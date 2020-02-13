@@ -2,6 +2,7 @@
     "currentSession": "0x0",
     "sessions": [
         {
+            "id": "0x0",
             "currentViewIndex": 0,
             "views": [
                 {
