@@ -1,8 +1,0 @@
-{
-    "uid": "0x02",
-    "type": "note",
-    "predicates": {"owner": "0x1"},
-    "properties": {"title": "my second note",
-                   "content": "my second content"
-                  }
-}

@@ -1,13 +1,44 @@
 import Foundation
 
-public class SearchResult {
+public class DataItem: Codable {
+    public var uid: String
+    public var type: String
+    public var predicates: [String: String]
+    public var properties: [String: String]
+    
+    
+    public init(_ uid: String){
+        self.uid = uid
+        self.type = "note"
+        self.predicates = ["owner": "0x0"]
+        self.properties = ["title": "example note",
+                           "content": "This is an example note"]
+    }
+    func findProperty(name: String) -> String {
+        return self.properties[name]!
+    }
+    
+    public class func from_json(file: String, ext: String = "json") throws -> [DataItem] {
+        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
+        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+        let jsonData = jsonString.data(using: .utf8)!
+        let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: jsonData)
+        return items
+    }
+    
+    //TODO: findRelationShipByType, findRelationshipByTarget, .onUpdate, .duplicate(), .delete()
+    
+}
+
+
+public class SearchResult: Codable {
     var query: String
     public var data: [DataItem]?
     
-    var sortProperty: String?
-    var sortAscending: Int
-    var loading: Int
-    var pageCount: Int
+    public var sortProperty: String?
+    public var sortAscending: Int
+    public var loading: Int
+    public var pageCount: Int
     
     public init(query: String, data: [DataItem]? = nil, sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
          pageCount: Int=0){

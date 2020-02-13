@@ -1,20 +1,23 @@
 import Foundation
 
-class ActionDescription{
+class ActionDescription: Codable{
     var icon: String
     var title: String
     var actionName: String
-    var actionArgs: [Any]
+    // TODO: Make serializeble
+//    var actionArgs: [Any]
     
-    init(icon: String, title: String, actionName: String, actionArgs: [Any]){
+//    init(icon: String, title: String, actionName: String, actionArgs: [Any]){
+    init(icon: String, title: String, actionName: String){
+
         self.icon=icon
         self.title=title
         self.actionName=actionName
-        self.actionArgs=actionArgs
+//        self.actionArgs=actionArgs
     }
 }
 
-class RenderConfig{
+class RenderConfig: Codable{
     var name: String
     var icon: String
     var category: String
@@ -35,7 +38,6 @@ class RenderConfig{
 
 
 class ListConfig: RenderConfig{
-    
     var cascadeOrder: [String]
     var slideLeftActions: [ActionDescription]
     var slideRightActions: [ActionDescription]
@@ -45,7 +47,7 @@ class ListConfig: RenderConfig{
     var sortAscending: Int
     var itemRenderer: String
     var longPress: ActionDescription
-    
+
     init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
          options2: [ActionDescription], cascadeOrder: [String], slideLeftActions: [ActionDescription],
          slideRightActions: [ActionDescription], type: String, browse: String, sortProperty: String,
@@ -60,13 +62,15 @@ class ListConfig: RenderConfig{
         self.itemRenderer=itemRenderer
         self.longPress=longPress
         super.init(name: name, icon: icon, category: category, items: items, options1: options1, options2: options2)
-        
-
+    }
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
     }
 }
 
-public class View {
-    var searchResult: SearchResult
+public class View: Codable {
+    public var searchResult: SearchResult
     var title: String
     var subtitle: String
     var renderName: String
@@ -106,22 +110,29 @@ public class View {
         self.editMode=editMode
         self.browsingMode=browsingMode
     }
-
+    
+    public class func from_json(_ file: String, ext: String = "json") throws -> [View] {
+        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
+        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+        let jsonData = jsonString.data(using: .utf8)!
+        let items: [View] = try! JSONDecoder().decode([View].self, from: jsonData)
+        return items
+    }
 }
 
 
-public class Session {
+public class Session: Codable {
     var currentViewIndex: Int
     var views: [View]
-    var currentView: View? {
-        if currentViewIndex != -1 {
+    public var currentView: View {
+        if currentViewIndex >= 0 {
             return views[currentViewIndex]
         } else{
-            return nil
+            return views[0]
         }
     }
     
-    public init(currentViewIndex: Int = -1, views: [View]=[]){
+    public init(currentViewIndex: Int = 0, views: [View]){
         self.currentViewIndex = currentViewIndex
         self.views = views
     }
@@ -132,6 +143,12 @@ public class Session {
     public func forward(){
         self.currentViewIndex += 1
     }
-
     
+    public class func from_json(_ file: String, ext: String = "json") throws -> Session {
+        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
+        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+        let jsonData = jsonString.data(using: .utf8)!
+        let session: Session = try! JSONDecoder().decode(Session.self, from: jsonData)
+        return session
+    }
 }

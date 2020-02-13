@@ -12,46 +12,73 @@ func wPrint( _ object: @escaping () -> Any){
         print(object())
     }
 }
+// ####################################
+// MODEL
+// ####################################
 
 // Create podAPI instance
-let testPodAPI = PodAPI("mytestkey")
-let sr = testPodAPI.query("get notes query")
-wPrint({sr.data})
-
-
-// Create Cache
-let cache = Cache(testPodAPI)
-let sr2 = cache.getByType(type: "note")
-wPrint({sr2!.data})
-
-let sr3 = cache.getByType(type: "note")
-wPrint({sr3!.data})
-
-// Initialize DataItems from json
-
-
-//func serializeToDataItems(file: String, ext: String) -> [DataItem]{
-//    let fileURL = Bundle.main.url(forResource: "test_dataItems", withExtension: "json")
-//    let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-//    let jsonData = jsonString.data(using: .utf8)!
-//    let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: jsonData)
-//    return items
-//}
-
-//let items = serializeToDataItems(file: "test_dataItems", ext: "json")
-
-//let fileURL = Bundle.main.url(forResource: "test_dataItems", withExtension: "json")
-//let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-//let jsonData = jsonString.data(using: .utf8)!
-//let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: jsonData)
-
+//let testPodAPI = PodAPI("mytestkey")
+//let sr = testPodAPI.query("get notes query")
+//wPrint({sr.data})
+//
+// Create Cache and query
+//let cache = Cache(testPodAPI)
+//let sr2 = cache.getByType(type: "note")
+//wPrint({sr2!.data})
+//
+// # redo query, use cache
+//let sr3 = cache.getByType(type: "note")
+//wPrint({sr3!.data})
+//
+// # Initialize DataItems from json
+//let items = DataItem.from_json(file: "test_dataItems")
+//
 //for item in items {
-//    print(item.uid)
-//    print(item.type)
-//    print(item.predicates)
-//    print(item.properties)
+//    let props: [Any] = [item.uid, item.type, item.predicates, item.properties]
+//    for prop in props{print(prop)}
 //    print()
 //}
+
+// # Deserialzing a view from json
+let testView = View.from_json("test_views")[0]
+
+// # Deserializing a session from json
+let testSession = Session.from_json("test_session")
+
+let testBrowser = Browser(testSession)
+
+
+
+
+// loads view from json, a view describes all UI elements
+// loads session (list of views) from json
+// init browser with session
+// browser.setstate() : populates all the browserelements (topnav/renderer/etc/)
+// get view
+
+//browser
+
+// session
+// setstate(session):
+//    current session op browserobject
+//    call setstate op topnaviatation , renderer, search
+//
+
+
+// browser -> topnav -> items -> title
+// set stuff in json from view
+// show that on screen
+
+
+
+//
+
+
+//
+
+//topnavigation
+//renderer
+//search
 
 
 
