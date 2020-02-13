@@ -14,6 +14,19 @@
                         "text": "data:Note",
                         "sortProperty": "date-created",
                         "sortAscending": 0
+                    }
+                }
+            ]
+        },
+        {
+            "id": "0x1",
+            "currentViewIndex": 0,
+            "views": [
+                {
+                    "query": {
+                        "text": "data:Note",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
                     },
                     "selection": ["0x5"],
                     "scrollState": 64
