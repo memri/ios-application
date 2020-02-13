@@ -5,31 +5,17 @@
             "currentViewIndex": 0,
             "views": [
                 {
-                    "title": "All Notes",
-                    "rendererName": "list",
-                    "renderConfig": {
-                        "list": {
-                            
-                        }
+                    "query": { "text": "0x7" },
+                    "editMode": true
+                },
+                {
+                    "query": {
+                        "text": "data:Note",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
                     },
-                    "editMode": false,
-                    "selection": ["0x0"],
-                    "browsingMode": "default",
-                    "editButtons": [
-
-                    ],
-                    "filterButtons": [
-                        
-                    ],
-                    "actionItems": [
-                        
-                    ],
-                    "navigateItems": [
-                        
-                    ],
-                    "contextButtons": [
-                        
-                    ]
+                    "selection": ["0x5"],
+                    "scrollState": 64
                 }
             ]
         }
