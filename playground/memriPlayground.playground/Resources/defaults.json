@@ -1,0 +1,121 @@
+{
+    "{renderer:list}": {
+        "renderConfig": {
+            "list": {
+                "slideLeftActions": [
+                    {
+                        "icon": "remove.ico",
+                        "title": "Remove",
+                        "actionName": "remove",
+                        "actionArgs": ["{.id}"]
+                    }
+                ],
+                "slideRightActions": [],
+                "itemRenderer": "{.title}"
+            }
+        }
+    },
+
+    "{type:Note}": {
+        "name": "all-notes",
+        "title": "Notes",
+        "query": "data:Note",
+        "rendererName": "list",
+        "renderConfig": {
+            "list": {
+                "sortProperty": "date-created",
+                "sortAscending": 0,
+                "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
+                "longPress": {
+                    "actionName": "select",
+                    "actionArgs": ["{.id}"]
+                }
+            }
+        },
+        "browsingMode": "default",
+        "editButtons": [
+            {
+                "icon": "add.ico",
+                "title": "Add Note",
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "predicates": {"owner": "{me}"},
+                    "properties": {"title": "Untitled Note"}
+                }]
+            }
+        ],
+        "filterButtons": [
+            {
+                "icon": "star.ico",
+                "title": "Show Starred Notes",
+                "actionName": "showStarred",
+                "actionArgs": []
+            },
+            {
+                "icon": "filter.ico",
+                "title": "Show Filter Panel",
+                "actionName": "showFilterPane",
+                "actionArgs": []
+            }
+        ],
+        "contextButtons": [
+            {
+                "icon": "star.ico",
+                "title": "Star Note",
+                "actionName": "star",
+                "actionArgs": ["{.id}"]
+            },
+            {
+                "icon": "schedule.ico",
+                "title": "Schedule...",
+                "actionName": "schedule",
+                "actionArgs": []
+            }
+        ],
+        "actionItems": [
+            {
+                "title": "Share with...",
+                "actionName": "showOverlay",
+                "actionArgs": ["shareWithPanel"]
+            },
+            {
+                "title": "Add to list...",
+                "actionName": "addToPanel",
+                "actionArgs": []
+            },
+            {
+                "title": "Duplicate Note",
+                "actionName": "duplicate",
+                "actionArgs": ["{@.id}"]
+            }
+        ],
+        "navigateItems": [
+            {
+                "title": "Timeline of this note",
+                "actionName": "openView",
+                "actionArgs": [{
+                    "rendererName": "timeline",
+                    "renderConfig": {
+                        "timeline": {
+                            "timeProperty": "date-created"
+                        }
+                    },
+                    "query": "data:Log appliesTo:{.id}",
+                    "sortProperty": "date-created",
+                    "sortAscending": 0
+                }]
+            },
+            {
+                "title": "Starred notes",
+                "actionName": "showStarred",
+                "actionArgs": []
+            },
+            {
+                "title": "All notes",
+                "actionName": "openView",
+                "actionArgs": ["all-notes"]
+            }
+        ]
+    }
+}

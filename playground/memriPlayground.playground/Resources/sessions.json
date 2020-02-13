@@ -1,0 +1,37 @@
+{
+    "currentSession": "0x0",
+    "sessions": [
+        {
+            "currentViewIndex": 0,
+            "views": [
+                {
+                    "title": "All Notes",
+                    "rendererName": "list",
+                    "renderConfig": {
+                        "list": {
+                            
+                        }
+                    },
+                    "editMode": false,
+                    "selection": ["0x0"],
+                    "browsingMode": "default",
+                    "editButtons": [
+
+                    ],
+                    "filterButtons": [
+                        
+                    ],
+                    "actionItems": [
+                        
+                    ],
+                    "navigateItems": [
+                        
+                    ],
+                    "contextButtons": [
+                        
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,16 @@
+{
+    "{type:Note}": {
+        "renderConfig": {
+            "list": {
+                "slideRightActions": [
+                    {
+                        "icon": "schedule.ico",
+                        "title": "Schedule",
+                        "actionName": "schedule",
+                        "actionArgs": ["{.id}"]
+                    }
+                ]
+            }
+        }
+    }
+}
