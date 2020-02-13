@@ -141,7 +141,7 @@
             {
                 "title": "Duplicate Note",
                 "actionName": "duplicate",
-                "actionArgs": ["{@.id}"]
+                "actionArgs": ["{.id}"]
             }
         ],
         "navigateItems": [
