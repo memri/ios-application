@@ -96,11 +96,14 @@
                 "actionName": "openView",
                 "actionArgs": [{
                     "rendererName": "timeline",
-                    "searchResult": {
-                        "query": "data:Log appliesTo:{.id}",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
-                    }
+                    "renderConfig": {
+                        "timeline": {
+                            "timeProperty": "date-created"
+                        }
+                    },
+                    "query": "data:Log appliesTo:{.id}",
+                    "sortProperty": "date-created",
+                    "sortAscending": 0
                 }]
             },
             {
