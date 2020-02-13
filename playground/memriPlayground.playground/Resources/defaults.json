@@ -1,16 +1,35 @@
 {
+    "{renderer:list}": {
+        "renderConfig": {
+            "list": {
+                "slideLeftActions": [
+                    {
+                        "icon": "remove.ico",
+                        "title": "Remove",
+                        "actionName": "remove",
+                        "actionArgs": ["{.id}"]
+                    }
+                ],
+                "slideRightActions": [],
+                "itemRenderer": "{.title}"
+            }
+        }
+    },
+
     "{type:Note}": {
         "name": "all-notes",
         "title": "Notes",
-        "searchResult": {
-            "query": "data:Note",
-            "sortProperty": "date-created",
-            "sortAscending": 0
-        },
+        "query": "data:Note",
         "rendererName": "list",
         "renderConfig": {
             "list": {
-                
+                "sortProperty": "date-created",
+                "sortAscending": 0,
+                "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
+                "longPress": {
+                    "actionName": "select",
+                    "actionArgs": ["{.id}"]
+                }
             }
         },
         "browsingMode": "default",
