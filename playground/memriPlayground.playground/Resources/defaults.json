@@ -76,7 +76,7 @@
         "rendererName": "richtexteditor",
         "renderConfig": {
             "richtexteditor": {
-                "editorRenderer": "{HBox(Textbox(.title), Label(.date-modified), RichTextbox(.contents))}"
+                "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
             }
         },
         "editButtons": [
