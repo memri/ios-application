@@ -2,8 +2,8 @@
     "currentSession": "0x0",
     "sessions": [
         {
-            "currentViewIndex": 0,
-            "views": [
+            "currentSessionViewIndex": 0,
+            "sessionViews": [
                 {
                     "title": "All Notes",
                     "rendererName": "list",

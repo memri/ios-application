@@ -69,7 +69,7 @@ class ListConfig: RenderConfig{
     }
 }
 
-public class View: Codable {
+public class SessionView: Codable {
     public var searchResult: SearchResult
     var title: String
     var subtitle: String
@@ -111,37 +111,37 @@ public class View: Codable {
         self.browsingMode=browsingMode
     }
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> [View] {
+    public class func from_json(_ file: String, ext: String = "json") throws -> [SessionView] {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
         let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
         let jsonData = jsonString.data(using: .utf8)!
-        let items: [View] = try! JSONDecoder().decode([View].self, from: jsonData)
+        let items: [SessionView] = try! JSONDecoder().decode([SessionView].self, from: jsonData)
         return items
     }
 }
 
 
 public class Session: Codable {
-    var currentViewIndex: Int
-    var views: [View]
-    public var currentView: View {
-        if currentViewIndex >= 0 {
-            return views[currentViewIndex]
+    var currentSessionViewIndex: Int
+    var sessionViews: [SessionView]
+    public var currentSessionView: SessionView {
+        if currentSessionViewIndex >= 0 {
+            return sessionViews[currentSessionViewIndex]
         } else{
-            return views[0]
+            return sessionViews[0]
         }
     }
     
-    public init(currentViewIndex: Int = 0, views: [View]){
-        self.currentViewIndex = currentViewIndex
-        self.views = views
+    public init(currentSessionViewIndex: Int = 0, sessionViews: [SessionView]){
+        self.currentSessionViewIndex = currentSessionViewIndex
+        self.sessionViews = sessionViews
     }
     
     public func back(){
-        self.currentViewIndex -= 1
+        self.currentSessionViewIndex -= 1
     }
     public func forward(){
-        self.currentViewIndex += 1
+        self.currentSessionViewIndex += 1
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {

@@ -1,6 +1,6 @@
 {
-    "currentViewIndex": 0,
-    "views": [
+    "currentSessionViewIndex": 0,
+    "sessionViews": [
             {
                 "searchResult": {
                     "query": "",
@@ -9,7 +9,7 @@
                     "loading": 0,
                     "pageCount": 0,
             },
-            "title": "testtitle",
+            "title": "Daily Notes",
             "subtitle": "testSubtitle",
             "renderName": "testRenderName",
             "selection": [],

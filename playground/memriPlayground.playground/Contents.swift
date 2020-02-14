@@ -1,5 +1,7 @@
 import UIKit
 import Foundation
+import SwiftUI
+import PlaygroundSupport
 
 
 enum MemriError: Error {
@@ -12,15 +14,17 @@ func wPrint( _ object: @escaping () -> Any){
         print(object())
     }
 }
-// ####################################
-// MODEL
-// ####################################
+/*
+MODEL
+*/
 
-// Create podAPI instance
+//Create podAPI instance
+
 //let testPodAPI = PodAPI("mytestkey")
 //let sr = testPodAPI.query("get notes query")
 //wPrint({sr.data})
-//
+
+
 // Create Cache and query
 //let cache = Cache(testPodAPI)
 //let sr2 = cache.getByType(type: "note")
@@ -39,13 +43,22 @@ func wPrint( _ object: @escaping () -> Any){
 //    print()
 //}
 
-// # Deserialzing a view from json
-let testView = View.from_json("test_views")[0]
+//# Deserialzing a view from json
+//let testView = MemriView.from_json("test_views")[0]
 
-// # Deserializing a session from json
-let testSession = Session.from_json("test_session")
 
+/*
+# Deserializing a session from json, init a browser with it
+*/
+
+let testSession = try Session.from_json("test_session")
 let testBrowser = Browser(testSession)
+
+
+print(testBrowser.currentSession.currentSessionView)
+
+
+PlaygroundPage.current.setLiveView(testBrowser)
 
 
 
