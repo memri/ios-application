@@ -16,16 +16,24 @@
         }
     },
 
-    "{type:Note}": {
+    "{[type:Note]}": {
         "name": "all-notes",
         "title": "Notes",
-        "query": "data:Note",
+        "query": {
+            "text": "data:Note",
+            "sortProperty": "date-created",
+            "sortAscending": 0
+        },
         "rendererName": "list",
         "renderConfig": {
             "list": {
                 "sortProperty": "date-created",
                 "sortAscending": 0,
                 "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
+                "press": {
+                    "actionName": "openView",
+                    "actionArgs": ["{.id}"]
+                },
                 "longPress": {
                     "actionName": "select",
                     "actionArgs": ["{.id}"]
@@ -58,6 +66,52 @@
                 "actionName": "showFilterPane",
                 "actionArgs": []
             }
+        ]
+    },
+
+    "{type:Note}": {
+        "name": "note",
+        "title": "Note",
+        "query": { "text": "{.id}" },
+        "rendererName": "richtexteditor",
+        "renderConfig": {
+            "richtexteditor": {
+                "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
+            }
+        },
+        "editButtons": [
+            {
+                "icon": "edit.ico",
+                "title": "Edit Note",
+                "actionName": "editMode",
+                "actionArgs": []
+            }
+        ],
+        "filterButtons": [
+            {
+                "icon": "timeline.ico",
+                "title": "Show Timeline",
+                "actionName": "openView",
+                "actionArgs": [{
+                    "rendererName": "timeline",
+                    "renderConfig": {
+                        "timeline": {
+                            "timeProperty": "date-created"
+                        }
+                    },
+                    "query": {
+                        "text": "data:Log appliesTo:{.id}",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
+                    }
+                }]
+            },
+            {
+                "icon": "context.ico",
+                "title": "Show Context Panel",
+                "actionName": "showContextPane",
+                "actionArgs": []
+            }
         ],
         "contextButtons": [
             {
@@ -87,7 +141,7 @@
             {
                 "title": "Duplicate Note",
                 "actionName": "duplicate",
-                "actionArgs": ["{@.id}"]
+                "actionArgs": ["{.id}"]
             }
         ],
         "navigateItems": [
@@ -101,9 +155,11 @@
                             "timeProperty": "date-created"
                         }
                     },
-                    "query": "data:Log appliesTo:{.id}",
-                    "sortProperty": "date-created",
-                    "sortAscending": 0
+                    "query": {
+                        "text": "data:Log appliesTo:{.id}",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
+                    }
                 }]
             },
             {
