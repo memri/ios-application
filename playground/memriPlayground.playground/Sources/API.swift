@@ -2,11 +2,11 @@
  * PodAPI
  */
 PodAPI(String key) // Constructor
-.remove(_ id:String,_ callback: (success:Boolean,Error error) -> Void)
-.get(_ id:String,_ callback: (item:DataItem,Error error) -> Void)
-.update(_ id:String,_ item:DataItem,_ callback: (success:Boolean,Error error) -> Void)
+.remove(_ id:String,_ callback: (success:Boolean, error:Error) -> Void)
+.get(_ id:String,_ callback: (item:DataItem, error:Error) -> Void)
+.update(_ id:String,_ item:DataItem,_ callback: (success:Boolean, error:Error) -> Void)
 // Sets the .id property on DataItem
-.create(_ item:DataItem,_ callback: (success:Boolean,Error error) -> Void)
+.create(_ item:DataItem,_ callback: (success:Boolean, error:Error) -> Void)
 .link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (created:Boolean, error:Error) -> Void)
 .unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (success:Boolean, error:Error) -> Void)
 .query(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void)
@@ -29,7 +29,3 @@ PodAPI(String key) // Constructor
 .augment()
 .automate()
 streamResource(_ URI:String, _ options:StreamOptions, _ callback: (stream:Stream, error:Error) -> Void)
-
-/*
- * PodAPI
- */
