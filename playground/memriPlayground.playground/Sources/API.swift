@@ -2,7 +2,7 @@
  * PodAPI
  */
 class PodAPI{
-    func init(String key) {} // Constructor
+    func init(key:String) {} // Constructor
 
     func remove(_ id:String,_ callback: (success:Boolean, error:Error) -> Void) {}
     func get(_ id:String,_ callback: (item:DataItem, error:Error) -> Void) {}
