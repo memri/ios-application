@@ -323,14 +323,14 @@ public class NavigationSearch {} // @TODO
  */
 public class Browser: View {
     /**
-     * The current view that is displayed in the browser
+     * The current session of the view that is displayed in the browser
      */
     public var currentSession: Session
 
     /**
      * The current view that is displayed in the browser
      */
-    public var currentView: SessionView // return self.currentSession.currentView
+    public var currentView: SessionView
 
     /**
      * Toggle the UI into edit mode
@@ -338,8 +338,8 @@ public class Browser: View {
     public var editMode: Bool
 
     /**
-     * Set a new view as current view, and displayes it. 
-     * This does not alter the session object.
+     * Set the currentView of a session as the view displayed in the browser. 
      */
     public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
 }
+
