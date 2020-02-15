@@ -191,3 +191,91 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
      */
     public func delete() -> DataItem {}
 }
+
+
+class Settings {} // @TODO  // Responsible for loading and saving as well
+class NavigationSettings {} // @TODO  // Responsible for loading and saving as well
+class Sessions {} // @TODO  // Responsible for loading and saving as well
+
+class Session {} // @TODO
+class SessionView {} // @TODO
+class ActionDescription {} // @TODO
+class ScheduleOptions {} // @TODO
+protocol RenderOptions {} // @TODO
+class InterfaceListRenderOptions: RenderOptions {} // @TODO
+class ThumbnailRenderOptions: RenderOptions {} // @TODO
+class CalendarRenderOptions: RenderOptions {} // @TODO
+class ChartRenderOptions: RenderOptions {} // @TODO
+class BarChartRenderOptions: RenderOptions {} // @TODO
+class LineChartRenderOptions: RenderOptions {} // @TODO
+class PieChartRenderOptions: RenderOptions {} // @TODO
+class MapRenderOptions: RenderOptions {} // @TODO
+class TimelineRenderOptions: RenderOptions {} // @TODO
+
+/**
+ * Represents the entire application.
+ * One can imagine in the future there being multiple applications, 
+ * each aimed at a different way to represent the data. For instance
+ * an application that is focussed on voice-first instead of gui-first.
+ */
+class Application: View, Event {
+    public let name: String
+
+    public let settings: Settings
+    public let sessions: Sessions
+    public let navigation: NavigationSettings
+    
+    // These variables stay private to prevent tampering which can cause backward incompatibility
+    var navigationPane: Navigation
+    var browserPane: Browser
+    var sessionPane: SessionSwitcher
+    var overlayPane: Overlay
+
+    public func init(_ name:String, _ api: PodAPI, _ cache Cache) {
+        // Instantiate view objects
+
+        // Load settings (from cache and/or api)
+        // Load navigationSettings (from cache and/or api)
+        // Load sessions (from cache and/or api)
+
+        // Fire ready event
+
+        // When session are loaded, load the current view
+        // If there are no pre-existing sessions, load the default view
+    }
+}
+
+class Navigation: View {
+    public var items: [NavigationItem]
+    public var currentItem: NavigationItem
+    public var scrollState: Int
+    public var editMode: Bool
+    public var selection: [NavigationItem]
+
+    public func init(_ settings: NavigationSettings){ }
+    
+    public func find(_ query:String)
+    public func add(_ item:NavigationItem)
+    public func remove(_ item:NavigationItem)
+}
+
+struct NavigationItem: Observable { // Should this be a class ??
+    /**
+     * Used as the caption in the navigation
+     */
+    public var title:String
+    /**
+     * Name of the view it opens
+     */
+    public var view: String
+    /**
+     * Defines the position in the navigation
+     */
+    public var count: Int
+    /**
+     *  0 = Item
+     *  1 = Heading
+     *  2 = Line
+     */
+    public var type: Int
+}
