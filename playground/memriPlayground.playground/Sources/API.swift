@@ -251,12 +251,23 @@ class Navigation: View {
     public var scrollState: Int
     public var editMode: Bool
     public var selection: [NavigationItem]
+    /**
+     * Toggle the UI into edit mode
+     */
+    public var editMode: Bool
+
+    var search: NavigationSearch
 
     public func init(_ settings: NavigationSettings){ }
     
-    public func find(_ query:String)
-    public func add(_ item:NavigationItem)
-    public func remove(_ item:NavigationItem)
+    public func filter(_ query:String) -> Void {}
+    public func add(_ item:NavigationItem) -> Bool {}
+    public func remove(_ item:NavigationItem) -> Bool {}
+
+    /**
+     * Act as if the user clicked on the navigation item
+     */
+    public func trigger(_ item:NavigationItem)
 }
 
 struct NavigationItem: Observable { // Should this be a class ??
@@ -279,3 +290,7 @@ struct NavigationItem: Observable { // Should this be a class ??
      */
     public var type: Int
 }
+
+public class NavigationSearch {} // @TODO
+
+
