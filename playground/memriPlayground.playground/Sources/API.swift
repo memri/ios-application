@@ -213,13 +213,18 @@ class MapRenderOptions: RenderOptions {} // @TODO
 class TimelineRenderOptions: RenderOptions {} // @TODO
 
 /**
- * Represents the entire application.
+ * Represents the entire application user interface.
  * One can imagine in the future there being multiple applications, 
  * each aimed at a different way to represent the data. For instance
  * an application that is focussed on voice-first instead of gui-first.
  */
 class Application: View, Event {
     public let name: String
+
+    /**
+     * The current session that is active in the application
+     */
+    public var currentSession: Session
 
     public let settings: Settings
     public let sessions: Sessions
@@ -229,7 +234,11 @@ class Application: View, Event {
     var navigationPane: Navigation
     var browserPane: Browser
     var sessionPane: SessionSwitcher
-    var overlayPane: Overlay
+    
+    // Overlays
+    var settingsPane: SettingsPane
+    var schedulePane: SchedulePane
+    var sharingPane: SharingPane
 
     public func init(_ name:String, _ api: PodAPI, _ cache Cache) {
         // Instantiate view objects
@@ -240,9 +249,24 @@ class Application: View, Event {
 
         // Fire ready event
 
-        // When session are loaded, load the current view
-        // If there are no pre-existing sessions, load the default view
+        // When session are loaded, load the current view in the browser
+        // If there are no pre-existing sessions, load the default view in the browser
     }
+
+    /**
+     * Adds a view to the history of the currentSession and displays it.
+     * If the view was already part of the currentSession.views it reorders it on top
+     */
+    public func openView(_ view: SessionView) {}
+    public func openView(_ view: String) {}
+    public func openView(_ items: [DataItem]) {}
+    public func openView(_ item: DataItem) {}
+
+    /**
+     * Add a new data item and displays that item in the UI
+     * in edit mode
+     */
+    public func add(_ item:DataItem) -> DataItem {}
 }
 
 class Navigation: View {
@@ -268,6 +292,7 @@ class Navigation: View {
      * Act as if the user clicked on the navigation item
      */
     public func trigger(_ item:NavigationItem)
+    public func trigger(_ view:String)
 }
 
 struct NavigationItem: Observable { // Should this be a class ??
@@ -293,4 +318,28 @@ struct NavigationItem: Observable { // Should this be a class ??
 
 public class NavigationSearch {} // @TODO
 
+/**
+ * Represents the part of the user interface that displays SessionViews
+ */
+public class Browser: View {
+    /**
+     * The current view that is displayed in the browser
+     */
+    public var currentSession: Session
 
+    /**
+     * The current view that is displayed in the browser
+     */
+    public var currentView: SessionView // return self.currentSession.currentView
+
+    /**
+     * Toggle the UI into edit mode
+     */
+    public var editMode: Bool
+
+    /**
+     * Set a new view as current view, and displayes it. 
+     * This does not alter the session object.
+     */
+    public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
+}
