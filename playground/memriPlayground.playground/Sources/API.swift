@@ -437,7 +437,51 @@ public struct ActionDescription {
     public var actionArgs: [Any]
 
 }
-public class ScheduleOptions {} // @TODO
+public class ScheduleOptions {
+    /**
+     * Date-time of first occurance of the scheduled task
+     */
+    public var when: DateTime // @TODO ??
+    /**
+     * Expression that defines when the task reoccurs
+     *    Format:
+     *      <count=Int>
+     *      <date yyyy-mm-dd hh:mm:ss>
+     *      <day of the week: DoW=1-7>
+     *      <weeks: W=3>
+     *      <start after: start:<date>>
+     *      <end after: end:<date>>
+     *      comma separated
+     *      OR
+     *      Natural Language:
+     *      “Every Tuesday”
+     *      “In summers, when I’m not out on holiday”
+     */
+    public var repeat: String
+    /**
+     * The data item that this task pertains to
+     */
+    public var item: DataItem
+    /**
+     * The data items that this task pertains to
+     */
+    public var items: [DataItem]
+    /**
+     * The action to perform when the event is triggered
+     */
+    public var action: [ActionDescription]
+    /**
+     * A natural language description of the scheduled action
+     * e.g. "Remind me to get milk"
+     */
+    public var actionDescription: String
+    /**
+     * A description of the type of schedule
+     * e.g. "Reminder"
+     */
+    public var title: String
+
+}
 public protocol RenderConfig {} // @TODO
 public class InterfaceListRenderConfig: RenderConfig {} // @TODO
 public class ThumbnailRenderConfig: RenderConfig {} // @TODO
