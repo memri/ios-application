@@ -198,27 +198,51 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
 }
 
 
-class Settings {} // @TODO  // Responsible for loading and saving as well
-class NavigationSettings {} // @TODO  // Responsible for loading and saving as well
-class Sessions {
+public class Settings {} // @TODO  // Responsible for loading and saving as well
+public class NavigationSettings {} // @TODO  // Responsible for loading and saving as well
 
+/**
+ * Responsible for loading and saving as well
+ * @event onsessionchange
+ */
+public class Sessions: Event {
+    /**
+     * The current session that the user is using (similar to active tab in an internet browser)
+     */
+    public var currentSession: Session
+    /**
+     * All sessions that are open
+     */
+    public var sessions: [Session]
+    /**
+     * Find a session using text
+     */
+    public func findSession(_ query:String) -> Void
+    /**
+     * Clear all sessions and create a new one
+     */
+    public func clear() -> Void
+    /**
+     * set the current session
+     * @TODO or should this just be by session .currentSession ?
+     */
     public func setCurrentSession(_ session:Session) -> Void
-} // @TODO  // Responsible for loading and saving as well
+} 
 
-class Session {} // @TODO
-class SessionView {} // @TODO
-class ActionDescription {} // @TODO
-class ScheduleOptions {} // @TODO
-protocol RenderConfig {} // @TODO
-class InterfaceListRenderConfig: RenderConfig {} // @TODO
-class ThumbnailRenderConfig: RenderConfig {} // @TODO
-class CalendarRenderConfig: RenderConfig {} // @TODO
-class ChartRenderConfig: RenderConfig {} // @TODO
-class BarChartRenderConfig: RenderConfig {} // @TODO
-class LineChartRenderConfig: RenderConfig {} // @TODO
-class PieChartRenderConfig: RenderConfig {} // @TODO
-class MapRenderConfig: RenderConfig {} // @TODO
-class TimelineRenderConfig: RenderConfig {} // @TODO
+public class Session {} // @TODO
+public class SessionView {} // @TODO
+public class ActionDescription {} // @TODO
+public class ScheduleOptions {} // @TODO
+public protocol RenderConfig {} // @TODO
+public class InterfaceListRenderConfig: RenderConfig {} // @TODO
+public class ThumbnailRenderConfig: RenderConfig {} // @TODO
+public class CalendarRenderConfig: RenderConfig {} // @TODO
+public class ChartRenderConfig: RenderConfig {} // @TODO
+public class BarChartRenderConfig: RenderConfig {} // @TODO
+public class LineChartRenderConfig: RenderConfig {} // @TODO
+public class PieChartRenderConfig: RenderConfig {} // @TODO
+public class MapRenderConfig: RenderConfig {} // @TODO
+public class TimelineRenderConfig: RenderConfig {} // @TODO
 
 /**
  * Represents the entire application user interface.
@@ -624,7 +648,7 @@ public class ContextPane: View {
     public func setCurrentView(_ view:SessionView) {}
 }
 
-public protocol Overlay {
+public protocol Overlay: View {
     /**
      * Display the overlay panel
      */
@@ -635,7 +659,7 @@ public protocol Overlay {
     public func hide() -> Void
 }
 
-public class SessionSwitcher {
+public class SessionSwitcher: View {
     /**
      * The scroll state in the session switcher
      */
@@ -650,6 +674,41 @@ public class SessionSwitcher {
     public func show() -> Void
     /**
      * Hide the overlay panel
-     */
+  S   */
     public func hide() -> Void
+}
+
+public class SettingsPane: View {
+    /**
+     * List of templates that define how a setting is rendered.
+     * e.g. a label and a textbox, a label and a checkbox, etc
+     */
+    var templates: [String:String]
+
+    public func init(_ settigns:Settings)
+
+    public func createSection(_ id:String, _ title: String) -> SettingsSection
+    public func getSection(_ id:String) -> SettingsSection
+    public func addSettingItem(_ item:SettingsItem) -> Bool
+}
+
+public class SettingsSection {
+    /**
+     * The title of the section
+     */
+    public var title: String
+
+    public func init(_ title:String) {}
+
+    /**
+     * Add a setting to the section
+     */
+    public func addSettingItem(_ item:SettingsItem) -> Void
+}
+
+public struct SettingsItem {
+    public var itemRenderer: String
+    public var variables: [String:AnyObject]
+
+    public func init(_ itemRenderer: String)
 }
