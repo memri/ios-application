@@ -328,8 +328,8 @@ class Navigation: View {
     /**
      * Act as if the user clicked on the navigation item
      */
-    public func trigger(_ item:NavigationItem)
-    public func trigger(_ viewName:String)
+    public func trigger(_ item:NavigationItem) {}
+    public func trigger(_ viewName:String) {}
 }
 
 struct NavigationItem: Observable { // Should this be a class ??
@@ -431,7 +431,7 @@ public class TopNavigation: View, Event {
     /**
      * Trigger the rename UI to show that enables a user to set the name of a view
      */
-    public func startRename()
+    public func startRename() -> Void {}
 }
 
 /**
@@ -477,8 +477,8 @@ public prototype Renderer {
     /**
      * Sets the state of the renderer (e.g. scroll position, zoom position, etc)
      */
-    public func setState(_ state:RenderState) -> Boolean
-    public func getState() -> RenderState
+    public func setState(_ state:RenderState) -> Boolean {}
+    public func getState() -> RenderState {}
 
     /**
      * Set the currentView of a session as the view displayed in the browser. 
@@ -517,7 +517,7 @@ public protocol MultiItemView: Renderer {
     /**
      * Loads the data to be rendered
      */
-    public func loadData(_ data:[DataItem])
+    public func loadData(_ data:[DataItem]) -> Boolean
 }
 
 public protocol SingleItemView: Renderer {
@@ -529,7 +529,7 @@ public protocol SingleItemView: Renderer {
     /**
      * Loads the data to be rendered
      */
-    public func loadData(_ data:DataItem)
+    public func loadData(_ data:DataItem) -> Boolean {}
 }
 
 /**
@@ -584,7 +584,7 @@ public class Search: View {
     /**
      * Show the filter panel
      */
-    public func toggleFilterPanel(_ force:Bool) -> Void // argument should be optional
+    public func toggleFilterPanel(_ force:Bool) -> Void {} // argument should be optional
 
     // @TODO should there be a toggle for the keyboard as well?
 }
@@ -604,7 +604,7 @@ public class FilterPanel: View {
     /**
      * Set the currentView of a session as the view displayed in the browser. 
      */
-    public func setCurrentView(_ view:SessionView) {}
+    public func setCurrentView(_ view:SessionView) -> Boolean {}
 }
 
 public class ContextPane: View {
@@ -645,7 +645,7 @@ public class ContextPane: View {
     /**
      * Set the currentView of a session as the view displayed in the browser. 
      */
-    public func setCurrentView(_ view:SessionView) {}
+    public func setCurrentView(_ view:SessionView) -> Boolean {}
 }
 
 public protocol Overlay: View {
@@ -687,9 +687,9 @@ public class SettingsPane: View {
 
     public func init(_ settigns:Settings)
 
-    public func createSection(_ id:String, _ title: String) -> SettingsSection
-    public func getSection(_ id:String) -> SettingsSection
-    public func addSettingItem(_ item:SettingsItem) -> Bool
+    public func createSection(_ id:String, _ title: String) -> SettingsSection {}
+    public func getSection(_ id:String) -> SettingsSection {}
+    public func addSettingItem(_ item:SettingsItem) -> Bool {}
 }
 
 public class SettingsSection {
@@ -703,7 +703,7 @@ public class SettingsSection {
     /**
      * Add a setting to the section
      */
-    public func addSettingItem(_ item:SettingsItem) -> Void
+    public func addSettingItem(_ item:SettingsItem) -> Void {}
 }
 
 public struct SettingsItem {
