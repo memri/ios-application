@@ -8,27 +8,27 @@ public class PodAPI {
     public func init(_ key:String) {}
 
     // Sets the .id property on DataItem
-    public func create(_ item:DataItem, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
-    public func get(_ id:String, _ callback: (item:DataItem, error:Error) -> Void) -> Void {}
-    public func update(_ id:String, _ item:DataItem, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
-    public func remove(_ id:String, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func create(_ item:DataItem, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func get(_ id:String, _ callback: (error:Error, item:DataItem) -> Void) -> Void {}
+    public func update(_ id:String, _ item:DataItem, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func remove(_ id:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
     
-    public func link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (created:Bool, error:Error) -> Void) -> Void {}
-    public func unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
+    public func unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
 
-    public func query(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryDSL(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryRAW(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func query(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func queryDSL(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func queryRAW(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
 
     // Returns a read-only SettingsData object.
-    public func getDefaultSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
+    public func getDefaultSettings(_ callback: (error:Error, result:SettingsData) -> Void) -> Void {}
     // Returns a read-write SettingsData object.
-    public func getDeviceSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
+    public func getDeviceSettings(_ callback: (error:Error, result:SettingsData) -> Void) -> Void {}
     // Returns a read-write SettingsData object when admin, otherwise read-only.
-    public func getGroupSettings(_ groupId:String, _ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
+    public func getGroupSettings(_ groupId:String, _ callback: (error:Error, result:SettingsData) -> Void) -> Void {}
     // Returns a read-write SettingsData object.
-    public func getUserSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
+    public func getUserSettings(_ callback: (error:Error, result:SettingsData) -> Void) -> Void {}
 
     public func import() -> Void {}
     public func export() -> Void {}
@@ -38,7 +38,7 @@ public class PodAPI {
     public func augment() -> Void {}
     public func automate() -> Void {}
 
-    public func streamResource(_ URI:String, _ options:StreamOptions, _ callback: (stream:Stream, error:Error) -> Void) -> Void {}
+    public func streamResource(_ URI:String, _ options:StreamOptions, _ callback: (error:Error, stream:Stream) -> Void) -> Void {}
 }
 
 public struct QueryOptions {
@@ -97,16 +97,16 @@ public class StateSyncAPI {
 public class Cache {
     public func init(_ api:PodAPI) {}
 
-    public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func getByType(_ query:String, _ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func getById(_ query:String, _ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func getByType(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
+    public func getById(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
 
     /**
      * Loads data from the pod. Returns SearchResult.
      * -> Calls callback twice, once for cache, once for real data [??]
      */
-    public func query(_ query:String, _ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func query(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
 
     public fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem] {}
 }
@@ -655,7 +655,7 @@ public class Browser: View {
     /**
      * Set the currentView of a session as the view displayed in the browser. 
      */
-    public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
+    public func setCurrentView(_ session:Session, _ callback:(error:Error, success:Bool) -> Void) {}
 
     public func init(_ renderers:[Renderer]) {}
 }
@@ -754,7 +754,7 @@ public protocol Renderer {
     /**
      * Set the currentView of a session as the view displayed in the browser. 
      */
-    public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
+    public func setCurrentView(_ session:Session, _ callback:(error:Error, success:Bool) -> Void) {}
 }
 
 /**
