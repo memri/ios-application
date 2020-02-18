@@ -1,22 +1,25 @@
+// @TODO find out how to set optional arguments. Set them for the error argument of all callbacks
+// @TODO callbacks should first be error then result
+
 /*
- * PodAPI
+ * Retrieves data from the pod, or executes actions on the pod.
  */
 public class PodAPI {
     public func init(_ key:String) {}
 
     // Sets the .id property on DataItem
-    public func create(_ item:DataItem,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
-    public func get(_ id:String,_ callback: (item:DataItem, error:Error) -> Void) -> Void {}
-    public func update(_ id:String,_ item:DataItem,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
-    public func remove(_ id:String,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func create(_ item:DataItem, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func get(_ id:String, _ callback: (item:DataItem, error:Error) -> Void) -> Void {}
+    public func update(_ id:String, _ item:DataItem, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func remove(_ id:String, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
     
     public func link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (created:Bool, error:Error) -> Void) -> Void {}
     public func unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
 
-    public func query(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryNLP(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryDSL(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
-    public func queryRAW(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func query(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func queryDSL(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+    public func queryRAW(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
 
     // Returns a read-only SettingsData object.
     public func getDefaultSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
@@ -71,11 +74,11 @@ public class SettingsData {
     /**
      * Also responsible for saving the setting to the permanent storage
      */
-    public func set(_ path:String, _ value:AnyObject) -> AnyType {} 
+    public func set(_ path:String, _ value:AnyObject) -> AnyObject {} 
 }
 
 // @TODO 
-public class Stream {
+public class Stream: Event {
 
 }
 
@@ -110,8 +113,8 @@ public class Cache {
 
 public class Event {
     public func fire(_ name:String) {}
-    public func on(_ name:String, _ callback:() -> Void)
-    public func off(_ name:String, _ callback:() -> Void)
+    public func on(_ name:String, _ callback:() -> Void) {}
+    public func off(_ name:String, _ callback:() -> Void) {}
 }
 
 /**
@@ -175,13 +178,13 @@ public struct Predicate {
 }
 
 public class DataItem: Observable { // @TODD figure out how to implement observable
-    public let uid: String // @koen why .uid iso .id?
+    public let id: String
     public let type: String
     public let predicates: [Predicate]
     public let properties: [String: String]
     public var deleted = false // This variable should only be settable by delete() and readable by everyone
     
-    public init(_ uid: String, _ type:String, _ predicates = [Predicate](),  _ properties = [String: String]()) {}
+    public init(_ id:String, _ type:String, _ predicates = [Predicate](),  _ properties = [String: String]()) {}
     public init(_ type:String, _ predicates = [Predicate](),  _ properties = [String: String]()) {}
 
     public func findProperty(_ name:String) -> AnyObject {}
@@ -206,13 +209,14 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
 // @TODO
 public class Settings {
     public func init(_ cache:Cache) {}
-} 
+}
 
 /**
  * Responsible for loading and saving as the navigation settings
+ * This is the model of your navigation
  * @event onsettingschange
  */
-public class NavigationSettings {
+public class NavigationCache {
     /**
      * Ordered list of navigation items
      */
@@ -253,17 +257,17 @@ public class Sessions: Event {
     /**
      * Find a session using text
      */
-    public func findSession(_ query:String) -> Void
+    public func findSession(_ query:String) -> Void {}
     /**
      * Clear all sessions and create a new one
      */
-    public func clear() -> Void
+    public func clear() -> Void {}
     /**
      * set the current session
      * @TODO or should this just be by session .currentSession ?
      */
-    public func setCurrentSession(_ session:Session) -> Void
-} 
+    public func setCurrentSession(_ session:Session) -> Void {}
+}
 
 /**
  * Think of sessions as tabs in an internet browser. Each tab has a little 
@@ -509,7 +513,11 @@ class Application: View, Event {
 
     public let settings: Settings
     public let sessions: Sessions
-    public let navigation: NavigationSettings
+    public let navigationCache: NavigationCache
+    /**
+     * All available renderers by name
+     */
+    public let renderers: [String: Renderer]
     
     // These variables stay private to prevent tampering which can cause backward incompatibility
     var navigationPane: Navigation
@@ -525,7 +533,7 @@ class Application: View, Event {
         // Instantiate view objects
 
         // Load settings (from cache and/or api)
-        // Load navigationSettings (from cache and/or api)
+        // Load NavigationCache (from cache and/or api)
         // Load sessions (from cache and/or api)
 
         // Fire ready event
@@ -548,6 +556,11 @@ class Application: View, Event {
      * in edit mode
      */
     public func add(_ item:DataItem) -> DataItem {}
+
+    /**
+     * Executes the action as described in the action description
+     */
+    public func executeAction(_ action:ActionDescription) -> Bool {}
 }
 
 struct ScrollState {
@@ -579,7 +592,7 @@ class Navigation: View {
 
     var search: NavigationSearch
 
-    public func init(_ settings: NavigationSettings){ }
+    public func init(_ settings: NavigationCache){ }
     
     public func filter(_ query:String) -> Void {}
     public func add(_ item:NavigationItem) -> Bool {}
@@ -613,7 +626,7 @@ struct NavigationItem: Observable { // Should this be a class ??
     public var type: Int
 }
 
-public class NavigationSearch {} // @TODO
+public class NavigationSearch: View {} // @TODO
 
 /**
  * Represents the part of the user interface that displays SessionViews
@@ -635,11 +648,6 @@ public class Browser: View {
      */
     public var editMode: Bool
 
-    /**
-     * All available renderers by name
-     */
-    public let renderers: [String: Renderer]
-
     var topNavigation: TopNavigation
     var currentRenderer: Renderer
     var searchPane: SearchPane
@@ -648,6 +656,8 @@ public class Browser: View {
      * Set the currentView of a session as the view displayed in the browser. 
      */
     public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
+
+    public func init(_ renderers:[Renderer]) {}
 }
 
 /**
@@ -657,6 +667,7 @@ public class Browser: View {
  * @event onrefresh
  * @event ontitletyping
  * @event onnavigate
+ * @event onrename
  */
 public class TopNavigation: View, Event {
     /**
@@ -697,7 +708,7 @@ public class TopNavigation: View, Event {
 /**
  * Renders content in the browser
  */
-public prototype Renderer {
+public protocol Renderer {
     /**
      * Name of the renderer
      */
@@ -830,7 +841,7 @@ public class Search: View {
     /**
      * The buttons displayed in the search panel
      */
-    public var buttons: ActionDescription[]
+    public var buttons: [ActionDescription]
     
     var filterPanel: FilterPanel
 
@@ -845,6 +856,12 @@ public class Search: View {
      * Show the filter panel
      */
     public func toggleFilterPanel(_ force:Bool) -> Void {} // argument should be optional
+
+    /**
+     * Sets the state of the renderer (e.g. scroll position, zoom position, etc)
+     */
+    public func setState(_ state:SearchState) -> Boolean {}
+    public func getState() -> SearchState {}
 
     // @TODO should there be a toggle for the keyboard as well?
 }
@@ -934,7 +951,7 @@ public class SessionSwitcher: View {
     public func show() -> Void
     /**
      * Hide the overlay panel
-  S   */
+     */
     public func hide() -> Void
 }
 
