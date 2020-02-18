@@ -1,5 +1,4 @@
 // @TODO find out how to set optional arguments. Set them for the error argument of all callbacks
-// @TODO callbacks should first be error then result
 
 /*
  * Retrieves data from the pod, or executes actions on the pod.
@@ -351,6 +350,10 @@ public class SessionView: Observable { // @TODO should this be a struct?
      */
     public var renderConfig: [String:RenderConfig]
     /**
+     * A dictionary of render states based on the name of the renderer
+     */
+    public var renderState: [String:RenderState]
+    /**
      * A list of uids representing the selection in the view
      */
     public var selection: String[]
@@ -486,8 +489,46 @@ public class ScheduleOptions {
     public var title: String
 
 }
-public protocol RenderConfig {} // @TODO
-public class InterfaceListRenderConfig: RenderConfig {} // @TODO
+public protocol RenderConfig {
+    /**
+     * Define the searching order for view details. Choose from:
+     * 
+     *   - renderer
+     *   - defaults
+     *   - view
+     *   - user
+     */
+    public var cascadeOrder = ["renderer", "datatype", "view", "user"]
+    /**
+     * Describes how to render a single data item
+     */
+    public var itemRenderer: String
+}
+public class ListRenderConfig: RenderConfig {
+    /**
+     * The button or buttons displayed when the user slides a list item to the left
+     */
+    public var slideLeftActions: [ActionDescription]
+    /**
+     * The button or buttons displayed when the user slides a list item to the right
+     */
+    public var slideRightActions: [ActionDescription]
+    /**
+     * The type of list rendering
+     * Options: 
+     *   - "default"        : renders a list without any extras
+     *   - "alphabetical"   : renders a list with quick alphabet navigation
+     */
+    public var type: String
+    /**
+     * Action to execute when the user presses on a list item
+     */
+    public var press: ActionDescription
+    /**
+     * Action to execute when the user long presses on a list item
+     */
+    public var longPress: ActionDescription
+}
 public class ThumbnailRenderConfig: RenderConfig {} // @TODO
 public class CalendarRenderConfig: RenderConfig {} // @TODO
 public class ChartRenderConfig: RenderConfig {} // @TODO
