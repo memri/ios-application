@@ -377,7 +377,7 @@ public class SessionView: Observable { // @TODO should this be a struct?
     public var browsingMode: String
 
 }
-public class ActionDescription {
+public struct ActionDescription {
     public var icon: String
     public var title: String
 
