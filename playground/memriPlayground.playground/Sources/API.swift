@@ -4,17 +4,20 @@
 public class PodAPI {
     public func init(_ key:String) {}
 
-    public func remove(_ id:String,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
-    public func get(_ id:String,_ callback: (item:DataItem, error:Error) -> Void) -> Void {}
-    public func update(_ id:String,_ item:DataItem,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
     // Sets the .id property on DataItem
     public func create(_ item:DataItem,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func get(_ id:String,_ callback: (item:DataItem, error:Error) -> Void) -> Void {}
+    public func update(_ id:String,_ item:DataItem,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    public func remove(_ id:String,_ callback: (success:Bool, error:Error) -> Void) -> Void {}
+    
     public func link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (created:Bool, error:Error) -> Void) -> Void {}
     public func unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (success:Bool, error:Error) -> Void) -> Void {}
+
     public func query(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
     public func queryNLP(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
     public func queryDSL(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
     public func queryRAW(_ query:String,_ options:QueryOptions, _ callback: (result:SearchResult, error:Error) -> Void) -> Void {}
+
     // Returns a read-only SettingsData object.
     public func getDefaultSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
     // Returns a read-write SettingsData object.
@@ -23,6 +26,7 @@ public class PodAPI {
     public func getGroupSettings(_ groupId:String, _ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
     // Returns a read-write SettingsData object.
     public func getUserSettings(_ callback: (result:SettingsData, error:Error) -> Void) -> Void {}
+
     public func import() -> Void {}
     public func export() -> Void {}
     public func sync() -> Void {}
@@ -30,6 +34,7 @@ public class PodAPI {
     public func convert() -> Void {}
     public func augment() -> Void {}
     public func automate() -> Void {}
+
     public func streamResource(_ URI:String, _ options:StreamOptions, _ callback: (stream:Stream, error:Error) -> Void) -> Void {}
 }
 
@@ -138,7 +143,7 @@ public class SearchResult: Event {
 
     /**
      * Returns the loading state
-     *  0 loading comppublic lete
+     *  0 loading complete
      *  1 loading data from server
      */
     public var loading:Bool
@@ -201,16 +206,16 @@ class Session {} // @TODO
 class SessionView {} // @TODO
 class ActionDescription {} // @TODO
 class ScheduleOptions {} // @TODO
-protocol RenderOptions {} // @TODO
-class InterfaceListRenderOptions: RenderOptions {} // @TODO
-class ThumbnailRenderOptions: RenderOptions {} // @TODO
-class CalendarRenderOptions: RenderOptions {} // @TODO
-class ChartRenderOptions: RenderOptions {} // @TODO
-class BarChartRenderOptions: RenderOptions {} // @TODO
-class LineChartRenderOptions: RenderOptions {} // @TODO
-class PieChartRenderOptions: RenderOptions {} // @TODO
-class MapRenderOptions: RenderOptions {} // @TODO
-class TimelineRenderOptions: RenderOptions {} // @TODO
+protocol RenderConfig {} // @TODO
+class InterfaceListRenderConfig: RenderConfig {} // @TODO
+class ThumbnailRenderConfig: RenderConfig {} // @TODO
+class CalendarRenderConfig: RenderConfig {} // @TODO
+class ChartRenderConfig: RenderConfig {} // @TODO
+class BarChartRenderConfig: RenderConfig {} // @TODO
+class LineChartRenderConfig: RenderConfig {} // @TODO
+class PieChartRenderConfig: RenderConfig {} // @TODO
+class MapRenderConfig: RenderConfig {} // @TODO
+class TimelineRenderConfig: RenderConfig {} // @TODO
 
 /**
  * Represents the entire application user interface.
@@ -292,14 +297,14 @@ class Navigation: View {
      * Act as if the user clicked on the navigation item
      */
     public func trigger(_ item:NavigationItem)
-    public func trigger(_ view:String)
+    public func trigger(_ viewName:String)
 }
 
 struct NavigationItem: Observable { // Should this be a class ??
     /**
      * Used as the caption in the navigation
      */
-    public var title:String
+    public var title: String
     /**
      * Name of the view it opens
      */
@@ -338,8 +343,166 @@ public class Browser: View {
     public var editMode: Bool
 
     /**
+     * All available renderers by name
+     */
+    public let renderers: [String: Renderer]
+
+    var topNavigation: TopNavigation
+    var currentRenderer: Renderer
+    var searchPane: SearchPane
+
+    /**
      * Set the currentView of a session as the view displayed in the browser. 
      */
     public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
 }
 
+/**
+ * The top navigation of the browser that shows the user where they are, 
+ * and show navigational items that are ever present in all views in the application.
+ *
+ * @event onrefresh
+ * @event ontitletyping
+ * @event onnavigate
+ */
+public class TopNavigation: View, Event {
+    /**
+     * Sets or retrieves the title displayed in the top navigation
+     */
+    public var title: String
+    /**
+     * Sets or retrieves the sub title displayed in the top navigation
+     */
+    public var subTitle: String
+    /**
+     * Sets or retrieves the title displayed near the back button in the top navigation
+     */
+    public var backTitle: String
+    /**
+     * Toggle the UI into edit mode
+     */
+    public var editMode = false
+    /**
+     * Toggle the UI into navigation mode
+     */
+    public var navigationMode = false
+
+    /**
+     * Sets the action button in the top navigation
+     */
+    public var actionButton: ActionDescription
+    /**
+     * Sets the action button displayed during edit mode in the top navigation
+     */
+    public var editActionButton: ActionDescription
+    /**
+     * Trigger the rename UI to show that enables a user to set the name of a view
+     */
+    public func startRename()
+}
+
+/**
+ * Renders content in the browser
+ */
+public prototype Renderer {
+    /**
+     * Name of the renderer
+     */
+    public var name: String
+    /**
+     * Icon of the renderer used to display in the filter view
+     */
+    public var icon: String
+    /**
+     * All renderers with the same category string are displayed 
+     * under the icon of the first renderer that lists in that
+     * category
+     */
+    public var category: String
+    /**
+     * The render modes add to the modes available under the category
+     * e.g. under the list category, one may add an alphabetic list view
+     */
+    public var renderModes: [ActionDescription]
+    /**
+     * A set of actions that let's the user configure an aspect of the renderer
+     */
+    public var options1: [ActionDescription]
+    /**
+     * A set of actions that let's the user configure an aspect of the renderer
+     */
+    public var options2: [ActionDescription]
+    /**
+     * Toggle the UI into edit mode
+     */
+    public var editMode = false
+    /**
+     * The render config that is used to render this renderer
+     */
+    public var renderConfig: renderConfig
+    
+    /**
+     * Sets the state of the renderer (e.g. scroll position, zoom position, etc)
+     */
+    public func setState(_ state:RenderState) -> Boolean
+    public func getState() -> RenderState
+}
+
+/**
+ * Records the state of the renderer. Each Renderer will have it's own 
+ * RenderState struct that is base classed from RenderState
+ * @TODO add renderState as a dict to the view
+ */
+struct RenderState {
+    struct ScrollState {
+        var x = 0
+        var y = 0
+    }
+
+    /**
+     * The scroll position of the renderer
+     */
+    public var scrollState: ScrollState
+
+    /**
+     * Whether the UI is in edit mode
+     */
+    public var editMode: Boolean
+}
+
+public protocol MultiItemView: Renderer {
+    /**
+     * The selected items in the view (only relevant for edit mode)
+     */
+    public var selection: [DataItem]
+
+    /**
+     * The render config that is used to render this renderer
+     */
+    public var data: [DataItem]
+
+    /**
+     * Loads the data to be rendered
+     */
+    public func loadData(_ data:[DataItem])
+}
+
+public protocol SingleItemView: Renderer {
+    /**
+     * The render config that is used to render this renderer
+     */
+    public var data: DataItem
+
+    /**
+     * Loads the data to be rendered
+     */
+    public func loadData(_ data:DataItem)
+}
+
+/**
+ * The editor is responsible for changing the data item in ways 
+ * directed by the user, and then updating them in the cache. 
+ */
+public protocol Editor: SingleItemView {
+
+}
