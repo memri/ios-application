@@ -200,7 +200,10 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
 
 class Settings {} // @TODO  // Responsible for loading and saving as well
 class NavigationSettings {} // @TODO  // Responsible for loading and saving as well
-class Sessions {} // @TODO  // Responsible for loading and saving as well
+class Sessions {
+
+    public func setCurrentSession(_ session:Session) -> Void
+} // @TODO  // Responsible for loading and saving as well
 
 class Session {} // @TODO
 class SessionView {} // @TODO
@@ -274,10 +277,15 @@ class Application: View, Event {
     public func add(_ item:DataItem) -> DataItem {}
 }
 
+struct ScrollState {
+    var x = 0
+    var y = 0
+}
+
 class Navigation: View {
     public var items: [NavigationItem]
     public var currentItem: NavigationItem
-    public var scrollState: Int
+    public var scrollState: ScrollState
     public var editMode: Bool
     public var selection: [NavigationItem]
     /**
@@ -460,11 +468,6 @@ public prototype Renderer {
  * @TODO add renderState as a dict to the view
  */
 struct RenderState {
-    struct ScrollState {
-        var x = 0
-        var y = 0
-    }
-
     /**
      * The scroll position of the renderer
      */
@@ -619,4 +622,34 @@ public class ContextPane: View {
      * Set the currentView of a session as the view displayed in the browser. 
      */
     public func setCurrentView(_ view:SessionView) {}
+}
+
+public protocol Overlay {
+    /**
+     * Display the overlay panel
+     */
+    public func show() -> Void
+    /**
+     * Hide the overlay panel
+     */
+    public func hide() -> Void
+}
+
+public class SessionSwitcher {
+    /**
+     * The scroll state in the session switcher
+     */
+    public var scrollState: ScrollState
+
+    var sessions: [Sessions]
+
+    public func init(_ sessions:[Sessions])
+    /**
+     * Display the overlay panel
+     */
+    public func show() -> Void
+    /**
+     * Hide the overlay panel
+     */
+    public func hide() -> Void
 }
