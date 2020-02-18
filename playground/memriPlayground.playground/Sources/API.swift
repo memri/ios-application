@@ -325,6 +325,7 @@ public class NavigationSearch {} // @TODO
 
 /**
  * Represents the part of the user interface that displays SessionViews
+ * @event onviewchange
  */
 public class Browser: View {
     /**
@@ -446,6 +447,11 @@ public prototype Renderer {
      */
     public func setState(_ state:RenderState) -> Boolean
     public func getState() -> RenderState
+
+    /**
+     * Set the currentView of a session as the view displayed in the browser. 
+     */
+    public func setCurrentView(_ session:Session, _ callback:(success:Bool, error:Error) -> Void) {}
 }
 
 /**
@@ -505,4 +511,112 @@ public protocol SingleItemView: Renderer {
  */
 public protocol Editor: SingleItemView {
 
+}
+
+/**
+ * Search controls the searching process, as well as the searchbox area on 
+ * the screen. When the user uses the searchbox, the current view is temporary 
+ * replaced by another view that displays search results. When the searchbox is 
+ * cleared, the original view is showed again. The new view is temporarily inserted 
+ * into the Session. When the the user clicks on a sub item to load another view, 
+ * the search view becomes a more permanent part of the session history.
+ */
+public class Search: View {
+    /**
+    * Records the state of the searchbox
+    */
+    struct SearchState {
+        var text: String
+        var cursorPosition: Int
+        var scrollState: Int
+    }
+
+    /**
+     * The text in the search box (i.e. the query)
+     */
+    public var text: String
+    /**
+     * The text displayed in the search box when the search box is empty
+     * e.g. "Search in this note"
+     */
+    public var emptyText: String
+    /**
+     * The buttons displayed in the search panel
+     */
+    public var buttons: ActionDescription[]
+    
+    var filterPanel: FilterPanel
+
+    public func init(_ renderers:[Renderers]) {}
+
+    /**
+     * Set the currentView of a session as the view displayed in the browser. 
+     */
+    public func setCurrentView(_ view:SessionView) {}
+   
+    /**
+     * Show the filter panel
+     */
+    public func toggleFilterPanel(_ force:Bool) -> Void // argument should be optional
+
+    // @TODO should there be a toggle for the keyboard as well?
+}
+
+public class FilterPanel: View {
+    /**
+     * Display the filter panel
+     */
+    public func show() -> Void
+    /**
+     * Hide the filter panel
+     */
+    public func hide() -> Void
+
+    public func init(_ renderers:[Renderers]) {}
+
+    /**
+     * Set the currentView of a session as the view displayed in the browser. 
+     */
+    public func setCurrentView(_ view:SessionView) {}
+}
+
+public class ContextPane: View {
+    /**
+     * Sets/retrieves text of the title displayed in the context pane
+     */
+    public var title: String
+    /**
+     * Sets/retrieves text of the subtitle displayed in the context pane
+     */
+    public var subtitle: String
+    /**
+     * Sets/retrieves the buttons to be displayed in the top of the context pane
+     */
+    public var buttons: ActionDescription[]
+    /**
+     * Sets/retrieves the text buttons in the action section of the context pane
+     */
+    public var actions: ActionDescription[]
+    /**
+     * Sets/retrieves the text buttons in the navigation section of the context pane
+     */
+    public var navigate: ActionDescription[]
+    /**
+     * Sets/retrieves whether the label section is hidden
+     */
+    public var hideLabels = false
+
+    /**
+     * Display the filter panel
+     */
+    public func show() -> Void
+    /**
+     * Hide the filter panel
+     */
+    public func hide() -> Void
+
+    /**
+     * Set the currentView of a session as the view displayed in the browser. 
+     */
+    public func setCurrentView(_ view:SessionView) {}
 }
