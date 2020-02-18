@@ -74,10 +74,12 @@ public class SettingsData {
     public func set(_ path:String, _ value:AnyObject) -> AnyType {} 
 }
 
+// @TODO 
 public class Stream {
 
 }
 
+// @TODO 
 public struct StreamOptions {
 
 }
@@ -173,7 +175,7 @@ public struct Predicate {
 }
 
 public class DataItem: Observable { // @TODD figure out how to implement observable
-    public let uid: String
+    public let uid: String // @koen why .uid iso .id?
     public let type: String
     public let predicates: [Predicate]
     public let properties: [String: String]
@@ -197,9 +199,43 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
     public func delete() -> DataItem {}
 }
 
+/**
+ * Responsible for loading and saving as well
+ * @event onsettingschange
+ */
+// @TODO
+public class Settings {
+    public func init(_ cache:Cache) {}
+} 
 
-public class Settings {} // @TODO  // Responsible for loading and saving as well
-public class NavigationSettings {} // @TODO  // Responsible for loading and saving as well
+/**
+ * Responsible for loading and saving as the navigation settings
+ * @event onsettingschange
+ */
+public class NavigationSettings {
+    /**
+     * Ordered list of navigation items
+     */
+    var items: [NavigationItem]
+    /**
+     * The currently selected navigation item
+     */
+    var currentItem: NavigationItem 
+    /**
+     * The scroll position of the navigation
+     */
+    var scrollState: ScrollState 
+    /**
+     * The selection in the navigation. Only relevant when in edit mode.
+     */
+    var selection: [NavigationItem] 
+    /**
+     * Toggle the UI into edit mode
+     */
+    var editMode: Bool // stored in settings.editMode
+
+    public func init(_ cache:Cache) {}
+}
 
 /**
  * Responsible for loading and saving as well
@@ -229,9 +265,178 @@ public class Sessions: Event {
     public func setCurrentSession(_ session:Session) -> Void
 } 
 
-public class Session {} // @TODO
-public class SessionView {} // @TODO
-public class ActionDescription {} // @TODO
+/**
+ * Think of sessions as tabs in an internet browser. Each tab has a little 
+ * bit of state such as the current page that is being looked at and a list 
+ * of all pages visited in the past. This is similar with a session. Instead 
+ * of pages, the Memri sessions consist of views.
+ * 
+ * @event onswitch — or using observable...
+ */
+public class Session: Observable {
+    /**
+     *  The active sessionview
+     */
+    public var currentView: SessionView
+    /**
+     * The index of the active sessionview in the list of views
+     */
+    public var currentViewIndex: Int
+    /**
+     * The list of all sessionviews in this session
+     */
+    public var views: [SessionView]
+
+    public func init(_ cache:Cache) {}
+
+    public func back() -> Void {}
+    public func forward() -> Void {}
+    public func bookmark(_ item:SessionView) -> Void {}
+    public func gotoBookmark() -> Void {}
+
+    /**
+     * set the current session
+     * @TODO or should this just be by session .currentView ?
+     */
+    public func setCurrentView(_ session:SessionView) -> Void
+}
+
+/**
+ * Describes a view that can be displayed in a renderer. 
+ */
+public class SessionView: Observable { // @TODO should this be a struct?
+    /**
+     * Reference to the search result used by this view
+     * @TODO is this needed? If cache has all recent search results, this should be fairly easy to look up. TBD
+     */
+    public var searchResult: SearchResult
+    /**
+     * The title of the view.
+     */
+    public var title: String
+    /**
+     * The subtitle of the the view.
+     */
+    public var subtitle: String
+    /**
+     * List of actions that are used to instantiate the buttons in the top navigation
+     */
+    public var editButtons: [ActionDescription]
+    /**
+     * List of actions that are used to instantiate the buttons in the search box
+     */
+    public var filterButtons: [ActionDescription]
+    /**
+     * List of actions that are used in the top of the context pane
+     */
+    public var contextButtons: [ActionDescription]
+    /**
+     * List of actions that are used in the action section of the context pane
+     */
+    public var actionItems: [ActionDescription]
+    /**
+     * List of actions that are used in the navigation section of the context pane
+     */
+    public var navigateItems: [ActionDescription]
+    /**
+     * The active renderer for this view
+     */
+    public var rendererName: String
+    /**
+     * A dictionary of render configurations based on the name of the renderer
+     */
+    public var renderConfig: [String:RenderConfig]
+    /**
+     * A list of uids representing the selection in the view
+     */
+    public var selection: String[]
+    /**
+     * Whether the view is in edit mode
+     */
+    public var editMode: Boolean
+    /**
+     * Whether the label section in the context panel is shown
+     */
+    public var hideLabels: Boolean
+    /**
+     * Whether the context pane is shown
+     */
+    public var contextMode: Boolean
+    /**
+     * Whether the fileter pane is shown
+     */
+    public var filterMode: Boolean
+    /**
+     * An icon for this view
+     */
+    public var icon: String
+    /**
+     * The type of browsing mode for this view
+     * Options: "default", "type", "labels"
+     */
+    public var browsingMode: String
+
+}
+public class ActionDescription {
+    public var icon: String
+    public var title: String
+
+    /**
+     * Arguments can template the data through “{.prop} or {global} or {global.prop}”
+     * 
+     * actionName              actionArgs
+     * ---------------------   -------------------------------------------------------------------------------------------------------------------
+     * openView                String viewName    
+     * openView                View view    
+     * openViewInNewSession    String viewName                
+     * openViewInNewSession    View view                
+     * saveView                View view, [String, title]    // Will ask for title input when title already exists or is not specified.
+     * deleteView              View view        
+     * updateView              View view        
+     * add                     DataItem item
+     * search                  String query    
+     * globalSearch            String query        
+     * select                  DataItem[] items    
+     * cancelEditMode          -            
+     * showSessionSwitch       -                
+     * showFilterPanel         -            
+     * transformView           View source, View changes            
+     * schedule                DataItem[] items, [ScheduleOptions options]    // Will show the schedule screen if options are omitted.
+     * editMode                Boolean enable     // Will toggle edit mode if no argument is given
+     * showContextPane         -            
+     * showEditOptions         -            
+     * remove                  DataItem item | String id | DataItem[] items | String[] ids    
+     * addTo                   DataItem item, String type, String id    // Will show the addToPanel if id is omitted
+     * shareWith               DataItem item, String type, String id    // Will show the shareWithPanel if id is omitted
+     * showOverlay             String name    // e.g. viewOptions, addToPanel, shareWithPanel, scheduleOptions
+     * showStarred             View view        
+     * showTimeline            View view        
+     * bulkEdit                DataItem[] items | String[] ids    
+     * star                    DataItem item | String id
+     * addToList               DataItem item | String id, String listId        
+     * duplicate               DataItem item | String id, [String newTitle]        
+     * setBookmark             View view        
+     * gotoBookmark            -        
+     * duplicateView           View view, [String newTitle]            
+     * renameView              View view, [String newTitle]        // Will ask for title input when title already exists or is not specified.
+     * copyProperty            DataItem item | String id, String propertyName        
+     * addToNav                View view, [String newTitle], [View beforeView]    
+     * removeFromNav           View view, [String title]            
+     * renameNav               View view, [String newTitle]        
+     * automate                ?    
+     * import                  ?    
+     * export                  ?    
+     * augment                 ?    
+     * convert                 ?    
+     * index                   ?    
+     * update                  DataItem item | String id, DataItem changes    
+     * addReminder             DataItem item, [String description]        
+     * %name                   Type value    // Sets a property or calls a method on the related object
+     */
+    public var actionName: String
+    public var actionArgs: [Any]
+
+}
 public class ScheduleOptions {} // @TODO
 public protocol RenderConfig {} // @TODO
 public class InterfaceListRenderConfig: RenderConfig {} // @TODO
@@ -307,15 +512,26 @@ struct ScrollState {
 }
 
 class Navigation: View {
-    public var items: [NavigationItem]
-    public var currentItem: NavigationItem
-    public var scrollState: ScrollState
-    public var editMode: Bool
-    public var selection: [NavigationItem]
+    /**
+     * Ordered list of navigation items displayed in the view
+     */
+    public var items: [NavigationItem] // stored in settings.items
+    /**
+     * The currently selected navigation item
+     */
+    public var currentItem: NavigationItem // stored in settings.currentItem
+    /**
+     * The scroll position of the navigation
+     */
+    public var scrollState: ScrollState // stored in settings.scrollState
+    /**
+     * The selection in the navigation. Only relevant when in edit mode.
+     */
+    public var selection: [NavigationItem] // stored in settings.selection
     /**
      * Toggle the UI into edit mode
      */
-    public var editMode: Bool
+    public var editMode: Bool // stored in settings.editMode
 
     var search: NavigationSearch
 
