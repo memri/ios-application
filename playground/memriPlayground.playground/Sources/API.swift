@@ -601,7 +601,7 @@ class Application: View, Event {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription) -> Bool {}
+    public func executeAction(_ action:ActionDescription, _ data:DataItem) -> Bool {}
 }
 
 struct ScrollState {
