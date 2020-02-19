@@ -12,8 +12,10 @@ public class PodAPI {
     public func update(_ id:String, _ item:DataItem, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
     public func remove(_ id:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
     
-    public func link(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
-    public func unlink(_ id:String | item:DataItem, _ id:String | item:DataItem, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func link(_ id:String, _ id:String, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
+    public func link(_ item:DataItem, _ item:DataItem, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
+    public func unlink(_ id:String, _ id:String, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func unlink(_ item:DataItem, _ item:DataItem, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
 
     public func query(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
     public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
@@ -176,12 +178,12 @@ public struct Predicate {
     public func unlink() -> Void {}
 }
 
-public class DataItem: Observable { // @TODD figure out how to implement observable
-    public let id: String
+public class DataItem: ObservableObject { // @TODD figure out how to implement ObservableObject
+    @Published public var id: String // @TODO How can this variable become read-only after it has been set
     public let type: String
-    public let predicates: [Predicate]
-    public let properties: [String: String]
-    public var deleted = false // This variable should only be settable by delete() and readable by everyone
+    @Published public var predicates: [Predicate]
+    @Published public var properties: [String: String]
+    @Published public var deleted = false // This variable should only be settable by delete() and readable by everyone
     
     public init(_ id:String, _ type:String, _ predicates = [Predicate](),  _ properties = [String: String]()) {}
     public init(_ type:String, _ predicates = [Predicate](),  _ properties = [String: String]()) {}
@@ -191,7 +193,7 @@ public class DataItem: Observable { // @TODD figure out how to implement observa
     public func findPredicateByTarget(_ item:DataItem) -> [Predicate] {}
 
     /**
-     * Does not copy the uid property
+     * Does not copy the id property
      */
     public func duplicate() -> DataItem {}
     /**
@@ -244,15 +246,19 @@ public class NavigationCache {
  * Responsible for loading and saving as well
  * @event onsessionchange
  */
-public class Sessions: Event {
+public class Sessions: Event, ObservableObject {
     /**
      * The current session that the user is using (similar to active tab in an internet browser)
      */
     public var currentSession: Session
     /**
+     * The index of the active sessionview in the list of views
+     */
+    @Published public var currentSessionIndex: Int
+    /**
      * All sessions that are open
      */
-    public var sessions: [Session]
+    @Published public var sessions: [Session]
     /**
      * Find a session using text
      */
@@ -274,9 +280,9 @@ public class Sessions: Event {
  * of all pages visited in the past. This is similar with a session. Instead 
  * of pages, the Memri sessions consist of views.
  * 
- * @event onswitch — or using observable...
+ * @event onswitch — or using ObservableObject...
  */
-public class Session: Observable {
+public class Session: ObservableObject {
     /**
      *  The active sessionview
      */
@@ -284,11 +290,11 @@ public class Session: Observable {
     /**
      * The index of the active sessionview in the list of views
      */
-    public var currentViewIndex: Int
+    @Published public var currentViewIndex: Int
     /**
      * The list of all sessionviews in this session
      */
-    public var views: [SessionView]
+    @Published public var views: [SessionView]
 
     public func init(_ cache:Cache) {}
 
@@ -307,7 +313,7 @@ public class Session: Observable {
 /**
  * Describes a view that can be displayed in a renderer. 
  */
-public class SessionView: Observable { // @TODO should this be a struct?
+public class SessionView: ObservableObject { // @TODO should this be a struct?
     /**
      * Reference to the search result used by this view
      * @TODO is this needed? If cache has all recent search results, this should be fairly easy to look up. TBD
@@ -316,15 +322,19 @@ public class SessionView: Observable { // @TODO should this be a struct?
     /**
      * The title of the view.
      */
-    public var title: String
+    @Published public var title: String
     /**
      * The subtitle of the the view.
      */
     public var subtitle: String
     /**
-     * List of actions that are used to instantiate the buttons in the top navigation
+     * Actions that is used to instantiate the button in the top navigation
      */
-    public var editButtons: [ActionDescription]
+    public var actionButton: ActionDescription
+    /**
+     * Actions that is used to instantiate the button in the top navigation in edit mode
+     */
+    public var editActionButton: ActionDescription
     /**
      * List of actions that are used to instantiate the buttons in the search box
      */
@@ -352,15 +362,15 @@ public class SessionView: Observable { // @TODO should this be a struct?
     /**
      * A dictionary of render states based on the name of the renderer
      */
-    public var renderState: [String:RenderState]
+    @Published public var renderState: [String:RenderState]
     /**
      * A list of uids representing the selection in the view
      */
-    public var selection: String[]
+    @Published public var selection: String[]
     /**
      * Whether the view is in edit mode
      */
-    public var editMode: Boolean
+    @Published public var editMode: Boolean
     /**
      * Whether the label section in the context panel is shown
      */
@@ -368,11 +378,11 @@ public class SessionView: Observable { // @TODO should this be a struct?
     /**
      * Whether the context pane is shown
      */
-    public var contextMode: Boolean
+    @Published public var contextMode: Boolean
     /**
      * Whether the fileter pane is shown
      */
-    public var filterMode: Boolean
+    @Published public var filterMode: Boolean
     /**
      * An icon for this view
      */
@@ -381,7 +391,7 @@ public class SessionView: Observable { // @TODO should this be a struct?
      * The type of browsing mode for this view
      * Options: "default", "type", "labels"
      */
-    public var browsingMode: String
+    @Published public var browsingMode: String
 
 }
 public struct ActionDescription {
@@ -646,7 +656,7 @@ class Navigation: View {
     public func trigger(_ viewName:String) {}
 }
 
-struct NavigationItem: Observable { // Should this be a class ??
+struct NavigationItem: ObservableObject { // Should this be a class ??
     /**
      * Used as the caption in the navigation
      */
