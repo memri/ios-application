@@ -51,15 +51,14 @@ MODEL
 # Deserializing a session from json, init a browser with it
 */
 
-let testSession = try Session.from_json("test_session")
-let testBrowser = Browser(testSession)
-
-
-print(testBrowser.currentSession.currentSessionView)
-
-
-PlaygroundPage.current.setLiveView(testBrowser)
-
+//let testSession = try Session.from_json("test_session")
+//let testBrowser = Browser(testSession)
+//
+//
+//print(testBrowser.currentSession.currentSessionView)
+//
+//
+//PlaygroundPage.current.setLiveView(testBrowser)
 
 
 
@@ -81,17 +80,6 @@ PlaygroundPage.current.setLiveView(testBrowser)
 // browser -> topnav -> items -> title
 // set stuff in json from view
 // show that on screen
-
-
-
-//
-
-
-//
-
-//topnavigation
-//renderer
-//search
 
 
 
