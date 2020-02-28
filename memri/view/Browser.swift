@@ -11,11 +11,11 @@ import Combine
 
 
 struct Browser: View {
-    @EnvironmentObject var session: Session    
+    @EnvironmentObject var sessions: Sessions
     var body: some View {
         return
             VStack {
-                TopNavigation(action:{self.session.back()})
+                TopNavigation(action:{self.sessions.currentSession.back()})
                 Renderer()
                 Search()
             }
@@ -24,9 +24,23 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(Session(SessionView(rendererName: "List",
-                        searchResult: SearchResult(query: "",data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")])))
+//        Browser().environmentObject(Session(SessionView(rendererName: "List",
+//                        searchResult: SearchResult(query: "",data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")])))
+//        )
+        Browser().environmentObject(        Sessions([Session(SessionView(rendererName: "List",
+                searchResult: SearchResult(query: "",
+                                           data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
+                                    )            ,
+                                                                              Session(SessionView(rendererName: "List",
+                                                                              searchResult: SearchResult(query: "",
+                                                                                                         data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
+                                                                                                  )
+
+                            ]
+            )
         )
+        
+
     }
 }
 

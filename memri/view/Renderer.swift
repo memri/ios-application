@@ -35,13 +35,14 @@ struct ViewTypeButton: Identifiable {
 
 
 struct Renderer: View {
-    @EnvironmentObject var session: Session
+    
+    @EnvironmentObject var sessions: Sessions
     
     var body: some View {
         return Group{
-            if self.session.currentSessionView.rendererName == "List" {
+            if self.sessions.currentSession.currentSessionView.rendererName == "List" {
                 List{
-                    ForEach(session.currentSessionView.searchResult.data) { dataItem in
+                    ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
                         VStack{
                             Text(dataItem.properties["title"]!)
                                 .bold()
@@ -50,13 +51,13 @@ struct Renderer: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
                             // TODO: HOW TO MAKE THIS UPDATE AFTER CLICK IN THIS VIEW
-                            self.session.openView(SessionView(rendererName: "RichTextEditor",
+                            self.sessions.currentSession.openView(SessionView(rendererName: "RichTextEditor",
                                                   searchResult: SearchResult(query: "", data: [dataItem])))
                         }
                     }
                 }
             } else {
-                TextView(dataItem: self.session.currentSessionView.searchResult.data[0])
+                TextView(dataItem: self.sessions.currentSession.currentSessionView.searchResult.data[0])
             }
         }
     }
@@ -64,10 +65,13 @@ struct Renderer: View {
 
 struct Renderer_Previews: PreviewProvider {
     static var previews: some View {
-        return Renderer().environmentObject(Session(
-        SessionView(rendererName: "List",
+        return Renderer().environmentObject(
+            Sessions([Session(SessionView(rendererName: "List",
                     searchResult: SearchResult(query: "",
                                                data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
-        ))
+                                        )
+                                ]
+            )
+        )
     }
 }

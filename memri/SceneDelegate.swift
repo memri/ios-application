@@ -26,11 +26,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let contentView = Browser()
 //            .environmentObject(SessionViewStack( sessionView(view: AnyView(HomeView()))))
         
-        let contentView = Browser()
-            .environmentObject(Session(SessionView(rendererName: "List",
-                        searchResult: SearchResult(query: "",
-                                                   data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))))
-
+//        let contentView = Browser()
+//            .environmentObject(Session(SessionView(rendererName: "List",
+//                        searchResult: SearchResult(query: "",
+//                                                   data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))))
+        let contentView = Browser().environmentObject(        Sessions([Session(SessionView(rendererName: "List",
+                searchResult: SearchResult(query: "",
+                                           data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
+                                    )
+                            ]
+            )
+        )
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

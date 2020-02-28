@@ -72,8 +72,46 @@ class ListConfig: RenderConfig {
 }
 
 
+public class Sessions: ObservableObject, Codable {
 
-final class Session: ObservableObject, Codable  {
+    @Published var currentSessionIndex: Int
+    @Published var sessions: [Session]
+    
+    var cancellables: [AnyCancellable]?=nil
+    
+    private enum CodingKeys: String, CodingKey {
+        case sessions, currentSessionIndex
+    }
+    
+    var currentSession: Session {
+            return sessions[currentSessionIndex]
+    }
+    
+    init(_ sessions: [Session], currentSessionIndex: Int = 0){
+        self.sessions = sessions
+        self.currentSessionIndex = currentSessionIndex
+        self.cancellables=[]
+        
+        for session in sessions{
+            cancellables?.append(session.objectWillChange.sink { (_) in
+                            self.objectWillChange.send()
+            })
+        }
+    }
+
+    public func findSession(_ query:String) -> Void {}
+    // Find a session using text
+
+    public func clear() -> Void {}
+    //  Clear all sessions and create a new one
+
+//    public func setCurrentSession(_ session:Session) -> Void {}
+}
+
+
+
+
+class Session: ObservableObject, Codable  {
     
     @Published var currentSessionViewIndex: Int
     @Published var sessionViews: [SessionView] = []

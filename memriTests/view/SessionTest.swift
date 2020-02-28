@@ -25,9 +25,10 @@ class SessionTest: XCTestCase {
         XCTAssert(session.currentSessionView.searchResult.data == [])
     }
     
-//    func testLoadSessionFromJson(){
-//        let session =  try! Session.from_json("sessions_manually_single")
-//    }
+    func testLoadEmptySessionsFromJson(){
+        // load SessionSSS
+        let session =  try! Session.from_json("empty_sessions")
+    }
     
 
     func testPerformanceExample() {

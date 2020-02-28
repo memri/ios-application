@@ -1,0 +1,31 @@
+{
+    "currentSessionViewIndex": 0,
+    "sessionViews": [
+        {
+            "searchResult": {
+                "query": "",
+                "data": [],
+                "sortProperty": "None",
+                "sortAscending": 1,
+                "loading": 0,
+                "pageCount": 0,
+            },
+            "title": "testtitle",
+            "subtitle": "testSubtitle",
+            "rendererName": "List",
+            "selection": [],
+            "renderConfigs": {},
+            "editButtons": [],
+            "filterButtons": [],
+            "actionItems": [],
+            "navigateItems": [],
+            "contextButtons": [],
+            "icon": "testIcon",
+            "showLabels": false,
+            "contextMode": false,
+            "filterMode": false,
+            "editMode": false,
+            "browsingMode": false
+        }
+    ]
+}
