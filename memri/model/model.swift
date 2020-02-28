@@ -1,19 +1,28 @@
 import Foundation
 
-public class DataItem: Codable {
-    public var uid: String
+public class DataItem: Codable, Equatable, Identifiable, ObservableObject {
+    
+    public let uid: String
     public var type: String
-    public var predicates: [String: String]
-    public var properties: [String: String]
+    @Published public var predicates: [String: String]
+    @Published public var properties: [String: String]
     
-    
-    public init(_ uid: String){
-        self.uid = uid
-        self.type = "note"
-        self.predicates = ["owner": "0x0"]
-        self.properties = ["title": "example note",
-                           "content": "This is an example note"]
+    public var id: String {
+        return self.uid
     }
+    
+    
+    public init(uid: String, type: String?=nil, predicates: [String:String]?=nil, properties: [String:String]? = nil){
+        self.uid = uid
+        self.type = type ?? "note"
+        self.predicates = predicates ?? ["owner": "0x0"]
+        self.properties = properties ?? ["title": "example note","content": "This is an example note"]
+    }
+    
+    public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
+        lhs.uid == rhs.uid
+    }
+    
     func findProperty(name: String) -> String {
         return self.properties[name]!
     }
@@ -31,16 +40,17 @@ public class DataItem: Codable {
 }
 
 
-public class SearchResult: Codable {
+public class SearchResult: ObservableObject, Codable {
     var query: String
-    public var data: [DataItem]?
+    @Published public var data: [DataItem] = []
     
     public var sortProperty: String?
     public var sortAscending: Int
     public var loading: Int
     public var pageCount: Int
     
-    public init(query: String, data: [DataItem]? = nil, sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
+    
+    public init(query: String, data: [DataItem] = [], sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
          pageCount: Int=0){
         self.query=query
         self.data=data
@@ -67,12 +77,12 @@ public class Cache {
         self.idCache = idCache
     }
     
-    public func findCachedResult(query: String) -> SearchResult? {
-        return self.queryCache[query]
-    }
-    
-//    func queryLocal(query: String) -> [SearchResult]?{}
-//    this will be a more complex function
+    public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem(uid: "")]}
+
+
     
     public func getByType(type: String) -> SearchResult? {
         let cacheValue = self.typeCache[type]
@@ -89,6 +99,10 @@ public class Cache {
                 return result
             }
         }
+    }
+    
+    func findCachedResult(query: String) -> SearchResult? {
+        return self.queryCache[query]
     }
     
 }

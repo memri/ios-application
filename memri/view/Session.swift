@@ -1,6 +1,8 @@
 import Foundation
+import Combine
 
-class ActionDescription: Codable{
+
+class ActionDescription: Codable {
     var icon: String
     var title: String
     var actionName: String
@@ -37,7 +39,7 @@ class RenderConfig: Codable{
 }
 
 
-class ListConfig: RenderConfig{
+class ListConfig: RenderConfig {
     var cascadeOrder: [String]
     var slideLeftActions: [ActionDescription]
     var slideRightActions: [ActionDescription]
@@ -69,11 +71,54 @@ class ListConfig: RenderConfig{
     }
 }
 
-public class SessionView: Codable {
+
+
+final class Session: ObservableObject, Codable  {
+    
+    @Published var currentSessionViewIndex: Int
+    @Published var sessionViews: [SessionView] = []
+    
+    public var currentSessionView: SessionView {
+        if currentSessionViewIndex >= 0 {
+            return sessionViews[currentSessionViewIndex]
+        } else{
+            return sessionViews[0]
+        }
+    }
+    
+    init(_ currentView: SessionView ){
+        self.sessionViews = [currentView]
+        self.currentSessionViewIndex = 0
+    }
+
+    func back(){
+        if currentSessionViewIndex == 0 {
+            return
+        }else{
+            currentSessionViewIndex -= 1
+        }
+    }
+    
+    func openView(_ view:SessionView){
+        self.sessionViews = self.sessionViews[0...self.currentSessionViewIndex] +  [view]
+        self.currentSessionViewIndex += 1
+    }
+    
+    public class func from_json(_ file: String, ext: String = "json") throws -> Session {
+        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
+        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+        let jsonData = jsonString.data(using: .utf8)!
+        let session: Session = try! JSONDecoder().decode(Session.self, from: jsonData)
+        return session
+    }
+}
+
+class SessionView: ObservableObject, Codable{
+
     public var searchResult: SearchResult
-    var title: String
+    @Published public var title: String
+    @Published var rendererName: String = "List"
     var subtitle: String
-    var renderName: String
     var selection: [String]
     var renderConfigs: [String: RenderConfig]
     var editButtons: [ActionDescription]
@@ -87,15 +132,16 @@ public class SessionView: Codable {
     var filterMode: Bool
     var editMode: Bool
     var browsingMode: Bool
-
-    init(searchResult: SearchResult, title: String, subtitle: String, renderName: String, selection: [String],
-         renderConfigs: [String: RenderConfig], editButtons: [ActionDescription], filterButtons: [ActionDescription],
-         actionItems: [ActionDescription], navigateItems: [ActionDescription], contextButtons: [ActionDescription],
-         icon: String, showLabels: Bool, contextMode: Bool, filterMode: Bool, editMode: Bool, browsingMode: Bool){
-        self.searchResult = searchResult
-        self.title = title
+    
+    init(rendererName: String = "List", searchResult: SearchResult=SearchResult(query: ""), title:String="",
+         subtitle:String = "", renderName:String="", selection: [String] = [], renderConfigs: [String: RenderConfig]=[:], editButtons: [ActionDescription]=[],
+         filterButtons: [ActionDescription]=[], actionItems: [ActionDescription]=[], navigateItems: [ActionDescription]=[],
+         contextButtons: [ActionDescription]=[], icon: String="", showLabels: Bool=false, contextMode: Bool=false, filterMode: Bool=false, editMode: Bool=false,
+         browsingMode: Bool=true){
+        self.rendererName=rendererName
+        self.searchResult=searchResult
+        self.title=title
         self.subtitle=subtitle
-        self.renderName=renderName
         self.selection=selection
         self.renderConfigs=renderConfigs
         self.editButtons=editButtons
@@ -111,44 +157,13 @@ public class SessionView: Codable {
         self.browsingMode=browsingMode
     }
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> [SessionView] {
+    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
         let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
         let jsonData = jsonString.data(using: .utf8)!
-        let items: [SessionView] = try! JSONDecoder().decode([SessionView].self, from: jsonData)
+        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
     }
 }
 
 
-public class Session: Codable {
-    var currentSessionViewIndex: Int
-    var sessionViews: [SessionView]
-    public var currentSessionView: SessionView {
-        if currentSessionViewIndex >= 0 {
-            return sessionViews[currentSessionViewIndex]
-        } else{
-            return sessionViews[0]
-        }
-    }
-    
-    public init(currentSessionViewIndex: Int = 0, sessionViews: [SessionView]){
-        self.currentSessionViewIndex = currentSessionViewIndex
-        self.sessionViews = sessionViews
-    }
-    
-    public func back(){
-        self.currentSessionViewIndex -= 1
-    }
-    public func forward(){
-        self.currentSessionViewIndex += 1
-    }
-    
-    public class func from_json(_ file: String, ext: String = "json") throws -> Session {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
-        let session: Session = try! JSONDecoder().decode(Session.self, from: jsonData)
-        return session
-    }
-}

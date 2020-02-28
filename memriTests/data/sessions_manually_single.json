@@ -1,0 +1,81 @@
+{
+    "currentSession": "0x0",
+    "sessionViews": [
+        {
+            "id": "0x1",
+            "currentViewIndex": 0,
+            "views": [
+                {
+                    "name": "all-notes",
+                    "title": "Notes",
+                    "query": {
+                        "text": "data:Note",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
+                    },
+                    "selection": ["0x5"],
+                    "scrollState": 64,
+                    "rendererName": "list",
+                    "renderConfig": {
+                        "list": {
+                            "slideLeftActions": [
+                                {
+                                    "icon": "remove.ico",
+                                    "title": "Remove",
+                                    "actionName": "remove",
+                                    "actionArgs": ["{.id}"]
+                                }
+                            ],
+                            "slideRightActions": [
+                                {
+                                    "icon": "schedule.ico",
+                                    "title": "Schedule",
+                                    "actionName": "schedule",
+                                    "actionArgs": ["{.id}"]
+                                }
+                            ],
+                            "sortProperty": "date-created",
+                            "sortAscending": 0,
+                            "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
+                            "press": {
+                                "actionName": "openView",
+                                "actionArgs": ["{.id}"]
+                            },
+                            "longPress": {
+                                "actionName": "select",
+                                "actionArgs": ["{.id}"]
+                            }
+                        }
+                    },
+                    "browsingMode": "default",
+                    "editButtons": [
+                        {
+                            "icon": "add.ico",
+                            "title": "Add Note",
+                            "actionName": "add",
+                            "actionArgs": [{
+                                "type": "note",
+                                "predicates": {"owner": "{me}"},
+                                "properties": {"title": "Untitled Note"}
+                            }]
+                        }
+                    ],
+                    "filterButtons": [
+                        {
+                            "icon": "star.ico",
+                            "title": "Show Starred Notes",
+                            "actionName": "showStarred",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "filter.ico",
+                            "title": "Show Filter Panel",
+                            "actionName": "showFilterPane",
+                            "actionArgs": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

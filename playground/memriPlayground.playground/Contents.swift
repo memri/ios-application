@@ -18,6 +18,10 @@ func wPrint( _ object: @escaping () -> Any){
 MODEL
 */
 
+var x=[1,2,3,4]
+
+print(x[0...1] + [8,9,10])
+
 //Create podAPI instance
 
 //let testPodAPI = PodAPI("mytestkey")
@@ -59,8 +63,6 @@ MODEL
 //
 //
 //PlaygroundPage.current.setLiveView(testBrowser)
-
-
 
 // loads view from json, a view describes all UI elements
 // loads session (list of views) from json

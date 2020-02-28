@@ -11,24 +11,22 @@ import Combine
 
 
 struct Browser: View {
-    @ObservedObject var dataStore: DataStore = DataStore()
-    @EnvironmentObject var sessionViewStack: SessionViewStack
-
-    
+    @EnvironmentObject var session: Session    
     var body: some View {
         return
             VStack {
-                TopNavigation(action:{self.sessionViewStack.back()})
-                Renderer(dataStore: self.dataStore)
+                TopNavigation(action:{self.session.back()})
+                Renderer()
                 Search()
-                }
-            
+            }
     }
 }
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(SessionViewStack( sessionView(rendererName: "List", data: nil)))
+        Browser().environmentObject(Session(SessionView(rendererName: "List",
+                        searchResult: SearchResult(query: "",data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")])))
+        )
     }
 }
 

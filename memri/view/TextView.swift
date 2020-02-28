@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct TextView: UIViewRepresentable {
-    @ObservedObject public var note: Note
+    @ObservedObject public var dataItem: DataItem
 
     class Coordinator: NSObject, UITextViewDelegate {
         var control: TextView
@@ -19,7 +19,7 @@ struct TextView: UIViewRepresentable {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
-            control.note.text = textView.text
+            control.dataItem.properties["content"] = textView.text
         }
     }
 
@@ -30,7 +30,7 @@ struct TextView: UIViewRepresentable {
         view.isUserInteractionEnabled = true
         view.contentInset = UIEdgeInsets(top: 5,left: 10, bottom: 5, right: 5)
         view.delegate = context.coordinator
-        view.text = self.note.text
+        view.text = self.dataItem.properties["content"]
         return view
     }
     
@@ -44,6 +44,6 @@ struct TextView: UIViewRepresentable {
 
 struct TextEdit_Previews: PreviewProvider {
     static var previews: some View {
-        TextView(note: DataStore().data[0])
+        TextView(dataItem: DataItem(uid: "0x01"))
     }
 }

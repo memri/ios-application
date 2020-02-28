@@ -2,7 +2,7 @@
 {
     "uid": "0x01",
     "type": "note",
-    "predicates": {"owner": "0x0"},
+    "predicates": {"owner": "0x01"},
     "properties": {"title": "my first note",
                    "content": "my first content"
                   }
@@ -10,7 +10,7 @@
 {
     "uid": "0x02",
     "type": "note",
-    "predicates": {"owner": "0x1"},
+    "predicates": {"owner": "0x02"},
     "properties": {"title": "my second note",
                    "content": "my second content"
                   }

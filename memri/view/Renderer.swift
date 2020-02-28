@@ -35,28 +35,28 @@ struct ViewTypeButton: Identifiable {
 
 
 struct Renderer: View {
-    
-    @ObservedObject var dataStore: DataStore
-    @EnvironmentObject var sessionViewStack: SessionViewStack
+    @EnvironmentObject var session: Session
     
     var body: some View {
         return Group{
-            if self.sessionViewStack.currentSessionView.rendererName == "List" {
+            if self.session.currentSessionView.rendererName == "List" {
                 List{
-                    ForEach(dataStore.data) { note in
+                    ForEach(session.currentSessionView.searchResult.data) { dataItem in
                         VStack{
-                            Text(note.title)
+                            Text(dataItem.properties["title"]!)
                                 .bold()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(note.text)
+                            Text(dataItem.properties["content"]!)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
-                            self.sessionViewStack.openView(sessionView(rendererName: "RichTextEditor", data: note))
+                            // TODO: HOW TO MAKE THIS UPDATE AFTER CLICK IN THIS VIEW
+                            self.session.openView(SessionView(rendererName: "RichTextEditor",
+                                                  searchResult: SearchResult(query: "", data: [dataItem])))
                         }
                     }
                 }
             } else {
-                TextView(note: self.sessionViewStack.currentSessionView.data!)
+                TextView(dataItem: self.session.currentSessionView.searchResult.data[0])
             }
         }
     }
@@ -64,6 +64,10 @@ struct Renderer: View {
 
 struct Renderer_Previews: PreviewProvider {
     static var previews: some View {
-        return Renderer(dataStore: DataStore()).environmentObject(SessionViewStack( sessionView(rendererName: "List", data: nil)))
+        return Renderer().environmentObject(Session(
+        SessionView(rendererName: "List",
+                    searchResult: SearchResult(query: "",
+                                               data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
+        ))
     }
 }

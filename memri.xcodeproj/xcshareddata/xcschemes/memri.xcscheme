@@ -48,6 +48,16 @@
                ReferencedContainer = "container:memri.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5D38DE282405810600FF9B70"
+               BuildableName = "memriLibraryTests.xctest"
+               BlueprintName = "memriLibraryTests"
+               ReferencedContainer = "container:memri.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

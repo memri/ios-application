@@ -1,15 +1,15 @@
 //
-//  memriTests.swift
+//  SessionTest.swift
 //  memriTests
 //
-//  Created by Koen van der Veen on 11/02/2020.
+//  Created by Koen van der Veen on 27/02/2020.
 //  Copyright © 2020 Koen van der Veen. All rights reserved.
 //
 
 import XCTest
 @testable import memri
 
-class memriTests: XCTestCase {
+class SessionTest: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -19,10 +19,16 @@ class memriTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testLoadEmptySessionFromJson() {
+        let session =  try! Session.from_json("empty_session")
+        XCTAssert(session.currentSessionView.rendererName == "List")
+        XCTAssert(session.currentSessionView.searchResult.data == [])
     }
+    
+//    func testLoadSessionFromJson(){
+//        let session =  try! Session.from_json("sessions_manually_single")
+//    }
+    
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
