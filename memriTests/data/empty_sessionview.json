@@ -9,7 +9,7 @@
     },
     "title": "testtitle",
     "subtitle": "testSubtitle",
-    "rendererName": "List",
+    "rendererName": "list",
     "selection": [],
     "renderConfigs": {},
     "editButtons": [],

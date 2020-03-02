@@ -1,53 +1,27 @@
 {
-    "currentSession": "0x0",
-    "sessionViews": [
+    "currentSessionIndex": 0,
+    "sessions": [
         {
-            "id": "0x1",
-            "currentViewIndex": 0,
-            "views": [
+            "currentSessionViewIndex": 0,
+            "sessionViews": [
                 {
                     "name": "all-notes",
                     "title": "Notes",
-                    "query": {
-                        "text": "data:Note",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                    "subtitle": "",
+                    "searchResult": {
+                        "query": "",
+                        "data": [],
+                        "sortProperty": "None",
+                        "sortAscending": 1,
+                        "loading": 0,
+                        "pageCount": 0,
                     },
                     "selection": ["0x5"],
                     "scrollState": 64,
                     "rendererName": "list",
-                    "renderConfig": {
-                        "list": {
-                            "slideLeftActions": [
-                                {
-                                    "icon": "remove.ico",
-                                    "title": "Remove",
-                                    "actionName": "remove",
-                                    "actionArgs": ["{.id}"]
-                                }
-                            ],
-                            "slideRightActions": [
-                                {
-                                    "icon": "schedule.ico",
-                                    "title": "Schedule",
-                                    "actionName": "schedule",
-                                    "actionArgs": ["{.id}"]
-                                }
-                            ],
-                            "sortProperty": "date-created",
-                            "sortAscending": 0,
-                            "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
-                            "press": {
-                                "actionName": "openView",
-                                "actionArgs": ["{.id}"]
-                            },
-                            "longPress": {
-                                "actionName": "select",
-                                "actionArgs": ["{.id}"]
-                            }
-                        }
-                    },
+                    "renderConfigs": {},
                     "browsingMode": "default",
+                    "actionItems": [],
                     "editButtons": [
                         {
                             "icon": "add.ico",

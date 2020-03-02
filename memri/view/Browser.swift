@@ -15,7 +15,7 @@ struct Browser: View {
     var body: some View {
         return
             VStack {
-                TopNavigation(action:{self.sessions.currentSession.back()})
+                TopNavigation()
                 Renderer()
                 Search()
             }
@@ -24,23 +24,7 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-//        Browser().environmentObject(Session(SessionView(rendererName: "List",
-//                        searchResult: SearchResult(query: "",data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")])))
-//        )
-        Browser().environmentObject(        Sessions([Session(SessionView(rendererName: "List",
-                searchResult: SearchResult(query: "",
-                                           data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
-                                    )            ,
-                                                                              Session(SessionView(rendererName: "List",
-                                                                              searchResult: SearchResult(query: "",
-                                                                                                         data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
-                                                                                                  )
-
-                            ]
-            )
-        )
-        
-
+        Browser().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }
 

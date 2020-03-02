@@ -1,31 +1,56 @@
 {
-    "currentSessionViewIndex": 0,
-    "sessionViews": [
+    "currentSessionIndex": 0,
+    "sessions": [
         {
-            "searchResult": {
-                "query": "",
-                "data": [],
-                "sortProperty": "None",
-                "sortAscending": 1,
-                "loading": 0,
-                "pageCount": 0,
-            },
-            "title": "testtitle",
-            "subtitle": "testSubtitle",
-            "rendererName": "List",
-            "selection": [],
-            "renderConfigs": {},
-            "editButtons": [],
-            "filterButtons": [],
-            "actionItems": [],
-            "navigateItems": [],
-            "contextButtons": [],
-            "icon": "testIcon",
-            "showLabels": false,
-            "contextMode": false,
-            "filterMode": false,
-            "editMode": false,
-            "browsingMode": false
+            "currentSessionViewIndex" :0,
+            "sessionViews": [
+                {
+                    "searchResult": {
+                        "query": "",
+                        "data": [
+                            {
+                                "uid": "0x01",
+                                "type": "note",
+                                "predicates": {},
+                                "properties": {
+                                    "title": "example note",
+                                    "content": "This is an example note"
+                                }
+                            },
+                            {
+                                "uid": "0x02",
+                                "type": "note",
+                                "predicates": {},
+                                "properties": {
+                                    "title": "second example note",
+                                    "content": "This is again an example note"
+                                }
+                            }
+                        ],
+                        "sortProperty": "None",
+                        "sortAscending": 1,
+                        "loading": 0,
+                        "pageCount": 0,
+                    },
+                    "name": "testname",
+                    "title": "notes",
+                    "subtitle": "testSubtitle",
+                    "rendererName": "list",
+                    "selection": [],
+                    "renderConfigs": {},
+                    "editButtons": [],
+                    "filterButtons": [],
+                    "actionItems": [],
+                    "navigateItems": [],
+                    "contextButtons": [],
+                    "icon": "testIcon",
+                    "showLabels": false,
+                    "contextMode": false,
+                    "filterMode": false,
+                    "editMode": false,
+                    "browsingMode": "default"
+                }
+            ]
         }
     ]
 }

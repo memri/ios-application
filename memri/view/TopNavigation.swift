@@ -9,8 +9,13 @@
 import SwiftUI
 
 struct TopNavigation: View {
+    @EnvironmentObject var sessions: Sessions
+
     var title: String = ""
-    var action: ()->Void = {}
+//    var action: ()->Void = {sessions.currentSession.back()}
+//    var action: [String: ()->Void] = [:]
+
+
     var hideBack:Bool = false
     
     var body: some View {
@@ -21,7 +26,7 @@ struct TopNavigation: View {
                     .font(Font.system(size: 20, weight: .medium))
             }.padding(.horizontal , 5)
 
-            Button(action: self.action) {
+            Button(action: sessions.currentSession.back ) {
                 Image(systemName: "chevron.left")
                 .foregroundColor(.gray)
 
@@ -29,11 +34,11 @@ struct TopNavigation: View {
 
             Spacer()
 
-            Text(title).font(.headline)
+            Text(sessions.currentSession.currentSessionView.title).font(.headline)
 
             Spacer()
 
-            Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
+            Button(action: newDataItem) {
                 Image(systemName: "plus")
             }.padding(.horizontal , 5)
              .foregroundColor(.green)
@@ -46,5 +51,21 @@ struct TopNavigation: View {
 
 
         }.padding(.all, 30)
+    }
+    
+    func newDataItem(){
+        let n = self.sessions.currentSession.currentSessionView.searchResult.data.count + 100
+        let dataItem = DataItem(uid: "0x0\(n)", properties: ["title": "new note", "content": ""])
+        self.sessions.currentSession.currentSessionView.searchResult.data.append(dataItem)
+        self.sessions.currentSession.openView(SessionView(rendererName: "RichTextEditor",
+                              searchResult: SearchResult(query: "", data: [dataItem]),
+                              title: "new note"))
+    }
+}
+
+
+struct Topnavigation_Previews: PreviewProvider {
+    static var previews: some View {
+        TopNavigation().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }

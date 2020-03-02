@@ -26,9 +26,10 @@ class SessionTest: XCTestCase {
     }
     
     func testLoadEmptySessionsFromJson(){
-        // load SessionSSS
-        let session =  try! Session.from_json("empty_sessions")
+        // load multiple
+        let sessions =  try! Sessions.from_json("empty_sessions")
     }
+    
     
 
     func testPerformanceExample() {

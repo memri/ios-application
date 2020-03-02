@@ -39,8 +39,8 @@ struct Renderer: View {
     @EnvironmentObject var sessions: Sessions
     
     var body: some View {
-        return Group{
-            if self.sessions.currentSession.currentSessionView.rendererName == "List" {
+        return VStack{
+            if self.sessions.currentSession.currentSessionView.rendererName == "list" {
                 List{
                     ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
                         VStack{
@@ -50,9 +50,9 @@ struct Renderer: View {
                             Text(dataItem.properties["content"]!)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
-                            // TODO: HOW TO MAKE THIS UPDATE AFTER CLICK IN THIS VIEW
                             self.sessions.currentSession.openView(SessionView(rendererName: "RichTextEditor",
                                                   searchResult: SearchResult(query: "", data: [dataItem])))
+
                         }
                     }
                 }
@@ -65,13 +65,6 @@ struct Renderer: View {
 
 struct Renderer_Previews: PreviewProvider {
     static var previews: some View {
-        return Renderer().environmentObject(
-            Sessions([Session(SessionView(rendererName: "List",
-                    searchResult: SearchResult(query: "",
-                                               data: [DataItem(uid: "0x0"), DataItem(uid: "0x1")]))
-                                        )
-                                ]
-            )
-        )
+        return Renderer().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }
