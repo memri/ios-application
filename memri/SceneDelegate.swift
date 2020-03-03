@@ -38,7 +38,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //            )
 //        )
         let sessions = try! Sessions.from_json("empty_sessions")
-        let contentView = Browser().environmentObject(sessions)
+//        let contentView = Browser().environmentObject(sessions)
+        let contentView = Browser(renderer: ListRenderer()).environmentObject(sessions)
+
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 
-class ActionDescription: Codable {
+public class ActionDescription: Codable {
     var icon: String
     var title: String
     var actionName: String
@@ -16,58 +16,6 @@ class ActionDescription: Codable {
         self.title=title
         self.actionName=actionName
 //        self.actionArgs=actionArgs
-    }
-}
-
-class RenderConfig: Codable{
-    var name: String
-    var icon: String
-    var category: String
-    var items: [ActionDescription]
-    var options1: [ActionDescription]
-    var options2: [ActionDescription]
-    
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription]){
-        self.name=name
-        self.icon=icon
-        self.category=category
-        self.items=items
-        self.options1=options1
-        self.options2=options2
-    }
-}
-
-
-class ListConfig: RenderConfig {
-    var cascadeOrder: [String]
-    var slideLeftActions: [ActionDescription]
-    var slideRightActions: [ActionDescription]
-    var type: String
-    var browse: String
-    var sortProperty: String
-    var sortAscending: Int
-    var itemRenderer: String
-    var longPress: ActionDescription
-
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription], cascadeOrder: [String], slideLeftActions: [ActionDescription],
-         slideRightActions: [ActionDescription], type: String, browse: String, sortProperty: String,
-         sortAscending: Int, itemRenderer: String, longPress: ActionDescription){
-        self.cascadeOrder=cascadeOrder
-        self.slideLeftActions=slideLeftActions
-        self.slideRightActions=slideRightActions
-        self.type=type
-        self.browse=browse
-        self.sortProperty=sortProperty
-        self.sortAscending=sortAscending
-        self.itemRenderer=itemRenderer
-        self.longPress=longPress
-        super.init(name: name, icon: icon, category: category, items: items, options1: options1, options2: options2)
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
     }
 }
 
@@ -132,7 +80,7 @@ public class Sessions: ObservableObject, Codable {
 
 
 
-class Session: ObservableObject, Codable  {
+public class Session: ObservableObject, Codable  {
     
     @Published var currentSessionViewIndex: Int
     @Published var sessionViews: [SessionView] = []
@@ -201,7 +149,7 @@ class Session: ObservableObject, Codable  {
     
 }
 
-class SessionView: ObservableObject, Codable{
+public class SessionView: ObservableObject, Codable{
 
     @Published public var searchResult: SearchResult
     @Published public var title: String
