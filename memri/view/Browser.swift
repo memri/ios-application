@@ -10,14 +10,14 @@ import SwiftUI
 import Combine
 
 
-struct Browser<Content: Renderer>: View {
+struct Browser<BrowserRenderer: Renderer>: View {
     @EnvironmentObject var sessions: Sessions
     
     var renderername: String
-    var renderers: [String: Content]
+    var renderers: [String: BrowserRenderer]
 
     
-    init(renderername: String, renderers: [String: Content]=[:]){
+    init(renderername: String, renderers: [String: BrowserRenderer]=[:]){
         self.renderername = renderername
         self.renderers = renderers
         
