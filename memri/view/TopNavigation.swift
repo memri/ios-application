@@ -55,11 +55,17 @@ struct TopNavigation: View {
     
     func newDataItem(){
         let n = self.sessions.currentSession.currentSessionView.searchResult.data.count + 100
-        let dataItem = DataItem(uid: "0x0\(n)", properties: ["title": "new note", "content": ""])
+        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+        
+        dataItem.properties=["title": "new note", "content": ""]
         self.sessions.currentSession.currentSessionView.searchResult.data.append(dataItem)
-        self.sessions.currentSession.openView(SessionView(rendererName: "RichTextEditor",
-                              searchResult: SearchResult(query: "", data: [dataItem]),
-                              title: "new note"))
+        let sr = SearchResult()
+        let sv = SessionView()
+        sr.data = [dataItem]
+        sv.searchResult=sr
+        sv.rendererName = "richTextEditor"
+        sv.title="new note"
+        self.sessions.currentSession.openView(sv)
     }
 }
 

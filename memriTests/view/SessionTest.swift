@@ -19,16 +19,16 @@ class SessionTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testLoadEmptySessionFromJson() {
-        let session =  try! Session.from_json("empty_session")
-        XCTAssert(session.currentSessionView.rendererName == "List")
-        XCTAssert(session.currentSessionView.searchResult.data == [])
-    }
-    
-    func testLoadEmptySessionsFromJson(){
-        // load multiple
-        let sessions =  try! Sessions.from_json("empty_sessions")
-    }
+//    func testLoadEmptySessionFromJson() {
+//        let session =  try! Session.from_json("empty_session")
+//        XCTAssert(session.currentSessionView.rendererName == "List")
+//        XCTAssert(session.currentSessionView.searchResult.data == [])
+//    }
+//    
+//    func testLoadEmptySessionsFromJson(){
+//        // load multiple
+//        let sessions =  try! Sessions.from_json("empty_sessions")
+//    }
     
     
 

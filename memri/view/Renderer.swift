@@ -91,15 +91,18 @@ public protocol Renderer: View {
     var name: String {get set}
     var icon: String {get set}
     var category: String {get set}
-//    var renderModes: [ActionDescription]  {get set}
-//    var options1: [ActionDescription] {get set}
-//    var options2: [ActionDescription] {get set}
-//    var editMode: Bool {get set}
-//    var renderConfig: RenderConfig {get set}
+    
+    
+    var renderModes: [ActionDescription]  {get set}
+    var options1: [ActionDescription] {get set}
+    var options2: [ActionDescription] {get set}
+    var editMode: Bool {get set}
+    var renderConfig: RenderConfig {get set}
 
-//    func setState(_ state:RenderState) -> Bool
-//    func getState() -> RenderState
-//    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
+    func setState(_ state:RenderState) -> Bool
+    func getState() -> RenderState
+    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
+    
 }
 
 
@@ -107,6 +110,7 @@ public protocol Renderer: View {
 
 
 struct ListRenderer: Renderer {
+    
     var name: String="list"
     var icon: String=""
     var category: String=""
@@ -124,30 +128,27 @@ struct ListRenderer: Renderer {
     
     var body: some View {
         return VStack{
-            if self.sessions.currentSession.currentSessionView.rendererName == "list" {
                 List{
                     ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
                         VStack{
-                            Text(dataItem.properties["title"]!)
-                                .bold()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(dataItem.properties["content"]!)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            Text(dataItem.properties["title"]!)
+//                                .bold()
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+//                            Text(dataItem.properties["content"]!)
+//                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text("abc")
                         }.onTapGesture {
-                            self.sessions.currentSession.openView(SessionView(rendererName: "RichTextEditor",
-                                                  searchResult: SearchResult(query: "", data: [dataItem])))
+                            self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                                rendererName: "richTextEditor"))
 
                         }
                     }
                 }
-            } else {
-                TextView(dataItem: self.sessions.currentSession.currentSessionView.searchResult.data[0])
-            }
         }
     }
 }
 
-struct SingleItemRenderer: Renderer {
+struct RichTextEditor: Renderer {
     var name: String="singleItem"
     var icon: String=""
     var category: String=""

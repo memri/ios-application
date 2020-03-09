@@ -44,6 +44,6 @@ struct TextView: UIViewRepresentable {
 
 struct TextEdit_Previews: PreviewProvider {
     static var previews: some View {
-        TextView(dataItem: DataItem(uid: "0x01"))
+        TextView(dataItem: DataItem.fromUid(uid: "0x01"))
     }
 }

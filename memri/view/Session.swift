@@ -20,30 +20,35 @@ public class ActionDescription: Codable {
 }
 
 
-public class Sessions: ObservableObject, Codable {
+public class Sessions: ObservableObject, Decodable {
 
-    @Published var currentSessionIndex: Int
-    @Published var sessions: [Session]
+    @Published var currentSessionIndex: Int=0
+    @Published var sessions: [Session]=[]
     
     
     var cancellables: [AnyCancellable]?=nil
     
-    private enum CodingKeys: String, CodingKey {
-        case sessions, currentSessionIndex
-    }
+//    private enum CodingKeys: String, CodingKey {
+//        case sessions, currentSessionIndex
+//    }
     
     var currentSession: Session {
             return sessions[currentSessionIndex]
     }
     
-    init(_ sessions: [Session], currentSessionIndex: Int = 0){
+    init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
         self.sessions = sessions
         self.currentSessionIndex = currentSessionIndex
         self.cancellables=[]
         self.postInit()
-        
-
     }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
+        sessions = try decoder.decodeIfPresent("sessions") ?? sessions
+    }
+    
     public func postInit(){
         self.cancellables=[]
         for session in sessions{
@@ -80,18 +85,16 @@ public class Sessions: ObservableObject, Codable {
 
 
 
-public class Session: ObservableObject, Codable  {
+public class Session: ObservableObject, Decodable  {
     
-    @Published var currentSessionViewIndex: Int
-    @Published var sessionViews: [SessionView] = []
+    @Published var currentSessionViewIndex: Int = 0
+    @Published var sessionViews: [SessionView] = [SessionView()]
     
     var cancellables: [AnyCancellable]?=nil
     
-    private enum CodingKeys: String, CodingKey {
-        case sessionViews, currentSessionViewIndex
-    }
-
-    
+//    private enum CodingKeys: String, CodingKey {
+//        case sessionViews, currentSessionViewIndex
+//    }
     public var currentSessionView: SessionView {
         if currentSessionViewIndex >= 0 {
             return sessionViews[currentSessionViewIndex]
@@ -100,11 +103,17 @@ public class Session: ObservableObject, Codable  {
         }
     }
     
-    init(_ currentView: SessionView ){
-        self.sessionViews = [currentView]
-        self.currentSessionViewIndex = 0
+    init(_ currentSessionViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
+        self.currentSessionViewIndex = currentSessionViewIndex
+        self.sessionViews = sessionViews
         self.postInit()
     }
+    
+        public convenience required init(from decoder: Decoder) throws {
+            self.init()
+            currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
+            sessionViews = try decoder.decodeIfPresent("sessionViews") ?? sessionViews
+        }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
@@ -149,51 +158,87 @@ public class Session: ObservableObject, Codable  {
     
 }
 
-public class SessionView: ObservableObject, Codable{
+public class SessionView: ObservableObject, Decodable{
 
-    @Published public var searchResult: SearchResult
-    @Published public var title: String
-    @Published var rendererName: String = "List"
-    var name: String
+    @Published public var searchResult: SearchResult = SearchResult()
+    @Published public var title: String = ""
+    @Published var rendererName: String = "list"
+    var name: String = ""
     var subtitle: String = ""
-    var selection: [String]
-    var renderConfigs: [String: RenderConfig]
-    var editButtons: [ActionDescription]
-    var filterButtons: [ActionDescription]
-    var actionItems: [ActionDescription]
-    var navigateItems: [ActionDescription]
-    var contextButtons: [ActionDescription]
-    var icon: String
-    var showLabels: Bool
-    var contextMode: Bool
-    var filterMode: Bool
-    var editMode: Bool
-    var browsingMode: String
+    var selection: [String] = []
+    var renderConfigs: [String: RenderConfig]=[:]
+    var editButtons: [ActionDescription]=[]
+    var filterButtons: [ActionDescription]=[]
+    var actionItems: [ActionDescription]=[]
+    var navigateItems: [ActionDescription]=[]
+    var contextButtons: [ActionDescription]=[]
+    var icon: String=""
+    var showLabels: Bool=false
+    var contextMode: Bool=false
+    var filterMode: Bool=false
+    var editMode: Bool=false
+    var browsingMode: String="default"
     
-    init(name: String="defaultname", rendererName: String = "list", searchResult: SearchResult=SearchResult(query: ""), title:String="",
-         subtitle:String="", renderName:String="", selection: [String] = [], renderConfigs: [String: RenderConfig]=[:], editButtons: [ActionDescription]=[],
-         filterButtons: [ActionDescription]=[], actionItems: [ActionDescription]=[], navigateItems: [ActionDescription]=[],
-         contextButtons: [ActionDescription]=[], icon: String="", showLabels: Bool=false, contextMode: Bool=false, filterMode: Bool=false, editMode: Bool=false,
-         browsingMode: String="default"){
-        self.name=name
-        self.rendererName=rendererName
-        self.searchResult=searchResult
-        self.title=title
-        self.subtitle=subtitle
-        self.selection=selection
-        self.renderConfigs=renderConfigs
-        self.editButtons=editButtons
-        self.filterButtons=filterButtons
-        self.actionItems=actionItems
-        self.navigateItems=navigateItems
-        self.contextButtons=contextButtons
-        self.icon=icon
-        self.showLabels=showLabels
-        self.contextMode=contextMode
-        self.filterMode=filterMode
-        self.editMode=editMode
-        self.browsingMode=browsingMode
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        self.searchResult = try decoder.decodeIfPresent("searchResult") ?? self.searchResult
+        self.title = try decoder.decodeIfPresent("title") ?? self.title
+        self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
+        self.name = try decoder.decodeIfPresent("name") ?? self.name
+        self.subtitle = try decoder.decodeIfPresent("subtitle") ?? self.subtitle
+        self.selection = try decoder.decodeIfPresent("selection") ?? self.selection
+        self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
+        self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
+        self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
+        self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
+        self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
+        self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
+        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
+        self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
+        self.contextMode = try decoder.decodeIfPresent("contextMode") ?? self.contextMode
+        self.filterMode = try decoder.decodeIfPresent("filterMode") ?? self.filterMode
+        self.editMode = try decoder.decodeIfPresent("editMode") ?? self.editMode
+        self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
     }
+    
+    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list") -> SessionView{
+        let sv = SessionView()
+        sv.searchResult = searchResult
+        sv.rendererName = rendererName
+        return sv
+    }
+    
+    
+//    private enum CodingKeys: String, DefaultingCodingKey {
+//        case searchResult, title, rendererName, name, subtitle, selection, renderConfigs, editButtons, filterButtons,actionItems,navigateItems,contextButtons,icon,showLabels,contextMode,filterMode,editMode,browsingMode
+//        
+//        static let defaults: [CodingKeys: Any] = [.name: "defaultname", .rendererName: "list", .searchResult: SearchResult(query: ""), .title:"",.subtitle:"", .selection: [], .renderConfigs: [:], .editButtons:[],.filterButtons: [], .actionItems:[], .navigateItems:[],.contextButtons: [], .icon: "", .showLabels: false, .contextMode: false, .filterMode: false, .editMode: false,.browsingMode: "default"]
+//    }
+    
+//    init(name: String="defaultname", rendererName: String = "list", searchResult: SearchResult=SearchResult(query: ""), title:String="",
+//         subtitle:String="", renderName:String="", selection: [String] = [], renderConfigs: [String: RenderConfig]=[:], editButtons: [ActionDescription]=[],
+//         filterButtons: [ActionDescription]=[], actionItems: [ActionDescription]=[], navigateItems: [ActionDescription]=[],
+//         contextButtons: [ActionDescription]=[], icon: String="", showLabels: Bool=false, contextMode: Bool=false, filterMode: Bool=false, editMode: Bool=false,
+//         browsingMode: String="default"){
+//        self.name=name
+//        self.rendererName=rendererName
+//        self.searchResult=searchResult
+//        self.title=title
+//        self.subtitle=subtitle
+//        self.selection=selection
+//        self.renderConfigs=renderConfigs
+//        self.editButtons=editButtons
+//        self.filterButtons=filterButtons
+//        self.actionItems=actionItems
+//        self.navigateItems=navigateItems
+//        self.contextButtons=contextButtons
+//        self.icon=icon
+//        self.showLabels=showLabels
+//        self.contextMode=contextMode
+//        self.filterMode=filterMode
+//        self.editMode=editMode
+//        self.browsingMode=browsingMode
+//    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
@@ -203,5 +248,3 @@ public class SessionView: ObservableObject, Codable{
         return items
     }
 }
-
-

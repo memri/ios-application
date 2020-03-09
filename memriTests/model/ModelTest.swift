@@ -21,16 +21,17 @@ class ModelTest: XCTestCase {
     }
     
     func testInitDataItems(){
-        let items = [DataItem(uid: "0x01", type: "note", predicates: nil, properties: ["title": "my first note",                         "content": "my first note"]),
+        let items: [DataItem] = [DataItem(uid: "0x01", type: "note", predicates: nil, properties: ["title": "my first note", "content": "my first note"]),
                     DataItem(uid: "0x02", type: "note", predicates: nil, properties: ["title": "my second note",                         "content": "my second note"])]
-        
+
 
         XCTAssert(items[0].type == "note" && items[1].type == "note")
         XCTAssert(items[0].properties["title"] == "my first note")
     }
     
     func testDeserializeDataItemsFromJSON() {
-        let items = try! DataItem.from_json(file: "test_dataItems")
+        var items = try! DataItem.from_json(file: "test_dataItems")
+        print(items[0].uid)
         XCTAssert(items[0].uid == "0x01" && items[1].uid == "0x02")
         XCTAssert(items[0].type == "note" && items[1].type == "note")
         XCTAssert(items[0].properties["title"] == "my first note")
@@ -38,7 +39,7 @@ class ModelTest: XCTestCase {
     
     func testInitSearchResult(){
         let items = try! DataItem.from_json(file: "test_dataItems")
-        let sr = SearchResult(query: "some query", data:items)
+        let sr = SearchResult.fromDataItems(items)
         XCTAssert(sr.data[0].uid == "0x01" && sr.data[1].uid == "0x02")
     }
     

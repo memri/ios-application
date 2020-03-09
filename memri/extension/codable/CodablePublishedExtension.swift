@@ -16,6 +16,14 @@ extension Published:Decodable where Value:Decodable {
     }
 }
 
+// AnyDecodable
+//extension Published:Decodable where Value:AnyDecodable {
+//    public init(from decoder: Decoder) throws {
+//        let decoded = try Value(from:decoder)
+//        self = Published(initialValue:decoded)
+//    }
+//}
+
 extension Published:Encodable where Value:Decodable {
 
     public func encode(to encoder: Encoder) throws {
@@ -40,3 +48,4 @@ extension Published:Encodable where Value:Decodable {
         }
     }
 }
+

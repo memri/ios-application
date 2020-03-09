@@ -1,22 +1,37 @@
 import Foundation
 
-public class DataItem: Codable, Equatable, Identifiable, ObservableObject {
+public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     
-    public let uid: String
-    public var type: String
-    @Published public var predicates: [String: String]
-    @Published public var properties: [String: String]
+    public var uid: String = ""
+    public var type: String = ""
+    @Published public var predicates: [String: String] = [:]
+    @Published public var properties: [String: String] = [:]
     
     public var id: String {
         return self.uid
     }
     
+    public convenience init(uid:String? = nil, type: String? = nil, predicates: [String: String]? = nil,
+                            properties:[String:String]? = nil){
+        self.init()
+        self.uid=uid ?? self.uid
+        self.type=type ?? self.type
+        self.predicates=predicates ?? self.predicates
+        self.properties=properties ?? self.properties
+    }
     
-    public init(uid: String, type: String?=nil, predicates: [String:String]?=nil, properties: [String:String]? = nil){
-        self.uid = uid
-        self.type = type ?? "note"
-        self.predicates = predicates ?? ["owner": "0x0"]
-        self.properties = properties ?? ["title": "example note","content": "This is an example note"]
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        self.uid = try decoder.decodeIfPresent("uid") ?? self.uid
+        self.type = try decoder.decodeIfPresent("type") ?? self.type
+        self.predicates = try decoder.decodeIfPresent("predicates") ?? self.predicates
+        self.properties = try decoder.decodeIfPresent("properties") ?? self.properties
+    }
+    
+    public static func fromUid(uid:String)-> DataItem{
+        var di = DataItem()
+        di.uid=uid
+        return di
     }
     
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
@@ -28,10 +43,8 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject {
     }
     
     public class func from_json(file: String, ext: String = "json") throws -> [DataItem] {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
-        let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: jsonData)
+        var data = try jsonDataFromFile(file, ext)
+        let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: data)
         return items
     }
     
@@ -39,25 +52,42 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject {
     
 }
 
+extension DataItem{
 
-public class SearchResult: ObservableObject, Codable {
-    var query: String
+}
+
+
+public class SearchResult: ObservableObject, Decodable {
+    var query: String=""
     @Published public var data: [DataItem] = []
     
-    public var sortProperty: String?
-    public var sortAscending: Int
-    public var loading: Int
-    public var pageCount: Int
+    public var sortProperty: String?=""
+    public var sortAscending: Int=0
+    public var loading: Int=0
+    public var pageCount: Int=0
     
     
-    public init(query: String, data: [DataItem] = [], sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
-         pageCount: Int=0){
-        self.query=query
-        self.data=data
-        self.sortProperty=sortProperty
-        self.sortAscending=sortAscending
-        self.loading=loading
-        self.pageCount=pageCount
+    
+//    public init(query: String, data: [DataItem] = [], sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
+//         pageCount: Int=0){
+//        self.query=query
+//        self.data=data
+//        self.sortProperty=sortProperty
+//        self.sortAscending=sortAscending
+//        self.loading=loading
+//        self.pageCount=pageCount
+//    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+//        try decodeFromTuples(decoder,
+//                             [(searchResult, "searchResult"),(title, "title"),(test2, "test2")] as [(Any, String)])
+    }
+    
+    public static func fromDataItems(_ data: [DataItem]) -> SearchResult{
+        let obj = SearchResult()
+        obj.data=data
+        return obj
     }
     
     func fire(event: String) -> Void{}
@@ -80,7 +110,8 @@ public class Cache {
     public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
-    public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem(uid: "")]}
+    
+    public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
 
 
     

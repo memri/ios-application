@@ -8,8 +8,9 @@
         "pageCount": 0,
     },
     "title": "testtitle",
-    "subtitle": "testSubtitle",
     "rendererName": "list",
+    "name": "",
+    "subtitle": "",
     "selection": [],
     "renderConfigs": {},
     "editButtons": [],
@@ -22,5 +23,5 @@
     "contextMode": false,
     "filterMode": false,
     "editMode": false,
-    "browsingMode": false
+    "browsingMode": "default"
 }

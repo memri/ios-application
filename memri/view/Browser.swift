@@ -10,36 +10,30 @@ import SwiftUI
 import Combine
 
 
-struct Browser<BrowserRenderer: Renderer>: View {
+struct Browser: View {
     @EnvironmentObject var sessions: Sessions
-    
-    var renderername: String
-    var renderers: [String: BrowserRenderer]
-
-    
-    init(renderername: String, renderers: [String: BrowserRenderer]=[:]){
-        self.renderername = renderername
-        self.renderers = renderers
+    @State var renderername: String = "list"
         
-    }
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
+                                        "richTextEditor": AnyView(RichTextEditor())]
     
     var body: some View {
         return
             VStack {
                 TopNavigation()
-                renderers[renderername]
-//                renderer
+                renderers[sessions.currentSession.currentSessionView.rendererName,
+                          default: AnyView(ListRenderer())]
                 Search()
             }
     }
 }
 
+
+
+
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser(renderername: "list",
-                renderers: ["list": ListRenderer(),
-                            "single_item_view": SingleItemRenderer()]
-        ).environmentObject(try! Sessions.from_json("empty_sessions"))
+        Browser().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }
 
