@@ -102,15 +102,9 @@ public protocol Renderer: View {
     func setState(_ state:RenderState) -> Bool
     func getState() -> RenderState
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
-    
 }
 
-
-
-
-
 struct ListRenderer: Renderer {
-    
     var name: String="list"
     var icon: String=""
     var category: String=""
@@ -128,22 +122,20 @@ struct ListRenderer: Renderer {
     
     var body: some View {
         return VStack{
-                List{
-                    ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
-                        VStack{
-//                            Text(dataItem.properties["title"]!)
-//                                .bold()
-//                                .frame(maxWidth: .infinity, alignment: .leading)
-//                            Text(dataItem.properties["content"]!)
-//                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text("abc")
-                        }.onTapGesture {
-                            self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                                rendererName: "richTextEditor"))
-
-                        }
+            List{
+                ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
+                    VStack{
+                        Text(dataItem.properties["title"]!)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(dataItem.properties["content"]!)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }.onTapGesture {
+                        self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                            rendererName: "richTextEditor"))
                     }
                 }
+            }
         }
     }
 }

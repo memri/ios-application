@@ -47,6 +47,7 @@ public class Sessions: ObservableObject, Decodable {
         self.init()
         currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
         sessions = try decoder.decodeIfPresent("sessions") ?? sessions
+        self.postInit()
     }
     
     public func postInit(){
@@ -71,11 +72,8 @@ public class Sessions: ObservableObject, Decodable {
     //  Clear all sessions and create a new one
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Sessions {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
+        var jsonData = try jsonDataFromFile(file, ext)
         let sessions: Sessions = try! JSONDecoder().decode(Sessions.self, from: jsonData)
-        sessions.postInit()
         return sessions
     }
 
@@ -109,11 +107,11 @@ public class Session: ObservableObject, Decodable  {
         self.postInit()
     }
     
-        public convenience required init(from decoder: Decoder) throws {
-            self.init()
-            currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
-            sessionViews = try decoder.decodeIfPresent("sessionViews") ?? sessionViews
-        }
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
+        sessionViews = try decoder.decodeIfPresent("sessionViews") ?? sessionViews
+    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
@@ -208,42 +206,8 @@ public class SessionView: ObservableObject, Decodable{
         return sv
     }
     
-    
-//    private enum CodingKeys: String, DefaultingCodingKey {
-//        case searchResult, title, rendererName, name, subtitle, selection, renderConfigs, editButtons, filterButtons,actionItems,navigateItems,contextButtons,icon,showLabels,contextMode,filterMode,editMode,browsingMode
-//        
-//        static let defaults: [CodingKeys: Any] = [.name: "defaultname", .rendererName: "list", .searchResult: SearchResult(query: ""), .title:"",.subtitle:"", .selection: [], .renderConfigs: [:], .editButtons:[],.filterButtons: [], .actionItems:[], .navigateItems:[],.contextButtons: [], .icon: "", .showLabels: false, .contextMode: false, .filterMode: false, .editMode: false,.browsingMode: "default"]
-//    }
-    
-//    init(name: String="defaultname", rendererName: String = "list", searchResult: SearchResult=SearchResult(query: ""), title:String="",
-//         subtitle:String="", renderName:String="", selection: [String] = [], renderConfigs: [String: RenderConfig]=[:], editButtons: [ActionDescription]=[],
-//         filterButtons: [ActionDescription]=[], actionItems: [ActionDescription]=[], navigateItems: [ActionDescription]=[],
-//         contextButtons: [ActionDescription]=[], icon: String="", showLabels: Bool=false, contextMode: Bool=false, filterMode: Bool=false, editMode: Bool=false,
-//         browsingMode: String="default"){
-//        self.name=name
-//        self.rendererName=rendererName
-//        self.searchResult=searchResult
-//        self.title=title
-//        self.subtitle=subtitle
-//        self.selection=selection
-//        self.renderConfigs=renderConfigs
-//        self.editButtons=editButtons
-//        self.filterButtons=filterButtons
-//        self.actionItems=actionItems
-//        self.navigateItems=navigateItems
-//        self.contextButtons=contextButtons
-//        self.icon=icon
-//        self.showLabels=showLabels
-//        self.contextMode=contextMode
-//        self.filterMode=filterMode
-//        self.editMode=editMode
-//        self.browsingMode=browsingMode
-//    }
-    
     public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
+        var jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
     }

@@ -22,10 +22,10 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        self.uid = try decoder.decodeIfPresent("uid") ?? self.uid
-        self.type = try decoder.decodeIfPresent("type") ?? self.type
-        self.predicates = try decoder.decodeIfPresent("predicates") ?? self.predicates
-        self.properties = try decoder.decodeIfPresent("properties") ?? self.properties
+        uid = try decoder.decodeIfPresent("uid") ?? uid
+        type = try decoder.decodeIfPresent("type") ?? type
+        predicates = try decoder.decodeIfPresent("predicates") ?? predicates
+        properties = try decoder.decodeIfPresent("properties") ?? properties
     }
     
     public static func fromUid(uid:String)-> DataItem{
@@ -52,10 +52,6 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     
 }
 
-extension DataItem{
-
-}
-
 
 public class SearchResult: ObservableObject, Decodable {
     var query: String=""
@@ -66,22 +62,14 @@ public class SearchResult: ObservableObject, Decodable {
     public var loading: Int=0
     public var pageCount: Int=0
     
-    
-    
-//    public init(query: String, data: [DataItem] = [], sortProperty: String? = nil, sortAscending: Int = -1, loading: Int=0,
-//         pageCount: Int=0){
-//        self.query=query
-//        self.data=data
-//        self.sortProperty=sortProperty
-//        self.sortAscending=sortAscending
-//        self.loading=loading
-//        self.pageCount=pageCount
-//    }
-    
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-//        try decodeFromTuples(decoder,
-//                             [(searchResult, "searchResult"),(title, "title"),(test2, "test2")] as [(Any, String)])
+        query = try decoder.decodeIfPresent("query") ?? query
+        data = try decoder.decodeIfPresent("data") ?? data
+        sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
+        sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
+        loading = try decoder.decodeIfPresent("loading") ?? loading
+        pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
     }
     
     public static func fromDataItems(_ data: [DataItem]) -> SearchResult{
@@ -110,7 +98,6 @@ public class Cache {
     public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
-    
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
 
 
