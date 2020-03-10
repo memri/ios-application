@@ -7,15 +7,15 @@
 //
 
 import SwiftUI
+import Combine
 
-
-struct TextView: UIViewRepresentable {
+struct RichTextEditor: UIViewRepresentable {
     @ObservedObject public var dataItem: DataItem
 
     class Coordinator: NSObject, UITextViewDelegate {
-        var control: TextView
+        var control: RichTextEditor
 
-        init(_ control: TextView) {
+        init(_ control: RichTextEditor) {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
@@ -35,15 +35,15 @@ struct TextView: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextView, context: Context) {}
-    func makeCoordinator() -> TextView.Coordinator {
+    func makeCoordinator() -> RichTextEditor.Coordinator {
         let coordinator = Coordinator(self)
         return coordinator
     }
 
 }
 
-struct TextEdit_Previews: PreviewProvider {
+struct RichTextRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        TextView(dataItem: DataItem.fromUid(uid: "0x01"))
+        RichTextEditor(dataItem: DataItem.fromUid(uid: "0x01"))
     }
 }

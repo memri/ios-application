@@ -38,7 +38,7 @@ struct TopNavigation: View {
 
             Spacer()
 
-            Button(action: newDataItem) {
+            Button(action: self.sessions.currentSession.newDataItem) {
                 Image(systemName: "plus")
             }.padding(.horizontal , 5)
              .foregroundColor(.green)
@@ -51,21 +51,6 @@ struct TopNavigation: View {
 
 
         }.padding(.all, 30)
-    }
-    
-    func newDataItem(){
-        let n = self.sessions.currentSession.currentSessionView.searchResult.data.count + 100
-        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
-        
-        dataItem.properties=["title": "new note", "content": ""]
-        self.sessions.currentSession.currentSessionView.searchResult.data.append(dataItem)
-        let sr = SearchResult()
-        let sv = SessionView()
-        sr.data = [dataItem]
-        sv.searchResult=sr
-        sv.rendererName = "richTextEditor"
-        sv.title="new note"
-        self.sessions.currentSession.openView(sv)
     }
 }
 

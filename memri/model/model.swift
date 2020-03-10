@@ -72,7 +72,7 @@ public class SearchResult: ObservableObject, Decodable {
         pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
     }
     
-    public static func fromDataItems(_ data: [DataItem]) -> SearchResult{
+    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
         let obj = SearchResult()
         obj.data=data
         return obj

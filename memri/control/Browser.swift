@@ -13,16 +13,17 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var sessions: Sessions
     @State var renderername: String = "list"
-        
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
-                                        "richTextEditor": AnyView(RichTextEditor())]
+                                        "richTextEditor": AnyView(RichTextRenderer())]
+    var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
+              default: AnyView(ListRenderer())]
+    }
     
     var body: some View {
         return
             VStack {
                 TopNavigation()
-                renderers[sessions.currentSession.currentSessionView.rendererName,
-                          default: AnyView(ListRenderer())]
+                currentRenderer
                 Search()
             }
     }
