@@ -28,6 +28,8 @@ class SessionTest: XCTestCase {
     func testLoadEmptySessionsFromJson(){
         // load multiple
         let sessions =  try! Sessions.from_json("empty_sessions")
+        print(sessions.currentSession.currentSessionView.searchResult.data[0].properties)
+        XCTAssert(sessions.currentSession.currentSessionView.searchResult.data.count > 0)
     }
     
     

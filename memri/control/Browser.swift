@@ -12,15 +12,25 @@ import Combine
 
 struct Browser: View {
     @EnvironmentObject var sessions: Sessions
+    @State var renderername: String = "list"
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
+                                        "richTextEditor": AnyView(RichTextRenderer())]
+    var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
+              default: AnyView(ListRenderer())]
+    }
+    
     var body: some View {
         return
             VStack {
                 TopNavigation()
-                Renderer()
+                currentRenderer
                 Search()
             }
     }
 }
+
+
+
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {

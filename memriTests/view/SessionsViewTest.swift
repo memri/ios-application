@@ -9,7 +9,6 @@
 import XCTest
 @testable import memri
 
-
 class ViewTest: XCTestCase {
 
     override func setUp() {
@@ -22,6 +21,7 @@ class ViewTest: XCTestCase {
 
     func testLoadSessionViewFromJson() {
         let sessionView =  try! SessionView.from_json("empty_sessionview")
+        XCTAssert(sessionView.title == "testtitle")
     }
 
     func testPerformanceExample() {

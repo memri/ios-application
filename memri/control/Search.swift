@@ -8,6 +8,30 @@
 
 import SwiftUI
 
+struct SortButton: Identifiable {
+    var id = UUID()
+    var name: String
+    var selected: Bool
+    var color: Color {self.selected ? Color.green : Color.black}
+    var fontWeight: Font.Weight? {self.selected ? .bold : .none}
+}
+
+struct BrowseSetting: Identifiable {
+    var id = UUID()
+    var name: String
+    var selected: Bool
+    var color: Color {self.selected ? Color.green : Color.black}
+    var fontWeight: Font.Weight? {self.selected ? .bold : .none}
+}
+
+struct ViewTypeButton: Identifiable {
+    var id = UUID()
+    var imgName: String
+    var selected: Bool
+    var backGroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
+    var foreGroundColor: Color { self.selected ? Color.green : Color.gray}
+}
+
 struct Search: View {
     @State var searchText=""
     @State var showFilters=false
@@ -21,7 +45,7 @@ struct Search: View {
                                 BrowseSetting(name: "Browse by folder", selected: false),
                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
 
-    @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected:                                   true),
+    @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected: true),
                                   ViewTypeButton(imgName: "square.grid.3x2.fill", selected: false),
                                   ViewTypeButton(imgName: "calendar", selected: false),
                                   ViewTypeButton(imgName: "location.fill", selected: false),

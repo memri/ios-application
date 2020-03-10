@@ -1,101 +1,45 @@
+//
+//  Session.swift
+//  memri
+//
+//  Created by Koen van der Veen on 10/03/2020.
+//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//
+
 import Foundation
 import Combine
 
 
-class ActionDescription: Codable {
-    var icon: String
-    var title: String
-    var actionName: String
-    // TODO: Make serializeble
-//    var actionArgs: [Any]
+public class Sessions: ObservableObject, Decodable {
+
+    @Published var currentSessionIndex: Int=0
+    @Published var sessions: [Session]=[]
     
-//    init(icon: String, title: String, actionName: String, actionArgs: [Any]){
-    init(icon: String, title: String, actionName: String){
-
-        self.icon=icon
-        self.title=title
-        self.actionName=actionName
-//        self.actionArgs=actionArgs
-    }
-}
-
-class RenderConfig: Codable{
-    var name: String
-    var icon: String
-    var category: String
-    var items: [ActionDescription]
-    var options1: [ActionDescription]
-    var options2: [ActionDescription]
-    
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription]){
-        self.name=name
-        self.icon=icon
-        self.category=category
-        self.items=items
-        self.options1=options1
-        self.options2=options2
-    }
-}
-
-
-class ListConfig: RenderConfig {
-    var cascadeOrder: [String]
-    var slideLeftActions: [ActionDescription]
-    var slideRightActions: [ActionDescription]
-    var type: String
-    var browse: String
-    var sortProperty: String
-    var sortAscending: Int
-    var itemRenderer: String
-    var longPress: ActionDescription
-
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription], cascadeOrder: [String], slideLeftActions: [ActionDescription],
-         slideRightActions: [ActionDescription], type: String, browse: String, sortProperty: String,
-         sortAscending: Int, itemRenderer: String, longPress: ActionDescription){
-        self.cascadeOrder=cascadeOrder
-        self.slideLeftActions=slideLeftActions
-        self.slideRightActions=slideRightActions
-        self.type=type
-        self.browse=browse
-        self.sortProperty=sortProperty
-        self.sortAscending=sortAscending
-        self.itemRenderer=itemRenderer
-        self.longPress=longPress
-        super.init(name: name, icon: icon, category: category, items: items, options1: options1, options2: options2)
-    }
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
-    }
-}
-
-
-public class Sessions: ObservableObject, Codable {
-
-    @Published var currentSessionIndex: Int
-    @Published var sessions: [Session]
+    var cancellables:[AnyCancellable]?=nil
     
     
-    var cancellables: [AnyCancellable]?=nil
-    
-    private enum CodingKeys: String, CodingKey {
-        case sessions, currentSessionIndex
-    }
+//    private enum CodingKeys: String, CodingKey {
+//        case sessions, currentSessionIndex
+//    }
     
     var currentSession: Session {
             return sessions[currentSessionIndex]
     }
     
-    init(_ sessions: [Session], currentSessionIndex: Int = 0){
+    init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
         self.sessions = sessions
         self.currentSessionIndex = currentSessionIndex
         self.cancellables=[]
         self.postInit()
-        
-
     }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
+        sessions = try decoder.decodeIfPresent("sessions") ?? sessions
+        self.postInit()
+    }
+    
     public func postInit(){
         self.cancellables=[]
         for session in sessions{
@@ -118,11 +62,8 @@ public class Sessions: ObservableObject, Codable {
     //  Clear all sessions and create a new one
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Sessions {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
+        var jsonData = try jsonDataFromFile(file, ext)
         let sessions: Sessions = try! JSONDecoder().decode(Sessions.self, from: jsonData)
-        sessions.postInit()
         return sessions
     }
 
@@ -132,18 +73,16 @@ public class Sessions: ObservableObject, Codable {
 
 
 
-class Session: ObservableObject, Codable  {
+public class Session: ObservableObject, Decodable  {
     
-    @Published var currentSessionViewIndex: Int
-    @Published var sessionViews: [SessionView] = []
+    @Published var currentSessionViewIndex: Int = 0
+    @Published var sessionViews: [SessionView] = [SessionView()]
     
     var cancellables: [AnyCancellable]?=nil
     
-    private enum CodingKeys: String, CodingKey {
-        case sessionViews, currentSessionViewIndex
-    }
-
-    
+//    private enum CodingKeys: String, CodingKey {
+//        case sessionViews, currentSessionViewIndex
+//    }
     public var currentSessionView: SessionView {
         if currentSessionViewIndex >= 0 {
             return sessionViews[currentSessionViewIndex]
@@ -152,10 +91,16 @@ class Session: ObservableObject, Codable  {
         }
     }
     
-    init(_ currentView: SessionView ){
-        self.sessionViews = [currentView]
-        self.currentSessionViewIndex = 0
+    init(_ currentSessionViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
+        self.currentSessionViewIndex = currentSessionViewIndex
+        self.sessionViews = sessionViews
         self.postInit()
+    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
+        sessionViews = try decoder.decodeIfPresent("sessionViews") ?? sessionViews
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
@@ -185,7 +130,21 @@ class Session: ObservableObject, Codable  {
         }
         print(currentSessionViewIndex)
         print(self.currentSessionView.rendererName)
-
+    }
+    
+    func newDataItem(){
+        let n = self.currentSessionView.searchResult.data.count + 100
+        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+        
+        dataItem.properties=["title": "new note", "content": ""]
+        self.currentSessionView.searchResult.data.append(dataItem)
+        let sr = SearchResult()
+        let sv = SessionView()
+        sr.data = [dataItem]
+        sv.searchResult=sr
+        sv.rendererName = "richTextEditor"
+        sv.title="new note"
+        self.openView(sv)
     }
     
     func openView(_ view:SessionView){
@@ -200,60 +159,3 @@ class Session: ObservableObject, Codable  {
     }
     
 }
-
-class SessionView: ObservableObject, Codable{
-
-    @Published public var searchResult: SearchResult
-    @Published public var title: String
-    @Published var rendererName: String = "List"
-    var name: String
-    var subtitle: String = ""
-    var selection: [String]
-    var renderConfigs: [String: RenderConfig]
-    var editButtons: [ActionDescription]
-    var filterButtons: [ActionDescription]
-    var actionItems: [ActionDescription]
-    var navigateItems: [ActionDescription]
-    var contextButtons: [ActionDescription]
-    var icon: String
-    var showLabels: Bool
-    var contextMode: Bool
-    var filterMode: Bool
-    var editMode: Bool
-    var browsingMode: String
-    
-    init(name: String="defaultname", rendererName: String = "list", searchResult: SearchResult=SearchResult(query: ""), title:String="",
-         subtitle:String="", renderName:String="", selection: [String] = [], renderConfigs: [String: RenderConfig]=[:], editButtons: [ActionDescription]=[],
-         filterButtons: [ActionDescription]=[], actionItems: [ActionDescription]=[], navigateItems: [ActionDescription]=[],
-         contextButtons: [ActionDescription]=[], icon: String="", showLabels: Bool=false, contextMode: Bool=false, filterMode: Bool=false, editMode: Bool=false,
-         browsingMode: String="default"){
-        self.name=name
-        self.rendererName=rendererName
-        self.searchResult=searchResult
-        self.title=title
-        self.subtitle=subtitle
-        self.selection=selection
-        self.renderConfigs=renderConfigs
-        self.editButtons=editButtons
-        self.filterButtons=filterButtons
-        self.actionItems=actionItems
-        self.navigateItems=navigateItems
-        self.contextButtons=contextButtons
-        self.icon=icon
-        self.showLabels=showLabels
-        self.contextMode=contextMode
-        self.filterMode=filterMode
-        self.editMode=editMode
-        self.browsingMode=browsingMode
-    }
-    
-    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
-        return items
-    }
-}
-
-

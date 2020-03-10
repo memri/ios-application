@@ -29,7 +29,7 @@ public class PodAPI {
     }
 
     func get(uid: String) -> DataItem {
-        return DataItem(uid: uid)
+        return DataItem.fromUid(uid: uid)
     }
 
     func update(uid: String, dataItem: DataItem) -> Void {
@@ -51,7 +51,7 @@ public class PodAPI {
     }
 
     public func query(_ query: String) -> SearchResult {
-        var searchResult = SearchResult(query: query)
+        var searchResult = SearchResult()
         
         searchResult.data = try! DataItem.from_json(file: "test_dataItems")
 
