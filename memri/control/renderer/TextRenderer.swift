@@ -21,7 +21,7 @@ struct RichTextRenderer: Renderer {
     var editMode: Bool=false
     var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
 
-    func setState(_ state:RenderState) -> Bool {false}
+    func setState(_ state:RenderState) -> Bool {return false}
     func getState() -> RenderState {RenderState()}
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
     @EnvironmentObject var sessions: Sessions
@@ -30,5 +30,11 @@ struct RichTextRenderer: Renderer {
         return VStack{
                 RichTextEditor(dataItem: self.sessions.currentSession.currentSessionView.searchResult.data[0])
         }
+    }
+}
+
+struct RichTextRenderer_Previews: PreviewProvider {
+    static var previews: some View {
+        RichTextRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }

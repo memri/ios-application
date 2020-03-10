@@ -52,7 +52,8 @@ struct ListRenderer: Renderer {
     var editMode: Bool=false
     var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
 
-    func setState(_ state:RenderState) -> Bool {false}
+    func setState(_ state:RenderState) -> Bool {return false}
+    
     func getState() -> RenderState {RenderState()}
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
     
@@ -75,5 +76,11 @@ struct ListRenderer: Renderer {
                 }
             }
         }
+    }
+}
+
+struct ListRenderer_Previews: PreviewProvider {
+    static var previews: some View {
+        ListRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }

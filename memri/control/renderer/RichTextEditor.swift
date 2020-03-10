@@ -42,7 +42,7 @@ struct RichTextEditor: UIViewRepresentable {
 
 }
 
-struct RichTextRenderer_Previews: PreviewProvider {
+struct RichTextEditor_Previews: PreviewProvider {
     static var previews: some View {
         RichTextEditor(dataItem: DataItem.fromUid(uid: "0x01"))
     }

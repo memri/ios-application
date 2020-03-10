@@ -31,7 +31,6 @@ public class RenderConfig: Codable {
 
 public class RenderState{}
 
-
 public protocol Renderer: View {
     var name: String {get set}
     var icon: String {get set}
@@ -47,4 +46,3 @@ public protocol Renderer: View {
     func getState() -> RenderState
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
 }
-
