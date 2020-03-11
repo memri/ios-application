@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     private var uid: String? = nil
@@ -142,7 +143,9 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
         }
         
         // Copy properties
-        self.properties = source.properties
+        for (name, value) in source.properties {
+            self.properties[name] = value
+        }
         
         // Copy predicates
         let sourcePredicates = source.predicates
@@ -163,16 +166,48 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
 
 
 public class SearchResult: ObservableObject, Decodable {
-    var query: String=""
-    @Published public var data: [DataItem] = []
+    @EnvironmentObject var podApi: PodAPI
     
-    public var sortProperty: String?=""
-    public var sortAscending: Int=0
-    public var loading: Int=0
-    public var pageCount: Int=0
+    /**
+     * Retrieves the query which is used to load data from the pod
+     */
+    var query: String = ""
+    /**
+     * Retrieves the data loaded from the pod
+     */
+    @Published public var data: [DataItem] = []
+    /**
+     * Retrieves the property that is used to sort on
+     */
+    public var sortProperty: String? = ""
+    /**
+     * Retrieves whether the sort direction
+     *   -1 no sorting is applied
+     *    0 sort descending
+     *    1 sort ascending
+     */
+    public var sortAscending: Int = 0
+    /**
+     * Returns the loading state
+     *  0 loading complete
+     *  1 loading data from server
+     */
+    public var loading: Int = 0
+    /**
+     * Retrieves the number of items per page
+     */
+    public var pageCount: Int = 0
+    
+    /**
+     * Sets the constants above
+     */
+//    public convenience required init(_ options:QueryOptions) {
+//
+//    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
+        
         query = try decoder.decodeIfPresent("query") ?? query
         data = try decoder.decodeIfPresent("data") ?? data
         sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
@@ -181,14 +216,49 @@ public class SearchResult: ObservableObject, Decodable {
         pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
     }
     
-    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
-        let obj = SearchResult()
-        obj.data=data
-        return obj
+    private func connect() -> Bool {
+        if (loading > 0 || query == "") { return false }
+        podApi.query(
     }
     
+    /**
+     * Client side filter, with a fallback to the server
+     */
+    public func filter(_ query:String) {
+        
+    }
+    /**
+     * Executes the query again
+     */
+    public func reload() {
+        
+    }
+    /**
+     *
+     */
+    public func resort(_ options:QueryOptions) {
+        
+    }
+    /**
+     *
+     */
+    public func loadPage(_ pageNr:Int) {
+        
+    }
+    
+    // TODO: change this to use observable
     func fire(event: String) -> Void{}
+    
+    /**
+     *
+     */
+    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
+        let obj = SearchResult()
+        obj.data = data
+        return obj
+    }
 }
+
 
 public class Cache {
     var podAPI: PodAPI
