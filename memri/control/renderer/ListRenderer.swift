@@ -64,10 +64,10 @@ struct ListRenderer: Renderer {
             List{
                 ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
                     VStack{
-                        Text(dataItem.properties["title"]!)
+                        Text(dataItem.properties["title"] ?? "")
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(dataItem.properties["content"]!)
+                        Text(dataItem.properties["content"] ?? "")
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }.onTapGesture {
                         self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),

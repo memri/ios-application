@@ -132,6 +132,11 @@ public class Session: ObservableObject, Decodable  {
         print(self.currentSessionView.rendererName)
     }
     
+    func changeRenderer(rendererName: String){
+        self.currentSessionView.rendererName = rendererName
+        self.objectWillChange.send()
+    }
+    
     func newDataItem(){
         let n = self.currentSessionView.searchResult.data.count + 100
         let dataItem = DataItem.fromUid(uid: "0x0\(n)")

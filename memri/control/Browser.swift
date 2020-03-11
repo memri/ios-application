@@ -9,23 +9,43 @@
 import SwiftUI
 import Combine
 
+struct ContentStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .frame(minWidth: 0,
+                   maxWidth: .infinity,
+                   minHeight: 0, maxHeight: .infinity,
+                   alignment: Alignment.topLeading)
+    }
+}
 
 struct Browser: View {
     @EnvironmentObject var sessions: Sessions
-    @State var renderername: String = "list"
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
-                                        "richTextEditor": AnyView(RichTextRenderer())]
+                                        "richTextEditor": AnyView(RichTextRenderer()),
+                                        "thumbnail": AnyView(ThumbnailRenderer())]
     var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
               default: AnyView(ListRenderer())]
     }
     
     var body: some View {
         return
-            VStack {
+            VStack() {
                 TopNavigation()
-                currentRenderer
+                renderers[sessions.currentSession.currentSessionView.rendererName,
+                          default: AnyView(ListRenderer())]
+                    .frame(minWidth: 0,
+                          maxWidth: .infinity,
+                          minHeight: 0, maxHeight: .infinity,
+                          alignment: Alignment.topLeading)
+
                 Search()
             }
+            .frame(minWidth: 0,
+                    maxWidth: .infinity,
+                    minHeight: 0, maxHeight: .infinity,
+                    alignment: Alignment.topLeading)
+
     }
 }
 

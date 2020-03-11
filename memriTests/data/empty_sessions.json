@@ -25,6 +25,24 @@
                                     "title": "second example note",
                                     "content": "This is again an example note"
                                 }
+                            },
+                            {
+                                "uid": "0x03",
+                                "type": "note",
+                                "predicates": {},
+                                "properties": {
+                                    "title": "third example note",
+                                    "content": "This is AGAIN an example note"
+                                }
+                            },
+                            {
+                                "uid": "0x04",
+                                "type": "note",
+                                "predicates": {},
+                                "properties": {
+                                    "title": "fourth example note",
+                                    "content": "This is AGAINNNN an example note"
+                                }
                             }
                         ],
                         "sortProperty": "None",
