@@ -313,13 +313,12 @@
 				5D1A3E62240704BF00A0583B /* extension */,
 				5D38DE1B2405788700FF9B70 /* api */,
 				5DD1E9B623FD812C007BDF7B /* model */,
+				5D493FDC23FC15D10034692B /* view */,
+				5D599BC223F2B77700F218A0 /* Preview Content */,
+				C8A6F7332419907D00FF8183 /* Resources */,
 				5D599BBA23F2B77500F218A0 /* AppDelegate.swift */,
 				5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */,
-				5D493FDC23FC15D10034692B /* view */,
-				5D599BC023F2B77700F218A0 /* Assets.xcassets */,
-				5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */,
 				5D599BC823F2B77700F218A0 /* Info.plist */,
-				5D599BC223F2B77700F218A0 /* Preview Content */,
 			);
 			path = memri;
 			sourceTree = "<group>";
@@ -374,6 +373,15 @@
 				C8630B2B2418609200C36D6F /* ContextPane.swift */,
 			);
 			path = control;
+			sourceTree = "<group>";
+		};
+		C8A6F7332419907D00FF8183 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5D599BC023F2B77700F218A0 /* Assets.xcassets */,
+				5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
