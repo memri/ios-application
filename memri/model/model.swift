@@ -1,23 +1,28 @@
 import Foundation
 
 public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
-    
     public var uid: String = ""
     public var type: String = ""
-    @Published public var predicates: [String: String] = [:]
-    @Published public var properties: [String: String] = [:]
+    
+    @Published public var predicates: [String: [DataItem]] = [:]
+    @Published public var properties: [String: AnyDecodable] = [:]
+    @Published private var deleted: Bool = false;
+    
+    public var isDeleted:Bool {
+        return deleted;
+    }
     
     public var id: String {
         return self.uid
     }
     
-    public convenience init(uid:String? = nil, type: String? = nil, predicates: [String: String]? = nil,
-                            properties:[String:String]? = nil){
+    public convenience init(uid:String? = nil, type: String, predicates: [String: [DataItem]]? = [:],
+                            properties:[String: AnyDecodable]? = [:]){
         self.init()
-        self.uid=uid ?? self.uid
-        self.type=type ?? self.type
-        self.predicates=predicates ?? self.predicates
-        self.properties=properties ?? self.properties
+        self.uid = uid ?? self.uid
+        self.type = type
+        self.predicates = predicates ?? self.predicates
+        self.properties = properties ?? self.properties
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -30,16 +35,12 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     
     public static func fromUid(uid:String)-> DataItem{
         var di = DataItem()
-        di.uid=uid
+        di.uid = uid
         return di
     }
     
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
-    }
-    
-    func findProperty(name: String) -> String {
-        return self.properties[name]!
     }
     
     public class func from_json(file: String, ext: String = "json") throws -> [DataItem] {
@@ -48,8 +49,91 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
         return items
     }
     
-    //TODO: findRelationShipByType, findRelationshipByTarget, .onUpdate, .duplicate(), .delete()
+    /**
+     *
+     */
+    public func findProperty(name: String) -> AnyDecodable {
+        return self.properties[name]!
+    }
     
+    /**
+     *
+     */
+    public func findPredicateByType(_ type:String) -> [DataItem] {
+        return self.predicates[type]!
+    }
+    
+    /**
+     *
+     */
+    public func findPredicateByTarget(_ item:DataItem) -> [String] {
+        var items:[String] = []
+        for (name, list) in self.predicates {
+            for index in 0...list.count {
+                if (list[index] === item) {
+                    items.append(name);
+                    break;
+                }
+            }
+        }
+        return items
+    }
+
+    
+    /**
+     * Does not copy the id property
+     */
+    public func duplicate() -> DataItem {
+        return DataItem(uid:nil, type:self.type, predicates:self.predicates, properties:self.properties)
+    }
+    
+    /**
+     * Sets deleted to true
+     * All methods and properties must throw when deleted = true;
+     */
+    public func delete() -> Bool {
+        if (deleted) { return false; }
+        deleted = true;
+        return true;
+    }
+    
+    /**
+     *
+     */
+    public func setProperty(_ name:String, _ value:AnyDecodable) {
+        self.properties[name] = value;
+    }
+    
+    /**
+     *
+     */
+    public func removeProperty(_ name:String) {
+        self.properties.remove(at: self.properties.index(forKey: name)!)
+    }
+    
+    /**
+     *
+     */
+    public func addPredicate(_ name:String, _ item:DataItem) {
+        var list:[DataItem] = self.predicates[name] ?? nil
+        if (list != nil) { self.predicates[name] = []; list = self.predicates[name]!}
+        list.append(item)
+    }
+    
+    /**
+     *
+     */
+    public func removePredicate(_ name:String, _ item:DataItem) {
+        let index = self.predicates[name]?.firstIndex(of: item) ?? -1
+        if (index > 0) { self.predicates[name]?.remove(at: index) }
+    }
+    
+    /**
+     *
+     */
+    public func merge(_ item:DataItem) {
+        
+    }
 }
 
 
@@ -99,8 +183,6 @@ public class Cache {
     public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
-
-
     
     public func getByType(type: String) -> SearchResult? {
         let cacheValue = self.typeCache[type]
