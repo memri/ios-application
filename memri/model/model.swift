@@ -1,7 +1,7 @@
 import Foundation
 
 public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
-    public var uid: String = ""
+    private var uid: String? = nil
     public var type: String = ""
     
     @Published public var predicates: [String: [DataItem]] = [:]
@@ -13,13 +13,13 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     }
     
     public var id: String {
-        return self.uid
+        return self.uid ?? ""
     }
     
-    public convenience init(uid:String? = nil, type: String, predicates: [String: [DataItem]]? = [:],
+    public convenience init(id:String? = nil, type: String, predicates: [String: [DataItem]]? = [:],
                             properties:[String: AnyDecodable]? = [:]){
         self.init()
-        self.uid = uid ?? self.uid
+        self.uid = id ?? self.uid
         self.type = type
         self.predicates = predicates ?? self.predicates
         self.properties = properties ?? self.properties
@@ -33,8 +33,8 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
         properties = try decoder.decodeIfPresent("properties") ?? properties
     }
     
-    public static func fromUid(uid:String)-> DataItem{
-        var di = DataItem()
+    public static func fromUid(uid:String)-> DataItem {
+        let di = DataItem()
         di.uid = uid
         return di
     }
@@ -44,7 +44,7 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     }
     
     public class func from_json(file: String, ext: String = "json") throws -> [DataItem] {
-        var data = try jsonDataFromFile(file, ext)
+        let data = try jsonDataFromFile(file, ext)
         let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: data)
         return items
     }
@@ -84,7 +84,7 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
      * Does not copy the id property
      */
     public func duplicate() -> DataItem {
-        return DataItem(uid:nil, type:self.type, predicates:self.predicates, properties:self.properties)
+        return DataItem(id:nil, type:self.type, predicates:self.predicates, properties:self.properties)
     }
     
     /**
@@ -115,9 +115,9 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
      *
      */
     public func addPredicate(_ name:String, _ item:DataItem) {
-        var list:[DataItem] = self.predicates[name] ?? nil
-        if (list != nil) { self.predicates[name] = []; list = self.predicates[name]!}
-        list.append(item)
+        let list:[DataItem] = self.predicates[name] ?? []
+        self.predicates[name] = list
+        self.predicates[name]?.append(item)
     }
     
     /**
@@ -128,10 +128,35 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
         if (index > 0) { self.predicates[name]?.remove(at: index) }
     }
     
+    enum DataItemError: Error {
+        case cannotMergeItemWithDifferentId
+    }
+    
     /**
      *
      */
-    public func merge(_ item:DataItem) {
+    public func merge(_ source:DataItem) throws {
+        // Items that do not have the same id should never merge
+        if (source.id != "" && self.uid != nil && source.id != self.uid) {
+            throw DataItemError.cannotMergeItemWithDifferentId
+        }
+        
+        // Copy properties
+        self.properties = source.properties
+        
+        // Copy predicates
+        let sourcePredicates = source.predicates
+        for (name, list) in self.predicates {
+            let sourceList = sourcePredicates[name] ?? []
+            outerLoop: for i in 0...list.count {
+                for j in 0...sourceList.count {
+                    if (list[i] === sourceList[j]) {
+                        break outerLoop
+                    }
+                    self.predicates[name]?.append(sourceList[j])
+                }
+            }
+        }
         
     }
 }
