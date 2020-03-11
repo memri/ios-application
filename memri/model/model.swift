@@ -166,7 +166,18 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
                 }
             }
         }
-        
+    }
+    
+    /**
+     *
+     */
+    public func match(_ query:String) -> Bool{
+        for (name, value) in self.properties {
+            if self.properties[name] is String {
+                // TODO @koen help!?
+                self.properties[name]
+            }
+        }
     }
 }
 

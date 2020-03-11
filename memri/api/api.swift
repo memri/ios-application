@@ -202,16 +202,21 @@ public class SearchResult: ObservableObject, Decodable {
      */
     public var pages: [Int] = []
     
-    /**
-     * Sets the constants above
-     */
-    public convenience required init(_ query: String, _ options:QueryOptions? = nil) {
+    public convenience required init(_ query: String, _ options:QueryOptions? = nil, _ data:[DataItem]?) {
         self.query = query
+        self.data = data ?? []
+        
         sortProperty = options?.sortProperty
         sortAscending = options?.sortAscending ?? 0
         pageCount = options?.pageCount ?? 0
         
-        connect()
+        if (data != nil) {
+            connect()
+        }
+        else {
+            loading = -1
+            pages = [0]
+        }
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -221,11 +226,17 @@ public class SearchResult: ObservableObject, Decodable {
         data = try decoder.decodeIfPresent("data") ?? data
         sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
         sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
-//        loading = try decoder.decodeIfPresent("loading") ?? loading
+        loading = try decoder.decodeIfPresent("loading") ?? loading
         pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
         pages = try decoder.decodeIfPresent("pageCount") ?? pages
         
-        connect()
+        if (data.isEmpty && loading == 0) {
+            connect()
+        }
+        else {
+            // If the searchResult is initiatlized with data we set the state to loading done
+            loading = -1
+        }
     }
     
     private func connect() -> Bool {
@@ -234,35 +245,57 @@ public class SearchResult: ObservableObject, Decodable {
         // Set state to loading
         loading = 1
         
-        podApi.query(self.query, QueryOptions(sortProperty: self.sortProperty ?? "", sortAscending: self.sortAscending,
-                                              pageIndex: 0, pageCount: self.pageCount), { (error, items) -> Void in
-                                                if (error != nil) {
-                                                    /* TODO: trigger event or so */
-                                                    
-                                                    // Loading error
-                                                    loading = -2
-                                                    
-                                                    return
-                                                }
-                                                
-                                                self.data = items
-                                                
-                                                // First time loading is done
-                                                loading = -1
+        let options = QueryOptions(sortProperty: self.sortProperty ?? "",
+                                   sortAscending: self.sortAscending,
+                                   pageIndex: 0, pageCount: self.pageCount);
+        
+        podApi.query(self.query, options, { (error, items) -> Void in
+            if (error != nil) {
+                /* TODO: trigger event or so */
+                
+                // Loading error
+                loading = -2
+                
+                return
+            }
+            
+            self.data = items
+            
+            // We've successfully loaded page 0
+            pages.append(0);
+            
+            // First time loading is done
+            loading = -1
         })
     }
     
     /**
-     * Client side filter, with a fallback to the server
+     * Client side filter //, with a fallback to the server
      */
-    public func filter(_ query:String) {
+    public func filter(_ query:String) -> SearchResult {
+        let searchResult = SearchResult(self.query, nil, self.data);
         
+        searchResult.sortProperty = self.sortProperty
+        searchResult.sortAscending = self.sortAscending
+        searchResult.loading = self.loading
+        searchResult.pageCount = self.pageCount
+        searchResult.pages = self.pages
+        
+        for i in 0...searchResult.data.count {
+            if (!searchResult.data[i].match(query)) {
+                searchResult.data.remove(at: i)
+            }
+        }
+        
+        return searchResult
     }
+        
     /**
      * Executes the query again
      */
-    public func reload() {
-        
+    public func reload() -> Bool {
+        loading = 0
+        return connect()
     }
     /**
      *
