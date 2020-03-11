@@ -1,0 +1,10 @@
+/* 
+  File.strings
+  memri
+
+  Created by Jess Taylor on 3/11/20.
+  Copyright © 2020 Koen van der Veen. All rights reserved.
+*/
+"application_name" = "memri";
+
+"application_tagline" = "I'm Dutch";
