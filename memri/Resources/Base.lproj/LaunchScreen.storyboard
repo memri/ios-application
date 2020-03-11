@@ -16,30 +16,30 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="memri" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v6N-D4-gnu">
-                                <rect key="frame" x="57" y="397" width="300" height="102"/>
+                                <rect key="frame" x="57" y="349.33333333333331" width="300" height="83.666666666666686"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="1As-Q0-k66"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="85"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="70"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="truely yours" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u7n-nW-pKb">
-                                <rect key="frame" x="57" y="499" width="300" height="43"/>
+                            <label opaque="NO" userInteractionEnabled="NO" alpha="0.5" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="truly yours" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="u7n-nW-pKb">
+                                <rect key="frame" x="57" y="418" width="300" height="31.333333333333314"/>
                                 <constraints>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Kbk-Tm-fIc"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="36"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="26"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
                         <color key="backgroundColor" red="0.4162526131" green="0.65988469120000004" blue="0.31168484689999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="v6N-D4-gnu" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="9gT-dU-KQz"/>
-                            <constraint firstItem="u7n-nW-pKb" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="MtM-7h-8QR"/>
-                            <constraint firstItem="v6N-D4-gnu" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="NB5-Wq-0Y6"/>
-                            <constraint firstItem="u7n-nW-pKb" firstAttribute="top" secondItem="v6N-D4-gnu" secondAttribute="bottom" id="hqO-iv-yeR"/>
+                            <constraint firstItem="u7n-nW-pKb" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="17u-Xe-yg8"/>
+                            <constraint firstItem="v6N-D4-gnu" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="2FR-Pu-P69"/>
+                            <constraint firstItem="v6N-D4-gnu" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" constant="-56.833333333333371" id="7q2-8e-86W"/>
+                            <constraint firstItem="u7n-nW-pKb" firstAttribute="top" secondItem="v6N-D4-gnu" secondAttribute="bottom" constant="-15" id="ylY-I6-Hcg"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -47,7 +47,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-763.768115942029" y="174.10714285714286"/>
+            <point key="canvasLocation" x="-423" y="48"/>
         </scene>
     </scenes>
 </document>

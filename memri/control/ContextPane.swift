@@ -9,8 +9,15 @@
 import SwiftUI
 
 struct ContextPane: View {
+    
+    let name = NSLocalizedString("application_name", comment: "")
+    let tag = NSLocalizedString("application_tagline", comment: "")
+
     var body: some View {
-        Text("Hi, I am the context pane.")
+        VStack {
+            Text("This is the context pane for \(name)")
+            Text("name = \(name) & tag = \(tag)")
+        }
     }
 }
 
