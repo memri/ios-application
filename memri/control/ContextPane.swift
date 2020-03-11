@@ -10,11 +10,13 @@ import SwiftUI
 
 struct ContextPane: View {
     
-    let text = NSLocalizedString("application_name", comment: "")
+    let name = NSLocalizedString("application_name", comment: "")
+    let tag = NSLocalizedString("application_tagline", comment: "")
 
     var body: some View {
         VStack {
-            Text("This is the context pane for \(text)")
+            Text("This is the context pane for \(name)")
+            Text("name = \(name) & tag = \(tag)")
         }
     }
 }
