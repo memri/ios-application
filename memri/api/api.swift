@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import Combine
 
 public struct QueryOptions {
     /**
@@ -9,11 +10,11 @@ public struct QueryOptions {
     /**
      * Name of the property to sort on
      */
-    public var sortAscending: Bool
+    public var sortAscending: Int
 
-    public var pageNr:Int
+    public var pageIndex:Int
 
-    public var pageSize:Int
+    public var pageCount:Int
 }
 
 public class SettingsData {
@@ -62,51 +63,54 @@ public class PodAPI {
     /**
      * Sets the .id property on DataItem
      */
-    public func create(_ item:DataItem, _ callback: (_ error:Error, _ success:Bool) -> Void) -> Void {
+    public func create(_ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("created \(item)")
+        callback(nil, true);
     }
     /**
      *
      */
-    public func get(_ id:String, _ callback: (_ error:Error, _ item:DataItem) -> Void) -> Void {
-        return DataItem.fromUid(uid: id)
+    public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
+        callback(nil, DataItem(id: id, type: "note"))
     }
     /**
      *
      */
-    public func update(_ id:String, _ item:DataItem, _ callback: (_ error:Error, _ success:Bool) -> Void) -> Void {
+    public func update(_ id:String, _ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("updated \(id)")
+        callback(nil, true);
     }
     /**
      *
      */
-    public func remove(_ id:String, _ callback: (_ error:Error, _ success:Bool) -> Void) -> Void {
+    public func remove(_ id:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("removed \(id)")
+        callback(nil, true);
     }
     
     /**
      *
      */
-    public func link(_ id:String, _ id2:String, _ predicate:String, _ callback: (_ error:Error, _ created:Bool) -> Void) -> Void {
+    public func link(_ id:String, _ id2:String, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {
         print("linked \(id) - \(predicate) > \(id2)")
+        callback(nil, true);
     }
-    public func link(_ item:DataItem, _ item2:DataItem, _ predicate:String, _ callback: (_ error:Error, _ created:Bool) -> Void) -> Void {}
+    public func link(_ item:DataItem, _ item2:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {}
     
     /**
      *
      */
-    public func unlink(_ fromId:String, _ toId:String, _ predicate:String, _ callback: (_ error:Error, _ success:Bool) -> Void) -> Void {
+    public func unlink(_ fromId:String, _ toId:String, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("unlinked \(fromId) - \(predicate) > \(toId)")
+        callback(nil, true);
     }
-    public func unlink(_ fromItem:DataItem, _ toItem:DataItem, _ predicate:String, _ callback: (_ error:Error, _ success:Bool) -> Void) -> Void {}
+    public func unlink(_ fromItem:DataItem, _ toItem:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {}
 
     /**
      *
      */
-    public func query(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {
-        var searchResult = SearchResult()
-                
-                searchResult.data = try! DataItem.from_json(file: "test_dataItems")
+    public func query(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
+        let items:[DataItem] = try! DataItem.from_json(file: "test_dataItems")
 
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -115,37 +119,38 @@ public class PodAPI {
         //            searchResult.data = [DataItem("0x0"), DataItem("0x1")]
         //            searchResult.fire(event: "onload")
         //        }
-                return searchResult
+        
+        callback(nil, items);
     }
     /**
      *
      */
-    public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func queryNLP(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      *
      */
-    public func queryDSL(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func queryDSL(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      *
      */
-    public func queryRAW(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    public func queryRAW(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
     /**
      * Returns a read-only SettingsData object.
      */
-    public func getDefaultSettings(_ callback: (_ error:Error, _ result:SettingsData) -> Void) -> Void {}
+    public func getDefaultSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      * Returns a read-write SettingsData object.
      */
-    public func getDeviceSettings(_ callback: (_ error:Error, _ result:SettingsData) -> Void) -> Void {}
+    public func getDeviceSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      * Returns a read-write SettingsData object when admin, otherwise read-only.
      */
-    public func getGroupSettings(_ groupId:String, _ callback: (_ error:Error, _ result:SettingsData) -> Void) -> Void {}
+    public func getGroupSettings(_ groupId:String, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      * Returns a read-write SettingsData object.
      */
-    public func getUserSettings(_ callback: (_ error:Error, _ result:SettingsData) -> Void) -> Void {}
+    public func getUserSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
 //    public func import() -> Void {}
 //    public func export() -> Void {}
@@ -155,5 +160,132 @@ public class PodAPI {
 //    public func augment() -> Void {}
 //    public func automate() -> Void {}
 //
-//    public func streamResource(_ URI:String, _ options:StreamOptions, _ callback: (_ error:Error, _ stream:Stream) -> Void) -> Void {}
+//    public func streamResource(_ URI:String, _ options:StreamOptions, _ callback: (_ error:Error?, _ stream:Stream) -> Void) -> Void {}
+}
+
+public class SearchResult: ObservableObject, Decodable {
+    @EnvironmentObject var podApi: PodAPI
+    
+    /**
+     * Retrieves the query which is used to load data from the pod
+     */
+    var query: String = ""
+    /**
+     * Retrieves the data loaded from the pod
+     */
+    @Published public var data: [DataItem] = []
+    /**
+     * Retrieves the property that is used to sort on
+     */
+    public var sortProperty: String? = ""
+    /**
+     * Retrieves whether the sort direction
+     *   -1 no sorting is applied
+     *    0 sort descending
+     *    1 sort ascending
+     */
+    public var sortAscending: Int = 0
+    /**
+     * Returns the loading state
+     *  -2 loading data failed
+     *  -1 data is loaded from the server
+     *  0 loading complete
+     *  1 loading data from server
+     */
+    public var loading: Int = 0
+    /**
+     * Retrieves the number of items per page
+     */
+    public var pageCount: Int = 0
+    /**
+     *
+     */
+    public var pages: [Int] = []
+    
+    /**
+     * Sets the constants above
+     */
+    public convenience required init(_ query: String, _ options:QueryOptions? = nil) {
+        self.query = query
+        sortProperty = options?.sortProperty
+        sortAscending = options?.sortAscending ?? 0
+        pageCount = options?.pageCount ?? 0
+        
+        connect()
+    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        query = try decoder.decodeIfPresent("query") ?? query
+        data = try decoder.decodeIfPresent("data") ?? data
+        sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
+        sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
+//        loading = try decoder.decodeIfPresent("loading") ?? loading
+        pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
+        pages = try decoder.decodeIfPresent("pageCount") ?? pages
+        
+        connect()
+    }
+    
+    private func connect() -> Bool {
+        if (loading > 0 || query == "") { return false }
+        
+        // Set state to loading
+        loading = 1
+        
+        podApi.query(self.query, QueryOptions(sortProperty: self.sortProperty ?? "", sortAscending: self.sortAscending,
+                                              pageIndex: 0, pageCount: self.pageCount), { (error, items) -> Void in
+                                                if (error != nil) {
+                                                    /* TODO: trigger event or so */
+                                                    
+                                                    // Loading error
+                                                    loading = -2
+                                                    
+                                                    return
+                                                }
+                                                
+                                                self.data = items
+                                                
+                                                // First time loading is done
+                                                loading = -1
+        })
+    }
+    
+    /**
+     * Client side filter, with a fallback to the server
+     */
+    public func filter(_ query:String) {
+        
+    }
+    /**
+     * Executes the query again
+     */
+    public func reload() {
+        
+    }
+    /**
+     *
+     */
+    public func resort(_ options:QueryOptions) {
+        
+    }
+    /**
+     *
+     */
+    public func loadPage(_ pageNr:Int) {
+        
+    }
+    
+    // TODO: change this to use observable
+    func fire(event: String) -> Void{}
+    
+    /**
+     *
+     */
+    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
+        let obj = SearchResult()
+        obj.data = data
+        return obj
+    }
 }
