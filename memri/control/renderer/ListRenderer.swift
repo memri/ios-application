@@ -69,8 +69,7 @@ struct ListRenderer: Renderer {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(dataItem.properties["content"] ?? "")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    }.onTapGesture {
-                        self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                    }.onTapGesture {                    self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
                             rendererName: "richTextEditor"))
                     }
                 }

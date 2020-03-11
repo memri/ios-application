@@ -25,7 +25,7 @@ struct Browser: View {
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
-              default: AnyView(ListRenderer())]
+                  default: AnyView(ListRenderer())]
     }
     
     var body: some View {
@@ -38,7 +38,6 @@ struct Browser: View {
                           maxWidth: .infinity,
                           minHeight: 0, maxHeight: .infinity,
                           alignment: Alignment.topLeading)
-
                 Search()
             }
             .frame(minWidth: 0,

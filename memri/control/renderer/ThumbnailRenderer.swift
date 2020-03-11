@@ -9,9 +9,8 @@
 import SwiftUI
 
 extension Text {
-    func asThumbnail(withMaxWidth maxWidth: CGFloat = 140) -> some View {
-        self
-            .bold()
+    func asThumbnail(withMaxWidth maxWidth: CGFloat = 120) -> some View {
+        self.bold()
             .aspectRatio(contentMode: .fit)
             .frame(maxWidth: maxWidth,
                    maxHeight: maxWidth)
@@ -39,7 +38,9 @@ struct ThumbnailRenderer: View {
             ForEach(0..<chunked(items: self.sessions.currentSession.currentSessionView.searchResult.data, into: 3).count) { index in
                     HStack {
                         ForEach(self.chunked(items: self.sessions.currentSession.currentSessionView.searchResult.data, into: 3)[index]) { dataItem in
-                            Text(dataItem.properties["title"] ?? "default title").asThumbnail()
+                            Text(dataItem.properties["title"] ?? "default title").asThumbnail().onTapGesture {                    self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                                    rendererName: "richTextEditor"))
+                            }
                         }
                     }
                 }
@@ -52,7 +53,7 @@ struct ThumbnailRenderer: View {
             if index % size == 0 && index != 0 {
                 chunkedArray.append(Array(items[(index - size)..<index]))
             } else if(index == items.count) {
-                chunkedArray.append(Array(items[index - 1..<index]))
+                chunkedArray.append(Array(items[index - (index % size)..<index]))
             }
         }
         return chunkedArray

@@ -43,6 +43,15 @@
                                     "title": "fourth example note",
                                     "content": "This is AGAINNNN an example note"
                                 }
+                            },
+                            {
+                                "uid": "0x05",
+                                "type": "note",
+                                "predicates": {},
+                                "properties": {
+                                    "title": "fifth example note",
+                                    "content": "This is AGAINNN an example note"
+                                }
                             }
                         ],
                         "sortProperty": "None",

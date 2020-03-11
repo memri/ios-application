@@ -123,6 +123,7 @@ public class Session: ObservableObject, Decodable  {
         print(currentSessionViewIndex)
         if currentSessionViewIndex == 0 {
             print("returning")
+            self.objectWillChange.send()
             return
         }else{
             currentSessionViewIndex -= 1
