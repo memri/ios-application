@@ -13,7 +13,7 @@ class Application: Event {
     public var currentSession: Session? = nil
 
 //    public let settings: Settings
-    public let sessions: Sessions
+    @ObservedObject public let sessions: Sessions
 //    public let navigationCache: NavigationCache
     
     public var podApi:PodAPI
@@ -50,12 +50,22 @@ class Application: Event {
         // Instantiate view objects
         browserPane = Browser()
         browserPane.environmentObject(sessions)
+        
+        // Hook current session
+        currentSession = sessions.currentSession
+        sessions.objectWillChange.sink { currentSession = sessions.currentSession } // TODO filter to a single property
 
         // Fire ready event
         self.fire("ready")
 
-        // When session are loaded, load the current view in the browser
-        // If there are no pre-existing sessions, load the default view in the browser
+//        // When session are loaded, load the current view in the browser
+//        if !currentSession.views.isEmpty {
+//            browserPane.
+//        }
+//        // If there are no pre-existing sessions, load the default view in the browser
+//        else {
+//            // TODO
+//        }
     }
 
     /**

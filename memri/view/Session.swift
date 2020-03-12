@@ -76,7 +76,7 @@ public class Sessions: ObservableObject, Decodable {
 public class Session: ObservableObject, Decodable  {
     
     @Published var currentSessionViewIndex: Int = 0
-    @Published var sessionViews: [SessionView] = [SessionView()]
+    @Published var view: [SessionView] = [SessionView()]
     
     var cancellables: [AnyCancellable]?=nil
     
@@ -85,22 +85,22 @@ public class Session: ObservableObject, Decodable  {
 //    }
     public var currentSessionView: SessionView {
         if currentSessionViewIndex >= 0 {
-            return sessionViews[currentSessionViewIndex]
+            return view[currentSessionViewIndex]
         } else{
-            return sessionViews[0]
+            return view[0]
         }
     }
     
     init(_ currentSessionViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
         self.currentSessionViewIndex = currentSessionViewIndex
-        self.sessionViews = sessionViews
+        self.view = sessionViews
         self.postInit()
     }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
-        sessionViews = try decoder.decodeIfPresent("sessionViews") ?? sessionViews
+        view = try decoder.decodeIfPresent("sessionViews") ?? view
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
@@ -112,7 +112,7 @@ public class Session: ObservableObject, Decodable  {
     }
     
     public func postInit(){
-        for sessionView in sessionViews{
+        for sessionView in view{
             cancellables?.append(sessionView.objectWillChange.sink { (_) in
                             self.objectWillChange.send()
             })
@@ -148,7 +148,7 @@ public class Session: ObservableObject, Decodable  {
     }
     
     func openView(_ view:SessionView){
-        self.sessionViews = self.sessionViews[0...self.currentSessionViewIndex] +  [view]
+        self.view = self.view[0...self.currentSessionViewIndex] +  [view]
         self.currentSessionViewIndex += 1
         
         cancellables?.append(view.objectWillChange.sink { (_) in

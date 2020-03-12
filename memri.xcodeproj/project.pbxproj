@@ -313,6 +313,7 @@
 				5D1A3E62240704BF00A0583B /* extension */,
 				5D38DE1B2405788700FF9B70 /* api */,
 				5DD1E9B623FD812C007BDF7B /* model */,
+				5D0EBA242403EDF200D9D842 /* Application.swift */,
 				5D599BBA23F2B77500F218A0 /* AppDelegate.swift */,
 				5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */,
 				5D493FDC23FC15D10034692B /* view */,
@@ -369,7 +370,6 @@
 				5D599BBE23F2B77500F218A0 /* Browser.swift */,
 				5DD1E9B223FD7E59007BDF7B /* TopNavigation.swift */,
 				5DD1E9B423FD7EB1007BDF7B /* Search.swift */,
-				5D0EBA242403EDF200D9D842 /* Application.swift */,
 				5D3D9620241675100004040E /* util.swift */,
 				C8630B2B2418609200C36D6F /* ContextPane.swift */,
 			);

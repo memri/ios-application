@@ -27,6 +27,11 @@ struct Browser: View {
                 Search()
             }
     }
+
+    /**
+     * Toggle the UI into edit mode
+     */
+    @State public var editMode: Bool = false
 }
 
 
