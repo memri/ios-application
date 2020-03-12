@@ -21,15 +21,15 @@ class SessionTest: XCTestCase {
 
     func testLoadEmptySessionFromJson() {
         let session =  try! Session.from_json("empty_session")
-        XCTAssert(session.currentSessionView.rendererName == "List")
-        XCTAssert(session.currentSessionView.searchResult.data == [])
+        XCTAssert(session.currentView.rendererName == "List")
+        XCTAssert(session.currentView.searchResult.data == [])
     }
     
     func testLoadEmptySessionsFromJson(){
         // load multiple
         let sessions =  try! Sessions.from_json("empty_sessions")
-        print(sessions.currentSession.currentSessionView.searchResult.data[0].properties)
-        XCTAssert(sessions.currentSession.currentSessionView.searchResult.data.count > 0)
+        print(sessions.currentSession.currentView.searchResult.data[0].properties)
+        XCTAssert(sessions.currentSession.currentView.searchResult.data.count > 0)
     }
     
     

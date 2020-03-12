@@ -12,10 +12,12 @@ import Combine
 
 struct Browser: View {
     @EnvironmentObject var sessions: Sessions
+    @EnvironmentObject var application: Application
+    
     @State var renderername: String = "list"
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
                                         "richTextEditor": AnyView(RichTextRenderer())]
-    var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
+    var currentRenderer: AnyView {               renderers[sessions.currentSession.currentView.rendererName,
               default: AnyView(ListRenderer())]
     }
     

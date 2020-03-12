@@ -75,7 +75,7 @@ public class Sessions: ObservableObject, Decodable {
 
 public class Session: ObservableObject, Decodable  {
     
-    @Published var currentSessionViewIndex: Int = 0
+    @Published var currentViewIndex: Int = 0
     @Published var view: [SessionView] = [SessionView()]
     
     var cancellables: [AnyCancellable]?=nil
@@ -83,23 +83,23 @@ public class Session: ObservableObject, Decodable  {
 //    private enum CodingKeys: String, CodingKey {
 //        case sessionViews, currentSessionViewIndex
 //    }
-    public var currentSessionView: SessionView {
-        if currentSessionViewIndex >= 0 {
-            return view[currentSessionViewIndex]
+    public var currentView: SessionView {
+        if currentViewIndex >= 0 {
+            return view[currentViewIndex]
         } else{
             return view[0]
         }
     }
     
-    init(_ currentSessionViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
-        self.currentSessionViewIndex = currentSessionViewIndex
+    init(_ currentViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
+        self.currentViewIndex = currentViewIndex
         self.view = sessionViews
         self.postInit()
     }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        currentSessionViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentSessionViewIndex
+        currentViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentViewIndex
         view = try decoder.decodeIfPresent("sessionViews") ?? view
     }
     
@@ -120,24 +120,24 @@ public class Session: ObservableObject, Decodable  {
     }
     
     func back(){
-        print(currentSessionViewIndex)
-        if currentSessionViewIndex == 0 {
+        print(currentViewIndex)
+        if currentViewIndex == 0 {
             print("returning")
             return
         }else{
-            currentSessionViewIndex -= 1
+            currentViewIndex -= 1
             self.objectWillChange.send()
         }
-        print(currentSessionViewIndex)
-        print(self.currentSessionView.rendererName)
+        print(currentViewIndex)
+        print(self.currentView.rendererName)
     }
     
     func newDataItem(){
-        let n = self.currentSessionView.searchResult.data.count + 100
+        let n = self.currentView.searchResult.data.count + 100
         let dataItem = DataItem.fromUid(uid: "0x0\(n)")
         
         dataItem.properties=["title": "new note", "content": ""]
-        self.currentSessionView.searchResult.data.append(dataItem)
+        self.currentView.searchResult.data.append(dataItem)
         let sr = SearchResult()
         let sv = SessionView()
         sr.data = [dataItem]
@@ -148,8 +148,8 @@ public class Session: ObservableObject, Decodable  {
     }
     
     func openView(_ view:SessionView){
-        self.view = self.view[0...self.currentSessionViewIndex] +  [view]
-        self.currentSessionViewIndex += 1
+        self.view = self.view[0...self.currentViewIndex] +  [view]
+        self.currentViewIndex += 1
         
         cancellables?.append(view.objectWillChange.sink { (_) in
             self.objectWillChange.send()

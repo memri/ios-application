@@ -28,7 +28,7 @@ struct RichTextRenderer: Renderer {
 
     var body: some View {
         return VStack{
-                RichTextEditor(dataItem: self.sessions.currentSession.currentSessionView.searchResult.data[0])
+                RichTextEditor(dataItem: self.sessions.currentSession.currentView.searchResult.data[0])
         }
     }
 }

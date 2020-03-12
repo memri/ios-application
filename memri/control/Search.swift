@@ -33,6 +33,8 @@ struct ViewTypeButton: Identifiable {
 }
 
 struct Search: View {
+    @EnvironmentObject var application: Application
+    
     @State var searchText=""
     @State var showFilters=false
     @State var sorters = [SortButton(name: "Select property", selected: false),

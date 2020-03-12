@@ -11,6 +11,8 @@ import SwiftUI
 struct TopNavigation: View {
     
     @EnvironmentObject var sessions: Sessions
+    @EnvironmentObject var application: Application
+    
     @State private var show_contextpage: Bool = false
     
     var title: String = ""
@@ -37,7 +39,7 @@ struct TopNavigation: View {
             .padding(.horizontal , 5)
 
             Spacer()
-            Text(sessions.currentSession.currentSessionView.title).font(.headline)
+            Text(sessions.currentSession.currentView.title).font(.headline)
             Spacer()
 
             Button(action: self.sessions.currentSession.newDataItem) {

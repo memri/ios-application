@@ -2,19 +2,38 @@ import Foundation
 import UIKit
 import Combine
 
-public struct QueryOptions {
+public struct QueryOptions: Decodable {
     /**
-     * Name of the property to sort on
+     * Retrieves the query which is used to load data from the pod
      */
-    public var sortProperty: String
+    var query: String = ""
+    
     /**
-     * Name of the property to sort on
+     * Retrieves the property that is used to sort on
      */
-    public var sortAscending: Int
-
-    public var pageIndex:Int
-
-    public var pageCount:Int
+    public var sortProperty: String? = ""
+    /**
+     * Retrieves whether the sort direction
+     *   -1 no sorting is applied
+     *    0 sort descending
+     *    1 sort ascending
+     */
+    public var sortAscending: Int = 0
+    /**
+     * Retrieves the number of items per page
+     */
+    public var pageCount: Int = 0
+    /**
+     *
+     */
+    public var pageIndex: Int = 0
+    
+    public init(from decoder: Decoder) throws {
+        query = try decoder.decodeIfPresent("query") ?? query
+        sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
+        sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
+        pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
+    }
 }
 
 public class SettingsData {

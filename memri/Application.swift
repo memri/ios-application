@@ -1,16 +1,19 @@
+import Foundation
+import Combine 
+
 /**
  * Represents the entire application user interface.
  * One can imagine in the future there being multiple applications,
  * each aimed at a different way to represent the data. For instance
  * an application that is focussed on voice-first instead of gui-first.
  */
-class Application: Event {
+public class Application: Event, ObservableObject {
     public let name: String = "GUI"
 
     /**
      * The current session that is active in the application
      */
-    public var currentSession: Session? = nil
+    @Published public var currentSession: Session? = nil
 
 //    public let settings: Settings
     @ObservedObject public let sessions: Sessions
@@ -50,6 +53,7 @@ class Application: Event {
         // Instantiate view objects
         browserPane = Browser()
         browserPane.environmentObject(sessions)
+        browserPane.environmentObject(self)
         
         // Hook current session
         currentSession = sessions.currentSession
