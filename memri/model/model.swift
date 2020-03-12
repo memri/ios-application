@@ -66,14 +66,14 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     /**
      *
      */
-    public func findPredicateByType(_ type:String) -> [DataItem] {
-        return self.predicates[type]!
+    public func findEntityByPredicate(_ predicate:String) -> [DataItem] {
+        return self.predicates[predicate]!
     }
     
     /**
      *
      */
-    public func findPredicateByTarget(_ item:DataItem) -> [String] {
+    public func findPredicateByEntity(_ item:DataItem) -> [String] {
         var items:[String] = []
         for (name, list) in self.predicates {
             for index in 0...list.count {
@@ -121,17 +121,17 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     /**
      *
      */
-    public func addPredicate(_ name:String, _ item:DataItem) {
+    public func addPredicate(_ name:String, _ entity:DataItem) {
         let list:[DataItem] = self.predicates[name] ?? []
         self.predicates[name] = list
-        self.predicates[name]?.append(item)
+        self.predicates[name]?.append(entity)
     }
     
     /**
      *
      */
-    public func removePredicate(_ name:String, _ item:DataItem) {
-        let index = self.predicates[name]?.firstIndex(of: item) ?? -1
+    public func removePredicate(_ name:String, _ entity:DataItem) {
+        let index = self.predicates[name]?.firstIndex(of: entity) ?? -1
         if (index > 0) { self.predicates[name]?.remove(at: index) }
     }
     
@@ -172,18 +172,22 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
      *
      */
     public func match(_ query:String) -> Bool{
-        for (name, value) in self.properties {
-            if self.properties[name] is String {
-                // TODO @koen help!?
-                self.properties[name]
+        let properties: [String:AnyDecodable] = self.properties
+        for (name, _) in properties {
+            if properties[name]!.value is String {
+                let haystack = (properties[name]!.value as! String)
+
+                if haystack.lowercased().range(of: query) != nil {
+                    return true
+                }
             }
         }
+        
+        return false
     }
 }
 
 public class SearchResult: ObservableObject, Decodable {
-    @EnvironmentObject var podApi: PodAPI
-    
     /**
      * Retrieves the query which is used to load data from the pod
      */
@@ -219,6 +223,10 @@ public class SearchResult: ObservableObject, Decodable {
      *
      */
     public var pages: [Int] = []
+    /**
+     *
+     */
+    private var cache: Cache? = nil
     
     public convenience required init(_ query: String, _ options:QueryOptions? = nil, _ data:[DataItem]?) {
         self.query = query
@@ -267,7 +275,7 @@ public class SearchResult: ObservableObject, Decodable {
                                    sortAscending: self.sortAscending,
                                    pageIndex: 0, pageCount: self.pageCount);
         
-        podApi.query(self.query, options, { (error, items) -> Void in
+        cache?.query(self.query, options, { (error, items) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
                 
@@ -375,9 +383,17 @@ public class Cache {
         self.idCache = idCache
     }
     
-    public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
-    public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
-    public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error, _ result:SearchResult) -> Void) -> Void {}
+    /**
+     * Loads data from the pod. Returns SearchResult.
+     * -> Calls callback twice, once for cache, once for real data [??]
+     */
+    public func query(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error?, _ result:SearchResult) -> Void) -> Void {
+        
+    }
+
+    public func findQueryResult(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error?, _ result:SearchResult) -> Void) -> Void {}
+    public func queryLocal(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error?, _ result:SearchResult) -> Void) -> Void {}
+    public func getById(_ query:String, _ options:QueryOptions, _ callback: (_ error:Error?, _ result:SearchResult) -> Void) -> Void {}
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
     
     public func getByType(type: String) -> SearchResult? {
@@ -389,10 +405,13 @@ public class Cache {
         } else{
             if type != "note" {
                 return nil
-            }else{
-                let result =  self.podAPI.query("notes")
-                self.typeCache[type] = result
-                return result
+            }
+            else{
+                // TODO refactor this
+                let result =  self.podAPI.query("notes", nil) { (error, items) -> Void in
+                    self.typeCache[type].data = items
+//                    return result
+                }
             }
         }
     }

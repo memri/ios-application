@@ -23,8 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let contentView = Application()
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
         
-        let sessions = try! Sessions.from_json("empty_sessions")
-        let contentView = Browser().environmentObject(sessions)
+        let application = Application()
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

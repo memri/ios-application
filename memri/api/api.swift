@@ -91,8 +91,8 @@ public class PodAPI {
     /**
      *
      */
-    public func link(_ id:String, _ id2:String, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {
-        print("linked \(id) - \(predicate) > \(id2)")
+    public func link(_ subjectId:String, _ entityId:String, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {
+        print("linked \(subjectId) - \(predicate) > \(entityId)")
         callback(nil, true);
     }
     public func link(_ item:DataItem, _ item2:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {}
@@ -100,8 +100,8 @@ public class PodAPI {
     /**
      *
      */
-    public func unlink(_ fromId:String, _ toId:String, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
-        print("unlinked \(fromId) - \(predicate) > \(toId)")
+    public func unlink(_ subjectId:String, _ entityId:String, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
+        print("unlinked \(subjectId) - \(predicate) > \(entityId)")
         callback(nil, true);
     }
     public func unlink(_ fromItem:DataItem, _ toItem:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {}
