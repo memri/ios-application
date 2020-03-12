@@ -23,7 +23,11 @@ public class Sessions: ObservableObject, Decodable {
 //    }
     
     var currentSession: Session {
+        if sessions.count > 0{
             return sessions[currentSessionIndex]
+        }else{
+            return Session()
+        }
     }
     
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
