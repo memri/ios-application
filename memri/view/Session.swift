@@ -23,7 +23,11 @@ public class Sessions: ObservableObject, Decodable {
 //    }
     
     var currentSession: Session {
+        if sessions.count > 0{
             return sessions[currentSessionIndex]
+        }else{
+            return Session()
+        }
     }
     
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
@@ -123,6 +127,7 @@ public class Session: ObservableObject, Decodable  {
         print(currentSessionViewIndex)
         if currentSessionViewIndex == 0 {
             print("returning")
+            self.objectWillChange.send()
             return
         }else{
             currentSessionViewIndex -= 1
@@ -130,6 +135,11 @@ public class Session: ObservableObject, Decodable  {
         }
         print(currentSessionViewIndex)
         print(self.currentSessionView.rendererName)
+    }
+    
+    func changeRenderer(rendererName: String){
+        self.currentSessionView.rendererName = rendererName
+        self.objectWillChange.send()
     }
     
     func newDataItem(){
