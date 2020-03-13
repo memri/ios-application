@@ -47,10 +47,11 @@ public class SettingsData {
      */
     public var name: String
     
-    private var data:[String:AnyObject]
+    private var data:[String:AnyObject] = [:]
     
-    public init(_ type:String) {
+    public init(_ type:String, _ name:String) {
         self.type = type
+        self.name = name
     }
 
     /**

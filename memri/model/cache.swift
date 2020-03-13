@@ -46,7 +46,7 @@ public class LocalStorage {
      *
      */
     public func get(_ key:String) -> String {
-        
+        return ""
     }
 }
 
@@ -54,12 +54,11 @@ public class LocalStorage {
 public class Scheduler {
     private var queue: [Task] = []
     private var localStorage: LocalStorage
-    private var cache: Cache
+    public var cache: Cache? = nil
     private var busy: Bool = false
     
-    init(_ local:LocalStorage, _ c:Cache) {
+    init(_ local:LocalStorage) {
         localStorage = local
-        cache = c
         
         // For a future solution: https://stackoverflow.com/questions/46344963/swift-jsondecode-decoding-arrays-fails-if-single-element-decoding-fails
         let decoder = JSONDecoder()
@@ -101,17 +100,17 @@ public class Scheduler {
      *
      */
     public func persist(){
-        localStorage.set("scheduler", serialize()) // TODO this may be increasingly slow and should then be refactored
+        localStorage.set("scheduler", serialize() ?? "") // TODO this may be increasingly slow and should then be refactored
     }
     
     /**
      *
      */
-    public func serialize() -> String {
+    public func serialize() -> String? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // for debugging purpose
 
-        var json:String
+        var json:String? = nil
         do {
             let data = try encoder.encode(queue)
             json = String(data: data, encoding: .utf8) ?? ""
@@ -138,7 +137,7 @@ public class Scheduler {
         busy = true;
 
         // TODO catch
-        try? cache.execute(task) { (error, success) -> Void in
+        try? cache!.execute(task) { (error, success) -> Void in
             queue.remove(at: 0)
             if !success { queue.append(task) } // TODO keep a retry counter to not have stuck jobs ??
             busy = false
@@ -180,7 +179,8 @@ public class Cache {
         
         // Create storage and scheduler objects
         localStorage = LocalStorage()
-        scheduler = Scheduler(localStorage, self)
+        scheduler = Scheduler(localStorage)
+        scheduler.cache = self
     }
     
     /**
