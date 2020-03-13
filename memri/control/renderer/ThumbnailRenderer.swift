@@ -26,7 +26,9 @@ struct ThumbnailRenderer: View {
     var options1: [ActionDescription]=[]
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
-    var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
+//    var renderConfig: RenderConfig=RenderConfig()
+    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: [])
+    )
     
     var cols: Int = 3
 
@@ -38,16 +40,22 @@ struct ThumbnailRenderer: View {
     var body: some View {
         
         QGrid(self.sessions.currentSession.currentSessionView.searchResult.data, columns: 3) { dataItem in
-                Text(dataItem.properties["title"] ?? "default title").asThumbnail()
-                    .onTapGesture {
-                        self.sessions.currentSession.openView(
-                            SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                                                         rendererName: "richTextEditor")
-                        )
+            Text(dataItem.properties["title"] ?? "default title").asThumbnail()
+                .onTapGesture {
+                    self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                    
                 }
         }
     }
     
+    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
+        self.sessions.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
+        
+//    func onTap(dataItem: DataItem){
+//        self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+//        rendererName: "richTextEditor"))
+//    }
+    }
 }
 
 struct ThumbnailRenderer_Previews: PreviewProvider {

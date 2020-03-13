@@ -1,21 +1,73 @@
 import Foundation
 import Combine
 
+//class Description: Decodable{
+//
+//    var actionName: String = ""
+//    var actionArgs: [AnyCodable] = []
+//
+//    public convenience required init(from decoder: Decoder) throws {
+//        self.init()
+//        self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
+//        self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
+//
+//        // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
+//        switch self.actionName{
+//        case "add":
+//            self.actionArgs[0] = AnyCodable(try! DataItem(from: self.actionArgs[0].value))
+//        case "openView":
+//            self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
+//        default:
+//            break
+//        }
+//    }
+//
+//    public class func from_json(_ file: String, ext: String = "json") throws -> Description {
+//        var jsonData = try jsonDataFromFile(file, ext)
+//        let description: Description = try! JSONDecoder().decode(Description.self, from: jsonData)
+//        return description
+//    }
+//
+//
+//}
+
 
 public class ActionDescription: Codable {
-    var icon: String
-    var title: String
-    var actionName: String
-    // TODO: Make serializeble
-//    var actionArgs: [Any]
+    var icon: String = ""
+    var title: String = ""
+    var actionName: String = ""
+    var actionArgs: [AnyCodable] = []
     
-//    init(icon: String, title: String, actionName: String, actionArgs: [Any]){
-    init(icon: String, title: String, actionName: String){
-
-        self.icon=icon
-        self.title=title
-        self.actionName=actionName
-//        self.actionArgs=actionArgs
+    public convenience required init(from decoder: Decoder) throws{
+        self.init()
+        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
+        self.title = try decoder.decodeIfPresent("title") ?? self.title
+        self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
+        self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
+                
+        // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
+        switch self.actionName{
+            case "add":
+                self.actionArgs[0] = AnyCodable(try! DataItem(from: self.actionArgs[0].value))
+            case "openView":
+                self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
+            default:
+                break
+        }
+        }
+    
+    public convenience init(icon: String?=nil, title: String?=nil, actionName: String?=nil, actionArgs: [AnyCodable]?=nil){
+        self.init()
+        self.icon = icon ?? self.icon
+        self.title = title ?? self.title
+        self.actionName = actionName ?? self.actionName
+        self.actionArgs = actionArgs ?? self.actionArgs
+    }
+    
+    public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
+        var jsonData = try jsonDataFromFile(file, ext)
+        let description: ActionDescription = try! JSONDecoder().decode(ActionDescription.self, from: jsonData)
+        return description
     }
 }
 
@@ -34,6 +86,8 @@ public class SessionView: ObservableObject, Decodable{
     var actionItems: [ActionDescription]=[]
     var navigateItems: [ActionDescription]=[]
     var contextButtons: [ActionDescription]=[]
+    var actionButton: ActionDescription?=nil
+    var backButton: ActionDescription?=nil
     var icon: String=""
     var showLabels: Bool=false
     var contextMode: Bool=false
@@ -55,6 +109,8 @@ public class SessionView: ObservableObject, Decodable{
         self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
         self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
         self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
+        self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
+        self.backButton = try decoder.decodeIfPresent("backButton") ?? self.backButton
         self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
         self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
         self.contextMode = try decoder.decodeIfPresent("contextMode") ?? self.contextMode
@@ -67,6 +123,7 @@ public class SessionView: ObservableObject, Decodable{
         let sv = SessionView()
         sv.searchResult = searchResult
         sv.rendererName = rendererName
+        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         return sv
     }
     

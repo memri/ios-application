@@ -66,6 +66,22 @@
                     "selection": [],
                     "renderConfigs": {},
                     "editButtons": [],
+                    "actionButton": {
+                        "icon": "plus",
+                        "title": "Add Note",
+                        "actionName": "add",
+                        "actionArgs": [{
+                            "type": "note",
+                            "predicates": {"owner": "{me}"},
+                            "properties": {"title": "Untitled Note"}
+                        }]
+                    },
+                    "backButton":{
+                        "icon": "chevron.left",
+                        "title": "Back",
+                        "actionName": "back",
+                        "actionArgs": []
+                    },
                     "filterButtons": [],
                     "actionItems": [],
                     "navigateItems": [],

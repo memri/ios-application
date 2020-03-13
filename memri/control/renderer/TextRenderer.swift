@@ -19,7 +19,7 @@ struct RichTextRenderer: Renderer {
     var options1: [ActionDescription]=[]
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
-    var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
+    var renderConfig: RenderConfig=RenderConfig()
 
     func setState(_ state:RenderState) -> Bool {return false}
     func getState() -> RenderState {RenderState()}

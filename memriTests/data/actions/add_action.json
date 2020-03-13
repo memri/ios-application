@@ -1,0 +1,8 @@
+{
+    "actionName": "openView",
+    "actionArgs": [{
+        "type": "note",
+        "predicates": {"owner": "{me}"},
+        "properties": {"title": "Untitled Note"}
+    }]
+}
