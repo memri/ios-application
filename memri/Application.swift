@@ -16,7 +16,7 @@ public class Application: Event, ObservableObject {
     @Published public var currentSession: Session? = nil
 
 //    public let settings: Settings
-    @ObservedObject public let sessions: Sessions
+    public let sessions: Sessions
 //    public let navigationCache: NavigationCache
     
     public var podApi:PodAPI
@@ -53,12 +53,14 @@ public class Application: Event, ObservableObject {
         
         // Instantiate view objects
         browserPane = Browser()
-        browserPane.environmentObject(sessions)
-        browserPane.environmentObject(self)
+        let _ = browserPane.environmentObject(sessions)
+        let _ = browserPane.environmentObject(self)
         
         // Hook current session
         currentSession = sessions.currentSession
-        sessions.objectWillChange.sink { currentSession = sessions.currentSession } // TODO filter to a single property
+        let _ = sessions.objectWillChange.sink {
+            self.currentSession = self.sessions.currentSession // TODO filter to a single property
+        }
 
         // Fire ready event
         self.fire("ready")
@@ -71,6 +73,14 @@ public class Application: Event, ObservableObject {
 //        else {
 //            // TODO
 //        }
+    }
+    
+    public func setCurrentView(){
+        // Load data
+        
+        
+        // Set on sessions
+        
     }
 
     /**
