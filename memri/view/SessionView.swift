@@ -23,7 +23,7 @@ public class ActionDescription: Codable {
 public class SessionView: ObservableObject, Decodable{
 
     @Published public var searchResult: SearchResult = SearchResult()
-    @Published public var title: String = ""
+        @Published public var title: String = ""
     @Published var rendererName: String = "list"
     var name: String = ""
     var subtitle: String = ""
@@ -31,12 +31,12 @@ public class SessionView: ObservableObject, Decodable{
     var renderConfigs: [String: RenderConfig]=[:]
     var editButtons: [ActionDescription]=[]
     var filterButtons: [ActionDescription]=[]
-    var actionItems: [ActionDescription]=[]
-    var navigateItems: [ActionDescription]=[]
-    var contextButtons: [ActionDescription]=[]
+        var actionItems: [ActionDescription]=[]
+        var navigateItems: [ActionDescription]=[]
+        var contextButtons: [ActionDescription]=[]
     var icon: String=""
-    var showLabels: Bool=false
-    var contextMode: Bool=false
+        var showLabels: Bool=false
+        var contextMode: Bool=false
     var filterMode: Bool=false
     var editMode: Bool=false
     var browsingMode: String="default"
