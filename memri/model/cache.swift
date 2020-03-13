@@ -206,14 +206,14 @@ public class Cache {
             }
             
             // Add the searchresult to the cache
-            self.queryCache[query.query] = results // Overwrite past results (even though sorting options etc, may differ ...
+            addToCache(results)
             
             results.data = items
             
             callback(nil, results, cached)
         }
         
-        queryLocalItems(query) { (error, items) in handle(error, items, true) }
+        queryLocal(query) { (error, items) in handle(error, items, true) }
         podAPI.query(query) { (error, items) in handle(error, items, false) }
         
         return results
@@ -222,7 +222,7 @@ public class Cache {
     /**
      *
      */
-    public func queryLocalItems(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
+    public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
         // Search in query cache
         if self.queryCache[query.query] != nil {
             callback(nil, self.queryCache[query.query]!.data)
@@ -232,6 +232,14 @@ public class Cache {
         // Parse query -> query types
         if self.typeCache[query.query] != nil {
             callback(nil, self.typeCache[query.query]!.data)
+            return
+        }
+        
+        // Parse query -> ids
+        if self.idCache[query.query] != nil {
+            var results: [DataItem] = []
+            results.append(self.idCache[query.query]!)
+            callback(nil, results)
             return
         }
         
@@ -288,7 +296,8 @@ public class Cache {
      *
      */
     public func addToCache(_ result:SearchResult) {
-        
+        // Overwrite past results (even though sorting options etc, may differ ...
+        self.queryCache[result.query?.query ?? ""] = result
     }
     
     /**
