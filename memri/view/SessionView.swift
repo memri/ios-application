@@ -1,37 +1,6 @@
 import Foundation
 import Combine
 
-//class Description: Decodable{
-//
-//    var actionName: String = ""
-//    var actionArgs: [AnyCodable] = []
-//
-//    public convenience required init(from decoder: Decoder) throws {
-//        self.init()
-//        self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
-//        self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
-//
-//        // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
-//        switch self.actionName{
-//        case "add":
-//            self.actionArgs[0] = AnyCodable(try! DataItem(from: self.actionArgs[0].value))
-//        case "openView":
-//            self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
-//        default:
-//            break
-//        }
-//    }
-//
-//    public class func from_json(_ file: String, ext: String = "json") throws -> Description {
-//        var jsonData = try jsonDataFromFile(file, ext)
-//        let description: Description = try! JSONDecoder().decode(Description.self, from: jsonData)
-//        return description
-//    }
-//
-//
-//}
-
-
 public class ActionDescription: Codable {
     var icon: String = ""
     var title: String = ""
