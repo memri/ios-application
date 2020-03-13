@@ -81,6 +81,9 @@ public class Scheduler {
      *
      */
     public func add(_ task:Task) {
+        // Don't add the same update to the queue more than once
+        if queue.firstIndex(of: task) ?? -1 > -1 { return }
+        
         queue.append(task)
         persist()
         processQueue()
@@ -147,18 +150,18 @@ public class Scheduler {
 public struct Task: Equatable, Codable {
     var job: String
     var data: [String:String]
-    var id: String = UUID().uuidString
-    
-    public static func == (lt: Task, rt: Task) -> Bool {
-        return lt.id == rt.id
-    }
+//    var id: String = UUID().uuidString
+//
+//    public static func == (lt: Task, rt: Task) -> Bool {
+//        return lt.id == rt.id
+//    }
 }
 
 public class Cache {
     var podAPI: PodAPI
     var queryCache: [String: SearchResult]
     var typeCache: [String: SearchResult]
-    var idCache: [String: SearchResult]
+    var idCache: [String: DataItem]
     
     private var localStorage: LocalStorage
     private var scheduler: Scheduler
@@ -168,7 +171,7 @@ public class Cache {
     }
     
     public init(_ podAPI: PodAPI, queryCache: [String: SearchResult] = [:],
-                typeCache: [String: SearchResult] = [:], idCache: [String: SearchResult] = [:]){
+                typeCache: [String: SearchResult] = [:], idCache: [String: DataItem] = [:]){
         self.podAPI = podAPI
         self.queryCache = queryCache
         self.typeCache = typeCache
@@ -192,6 +195,14 @@ public class Cache {
                 return
             }
             
+            // Add all new data items to the cache
+            try? items.forEach { (item) throws in
+                self.addToCache(item)
+            }
+            
+            // Add the searchresult to the cache
+            self.queryCache[query.query] = results // Overwrite past results (even though sorting options etc, may differ ...
+            
             results.data = items
             
             callback?(nil, results)
@@ -202,31 +213,55 @@ public class Cache {
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
     public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
-    public func getItemById(_ id: String) -> DataItem {}
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
     
-    public func getByType(type: String) -> SearchResult? {
-        let cacheValue = self.typeCache[type]
+    /**
+     *
+     */
+    public func getItemById(_ id: String) -> DataItem? {
+        return self.idCache[id]
+    }
+    
+    /**
+     *
+     */
+    public func getItemByType(type: String) -> SearchResult? {
+        return self.typeCache[type]
+    }
+    
+    /**
+     *
+     */
+    func findCachedResult(query: String) -> SearchResult? {
+        return self.queryCache[query]
+    }
+    
+    /**
+     *
+     */
+    public func addToCache(_ item:DataItem) {
+        if self.idCache[item.id] == nil {
+            self.idCache[item.id] = item
+        }
+        else { return }
+
+        if item.type != "" && self.typeCache[item.type] == nil {
+            self.typeCache[item.type] = SearchResult()
+        }
         
-        if cacheValue != nil {
-            print("using cached result for \(type)")
-            return cacheValue!
-        } else{
-            if type != "note" {
-                return nil
-            }
-            else{
-                // TODO refactor this
-                let result =  self.podAPI.query("notes", nil) { (error, items) -> Void in
-                    self.typeCache[type].data = items
-//                    return result
-                }
-            }
+        self.typeCache[item.type]!.data.append(item) // TODO sort??
+        
+        let _ = item.objectWillChange.sink {
+            if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
+            else { self.onUpdate(item) }
         }
     }
     
-    func findCachedResult(query: String) -> SearchResult? {
-        return self.queryCache[query]
+    /**
+     *
+     */
+    public func addToCache(_ result:SearchResult) {
+        
     }
     
     /**
@@ -259,5 +294,33 @@ public class Cache {
         default:
             throw CacheError.UnknownTaskJob(job: task.job)
         }
+    }
+    
+    private func onCreate(_ item:DataItem) {
+        // Store in local storage
+        
+        // Create a task
+        let task = Task(job: "create", data: ["id": item.id])
+        
+        // Add task to the scheduler
+        scheduler.add(task)
+    }
+    private func onRemove(_ item:DataItem) {
+        // Store in local storage
+        
+        // Create a task
+        let task = Task(job: "delete", data: ["id": item.id])
+        
+        // Add task to the scheduler
+        scheduler.add(task)
+    }
+    private func onUpdate(_ item:DataItem) {
+        // Store in local storage
+        
+        // Create a task
+        let task = Task(job: "update", data: ["id": item.id])
+        
+        // Add task to the scheduler
+        scheduler.add(task)
     }
 }
