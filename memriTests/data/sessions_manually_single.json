@@ -1,0 +1,55 @@
+{
+    "currentSessionIndex": 0,
+    "sessions": [
+        {
+            "currentSessionViewIndex": 0,
+            "sessionViews": [
+                {
+                    "name": "all-notes",
+                    "title": "Notes",
+                    "subtitle": "",
+                    "searchResult": {
+                        "query": "",
+                        "data": [],
+                        "sortProperty": "None",
+                        "sortAscending": 1,
+                        "loading": 0,
+                        "pageCount": 0,
+                    },
+                    "selection": ["0x5"],
+                    "scrollState": 64,
+                    "rendererName": "list",
+                    "renderConfigs": {},
+                    "browsingMode": "default",
+                    "actionItems": [],
+                    "editButtons": [
+                        {
+                            "icon": "add.ico",
+                            "title": "Add Note",
+                            "actionName": "add",
+                            "actionArgs": [{
+                                "type": "note",
+                                "predicates": {"owner": "{me}"},
+                                "properties": {"title": "Untitled Note"}
+                            }]
+                        }
+                    ],
+                    "filterButtons": [
+                        {
+                            "icon": "star.ico",
+                            "title": "Show Starred Notes",
+                            "actionName": "showStarred",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "filter.ico",
+                            "title": "Show Filter Panel",
+                            "actionName": "showFilterPane",
+                            "actionArgs": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
