@@ -16,14 +16,18 @@
                             "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                         }
                     },
-                    "editButtons": [
-                        {
-                            "icon": "edit.ico",
-                            "title": "Edit Note",
-                            "actionName": "editMode",
-                            "actionArgs": []
-                        }
-                    ],
+                    "actionButton": {
+                        "icon": "edit.ico",
+                        "title": "Edit Note",
+                        "actionName": "editMode",
+                        "actionArgs": []
+                    },
+                    "editActionButton": {
+                        "icon": "edit.ico",
+                        "title": "Stop editing Note",
+                        "actionName": "editMode",
+                        "actionArgs": []
+                    },
                     "filterButtons": [
                         {
                             "icon": "timeline.ico",
@@ -152,18 +156,22 @@
                         }
                     },
                     "browsingMode": "default",
-                    "editButtons": [
-                        {
-                            "icon": "add.ico",
-                            "title": "Add Note",
-                            "actionName": "add",
-                            "actionArgs": [{
-                                "type": "note",
-                                "predicates": {"owner": "{me}"},
-                                "properties": {"title": "Untitled Note"}
-                            }]
-                        }
-                    ],
+                    "actionButton": {
+                        "icon": "add.ico",
+                        "title": "Add Note",
+                        "actionName": "add",
+                        "actionArgs": [{
+                            "type": "note",
+                            "predicates": {"owner": "{me}"},
+                            "properties": {"title": "Untitled Note"}
+                        }]
+                    },
+                    "editActionButton": {
+                        "icon": "edit.ico",
+                        "title": "Edit List",
+                        "actionName": "editMode",
+                        "actionArgs": []
+                    },
                     "filterButtons": [
                         {
                             "icon": "star.ico",

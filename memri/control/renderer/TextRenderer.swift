@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 10/03/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import Foundation
