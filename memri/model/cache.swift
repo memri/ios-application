@@ -137,7 +137,7 @@ public class Scheduler {
         busy = true;
 
         // TODO catch
-        try cache.execute(task) { (error, success) -> Void in
+        try? cache.execute(task) { (error, success) -> Void in
             queue.remove(at: 0)
             if !success { queue.append(task) } // TODO keep a retry counter to not have stuck jobs ??
             busy = false
@@ -271,7 +271,7 @@ public class Cache {
         
         switch task.job {
         case "create":
-            let item = self.getItemById(task.data["id"]!)
+            let item = self.getItemById(task.data["id"]!) ?? DataItem()
             podAPI.create(item) { (error, id) -> Void in
                 if error != nil { return callback(error, false) }
                 
@@ -289,7 +289,7 @@ public class Cache {
             fallthrough
         case "update":
             let id = task.data["id"]!
-            let item = self.getItemById(id)
+            let item = self.getItemById(id) ?? DataItem()
             podAPI.update(item, callback)
         default:
             throw CacheError.UnknownTaskJob(job: task.job)

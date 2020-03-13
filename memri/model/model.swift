@@ -235,30 +235,31 @@ public class SearchResult: ObservableObject, Decodable {
         }
     }
     
-    private func loadPage(_ index:Int, _ callback:(_ error:Error?) -> Void?) -> Bool {
+    private func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)?) -> Bool {
         // Set state to loading
         loading = 1
         
-        cache?.query(self.query, { (error, items) -> Void in
+        let _ = cache?.query(self.query!) { (error, result) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
-                
+
                 // Loading error
-                loading = -2
-                
+                self.loading = -2
+
                 return
             }
-            
-            self.data = items
-            
+
+            // TODO this only works when retrieving 1 page. It will break for pagination
+            self.data = result!.data
+
             // We've successfully loaded page 0
-            pages[0] = true;
-            
+            self.pages[0] = true;
+
             // First time loading is done
-            loading = -1
-            
-            calback?(nil)
-        })
+            self.loading = -1
+
+            callback?(nil)
+        }
     }
     
     /**
@@ -287,7 +288,7 @@ public class SearchResult: ObservableObject, Decodable {
     public func reload() -> Bool {
         // Reload all pages
         for (page, _) in pages {
-            loadPage(page)
+            let _ = loadPage(page, { (error) in })
         }
     }
     /**
