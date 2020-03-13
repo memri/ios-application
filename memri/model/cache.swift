@@ -10,28 +10,28 @@ import Foundation
 import Combine
 
 // Stores data remote
-public class RemoteStorage {
-    
-    private var podApi: PodAPI
-    
-    init(_ api:PodAPI) {
-        podApi = api
-    }
-    
-    /**
-     *
-     */
-    public func set(_ key:String, _ value:String) {
-        
-    }
-    
-    /**
-     *
-     */
-    public func get(_ key:String) -> String {
-        
-    }
-}
+//public class RemoteStorage {
+//
+//    private var podApi: PodAPI
+//
+//    init(_ api:PodAPI) {
+//        podApi = api
+//    }
+//
+//    /**
+//     *
+//     */
+//    public func set(_ key:String, _ value:String) {
+//
+//    }
+//
+//    /**
+//     *
+//     */
+//    public func get(_ key:String) -> String {
+//
+//    }
+//}
 
 // Stores data locally
 public class LocalStorage {
@@ -126,6 +126,7 @@ public class Scheduler {
      *
      */
     // TODO add concurrency
+    // TODO time-delay
     public func processQueue(){
         // Already working
         if busy { return }
@@ -186,12 +187,16 @@ public class Cache {
      * Loads data from the pod. Returns SearchResult.
      * -> Calls callback twice, once for cache, once for real data [??]
      */
-    public func query(_ query:QueryOptions, _ callback: ((_ error: Error?, _ result: SearchResult?) -> Void)?) -> SearchResult {
+    public func query(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult?, _ cached:Bool?) -> Void) -> SearchResult {
         let results = SearchResult(query, nil)
         
-        podAPI.query(query, { (error, items) -> Void in
+        var receivedFromServer = false
+        func handle (_ error:Error?, _ items:[DataItem], _ cached:Bool) -> Void {
+            if receivedFromServer { return } 
+            receivedFromServer = !cached
+            
             if (error != nil) {
-                callback?(error, nil)
+                callback(error, nil, nil)
                 return
             }
             
@@ -205,10 +210,32 @@ public class Cache {
             
             results.data = items
             
-            callback?(nil, results)
-        })
+            callback(nil, results, cached)
+        }
+        
+        queryLocalItems(query) { (error, items) in handle(error, items, true) }
+        podAPI.query(query) { (error, items) in handle(error, items, false) }
         
         return results
+    }
+    
+    /**
+     *
+     */
+    public func queryLocalItems(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
+        // Search in query cache
+        if self.queryCache[query.query] != nil {
+            callback(nil, self.queryCache[query.query]!.data)
+            return
+        }
+        
+        // Parse query -> query types
+        if self.typeCache[query.query] != nil {
+            callback(nil, self.typeCache[query.query]!.data)
+            return
+        }
+        
+        callback(nil, [])
     }
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}

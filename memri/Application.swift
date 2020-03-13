@@ -45,8 +45,9 @@ public class Application: Event, ObservableObject {
         
         super.init()
 
-        // Load settings (from cache and/or api)
 //        cache = Cache(<#T##podAPI: PodAPI##PodAPI#>, queryCache: <#T##[String : SearchResult]#>, typeCache: <#T##[String : SearchResult]#>, idCache: <#T##[String : SearchResult]#>)
+        // Load settings (from cache and/or api)
+        
         // Load NavigationCache (from cache and/or api)
         // Load sessions (from cache and/or api)
         
