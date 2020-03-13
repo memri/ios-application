@@ -15,7 +15,7 @@ public class RemoteStorage {
     private var podApi: PodAPI
     
     init(_ api:PodAPI) {
-        podApi = PodAPI
+        podApi = api
     }
     
     /**
@@ -54,17 +54,19 @@ public class LocalStorage {
 public class Scheduler {
     private var queue: [Task] = []
     private var localStorage: LocalStorage
+    private var cache: Cache
     private var busy: Bool = false
     
-    init(_ storage:LocalStorage) {
-        localStorage = storage
-        
-        let json = localStorage.get("scheduler").data(using: .utf8)!
-        let decoder = JSONDecoder()
+    init(_ local:LocalStorage, _ c:Cache) {
+        localStorage = local
+        cache = c
         
         // For a future solution: https://stackoverflow.com/questions/46344963/swift-jsondecode-decoding-arrays-fails-if-single-element-decoding-fails
+        let decoder = JSONDecoder()
         do {
+            let json = localStorage.get("scheduler").data(using: .utf8)!
             queue = try decoder.decode([Task].self, from: json)
+            processQueue()
         } catch {
             print("Unexpected init error: \(error)")
             
@@ -102,7 +104,7 @@ public class Scheduler {
     /**
      *
      */
-    public func serialize() -> String{
+    public func serialize() -> String {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted // for debugging purpose
 
@@ -120,13 +122,6 @@ public class Scheduler {
     /**
      *
      */
-    public func execute(_ task:Task, callback: (_ success:Bool) -> Void) {
-        callback(true);
-    }
-    
-    /**
-     *
-     */
     // TODO add concurrency
     public func processQueue(){
         // Already working
@@ -138,7 +133,8 @@ public class Scheduler {
         let task = queue[0]
         busy = true;
 
-        execute(task) { (success) -> Void in
+        // TODO catch
+        try cache.execute(task) { (error, success) -> Void in
             queue.remove(at: 0)
             if !success { queue.append(task) } // TODO keep a retry counter to not have stuck jobs ??
             busy = false
@@ -151,7 +147,7 @@ public class Scheduler {
 public struct Task: Equatable, Codable {
     var job: String
     var data: [String:String]
-    var id: UUID = UUID()
+    var id: String = UUID().uuidString
     
     public static func == (lt: Task, rt: Task) -> Bool {
         return lt.id == rt.id
@@ -165,8 +161,11 @@ public class Cache {
     var idCache: [String: SearchResult]
     
     private var localStorage: LocalStorage
-    private var remoteStorage: RemoteStorage
     private var scheduler: Scheduler
+    
+    enum CacheError: Error {
+        case UnknownTaskJob(job: String)
+    }
     
     public init(_ podAPI: PodAPI, queryCache: [String: SearchResult] = [:],
                 typeCache: [String: SearchResult] = [:], idCache: [String: SearchResult] = [:]){
@@ -177,40 +176,33 @@ public class Cache {
         
         // Create storage and scheduler objects
         localStorage = LocalStorage()
-        remoteStorage = RemoteStorage(podAPI)
-        scheduler = Scheduler(localStorage)
+        scheduler = Scheduler(localStorage, self)
     }
     
     /**
      * Loads data from the pod. Returns SearchResult.
      * -> Calls callback twice, once for cache, once for real data [??]
      */
-    public func query(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {
-        podAPI.query(self.query, { (error, items) -> Void in
+    public func query(_ query:QueryOptions, _ callback: ((_ error: Error?, _ result: SearchResult?) -> Void)?) -> SearchResult {
+        let results = SearchResult(query, nil)
+        
+        podAPI.query(query, { (error, items) -> Void in
             if (error != nil) {
-                /* TODO: trigger event or so */
-                
-                // Loading error
-                loading = -2
-                
+                callback?(error, nil)
                 return
             }
             
-            self.data = items
+            results.data = items
             
-            // We've successfully loaded page 0
-            pages[0] = true;
-            
-            // First time loading is done
-            loading = -1
-            
-            calback?(nil)
+            callback?(nil, results)
         })
+        
+        return results
     }
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
     public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
-    public func getById(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
+    public func getItemById(_ id: String) -> DataItem {}
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
     
     public func getByType(type: String) -> SearchResult? {
@@ -237,4 +229,35 @@ public class Cache {
         return self.queryCache[query]
     }
     
+    /**
+     *
+     */
+    public func execute(_ task:Task, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
+        
+        switch task.job {
+        case "create":
+            let item = self.getItemById(task.data["id"]!)
+            podAPI.create(item) { (error, id) -> Void in
+                if error != nil { return callback(error, false) }
+                
+                // Set the new id from the server
+                item.setProperty("id", AnyDecodable(id))
+                
+                callback(nil, true)
+            }
+        case "delete":
+            let id = task.data["id"]!
+            podAPI.remove(id) { (error, success) -> Void in
+                callback(error, success)
+            }
+        case "update-property":
+            fallthrough
+        case "update":
+            let id = task.data["id"]!
+            let item = self.getItemById(id)
+            podAPI.update(item, callback)
+        default:
+            throw CacheError.UnknownTaskJob(job: task.job)
+        }
+    }
 }

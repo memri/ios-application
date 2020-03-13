@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
-    private var uid: String? = nil
+    private var uid: String = UUID().uuidString
     public var type: String = ""
     
     @Published public var predicates: [String: [DataItem]] = [:]
@@ -14,10 +14,14 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     }
     
     public var id: String {
-        return self.uid ?? ""
+        return self.uid
     }
     
-    public convenience required init(id:String? = nil, type:String) {
+    enum DataItemError: Error {
+        case cannotMergeItemWithDifferentId
+    }
+    
+    public convenience required init(id:String=UUID().uuidString, type:String) {
         self.init()
         self.uid = id
         self.type = type
@@ -133,10 +137,6 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
     public func removePredicate(_ name:String, _ entity:DataItem) {
         let index = self.predicates[name]?.firstIndex(of: entity) ?? -1
         if (index > 0) { self.predicates[name]?.remove(at: index) }
-    }
-    
-    enum DataItemError: Error {
-        case cannotMergeItemWithDifferentId
     }
     
     /**

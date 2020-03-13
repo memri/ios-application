@@ -82,9 +82,9 @@ public class PodAPI {
     /**
      * Sets the .id property on DataItem
      */
-    public func create(_ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
+    public func create(_ item:DataItem, _ callback: (_ error:Error?, _ id:String) -> Void) -> Void {
         print("created \(item)")
-        callback(nil, true);
+        callback(nil, "0x00");
     }
     /**
      *
@@ -95,8 +95,8 @@ public class PodAPI {
     /**
      *
      */
-    public func update(_ id:String, _ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
-        print("updated \(id)")
+    public func update(_ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
+        print("updated \(item.id)")
         callback(nil, true);
     }
     /**
@@ -128,7 +128,7 @@ public class PodAPI {
     /**
      *
      */
-    public func query(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
+    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
         let items:[DataItem] = try! DataItem.from_json(file: "test_dataItems")
 
         //        // this simulates async call
@@ -144,15 +144,15 @@ public class PodAPI {
     /**
      *
      */
-    public func queryNLP(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      *
      */
-    public func queryDSL(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
     /**
      *
      */
-    public func queryRAW(_ query:String, _ options:QueryOptions?, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryRAW(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
     /**
      * Returns a read-only SettingsData object.
