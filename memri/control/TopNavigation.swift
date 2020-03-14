@@ -52,7 +52,7 @@ struct TopNavigation: View {
             }) {
                 Image(systemName: "ellipsis")
             }.sheet(isPresented: self.$show_contextpage) {
-                ContextPane()
+                ContextPane(sessions: self.sessions)
             }
                 
             .padding(.horizontal , 5)

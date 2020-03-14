@@ -8,3 +8,7 @@
 "application_name" = "d-memri";
 
 "application_tagline" = "d-I'm Dutch";
+
+"actionLabel" = "ACTIONS";
+"navigateLabel" = "NAVIGATE";
+"labelsLabel" = "LABELS";
