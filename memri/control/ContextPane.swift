@@ -10,11 +10,12 @@ import SwiftUI
 
 struct ContextPane: View {
     
-    let lineDividerLineWidth: CGFloat = 1.5
+    let horizontalLineWidth: CGFloat = 1.5
+    var horizontalLine = HorizontalLine()
     var currentSessionView: SessionView?
 
     init(sessions: Sessions) {
-        self.currentSessionView = sessions.currentSession.currentSessionView
+       self.currentSessionView = sessions.currentSession.currentSessionView
     }
     
     var title: String?
@@ -26,7 +27,7 @@ struct ContextPane: View {
     let actionLabel = NSLocalizedString("actionLabel", comment: "")
     let navigateLabel = NSLocalizedString("navigateLabel", comment: "")
     let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
-
+    
     var body: some View {
         VStack (/*alignment: .leading*/){
             VStack {
@@ -35,15 +36,15 @@ struct ContextPane: View {
                     .fontWeight(.bold)
                 Text("\(self.currentSessionView?.subtitle ?? "")")
                     .font(.body)
-                LineDivider()
-                    .stroke(Color.gray, lineWidth: lineDividerLineWidth)
-                    .frame(height: lineDividerFrameHeight)
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
             }
             VStack {
                 Text("some stuff to add later ...")
-                LineDivider()
-                    .stroke(Color.gray, lineWidth: lineDividerLineWidth)
-                    .frame(height: lineDividerFrameHeight)
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
             }
             VStack {
                 HStack {
@@ -52,9 +53,9 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                LineDivider()
-                    .stroke(Color.gray, lineWidth: lineDividerLineWidth)
-                    .frame(height: lineDividerFrameHeight)
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
             }
             VStack {
                 HStack {
@@ -63,9 +64,9 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                LineDivider()
-                    .stroke(Color.gray, lineWidth: lineDividerLineWidth)
-                    .frame(height: lineDividerFrameHeight)
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
             }
             VStack {
                 HStack {
