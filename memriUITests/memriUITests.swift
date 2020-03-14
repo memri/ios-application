@@ -3,7 +3,7 @@
 //  memriUITests
 //
 //  Created by Koen van der Veen on 11/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import XCTest

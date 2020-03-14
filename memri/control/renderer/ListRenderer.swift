@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 10/03/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import Foundation
@@ -60,20 +60,17 @@ struct ListRenderer: Renderer {
     @EnvironmentObject var sessions: Sessions
     
     var body: some View {
-        return VStack{
-            List{
-                ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
+        return VStack {                     ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
                     VStack{
-                        Text(dataItem.properties["title"]!)
+                        Text(dataItem.properties["title"] ?? "")
                             .bold()
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(dataItem.properties["content"]!)
+                        Text(dataItem.properties["content"] ?? "")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    }.onTapGesture {
-                        self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                    }.onTapGesture {                    self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
                             rendererName: "richTextEditor"))
-                    }
-                }
+                    }.padding(.horizontal, 10)
+                     .padding(.vertical, 7)
             }
         }
     }
