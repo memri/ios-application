@@ -7,3 +7,8 @@
 */
 "application_name" = "memri";
 "application_tagline" = "truly yours";
+
+"actionLabel" = "ACTIONS";
+"navigateLabel" = "NAVIGATE";
+"labelsLabel" = "LABELS";
+

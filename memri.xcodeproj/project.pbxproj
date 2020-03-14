@@ -319,6 +319,7 @@
 				5D38DE1B2405788700FF9B70 /* api */,
 				5DD1E9B623FD812C007BDF7B /* model */,
 				5D493FDC23FC15D10034692B /* view */,
+				C818E60B241C3D640051E653 /* Utilities */,
 				5D599BC223F2B77700F218A0 /* Preview Content */,
 				C8A6F7332419907D00FF8183 /* Resources */,
 				5D599BBA23F2B77500F218A0 /* AppDelegate.swift */,
@@ -378,6 +379,21 @@
 				C8630B2B2418609200C36D6F /* ContextPane.swift */,
 			);
 			path = control;
+			sourceTree = "<group>";
+		};
+		C818E60B241C3D640051E653 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				C818E60C241C3D790051E653 /* Drawing */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		C818E60C241C3D790051E653 /* Drawing */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Drawing;
 			sourceTree = "<group>";
 		};
 		C8A6F7332419907D00FF8183 /* Resources */ = {
