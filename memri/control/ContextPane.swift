@@ -8,20 +8,9 @@
 
 import SwiftUI
 
-struct LineDivider: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0.0, y: 0.0))
-        path.addLine(to: CGPoint(x: rect.width, y: 0))
-        return path
-    }
-}
-
-let lineDividerLineWidth: CGFloat = 1.5
-let lineDividerFrameHeight: CGFloat = 5.0
-
 struct ContextPane: View {
     
+    let lineDividerLineWidth: CGFloat = 1.5
     var currentSessionView: SessionView?
 
     init(sessions: Sessions) {

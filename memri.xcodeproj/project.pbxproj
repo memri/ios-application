@@ -62,6 +62,7 @@
 		5DF96DCE2417AA2B0051EA45 /* ListRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCD2417AA2B0051EA45 /* ListRenderer.swift */; };
 		5DF96DD02417AABB0051EA45 /* TextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */; };
 		5DFB0CBF24179FA6002FBDE7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB0CBE24179FA6002FBDE7 /* Session.swift */; };
+		C818E610241D365F0051E653 /* PShapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* PShapes.swift */; };
 		C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8630B2B2418609200C36D6F /* ContextPane.swift */; };
 		C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8A6F73B241993AD00FF8183 /* Localizable.strings */; };
 /* End PBXBuildFile section */
@@ -147,6 +148,7 @@
 		5DF96DCD2417AA2B0051EA45 /* ListRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRenderer.swift; sourceTree = "<group>"; };
 		5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRenderer.swift; sourceTree = "<group>"; };
 		5DFB0CBE24179FA6002FBDE7 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
+		C818E60F241D365F0051E653 /* PShapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PShapes.swift; sourceTree = "<group>"; };
 		C8630B2B2418609200C36D6F /* ContextPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPane.swift; sourceTree = "<group>"; };
 		C8A6F7342419926600FF8183 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C8A6F736241992ED00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
@@ -392,6 +394,7 @@
 		C818E60C241C3D790051E653 /* Drawing */ = {
 			isa = PBXGroup;
 			children = (
+				C818E60F241D365F0051E653 /* PShapes.swift */,
 			);
 			path = Drawing;
 			sourceTree = "<group>";
@@ -571,6 +574,7 @@
 				5D0EBA2924040D6300D9D842 /* Browser_v1.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
+				C818E610241D365F0051E653 /* PShapes.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				5DF96DCE2417AA2B0051EA45 /* ListRenderer.swift in Sources */,
 				5D38DE152405776300FF9B70 /* control.swift in Sources */,
