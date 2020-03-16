@@ -9,14 +9,6 @@
 import XCTest
 @testable import memri
 
-protocol Param: Decodable {}
-
-extension Int: Param {}
-extension String: Param {}
-
-
-
-
 class ViewTest: XCTestCase {
 
     override func setUp() {
@@ -30,18 +22,6 @@ class ViewTest: XCTestCase {
     func testLoadSessionViewFromJson() {
         let sessionView =  try! SessionView.from_json("empty_sessionview")
         XCTAssert(sessionView.title == "testtitle")
-    }
-    
-    func testLoadActionFromJson(){
-        var sessions = try! Sessions.from_json("empty_sessions")
-        
-        let backDescription = try! ActionDescription.from_json("back_action")
-        let addDescription = try! ActionDescription.from_json("add_action")
-        let openViewDescription = try! ActionDescription.from_json("openview_action")
-        
-        sessions.currentSession.executeAction(action: backDescription)
-        sessions.currentSession.executeAction(action: addDescription)
-        sessions.currentSession.executeAction(action: openViewDescription)
     }
 
     func testPerformanceExample() {

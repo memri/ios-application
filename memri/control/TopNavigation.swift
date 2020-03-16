@@ -28,26 +28,23 @@ struct TopNavigation: View {
                     .font(Font.system(size: 20, weight: .medium))
             }
             .padding(.horizontal , 5)
-            
-            if self.sessions.currentSession.currentSessionView.backButton != nil {
-                Button(action: backButtonAction ) {
-                    Image(systemName: self.sessions.currentSession.currentSessionView.backButton!.icon)
-                    .foregroundColor(.gray)
-                }
+
+            Button(action: sessions.currentSession.back ) {
+                Image(systemName: "chevron.left")
+                .foregroundColor(.gray)
+
             }
+            .padding(.horizontal , 5)
 
             Spacer()
             Text(sessions.currentSession.currentSessionView.title).font(.headline)
             Spacer()
-            
-            if self.sessions.currentSession.currentSessionView.actionButton != nil {
-                Button(action: actionButtonAction) {
-                    Image(systemName: self.sessions.currentSession.currentSessionView.actionButton!.icon)
-                }
-                .padding(.horizontal , 5)
-                .foregroundColor(.green)
+
+            Button(action: self.sessions.currentSession.newDataItem) {
+                Image(systemName: "plus")
             }
-            
+            .padding(.horizontal , 5)
+            .foregroundColor(.green)
 
             Button(action: {
                 print("render contextpane")
@@ -57,16 +54,12 @@ struct TopNavigation: View {
             }.sheet(isPresented: self.$show_contextpage) {
                 ContextPane()
             }
+                
             .padding(.horizontal , 5)
             .foregroundColor(.gray)
-        }.padding(.all, 30)
-    }
-    func actionButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.actionButton)
-    }
-    
-    func backButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.backButton)
+
+        }
+        .padding(.all, 30)
     }
 }
 
