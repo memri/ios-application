@@ -2,7 +2,6 @@ memri.xcodeproj/project.xcworkspace/xcuserdata/*
 .DS_Store
 memri.xcodeproj/xcuserdata/
 xcuserdata
-memri.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 
 #########################
 # .gitignore file for Xcode4 and Xcode5 Source projects
