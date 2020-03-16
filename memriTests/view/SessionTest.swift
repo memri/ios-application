@@ -30,6 +30,7 @@ class SessionTest: XCTestCase {
         let sessions =  try! Sessions.from_json("empty_sessions")
         print(sessions.currentSession.currentSessionView.searchResult.data[0].properties)
         XCTAssert(sessions.currentSession.currentSessionView.searchResult.data.count > 0)
+        XCTAssert(sessions.currentSession.currentSessionView.actionButton!.actionName == "add")
     }
     
     

@@ -1,6 +1,18 @@
 import Foundation
 
-public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
+protocol PropertyReflectable { }
+
+extension PropertyReflectable {
+    subscript(key: String) -> Any? {
+        let m = Mirror(reflecting: self)
+        for child in m.children {
+            if child.label == key { return child.value }
+        }
+        return nil
+    }
+}
+
+public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
     
     public var uid: String = ""
     public var type: String = ""
