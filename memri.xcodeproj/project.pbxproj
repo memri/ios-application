@@ -46,8 +46,8 @@
 		5DC1692A24093E7000367905 /* sessions_manually_expanded.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692524093BD300367905 /* sessions_manually_expanded.json */; };
 		5DC1692C2409453200367905 /* empty_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692B2409453200367905 /* empty_sessions.json */; };
 		5DC1692D240945D200367905 /* empty_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692B2409453200367905 /* empty_sessions.json */; };
-		5DD17B5A241252D90018A8F1 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* test.json */; };
-		5DD17B5B241252D90018A8F1 /* test.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* test.json */; };
+		5DD17B5A241252D90018A8F1 /* add_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* add_action.json */; };
+		5DD17B5B241252D90018A8F1 /* add_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* add_action.json */; };
 		5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
 		5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
 		5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 5DD17B60241293010018A8F1 /* AnyCodable */; };
@@ -61,6 +61,12 @@
 		5DD1E9B823FD814E007BDF7B /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD1E9B723FD814E007BDF7B /* Note.swift */; };
 		5DD1E9BA23FD81C5007BDF7B /* Renderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD1E9B923FD81C5007BDF7B /* Renderer.swift */; };
 		5DD28B772417BAF900CE9F6A /* ThumbnailRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD28B762417BAF900CE9F6A /* ThumbnailRenderer.swift */; };
+		5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A66241BC92E003ABA63 /* openview_action.json */; };
+		5DE95A68241BC92E003ABA63 /* openview_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A66241BC92E003ABA63 /* openview_action.json */; };
+		5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE95A69241BC954003ABA63 /* DecodableDict.swift */; };
+		5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE95A69241BC954003ABA63 /* DecodableDict.swift */; };
+		5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A6C241BCD34003ABA63 /* back_action.json */; };
+		5DE95A6E241BCD34003ABA63 /* back_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A6C241BCD34003ABA63 /* back_action.json */; };
 		5DF96DCE2417AA2B0051EA45 /* ListRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCD2417AA2B0051EA45 /* ListRenderer.swift */; };
 		5DF96DD02417AABB0051EA45 /* TextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */; };
 		5DFB0CBF24179FA6002FBDE7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB0CBE24179FA6002FBDE7 /* Session.swift */; };
@@ -138,7 +144,7 @@
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
-		5DD17B59241252D90018A8F1 /* test.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = test.json; sourceTree = "<group>"; };
+		5DD17B59241252D90018A8F1 /* add_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = add_action.json; sourceTree = "<group>"; };
 		5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCodingKeys.swift; sourceTree = "<group>"; };
 		5DD17B67241294CC0018A8F1 /* AnyCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyCodable.swift; sourceTree = "<group>"; };
 		5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyDecodable.swift; sourceTree = "<group>"; };
@@ -148,6 +154,9 @@
 		5DD1E9B723FD814E007BDF7B /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		5DD1E9B923FD81C5007BDF7B /* Renderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderer.swift; sourceTree = "<group>"; };
 		5DD28B762417BAF900CE9F6A /* ThumbnailRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailRenderer.swift; sourceTree = "<group>"; };
+		5DE95A66241BC92E003ABA63 /* openview_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = openview_action.json; sourceTree = "<group>"; };
+		5DE95A69241BC954003ABA63 /* DecodableDict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodableDict.swift; sourceTree = "<group>"; };
+		5DE95A6C241BCD34003ABA63 /* back_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = back_action.json; sourceTree = "<group>"; };
 		5DF96DCD2417AA2B0051EA45 /* ListRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRenderer.swift; sourceTree = "<group>"; };
 		5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextRenderer.swift; sourceTree = "<group>"; };
 		5DFB0CBE24179FA6002FBDE7 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
@@ -189,11 +198,11 @@
 		5D0A28BC2406834700398B17 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5DE95A6F241BD60B003ABA63 /* actions */,
 				5DC1692524093BD300367905 /* sessions_manually_expanded.json */,
 				5DC1692624093C3900367905 /* sessions_manually_single.json */,
 				5D1A3E6C2408099900A0583B /* empty_session.json */,
 				5D1A3E652408035A00A0583B /* empty_sessionview.json */,
-				5DD17B59241252D90018A8F1 /* test.json */,
 				5DC1692B2409453200367905 /* empty_sessions.json */,
 				5D0A28B7240677EE00398B17 /* test_dataItems.json */,
 			);
@@ -271,6 +280,7 @@
 				5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */,
 				5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */,
 				5D3D961E24164B240004040E /* CodeExtended.swift */,
+				5DE95A69241BC954003ABA63 /* DecodableDict.swift */,
 			);
 			path = codable;
 			sourceTree = "<group>";
@@ -372,6 +382,16 @@
 				5D38DE162405776B00FF9B70 /* model.swift */,
 			);
 			path = model;
+			sourceTree = "<group>";
+		};
+		5DE95A6F241BD60B003ABA63 /* actions */ = {
+			isa = PBXGroup;
+			children = (
+				5DD17B59241252D90018A8F1 /* add_action.json */,
+				5DE95A66241BC92E003ABA63 /* openview_action.json */,
+				5DE95A6C241BCD34003ABA63 /* back_action.json */,
+			);
+			path = actions;
 			sourceTree = "<group>";
 		};
 		5DFB0CB824179DFC002FBDE7 /* control */ = {
@@ -531,6 +551,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
 				5DC1692A24093E7000367905 /* sessions_manually_expanded.json in Resources */,
 				5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */,
 				5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */,
@@ -539,7 +560,8 @@
 				5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
-				5DD17B5A241252D90018A8F1 /* test.json in Resources */,
+				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
+				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
 				5D599BC123F2B77700F218A0 /* Assets.xcassets in Resources */,
 				5DC1692D240945D200367905 /* empty_sessions.json in Resources */,
 			);
@@ -551,10 +573,12 @@
 			files = (
 				5D1A3E6D24080BD800A0583B /* empty_session.json in Resources */,
 				5DC1692924093E7000367905 /* sessions_manually_expanded.json in Resources */,
+				5DE95A6E241BCD34003ABA63 /* back_action.json in Resources */,
 				5D0A28BB24067E8000398B17 /* test_dataItems.json in Resources */,
 				5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */,
+				5DE95A68241BC92E003ABA63 /* openview_action.json in Resources */,
 				5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */,
-				5DD17B5B241252D90018A8F1 /* test.json in Resources */,
+				5DD17B5B241252D90018A8F1 /* add_action.json in Resources */,
 				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -602,6 +626,7 @@
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,
 				5D0EBA272404036600D9D842 /* Renderer_v1.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
+				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
 				5D2934F023FEA1CD0073E25F /* DataStore.swift in Sources */,
 			);
@@ -613,6 +638,7 @@
 			files = (
 				5D1A3E69240807C100A0583B /* SessionTest.swift in Sources */,
 				5D0A28B9240678EE00398B17 /* ModelTest.swift in Sources */,
+				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,

@@ -87,6 +87,10 @@ public class Session: ObservableObject, Decodable  {
 //    private enum CodingKeys: String, CodingKey {
 //        case sessionViews, currentSessionViewIndex
 //    }
+    
+//    var actions: [String: ]
+    
+    
     public var currentSessionView: SessionView {
         if currentSessionViewIndex >= 0 {
             return sessionViews[currentSessionViewIndex]
@@ -123,6 +127,34 @@ public class Session: ObservableObject, Decodable  {
         }
     }
     
+    func executeAction(action: ActionDescription?, dataItem: DataItem? = nil){
+        if let action = action{
+            let params = action.actionArgs
+            
+            switch action.actionName {
+            case "back":
+                back()
+            case "add":
+                let param0 = params[0].value as! DataItem
+                add(dataItem: param0)
+            case "openView":
+                if let dataItem = dataItem{
+                    openView(dataItem)
+                }else{
+                    let param0 = params[0].value as! SessionView
+                    openView(param0)
+                }
+
+            case "exampleUnpack":
+                let (_, _) = (params[0].value, params[1].value) as! (String, Int)
+                break
+            default:
+                print("UNDEFINED ACTION, NOT EXECUTING")
+            }
+        }
+    }
+    
+    
     func back(){
         print(currentSessionViewIndex)
         if currentSessionViewIndex == 0 {
@@ -142,11 +174,14 @@ public class Session: ObservableObject, Decodable  {
         self.objectWillChange.send()
     }
     
-    func newDataItem(){
-        let n = self.currentSessionView.searchResult.data.count + 100
-        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+    func add(dataItem: DataItem){
         
-        dataItem.properties=["title": "new note", "content": ""]
+//        let n = self.currentSessionView.searchResult.data.count + 100
+//        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+//
+//        dataItem.properties=["title": "new note", "content": ""]
+        
+        
         self.currentSessionView.searchResult.data.append(dataItem)
         let sr = SearchResult()
         let sv = SessionView()
@@ -154,6 +189,7 @@ public class Session: ObservableObject, Decodable  {
         sv.searchResult=sr
         sv.rendererName = "richTextEditor"
         sv.title="new note"
+        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         self.openView(sv)
     }
     
@@ -164,8 +200,17 @@ public class Session: ObservableObject, Decodable  {
         cancellables?.append(view.objectWillChange.sink { (_) in
             self.objectWillChange.send()
         })
+    }
+    func openView(_ dataItem:DataItem){
+        var view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                rendererName: "richTextEditor")
+    
+        self.sessionViews = self.sessionViews[0...self.currentSessionViewIndex] +  [view]
+        self.currentSessionViewIndex += 1
         
-        
+        cancellables?.append(view.objectWillChange.sink { (_) in
+            self.objectWillChange.send()
+        })
     }
     
 }

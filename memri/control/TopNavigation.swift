@@ -28,23 +28,26 @@ struct TopNavigation: View {
                     .font(Font.system(size: 20, weight: .medium))
             }
             .padding(.horizontal , 5)
-
-            Button(action: sessions.currentSession.back ) {
-                Image(systemName: "chevron.left")
-                .foregroundColor(.gray)
-
+            
+            if self.sessions.currentSession.currentSessionView.backButton != nil {
+                Button(action: backButtonAction ) {
+                    Image(systemName: self.sessions.currentSession.currentSessionView.backButton!.icon)
+                    .foregroundColor(.gray)
+                }
             }
-            .padding(.horizontal , 5)
 
             Spacer()
             Text(sessions.currentSession.currentSessionView.title).font(.headline)
             Spacer()
-
-            Button(action: self.sessions.currentSession.newDataItem) {
-                Image(systemName: "plus")
+            
+            if self.sessions.currentSession.currentSessionView.actionButton != nil {
+                Button(action: actionButtonAction) {
+                    Image(systemName: self.sessions.currentSession.currentSessionView.actionButton!.icon)
+                }
+                .padding(.horizontal , 5)
+                .foregroundColor(.green)
             }
-            .padding(.horizontal , 5)
-            .foregroundColor(.green)
+            
 
             Button(action: {
                 print("render contextpane")
@@ -54,12 +57,16 @@ struct TopNavigation: View {
             }.sheet(isPresented: self.$show_contextpage) {
                 ContextPane(sessions: self.sessions)
             }
-                
             .padding(.horizontal , 5)
             .foregroundColor(.gray)
-
-        }
-        .padding(.all, 30)
+        }.padding(.all, 30)
+    }
+    func actionButtonAction(){
+        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.actionButton)
+    }
+    
+    func backButtonAction(){
+        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.backButton)
     }
 }
 

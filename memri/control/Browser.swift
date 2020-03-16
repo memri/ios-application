@@ -12,9 +12,9 @@ import Combine
 extension View {
     func fullHeight() -> some View {
         self.frame(minWidth: 0,
-               maxWidth: .infinity,
-               minHeight: 0, maxHeight: .infinity,
-               alignment: Alignment.topLeading)
+                   maxWidth: .infinity,
+                   minHeight: 0, maxHeight: .infinity,
+                   alignment: Alignment.topLeading)
     }
 }
 
@@ -23,7 +23,8 @@ struct Browser: View {
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
-    var currentRenderer: AnyView {               renderers[sessions.currentSession.currentSessionView.rendererName,
+    
+    var currentRenderer: AnyView { renderers[sessions.currentSession.currentSessionView.rendererName,
                   default: AnyView(ThumbnailRenderer())]
     }
     
@@ -35,10 +36,8 @@ struct Browser: View {
                           default: AnyView(ListRenderer())].fullHeight()
                 Search()
                 }.fullHeight()
-
     }
 }
-
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
