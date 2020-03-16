@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 11/02/2020.
-//  Copyright © 2020 memri. All rights reserved.
+//  Copyright © 2020 Koen van der Veen. All rights reserved.
 //
 
 import UIKit
@@ -20,11 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-//        let contentView = Application()
-//            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
-        
-        let sessions = try! Sessions.from_json("empty_sessions")
-        let contentView = Browser().environmentObject(sessions)
+        let contentView = ContentView()
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

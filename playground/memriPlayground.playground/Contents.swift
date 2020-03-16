@@ -3,137 +3,99 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-//protocol DefaultingCodingKey: CodingKey, Hashable {
-//    static var defaults: [Self: Any] { get }
-//}
-//
-//extension KeyedDecodingContainer where Key: DefaultingCodingKey {
-//
-//    func decode(_ type: String.Type, forKey key: Key) throws -> String {
-//        print("DEF")
-//        if let t = try self.decodeIfPresent(type, forKey: key) {
-//            return t
-//        } else {
-//            return Swift.type(of: key).defaults[key] as! String
-//        }
-//    }
-//
-//    func decode(_ type: String.Type, forKey key: Key) throws -> String? {
-//        print("DEF")
-//
-//        if let t = try self.decodeIfPresent(type, forKey: key) {
-//            return t
-//        } else {
-//            return Swift.type(of: key).defaults[key] as! String
-//        }
-//    }
-//
-//
-//    func decode<T: Codable>(_ type: T.Type, forKey key: Key) throws -> T {
-//        if let t = try self.decodeIfPresent(type, forKey: key) {
-//            return t
-//        } else {
-//            print(type)
-//            print(key)
-//            print(Swift.type(of: key))
-//            print(self.allKeys)
-//            print
-//            return Swift.type(of: key).defaults[key] as! T
-//        }
-//    }
-//
-//
-//
-//    func decode<T: Codable>(_ type: T.Type, forKey key: Key) throws -> T? {
-//        if let t = try self.decodeIfPresent(type, forKey: key) {
-//            return t
-//        } else {
-//            print(type)
-//            print(key)
-//            print(Swift.type(of: key))
-//            print(self.allKeys)
-//            print
-//            return Swift.type(of: key).defaults[key] as! T
-//        }
-//    }
-//
-//}
-//
-//extension KeyedEncodingContainer where Key: DefaultingCodingKey {
-//
-//    mutating func encode(_ value: String, forKey key: Key) throws {
-//        guard value != type(of: key).defaults[key] as! String else { return }
-//        try self.encodeIfPresent(value, forKey: key)
-//    }
-//
-//    mutating func encode<T: Encodable & Equatable>(_ value: [T], forKey key: Key) throws {
-//        guard value != type(of: key).defaults[key] as! [T] else { return }
-//        try self.encodeIfPresent(value, forKey: key)
-//    }
-//
-//    mutating func encode<T: Encodable & Equatable>(_ value: T, forKey key: Key) throws {
-//        guard value != type(of: key).defaults[key] as! T else { return }
-//        try self.encodeIfPresent(value, forKey: key)
-//    }
-//
-//}
 
-class Test: Codable {
-
-    public var name: String = "abc"
-    public var styles: [String]? = ["default styles"]
-
-//    enum CodingKeys: String, CodingKey {
-//        case name, styles
-//    }
-    
-    init(name: String = "", styles: [String]? = []){
-        self.name=name
-        self.styles=styles
-    }
-
-    required init (from decoder: Decoder) throws {
-        let values = try decoder.container(keyedBy: CodingKeys.self)
-        var props: [AnyDecodable] = [self.name, self.styles]
-        for var prop in props{
-            print(CodingKeys.name)
-            prop = try values.decodeIfPresent(Swift.type(of: self.name).self, forKey: CodingKeys.name) ?? prop
-//            print(prop)
-        }
-        print(CodingKeys(stringValue: "name")!)
-        
-//        name = try values.decodeIfPresent(Swift.type(of: self.name).self, forKey: .name) ?? self.name
-//
-//        styles = try values.decodeIfPresent([String]?.self, forKey: .styles) ?? ["default styles"]
-    }
+enum MemriError: Error {
+    case basic
 }
 
+func wPrint( _ object: @escaping () -> Any){
+    let when = DispatchTime.now() + 0.1
+    DispatchQueue.main.asyncAfter(deadline: when) {
+        print(object())
+    }
+}
+/*
+MODEL
+*/
 
-//let x = Test()
-//
-//let encoder = JSONEncoder()
-//
-//let json = try! encoder.encode(x)
-//print(String(data: json, encoding: .utf8)!)
-//
-let decoder = JSONDecoder()
-//
-//let a = try! decoder.decode(Test.self, from: json)
-//print(a.name)
-//print(a.styles)
-//let decoder = JSONDecoder()
+//Create podAPI instance
 
-let refWithName = "{\"name\": \"Randy\"}"
-let b = try! decoder.decode(Test.self, from: refWithName.data(using: .utf8)!)
-print(b.name)
-print(b.styles)
+//let testPodAPI = PodAPI("mytestkey")
+//let sr = testPodAPI.query("get notes query")
+//wPrint({sr.data})
 
-//print()
+
+// Create Cache and query
+//let cache = Cache(testPodAPI)
+//let sr2 = cache.getByType(type: "note")
+//wPrint({sr2!.data})
 //
-//let ref = "{\"name\": \"Randy\", \"styles\": [\"Swifty\"]}"
-//let c = try! decoder.decode(Test.self, from: ref.data(using: .utf8)!)
-//print(c.name)
-//print(c.styles)
+// # redo query, use cache
+//let sr3 = cache.getByType(type: "note")
+//wPrint({sr3!.data})
+//
+// # Initialize DataItems from json
+//let items = DataItem.from_json(file: "test_dataItems")
+//
+//for item in items {
+//    let props: [Any] = [item.uid, item.type, item.predicates, item.properties]
+//    for prop in props{print(prop)}
+//    print()
+//}
+
+//# Deserialzing a view from json
+//let testView = MemriView.from_json("test_views")[0]
+
+
+/*
+# Deserializing a session from json, init a browser with it
+*/
+
+let testSession = try Session.from_json("test_session")
+let testBrowser = Browser(testSession)
+
+
+print(testBrowser.currentSession.currentSessionView)
+
+
+PlaygroundPage.current.setLiveView(testBrowser)
+
+
+
+
+// loads view from json, a view describes all UI elements
+// loads session (list of views) from json
+// init browser with session
+// browser.setstate() : populates all the browserelements (topnav/renderer/etc/)
+// get view
+
+//browser
+
+// session
+// setstate(session):
+//    current session op browserobject
+//    call setstate op topnaviatation , renderer, search
+//
+
+
+// browser -> topnav -> items -> title
+// set stuff in json from view
+// show that on screen
+
+
+
+//
+
+
+//
+
+//topnavigation
+//renderer
+//search
+
+
+
+
 
 
 
