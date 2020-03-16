@@ -11,31 +11,35 @@ import Combine
 import SwiftUI
 
 class ListConfig: RenderConfig {
-    var cascadeOrder: [String]
-    var slideLeftActions: [ActionDescription]
-    var slideRightActions: [ActionDescription]
-    var type: String
-    var browse: String
-    var sortProperty: String
-    var sortAscending: Int
-    var itemRenderer: String
-    var longPress: ActionDescription
+    var cascadeOrder: [String] = []
+    var slideLeftActions: [ActionDescription] = []
+    var slideRightActions: [ActionDescription] = []
+    var press: ActionDescription? = nil
+    var type: String = "list"
+    var browse: String = ""
+    var sortProperty: String = ""
+    var sortAscending: Int = 0
+    var itemRenderer: String = ""
+    var longPress: ActionDescription? = nil
+    
 
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription], cascadeOrder: [String], slideLeftActions: [ActionDescription],
-         slideRightActions: [ActionDescription], type: String, browse: String, sortProperty: String,
-         sortAscending: Int, itemRenderer: String, longPress: ActionDescription){
-        self.cascadeOrder=cascadeOrder
-        self.slideLeftActions=slideLeftActions
-        self.slideRightActions=slideRightActions
-        self.type=type
-        self.browse=browse
-        self.sortProperty=sortProperty
-        self.sortAscending=sortAscending
-        self.itemRenderer=itemRenderer
-        self.longPress=longPress
-        super.init(name: name, icon: icon, category: category, items: items, options1: options1, options2: options2)
+    init(name: String?=nil, icon: String?=nil, category: String?=nil, items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
+         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil, slideLeftActions: [ActionDescription]?=nil,
+         slideRightActions: [ActionDescription]?=nil, type: String?=nil, browse: String?=nil, sortProperty: String?=nil,
+         sortAscending: Int?=nil, itemRenderer: String?=nil, longPress: ActionDescription?=nil, press: ActionDescription? = nil){
+        super.init()
+        self.cascadeOrder=cascadeOrder ?? self.cascadeOrder
+        self.slideLeftActions=slideLeftActions ?? self.slideLeftActions
+        self.slideRightActions=slideRightActions ?? self.slideRightActions
+        self.type=type ?? self.type
+        self.browse=browse ?? self.browse
+        self.sortProperty=sortProperty ?? self.sortProperty
+        self.sortAscending=sortAscending ?? self.sortAscending
+        self.itemRenderer=itemRenderer ?? self.itemRenderer
+        self.longPress=longPress ?? self.longPress
+        self.press = press ?? self.press
     }
+    
     
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
@@ -50,7 +54,10 @@ struct ListRenderer: Renderer {
     var options1: [ActionDescription]=[]
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
-    var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
+    
+//    var renderConfig: RenderConfig = RenderConfig()
+    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: [])
+    )
 
     func setState(_ state:RenderState) -> Bool {return false}
     
@@ -67,12 +74,18 @@ struct ListRenderer: Renderer {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Text(dataItem.properties["content"] ?? "")
                             .frame(maxWidth: .infinity, alignment: .leading)
-                    }.onTapGesture {                    self.sessions.currentSession.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                            rendererName: "richTextEditor"))
+                    }.onTapGesture {
+                        self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                        
                     }.padding(.horizontal, 10)
                      .padding(.vertical, 7)
             }
         }
+    }
+    
+    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
+        self.sessions.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
+        
     }
 }
 
