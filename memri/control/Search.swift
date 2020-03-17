@@ -57,6 +57,7 @@ struct Search: View {
                                                  rendererName: "list"),
                                   ViewTypeButton(imgName: "chart.bar.fill", selected: false,
                                                  rendererName: "list")]
+    var filterPannelRenderers = ["list", "thumbnail"]
 
     var body: some View {
         VStack{
@@ -80,50 +81,50 @@ struct Search: View {
                  .foregroundColor(.gray)
 
             }.padding(.horizontal , 15)
-
-            HStack(alignment: .top){
-                VStack(alignment: .leading){
-                    HStack(alignment: .bottom){
-                        HStack(alignment: .top, spacing: 0) {
-                            ForEach(0..<self.viewTypeButtons.count) {i in
-                                Button(action: {self.setRenderer(i:i)}) {
-                                        Image(systemName: self.viewTypeButtons[i].imgName)
+            if filterPannelRenderers.contains(sessions.currentView.rendererName){
+                HStack(alignment: .top){
+                    VStack(alignment: .leading){
+                        HStack(alignment: .bottom){
+                            HStack(alignment: .top, spacing: 0) {
+                                ForEach(0..<self.viewTypeButtons.count) {i in
+                                    Button(action: {self.setRenderer(i:i)}) {
+                                            Image(systemName: self.viewTypeButtons[i].imgName)
+                                    }
+                                    .padding(.horizontal, 7)
+                                    .padding(.vertical, 6)
+                                    .background(self.viewTypeButtons[i].backGroundColor)
+                                    .foregroundColor(self.viewTypeButtons[i].foreGroundColor)
                                 }
-                                .padding(.horizontal, 7)
-                                .padding(.vertical, 6)
-                                .background(self.viewTypeButtons[i].backGroundColor)
-                                .foregroundColor(self.viewTypeButtons[i].foreGroundColor)
-                                
                             }
                         }
-                    }
-                    VStack(alignment: .leading){
-                        ForEach(self.browseSettings) { browseSetting in
-                            Text(browseSetting.name)
-                                .foregroundColor(browseSetting.color)
-                                .fontWeight(browseSetting.fontWeight)
-                                .listRowInsets(EdgeInsets())
-                                .padding(.vertical, 10)
+                        VStack(alignment: .leading){
+                            ForEach(self.browseSettings) { browseSetting in
+                                Text(browseSetting.name)
+                                    .foregroundColor(browseSetting.color)
+                                    .fontWeight(browseSetting.fontWeight)
+                                    .listRowInsets(EdgeInsets())
+                                    .padding(.vertical, 10)
+                            }
                         }
-                    }
 
-                }.padding(.horizontal , 20)
-                    .frame(minWidth: 0, maxWidth: .infinity,alignment: Alignment.topLeading)
+                    }.padding(.horizontal , 20)
+                        .frame(minWidth: 0, maxWidth: .infinity,alignment: Alignment.topLeading)
 
-                VStack(alignment: .leading){
-                    Text("SORT").font(.headline)                                .padding(.vertical, 6)
+                    VStack(alignment: .leading){
+                        Text("SORT").font(.headline)                                .padding(.vertical, 6)
 
-                    ForEach(self.sorters) { sorter in
-                        Text(sorter.name)
-                            .foregroundColor(sorter.color)
-                            .fontWeight(sorter.fontWeight)
-                            .padding(.vertical, 10)
+                        ForEach(self.sorters) { sorter in
+                            Text(sorter.name)
+                                .foregroundColor(sorter.color)
+                                .fontWeight(sorter.fontWeight)
+                                .padding(.vertical, 10)
 
-                    }
+                        }
 
-                }.padding(.horizontal, 20)
-            }.frame(minWidth: 0, maxWidth: .infinity, alignment: Alignment.topLeading)
+                    }.padding(.horizontal, 20)
+                }.frame(minWidth: 0, maxWidth: .infinity, alignment: Alignment.topLeading)
                 .padding(.vertical, 10)
+            }
         }
     }
 

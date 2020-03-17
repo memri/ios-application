@@ -76,10 +76,10 @@
                             "properties": {"title": "Untitled Note"}
                         }]
                     },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
+                    "editActionButton":{
+                        "icon": "pencil",
+                        "title": "edit",
+                        "actionName": "toggleEdit",
                         "actionArgs": []
                     },
                     "filterButtons": [],

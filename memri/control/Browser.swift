@@ -20,23 +20,31 @@ extension View {
 
 struct Browser: View {
     @EnvironmentObject var sessions: Sessions
-    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
-                                        "richTextEditor": AnyView(RichTextRenderer()),
-                                        "thumbnail": AnyView(ThumbnailRenderer())]
-    
-    var currentRenderer: AnyView { renderers[sessions.currentSession.currentSessionView.rendererName,
-                  default: AnyView(ThumbnailRenderer())]
-    }
+    @State var isEditMode: EditMode = .inactive
     
     var body: some View {
         return
             VStack() {
-                TopNavigation()
-                renderers[sessions.currentSession.currentSessionView.rendererName,
-                          default: AnyView(ListRenderer())].fullHeight()
+                TopNavigation(isEditMode: $isEditMode)
+                getRenderer().fullHeight()
                 Search()
-                }.fullHeight()
+            }.fullHeight()
     }
+    
+    
+    func getRenderer() -> AnyView{
+        switch self.sessions.currentSession.currentSessionView.rendererName{
+        case "list":
+            return AnyView(ListRenderer(isEditMode: $isEditMode))
+        case "richTextEditor":
+            return AnyView(RichTextRenderer())
+        case "thumbnail":
+            return AnyView(ThumbnailRenderer())
+        default:
+            return AnyView(ThumbnailRenderer())
+        }
+    }
+    
 }
 
 struct Browser_Previews: PreviewProvider {

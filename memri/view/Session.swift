@@ -30,6 +30,10 @@ public class Sessions: ObservableObject, Decodable {
         }
     }
     
+    var currentView: SessionView{
+        return currentSession.currentSessionView
+    }
+    
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
         self.sessions = sessions
         self.currentSessionIndex = currentSessionIndex
@@ -144,13 +148,16 @@ public class Session: ObservableObject, Decodable  {
                     let param0 = params[0].value as! SessionView
                     openView(param0)
                 }
-
+            case "toggleEdit":
+                toggleEditMode()
             case "exampleUnpack":
                 let (_, _) = (params[0].value, params[1].value) as! (String, Int)
                 break
             default:
-                print("UNDEFINED ACTION, NOT EXECUTING")
+                print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
             }
+        }else{
+            print("No action defined")
         }
     }
     
@@ -190,7 +197,12 @@ public class Session: ObservableObject, Decodable  {
         sv.rendererName = "richTextEditor"
         sv.title="new note"
         sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        sv.backTitle = self.currentSessionView.title
         self.openView(sv)
+    }
+    
+    func toggleEditMode(){
+        //currently handled in browser
     }
     
     func openView(_ view:SessionView){
@@ -202,8 +214,10 @@ public class Session: ObservableObject, Decodable  {
         })
     }
     func openView(_ dataItem:DataItem){
+        print("opening from dataitem")
         var view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                rendererName: "richTextEditor")
+                                                rendererName: "richTextEditor",
+                                                currentView: self.currentSessionView)
     
         self.sessionViews = self.sessionViews[0...self.currentSessionViewIndex] +  [view]
         self.currentSessionViewIndex += 1

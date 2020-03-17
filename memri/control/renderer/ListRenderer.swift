@@ -54,7 +54,9 @@ struct ListRenderer: Renderer {
     var options1: [ActionDescription]=[]
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
-    
+    @Binding var isEditMode: EditMode
+    @State var abc: Bool=false
+
 //    var renderConfig: RenderConfig = RenderConfig()
     var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: [])
     )
@@ -67,19 +69,29 @@ struct ListRenderer: Renderer {
     @EnvironmentObject var sessions: Sessions
     
     var body: some View {
-        return VStack {                     ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
-                    VStack{
-                        Text(dataItem.properties["title"] ?? "")
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(dataItem.properties["content"] ?? "")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }.onTapGesture {
-                        self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
-                        
-                    }.padding(.horizontal, 10)
-                     .padding(.vertical, 7)
+        return VStack {
+            NavigationView {
+                List{
+                    ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
+                        VStack{
+                            Text(dataItem.properties["title"] ?? "")
+                                .bold()
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(dataItem.properties["content"] ?? "")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }.onTapGesture {
+                            self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                        }
+//                        .padding(.horizontal, 10)
+//                         .padding(.vertical, 7)
+                    }.onDelete{ indexSet in self.sessions.currentSession.currentSessionView.searchResult.data.remove(atOffsets: indexSet)
+                    }
+                }
+                .environment(\.editMode, $isEditMode)
+                .navigationBarTitle("")
+                .navigationBarHidden(true)
             }
+
         }
     }
     
@@ -91,6 +103,6 @@ struct ListRenderer: Renderer {
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
+        ListRenderer(isEditMode: .constant(.active)).environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }
