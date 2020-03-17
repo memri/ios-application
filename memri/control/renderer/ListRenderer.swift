@@ -67,18 +67,19 @@ struct ListRenderer: Renderer {
     @EnvironmentObject var sessions: Sessions
     
     var body: some View {
-        return VStack {                     ForEach(self.sessions.currentSession.currentView.searchResult.data) { dataItem in
-                    VStack{
-                        Text(dataItem.properties["title"] ?? "")
-                            .bold()
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                        Text(dataItem.properties["content"] ?? "")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }.onTapGesture {
-                        self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
-                        
-                    }.padding(.horizontal, 10)
-                     .padding(.vertical, 7)
+        return VStack {
+            ForEach(self.sessions.currentSession.currentView.searchResult.data) { dataItem in
+                VStack{
+                    Text(dataItem.properties["title"]!.value as! String)
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(dataItem.properties["content"]!.value as! String)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }.onTapGesture {
+                    self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                    
+                }.padding(.horizontal, 10)
+                 .padding(.vertical, 7)
             }
         }
     }
@@ -91,6 +92,6 @@ struct ListRenderer: Renderer {
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
+        ListRenderer().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

@@ -84,6 +84,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane(sessions: try! Sessions.from_json("empty_sessions"))
+        ContextPane(sessions: try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

@@ -12,10 +12,10 @@ import Combine
 
 public class Sessions: ObservableObject, Decodable {
 
-    @Published var currentSessionIndex: Int=0
-    @Published var sessions: [Session]=[]
+    @Published var currentSessionIndex: Int = 0
+    @Published var sessions: [Session] = []
     
-    var cancellables:[AnyCancellable]?=nil
+    var cancellables:[AnyCancellable]? = nil
     
     
 //    private enum CodingKeys: String, CodingKey {
@@ -23,9 +23,10 @@ public class Sessions: ObservableObject, Decodable {
 //    }
     
     var currentSession: Session {
-        if sessions.count > 0{
+        if sessions.count > 0 {
             return sessions[currentSessionIndex]
-        }else{
+        }
+        else {
             return Session()
         }
     }
@@ -65,17 +66,19 @@ public class Sessions: ObservableObject, Decodable {
     public func clear() -> Void {}
     //  Clear all sessions and create a new one
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> Sessions {
-        var jsonData = try jsonDataFromFile(file, ext)
-        let sessions: Sessions = try! JSONDecoder().decode(Sessions.self, from: jsonData)
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: jsonData)
+        return sessions
+    }
+    
+    public class func fromJSONString(_ json: String) throws -> Sessions {
+        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: Data(json.utf8))
         return sessions
     }
 
 //    public func setCurrentSession(_ session:Session) -> Void {}
 }
-
-
-
 
 public class Session: ObservableObject, Decodable  {
     
@@ -170,13 +173,13 @@ public class Session: ObservableObject, Decodable  {
         self.objectWillChange.send()
     }
     
+    // TODO
     func add(dataItem: DataItem){
         
 //        let n = self.currentSessionView.searchResult.data.count + 100
 //        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
 //
 //        dataItem.properties=["title": "new note", "content": ""]
-        
         
         self.currentView.searchResult.data.append(dataItem)
         
@@ -189,7 +192,6 @@ public class Session: ObservableObject, Decodable  {
         sv.title="new note"
         sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         
-        
         self.openView(sv)
     }
     
@@ -201,6 +203,7 @@ public class Session: ObservableObject, Decodable  {
             self.objectWillChange.send()
         })
     }
+    
     func openView(_ dataItem:DataItem){
         let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
                 rendererName: "richTextEditor")

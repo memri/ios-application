@@ -35,6 +35,6 @@ struct RichTextRenderer: Renderer {
 
 struct RichTextRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
+        RichTextRenderer().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

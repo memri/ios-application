@@ -75,6 +75,6 @@ struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(try! Sessions.from_json("empty_sessions"))
+        TopNavigation().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

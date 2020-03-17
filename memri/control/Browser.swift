@@ -48,6 +48,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(try! Sessions.from_json("empty_sessions"))
+        Browser().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

@@ -40,7 +40,7 @@ struct ThumbnailRenderer: View {
     var body: some View {
         
         QGrid(self.sessions.currentSession.currentView.searchResult.data, columns: 3) { dataItem in
-            Text(dataItem.properties["title"] ?? "default title").asThumbnail()
+            Text((dataItem.properties["title"]?.value as! String)).asThumbnail()
                 .onTapGesture {
                     self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
                     
@@ -60,6 +60,6 @@ struct ThumbnailRenderer: View {
 
 struct ThumbnailRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRenderer().environmentObject(try! Sessions.from_json("empty_sessions"))
+        ThumbnailRenderer().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }

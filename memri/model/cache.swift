@@ -46,7 +46,7 @@ public class LocalStorage {
      *
      */
     public func get(_ key:String) -> String {
-        return ""
+        return "[]"
     }
 }
 

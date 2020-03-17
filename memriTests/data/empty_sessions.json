@@ -6,7 +6,13 @@
             "sessionViews": [
                 {
                     "searchResult": {
-                        "query": "",
+                        "query": {
+                            "query": "",
+                            "sortProperty": "None",
+                            "sortAscending": 1,
+                            "loading": 0,
+                            "pageCount": 0,
+                        },
                         "data": [
                             {
                                 "uid": "0x01",
@@ -53,11 +59,7 @@
                                     "content": "This is AGAINNN an example note"
                                 }
                             }
-                        ],
-                        "sortProperty": "None",
-                        "sortAscending": 1,
-                        "loading": 0,
-                        "pageCount": 0,
+                        ]
                     },
                     "name": "testname",
                     "subtitle": "testSubtitle",

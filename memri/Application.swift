@@ -16,7 +16,7 @@ public class Application: Event, ObservableObject {
     @Published public var currentSession: Session? = nil
 
 //    public let settings: Settings
-    public let sessions: Sessions
+    public var sessions: Sessions
 //    public let navigationCache: NavigationCache
     
     public var podApi:PodAPI
@@ -29,7 +29,7 @@ public class Application: Event, ObservableObject {
     
     // These variables stay private to prevent tampering which can cause backward incompatibility
 //    var navigationPane: Navigation
-    var browserPane: Browser? = nil
+    var browserPane: Browser
 //    var sessionPane: SessionSwitcher
     
     // Overlays
@@ -41,7 +41,7 @@ public class Application: Event, ObservableObject {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
-        sessions = try! Sessions.from_json("empty_sessions")
+        sessions = Sessions()
         
         super.init()
 
@@ -50,11 +50,18 @@ public class Application: Event, ObservableObject {
         
         // Load NavigationCache (from cache and/or api)
         // Load sessions (from cache and/or api)
+//        podApi.get("sessions") { (error, dataitem) in // TODO store in database objects in the dgraph??
+//            if error != nil { return }
+//
+//            sessions = try! Sessions.fromJSONString(dataitem.properties["json"]?.value as! String)
+//
+//            print(sessions.sessions[0].views.count)
+//        }
         
         // Instantiate view objects
         browserPane = Browser()
-        let _ = browserPane.environmentObject(sessions)
-        let _ = browserPane.environmentObject(self)
+            .environmentObject(sessions)
+            .environmentObject(self)
         
         // Hook current session
         currentSession = sessions.currentSession
@@ -120,9 +127,12 @@ public class Event {
      */
     public func fire(_ name:String, _ value:String="") {
         let list = events[name]
-        let e = EventObject(value: value)
-        for i in 0...list!.count {
-            list?[i](e)
+        
+        if let list = list {
+            let e = EventObject(value: value)
+            for i in 0...list.count {
+                list[i](e)
+            }
         }
     }
     /**

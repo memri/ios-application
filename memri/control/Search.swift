@@ -147,6 +147,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(try! Sessions.from_json("empty_sessions"))
+        Search().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
     }
 }
