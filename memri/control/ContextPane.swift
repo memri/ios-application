@@ -9,13 +9,81 @@
 import SwiftUI
 
 struct ContextPane: View {
+    
+    let horizontalLineWidth: CGFloat = 1.5
+    var horizontalLine = HorizontalLine()
+    var currentView: SessionView?
+
+    init(sessions: Sessions) {
+       self.currentView = sessions.currentSession.currentView
+    }
+    
+    var title: String?
+    var subtitle: String?
+    var buttons: [ActionDescription] = []
+    var actions: [ActionDescription] = []
+    var navigate: [ActionDescription] = []
+    
+    let actionLabel = NSLocalizedString("actionLabel", comment: "")
+    let navigateLabel = NSLocalizedString("navigateLabel", comment: "")
+    let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
+    
     var body: some View {
-        Text("Hi, I am the context pane.")
+        VStack (/*alignment: .leading*/){
+            VStack {
+                Text("\(self.currentView?.title ?? "")")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                Text("\(self.currentView?.subtitle ?? "")")
+                    .font(.body)
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
+            }
+            VStack {
+                Text("some stuff to add later ...")
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
+            }
+            VStack {
+                HStack {
+                    Text("\(actionLabel)")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                }
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
+            }
+            VStack {
+                HStack {
+                    Text("\(navigateLabel)")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                }
+                horizontalLine
+                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
+                    .frame(height: horizontalLineFrameHeight)
+            }
+            VStack {
+                HStack {
+                    Text("\(labelsLabel)")
+                        .fontWeight(.bold)
+                        .foregroundColor(Color.gray)
+                    Spacer()
+                }
+            }
+            Spacer()
+        }
+        .padding()
     }
 }
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane()
+        ContextPane(sessions: try! Sessions.from_json("empty_sessions"))
     }
 }

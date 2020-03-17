@@ -23,7 +23,11 @@ public class Sessions: ObservableObject, Decodable {
 //    }
     
     var currentSession: Session {
+        if sessions.count > 0{
             return sessions[currentSessionIndex]
+        }else{
+            return Session()
+        }
     }
     
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
@@ -76,31 +80,32 @@ public class Sessions: ObservableObject, Decodable {
 public class Session: ObservableObject, Decodable  {
     
     @Published var currentViewIndex: Int = 0
-    @Published var view: [SessionView] = [SessionView()]
+    @Published var views: [SessionView] = [SessionView()]
     
     var cancellables: [AnyCancellable]?=nil
     
 //    private enum CodingKeys: String, CodingKey {
 //        case sessionViews, currentSessionViewIndex
 //    }
+    
     public var currentView: SessionView {
         if currentViewIndex >= 0 {
-            return view[currentViewIndex]
+            return views[currentViewIndex]
         } else{
-            return view[0]
+            return views[0]
         }
     }
     
-    init(_ currentViewIndex: Int = 0, sessionViews: [SessionView]=[SessionView()]){
+    init(_ currentViewIndex: Int = 0, views: [SessionView]=[SessionView()]){
         self.currentViewIndex = currentViewIndex
-        self.view = sessionViews
+        self.views = views
         self.postInit()
     }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        currentViewIndex = try decoder.decodeIfPresent("currentSessionViewIndex") ?? currentViewIndex
-        view = try decoder.decodeIfPresent("sessionViews") ?? view
+        currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
+        views = try decoder.decodeIfPresent("views") ?? views
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
@@ -112,10 +117,37 @@ public class Session: ObservableObject, Decodable  {
     }
     
     public func postInit(){
-        for sessionView in view{
+        for sessionView in views{
             cancellables?.append(sessionView.objectWillChange.sink { (_) in
                             self.objectWillChange.send()
             })
+        }
+    }
+    
+    func executeAction(action: ActionDescription?, dataItem: DataItem? = nil){
+        if let action = action{
+            let params = action.actionArgs
+            
+            switch action.actionName {
+            case "back":
+                back()
+            case "add":
+                let param0 = params[0].value as! DataItem
+                add(dataItem: param0)
+            case "openView":
+                if let dataItem = dataItem{
+                    openView(dataItem)
+                }else{
+                    let param0 = params[0].value as! SessionView
+                    openView(param0)
+                }
+
+            case "exampleUnpack":
+                let (_, _) = (params[0].value, params[1].value) as! (String, Int)
+                break
+            default:
+                print("UNDEFINED ACTION, NOT EXECUTING")
+            }
         }
     }
     
@@ -123,6 +155,7 @@ public class Session: ObservableObject, Decodable  {
         print(currentViewIndex)
         if currentViewIndex == 0 {
             print("returning")
+            self.objectWillChange.send()
             return
         }else{
             currentViewIndex -= 1
@@ -132,30 +165,52 @@ public class Session: ObservableObject, Decodable  {
         print(self.currentView.rendererName)
     }
     
-    func newDataItem(){
-        let n = self.currentView.searchResult.data.count + 100
-        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+    func changeRenderer(rendererName: String){
+        self.currentView.rendererName = rendererName
+        self.objectWillChange.send()
+    }
+    
+    func add(dataItem: DataItem){
         
-        dataItem.properties=["title": "new note", "content": ""]
+//        let n = self.currentSessionView.searchResult.data.count + 100
+//        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+//
+//        dataItem.properties=["title": "new note", "content": ""]
+        
+        
         self.currentView.searchResult.data.append(dataItem)
+        
         let sr = SearchResult()
         let sv = SessionView()
+        
         sr.data = [dataItem]
         sv.searchResult=sr
         sv.rendererName = "richTextEditor"
         sv.title="new note"
+        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        
+        
         self.openView(sv)
     }
     
     func openView(_ view:SessionView){
-        self.view = self.view[0...self.currentViewIndex] +  [view]
+        self.views = self.views[0...self.currentViewIndex] +  [view]
         self.currentViewIndex += 1
         
         cancellables?.append(view.objectWillChange.sink { (_) in
             self.objectWillChange.send()
         })
+    }
+    func openView(_ dataItem:DataItem){
+        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
+                rendererName: "richTextEditor")
+    
+        self.views = self.views[0...self.currentViewIndex] + [view]
+        self.currentViewIndex += 1
         
-        
+        cancellables?.append(view.objectWillChange.sink { (_) in
+            self.objectWillChange.send()
+        })
     }
     
 }

@@ -1,7 +1,20 @@
 import Foundation
 import Combine
 
-public class DataItem: Decodable, Equatable, Identifiable, ObservableObject {
+protocol PropertyReflectable { }
+
+extension PropertyReflectable {
+    subscript(key: String) -> Any? {
+        let m = Mirror(reflecting: self)
+        for child in m.children {
+            if child.label == key { return child.value }
+        }
+        return nil
+    }
+}
+
+public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
+    
     private var uid: String = UUID().uuidString
     public var type: String = ""
     
@@ -212,6 +225,8 @@ public class SearchResult: ObservableObject, Decodable {
     public var loading: Int = 0
     
     public convenience required init(_ query: QueryOptions? = nil, _ data:[DataItem]?) {
+        self.init()
+        
         self.query = query
         self.data = data ?? []
         
@@ -235,11 +250,11 @@ public class SearchResult: ObservableObject, Decodable {
         }
     }
     
-    private func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)?) -> Bool {
+    private func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)?) -> Void {
         // Set state to loading
         loading = 1
         
-        let _ = cache?.query(self.query!) { (error, result) -> Void in
+        let _ = cache?.query(self.query!) { (error, result, success) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
 
@@ -285,7 +300,7 @@ public class SearchResult: ObservableObject, Decodable {
     /**
      * Executes the query again
      */
-    public func reload() -> Bool {
+    public func reload() -> Void {
         // Reload all pages
         for (page, _) in pages {
             let _ = loadPage(page, { (error) in })

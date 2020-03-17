@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 19/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import SwiftUI
@@ -11,22 +11,22 @@ import Combine
 
 
 public class RenderConfig: Codable {
-    var name: String
-    var icon: String
-    var category: String
-    var items: [ActionDescription]
-    var options1: [ActionDescription]
-    var options2: [ActionDescription]
+    var name: String = ""
+    var icon: String = ""
+    var category: String = ""
+    var items: [ActionDescription] = []
+    var options1: [ActionDescription] = []
+    var options2: [ActionDescription] = []
     
-    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-         options2: [ActionDescription]){
-        self.name=name
-        self.icon=icon
-        self.category=category
-        self.items=items
-        self.options1=options1
-        self.options2=options2
-    }
+//    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
+//         options2: [ActionDescription]){
+//        self.name=name
+//        self.icon=icon
+//        self.category=category
+//        self.items=items
+//        self.options1=options1
+//        self.options2=options2
+//    }
 }
 
 public class RenderState{}

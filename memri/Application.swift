@@ -37,7 +37,7 @@ public class Application: Event, ObservableObject {
 //    var schedulePane: SchedulePane
 //    var sharingPane: SharingPane
 
-    public init(_ name:String, _ key:String) {
+    public init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)

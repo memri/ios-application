@@ -57,15 +57,15 @@ public class SettingsData {
     /**
      *
      */
-    public func get(_ path:String) -> AnyObject {
-        
+    public func get(_ path:String) -> AnyObject? {
+        return data[path] ?? nil
     }
 
     /**
      * Also responsible for saving the setting to the permanent storage
      */
-    public func set(_ path:String, _ value:AnyObject) -> AnyObject {
-        
+    public func set(_ path:String, _ value:AnyObject) -> Void {
+        data[path] = value
     }
 }
 

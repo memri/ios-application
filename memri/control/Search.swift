@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 19/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import SwiftUI
@@ -28,13 +28,15 @@ struct ViewTypeButton: Identifiable {
     var id = UUID()
     var imgName: String
     var selected: Bool
+    var rendererName: String
     var backGroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
     var foreGroundColor: Color { self.selected ? Color.green : Color.gray}
 }
 
 struct Search: View {
     @EnvironmentObject var application: Application
-    
+    @EnvironmentObject var sessions: Sessions
+
     @State var searchText=""
     @State var showFilters=false
     @State var sorters = [SortButton(name: "Select property", selected: false),
@@ -47,13 +49,16 @@ struct Search: View {
                                 BrowseSetting(name: "Browse by folder", selected: false),
                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
 
-    @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected: true),
-                                  ViewTypeButton(imgName: "square.grid.3x2.fill", selected: false),
-                                  ViewTypeButton(imgName: "calendar", selected: false),
-                                  ViewTypeButton(imgName: "location.fill", selected: false),
-                                  ViewTypeButton(imgName: "chart.bar.fill", selected: false)]
-
-
+    @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected: true,
+                                                 rendererName: "list"),
+                                  ViewTypeButton(imgName: "square.grid.3x2.fill", selected: false,
+                                                   rendererName: "thumbnail"),
+                                  ViewTypeButton(imgName: "calendar", selected: false,
+                                                 rendererName: "list"),
+                                  ViewTypeButton(imgName: "location.fill", selected: false,
+                                                 rendererName: "list"),
+                                  ViewTypeButton(imgName: "chart.bar.fill", selected: false,
+                                                 rendererName: "list")]
 
     var body: some View {
         VStack{
@@ -82,14 +87,14 @@ struct Search: View {
                 VStack(alignment: .leading){
                     HStack(alignment: .bottom){
                         HStack(alignment: .top, spacing: 0) {
-                            ForEach(self.viewTypeButtons) { viewTypeButton in
-                                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
-                                    Image(systemName: viewTypeButton.imgName)
+                            ForEach(0..<self.viewTypeButtons.count) {i in
+                                Button(action: {self.setRenderer(i:i)}) {
+                                        Image(systemName: self.viewTypeButtons[i].imgName)
                                 }
                                 .padding(.horizontal, 7)
                                 .padding(.vertical, 6)
-                                .background(viewTypeButton.backGroundColor)
-                                .foregroundColor(viewTypeButton.foreGroundColor)
+                                .background(self.viewTypeButtons[i].backGroundColor)
+                                .foregroundColor(self.viewTypeButtons[i].foreGroundColor)
                                 
                             }
                         }
@@ -128,10 +133,20 @@ struct Search: View {
         // THIS HIDEN THE LIST LINES
         UITableView.appearance().separatorColor = .clear
     }
+    func setRenderer(i: Int){
+        self.sessions.currentSession.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
+        self.resetSelected()
+        self.viewTypeButtons[i].selected = true
+    }
+    func resetSelected(){
+        for i in 0..<self.viewTypeButtons.count{
+            self.viewTypeButtons[i].selected=false
+        }
+    }
 }
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search()
+        Search().environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }

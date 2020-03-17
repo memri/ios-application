@@ -3,7 +3,7 @@
 //  memriTests
 //
 //  Created by Koen van der Veen on 27/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import XCTest
@@ -30,6 +30,7 @@ class SessionTest: XCTestCase {
         let sessions =  try! Sessions.from_json("empty_sessions")
         print(sessions.currentSession.currentView.searchResult.data[0].properties)
         XCTAssert(sessions.currentSession.currentView.searchResult.data.count > 0)
+        XCTAssert(sessions.currentSession.currentView.actionButton!.actionName == "add")
     }
     
     

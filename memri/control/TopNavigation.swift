@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 19/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import SwiftUI
@@ -30,23 +30,26 @@ struct TopNavigation: View {
                     .font(Font.system(size: 20, weight: .medium))
             }
             .padding(.horizontal , 5)
-
-            Button(action: sessions.currentSession.back ) {
-                Image(systemName: "chevron.left")
-                .foregroundColor(.gray)
-
+            
+            if self.sessions.currentSession.currentView.backButton != nil {
+                Button(action: backButtonAction ) {
+                    Image(systemName: self.sessions.currentSession.currentView.backButton!.icon)
+                    .foregroundColor(.gray)
+                }
             }
-            .padding(.horizontal , 5)
 
             Spacer()
             Text(sessions.currentSession.currentView.title).font(.headline)
             Spacer()
-
-            Button(action: self.sessions.currentSession.newDataItem) {
-                Image(systemName: "plus")
+            
+            if self.sessions.currentSession.currentView.actionButton != nil {
+                Button(action: actionButtonAction) {
+                    Image(systemName: self.sessions.currentSession.currentView.actionButton!.icon)
+                }
+                .padding(.horizontal , 5)
+                .foregroundColor(.green)
             }
-            .padding(.horizontal , 5)
-            .foregroundColor(.green)
+            
 
             Button(action: {
                 print("render contextpane")
@@ -54,14 +57,18 @@ struct TopNavigation: View {
             }) {
                 Image(systemName: "ellipsis")
             }.sheet(isPresented: self.$show_contextpage) {
-                ContextPane()
+                ContextPane(sessions: self.sessions)
             }
-                
             .padding(.horizontal , 5)
             .foregroundColor(.gray)
-
-        }
-        .padding(.all, 30)
+        }.padding(.all, 30)
+    }
+    func actionButtonAction(){
+        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentView.actionButton)
+    }
+    
+    func backButtonAction(){
+        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentView.backButton)
     }
 }
 

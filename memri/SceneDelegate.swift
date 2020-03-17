@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 11/02/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import UIKit
@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        let contentView = Application()
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
         
-        let application = Application()
+        let application = Application(name: "Memri GUI", key: "ABCDEF")
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {

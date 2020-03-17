@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Koen van der Veen on 10/03/2020.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ struct RichTextRenderer: Renderer {
     var options1: [ActionDescription]=[]
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
-    var renderConfig: RenderConfig=RenderConfig(name: "", icon: "", category: "", items: [], options1: [], options2: [])
+    var renderConfig: RenderConfig=RenderConfig()
 
     func setState(_ state:RenderState) -> Bool {return false}
     func getState() -> RenderState {RenderState()}
