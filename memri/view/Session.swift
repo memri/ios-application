@@ -144,13 +144,16 @@ public class Session: ObservableObject, Decodable  {
                     let param0 = params[0].value as! SessionView
                     openView(param0)
                 }
-
+            case "toggleEdit":
+                toggleEditMode()
             case "exampleUnpack":
                 let (_, _) = (params[0].value, params[1].value) as! (String, Int)
                 break
             default:
-                print("UNDEFINED ACTION, NOT EXECUTING")
+                print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
             }
+        }else{
+            print("No action defined")
         }
     }
     
@@ -191,6 +194,10 @@ public class Session: ObservableObject, Decodable  {
         sv.title="new note"
         sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         self.openView(sv)
+    }
+    
+    func toggleEditMode(){
+        //currently handled in browser
     }
     
     func openView(_ view:SessionView){

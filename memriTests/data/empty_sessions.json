@@ -82,6 +82,12 @@
                         "actionName": "back",
                         "actionArgs": []
                     },
+                    "editActionButton":{
+                        "icon": "pencil",
+                        "title": "edit",
+                        "actionName": "toggleEdit",
+                        "actionArgs": []
+                    },
                     "filterButtons": [],
                     "actionItems": [],
                     "navigateItems": [],

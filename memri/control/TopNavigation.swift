@@ -12,6 +12,7 @@ struct TopNavigation: View {
     
     @EnvironmentObject var sessions: Sessions
     @State private var show_contextpage: Bool = false
+    @Binding var isEditMode:EditMode
     
     var title: String = ""
 //    var action: ()->Void = {sessions.currentSession.back()}
@@ -39,6 +40,14 @@ struct TopNavigation: View {
             Spacer()
             Text(sessions.currentSession.currentSessionView.title).font(.headline)
             Spacer()
+            
+            if self.sessions.currentSession.currentSessionView.editActionButton != nil {
+                Button(action: editAction) {
+                    Image(systemName: self.sessions.currentSession.currentSessionView.editActionButton!.icon)
+                }
+                .padding(.horizontal , 5)
+                .foregroundColor(.gray)
+            }
             
             if self.sessions.currentSession.currentSessionView.actionButton != nil {
                 Button(action: actionButtonAction) {
@@ -68,11 +77,23 @@ struct TopNavigation: View {
     func backButtonAction(){
         self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.backButton)
     }
+    
+    func editAction(){
+        switch self.isEditMode{
+            case .active:
+                self.isEditMode = .inactive
+            case .inactive:
+                self.isEditMode = .active
+            default:
+                break
+        }
+//        self.isEditMode = .active
+    }
 }
 
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(try! Sessions.from_json("empty_sessions"))
+        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }
