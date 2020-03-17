@@ -30,28 +30,29 @@ struct TopNavigation: View {
             }
             .padding(.horizontal , 5)
             
-            if self.sessions.currentSession.currentSessionView.backButton != nil {
+            if sessions.currentView.backButton != nil {
                 Button(action: backButtonAction ) {
-                    Image(systemName: self.sessions.currentSession.currentSessionView.backButton!.icon)
+                    Image(systemName: sessions.currentView.backButton!.icon)
                     .foregroundColor(.gray)
                 }
             }
 
             Spacer()
-            Text(sessions.currentSession.currentSessionView.title).font(.headline)
+            Text(sessions.currentView.title).font(.headline)
             Spacer()
             
-            if self.sessions.currentSession.currentSessionView.editActionButton != nil {
+            if self.sessions.currentView.editActionButton != nil {
                 Button(action: editAction) {
-                    Image(systemName: self.sessions.currentSession.currentSessionView.editActionButton!.icon)
+                    Image(systemName: sessions.currentView.editActionButton!.icon)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
             }
             
-            if self.sessions.currentSession.currentSessionView.actionButton != nil {
+            if sessions.currentView.actionButton != nil {
                 Button(action: actionButtonAction) {
-                    Image(systemName: self.sessions.currentSession.currentSessionView.actionButton!.icon)
+                    Image(systemName:
+                        sessions.currentView.actionButton!.icon)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.green)
@@ -71,11 +72,11 @@ struct TopNavigation: View {
         }.padding(.all, 30)
     }
     func actionButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.actionButton)
+        sessions.currentSession.executeAction(action: sessions.currentView.actionButton)
     }
     
     func backButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentSessionView.backButton)
+        sessions.currentSession.executeAction(action: sessions.currentView.backButton)
     }
     
     func editAction(){
@@ -87,7 +88,6 @@ struct TopNavigation: View {
             default:
                 break
         }
-//        self.isEditMode = .active
     }
 }
 

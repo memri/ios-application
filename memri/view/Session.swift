@@ -30,6 +30,10 @@ public class Sessions: ObservableObject, Decodable {
         }
     }
     
+    var currentView: SessionView{
+        return currentSession.currentSessionView
+    }
+    
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){
         self.sessions = sessions
         self.currentSessionIndex = currentSessionIndex
