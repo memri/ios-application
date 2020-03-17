@@ -197,6 +197,7 @@ public class Session: ObservableObject, Decodable  {
         sv.rendererName = "richTextEditor"
         sv.title="new note"
         sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        sv.backTitle = self.currentSessionView.title
         self.openView(sv)
     }
     
@@ -213,8 +214,10 @@ public class Session: ObservableObject, Decodable  {
         })
     }
     func openView(_ dataItem:DataItem){
+        print("opening from dataitem")
         var view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                rendererName: "richTextEditor")
+                                                rendererName: "richTextEditor",
+                                                currentView: self.currentSessionView)
     
         self.sessionViews = self.sessionViews[0...self.currentSessionViewIndex] +  [view]
         self.currentSessionViewIndex += 1

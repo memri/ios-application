@@ -59,6 +59,7 @@ public class SessionView: ObservableObject, Decodable{
     var contextButtons: [ActionDescription]=[]
     var actionButton: ActionDescription?=nil
     var backButton: ActionDescription?=nil
+    var backTitle: String?=nil
     var editActionButton: ActionDescription?=nil
     var icon: String=""
     var showLabels: Bool=false
@@ -85,6 +86,7 @@ public class SessionView: ObservableObject, Decodable{
         self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
         self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
         self.backButton = try decoder.decodeIfPresent("backButton") ?? self.backButton
+        self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
         self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
         self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
         self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
@@ -94,11 +96,17 @@ public class SessionView: ObservableObject, Decodable{
         self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
     }
     
-    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list") -> SessionView{
+    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
         let sv = SessionView()
         sv.searchResult = searchResult
         sv.rendererName = rendererName
-        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        sv.backButton = ActionDescription(icon: "chevron.left",
+                                          title: "Back",
+                                          actionName: "back",
+                                          actionArgs: [])
+        print("TITLE \(searchResult.data[0].properties["title"]!)")
+        sv.title = searchResult.data[0].properties["title"] ?? ""
+        sv.backTitle = currentView.title
         return sv
     }
     

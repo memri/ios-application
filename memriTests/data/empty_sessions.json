@@ -76,12 +76,6 @@
                             "properties": {"title": "Untitled Note"}
                         }]
                     },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
-                        "actionArgs": []
-                    },
                     "editActionButton":{
                         "icon": "pencil",
                         "title": "edit",

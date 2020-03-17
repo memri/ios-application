@@ -21,55 +21,63 @@ struct TopNavigation: View {
     var hideBack:Bool = false
     
     var body: some View {
-        HStack {
-            
-            Button(action: {}) {
-                Image(systemName: "line.horizontal.3")
-                    .foregroundColor(.gray)
-                    .font(Font.system(size: 20, weight: .medium))
+        
+        ZStack{
+            // we place the title *over* the rest of the topnav, to center it horizontally
+            HStack{
+                Text(sessions.currentView.title).font(.headline)
             }
-            .padding(.horizontal , 5)
-            
-            if sessions.currentView.backButton != nil {
-                Button(action: backButtonAction ) {
-                    Image(systemName: sessions.currentView.backButton!.icon)
+            HStack{
+                Button(action: {}) {
+                    Image(systemName: "line.horizontal.3")
+                        .foregroundColor(.gray)
+                        .font(Font.system(size: 20, weight: .medium))
+                }
+                .padding(.horizontal , 5)
+                
+                if sessions.currentView.backButton != nil {
+                    Button(action: backButtonAction ) {
+                        Image(systemName: sessions.currentView.backButton!.icon)
+                        .foregroundColor(.gray)
+                        if sessions.currentView.backTitle != nil{
+                            Text(sessions.currentView.backTitle!)
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                        }
+
+                    }
+                }
+                Spacer()
+                if self.sessions.currentView.editActionButton != nil {
+                    Button(action: editAction) {
+                        Image(systemName: sessions.currentView.editActionButton!.icon)
+                    }
+                    .padding(.horizontal , 5)
                     .foregroundColor(.gray)
                 }
-            }
+                
+                if sessions.currentView.actionButton != nil {
+                    Button(action: actionButtonAction) {
+                        Image(systemName:
+                            sessions.currentView.actionButton!.icon)
+                    }
+                    .padding(.horizontal , 5)
+                    .foregroundColor(.green)
+                }
 
-            Spacer()
-            Text(sessions.currentView.title).font(.headline)
-            Spacer()
-            
-            if self.sessions.currentView.editActionButton != nil {
-                Button(action: editAction) {
-                    Image(systemName: sessions.currentView.editActionButton!.icon)
+                Button(action: {
+                    print("render contextpane")
+                    self.show_contextpage = true
+                }) {
+                    Image(systemName: "ellipsis")
+                }.sheet(isPresented: self.$show_contextpage) {
+                    ContextPane(sessions: self.sessions)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
-            }
-            
-            if sessions.currentView.actionButton != nil {
-                Button(action: actionButtonAction) {
-                    Image(systemName:
-                        sessions.currentView.actionButton!.icon)
-                }
-                .padding(.horizontal , 5)
-                .foregroundColor(.green)
-            }
-            
+            }.padding(.all, 30)
+        }
 
-            Button(action: {
-                print("render contextpane")
-                self.show_contextpage = true
-            }) {
-                Image(systemName: "ellipsis")
-            }.sheet(isPresented: self.$show_contextpage) {
-                ContextPane(sessions: self.sessions)
-            }
-            .padding(.horizontal , 5)
-            .foregroundColor(.gray)
-        }.padding(.all, 30)
     }
     func actionButtonAction(){
         sessions.currentSession.executeAction(action: sessions.currentView.actionButton)

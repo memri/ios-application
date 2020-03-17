@@ -92,15 +92,6 @@ struct ListRenderer: Renderer {
                 .navigationBarHidden(true)
             }
 
-//            Button(action: {
-//                print(self.isEditMode)
-//                self.isEditMode = .active
-//                print(self.isEditMode)
-//
-//            }) {
-//                Text("abc")
-//            }
-
         }
     }
     
