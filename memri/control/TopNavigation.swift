@@ -9,9 +9,7 @@
 import SwiftUI
 
 struct TopNavigation: View {
-    
-    @EnvironmentObject var sessions: Sessions
-    @EnvironmentObject var application: Application
+    @EnvironmentObject var main: Main
     
     @State private var show_contextpage: Bool = false
     
@@ -31,20 +29,20 @@ struct TopNavigation: View {
             }
             .padding(.horizontal , 5)
             
-            if self.sessions.currentSession.currentView.backButton != nil {
+            if main.currentView.backButton != nil {
                 Button(action: backButtonAction ) {
-                    Image(systemName: self.sessions.currentSession.currentView.backButton!.icon)
+                    Image(systemName: main.currentView.backButton!.icon)
                     .foregroundColor(.gray)
                 }
             }
 
             Spacer()
-            Text(sessions.currentSession.currentView.title).font(.headline)
+            Text(main.currentView.title).font(.headline)
             Spacer()
             
-            if self.sessions.currentSession.currentView.actionButton != nil {
+            if main.currentView.actionButton != nil {
                 Button(action: actionButtonAction) {
-                    Image(systemName: self.sessions.currentSession.currentView.actionButton!.icon)
+                    Image(systemName: main.currentView.actionButton!.icon)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.green)
@@ -57,24 +55,24 @@ struct TopNavigation: View {
             }) {
                 Image(systemName: "ellipsis")
             }.sheet(isPresented: self.$show_contextpage) {
-                ContextPane(sessions: self.sessions)
+                ContextPane()
             }
             .padding(.horizontal , 5)
             .foregroundColor(.gray)
         }.padding(.all, 30)
     }
     func actionButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentView.actionButton)
+        main.executeAction(main.currentView.actionButton!)
     }
     
     func backButtonAction(){
-        self.sessions.currentSession.executeAction(action: self.sessions.currentSession.currentView.backButton)
+        main.executeAction(main.currentView.backButton!)
     }
 }
 
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
+        TopNavigation().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

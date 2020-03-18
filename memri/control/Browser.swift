@@ -9,24 +9,14 @@
 import SwiftUI
 import Combine
 
-extension View {
-    func fullHeight() -> some View {
-        self.frame(minWidth: 0,
-                   maxWidth: .infinity,
-                   minHeight: 0, maxHeight: .infinity,
-                   alignment: Alignment.topLeading)
-    }
-}
-
 struct Browser: View {
-    @EnvironmentObject var sessions: Sessions
-    @EnvironmentObject var application: Application
+    @EnvironmentObject var main: Main
     
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
-    var currentRenderer: AnyView { renderers[sessions.currentSession.currentView.rendererName,
+    var currentRenderer: AnyView { renderers[main.currentView.rendererName,
                   default: AnyView(ThumbnailRenderer())]
     }
     
@@ -34,10 +24,10 @@ struct Browser: View {
         return
             VStack() {
                 TopNavigation()
-                renderers[sessions.currentSession.currentView.rendererName,
+                renderers[main.currentView.rendererName,
                           default: AnyView(ListRenderer())].fullHeight()
                 Search()
-                }.fullHeight()
+                }
     }
 
     /**
@@ -48,6 +38,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
+        Browser().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

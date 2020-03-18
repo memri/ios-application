@@ -24,17 +24,18 @@ struct RichTextRenderer: Renderer {
     func setState(_ state:RenderState) -> Bool {return false}
     func getState() -> RenderState {RenderState()}
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
-    @EnvironmentObject var sessions: Sessions
+    
+    @EnvironmentObject var main: Main
 
     var body: some View {
         return VStack{
-                RichTextEditor(dataItem: self.sessions.currentSession.currentView.searchResult.data[0])
+                RichTextEditor(dataItem: main.currentView.searchResult.data[0])
         }
     }
 }
 
 struct RichTextRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextRenderer().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
+        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

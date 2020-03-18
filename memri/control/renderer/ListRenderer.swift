@@ -64,11 +64,11 @@ struct ListRenderer: Renderer {
     func getState() -> RenderState {RenderState()}
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
     
-    @EnvironmentObject var sessions: Sessions
+    @EnvironmentObject var main: Main
     
     var body: some View {
         return VStack {
-            ForEach(self.sessions.currentSession.currentView.searchResult.data) { dataItem in
+            ForEach(main.currentView.searchResult.data) { dataItem in
                 VStack{
                     Text(dataItem.properties["title"]!.value as! String)
                         .bold()
@@ -85,13 +85,13 @@ struct ListRenderer: Renderer {
     }
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        self.sessions.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
+        main.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
         
     }
 }
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
+        ListRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

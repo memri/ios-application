@@ -9,14 +9,10 @@
 import SwiftUI
 
 struct ContextPane: View {
+    @EnvironmentObject var main: Main
     
     let horizontalLineWidth: CGFloat = 1.5
     var horizontalLine = HorizontalLine()
-    var currentView: SessionView?
-
-    init(sessions: Sessions) {
-       self.currentView = sessions.currentSession.currentView
-    }
     
     var title: String?
     var subtitle: String?
@@ -31,10 +27,10 @@ struct ContextPane: View {
     var body: some View {
         VStack (/*alignment: .leading*/){
             VStack {
-                Text("\(self.currentView?.title ?? "")")
+                Text("\(main.currentView.title ?? "")")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text("\(self.currentView?.subtitle ?? "")")
+                Text("\(main.currentView.subtitle ?? "")")
                     .font(.body)
                 horizontalLine
                     .stroke(Color.gray, lineWidth: horizontalLineWidth)
@@ -84,6 +80,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane(sessions: try! Sessions.fromJSONFile("empty_sessions"))
+        ContextPane().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

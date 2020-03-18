@@ -8,16 +8,22 @@ import SwiftUI
  * each aimed at a different way to represent the data. For instance
  * an application that is focussed on voice-first instead of gui-first.
  */
-public class Application: Event, ObservableObject {
+public class Main: Event, ObservableObject {
     public let name: String = "GUI"
 
     /**
      * The current session that is active in the application
      */
-    @Published public var currentSession: Session? = nil
+    @Published public var currentSession: Session = Session()
+    @Published public var currentView: SessionView = SessionView()
+    
+    @Published public var browserEditMode: Bool = false
+    @Published public var navigationEditMode: Bool = false
+    @Published public var showOverlay: String? = nil
+    @Published public var showNavigation: Bool? = nil
 
 //    public let settings: Settings
-    public var sessions: Sessions
+    @Published public var sessions: Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
     public var podApi:PodAPI
@@ -31,7 +37,7 @@ public class Application: Event, ObservableObject {
     // These variables stay private to prevent tampering which can cause backward incompatibility
 //    var navigationPane: Navigation
 //    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
-    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
+//    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
 
 //    var sessionPane: SessionSwitcher
     
@@ -40,14 +46,15 @@ public class Application: Event, ObservableObject {
 //    var schedulePane: SchedulePane
 //    var sharingPane: SharingPane
 
-    init(name:String, key:String, browser: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>) {
+    init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
-        sessions = Sessions()
-        browserPane=browser
         
-
+        super.init()
+    }
+    
+    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) {
 //        cache = Cache(<#T##podAPI: PodAPI##PodAPI#>, queryCache: <#T##[String : SearchResult]#>, typeCache: <#T##[String : SearchResult]#>, idCache: <#T##[String : SearchResult]#>)
         // Load settings (from cache and/or api)
         
@@ -65,13 +72,14 @@ public class Application: Event, ObservableObject {
 //        self.browserPane = Browser()
 
 //        browserPane = Browser().environmentObject(sessions) as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
-        super.init()
 
         
         // Hook current session
-        currentSession = sessions.currentSession
-        let _ = sessions.objectWillChange.sink {
+        self.currentSession = sessions.currentSession
+        self.currentView = sessions.currentSession.currentView
+        let _ = self.sessions.objectWillChange.sink {
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
+            self.currentView = self.sessions.currentSession.currentView
         }
 
         // Fire ready event
@@ -85,6 +93,13 @@ public class Application: Event, ObservableObject {
 //        else {
 //            // TODO
 //        }
+        
+        callback(nil, true)
+    }
+    
+    public func mockBoot() -> Main {
+        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
+        return self
     }
     
     public func setCurrentView(){
@@ -115,7 +130,7 @@ public class Application: Event, ObservableObject {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ data:DataItem) -> Bool {
+    public func executeAction(_ action:ActionDescription, _ data:DataItem? = nil) -> Void {
         return true
     }
 }

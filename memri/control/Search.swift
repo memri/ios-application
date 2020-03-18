@@ -34,8 +34,7 @@ struct ViewTypeButton: Identifiable {
 }
 
 struct Search: View {
-    @EnvironmentObject var application: Application
-    @EnvironmentObject var sessions: Sessions
+    @EnvironmentObject var main: Main
 
     @State var searchText=""
     @State var showFilters=false
@@ -134,7 +133,7 @@ struct Search: View {
         UITableView.appearance().separatorColor = .clear
     }
     func setRenderer(i: Int){
-        self.sessions.currentSession.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
+        self.main.currentSession.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
         self.resetSelected()
         self.viewTypeButtons[i].selected = true
     }
@@ -147,6 +146,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(try! Sessions.fromJSONFile("empty_sessions"))
+        Search().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

@@ -21,23 +21,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create the SwiftUI view that provides the window contents.
         
-        var sessions = Sessions()
+        let main = Main(name: "Memri GUI", key: "ABCDEF")
 
-        var browser = Browser().environmentObject(sessions)
+        let application = Application()
+            .environmentObject(main)
 
-
-        
-        var application: Application = Application(name: "Memri GUI", key: "ABCDEF", browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
+//
+//
+//        var application: Application = Application(, browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
 //        var browser = application.browserPane
 //        var sessions = Sessions()
 //        var browser: some View = Browser().environmentObject(sessions)
-
+        
+        main.boot() { (error, success) in
+            print("Booted")
+        }
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: application.browserPane)
+            window.rootViewController = UIHostingController(rootView: application)
             self.window = window
             window.makeKeyAndVisible()
         }
