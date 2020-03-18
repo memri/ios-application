@@ -26,7 +26,7 @@ public class Main: Event, ObservableObject {
     @Published public var sessions: Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
-    var cancellables:[AnyCancellable]? = nil
+    var cancellable:AnyCancellable? = nil
     
     public var podApi:PodAPI
     public var cache:Cache
@@ -80,11 +80,11 @@ public class Main: Event, ObservableObject {
         // Hook current session
         self.currentSession = sessions.currentSession
         self.currentView = sessions.currentSession.currentView
-        self.cancellables?.append(self.sessions.objectWillChange.sink {
+        self.cancellable = self.sessions.objectWillChange.sink {
             print("updated main")
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             self.currentView = self.sessions.currentSession.currentView
-        })
+        }
 
         // Fire ready event
         self.fire("ready")
@@ -104,11 +104,12 @@ public class Main: Event, ObservableObject {
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
         
-        self.cancellables?.append(self.sessions.objectWillChange.sink {
-            print("updated main2")
-            self.currentSession = self.sessions.currentSession // TODO filter to a single property
-            self.currentView = self.sessions.currentSession.currentView
-        })
+        self.cancellable = self.sessions.objectWillChange.sink {
+              print("updated main2")
+              self.currentSession = self.sessions.currentSession // TODO filter to a single property
+              self.currentView = self.sessions.currentSession.currentView
+          }
+        
         
         return self
     }
