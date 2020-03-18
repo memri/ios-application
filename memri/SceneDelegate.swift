@@ -20,13 +20,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-        let contentView = Application(name: "Memri GUI", key: "ABCDEF").browserPane
+        
+        var sessions = Sessions()
+
+        var browser = Browser().environmentObject(sessions)
+
+
+        
+        var application: Application = Application(name: "Memri GUI", key: "ABCDEF", browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
+//        var browser = application.browserPane
+//        var sessions = Sessions()
+//        var browser: some View = Browser().environmentObject(sessions)
+
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: contentView)
+            window.rootViewController = UIHostingController(rootView: application.browserPane)
             self.window = window
             window.makeKeyAndVisible()
         }

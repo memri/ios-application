@@ -1,5 +1,6 @@
 import Foundation
-import Combine 
+import Combine
+import SwiftUI
 
 /**
  * Represents the entire application user interface.
@@ -29,7 +30,9 @@ public class Application: Event, ObservableObject {
     
     // These variables stay private to prevent tampering which can cause backward incompatibility
 //    var navigationPane: Navigation
-    var browserPane: Browser
+//    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
+    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
+
 //    var sessionPane: SessionSwitcher
     
     // Overlays
@@ -37,13 +40,13 @@ public class Application: Event, ObservableObject {
 //    var schedulePane: SchedulePane
 //    var sharingPane: SharingPane
 
-    public init(name:String, key:String) {
+    init(name:String, key:String, browser: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>) {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
         sessions = Sessions()
+        browserPane=browser
         
-        super.init()
 
 //        cache = Cache(<#T##podAPI: PodAPI##PodAPI#>, queryCache: <#T##[String : SearchResult]#>, typeCache: <#T##[String : SearchResult]#>, idCache: <#T##[String : SearchResult]#>)
         // Load settings (from cache and/or api)
@@ -59,9 +62,11 @@ public class Application: Event, ObservableObject {
 //        }
         
         // Instantiate view objects
-        browserPane = Browser()
-            .environmentObject(sessions)
-            .environmentObject(self)
+//        self.browserPane = Browser()
+
+//        browserPane = Browser().environmentObject(sessions) as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
+        super.init()
+
         
         // Hook current session
         currentSession = sessions.currentSession
