@@ -29,10 +29,12 @@ public struct QueryOptions: Decodable {
     public var pageIndex: Int = 0
     
     public init(from decoder: Decoder) throws {
-        query = try decoder.decodeIfPresent("query") ?? query
-        sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
-        sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
-        pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount
+        jsonErrorHandling(decoder) {
+            query = try decoder.decodeIfPresent("query") ?? query
+            sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
+            sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
+            pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount   
+        }
     }
 }
 

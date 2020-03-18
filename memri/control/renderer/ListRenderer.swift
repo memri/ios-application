@@ -85,7 +85,7 @@ struct ListRenderer: Renderer {
     }
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        main.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
+        main.executeAction(actionDescription, dataItem)
         
     }
 }

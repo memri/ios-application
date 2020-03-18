@@ -51,10 +51,13 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, Pro
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        uid = try decoder.decodeIfPresent("uid") ?? uid
-        type = try decoder.decodeIfPresent("type") ?? type
-        predicates = try decoder.decodeIfPresent("predicates") ?? predicates
-        properties = try decoder.decodeIfPresent("properties") ?? properties
+        
+        jsonErrorHandling(decoder) {
+            uid = try decoder.decodeIfPresent("uid") ?? uid
+            type = try decoder.decodeIfPresent("type") ?? type
+            predicates = try decoder.decodeIfPresent("predicates") ?? predicates
+            properties = try decoder.decodeIfPresent("properties") ?? properties
+        }
     }
     
     public static func fromUid(uid:String)-> DataItem {
@@ -239,10 +242,12 @@ public class SearchResult: ObservableObject, Decodable {
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
-        data = try decoder.decodeIfPresent("data") ?? data
-        query = try decoder.decodeIfPresent("query") ?? query
-        loading = try decoder.decodeIfPresent("loading") ?? loading
-        pages = try decoder.decodeIfPresent("pageCount") ?? pages
+        jsonErrorHandling(decoder) {
+            data = try decoder.decodeIfPresent("data") ?? data
+            query = try decoder.decodeIfPresent("query") ?? query
+            loading = try decoder.decodeIfPresent("loading") ?? loading
+            pages = try decoder.decodeIfPresent("pageCount") ?? pages
+        }
         
         // If the searchResult is initiatlized with data we set the state to loading done
         if (!(data.isEmpty && loading == 0)) {

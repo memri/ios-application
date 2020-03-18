@@ -47,7 +47,6 @@ struct TopNavigation: View {
                 .padding(.horizontal , 5)
                 .foregroundColor(.green)
             }
-            
 
             Button(action: {
                 print("render contextpane")
