@@ -40,13 +40,17 @@ public class Sessions: ObservableObject, Decodable {
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
-        sessions = try decoder.decodeIfPresent("sessions") ?? sessions
+        
+        jsonErrorHandling(decoder) {
+            currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
+            sessions = try decoder.decodeIfPresent("sessions") ?? sessions
+        }
+        
         self.postInit()
     }
     
     public func postInit(){
-        self.cancellables=[]
+        self.cancellables = []
         for session in sessions{
             self.cancellables?.append(session.objectWillChange.sink { (_) in
                 print("session \(session) was changed")
@@ -55,16 +59,25 @@ public class Sessions: ObservableObject, Decodable {
         }
     }
     
-    func openView(_ view:SessionView){
-        self.currentSession.openView(view)
-        self.objectWillChange.send()
+    /**
+     *
+     */
+    public func setCurrentSession(_ session:Session) throws -> Void {
+        let index = sessions.firstIndex(of: session) ?? -1
+        if (index > 0) { throw "Should never happen" } // Should never happen
+        
+        currentSessionIndex = index
     }
 
+    /**
+     * Find a session using text
+     */
     public func findSession(_ query:String) -> Void {}
-    // Find a session using text
 
+    /**
+     * Clear all sessions and create a new one
+     */
     public func clear() -> Void {}
-    //  Clear all sessions and create a new one
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
         let jsonData = try jsonDataFromFile(file, ext)
@@ -76,11 +89,10 @@ public class Sessions: ObservableObject, Decodable {
         let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: Data(json.utf8))
         return sessions
     }
-
-//    public func setCurrentSession(_ session:Session) -> Void {}
 }
 
-public class Session: ObservableObject, Decodable  {
+public class Session: ObservableObject, Decodable, Equatable {
+    var id: String
     
     @Published var currentViewIndex: Int = 0
     @Published var views: [SessionView] = [SessionView()]
@@ -100,6 +112,7 @@ public class Session: ObservableObject, Decodable  {
     }
     
     init(_ currentViewIndex: Int = 0, views: [SessionView]=[SessionView()]){
+        self.id = UUID().uuidString
         self.currentViewIndex = currentViewIndex
         self.views = views
         self.postInit()
@@ -107,8 +120,12 @@ public class Session: ObservableObject, Decodable  {
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-        views = try decoder.decodeIfPresent("views") ?? views
+        
+        jsonErrorHandling(decoder) {
+            id = try decoder.decodeIfPresent("id") ?? id
+            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
+            views = try decoder.decodeIfPresent("views") ?? views
+        }
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
@@ -126,94 +143,8 @@ public class Session: ObservableObject, Decodable  {
             })
         }
     }
-    
-    func executeAction(action: ActionDescription?, dataItem: DataItem? = nil){
-        if let action = action{
-            let params = action.actionArgs
-            
-            switch action.actionName {
-            case "back":
-                back()
-            case "add":
-                let param0 = params[0].value as! DataItem
-                add(dataItem: param0)
-            case "openView":
-                if let dataItem = dataItem{
-                    openView(dataItem)
-                }else{
-                    let param0 = params[0].value as! SessionView
-                    openView(param0)
-                }
 
-            case "exampleUnpack":
-                let (_, _) = (params[0].value, params[1].value) as! (String, Int)
-                break
-            default:
-                print("UNDEFINED ACTION, NOT EXECUTING")
-            }
-        }
+    public static func == (lt: Session, rt: Session) -> Bool {
+        return lt.id == rt.id
     }
-    
-    func back(){
-        print(currentViewIndex)
-        if currentViewIndex == 0 {
-            print("returning")
-            self.objectWillChange.send()
-            return
-        }else{
-            currentViewIndex -= 1
-            self.objectWillChange.send()
-        }
-        print(currentViewIndex)
-        print(self.currentView.rendererName)
-    }
-    
-    func changeRenderer(rendererName: String){
-        self.currentView.rendererName = rendererName
-        self.objectWillChange.send()
-    }
-    
-    // TODO
-    func add(dataItem: DataItem){
-        
-//        let n = self.currentSessionView.searchResult.data.count + 100
-//        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
-//
-//        dataItem.properties=["title": "new note", "content": ""]
-        
-        self.currentView.searchResult.data.append(dataItem)
-        
-        let sr = SearchResult()
-        let sv = SessionView()
-        
-        sr.data = [dataItem]
-        sv.searchResult=sr
-        sv.rendererName = "richTextEditor"
-        sv.title="new note"
-        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
-        
-        self.openView(sv)
-    }
-    
-    func openView(_ view:SessionView){
-        self.views = self.views[0...self.currentViewIndex] +  [view]
-        self.currentViewIndex += 1
-        
-        cancellables?.append(view.objectWillChange.sink { (_) in
-            self.objectWillChange.send()
-        })
-    }
-    
-    func openView(_ dataItem:DataItem){
-        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-                rendererName: "richTextEditor")
-    
-        self.views = self.views[0...self.currentViewIndex] + [view]
-        self.currentViewIndex += 1
-        
-        cancellables?.append(view.objectWillChange.sink { (_) in
-            self.objectWillChange.send()
-        })
-    }
-    
 }

@@ -3,7 +3,7 @@
     "sessions": [
         {
             "currentViewIndex" :0,
-            "sessionViews": [
+            "views": [
                 {
                     "searchResult": {
                         "query": {
@@ -17,7 +17,6 @@
                             {
                                 "uid": "0x01",
                                 "type": "note",
-                                "predicates": {},
                                 "properties": {
                                     "title": "first example note",
                                     "content": "This is an example note"
@@ -26,7 +25,6 @@
                             {
                                 "uid": "0x02",
                                 "type": "note",
-                                "predicates": {},
                                 "properties": {
                                     "title": "second example note",
                                     "content": "This is again an example note"
@@ -35,7 +33,6 @@
                             {
                                 "uid": "0x03",
                                 "type": "note",
-                                "predicates": {},
                                 "properties": {
                                     "title": "third example note",
                                     "content": "This is AGAIN an example note"
@@ -44,7 +41,6 @@
                             {
                                 "uid": "0x04",
                                 "type": "note",
-                                "predicates": {},
                                 "properties": {
                                     "title": "fourth example note",
                                     "content": "This is AGAINNNN an example note"
@@ -53,7 +49,6 @@
                             {
                                 "uid": "0x05",
                                 "type": "note",
-                                "predicates": {},
                                 "properties": {
                                     "title": "fifth example note",
                                     "content": "This is AGAINNN an example note"
@@ -74,7 +69,7 @@
                         "actionName": "add",
                         "actionArgs": [{
                             "type": "note",
-                            "predicates": {"owner": "{me}"},
+                            "_predicates": {"owner": "{me}"},
                             "properties": {"title": "Untitled Note"}
                         }]
                     },

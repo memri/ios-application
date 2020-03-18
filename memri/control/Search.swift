@@ -133,7 +133,7 @@ struct Search: View {
         UITableView.appearance().separatorColor = .clear
     }
     func setRenderer(i: Int){
-        self.main.currentSession.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
+        self.main.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
         self.resetSelected()
         self.viewTypeButtons[i].selected = true
     }

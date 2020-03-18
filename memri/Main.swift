@@ -26,6 +26,8 @@ public class Main: Event, ObservableObject {
     @Published public var sessions: Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
+    var cancellables:[AnyCancellable]? = nil
+    
     public var podApi:PodAPI
     public var cache:Cache
     
@@ -73,16 +75,16 @@ public class Main: Event, ObservableObject {
 
 //        browserPane = Browser().environmentObject(sessions) as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
 
-        
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
         
         // Hook current session
         self.currentSession = sessions.currentSession
         self.currentView = sessions.currentSession.currentView
-        let _ = self.sessions.objectWillChange.sink {
+        self.cancellables?.append(self.sessions.objectWillChange.sink {
+            print("updated main")
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             self.currentView = self.sessions.currentSession.currentView
-        }
+        })
 
         // Fire ready event
         self.fire("ready")
@@ -101,6 +103,13 @@ public class Main: Event, ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
+        
+        self.cancellables?.append(self.sessions.objectWillChange.sink {
+            print("updated main2")
+            self.currentSession = self.sessions.currentSession // TODO filter to a single property
+            self.currentView = self.sessions.currentSession.currentView
+        })
+        
         return self
     }
     
@@ -116,24 +125,112 @@ public class Main: Event, ObservableObject {
      * Adds a view to the history of the currentSession and displays it.
      * If the view was already part of the currentSession.views it reorders it on top
      */
-    public func openView(_ view: SessionView) {}
+    func openView(_ view:SessionView){
+        let session = self.currentSession
+        
+//        session.views = session.views[0...session.currentViewIndex] + [view]
+//        session.currentViewIndex += 1
+        
+        session.views.append(view)
+        session.currentViewIndex = session.views.count - 1
+        
+        self.currentView = view // TODO this should not be needed
+        
+        session.cancellables?.append(view.objectWillChange.sink { (_) in
+            session.objectWillChange.send()
+        })
+    }
+    
+    func openView(_ item:DataItem){
+        let session = self.currentSession
+        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([item]),
+                rendererName: "richTextEditor")
+    
+        session.views.append(view)
+        session.currentViewIndex = session.views.count - 1
+//        session.views = session.views[0...session.currentViewIndex] + [view]
+        
+        self.currentView = view // TODO this should not be needed
+        
+        session.cancellables?.append(view.objectWillChange.sink { (_) in
+            session.objectWillChange.send()
+        })
+    }
+    
     public func openView(_ view: String) {}
     public func openView(_ items: [DataItem]) {}
-    public func openView(_ item: DataItem) {}
 
     /**
      * Add a new data item and displays that item in the UI
      * in edit mode
      */
-    public func add(_ item:DataItem) -> DataItem {
-        return DataItem()
+    public func add(_ item:DataItem) {
+//        let n = self.currentSessionView.searchResult.data.count + 100
+//        let dataItem = DataItem.fromUid(uid: "0x0\(n)")
+//
+//        dataItem.properties=["title": "new note", "content": ""]
+        
+        self.currentView.searchResult.data.append(item) // TODO
+        
+        let sr = SearchResult()
+        let sv = SessionView()
+        
+        sr.data = [item]
+        sv.searchResult = sr
+        sv.rendererName = "richTextEditor"
+        sv.title = "new note"
+        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        
+        self.openView(sv)
     }
 
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ data:DataItem? = nil) -> Void {
+    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil) -> Void {
+        let params = action.actionArgs
         
+        switch action.actionName {
+        case "back":
+            back()
+        case "add":
+            let param0 = params[0].value as! DataItem
+            add(param0)
+        case "openView":
+            if let item = item {
+                openView(item)
+            }
+            else {
+                let param0 = params[0].value as! SessionView
+                openView(param0)
+            }
+
+        case "exampleUnpack":
+            let (_, _) = (params[0].value, params[1].value) as! (String, Int)
+            break
+        default:
+            print("UNDEFINED ACTION, NOT EXECUTING")
+        }
+    }
+        
+    func back(){
+        let session = currentSession
+        
+        if session.currentViewIndex == 0 {
+            print("returning")
+            session.objectWillChange.send()
+            return
+        }
+        else {
+            session.currentViewIndex -= 1
+            session.objectWillChange.send()
+        }
+    }
+    
+    func changeRenderer(rendererName: String){
+        let session = currentSession
+        session.currentView.rendererName = rendererName
+        session.objectWillChange.send()
     }
 }
 
