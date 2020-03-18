@@ -9,21 +9,21 @@ import SwiftUI
  * an application that is focussed on voice-first instead of gui-first.
  */
 public class Main: Event, ObservableObject {
-    public let name: String = "GUI"
+    public let name:String = "GUI"
 
     /**
      * The current session that is active in the application
      */
-    @Published public var currentSession: Session = Session()
-    @Published public var currentView: SessionView = SessionView()
+    @Published public var currentSession:Session = Session()
+    @Published public var currentView:SessionView = SessionView()
     
-    @Published public var browserEditMode: Bool = false
-    @Published public var navigationEditMode: Bool = false
-    @Published public var showOverlay: String? = nil
-    @Published public var showNavigation: Bool? = nil
+    @Published public var browserEditMode:Bool = false
+    @Published public var navigationEditMode:Bool = false
+    @Published public var showOverlay:String? = nil
+    @Published public var showNavigation:Bool? = nil
 
 //    public let settings: Settings
-    @Published public var sessions: Sessions = Sessions()
+    @Published public var sessions:Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
     var cancellable:AnyCancellable? = nil
@@ -81,9 +81,10 @@ public class Main: Event, ObservableObject {
         self.currentSession = sessions.currentSession
         self.currentView = sessions.currentSession.currentView
         self.cancellable = self.sessions.objectWillChange.sink {
-            print("updated main")
-            self.currentSession = self.sessions.currentSession // TODO filter to a single property
-            self.currentView = self.sessions.currentSession.currentView
+            DispatchQueue.main.async {
+                self.currentSession = self.sessions.currentSession // TODO filter to a single property
+                self.currentView = self.sessions.currentSession.currentView
+            }
         }
 
         // Fire ready event
@@ -105,10 +106,11 @@ public class Main: Event, ObservableObject {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
         
         self.cancellable = self.sessions.objectWillChange.sink {
-              print("updated main2")
-              self.currentSession = self.sessions.currentSession // TODO filter to a single property
-              self.currentView = self.sessions.currentSession.currentView
-          }
+              DispatchQueue.main.async {
+                  self.currentSession = self.sessions.currentSession // TODO filter to a single property
+                  self.currentView = self.sessions.currentSession.currentView
+            }
+        }
         
         
         return self
@@ -129,13 +131,8 @@ public class Main: Event, ObservableObject {
     func openView(_ view:SessionView){
         let session = self.currentSession
         
-//        session.views = session.views[0...session.currentViewIndex] + [view]
-//        session.currentViewIndex += 1
-        
         session.views.append(view)
         session.currentViewIndex = session.views.count - 1
-        
-        self.currentView = view // TODO this should not be needed
         
         session.cancellables?.append(view.objectWillChange.sink { (_) in
             session.objectWillChange.send()
@@ -149,9 +146,6 @@ public class Main: Event, ObservableObject {
     
         session.views.append(view)
         session.currentViewIndex = session.views.count - 1
-//        session.views = session.views[0...session.currentViewIndex] + [view]
-        
-        self.currentView = view // TODO this should not be needed
         
         session.cancellables?.append(view.objectWillChange.sink { (_) in
             session.objectWillChange.send()

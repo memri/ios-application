@@ -22,12 +22,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the SwiftUI view that provides the window contents.
         
         let main = Main(name: "Memri GUI", key: "ABCDEF")
+        let application = Application().environmentObject(main)
 
-        let application = Application()
-            .environmentObject(main)
-
-//
-//
 //        var application: Application = Application(, browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
 //        var browser = application.browserPane
