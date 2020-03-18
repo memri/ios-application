@@ -74,6 +74,8 @@ public class Main: Event, ObservableObject {
 //        browserPane = Browser().environmentObject(sessions) as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
 
         
+        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
+        
         // Hook current session
         self.currentSession = sessions.currentSession
         self.currentView = sessions.currentSession.currentView
@@ -131,7 +133,7 @@ public class Main: Event, ObservableObject {
      * Executes the action as described in the action description
      */
     public func executeAction(_ action:ActionDescription, _ data:DataItem? = nil) -> Void {
-        return true
+        
     }
 }
 
