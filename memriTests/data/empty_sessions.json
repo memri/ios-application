@@ -3,7 +3,7 @@
     "sessions": [
         {
             "currentViewIndex" :0,
-            "sessionViews": [
+            "views": [
                 {
                     "searchResult": {
                         "query": {
