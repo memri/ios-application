@@ -1,0 +1,54 @@
+{
+    "currentSessionIndex": 0,
+    "sessions": [
+        {
+            "currentViewIndex" :0,
+            "views": [
+                {
+                    "searchResult": {
+                        "query": {
+                            "query": "",
+                            "sortProperty": "None",
+                            "sortAscending": 1,
+                            "loading": 0,
+                            "pageCount": 0
+                        }
+                    },
+                    "name": "testname",
+                    "subtitle": "testSubtitle",
+                    "title": "notes",
+                    "rendererName": "list",
+                    "selection": [],
+                    "renderConfigs": {},
+                    "editButtons": [],
+                    "actionButton": {
+                        "icon": "plus",
+                        "title": "Add Note",
+                        "actionName": "add",
+                        "actionArgs": [{
+                            "type": "note",
+                            "_predicates": {"owner": "{me}"},
+                            "properties": {"title": "Untitled Note"}
+                        }]
+                    },
+                    "backButton":{
+                        "icon": "chevron.left",
+                        "title": "Back",
+                        "actionName": "back",
+                        "actionArgs": []
+                    },
+                    "filterButtons": [],
+                    "actionItems": [],
+                    "navigateItems": [],
+                    "contextButtons": [],
+                    "icon": "testIcon",
+                    "showLabels": false,
+                    "contextMode": false,
+                    "filterMode": false,
+                    "editMode": false,
+                    "browsingMode": "default"
+                }
+            ]
+        }
+    ]
+}

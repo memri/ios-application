@@ -31,23 +31,6 @@ public class Main: Event, ObservableObject {
     public var podApi:PodAPI
     public var cache:Cache
     
-    /**
-     * All available renderers by name
-     */
-//    public let renderers: [String: Renderer]
-    
-    // These variables stay private to prevent tampering which can cause backward incompatibility
-//    var navigationPane: Navigation
-//    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
-//    var browserPane: ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
-
-//    var sessionPane: SessionSwitcher
-    
-    // Overlays
-//    var settingsPane: SettingsPane
-//    var schedulePane: SchedulePane
-//    var sharingPane: SharingPane
-
     init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
@@ -57,47 +40,28 @@ public class Main: Event, ObservableObject {
     }
     
     public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) {
-//        cache = Cache(<#T##podAPI: PodAPI##PodAPI#>, queryCache: <#T##[String : SearchResult]#>, typeCache: <#T##[String : SearchResult]#>, idCache: <#T##[String : SearchResult]#>)
         // Load settings (from cache and/or api)
         
         // Load NavigationCache (from cache and/or api)
+        
         // Load sessions (from cache and/or api)
-//        podApi.get("sessions") { (error, dataitem) in // TODO store in database objects in the dgraph??
-//            if error != nil { return }
-//
-//            sessions = try! Sessions.fromJSONString(dataitem.properties["json"]?.value as! String)
-//
-//            print(sessions.sessions[0].views.count)
-//        }
-        
-        // Instantiate view objects
-//        self.browserPane = Browser()
-
-//        browserPane = Browser().environmentObject(sessions) as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>
-
-        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        
-        // Hook current session
-        self.currentSession = sessions.currentSession
-        self.currentView = sessions.currentSession.currentView
-        self.cancellable = self.sessions.objectWillChange.sink {
-            DispatchQueue.main.async {
-                self.currentSession = self.sessions.currentSession // TODO filter to a single property
-                self.currentView = self.sessions.currentSession.currentView
+        podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
+            if error != nil { return }
+            
+            sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
+            
+            // Hook current session
+            self.currentSession = sessions.currentSession
+            self.currentView = sessions.currentSession.currentView
+            self.cancellable = self.sessions.objectWillChange.sink {
+                DispatchQueue.main.async {
+                    self.setCurrentView()
+                }
             }
         }
 
         // Fire ready event
         self.fire("ready")
-
-//        // When session are loaded, load the current view in the browser
-//        if !currentSession.views.isEmpty {
-//            browserPane.
-//        }
-//        // If there are no pre-existing sessions, load the default view in the browser
-//        else {
-//            // TODO
-//        }
         
         callback(nil, true)
     }
@@ -106,9 +70,8 @@ public class Main: Event, ObservableObject {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
         
         self.cancellable = self.sessions.objectWillChange.sink {
-              DispatchQueue.main.async {
-                  self.currentSession = self.sessions.currentSession // TODO filter to a single property
-                  self.currentView = self.sessions.currentSession.currentView
+            DispatchQueue.main.async {
+                self.setCurrentView()
             }
         }
         
@@ -117,10 +80,11 @@ public class Main: Event, ObservableObject {
     }
     
     public func setCurrentView(){
-        // Load data
-        
-        
         // Set on sessions
+        self.currentSession = self.sessions.currentSession // TODO filter to a single property
+        self.currentView = self.sessions.currentSession.currentView
+        
+        // Load data
         
     }
 

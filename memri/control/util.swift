@@ -16,14 +16,29 @@ import Foundation
 
 extension String: Error {}
 
-func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
+func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
     let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+    return jsonString
+}
+
+func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
+    let jsonString = try stringFromFile(file, ext)
     let jsonData = jsonString.data(using: .utf8)!
     return jsonData
 }
 
-func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
+func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) -> Bool {
+    do {
+        try convert()
+        return true
+    } catch {
+        dump(decoder)
+        return false
+    }
+}
+
+func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool {
     var path:String = "[Unknown]"
     
     if decoder.codingPath.count > 0 {
@@ -42,8 +57,25 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     
     do {
         try convert()
+        return true
     } catch {
         dump(decoder)
         print("JSON Parse Error at \(path)\n\nError: \(error)")
+        return false
     }
+}
+
+func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = .prettyPrinted // for debugging purpose
+
+    var json:String? = nil
+    do {
+        let data = try encode(encoder)
+        json = String(data: data, encoding: .utf8) ?? ""
+    } catch {
+        print("Unexpected error: \(error)")
+    }
+    
+    return json
 }

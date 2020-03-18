@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 import Combine
 
-public struct QueryOptions: Decodable {
+public struct QueryOptions: Codable {
     /**
      * Retrieves the query which is used to load data from the pod
      */
@@ -94,109 +94,8 @@ public class PodAPI {
      */
     public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
         if id == "sessions" {
-            callback(nil, DataItem(id: "sessions", type: "sessions", properties: ["jsons": AnyDecodable("""
-                {
-                    "currentSessionIndex": 0,
-                    "sessions": [
-                        {
-                            "currentViewIndex" :0,
-                            "sessionViews": [
-                                {
-                                    "searchResult": {
-                                        "query": {
-                                            "query": "",
-                                            "sortProperty": "None",
-                                            "sortAscending": 1,
-                                            "loading": 0,
-                                            "pageCount": 0,
-                                        },
-                                        "data": [
-                                            {
-                                                "uid": "0x01",
-                                                "type": "note",
-                                                "predicates": {},
-                                                "properties": {
-                                                    "title": "first example note",
-                                                    "content": "This is an example note"
-                                                }
-                                            },
-                                            {
-                                                "uid": "0x02",
-                                                "type": "note",
-                                                "predicates": {},
-                                                "properties": {
-                                                    "title": "second example note",
-                                                    "content": "This is again an example note"
-                                                }
-                                            },
-                                            {
-                                                "uid": "0x03",
-                                                "type": "note",
-                                                "predicates": {},
-                                                "properties": {
-                                                    "title": "third example note",
-                                                    "content": "This is AGAIN an example note"
-                                                }
-                                            },
-                                            {
-                                                "uid": "0x04",
-                                                "type": "note",
-                                                "predicates": {},
-                                                "properties": {
-                                                    "title": "fourth example note",
-                                                    "content": "This is AGAINNNN an example note"
-                                                }
-                                            },
-                                            {
-                                                "uid": "0x05",
-                                                "type": "note",
-                                                "predicates": {},
-                                                "properties": {
-                                                    "title": "fifth example note",
-                                                    "content": "This is AGAINNN an example note"
-                                                }
-                                            }
-                                        ]
-                                    },
-                                    "name": "testname",
-                                    "subtitle": "testSubtitle",
-                                    "title": "notes",
-                                    "rendererName": "list",
-                                    "selection": [],
-                                    "renderConfigs": {},
-                                    "editButtons": [],
-                                    "actionButton": {
-                                        "icon": "plus",
-                                        "title": "Add Note",
-                                        "actionName": "add",
-                                        "actionArgs": [{
-                                            "type": "note",
-                                            "predicates": {"owner": "{me}"},
-                                            "properties": {"title": "Untitled Note"}
-                                        }]
-                                    },
-                                    "backButton":{
-                                        "icon": "chevron.left",
-                                        "title": "Back",
-                                        "actionName": "back",
-                                        "actionArgs": []
-                                    },
-                                    "filterButtons": [],
-                                    "actionItems": [],
-                                    "navigateItems": [],
-                                    "contextButtons": [],
-                                    "icon": "testIcon",
-                                    "showLabels": false,
-                                    "contextMode": false,
-                                    "filterMode": false,
-                                    "editMode": false,
-                                    "browsingMode": "default"
-                                }
-                            ]
-                        }
-                    ]
-                }
-                """)]))
+            let jsonString = try! stringFromFile("default_sessions", "json")
+            callback(nil, DataItem(id: "sessions", type: "sessions", properties: ["json": AnyDecodable(jsonString)]))
             return
         }
         
@@ -239,8 +138,6 @@ public class PodAPI {
      *
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
-        let items:[DataItem] = try! DataItem.from_json(file: "test_dataItems")
-
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result
@@ -249,6 +146,16 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
+        if query.query.starts(with: "0x") {
+            callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
+            return
+        }
+        if query.query == "notes" {
+            callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
+            return
+        }
+        
+        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")
         callback(nil, items);
     }
     /**

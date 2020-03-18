@@ -13,7 +13,7 @@ extension PropertyReflectable {
     }
 }
 
-public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
+public class DataItem: Codable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
     
     private var uid: String = UUID().uuidString
     public var type: String = ""
@@ -70,9 +70,14 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, Pro
         lhs.uid == rhs.uid
     }
     
-    public class func from_json(file: String, ext: String = "json") throws -> [DataItem] {
-        let data = try jsonDataFromFile(file, ext)
-        let items: [DataItem] = try! JSONDecoder().decode([DataItem].self, from: data)
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let items: [DataItem] = try JSONDecoder().decode([DataItem].self, from: jsonData)
+        return items
+    }
+    
+    public class func fromJSONString(_ json: String) throws -> [DataItem] {
+        let items: [DataItem] = try JSONDecoder().decode([DataItem].self, from: Data(json.utf8))
         return items
     }
     
@@ -203,7 +208,7 @@ public class DataItem: Decodable, Equatable, Identifiable, ObservableObject, Pro
     }
 }
 
-public class SearchResult: ObservableObject, Decodable {
+public class SearchResult: ObservableObject, Codable {
     private var cache: Cache? = nil
     
     /**
@@ -222,7 +227,7 @@ public class SearchResult: ObservableObject, Decodable {
      * Returns the loading state
      *  -2 loading data failed
      *  -1 data is loaded from the server
-     *  0 loading complete
+     *  0 loading idle
      *  1 loading data from server
      */
     public var loading: Int = 0
@@ -325,5 +330,9 @@ public class SearchResult: ObservableObject, Decodable {
         let obj = SearchResult()
         obj.data = data
         return obj
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case query, pages, data
     }
 }

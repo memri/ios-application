@@ -48,6 +48,27 @@ public class LocalStorage {
     public func get(_ key:String) -> String {
         return "[]"
     }
+    
+    /**
+     *
+     */
+    public func create(_ item:DataItem) {
+        
+    }
+    
+    /**
+     *
+     */
+    public func remove(_ item:DataItem) {
+        
+    }
+    
+    /**
+     *
+     */
+    public func update(_ item:DataItem) {
+        
+    }
 }
 
 // Schedules long term tasks like syncing with remote
@@ -61,17 +82,15 @@ public class Scheduler {
         localStorage = local
         
         // For a future solution: https://stackoverflow.com/questions/46344963/swift-jsondecode-decoding-arrays-fails-if-single-element-decoding-fails
+        
         let decoder = JSONDecoder()
-        do {
+        if (!jsonErrorHandling (decoder) {
             let json = localStorage.get("scheduler").data(using: .utf8)!
             queue = try decoder.decode([Task].self, from: json)
             processQueue()
-        } catch {
-            print("Unexpected init error: \(error)")
-            
+        }) {
             queue = []
             persist()
-            
             // TODO fullSync()
         }
     }
@@ -107,18 +126,9 @@ public class Scheduler {
      *
      */
     public func serialize() -> String? {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = .prettyPrinted // for debugging purpose
-
-        var json:String? = nil
-        do {
-            let data = try encoder.encode(queue)
-            json = String(data: data, encoding: .utf8) ?? ""
-        } catch {
-            print("Unexpected error: \(error)")
+        return serializeJSON { (encoder) in
+            return try! encoder.encode(queue)
         }
-        
-        return json
     }
     
     /**
@@ -159,9 +169,9 @@ public struct Task: Equatable, Codable {
 
 public class Cache {
     var podAPI: PodAPI
-    var queryCache: [String: SearchResult]
-    var typeCache: [String: SearchResult]
-    var idCache: [String: DataItem]
+    var queryCache: [String: SearchResult] = [:]
+    var typeCache: [String: SearchResult] = [:]
+    var idCache: [String: DataItem] = [:]
     
     private var localStorage: LocalStorage
     private var scheduler: Scheduler
@@ -170,17 +180,35 @@ public class Cache {
         case UnknownTaskJob(job: String)
     }
     
-    public init(_ podAPI: PodAPI, queryCache: [String: SearchResult] = [:],
-                typeCache: [String: SearchResult] = [:], idCache: [String: DataItem] = [:]){
-        self.podAPI = podAPI
-        self.queryCache = queryCache
-        self.typeCache = typeCache
-        self.idCache = idCache
+    public init(_ podAPI: PodAPI){
         
-        // Create storage and scheduler objects
+        // Create localstorage object
         localStorage = LocalStorage()
+        
+        self.podAPI = podAPI
+        
+        // Create scheduler objects
         scheduler = Scheduler(localStorage)
         scheduler.cache = self
+        
+        // Load JSON from cache
+        let decoder = JSONDecoder()
+        
+        // Query Cache
+        if (!jsonErrorHandling (decoder) {
+            let json = localStorage.get("queryCache").data(using: .utf8)!
+            self.queryCache = try decoder.decode([String: SearchResult].self, from: json)
+        }) { self.queryCache = [:] }
+        
+        if (!jsonErrorHandling (decoder) {
+            let json = localStorage.get("typeCache").data(using: .utf8)!
+            self.typeCache = try decoder.decode([String: SearchResult].self, from: json)
+        }) { self.typeCache = [:] }
+        
+        if (!jsonErrorHandling (decoder) {
+            let json = localStorage.get("idCache").data(using: .utf8)!
+            self.idCache = try decoder.decode([String: DataItem].self, from: json)
+        }) { self.idCache = [:] }
     }
     
     /**
@@ -334,6 +362,8 @@ public class Cache {
     
     private func onCreate(_ item:DataItem) {
         // Store in local storage
+        localStorage.create(item)
+        persist() // HACK
         
         // Create a task
         let task = Task(job: "create", data: ["id": item.id])
@@ -343,6 +373,8 @@ public class Cache {
     }
     private func onRemove(_ item:DataItem) {
         // Store in local storage
+        localStorage.remove(item)
+        persist() // HACK
         
         // Create a task
         let task = Task(job: "delete", data: ["id": item.id])
@@ -352,11 +384,32 @@ public class Cache {
     }
     private func onUpdate(_ item:DataItem) {
         // Store in local storage
+        localStorage.update(item)
+        persist() // HACK
         
         // Create a task
         let task = Task(job: "update", data: ["id": item.id])
         
         // Add task to the scheduler
         scheduler.add(task)
+    }
+    
+    /**
+     * Temporary function until there is a good caching backend implemented
+     * TODO
+     */
+    public func persist() -> Void {
+        // TODO this may be increasingly slow and should then be refactored
+        localStorage.set("queryCache", serializeJSON { (encoder) in
+            return try! encoder.encode(self.queryCache)
+        } ?? "")
+        
+        localStorage.set("typeCache", serializeJSON { (encoder) in
+            return try! encoder.encode(self.typeCache)
+        } ?? "")
+        
+        localStorage.set("idCache", serializeJSON { (encoder) in
+            return try! encoder.encode(self.idCache)
+        } ?? "")
     }
 }
