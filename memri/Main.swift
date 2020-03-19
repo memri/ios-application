@@ -28,6 +28,8 @@ public class Main: Event, ObservableObject {
     
     var cancellable:AnyCancellable? = nil
     
+    private var views:[String:[String:SessionView]] = [:]
+    
     public var podApi:PodAPI
     public var cache:Cache
     
@@ -43,6 +45,15 @@ public class Main: Event, ObservableObject {
         // Load settings (from cache and/or api)
         
         // Load NavigationCache (from cache and/or api)
+        
+        
+        // Load view configuration (from cache and/or api)
+        podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
+            if error != nil { return }
+            
+            let jsonData = try! jsonDataFromFile("views_from_server")
+            self.views = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
+        }
         
         // Load sessions (from cache and/or api)
         podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??

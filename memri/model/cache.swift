@@ -312,7 +312,7 @@ public class Cache {
             try! cachedItem.merge(item)
             return
         }
-        else {
+        else if item.id != "" {
             self.idCache[item.id] = item
         }
 
@@ -324,6 +324,7 @@ public class Cache {
         
         cancellables?.append(item.objectWillChange.sink { (_) in
             if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
+            else if item.id == "" { self.onCreate(item) }
             else { self.onUpdate(item) }
         })
     }
@@ -380,6 +381,8 @@ public class Cache {
         scheduler.add(task)
     }
     private func onRemove(_ item:DataItem) {
+        if item.id == "" { return } // TODO edge case when it is being created...
+        
         // Store in local storage
         localStorage.remove(item)
         persist() // HACK

@@ -21,7 +21,9 @@ public class ActionDescription: Codable {
                 case "add":
                     self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
                 case "openView":
-                    self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
+                // TODO make this work
+                1+1
+//                    self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
                 default:
                     break
             }
@@ -42,7 +44,6 @@ public class ActionDescription: Codable {
         return description
     }
 }
-
 
 public class SessionView: ObservableObject, Decodable{
     @Published public var searchResult: SearchResult = SearchResult()

@@ -2,51 +2,34 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentViewIndex" :0,
+            "id": "0x0",
+            "currentViewIndex": 1,
             "views": [
                 {
-                    "searchResult": {
-                        "query": {
-                            "query": "notes",
-                            "sortProperty": "None",
-                            "sortAscending": 1,
-                            "loading": 0,
-                            "pageCount": 0
-                        }
+                    "query": {
+                        "text": "notes",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
+                    }
+                },
+                {
+                    "query": { "query": "0x1" },
+                    "editMode": true
+                }
+            ]
+        },
+        {
+            "id": "0x1",
+            "currentViewIndex": 0,
+            "views": [
+                {
+                    "query": {
+                        "query": "notes",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
                     },
-                    "name": "testname",
-                    "subtitle": "testSubtitle",
-                    "title": "notes",
-                    "rendererName": "list",
-                    "selection": [],
-                    "renderConfigs": {},
-                    "editButtons": [],
-                    "actionButton": {
-                        "icon": "plus",
-                        "title": "Add Note",
-                        "actionName": "add",
-                        "actionArgs": [{
-                            "type": "note",
-                            "_predicates": {"owner": "{me}"},
-                            "properties": {"title": "Untitled Note"}
-                        }]
-                    },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
-                        "actionArgs": []
-                    },
-                    "filterButtons": [],
-                    "actionItems": [],
-                    "navigateItems": [],
-                    "contextButtons": [],
-                    "icon": "testIcon",
-                    "showLabels": false,
-                    "contextMode": false,
-                    "filterMode": false,
-                    "editMode": false,
-                    "browsingMode": "default"
+                    "selection": ["0x5"],
+                    "scrollState": 64
                 }
             ]
         }
