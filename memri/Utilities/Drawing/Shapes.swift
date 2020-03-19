@@ -21,7 +21,7 @@ public struct HorizontalLine: Shape {
     }
     
     //
-    // Return a stylized horizontal line with a color and linewidth
+    // Return a stylized horizontal line with a custom color and linewidth
     // (Set the frame.height equal to the linewidth)
     //
     public func styleHorizontalLine(lineColor: Color = Color.gray, lineWidth: CGFloat = 1.5) -> some View {
