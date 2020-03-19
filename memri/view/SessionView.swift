@@ -67,7 +67,7 @@ public class SessionView: ObservableObject, Decodable{
     var renderConfigs: [String: RenderConfig]=[:]
     var editButtons: [ActionDescription]=[]
     @Published public var filterButtons: [ActionDescription]=[]
-    @Published public var showFilterPannel: Bool = true
+    @Published public var showFilterPannel: Bool = false
     var actionItems: [ActionDescription]=[]
     var navigateItems: [ActionDescription]=[]
     var contextButtons: [ActionDescription]=[]
