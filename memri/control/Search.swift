@@ -76,7 +76,7 @@ struct Search: View {
                 }
 
             }.padding(.horizontal , 15)
-            if filterPannelRenderers.contains(sessions.currentView.rendererName){
+            if filterPannelRenderers.contains(sessions.currentView.rendererName) && sessions.currentView.showFilterPannel{
                 HStack(alignment: .top){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){

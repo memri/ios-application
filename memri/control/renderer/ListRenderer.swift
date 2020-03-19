@@ -103,6 +103,6 @@ struct ListRenderer: Renderer {
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer(isEditMode: .constant(.active)).environmentObject(try! Sessions.from_json("empty_sessions"))
+        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(try! Sessions.from_json("empty_sessions"))
     }
 }

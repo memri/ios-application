@@ -151,7 +151,8 @@ public class Session: ObservableObject, Decodable  {
                 }
             case "toggleEdit":
                 toggleEditMode()
-                
+            case "toggleFilterPanel":
+                toggleFilterPanel()
             case "star":
                 star()
             case "exampleUnpack":
@@ -221,6 +222,11 @@ public class Session: ObservableObject, Decodable  {
     
     func toggleEditMode(){
         //currently handled in browser
+    }
+    
+    func toggleFilterPanel(){
+        self.currentSessionView.showFilterPannel.toggle()
+        self.objectWillChange.send()
     }
     
     func openView(_ view:SessionView){

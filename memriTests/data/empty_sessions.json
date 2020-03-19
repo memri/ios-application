@@ -92,7 +92,7 @@
                         {
                             "icon": "chevron.down",
                             "title": "showFilterPanel",
-                            "actionName": "showFilterPanel",
+                            "actionName": "toggleFilterPanel",
                             "actionArgs": []
                         }
                     ],

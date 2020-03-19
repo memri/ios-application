@@ -67,6 +67,7 @@ public class SessionView: ObservableObject, Decodable{
     var renderConfigs: [String: RenderConfig]=[:]
     var editButtons: [ActionDescription]=[]
     @Published public var filterButtons: [ActionDescription]=[]
+    @Published public var showFilterPannel: Bool = true
     var actionItems: [ActionDescription]=[]
     var navigateItems: [ActionDescription]=[]
     var contextButtons: [ActionDescription]=[]
@@ -94,6 +95,7 @@ public class SessionView: ObservableObject, Decodable{
         self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
         self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
         self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
+        self.showFilterPannel = try decoder.decodeIfPresent("showFilterPannel") ?? self.showFilterPannel
         self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
         self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
         self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
