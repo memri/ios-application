@@ -11,8 +11,9 @@ import Combine
 
 struct Browser: View {
     @EnvironmentObject var main: Main
+    @State var isEditMode: EditMode = .inactive
     
-    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
@@ -23,17 +24,24 @@ struct Browser: View {
     var body: some View {
         return
             VStack() {
-                TopNavigation()
-                renderers[main.currentView.rendererName,
-                          default: AnyView(ListRenderer())].fullHeight()
+                TopNavigation(isEditMode: $isEditMode)
+                getRenderer().fullHeight()
                 Search()
-                }
+            }.fullHeight()
     }
-
-    /**
-     * Toggle the UI into edit mode
-     */
-    @State public var editMode: Bool = false
+    
+    func getRenderer() -> AnyView{
+        switch self.main.currentView.rendererName{
+        case "list":
+            return AnyView(ListRenderer(isEditMode: $isEditMode))
+        case "richTextEditor":
+            return AnyView(RichTextRenderer())
+        case "thumbnail":
+            return AnyView(ThumbnailRenderer())
+        default:
+            return AnyView(ThumbnailRenderer())
+        }
+    }
 }
 
 struct Browser_Previews: PreviewProvider {

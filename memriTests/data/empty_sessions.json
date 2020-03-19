@@ -73,13 +73,26 @@
                             "properties": {"title": "Untitled Note"}
                         }]
                     },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
+                    "editActionButton":{
+                        "icon": "pencil",
+                        "title": "edit",
+                        "actionName": "toggleEdit",
                         "actionArgs": []
                     },
-                    "filterButtons": [],
+                    "filterButtons": [
+                        {
+                            "icon": "star.fill",
+                            "title": "star",
+                            "actionName": "star",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "chevron.down",
+                            "title": "showFilterPanel",
+                            "actionName": "toggleFilterPanel",
+                            "actionArgs": []
+                        }
+                    ],
                     "actionItems": [],
                     "navigateItems": [],
                     "contextButtons": [],

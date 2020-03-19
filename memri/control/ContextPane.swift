@@ -11,9 +11,6 @@ import SwiftUI
 struct ContextPane: View {
     @EnvironmentObject var main: Main
     
-    let horizontalLineWidth: CGFloat = 1.5
-    var horizontalLine = HorizontalLine()
-    
     var title: String?
     var subtitle: String?
     var buttons: [ActionDescription] = []
@@ -27,20 +24,16 @@ struct ContextPane: View {
     var body: some View {
         VStack (/*alignment: .leading*/){
             VStack {
-                Text("\(main.currentView.title ?? "")")
+                Text("\(main.currentView.title)")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text("\(main.currentView.subtitle ?? "")")
+                Text("\(main.currentView.subtitle)")
                     .font(.body)
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 Text("some stuff to add later ...")
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -49,9 +42,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -60,9 +51,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
