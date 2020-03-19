@@ -27,7 +27,7 @@ struct ContextPane: View {
     let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
     
     var body: some View {
-        VStack (/*alignment: .leading*/){
+        VStack {
             VStack {
                 Text("\(self.currentSessionView?.title ?? "")")
                     .font(.largeTitle)
