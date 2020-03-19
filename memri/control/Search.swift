@@ -67,18 +67,13 @@ struct Search: View {
                         print("abc")
                         self.showFilters=true
                 }
-                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
-                    Image(systemName: "star.fill")
-                }.padding(.horizontal , 5)
-                 .font(Font.system(size: 20, weight: .medium))
-                 .foregroundColor(.gray)
-
-
-                Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/) {
-                    Image(systemName: "chevron.down")
-                }.padding(.horizontal , 5)
-                 .font(Font.system(size: 20, weight: .medium))
-                 .foregroundColor(.gray)
+                ForEach(self.sessions.currentView.filterButtons){ filterButton in
+                    Button(action: {self.sessions.currentSession.executeAction(action: filterButton)}) {
+                        Image(systemName: filterButton.icon)
+                    }.padding(.horizontal , 5)
+                     .font(Font.system(size: 20, weight: .medium))
+                        .foregroundColor(Color(filterButton.color))
+                }
 
             }.padding(.horizontal , 15)
             if filterPannelRenderers.contains(sessions.currentView.rendererName){

@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 
 public class Sessions: ObservableObject, Decodable {
@@ -150,6 +151,9 @@ public class Session: ObservableObject, Decodable  {
                 }
             case "toggleEdit":
                 toggleEditMode()
+                
+            case "star":
+                star()
             case "exampleUnpack":
                 let (_, _) = (params[0].value, params[1].value) as! (String, Int)
                 break
@@ -199,6 +203,20 @@ public class Session: ObservableObject, Decodable  {
         sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         sv.backTitle = self.currentSessionView.title
         self.openView(sv)
+    }
+    
+    func star(){
+        let starButton = self.currentSessionView.filterButtons.filter{$0.actionName == "star"}[0]
+        toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
+        self.objectWillChange.send()
+    }
+    
+    func toggleColor(object: ActionDescription, color1: UIColor, color2: UIColor){
+        switch object.color{
+            case color1: object.color = color2
+            case color2: object.color = color1
+            default: object.color = color1
+        }
     }
     
     func toggleEditMode(){
