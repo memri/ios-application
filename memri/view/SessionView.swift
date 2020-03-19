@@ -3,7 +3,11 @@ import Combine
 import SwiftUI
 
 
-public class ActionDescription: Codable {
+public class ActionDescription: Decodable, Identifiable {
+    
+    
+    public var id = UUID()
+    var color: UIColor = .gray
     var icon: String = ""
     var title: String = ""
     var actionName: String = ""
@@ -15,6 +19,15 @@ public class ActionDescription: Codable {
         self.title = try decoder.decodeIfPresent("title") ?? self.title
         self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
         self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
+        
+        let colorString = try decoder.decodeIfPresent("color") ?? ""
+        
+        switch colorString{
+            case "gray": self.color = .gray
+            case "yellow","systemYellow": self.color = .systemYellow
+            default: self.color = .gray
+        }
+        
                 
         // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
         switch self.actionName{
@@ -53,7 +66,8 @@ public class SessionView: ObservableObject, Decodable{
     var selection: [String] = []
     var renderConfigs: [String: RenderConfig]=[:]
     var editButtons: [ActionDescription]=[]
-    var filterButtons: [ActionDescription]=[]
+    @Published public var filterButtons: [ActionDescription]=[]
+    @Published public var showFilterPannel: Bool = false
     var actionItems: [ActionDescription]=[]
     var navigateItems: [ActionDescription]=[]
     var contextButtons: [ActionDescription]=[]
@@ -81,6 +95,7 @@ public class SessionView: ObservableObject, Decodable{
         self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
         self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
         self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
+        self.showFilterPannel = try decoder.decodeIfPresent("showFilterPannel") ?? self.showFilterPannel
         self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
         self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
         self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
