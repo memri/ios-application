@@ -209,8 +209,6 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
 }
 
 public class SearchResult: ObservableObject, Codable {
-    public var cache: Cache? = nil
-    
     /**
      *
      */
@@ -258,75 +256,6 @@ public class SearchResult: ObservableObject, Codable {
                 loading = -1
             }
         }
-    }
-    
-    public func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)) -> Void {
-        // Set state to loading
-        loading = 1
-        
-        if self.query.query == "" {
-            callback("No query specified")
-            return
-        }
-        
-        let _ = cache!.query(self.query) { (error, result, success) -> Void in
-            if (error != nil) {
-                /* TODO: trigger event or so */
-
-                // Loading error
-                self.loading = -2
-
-                callback(error)
-                return
-            }
-
-            // TODO this only works when retrieving 1 page. It will break for pagination
-            self.data = result!.data
-
-            // We've successfully loaded page 0
-            self.pages[0] = true;
-
-            // First time loading is done
-            self.loading = -1
-
-            callback(nil)
-        }
-    }
-    
-    /**
-     * Client side filter //, with a fallback to the server
-     */
-    public func filter(_ query:String) -> SearchResult {
-        var options = self.query
-        options.query = query
-        let searchResult = SearchResult(options, self.data);
-        
-        searchResult.loading = self.loading
-        searchResult.pages = self.pages
-        
-        for i in 0...searchResult.data.count {
-            if (!searchResult.data[i].match(query)) {
-                searchResult.data.remove(at: i)
-            }
-        }
-        
-        return searchResult
-    }
-        
-    /**
-     * Executes the query again
-     */
-    public func reload() -> Void {
-        // Reload all pages
-        for (page, _) in pages {
-            let _ = loadPage(page, { (error) in })
-        }
-    }
-    /**
-     *
-     */
-    public func resort(_ options:QueryOptions) {
-        
     }
     
     /**

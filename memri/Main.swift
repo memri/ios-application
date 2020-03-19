@@ -85,10 +85,9 @@ public class Main: Event, ObservableObject {
         
         // Load data
         let searchResult = self.currentView.searchResult
-        if searchResult.cache == nil { searchResult.cache = self.cache }
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
-            searchResult.loadPage(0, { (error) in })
+            cache.loadPage(searchResult, 0, { (error) in })
         }
     }
 
@@ -124,10 +123,13 @@ public class Main: Event, ObservableObject {
         let view = SessionView()
         
         let existingSR = cache.findCachedResult(query: item.id)
-        if let existingSR = existingSR { searchResult = existingSR }
+        if let existingSR = existingSR {
+            searchResult = existingSR
+        }
         else {
             searchResult = SearchResult(QueryOptions(query: item.id), [item])
             searchResult.loading = 0 // Force to load the first time
+            cache.addToCache(searchResult)
         }
         
         view.searchResult = searchResult
@@ -152,8 +154,8 @@ public class Main: Event, ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         self.currentView.searchResult.data.append(item) // TODO
-        self.cache.addToCache(item)
-        self.openView(item)
+        let realItem = self.cache.addToCache(item)
+        self.openView(realItem)
     }
 
     /**
