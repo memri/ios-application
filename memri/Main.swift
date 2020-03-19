@@ -75,7 +75,6 @@ public class Main: Event, ObservableObject {
             }
         }
         
-        
         return self
     }
     

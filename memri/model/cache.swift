@@ -323,8 +323,11 @@ public class Cache {
         self.typeCache[item.type]!.data.append(item) // TODO sort??
         
         cancellables?.append(item.objectWillChange.sink { (_) in
-            if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
-            else { self.onUpdate(item) }
+            DispatchQueue.main.async {
+                if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
+                else if item.id == "" { self.onCreate(item) }
+                else { self.onUpdate(item) }
+            }
         })
     }
     
