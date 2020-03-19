@@ -10,8 +10,6 @@ import SwiftUI
 
 struct ContextPane: View {
     
-    let horizontalLineWidth: CGFloat = 1.5
-    var horizontalLine = HorizontalLine()
     var currentSessionView: SessionView?
 
     init(sessions: Sessions) {
@@ -36,15 +34,11 @@ struct ContextPane: View {
                     .fontWeight(.bold)
                 Text("\(self.currentSessionView?.subtitle ?? "")")
                     .font(.body)
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().adornedHorizontalLine()
             }
             VStack {
                 Text("some stuff to add later ...")
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().adornedHorizontalLine()
             }
             VStack {
                 HStack {
@@ -53,9 +47,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().adornedHorizontalLine()
             }
             VStack {
                 HStack {
@@ -64,9 +56,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().adornedHorizontalLine()
             }
             VStack {
                 HStack {
