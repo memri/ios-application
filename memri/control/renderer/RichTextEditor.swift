@@ -19,7 +19,7 @@ struct RichTextEditor: UIViewRepresentable {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
-            control.dataItem.properties["content"] = AnyDecodable(textView.text)
+            control.dataItem.properties["content"] = AnyCodable(textView.text)
         }
     }
 

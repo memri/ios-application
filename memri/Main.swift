@@ -88,7 +88,7 @@ public class Main: Event, ObservableObject {
         let searchResult = self.currentView.searchResult
         if searchResult.cache == nil { searchResult.cache = self.cache }
         
-        if searchResult.loading == 0 {
+        if searchResult.loading == 0 && searchResult.query.query != "" {
             searchResult.loadPage(0, { (error) in })
         }
     }
@@ -100,11 +100,17 @@ public class Main: Event, ObservableObject {
     func openView(_ view:SessionView){
         let session = self.currentSession
         
-        // TODO remove all items after the current index
+        // Remove all items after the current index
+        session.views.removeSubrange((session.currentViewIndex + 1)...)
         
+        // Add the view to the session
         session.views.append(view)
+        
+        // Update the index pointer
         session.currentViewIndex = session.views.count - 1
         
+        // Make sure to listen to changes in the view
+        // TODO Will this be set more than once on a view???
         session.cancellables?.append(view.objectWillChange.sink { (_) in
             session.objectWillChange.send()
         })
@@ -120,7 +126,7 @@ public class Main: Event, ObservableObject {
         
         let existingSR = cache.findCachedResult(query: item.id)
         if let existingSR = existingSR { searchResult = existingSR }
-        else { // TODO adding new notes
+        else {
             searchResult = SearchResult(QueryOptions(query: item.id), [item])
             searchResult.loading = 0 // Force to load the first time
         }
@@ -147,6 +153,7 @@ public class Main: Event, ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         self.currentView.searchResult.data.append(item) // TODO
+        self.cache.addToCache(item)
         self.openView(item)
     }
 

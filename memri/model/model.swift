@@ -15,11 +15,11 @@ extension PropertyReflectable {
 
 public class DataItem: Codable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
     
-    private var uid: String = UUID().uuidString
+    private var uid: String = "" // 0x" + UUID().uuidString
     public var type: String = ""
     
     @Published public var predicates: [String: [DataItem]] = [:]
-    @Published public var properties: [String: AnyDecodable] = [:]
+    @Published public var properties: [String: AnyCodable] = [:]
     @Published private var deleted: Bool = false;
     
     public var isDeleted:Bool {
@@ -41,7 +41,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
     }
     
     public convenience required init(id:String? = nil, type: String, predicates: [String: [DataItem]]? = [:],
-                            properties:[String: AnyDecodable]? = [:]){
+                            properties:[String: AnyCodable]? = [:]){
         self.init()
         self.uid = id ?? self.uid
         self.type = type
@@ -84,7 +84,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
     /**
      *
      */
-    public func findProperty(name: String) -> AnyDecodable {
+    public func findProperty(name: String) -> AnyCodable {
         return self.properties[name]!
     }
     
@@ -132,7 +132,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
     /**
      *
      */
-    public func setProperty(_ name:String, _ value:AnyDecodable) {
+    public func setProperty(_ name:String, _ value:AnyCodable) {
         self.properties[name] = value;
     }
     
@@ -165,7 +165,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
      */
     public func merge(_ source:DataItem) throws {
         // Items that do not have the same id should never merge
-        if (source.id != "" && self.uid != nil && source.id != self.uid) {
+        if (source.id != "" && self.id != "" && source.id != self.id) {
             throw DataItemError.cannotMergeItemWithDifferentId
         }
         
@@ -193,7 +193,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
      *
      */
     public func match(_ query:String) -> Bool{
-        let properties: [String:AnyDecodable] = self.properties
+        let properties: [String:AnyCodable] = self.properties
         for (name, _) in properties {
             if properties[name]!.value is String {
                 let haystack = (properties[name]!.value as! String)
@@ -214,7 +214,7 @@ public class SearchResult: ObservableObject, Codable {
     /**
      *
      */
-    public var query: QueryOptions? = nil
+    public var query: QueryOptions = QueryOptions(query: "")
     /**
      * Retrieves the data loaded from the pod
      */
@@ -235,7 +235,7 @@ public class SearchResult: ObservableObject, Codable {
     public convenience required init(_ query: QueryOptions? = nil, _ data:[DataItem]?) {
         self.init()
         
-        self.query = query
+        self.query = query ?? self.query
         self.data = data ?? []
         
         if (data != nil) {
@@ -264,7 +264,12 @@ public class SearchResult: ObservableObject, Codable {
         // Set state to loading
         loading = 1
         
-        let _ = cache!.query(self.query!) { (error, result, success) -> Void in
+        if self.query.query == "" {
+            callback("No query specified")
+            return
+        }
+        
+        let _ = cache!.query(self.query) { (error, result, success) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
 
@@ -293,7 +298,7 @@ public class SearchResult: ObservableObject, Codable {
      */
     public func filter(_ query:String) -> SearchResult {
         var options = self.query
-        options?.query = query
+        options.query = query
         let searchResult = SearchResult(options, self.data);
         
         searchResult.loading = self.loading

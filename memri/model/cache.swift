@@ -173,6 +173,8 @@ public class Cache {
     var typeCache: [String: SearchResult] = [:]
     var idCache: [String: DataItem] = [:]
     
+    var cancellables: [AnyCancellable]? = nil
+    
     private var localStorage: LocalStorage
     private var scheduler: Scheduler
     
@@ -305,10 +307,14 @@ public class Cache {
      *
      */
     public func addToCache(_ item:DataItem) {
-        if self.idCache[item.id] == nil {
+        let cachedItem:DataItem? = self.idCache[item.id]
+        if let cachedItem = cachedItem {
+            try! cachedItem.merge(item)
+            return
+        }
+        else {
             self.idCache[item.id] = item
         }
-        else { return }
 
         if item.type != "" && self.typeCache[item.type] == nil {
             self.typeCache[item.type] = SearchResult()
@@ -316,10 +322,10 @@ public class Cache {
         
         self.typeCache[item.type]!.data.append(item) // TODO sort??
         
-        let _ = item.objectWillChange.sink {
+        cancellables?.append(item.objectWillChange.sink { (_) in
             if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
             else { self.onUpdate(item) }
-        }
+        })
     }
     
     /**
@@ -327,7 +333,7 @@ public class Cache {
      */
     public func addToCache(_ result:SearchResult) {
         // Overwrite past results (even though sorting options etc, may differ ...
-        self.queryCache[result.query?.query ?? ""] = result
+        self.queryCache[result.query.query] = result
     }
     
     /**
@@ -342,7 +348,7 @@ public class Cache {
                 if error != nil { return callback(error, false) }
                 
                 // Set the new id from the server
-                item.setProperty("id", AnyDecodable(id))
+                item.setProperty("id", AnyCodable(id))
                 
                 callback(nil, true)
             }

@@ -99,7 +99,7 @@ public class PodAPI {
     public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
         if id == "sessions" {
             let jsonString = try! stringFromFile("default_sessions", "json")
-            callback(nil, DataItem(id: "sessions", type: "sessions", properties: ["json": AnyDecodable(jsonString)]))
+            callback(nil, DataItem(id: "sessions", type: "sessions", properties: ["json": AnyCodable(jsonString)]))
             return
         }
         
