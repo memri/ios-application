@@ -34,11 +34,11 @@ struct ContextPane: View {
                     .fontWeight(.bold)
                 Text("\(self.currentSessionView?.subtitle ?? "")")
                     .font(.body)
-                HorizontalLine().adornedHorizontalLine()
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 Text("some stuff to add later ...")
-                HorizontalLine().adornedHorizontalLine()
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -47,7 +47,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                HorizontalLine().adornedHorizontalLine()
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -56,7 +56,7 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                HorizontalLine().adornedHorizontalLine()
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {

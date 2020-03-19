@@ -10,24 +10,23 @@ import SwiftUI
 
 public struct HorizontalLine: Shape {
 
-    let horizontalLineFrameHeight: CGFloat = 10.0
-
     //
-    // Draw a full width horizontal line vertically centered in the frame
+    // Draw a default full width horizontal line vertically centered in the provided frame
     //
     public func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.move(to: CGPoint(x: 0.0, y: horizontalLineFrameHeight / 2.0))
-        path.addLine(to: CGPoint(x: rect.width, y: horizontalLineFrameHeight / 2.0))
+        path.move(to: CGPoint(x: 0.0, y: rect.height / 2.0))
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height / 2.0))
         return path
     }
     
     //
-    // Adorn a horizontal line with a color and line with
+    // Return a stylized horizontal line with a given color and linewidth
+    // Set the frame height equal to the line width
     //
-    public func adornedHorizontalLine(lineWidth: CGFloat = 1.5) -> some View {
+    public func styleHorizontalLine(lineColor: Color = Color.gray, lineWidth: CGFloat = 1.5) -> some View {
         let path = HorizontalLine()
-        let strokedView = path.stroke(Color.gray, lineWidth: lineWidth)
-        return strokedView.frame(height: horizontalLineFrameHeight)
+        let strokedView = path.stroke(lineColor, lineWidth: lineWidth)
+        return strokedView.frame(height: lineWidth)
     }
 }
