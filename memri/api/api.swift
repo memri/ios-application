@@ -28,6 +28,10 @@ public struct QueryOptions: Codable {
      */
     public var pageIndex: Int = 0
     
+    init(query:String) {
+        self.query = query
+    }
+    
     public init(from decoder: Decoder) throws {
         jsonErrorHandling(decoder) {
             query = try decoder.decodeIfPresent("query") ?? query
@@ -147,7 +151,7 @@ public class PodAPI {
         //        }
         
         if query.query.starts(with: "0x") {
-            callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
+            callback(nil, try! DataItem.fromJSONFile(query.query))
             return
         }
         if query.query == "notes" {

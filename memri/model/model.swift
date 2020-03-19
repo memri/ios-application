@@ -209,7 +209,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
 }
 
 public class SearchResult: ObservableObject, Codable {
-    private var cache: Cache? = nil
+    public var cache: Cache? = nil
     
     /**
      *
@@ -238,7 +238,7 @@ public class SearchResult: ObservableObject, Codable {
         self.query = query
         self.data = data ?? []
         
-        if (data == nil) {
+        if (data != nil) {
             loading = -1
             pages[query?.pageIndex ?? 0] = true
         }
@@ -252,25 +252,26 @@ public class SearchResult: ObservableObject, Codable {
             query = try decoder.decodeIfPresent("query") ?? query
             loading = try decoder.decodeIfPresent("loading") ?? loading
             pages = try decoder.decodeIfPresent("pageCount") ?? pages
-        }
-        
-        // If the searchResult is initiatlized with data we set the state to loading done
-        if (!(data.isEmpty && loading == 0)) {
-            loading = -1
+
+            // If the searchResult is initiatlized with data we set the state to loading done
+            if (!(data.isEmpty && loading == 0)) {
+                loading = -1
+            }
         }
     }
     
-    private func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)?) -> Void {
+    public func loadPage(_ index:Int, _ callback:((_ error:Error?) -> Void)) -> Void {
         // Set state to loading
         loading = 1
         
-        let _ = cache?.query(self.query!) { (error, result, success) -> Void in
+        let _ = cache!.query(self.query!) { (error, result, success) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
 
                 // Loading error
                 self.loading = -2
 
+                callback(error)
                 return
             }
 
@@ -283,7 +284,7 @@ public class SearchResult: ObservableObject, Codable {
             // First time loading is done
             self.loading = -1
 
-            callback?(nil)
+            callback(nil)
         }
     }
     

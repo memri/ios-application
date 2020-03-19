@@ -1,0 +1,8 @@
+[{
+    "uid": "0x02",
+    "type": "note",
+    "properties": {
+        "title": "second example note",
+        "content": "This is again an example note"
+    }
+}]

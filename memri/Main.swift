@@ -51,13 +51,13 @@ public class Main: Event, ObservableObject {
             sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
             
             // Hook current session
-            self.currentSession = sessions.currentSession
-            self.currentView = sessions.currentSession.currentView
             self.cancellable = self.sessions.objectWillChange.sink {
                 DispatchQueue.main.async {
                     self.setCurrentView()
                 }
             }
+            
+            self.setCurrentView()
         }
 
         // Fire ready event
@@ -85,7 +85,12 @@ public class Main: Event, ObservableObject {
         self.currentView = self.sessions.currentSession.currentView
         
         // Load data
+        let searchResult = self.currentView.searchResult
+        if searchResult.cache == nil { searchResult.cache = self.cache }
         
+        if searchResult.loading == 0 {
+            searchResult.loadPage(0, { (error) in })
+        }
     }
 
     /**
@@ -94,6 +99,8 @@ public class Main: Event, ObservableObject {
      */
     func openView(_ view:SessionView){
         let session = self.currentSession
+        
+        // TODO remove all items after the current index
         
         session.views.append(view)
         session.currentViewIndex = session.views.count - 1
@@ -104,16 +111,26 @@ public class Main: Event, ObservableObject {
     }
     
     func openView(_ item:DataItem){
-        let session = self.currentSession
-        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([item]),
-                rendererName: "richTextEditor")
-    
-        session.views.append(view)
-        session.currentViewIndex = session.views.count - 1
+//        let session = self.currentSession
+//        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([item]),
+//                rendererName: "richTextEditor")
         
-        session.cancellables?.append(view.objectWillChange.sink { (_) in
-            session.objectWillChange.send()
-        })
+        var searchResult:SearchResult
+        let view = SessionView()
+        
+        let existingSR = cache.findCachedResult(query: item.id)
+        if let existingSR = existingSR { searchResult = existingSR }
+        else { // TODO adding new notes
+            searchResult = SearchResult(QueryOptions(query: item.id), [item])
+            searchResult.loading = 0 // Force to load the first time
+        }
+        
+        view.searchResult = searchResult
+        view.rendererName = "richTextEditor"
+        view.title = "new note"
+        view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        
+        self.openView(view)
     }
     
     public func openView(_ view: String) {}
@@ -130,17 +147,7 @@ public class Main: Event, ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         self.currentView.searchResult.data.append(item) // TODO
-        
-        let sr = SearchResult()
-        let sv = SessionView()
-        
-        sr.data = [item]
-        sv.searchResult = sr
-        sv.rendererName = "richTextEditor"
-        sv.title = "new note"
-        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
-        
-        self.openView(sv)
+        self.openView(item)
     }
 
     /**

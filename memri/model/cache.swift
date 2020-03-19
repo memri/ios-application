@@ -200,11 +200,13 @@ public class Cache {
             self.queryCache = try decoder.decode([String: SearchResult].self, from: json)
         }) { self.queryCache = [:] }
         
+        // Type Cache
         if (!jsonErrorHandling (decoder) {
             let json = localStorage.get("typeCache").data(using: .utf8)!
             self.typeCache = try decoder.decode([String: SearchResult].self, from: json)
         }) { self.typeCache = [:] }
         
+        // ID Cache
         if (!jsonErrorHandling (decoder) {
             let json = localStorage.get("idCache").data(using: .utf8)!
             self.idCache = try decoder.decode([String: DataItem].self, from: json)

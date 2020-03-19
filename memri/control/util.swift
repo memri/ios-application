@@ -17,12 +17,16 @@ import Foundation
 extension String: Error {}
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
+    print("Reading from file \(file)")
+    
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
     let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
     return jsonString
 }
 
 func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
+    print("Reading from file (for json) \(file)")
+    
     let jsonString = try stringFromFile(file, ext)
     let jsonData = jsonString.data(using: .utf8)!
     return jsonData
@@ -42,10 +46,11 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool
     var path:String = "[Unknown]"
     
     if decoder.codingPath.count > 0 {
-        path = "\(decoder.codingPath[0].stringValue)"
-        for i in 1...decoder.codingPath.count - 1 {
+        path = ""
+        for i in 0...decoder.codingPath.count - 1 {
             if decoder.codingPath[i].intValue == nil {
-                path += ".\(decoder.codingPath[i].stringValue)"
+                if i > 0 { path += "." }
+                path += "\(decoder.codingPath[i].stringValue)"
             }
             else {
                 path += "[\(Int(decoder.codingPath[i].intValue ?? -1))]"
@@ -59,8 +64,9 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool
         try convert()
         return true
     } catch {
-        dump(decoder)
+//        dump(decoder)
         print("JSON Parse Error at \(path)\n\nError: \(error)")
+        raise(SIGINT)
         return false
     }
 }

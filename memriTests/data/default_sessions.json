@@ -7,7 +7,7 @@
                 {
                     "searchResult": {
                         "query": {
-                            "query": "",
+                            "query": "notes",
                             "sortProperty": "None",
                             "sortAscending": 1,
                             "loading": 0,
