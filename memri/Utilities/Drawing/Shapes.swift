@@ -11,7 +11,6 @@ import SwiftUI
 public struct HorizontalLine: Shape {
 
     let horizontalLineFrameHeight: CGFloat = 10.0
-    let horizontalLineWidth: CGFloat = 1.5
 
     //
     // Draw a full width horizontal line vertically centered in the frame
@@ -26,9 +25,9 @@ public struct HorizontalLine: Shape {
     //
     // Adorn a horizontal line with a color and line with
     //
-    public func adornedHorizontalLine() -> some View {
+    public func adornedHorizontalLine(lineWidth: CGFloat = 1.5) -> some View {
         let path = HorizontalLine()
-        let strokedView = path.stroke(Color.gray, lineWidth: horizontalLineWidth)
+        let strokedView = path.stroke(Color.gray, lineWidth: lineWidth)
         return strokedView.frame(height: horizontalLineFrameHeight)
     }
 }
