@@ -121,7 +121,7 @@ public class SessionView: ObservableObject, Decodable{
         let query = view.searchResult.query
         let sr = self.searchResult
         
-        dump(query)
+        // TODO this function is called way too often
         
         sr.query.query = query.query ?? sr.query.query ?? nil
         sr.query.sortProperty = query.sortProperty ?? sr.query.sortProperty ?? ""

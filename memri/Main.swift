@@ -189,15 +189,15 @@ public class Main: Event, ObservableObject {
         let view = SessionView()
         
         var existingSR:SearchResult?
-        if item.id != "" {
-            existingSR = cache.findCachedResult(query: item.id)
+        if item.uid != nil {
+            existingSR = cache.findCachedResult(query: item.uid!)
         }
         if let existingSR = existingSR {
             searchResult = existingSR
         }
         else {
-            var xxid = item.id
-            if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query
+            var xxid = item.uid ?? ""
+            if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query | See also hack in api.swift
             searchResult = SearchResult(QueryOptions(query: xxid), [item])
             searchResult.loading = 0 // Force to load the first time
             cache.addToCache(searchResult)

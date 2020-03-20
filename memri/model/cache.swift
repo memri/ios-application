@@ -221,7 +221,7 @@ public class Cache {
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
         var receivedFromServer = false
-        func handle (_ error:Error?, _ items:[DataItem], _ cached:Bool) -> Void {
+        func handle (_ error:Error?, _ items:[DataItem]?, _ cached:Bool) -> Void {
             if receivedFromServer { return } 
             receivedFromServer = !cached
             
@@ -232,9 +232,11 @@ public class Cache {
             
             // Add all new data items to the cache
             var data:[DataItem] = []
-            if items.count > 0 {
-                for i in 0...items.count - 1 {
-                    data.append(self.addToCache(items[i]))
+            if let items = items {
+                if items.count > 0 {
+                    for i in 0...items.count - 1 {
+                        data.append(self.addToCache(items[i]))
+                    }
                 }
             }
             

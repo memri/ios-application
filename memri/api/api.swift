@@ -141,7 +141,7 @@ public class PodAPI {
     /**
      *
      */
-    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
+    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result
@@ -151,6 +151,11 @@ public class PodAPI {
         //        }
         
         if query.query!.starts(with: "0x") {
+            if query.query == "0x???" {
+                callback("nothing to do", nil)
+                return
+            }
+            
             callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
