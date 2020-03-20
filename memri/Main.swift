@@ -82,7 +82,7 @@ public class Main: Event, ObservableObject {
     public func setCurrentView(){
         // Set on sessions
         self.currentSession = self.sessions.currentSession // TODO filter to a single property
-        self.currentView = self.sessions.currentSession.currentView
+        self.currentView = cascadeView(self.sessions.currentSession.currentView)
         
         // Load data
         let searchResult = self.currentView.searchResult
@@ -90,6 +90,23 @@ public class Main: Event, ObservableObject {
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
             searchResult.loadPage(0, { (error) in })
+        }
+    }
+    
+    public func cascadeView(_ session:SessionView) -> SessionView {
+        var cascadedView = SessionView()
+        var cascadeOrder = ["default", "user", "session"] // "renderer", "datatype",
+        
+        for orderType in cascadeOrder {
+            if orderType == "default" {
+                
+            }
+            else if orderType == "user" {
+                
+            }
+            else if orderType == "session" {
+                cascadedView.merge(session)
+            }
         }
     }
 
