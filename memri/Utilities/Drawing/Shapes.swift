@@ -1,5 +1,5 @@
 //
-//  PShapes.swift
+//  Shapes.swift
 //  memri
 //
 //  Created by Jess Taylor on 3/14/20.
@@ -11,7 +11,7 @@ import SwiftUI
 public struct HorizontalLine: Shape {
 
     //
-    // Draw a default full width horizontal line vertically centered in the provided frame
+    // Draw a default full width horizontal line vertically centered in the provided CGRect
     //
     public func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -21,8 +21,8 @@ public struct HorizontalLine: Shape {
     }
     
     //
-    // Return a stylized horizontal line with a given color and linewidth
-    // Set the frame height equal to the line width
+    // Return a stylized horizontal line with a custom color and linewidth
+    // (Set the frame.height equal to the linewidth)
     //
     public func styleHorizontalLine(lineColor: Color = Color.gray, lineWidth: CGFloat = 1.5) -> some View {
         let path = HorizontalLine()
