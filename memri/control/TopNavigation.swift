@@ -32,9 +32,8 @@ struct TopNavigation: View {
                     Image(systemName: "line.horizontal.3")
                         .foregroundColor(.gray)
                         .font(Font.system(size: 20, weight: .medium))
-                }
-                .padding(.horizontal, 5)
-                
+                }.padding(.horizontal, 5)
+
                 if main.currentView.backButton != nil {
                     Button(action: backButtonAction ) {
                         Image(systemName: main.currentView.backButton!.icon)
@@ -55,6 +54,7 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.gray)
                 }
+            
                 
                 if main.currentView.actionButton != nil {
                     Button(action: actionButtonAction) {
@@ -64,16 +64,19 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
+                
                 Button(action: {
                     print("render contextpane")
                     self.show_contextpage = true
                 }) {
                     Image(systemName: "ellipsis")
-                }.sheet(isPresented: self.$show_contextpage) {
-                    ContextPane(sessions: self.sessions)
+                }
+                .sheet(isPresented: self.$show_contextpage) {
+                    ContextPane()
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
+                
             }.padding(.all, 30)
         }
 
