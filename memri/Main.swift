@@ -92,7 +92,6 @@ public class Main: Event, ObservableObject {
     public func setCurrentView(){
         // Set on sessions
         self.currentSession = self.sessions.currentSession // TODO filter to a single property
-        
         self.currentView = cascadeView(self.sessions.currentSession.currentView)
         
         // Load data

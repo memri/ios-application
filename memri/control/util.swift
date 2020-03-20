@@ -34,7 +34,6 @@ func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) -> 
         try convert()
         return true
     } catch {
-        dump(decoder)
         return false
     }
 }

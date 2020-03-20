@@ -42,17 +42,21 @@
                 }
             },
             "browsingMode": "default",
-            "editButtons": [
-                {
-                    "icon": "add.ico",
-                    "title": "Add Note",
-                    "actionName": "add",
-                    "actionArgs": [{
-                        "type": "note",
-                        "properties": {"title": "Untitled Note"}
-                    }]
-                }
-            ],
+            "actionButton": {
+                "icon": "plus",
+                "title": "Add Note",
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "properties": {"title": "Untitled Note"}
+                }]
+            },
+            "editActionButton": {
+                "icon": "pencil",
+                "title": "Edit Note",
+                "actionName": "toggleEdit",
+                "actionArgs": []
+            },
             "filterButtons": [
                 {
                     "icon": "star.fill",
@@ -78,14 +82,12 @@
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                 }
             },
-            "editButtons": [
-                {
-                    "icon": "edit.ico",
-                    "title": "Edit Note",
-                    "actionName": "editMode",
-                    "actionArgs": []
-                }
-            ],
+            "editActionButton": {
+                "icon": "pencil",
+                "title": "Edit Note",
+                "actionName": "toggleEdit",
+                "actionArgs": []
+            },
             "filterButtons": [
                 {
                     "icon": "timeline.ico",
