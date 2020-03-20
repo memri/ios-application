@@ -21,65 +21,63 @@ struct TopNavigation: View {
     var hideBack:Bool = false
     
     var body: some View {
-        Text("abc")
-        
-//        ZStack{
-//            // we place the title *over* the rest of the topnav, to center it horizontally
-//            HStack{
-//                Text(main.currentView.title).font(.headline)
-//            }
-//            HStack{
-//                Button(action: {}) {
-//                    Image(systemName: "line.horizontal.3")
-//                        .foregroundColor(.gray)
-//                        .font(Font.system(size: 20, weight: .medium))
-//                }.padding(.horizontal, 5)
-//
-//                if main.currentView.backButton != nil {
-//                    Button(action: backButtonAction ) {
-//                        Image(systemName: main.currentView.backButton!.icon)
-//                        .foregroundColor(.gray)
-//                        if main.currentView.backTitle != nil{
-//                            Text(main.currentView.backTitle!)
-//                                .font(.subheadline)
-//                                .foregroundColor(.black)
-//                        }
-//
-//                    }
-//                }
-//                Spacer()
-//                if self.main.currentView.editActionButton != nil {
-//                    Button(action: editAction) {
-//                        Image(systemName: main.currentView.editActionButton!.icon)
-//                    }
-//                    .padding(.horizontal , 5)
-//                    .foregroundColor(.gray)
-//                }
-//
-//
-//                if main.currentView.actionButton != nil {
-//                    Button(action: actionButtonAction) {
-//                        Image(systemName:
-//                            main.currentView.actionButton!.icon)
-//                    }
-//                    .padding(.horizontal , 5)
-//                    .foregroundColor(.green)
-//                }
-//
-//                Button(action: {
-//                    print("render contextpane")
-//                    self.show_contextpage = true
-//                }) {
-//                    Image(systemName: "ellipsis")
-//                }
-//                .sheet(isPresented: self.$show_contextpage) {
-//                    ContextPane()
-//                }
-//                .padding(.horizontal , 5)
-//                .foregroundColor(.gray)
-//
-//            }.padding(.all, 30)
-//        }
+        ZStack{
+            // we place the title *over* the rest of the topnav, to center it horizontally
+            HStack{
+                if main.currentView.title != nil{
+                    Text(main.currentView.title!).font(.headline)
+                }
+            }
+            HStack{
+                Button(action: {}) {
+                    Image(systemName: "line.horizontal.3")
+                        .foregroundColor(.gray)
+                        .font(Font.system(size: 20, weight: .medium))
+                }.padding(.horizontal, 5)
+            
+                if main.currentView.backButton != nil {
+                    Button(action: backButtonAction ) {
+                        Image(systemName: main.currentView.backButton!.icon)
+                        .foregroundColor(.gray)
+                        if main.currentView.backTitle != nil{
+                            Text(main.currentView.backTitle!)
+                                .font(.subheadline)
+                                .foregroundColor(.black)
+                        }
+                    }
+                }
+                Spacer()
+                if self.main.currentView.editActionButton != nil {
+                    Button(action: editAction) {
+                        Image(systemName: main.currentView.editActionButton!.icon)
+                    }
+                    .padding(.horizontal , 5)
+                    .foregroundColor(.gray)
+                }
+
+
+                if main.currentView.actionButton != nil {
+                    Button(action: actionButtonAction) {
+                        Image(systemName:
+                            main.currentView.actionButton!.icon)
+                    }
+                    .padding(.horizontal , 5)
+                    .foregroundColor(.green)
+                }
+                Button(action: {
+                    print("render contextpane")
+                    self.show_contextpage = true
+                }) {
+                    Image(systemName: "ellipsis")
+                }
+                .sheet(isPresented: self.$show_contextpage) {
+                    ContextPane()
+                }
+                .padding(.horizontal , 5)
+                .foregroundColor(.gray)
+
+            }.padding(.all, 30)
+        }
 
     }
     func actionButtonAction(){
