@@ -92,13 +92,17 @@ public class Main: Event, ObservableObject {
     public func setCurrentView(){
         // Set on sessions
         self.currentSession = self.sessions.currentSession // TODO filter to a single property
+        
         self.currentView = cascadeView(self.sessions.currentSession.currentView)
         
         // Load data
         let searchResult = self.currentView.searchResult
+        print(searchResult.query.query ?? "")
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
-            cache.loadPage(searchResult, 0, { (error) in })
+            cache.loadPage(searchResult, 0, { (error) in
+                self.setCurrentView()
+            })
         }
     }
     
@@ -124,10 +128,12 @@ public class Main: Event, ObservableObject {
             for orderType in cascadeOrder {
                 if orderType == "renderer" {
                     // TODO the renderer may only be specified by the datatype, and this will fail when the renderer is first in order
-                    let needle = "{renderer:\(session.rendererName ?? cascadedView.rendererName!)}"
-                    
-                    let rendererView = self.views[viewDomain]![needle]
-                    if let rendererView = rendererView { cascadedView.merge(rendererView) }
+                    let renderName:String? = session.rendererName ?? cascadedView.rendererName ?? nil
+                    if let renderName = renderName {
+                        let needle = "{renderer:\(renderName)}"
+                        let rendererView = self.views[viewDomain]![needle]
+                        if let rendererView = rendererView { cascadedView.merge(rendererView) }
+                    }
                 }
                 else if orderType == "datatype" && type != nil {
                     var needle:String
@@ -141,6 +147,8 @@ public class Main: Event, ObservableObject {
         }
         
         cascadedView.merge(session)
+        
+        dump(cascadedView)
         
         return cascadedView
     }

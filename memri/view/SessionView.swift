@@ -118,40 +118,42 @@ public class SessionView: ObservableObject, Decodable{
     }
     
     public func merge(_ view:SessionView) {
+        print("Merging view")
+        dump(view)
+        
         let query = view.searchResult.query
         let sr = self.searchResult
-        if query.query != nil { sr.query.query = query.query }
-        if query.sortProperty != nil { sr.query.sortProperty = query.sortProperty }
-        if query.sortAscending != nil { sr.query.sortAscending = query.sortAscending }
-        if query.pageCount != nil { sr.query.pageCount = query.pageCount }
-        if query.pageIndex != nil { sr.query.pageIndex = query.pageIndex }
+        sr.query.query = query.query ?? sr.query.query ?? nil
+        sr.query.sortProperty = query.sortProperty ?? sr.query.sortProperty ?? ""
+        sr.query.sortAscending = query.sortAscending ?? sr.query.sortAscending ?? -1
+        sr.query.pageCount = query.pageCount ?? sr.query.pageCount ?? 0
+        sr.query.pageIndex = query.pageIndex ?? sr.query.pageIndex ?? 0
         
-        if view.title != nil { self.title = view.title }
-        if view.rendererName != nil { self.rendererName = view.rendererName }
-        if view.name != nil { self.name = view.name }
-        if view.subtitle != nil { self.subtitle = view.subtitle }
-        if view.selection != nil { self.selection = view.selection }
-        if view.icon != nil { self.icon = view.icon }
-        if view.showLabels != nil { self.showLabels = view.showLabels }
-        if view.contextMode != nil { self.contextMode = view.contextMode }
-        if view.filterMode != nil { self.filterMode = view.filterMode }
-        if view.editMode != nil { self.editMode = view.editMode }
-        if view.browsingMode != nil { self.browsingMode = view.browsingMode }
-        if view.actionButton != nil { self.actionButton = view.actionButton }
-        if view.backButton != nil { self.backButton = view.backButton }
+        self.title = view.title ?? self.title ?? ""
+        self.rendererName = view.rendererName ?? self.rendererName ?? ""
+        self.name = view.name ?? self.name ?? ""
+        self.subtitle = view.subtitle ?? self.subtitle ?? ""
+        self.selection = view.selection ?? self.selection ?? []
+        self.icon = view.icon ?? self.icon ?? ""
+        self.showLabels = view.showLabels ?? self.showLabels ?? true
+        self.contextMode = view.contextMode ?? self.contextMode ?? false
+        self.filterMode = view.filterMode ?? self.filterMode ?? false
+        self.editMode = view.editMode ?? self.editMode ?? false
+        self.browsingMode = view.browsingMode ?? self.browsingMode ?? "default"
+        self.actionButton = view.actionButton ?? self.actionButton ?? nil
+        self.backButton = view.backButton ?? self.backButton ?? nil
+        self.showFilterPanel = view.showFilterPanel ?? self.showFilterPanel ?? false
+        self.backTitle = view.backTitle ?? self.backTitle ?? ""
+        self.editActionButton = view.editActionButton ?? self.editActionButton ?? nil
+        self.isEditMode = view.isEditMode ?? self.isEditMode
         
-        if view.showFilterPanel != nil { self.showFilterPanel = view.showFilterPanel }
-        if view.backTitle != nil { self.backTitle = view.backTitle }
-        if view.editActionButton != nil { self.editActionButton = view.editActionButton }
-        if view.isEditMode != nil { self.isEditMode = view.isEditMode }
+        self.renderConfigs = view.renderConfigs ?? self.renderConfigs ?? [:] // TODO merge this properly
         
-        if view.renderConfigs != nil { self.renderConfigs = view.renderConfigs } // TODO merge this properly
-        
-        if view.editButtons != nil { self.editButtons = (self.editButtons ?? []) + view.editButtons! } // TODO filter out any duplicates
-        if view.filterButtons != nil { self.filterButtons = (self.filterButtons ?? []) + view.filterButtons! } // TODO filter out any duplicates
-        if view.actionItems != nil { self.actionItems = (self.actionItems ?? []) + view.actionItems! } // TODO filter out any duplicates
-        if view.navigateItems != nil { self.navigateItems = (self.navigateItems ?? []) + view.navigateItems! } // TODO filter out any duplicates
-        if view.contextButtons != nil { self.contextButtons = (self.contextButtons ?? []) + view.contextButtons! } // TODO filter out any duplicates
+        self.editButtons = (self.editButtons ?? []) + (view.editButtons ?? []) // TODO filter out any duplicates
+        self.filterButtons = (self.filterButtons ?? []) + (view.filterButtons ?? []) // TODO filter out any duplicates
+        self.actionItems = (self.actionItems ?? []) + (view.actionItems ?? []) // TODO filter out any duplicates
+        self.navigateItems = (self.navigateItems ?? []) + (view.navigateItems ?? []) // TODO filter out any duplicates
+        self.contextButtons = (self.contextButtons ?? []) + (view.contextButtons ?? []) // TODO filter out any duplicates
     }
     
     public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{

@@ -2,31 +2,37 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "id": "0x0",
+            "id": "0xS01",
             "currentViewIndex": 1,
             "views": [
                 {
-                    "query": {
-                        "text": "notes",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                    "searchResult": {
+                        "query": {
+                            "text": "notes",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
+                        }
                     }
                 },
                 {
-                    "query": { "query": "0x1" },
+                    "searchResult": {
+                        "query": { "query": "0x01" }
+                    },
                     "editMode": true
                 }
             ]
         },
         {
-            "id": "0x1",
+            "id": "0xS02",
             "currentViewIndex": 0,
             "views": [
                 {
-                    "query": {
-                        "query": "notes",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                    "searchResult": {
+                        "query": {
+                            "query": "notes",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
+                        }
                     },
                     "selection": ["0x5"],
                     "scrollState": 64
