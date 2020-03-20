@@ -8,6 +8,25 @@
 
 import SwiftUI
 
+
+class NavigationItem: ObservableObject{
+        /**
+         * Used as the caption in the navigation
+         */
+        public var title: String? = nil
+        /**
+         * Name of the view it opens
+         */
+        public var view: String? = nil
+        /**
+         * Defines the position in the navigation
+         */
+        public var count: Int = 0
+
+        public var type: Int = 0
+}
+
+
 struct Navigation: View {
     var body: some View {
         VStack{
