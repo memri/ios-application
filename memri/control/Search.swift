@@ -34,7 +34,8 @@ struct ViewTypeButton: Identifiable {
 }
 
 struct Search: View {
-    @EnvironmentObject var sessions: Sessions
+    @EnvironmentObject var main: Main
+
     @State var searchText=""
     @State var showFilters=false
     @State var sorters = [SortButton(name: "Select property", selected: false),
@@ -67,8 +68,8 @@ struct Search: View {
                         print("abc")
                         self.showFilters=true
                 }
-                ForEach(self.sessions.currentView.filterButtons){ filterButton in
-                    Button(action: {self.sessions.currentSession.executeAction(action: filterButton)}) {
+                ForEach(self.main.currentView.filterButtons){ filterButton in
+                    Button(action: {self.main.executeAction(filterButton)}) {
                         Image(systemName: filterButton.icon)
                     }.padding(.horizontal , 5)
                      .font(Font.system(size: 20, weight: .medium))
@@ -76,7 +77,7 @@ struct Search: View {
                 }
 
             }.padding(.horizontal , 15)
-            if filterPannelRenderers.contains(sessions.currentView.rendererName) && sessions.currentView.showFilterPannel{
+            if filterPannelRenderers.contains(self.main.currentView.rendererName) && self.main.currentView.showFilterPanel {
                 HStack(alignment: .top){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){
@@ -128,7 +129,7 @@ struct Search: View {
         UITableView.appearance().separatorColor = .clear
     }
     func setRenderer(i: Int){
-        self.sessions.currentSession.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
+        self.main.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
         self.resetSelected()
         self.viewTypeButtons[i].selected = true
     }
@@ -141,6 +142,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(try! Sessions.from_json("empty_sessions"))
+        Search().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

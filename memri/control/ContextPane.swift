@@ -9,8 +9,13 @@
 import SwiftUI
 
 struct ContextPane: View {
+    @EnvironmentObject var main: Main
     
-    var currentSessionView: SessionView
+    var title: String?
+    var subtitle: String?
+    var buttons: [ActionDescription] = []
+    var actions: [ActionDescription] = []
+    var navigate: [ActionDescription] = []
     
     let actionLabel = NSLocalizedString("actionLabel", comment: "")
     var actionItems: Array<ActionDescription>
@@ -49,10 +54,10 @@ struct ContextPane: View {
     var body: some View {
         VStack {
             VStack {
-                Text("\(self.currentSessionView.title)")
+                Text("\(main.currentView.title)")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text("\(self.currentSessionView.subtitle)")
+                Text("\(main.currentView.subtitle)")
                     .font(.body)
                 HorizontalLine().styleHorizontalLine()
             }
@@ -140,6 +145,6 @@ func actionNotFound() {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane(sessions: try! Sessions.from_json("empty_sessions"))
+        ContextPane().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

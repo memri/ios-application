@@ -47,6 +47,8 @@ class ListConfig: RenderConfig {
 }
 
 struct ListRenderer: Renderer {
+    @EnvironmentObject var main: Main
+    
     var name: String="list"
     var icon: String=""
     var category: String=""
@@ -58,33 +60,31 @@ struct ListRenderer: Renderer {
     @State var abc: Bool=false
 
 //    var renderConfig: RenderConfig = RenderConfig()
-    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: [])
-    )
+    var renderConfig: RenderConfig = ListConfig(press:
+        ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: []))
 
-    func setState(_ state:RenderState) -> Bool {return false}
+    func setState(_ state:RenderState) -> Bool { return false }
     
-    func getState() -> RenderState {RenderState()}
+    func getState() -> RenderState { RenderState() }
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
-    
-    @EnvironmentObject var sessions: Sessions
     
     var body: some View {
         return VStack {
             NavigationView {
                 List{
-                    ForEach(self.sessions.currentSession.currentSessionView.searchResult.data) { dataItem in
+                    ForEach(main.currentView.searchResult.data) { dataItem in
                         VStack{
-                            Text(dataItem.properties["title"] ?? "")
+                            Text(dataItem.properties["title"]!.value as! String)
                                 .bold()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(dataItem.properties["content"] ?? "")
+                            Text(dataItem.properties["content"]!.value as! String)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
                             self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
                         }
 //                        .padding(.horizontal, 10)
 //                         .padding(.vertical, 7)
-                    }.onDelete{ indexSet in self.sessions.currentSession.currentSessionView.searchResult.data.remove(atOffsets: indexSet)
+                    }.onDelete{ indexSet in self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
                     }
                 }
                 .environment(\.editMode, $isEditMode)
@@ -96,13 +96,12 @@ struct ListRenderer: Renderer {
     }
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        self.sessions.currentSession.executeAction(action: actionDescription, dataItem: dataItem)
-        
+        main.executeAction(actionDescription, dataItem)
     }
 }
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(try! Sessions.from_json("empty_sessions"))
+        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

@@ -9,8 +9,8 @@
 import SwiftUI
 
 struct TopNavigation: View {
+    @EnvironmentObject var main: Main
     
-    @EnvironmentObject var sessions: Sessions
     @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
     
@@ -25,22 +25,21 @@ struct TopNavigation: View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                Text(sessions.currentView.title).font(.headline)
+                Text(main.currentView.title).font(.headline)
             }
             HStack{
                 Button(action: {}) {
                     Image(systemName: "line.horizontal.3")
                         .foregroundColor(.gray)
                         .font(Font.system(size: 20, weight: .medium))
-                }
-                .padding(.horizontal , 5)
-                
-                if sessions.currentView.backButton != nil {
+                }.padding(.horizontal, 5)
+
+                if main.currentView.backButton != nil {
                     Button(action: backButtonAction ) {
-                        Image(systemName: sessions.currentView.backButton!.icon)
+                        Image(systemName: main.currentView.backButton!.icon)
                         .foregroundColor(.gray)
-                        if sessions.currentView.backTitle != nil{
-                            Text(sessions.currentView.backTitle!)
+                        if main.currentView.backTitle != nil{
+                            Text(main.currentView.backTitle!)
                                 .font(.subheadline)
                                 .foregroundColor(.black)
                         }
@@ -48,43 +47,46 @@ struct TopNavigation: View {
                     }
                 }
                 Spacer()
-                if self.sessions.currentView.editActionButton != nil {
+                if self.main.currentView.editActionButton != nil {
                     Button(action: editAction) {
-                        Image(systemName: sessions.currentView.editActionButton!.icon)
+                        Image(systemName: main.currentView.editActionButton!.icon)
                     }
                     .padding(.horizontal , 5)
                     .foregroundColor(.gray)
                 }
+            
                 
-                if sessions.currentView.actionButton != nil {
+                if main.currentView.actionButton != nil {
                     Button(action: actionButtonAction) {
                         Image(systemName:
-                            sessions.currentView.actionButton!.icon)
+                            main.currentView.actionButton!.icon)
                     }
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
-
+                
                 Button(action: {
                     print("render contextpane")
                     self.show_contextpage = true
                 }) {
                     Image(systemName: "ellipsis")
-                }.sheet(isPresented: self.$show_contextpage) {
-                    ContextPane(sessions: self.sessions)
+                }
+                .sheet(isPresented: self.$show_contextpage) {
+                    ContextPane()
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
+                
             }.padding(.all, 30)
         }
 
     }
     func actionButtonAction(){
-        sessions.currentSession.executeAction(action: sessions.currentView.actionButton)
+        main.executeAction(main.currentView.actionButton!)
     }
     
     func backButtonAction(){
-        sessions.currentSession.executeAction(action: sessions.currentView.backButton)
+        main.executeAction(main.currentView.backButton!)
     }
     
     func editAction(){
@@ -102,6 +104,6 @@ struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(try! Sessions.from_json("empty_sessions"))
+        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

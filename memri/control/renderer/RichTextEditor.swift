@@ -19,7 +19,7 @@ struct RichTextEditor: UIViewRepresentable {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
-            control.dataItem.properties["content"] = textView.text
+            control.dataItem.properties["content"] = AnyCodable(textView.text)
         }
     }
 
@@ -30,7 +30,7 @@ struct RichTextEditor: UIViewRepresentable {
         view.isUserInteractionEnabled = true
         view.contentInset = UIEdgeInsets(top: 5,left: 10, bottom: 5, right: 5)
         view.delegate = context.coordinator
-        view.text = self.dataItem.properties["content"]
+        view.text = ((self.dataItem.properties["content"]?.value ?? "") as! String)
         return view
     }
     
