@@ -19,7 +19,7 @@
 
         "{[type:note]}": {
             "name": "notes",
-            "title": Notes",
+            "title": "Notes",
             "query": {
                 "text": "data:Note",
                 "sortProperty": "date-created",
