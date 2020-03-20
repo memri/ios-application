@@ -76,7 +76,7 @@
         "{type:note}": {
             "name": "note",
             "title": "Note",
-            "rendererName": "richtexteditor",
+            "rendererName": "richTextEditor",
             "renderConfig": {
                 "richtexteditor": {
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"

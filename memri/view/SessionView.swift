@@ -120,6 +120,9 @@ public class SessionView: ObservableObject, Decodable{
     public func merge(_ view:SessionView) {
         let query = view.searchResult.query
         let sr = self.searchResult
+        
+        dump(query)
+        
         sr.query.query = query.query ?? sr.query.query ?? nil
         sr.query.sortProperty = query.sortProperty ?? sr.query.sortProperty ?? ""
         sr.query.sortAscending = query.sortAscending ?? sr.query.sortAscending ?? -1

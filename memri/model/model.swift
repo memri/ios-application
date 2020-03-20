@@ -14,12 +14,12 @@ extension PropertyReflectable {
 }
 
 public class DataItem: Codable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
+    private var uuid:String = UUID().uuidString
+    public var uid:String? = nil // 0x" + UUID().uuidString
+    public var type:String = ""
     
-    private var uid: String = "" // 0x" + UUID().uuidString
-    public var type: String = ""
-    
-    @Published public var predicates: [String: [DataItem]] = [:]
-    @Published public var properties: [String: AnyCodable] = [:]
+    @Published public var predicates:[String: [DataItem]] = [:]
+    @Published public var properties:[String: AnyCodable] = [:]
     @Published private var deleted: Bool = false;
     
     public var isDeleted:Bool {
@@ -27,7 +27,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
     }
     
     public var id: String {
-        return self.uid
+        return self.uid ?? self.uuid
     }
     
     enum DataItemError: Error {
@@ -165,7 +165,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
      */
     public func merge(_ source:DataItem) throws {
         // Items that do not have the same id should never merge
-        if (source.id != "" && self.id != "" && source.id != self.id) {
+        if (source.uid != nil && self.uid != nil && source.uid != self.uid) {
             throw DataItemError.cannotMergeItemWithDifferentId
         }
         

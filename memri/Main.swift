@@ -62,9 +62,12 @@ public class Main: Event, ObservableObject {
             sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
             
             // Hook current session
+            var isCalled:Bool = false
             self.cancellable = self.sessions.objectWillChange.sink {
+                isCalled = false
                 DispatchQueue.main.async {
-                    self.setCurrentView()
+                    if !isCalled { self.setCurrentView() }
+                    else { isCalled = true }
                 }
             }
             
@@ -96,7 +99,6 @@ public class Main: Event, ObservableObject {
         
         // Load data
         let searchResult = self.currentView.searchResult
-        print(searchResult.query.query ?? "")
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
             cache.loadPage(searchResult, 0, { (error) in
@@ -110,9 +112,9 @@ public class Main: Event, ObservableObject {
         let searchOrder = ["defaults", "user"]
         
         let cascadedView = SessionView()
-        cascadedView.searchResult = session.searchResult
         
         let isList = !session.searchResult.query.query!.starts(with: "0x")
+        
         var type:String? = nil
         if (session.searchResult.data.count > 0 ) {
             type = session.searchResult.data[0].type
@@ -146,6 +148,11 @@ public class Main: Event, ObservableObject {
         }
         
         cascadedView.merge(session)
+        
+        session.searchResult.query = cascadedView.searchResult.query
+        cascadedView.searchResult = session.searchResult
+        
+        dump(cascadedView.searchResult)
         
         return cascadedView
     }
@@ -189,14 +196,17 @@ public class Main: Event, ObservableObject {
             searchResult = existingSR
         }
         else {
-            searchResult = SearchResult(QueryOptions(query: item.id), [item])
+            var xxid = item.id
+            if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query
+            searchResult = SearchResult(QueryOptions(query: xxid), [item])
             searchResult.loading = 0 // Force to load the first time
             cache.addToCache(searchResult)
         }
         
         view.searchResult = searchResult
-        view.rendererName = "richTextEditor"
-        view.title = "new note"
+//        view = cascadeView(view)
+        
+        // Hack!!
         view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         
         self.openView(view)
@@ -217,7 +227,6 @@ public class Main: Event, ObservableObject {
         
         let realItem = self.cache.addToCache(item)
         self.currentView.searchResult.data.append(realItem) // TODO
-        dump(self.currentView.searchResult.data)
         self.openView(realItem)
     }
 

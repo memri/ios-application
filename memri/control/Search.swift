@@ -75,8 +75,8 @@ struct Search: View {
                      .font(Font.system(size: 20, weight: .medium))
                         .foregroundColor(Color(filterButton.color))
                 }
-
             }.padding(.horizontal , 15)
+            
             if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentView.showFilterPanel ?? false) {
                 HStack(alignment: .top){
                     VStack(alignment: .leading){
