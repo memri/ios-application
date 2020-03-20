@@ -137,8 +137,8 @@ public class Main: Event, ObservableObject {
                 }
                 else if orderType == "datatype" && type != nil {
                     var needle:String
-                    if (isList) { needle = "{[\(type!)]}" }
-                    else { needle = "{\(type!)}" }
+                    if (isList) { needle = "{[type:\(type!)]}" }
+                    else { needle = "{type:\(type!)}" }
                     
                     let datatypeView = self.views[viewDomain]![needle]
                     if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
@@ -147,8 +147,6 @@ public class Main: Event, ObservableObject {
         }
         
         cascadedView.merge(session)
-        
-        dump(cascadedView)
         
         return cascadedView
     }

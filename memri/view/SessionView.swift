@@ -118,9 +118,6 @@ public class SessionView: ObservableObject, Decodable{
     }
     
     public func merge(_ view:SessionView) {
-        print("Merging view")
-        dump(view)
-        
         let query = view.searchResult.query
         let sr = self.searchResult
         sr.query.query = query.query ?? sr.query.query ?? nil

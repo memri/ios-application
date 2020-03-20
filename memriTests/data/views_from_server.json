@@ -21,7 +21,7 @@
             "name": "notes",
             "title": "Notes",
             "query": {
-                "text": "data:Note",
+                "text": "notes",
                 "sortProperty": "date-created",
                 "sortAscending": 0
             },
@@ -55,15 +55,15 @@
             ],
             "filterButtons": [
                 {
-                    "icon": "star.ico",
+                    "icon": "star.fill",
                     "title": "Show Starred Notes",
                     "actionName": "showStarred",
                     "actionArgs": []
                 },
                 {
-                    "icon": "filter.ico",
+                    "icon": "chevron.down",
                     "title": "Show Filter Panel",
-                    "actionName": "showFilterPane",
+                    "actionName": "toggleFilterPanel",
                     "actionArgs": []
                 }
             ]
@@ -72,7 +72,6 @@
         "{type:note}": {
             "name": "note",
             "title": "Note",
-            "query": { "text": "{.id}" },
             "rendererName": "richtexteditor",
             "renderConfig": {
                 "richtexteditor": {
