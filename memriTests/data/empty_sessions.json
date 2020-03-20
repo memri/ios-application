@@ -69,7 +69,6 @@
                         "actionName": "add",
                         "actionArgs": [{
                             "type": "note",
-                            "_predicates": {"owner": "{me}"},
                             "properties": {"title": "Untitled Note"}
                         }]
                     },

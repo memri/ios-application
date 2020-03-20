@@ -68,7 +68,7 @@ public class Main: Event, ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        
+        print("in mockBoot sessions.title = \(self.sessions.currentView.title)")
         self.cancellable = self.sessions.objectWillChange.sink {
             DispatchQueue.main.async {
                 self.setCurrentView()
@@ -183,6 +183,18 @@ public class Main: Event, ObservableObject {
             toggleFilterPanel()
         case "star":
             star()
+        case "share":
+            shareNote()
+        case "addToList":
+            addToList()
+        case "duplicateNote":
+            duplicateNote()
+        case "noteTimeline":
+            noteTimeline()
+        case "starredNotes":
+            starredNotes()
+        case "allNotes":
+            allNotes()
         case "exampleUnpack":
             let (_, _) = (params[0].value, params[1].value) as! (String, Int)
             break
@@ -233,6 +245,31 @@ public class Main: Event, ObservableObject {
         self.currentView.showFilterPanel.toggle()
         self.objectWillChange.send()
     }
+
+    func shareNote() {
+        print("shareNote")
+    }
+
+    func addToList() {
+        print("addToList")
+    }
+    
+    func duplicateNote() {
+        print("duplicateNote")
+    }
+    
+    func noteTimeline() {
+        print("noteTimeline")
+    }
+    
+    func starredNotes() {
+        print("starredNotes")
+    }
+    
+    func allNotes() {
+        print("allNotes")
+    }
+
 }
 
 /**
