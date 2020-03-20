@@ -152,8 +152,6 @@ public class Main: Event, ObservableObject {
         session.searchResult.query = cascadedView.searchResult.query
         cascadedView.searchResult = session.searchResult
         
-        dump(cascadedView.searchResult)
-        
         return cascadedView
     }
 
