@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct ContextPane: View {
+    
     @EnvironmentObject var main: Main
     
     var title: String?
