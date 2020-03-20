@@ -21,7 +21,6 @@ struct TopNavigation: View {
     var hideBack:Bool = false
     
     var body: some View {
-        
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
@@ -54,8 +53,8 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.gray)
                 }
-            
-                
+
+
                 if main.currentView.actionButton != nil {
                     Button(action: actionButtonAction) {
                         Image(systemName:
@@ -64,9 +63,8 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
-                
+
                 Button(action: {
-                    print("render contextpane")
                     self.show_contextpage = true
                 }) {
                     Image(systemName: "ellipsis")
@@ -76,7 +74,7 @@ struct TopNavigation: View {
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
-                
+
             }.padding(.all, 30)
         }
 

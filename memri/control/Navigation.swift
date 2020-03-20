@@ -9,7 +9,11 @@
 import SwiftUI
 
 
-class NavigationItem: ObservableObject{
+enum NavigationType: Int, Decodable {
+    case item, heading, line
+}
+
+class NavigationItem: ObservableObject, Decodable{
         /**
          * Used as the caption in the navigation
          */
@@ -22,12 +26,22 @@ class NavigationItem: ObservableObject{
          * Defines the position in the navigation
          */
         public var count: Int = 0
+        /**
+         *  0 = Item
+         *  1 = Heading
+         *  2 = Line
+         */
+        public var type: NavigationType = .item
 
-        public var type: Int = 0
 }
 
 
 struct Navigation: View {
+    @EnvironmentObject var main: Main
+
+    
+    var navigationItems: [NavigationItem] = [NavigationItem()]
+    
     var body: some View {
         VStack{
             HStack{
