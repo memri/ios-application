@@ -314,7 +314,7 @@ public class Cache {
         if item.type != "" && self.typeCache[item.type] == nil {
             self.typeCache[item.type] = SearchResult()
         }
-        
+
         self.typeCache[item.type]!.data.append(item) // TODO sort??
         
         cancellables?.append(item.objectWillChange.sink { (_) in
@@ -324,7 +324,7 @@ public class Cache {
                 else { self.onUpdate(item) }
             }
         })
-        
+
         return item
     }
     

@@ -169,6 +169,8 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
             throw DataItemError.cannotMergeItemWithDifferentId
         }
         
+        if self.type == "" { self.type = source.type }
+        
         // Copy properties
         for (name, value) in source.properties {
             self.properties[name] = value

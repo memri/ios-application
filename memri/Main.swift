@@ -181,7 +181,10 @@ public class Main: Event, ObservableObject {
         var searchResult:SearchResult
         let view = SessionView()
         
-        let existingSR = cache.findCachedResult(query: item.id)
+        var existingSR:SearchResult?
+        if item.id != "" {
+            existingSR = cache.findCachedResult(query: item.id)
+        }
         if let existingSR = existingSR {
             searchResult = existingSR
         }
@@ -212,8 +215,9 @@ public class Main: Event, ObservableObject {
 //
 //        dataItem.properties=["title": "new note", "content": ""]
         
-        self.currentView.searchResult.data.append(item) // TODO
         let realItem = self.cache.addToCache(item)
+        self.currentView.searchResult.data.append(realItem) // TODO
+        dump(self.currentView.searchResult.data)
         self.openView(realItem)
     }
 
@@ -228,7 +232,9 @@ public class Main: Event, ObservableObject {
             back()
         case "add":
             let param0 = params[0].value as! DataItem
-            add(param0)
+            let item = DataItem()
+            try! item.merge(param0)
+            add(item)
         case "openView":
             if let item = item{
                 openView(item)

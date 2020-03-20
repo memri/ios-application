@@ -91,7 +91,7 @@ public class PodAPI {
      */
     public func create(_ item:DataItem, _ callback: (_ error:Error?, _ id:String) -> Void) -> Void {
         print("created \(item)")
-        callback(nil, "0x10");
+        callback(nil, "0x" + UUID().uuidString);
     }
     /**
      *
