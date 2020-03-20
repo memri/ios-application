@@ -38,6 +38,7 @@
 		5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5D599BC323F2B77700F218A0 /* Preview Assets.xcassets */; };
 		5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */; };
 		5D599BDD23F2B77700F218A0 /* memriUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BDC23F2B77700F218A0 /* memriUITests.swift */; };
+		5D78D0692424D4D900F7BD3B /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78D0682424D4D900F7BD3B /* Navigation.swift */; };
 		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
@@ -156,6 +157,7 @@
 		5D599BDC23F2B77700F218A0 /* memriUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memriUITests.swift; sourceTree = "<group>"; };
 		5D599BDE23F2B77700F218A0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D599BEB23F2B87600F218A0 /* memriPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = memriPlayground.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		5D78D0682424D4D900F7BD3B /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
@@ -438,6 +440,7 @@
 				5DD1E9B423FD7EB1007BDF7B /* Search.swift */,
 				5D3D9620241675100004040E /* util.swift */,
 				C8630B2B2418609200C36D6F /* ContextPane.swift */,
+				5D78D0682424D4D900F7BD3B /* Navigation.swift */,
 			);
 			path = control;
 			sourceTree = "<group>";
@@ -647,6 +650,7 @@
 			files = (
 				8665ADD7241A8120005B3FA5 /* Main.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
+				5D78D0692424D4D900F7BD3B /* Navigation.swift in Sources */,
 				5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
