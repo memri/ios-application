@@ -73,15 +73,66 @@
                             "properties": {"title": "Untitled Note"}
                         }]
                     },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
+                    "editActionButton":{
+                        "icon": "pencil",
+                        "title": "edit",
+                        "actionName": "toggleEdit",
                         "actionArgs": []
                     },
-                    "filterButtons": [],
-                    "actionItems": [],
-                    "navigateItems": [],
+                    "filterButtons": [
+                        {
+                            "icon": "star.fill",
+                            "title": "star",
+                            "actionName": "star",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "chevron.down",
+                            "title": "showFilterPanel",
+                            "actionName": "toggleFilterPanel",
+                            "actionArgs": []
+                        }
+                    ],
+                    "actionItems": [
+                        {
+                            "icon": "",
+                            "title": "Share with ...",
+                            "actionName": "share",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Add to list",
+                            "actionName": "addToList",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Duplicate Note",
+                            "actionName": "duplicateNote",
+                            "actionArgs": []
+                        }
+                    ],
+                    "navigateItems": [
+                        {
+                            "icon": "",
+                            "title": "Timeline of this note",
+                            "actionName": "noteTimeline",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Starred notes",
+                            "actionName": "starredNotes",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "All notes",
+                            "actionName": "allNotes",
+                            "actionArgs": []
+                        }
+                    ],
                     "contextButtons": [],
                     "icon": "testIcon",
                     "showLabels": false,

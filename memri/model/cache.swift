@@ -219,9 +219,7 @@ public class Cache {
      * Loads data from the pod. Returns SearchResult.
      * -> Calls callback twice, once for cache, once for real data [??]
      */
-    public func query(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult?, _ cached:Bool?) -> Void) -> SearchResult {
-        let results = SearchResult(query, nil)
-        
+    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
         var receivedFromServer = false
         func handle (_ error:Error?, _ items:[DataItem], _ cached:Bool) -> Void {
             if receivedFromServer { return } 
@@ -233,22 +231,18 @@ public class Cache {
             }
             
             // Add all new data items to the cache
-            try? items.forEach { (item) throws in
-                self.addToCache(item)
+            var data:[DataItem] = []
+            if items.count > 0 {
+                for i in 0...items.count - 1 {
+                    data.append(self.addToCache(items[i]))
+                }
             }
             
-            // Add the searchresult to the cache
-            addToCache(results)
-            
-            results.data = items
-            
-            callback(nil, results, cached)
+            callback(nil, data, cached)
         }
         
         queryLocal(query) { (error, items) in handle(error, items, true) }
         podAPI.query(query) { (error, items) in handle(error, items, false) }
-        
-        return results
     }
     
     /**
@@ -280,8 +274,7 @@ public class Cache {
         callback(nil, [])
     }
 
-    public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
-    public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: SearchResult) -> Void) -> Void {}
+    public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: [DataItem]) -> Void) -> Void {}
     public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
     
     /**
@@ -308,11 +301,11 @@ public class Cache {
     /**
      *
      */
-    public func addToCache(_ item:DataItem) {
+    public func addToCache(_ item:DataItem) -> DataItem {
         let cachedItem:DataItem? = self.idCache[item.id]
         if let cachedItem = cachedItem {
             try! cachedItem.merge(item)
-            return
+            return cachedItem
         }
         else if item.id != "" {
             self.idCache[item.id] = item
@@ -325,10 +318,84 @@ public class Cache {
         self.typeCache[item.type]!.data.append(item) // TODO sort??
         
         cancellables?.append(item.objectWillChange.sink { (_) in
-            if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
-            else if item.id == "" { self.onCreate(item) }
-            else { self.onUpdate(item) }
+            DispatchQueue.main.async {
+                if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
+                else if item.id == "" { self.onCreate(item) }
+                else { self.onUpdate(item) }
+            }
         })
+        
+        return item
+    }
+    
+    public func loadPage(_ searchResult:SearchResult, _ index:Int, _ callback:((_ error:Error?) -> Void)) -> Void {
+        // Set state to loading
+        searchResult.loading = 1
+        
+        if searchResult.query.query == "" {
+            callback("No query specified")
+            return
+        }
+        
+        let _ = self.query(searchResult.query) { (error, result, success) -> Void in
+            if (error != nil) {
+                /* TODO: trigger event or so */
+
+                // Loading error
+                searchResult.loading = -2
+
+                callback(error)
+                return
+            }
+
+            // TODO this only works when retrieving 1 page. It will break for pagination
+            if let result = result { searchResult.data = result }
+
+            // We've successfully loaded page 0
+            searchResult.pages[0] = true;
+
+            // First time loading is done
+            searchResult.loading = -1
+
+            callback(nil)
+        }
+    }
+    
+    /**
+     * Client side filter //, with a fallback to the server
+     */
+    public func filter(_ searchResult:SearchResult, _ query:String) -> SearchResult {
+        var options = searchResult.query
+        options.query = query
+        
+        let filterResult = SearchResult(options, searchResult.data)
+        filterResult.loading = searchResult.loading
+        filterResult.pages = searchResult.pages
+        
+        for i in 0...filterResult.data.count {
+            if (!filterResult.data[i].match(query)) {
+                filterResult.data.remove(at: i)
+            }
+        }
+        
+        return filterResult
+    }
+        
+    /**
+     * Executes the query again
+     */
+    public func reload(_ searchResult:SearchResult) -> Void {
+        // Reload all pages
+        for (page, _) in searchResult.pages {
+            let _ = self.loadPage(searchResult, page, { (error) in })
+        }
+    }
+    
+    /**
+     *
+     */
+    public func resort(_ options:QueryOptions) {
+        
     }
     
     /**

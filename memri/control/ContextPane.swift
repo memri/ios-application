@@ -11,9 +11,6 @@ import SwiftUI
 struct ContextPane: View {
     @EnvironmentObject var main: Main
     
-    let horizontalLineWidth: CGFloat = 1.5
-    var horizontalLine = HorizontalLine()
-    
     var title: String?
     var subtitle: String?
     var buttons: [ActionDescription] = []
@@ -21,26 +18,52 @@ struct ContextPane: View {
     var navigate: [ActionDescription] = []
     
     let actionLabel = NSLocalizedString("actionLabel", comment: "")
+    var actionItems: Array<ActionDescription>? = nil
+    typealias actionMethod = () -> ()
+    var actionMethods = Dictionary<String, actionMethod>()
+    let noAction: actionMethod = actionNotFound
+    let shareAction: actionMethod = share
+    let addToListAction: actionMethod = addToList
+    let duplicateAction: actionMethod = duplicateNote
+
     let navigateLabel = NSLocalizedString("navigateLabel", comment: "")
+    var navigationItems: Array<ActionDescription>? = nil
+    typealias navigationMethod = () -> ()
+    var navigationMethods = Dictionary<String, navigationMethod>()
+    let noteTimelineNavigation: navigationMethod = noteTimeline
+    let starredNotesNavigation: navigationMethod = starredNotes
+    let allNotesNavigation: navigationMethod = allNotes
+
     let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
+
+    init() {
+//        self.currentView = main.currentView
+//        self.actionItems = self.currentView.actionItems
+//        self.navigationItems = self.currentView.navigateItems
+        
+        self.actionMethods.updateValue(shareAction, forKey: "share")
+        self.actionMethods.updateValue(addToListAction, forKey: "addToList")
+        self.actionMethods.updateValue(duplicateAction, forKey: "duplicateNote")
+
+        self.navigationMethods.updateValue(noteTimelineNavigation, forKey: "noteTimeline")
+        self.navigationMethods.updateValue(starredNotesNavigation, forKey: "starredNotes")
+        self.navigationMethods.updateValue(allNotesNavigation, forKey: "allNotes")
+    }
+    
     
     var body: some View {
-        VStack (/*alignment: .leading*/){
+        VStack {
             VStack {
                 Text("\(main.currentView.title ?? "")")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                 Text("\(main.currentView.subtitle ?? "")")
                     .font(.body)
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 Text("some stuff to add later ...")
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -49,9 +72,16 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                List {
+                    ForEach (0 ..< (self.main.currentView.actionItems?.count ?? 0)) { i in
+                        Button(action:{
+                            (self.actionMethods[self.main.currentView.actionItems![i].actionName] ?? self.noAction)()
+                        }) {
+                            Text(self.main.currentView.actionItems![i].title)
+                        }
+                    }
+                }
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -60,9 +90,16 @@ struct ContextPane: View {
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
-                horizontalLine
-                    .stroke(Color.gray, lineWidth: horizontalLineWidth)
-                    .frame(height: horizontalLineFrameHeight)
+                List {
+                    ForEach (0 ..< (main.currentView.navigateItems?.count ?? 0)) { i in
+                        Button(action:{
+                            (self.navigationMethods[self.main.currentView.navigateItems![i].actionName] ?? self.noAction)()
+                        }) {
+                            Text(self.main.currentView.navigateItems![i].title)
+                        }
+                    }
+                }
+                HorizontalLine().styleHorizontalLine()
             }
             VStack {
                 HStack {
@@ -76,6 +113,34 @@ struct ContextPane: View {
         }
         .padding()
     }
+}
+
+func share() {
+    print("share function called!")
+}
+
+func addToList() {
+    print("addToList function called!")
+}
+
+func duplicateNote() {
+    print("duplicateNote function called!")
+}
+
+func noteTimeline() {
+    print("noteTimeline function called!")
+}
+
+func starredNotes() {
+    print("starredNotes function called!")
+}
+
+func allNotes() {
+    print("allNotes function called!")
+}
+
+func actionNotFound() {
+    print("actionNotFound!")
 }
 
 struct ContentPane_Previews: PreviewProvider {

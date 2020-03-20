@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 
 public class Sessions: ObservableObject, Decodable {
@@ -29,6 +30,10 @@ public class Sessions: ObservableObject, Decodable {
         else {
             return Session()
         }
+    }
+    
+    var currentView: SessionView{
+        return currentSession.currentView
     }
     
     init(_ sessions: [Session] = [Session()], currentSessionIndex: Int = 0){

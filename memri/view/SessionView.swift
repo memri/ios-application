@@ -1,7 +1,13 @@
 import Foundation
 import Combine
+import SwiftUI
 
-public class ActionDescription: Codable {
+
+public class ActionDescription: Decodable, Identifiable {
+    
+    
+    public var id = UUID()
+    var color: UIColor = .gray
     var icon: String = ""
     var title: String = ""
     var actionName: String = ""
@@ -15,6 +21,14 @@ public class ActionDescription: Codable {
             self.title = try decoder.decodeIfPresent("title") ?? self.title
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
+        
+            let colorString = try decoder.decodeIfPresent("color") ?? ""
+            
+            switch colorString{
+                case "gray": self.color = .gray
+                case "yellow","systemYellow": self.color = .systemYellow
+                default: self.color = .gray
+            }
                     
             // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
             switch self.actionName{
@@ -55,18 +69,23 @@ public class SessionView: ObservableObject, Decodable{
     var selection: [String]? = nil
     var renderConfigs: [String: RenderConfig]? = nil
     var editButtons: [ActionDescription]? = nil
-    var filterButtons: [ActionDescription]? = nil
+    @Published var filterButtons: [ActionDescription]? = nil
+    @Published public var showFilterPanel: Bool? = nil
     var actionItems: [ActionDescription]? = nil
     var navigateItems: [ActionDescription]? = nil
     var contextButtons: [ActionDescription]? = nil
     var actionButton: ActionDescription? = nil
     var backButton: ActionDescription? = nil
+    var backTitle: String?=nil
+    var editActionButton: ActionDescription?=nil
     var icon: String? = nil
     var showLabels: Bool? = nil
     var contextMode: Bool? = nil
     var filterMode: Bool? = nil
     var editMode: Bool? = nil
     var browsingMode: String? = nil
+    @State var isEditMode: EditMode = .inactive
+    @State var abc: Bool = false
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -81,11 +100,14 @@ public class SessionView: ObservableObject, Decodable{
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
             self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
+            self.showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? self.showFilterPanel
             self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
             self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
             self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
             self.backButton = try decoder.decodeIfPresent("backButton") ?? self.backButton
+            self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
+            self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
             self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
             self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
             self.contextMode = try decoder.decodeIfPresent("contextMode") ?? self.contextMode
@@ -118,6 +140,11 @@ public class SessionView: ObservableObject, Decodable{
         if view.actionButton != nil { self.actionButton = view.actionButton }
         if view.backButton != nil { self.backButton = view.backButton }
         
+        if view.showFilterPanel != nil { self.showFilterPanel = view.showFilterPanel }
+        if view.backTitle != nil { self.backTitle = view.backTitle }
+        if view.editActionButton != nil { self.editActionButton = view.editActionButton }
+        if view.isEditMode != nil { self.isEditMode = view.isEditMode }
+        
         if view.renderConfigs != nil { self.renderConfigs = view.renderConfigs } // TODO merge this properly
         
         if view.editButtons != nil { self.editButtons = (self.editButtons ?? []) + view.editButtons! } // TODO filter out any duplicates
@@ -127,11 +154,17 @@ public class SessionView: ObservableObject, Decodable{
         if view.contextButtons != nil { self.contextButtons = (self.contextButtons ?? []) + view.contextButtons! } // TODO filter out any duplicates
     }
     
-    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list") -> SessionView{
+    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
         let sv = SessionView()
         sv.searchResult = searchResult
         sv.rendererName = rendererName
-        sv.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+        sv.backButton = ActionDescription(icon: "chevron.left",
+                                          title: "Back",
+                                          actionName: "back",
+                                          actionArgs: [])
+        print("TITLE \(searchResult.data[0].properties["title"]!)")
+        sv.title = searchResult.data[0].properties["title"]?.value as! String
+        sv.backTitle = currentView.title
         return sv
     }
     
@@ -139,5 +172,24 @@ public class SessionView: ObservableObject, Decodable{
         var jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
+    }
+    
+    public func toggleEditMode(){
+        switch self.isEditMode{
+            case .active:
+                self.isEditMode = .inactive
+            case .inactive:
+                self.isEditMode = .active
+//                self.$isEditMode.wrappedValue = .active
+                print(self.isEditMode)
+            default:
+                break
+        }
+        self.isEditMode = .active
+        print(self.abc)
+        self.abc.toggle()
+        self.abc=true
+        self.$abc.wrappedValue = true
+        print(self.abc)
     }
 }

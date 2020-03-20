@@ -18,15 +18,12 @@ extension String: Error {}
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     print("Reading from file \(file)")
-    
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
     let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
     return jsonString
 }
 
 func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
-    print("Reading from file (for json) \(file)")
-    
     let jsonString = try stringFromFile(file, ext)
     let jsonData = jsonString.data(using: .utf8)!
     return jsonData

@@ -27,7 +27,7 @@ class SessionTest: XCTestCase {
     
     func testLoadEmptySessionsFromJson(){
         // load multiple
-        let sessions =  try! Sessions.from_json("empty_sessions")
+        let sessions =  try! Sessions.fromJSONFile("empty_sessions")
         print(sessions.currentSession.currentView.searchResult.data[0].properties)
         XCTAssert(sessions.currentSession.currentView.searchResult.data.count > 0)
         XCTAssert(sessions.currentSession.currentView.actionButton!.actionName == "add")

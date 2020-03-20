@@ -86,7 +86,6 @@ public class Main: Event, ObservableObject {
             }
         }
         
-        
         return self
     }
     
@@ -97,10 +96,9 @@ public class Main: Event, ObservableObject {
         
         // Load data
         let searchResult = self.currentView.searchResult
-        if searchResult.cache == nil { searchResult.cache = self.cache }
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
-            searchResult.loadPage(0, { (error) in })
+            cache.loadPage(searchResult, 0, { (error) in })
         }
     }
     
@@ -179,10 +177,13 @@ public class Main: Event, ObservableObject {
         let view = SessionView()
         
         let existingSR = cache.findCachedResult(query: item.id)
-        if let existingSR = existingSR { searchResult = existingSR }
+        if let existingSR = existingSR {
+            searchResult = existingSR
+        }
         else {
             searchResult = SearchResult(QueryOptions(query: item.id), [item])
             searchResult.loading = 0 // Force to load the first time
+            cache.addToCache(searchResult)
         }
         
         view.searchResult = searchResult
@@ -207,8 +208,8 @@ public class Main: Event, ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         self.currentView.searchResult.data.append(item) // TODO
-        self.cache.addToCache(item)
-        self.openView(item)
+        let realItem = self.cache.addToCache(item)
+        self.openView(realItem)
     }
 
     /**
@@ -224,19 +225,23 @@ public class Main: Event, ObservableObject {
             let param0 = params[0].value as! DataItem
             add(param0)
         case "openView":
-            if let item = item {
+            if let item = item{
                 openView(item)
-            }
-            else {
+            }else{
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
-
+        case "toggleEdit":
+            toggleEditMode()
+        case "toggleFilterPanel":
+            toggleFilterPanel()
+        case "star":
+            star()
         case "exampleUnpack":
             let (_, _) = (params[0].value, params[1].value) as! (String, Int)
             break
         default:
-            print("UNDEFINED ACTION, NOT EXECUTING")
+            print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
     }
         
@@ -258,6 +263,29 @@ public class Main: Event, ObservableObject {
         let session = currentSession
         session.currentView.rendererName = rendererName
         session.objectWillChange.send()
+    }
+    
+    func star(){
+        let starButton = self.currentView.filterButtons!.filter{$0.actionName == "star"}[0]
+        toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
+        self.objectWillChange.send()
+    }
+    
+    func toggleColor(object: ActionDescription, color1: UIColor, color2: UIColor){
+        switch object.color{
+            case color1: object.color = color2
+            case color2: object.color = color1
+            default: object.color = color1
+        }
+    }
+    
+    func toggleEditMode(){
+        //currently handled in browser
+    }
+    
+    func toggleFilterPanel(){
+        self.currentView.showFilterPanel!.toggle()
+        self.objectWillChange.send()
     }
 }
 
