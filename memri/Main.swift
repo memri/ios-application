@@ -105,14 +105,17 @@ public class Main: Event, ObservableObject {
     }
     
     public func cascadeView(_ session:SessionView) -> SessionView {
-        let cascadeOrder = ["renderer", "datatype"]
+        let cascadeOrder = ["datatype", "renderer"]
         let searchOrder = ["defaults", "user"]
         
         let cascadedView = SessionView()
         cascadedView.searchResult = session.searchResult
         
         let isList = !session.searchResult.query.query!.starts(with: "0x")
-        let type = session.searchResult.data[0].type
+        var type:String? = nil
+        if (session.searchResult.data.count > 0 ) {
+            type = session.searchResult.data[0].type
+        }
 
         /*
          "{type:Note}"
@@ -122,14 +125,17 @@ public class Main: Event, ObservableObject {
         for viewDomain in searchOrder {
             for orderType in cascadeOrder {
                 if orderType == "renderer" {
-                    let needle = "{renderer:\(session.rendererName ?? cascadedView.rendererName)}"
+                    // TODO the renderer may only be specified by the datatype, and this will fail when the renderer is first in order
+                    let needle = "{renderer:\(session.rendererName ?? cascadedView.rendererName!)}"
+                    
                     let rendererView = self.views[viewDomain]![needle]
                     if let rendererView = rendererView { cascadedView.merge(rendererView) }
                 }
-                else if orderType == "datatype" {
+                else if orderType == "datatype" && type != nil {
                     var needle:String
-                    if (isList) { needle = "{[\(type)]}" }
-                    else { needle = "{\(type)}" }
+                    if (isList) { needle = "{[\(type!)]}" }
+                    else { needle = "{\(type!)}" }
+                    
                     let datatypeView = self.views[viewDomain]![needle]
                     if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
                 }
