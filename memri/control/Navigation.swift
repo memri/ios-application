@@ -32,7 +32,17 @@ class NavigationItem: ObservableObject, Decodable{
          *  2 = Line
          */
         public var type: NavigationType = .item
-
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.title = try decoder.decodeIfPresent("title") ?? self.title
+            self.view = try decoder.decodeIfPresent("view") ?? self.view
+            self.count = try decoder.decodeIfPresent("count") ?? self.count
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+        }
+    }
 }
 
 
