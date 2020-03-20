@@ -18,7 +18,7 @@ struct ContextPane: View {
     var navigate: [ActionDescription] = []
     
     let actionLabel = NSLocalizedString("actionLabel", comment: "")
-    var actionItems: Array<ActionDescription>
+    var actionItems: Array<ActionDescription> = []
     typealias actionMethod = () -> ()
     var actionMethods = Dictionary<String, actionMethod>()
     let noAction: actionMethod = actionNotFound
@@ -27,7 +27,7 @@ struct ContextPane: View {
     let duplicateAction: actionMethod = duplicateNote
 
     let navigateLabel = NSLocalizedString("navigateLabel", comment: "")
-    var navigationItems: Array<ActionDescription>
+    var navigationItems: Array<ActionDescription> = []
     typealias navigationMethod = () -> ()
     var navigationMethods = Dictionary<String, navigationMethod>()
     let noteTimelineNavigation: navigationMethod = noteTimeline
@@ -36,10 +36,7 @@ struct ContextPane: View {
 
     let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
 
-    init(sessions: Sessions) {
-        self.currentSessionView = sessions.currentSession.currentSessionView
-        self.actionItems = self.currentSessionView.actionItems
-        self.navigationItems = self.currentSessionView.navigateItems
+    init() {
         
         self.actionMethods.updateValue(shareAction, forKey: "share")
         self.actionMethods.updateValue(addToListAction, forKey: "addToList")
