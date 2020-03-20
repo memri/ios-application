@@ -47,26 +47,26 @@ public class ActionDescription: Codable {
 
 public class SessionView: ObservableObject, Decodable{
     @Published public var searchResult: SearchResult = SearchResult()
-    @Published public var title: String = ""
-    @Published var rendererName: String = "list"
+    @Published public var title: String? = nil
+    @Published var rendererName: String? = nil
     
-    var name: String = ""
-    var subtitle: String = ""
-    var selection: [String] = []
-    var renderConfigs: [String: RenderConfig] = [:]
-    var editButtons: [ActionDescription] = []
-    var filterButtons: [ActionDescription] = []
-    var actionItems: [ActionDescription] = []
-    var navigateItems: [ActionDescription] = []
-    var contextButtons: [ActionDescription] = []
+    var name: String? = nil
+    var subtitle: String? = nil
+    var selection: [String]? = nil
+    var renderConfigs: [String: RenderConfig]? = nil
+    var editButtons: [ActionDescription]? = nil
+    var filterButtons: [ActionDescription]? = nil
+    var actionItems: [ActionDescription]? = nil
+    var navigateItems: [ActionDescription]? = nil
+    var contextButtons: [ActionDescription]? = nil
     var actionButton: ActionDescription? = nil
     var backButton: ActionDescription? = nil
-    var icon: String = ""
-    var showLabels: Bool = false
-    var contextMode: Bool = false
-    var filterMode: Bool = false
-    var editMode: Bool = false
-    var browsingMode: String = "default"
+    var icon: String? = nil
+    var showLabels: Bool? = nil
+    var contextMode: Bool? = nil
+    var filterMode: Bool? = nil
+    var editMode: Bool? = nil
+    var browsingMode: String? = nil
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -93,6 +93,38 @@ public class SessionView: ObservableObject, Decodable{
             self.editMode = try decoder.decodeIfPresent("editMode") ?? self.editMode
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
         }
+    }
+    
+    public func merge(_ view:SessionView) {
+        let query = view.searchResult.query
+        let sr = self.searchResult
+        if query.query != nil { sr.query.query = query.query }
+        if query.sortProperty != nil { sr.query.sortProperty = query.sortProperty }
+        if query.sortAscending != nil { sr.query.sortAscending = query.sortAscending }
+        if query.pageCount != nil { sr.query.pageCount = query.pageCount }
+        if query.pageIndex != nil { sr.query.pageIndex = query.pageIndex }
+        
+        if view.title != nil { self.title = view.title }
+        if view.rendererName != nil { self.rendererName = view.rendererName }
+        if view.name != nil { self.name = view.name }
+        if view.subtitle != nil { self.subtitle = view.subtitle }
+        if view.selection != nil { self.selection = view.selection }
+        if view.icon != nil { self.icon = view.icon }
+        if view.showLabels != nil { self.showLabels = view.showLabels }
+        if view.contextMode != nil { self.contextMode = view.contextMode }
+        if view.filterMode != nil { self.filterMode = view.filterMode }
+        if view.editMode != nil { self.editMode = view.editMode }
+        if view.browsingMode != nil { self.browsingMode = view.browsingMode }
+        if view.actionButton != nil { self.actionButton = view.actionButton }
+        if view.backButton != nil { self.backButton = view.backButton }
+        
+        if view.renderConfigs != nil { self.renderConfigs = view.renderConfigs } // TODO merge this properly
+        
+        if view.editButtons != nil { self.editButtons = (self.editButtons ?? []) + view.editButtons! } // TODO filter out any duplicates
+        if view.filterButtons != nil { self.filterButtons = (self.filterButtons ?? []) + view.filterButtons! } // TODO filter out any duplicates
+        if view.actionItems != nil { self.actionItems = (self.actionItems ?? []) + view.actionItems! } // TODO filter out any duplicates
+        if view.navigateItems != nil { self.navigateItems = (self.navigateItems ?? []) + view.navigateItems! } // TODO filter out any duplicates
+        if view.contextButtons != nil { self.contextButtons = (self.contextButtons ?? []) + view.contextButtons! } // TODO filter out any duplicates
     }
     
     public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list") -> SessionView{

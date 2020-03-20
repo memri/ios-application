@@ -16,7 +16,7 @@ struct Browser: View {
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
-    var currentRenderer: AnyView { renderers[main.currentView.rendererName,
+    var currentRenderer: AnyView { renderers[main.currentView.rendererName!,
                   default: AnyView(ThumbnailRenderer())]
     }
     
@@ -24,7 +24,7 @@ struct Browser: View {
         return
             VStack() {
                 TopNavigation()
-                renderers[main.currentView.rendererName,
+                renderers[main.currentView.rendererName!,
                           default: AnyView(ListRenderer())].fullHeight()
                 Search()
                 }

@@ -256,21 +256,23 @@ public class Cache {
      */
     public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
         // Search in query cache
-        if self.queryCache[query.query] != nil {
-            callback(nil, self.queryCache[query.query]!.data)
+        let q = query.query ?? ""
+        
+        if self.queryCache[q] != nil {
+            callback(nil, self.queryCache[q]!.data)
             return
         }
         
         // Parse query -> query types
-        if self.typeCache[query.query] != nil {
-            callback(nil, self.typeCache[query.query]!.data)
+        if self.typeCache[q] != nil {
+            callback(nil, self.typeCache[q]!.data)
             return
         }
         
         // Parse query -> ids
-        if self.idCache[query.query] != nil {
+        if self.idCache[q] != nil {
             var results: [DataItem] = []
-            results.append(self.idCache[query.query]!)
+            results.append(self.idCache[q]!)
             callback(nil, results)
             return
         }
@@ -334,7 +336,9 @@ public class Cache {
      */
     public func addToCache(_ result:SearchResult) {
         // Overwrite past results (even though sorting options etc, may differ ...
-        self.queryCache[result.query.query] = result
+        if let q = result.query.query {
+            self.queryCache[q] = result
+        }
     }
     
     /**

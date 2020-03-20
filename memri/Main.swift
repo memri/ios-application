@@ -105,20 +105,40 @@ public class Main: Event, ObservableObject {
     }
     
     public func cascadeView(_ session:SessionView) -> SessionView {
-        var cascadedView = SessionView()
-        var cascadeOrder = ["default", "user", "session"] // "renderer", "datatype",
+        let cascadeOrder = ["renderer", "datatype"]
+        let searchOrder = ["defaults", "user"]
         
-        for orderType in cascadeOrder {
-            if orderType == "default" {
-                
-            }
-            else if orderType == "user" {
-                
-            }
-            else if orderType == "session" {
-                cascadedView.merge(session)
+        let cascadedView = SessionView()
+        cascadedView.searchResult = session.searchResult
+        
+        let isList = !session.searchResult.query.query!.starts(with: "0x")
+        let type = session.searchResult.data[0].type
+
+        /*
+         "{type:Note}"
+         "{renderer:list}"
+         "{[type:Note]}"
+         */
+        for viewDomain in searchOrder {
+            for orderType in cascadeOrder {
+                if orderType == "renderer" {
+                    let needle = "{renderer:\(session.rendererName ?? cascadedView.rendererName)}"
+                    let rendererView = self.views[viewDomain]![needle]
+                    if let rendererView = rendererView { cascadedView.merge(rendererView) }
+                }
+                else if orderType == "datatype" {
+                    var needle:String
+                    if (isList) { needle = "{[\(type)]}" }
+                    else { needle = "{\(type)}" }
+                    let datatypeView = self.views[viewDomain]![needle]
+                    if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
+                }
             }
         }
+        
+        cascadedView.merge(session)
+        
+        return cascadedView
     }
 
     /**

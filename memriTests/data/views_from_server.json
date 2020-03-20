@@ -17,9 +17,9 @@
             }
         },
 
-        "{[type:Note]}": {
-            "name": "all-notes",
-            "title": "Notes",
+        "{[type:note]}": {
+            "name": "notes",
+            "title": Notes",
             "query": {
                 "text": "data:Note",
                 "sortProperty": "date-created",
@@ -69,7 +69,7 @@
             ]
         },
 
-        "{type:Note}": {
+        "{type:note}": {
             "name": "note",
             "title": "Note",
             "query": { "text": "{.id}" },
@@ -177,7 +177,7 @@
     },
     
     "user": {
-        "{type:Note}": {
+        "{type:note}": {
             "renderConfig": {
                 "list": {
                     "slideRightActions": [
