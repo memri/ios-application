@@ -275,6 +275,30 @@ public class Main: Event, ObservableObject {
             print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
     }
+    
+    private var lastSearchResult:SearchResult?
+    private var lastNeedle:String = ""
+    func search(_ needle:String) {
+        if lastNeedle == needle { return } // TODO removing this causes an infinite loop because onReceive is called based on the objectWillChange.send() - that is unexpected to me
+        
+        lastNeedle = needle
+        
+        if needle == "" {
+            if let lastSearchResult = lastSearchResult {
+                self.currentView.searchResult = lastSearchResult
+                self.objectWillChange.send() // TODO why is this not triggered
+            }
+            return
+        }
+
+        if lastSearchResult == nil {
+            lastSearchResult = self.currentView.searchResult
+        }
+        
+        let searchResult = self.cache.filter(lastSearchResult!, needle)
+        self.currentView.searchResult = searchResult
+        self.objectWillChange.send() // TODO why is this not triggered
+    }
         
     func back(){
         let session = currentSession

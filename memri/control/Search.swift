@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct SortButton: Identifiable {
     var id = UUID()
@@ -64,10 +65,9 @@ struct Search: View {
         VStack{
             HStack{
                 TextField("type your search query here", text: $searchText)
-                    .onTapGesture {
-                        print("abc")
-                        self.showFilters=true
-                }
+                    .onReceive(Just(searchText)) { (newValue: String) in
+                        self.main.search(self.searchText)
+                    }
                 ForEach(self.main.currentView.filterButtons!){ filterButton in
                     Button(action: {self.main.executeAction(filterButton)}) {
                         Image(systemName: filterButton.icon)

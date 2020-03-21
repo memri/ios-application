@@ -200,7 +200,7 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
             if properties[name]!.value is String {
                 let haystack = (properties[name]!.value as! String)
 
-                if haystack.lowercased().range(of: query) != nil {
+                if haystack.lowercased().range(of: query.lowercased()) != nil {
                     return true
                 }
             }

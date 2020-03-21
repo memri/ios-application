@@ -374,12 +374,12 @@ public class Cache {
         filterResult.loading = searchResult.loading
         filterResult.pages = searchResult.pages
         
-        for i in 0...filterResult.data.count {
+        for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
             if (!filterResult.data[i].match(query)) {
                 filterResult.data.remove(at: i)
             }
         }
-        
+
         return filterResult
     }
         
