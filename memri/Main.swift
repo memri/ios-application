@@ -291,8 +291,9 @@ public class Main: Event, ObservableObject {
         lastNeedle = needle
         
         if needle == "" {
-            if let lastSearchResult = lastSearchResult {
-                self.currentView.searchResult = lastSearchResult
+            if lastSearchResult != nil {
+                self.currentView.searchResult = lastSearchResult!
+                lastSearchResult = nil
                 self.currentView.title = lastTitle
                 self.objectWillChange.send() // TODO why is this not triggered
             }
@@ -341,6 +342,10 @@ public class Main: Event, ObservableObject {
     
     var lastStarredView:SessionView?
     func showStarred(){
+        if lastNeedle != "" {
+            self.search("") // Reset search | should update the UI state as well. Don't know how
+        }
+        
         let starButton = self.currentView.filterButtons!.filter{$0.actionName == "showStarred"}[0] // HACK
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
         
