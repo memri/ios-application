@@ -90,7 +90,7 @@
             },
             "filterButtons": [
                 {
-                    "icon": "timeline.ico",
+                    "icon": "increase.indent",
                     "title": "Show Timeline",
                     "actionName": "openView",
                     "actionArgs": [{
@@ -108,7 +108,7 @@
                     }]
                 },
                 {
-                    "icon": "context.ico",
+                    "icon": "ellipsis",
                     "title": "Show Context Panel",
                     "actionName": "showContextPane",
                     "actionArgs": []
