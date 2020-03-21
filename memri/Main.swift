@@ -256,6 +256,10 @@ public class Main: Event, ObservableObject {
             toggleFilterPanel()
         case "star":
             star()
+        case "showStarred":
+            showStarred()
+        case "showContextPane":
+            allNotes() // TODO @Jess
         case "share":
             shareNote()
         case "addToList":
@@ -274,6 +278,46 @@ public class Main: Event, ObservableObject {
         default:
             print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
+    }
+    
+    // TODO move this to searchResult, suggestion: change searchResult to
+    // ResultSet (list, item, isList) and maintain only one per query. also add query to sessionview
+    private var lastSearchResult:SearchResult?
+    private var lastNeedle:String = ""
+    private var lastTitle:String? = nil
+    func search(_ needle:String) {
+        if self.currentView.rendererName != "list" && self.currentView.rendererName != "thumbnail" {
+            return
+        }
+        
+        if lastNeedle == needle { return } // TODO removing this causes an infinite loop because onReceive is called based on the objectWillChange.send() - that is unexpected to me
+        
+        lastNeedle = needle
+        
+        if needle == "" {
+            if lastSearchResult != nil {
+                self.currentView.searchResult = lastSearchResult!
+                lastSearchResult = nil
+                self.currentView.title = lastTitle
+                self.objectWillChange.send() // TODO why is this not triggered
+            }
+            return
+        }
+
+        if lastSearchResult == nil {
+            lastSearchResult = self.currentView.searchResult
+            lastTitle = self.currentView.title
+        }
+        
+        let searchResult = self.cache.filter(lastSearchResult!, needle)
+        self.currentView.searchResult = searchResult
+        if searchResult.data.count == 0 {
+            self.currentView.title = "No results"
+        }
+        else {
+            self.currentView.title = "\(searchResult.data.count) items found"
+        }
+        self.objectWillChange.send() // TODO why is this not triggered
     }
         
     func back(){
@@ -296,9 +340,47 @@ public class Main: Event, ObservableObject {
         session.objectWillChange.send()
     }
     
-    func star(){
-        let starButton = self.currentView.filterButtons!.filter{$0.actionName == "star"}[0]
+    func star() {
+        
+    }
+    
+    var lastStarredView:SessionView?
+    func showStarred(){
+        if lastNeedle != "" {
+            self.search("") // Reset search | should update the UI state as well. Don't know how
+        }
+        
+        let starButton = self.currentView.filterButtons!.filter{$0.actionName == "showStarred"}[0] // HACK
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
+        
+        // If showing starred items, return to normal view
+        if lastStarredView != nil {
+            self.currentView = lastStarredView!
+            lastStarredView = nil
+            self.objectWillChange.send()
+            return
+        }
+        
+        // Otherwise create a new searchResult, mark it as starred (query??)
+        lastStarredView = self.currentView
+        let view = SessionView()
+        view.merge(self.currentView)
+        self.currentView = view
+        
+        // filter the results based on the starred property
+        var results:[DataItem] = []
+        let data = lastStarredView!.searchResult.data
+        for i in 0...data.count - 1 {
+            if (data[i].properties["starred"] != nil) {
+                let isStarred = data[i].properties["starred"]!.value as! Bool
+                if isStarred { results.append(data[i]) }
+            }
+        }
+        
+        // Add searchResult to view
+        view.searchResult.data = results
+        view.title = "Starred \(view.title ?? "")"
+        
         self.objectWillChange.send()
     }
     
