@@ -286,6 +286,10 @@ public class Main: Event, ObservableObject {
     private var lastNeedle:String = ""
     private var lastTitle:String? = nil
     func search(_ needle:String) {
+        if self.currentView.rendererName != "list" && self.currentView.rendererName != "thumbnail" {
+            return
+        }
+        
         if lastNeedle == needle { return } // TODO removing this causes an infinite loop because onReceive is called based on the objectWillChange.send() - that is unexpected to me
         
         lastNeedle = needle
