@@ -280,6 +280,7 @@ public class Main: Event, ObservableObject {
     // ResultSet (list, item, isList) and maintain only one per query. also add query to sessionview
     private var lastSearchResult:SearchResult?
     private var lastNeedle:String = ""
+    private var lastTitle:String? = nil
     func search(_ needle:String) {
         if lastNeedle == needle { return } // TODO removing this causes an infinite loop because onReceive is called based on the objectWillChange.send() - that is unexpected to me
         
@@ -288,6 +289,7 @@ public class Main: Event, ObservableObject {
         if needle == "" {
             if let lastSearchResult = lastSearchResult {
                 self.currentView.searchResult = lastSearchResult
+                self.currentView.title = lastTitle
                 self.objectWillChange.send() // TODO why is this not triggered
             }
             return
@@ -295,10 +297,17 @@ public class Main: Event, ObservableObject {
 
         if lastSearchResult == nil {
             lastSearchResult = self.currentView.searchResult
+            lastTitle = self.currentView.title
         }
         
         let searchResult = self.cache.filter(lastSearchResult!, needle)
         self.currentView.searchResult = searchResult
+        if searchResult.data.count == 0 {
+            self.currentView.title = "No results"
+        }
+        else {
+            self.currentView.title = "\(searchResult.data.count) items found"
+        }
         self.objectWillChange.send() // TODO why is this not triggered
     }
         
