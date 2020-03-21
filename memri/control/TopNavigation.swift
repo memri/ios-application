@@ -24,7 +24,9 @@ struct TopNavigation: View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                Text(main.currentView.title).font(.headline)
+                if main.currentView.title != nil{
+                    Text(main.currentView.title!).font(.headline)
+                }
             }
             HStack{
                 Button(action: {
@@ -47,7 +49,6 @@ struct TopNavigation: View {
                                 .font(.subheadline)
                                 .foregroundColor(.black)
                         }
-
                     }
                 }
                 Spacer()
@@ -68,7 +69,7 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
-
+                    
                 Button(action: {
                     self.show_contextpage = true
                 }) {

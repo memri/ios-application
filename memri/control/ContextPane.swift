@@ -15,10 +15,10 @@ struct ContextPane: View {
     var body: some View {
         VStack {
             VStack {
-                Text("\(main.currentView.title)")
+                Text("\(main.currentView.title!)")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text(main.currentView.subtitle)
+                Text(main.currentView.subtitle!)
                     .font(.body)
                 HorizontalLine().styleHorizontalLine()
             }
@@ -34,7 +34,7 @@ struct ContextPane: View {
                     Spacer()
                 }
                 List {
-                    ForEach (self.main.currentView.actionItems) { actionItem in
+                    ForEach (self.main.currentView.actionItems!) { actionItem in
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
@@ -52,7 +52,7 @@ struct ContextPane: View {
                     Spacer()
                 }
                 List {
-                    ForEach (self.main.currentView.navigateItems) { navigateItem in
+                    ForEach (self.main.currentView.navigateItems!) { navigateItem in
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {

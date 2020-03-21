@@ -23,7 +23,7 @@ struct Application: View {
     
     var body: some View {
         return
-            HStack() {
+            ZStack() {
                 Browser()
             }.fullHeight()
     }

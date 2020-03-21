@@ -58,7 +58,7 @@ struct Search: View {
                                                  rendererName: "list"),
                                   ViewTypeButton(imgName: "chart.bar.fill", selected: false,
                                                  rendererName: "list")]
-    var filterPannelRenderers = ["list", "thumbnail"]
+    var filterPanelRenderers = ["list", "thumbnail"]
 
     var body: some View {
         VStack{
@@ -68,16 +68,16 @@ struct Search: View {
                         print("abc")
                         self.showFilters=true
                 }
-                ForEach(self.main.currentView.filterButtons){ filterButton in
+                ForEach(self.main.currentView.filterButtons!){ filterButton in
                     Button(action: {self.main.executeAction(filterButton)}) {
                         Image(systemName: filterButton.icon)
                     }.padding(.horizontal , 5)
                      .font(Font.system(size: 20, weight: .medium))
                         .foregroundColor(Color(filterButton.color))
                 }
-
             }.padding(.horizontal , 15)
-            if filterPannelRenderers.contains(self.main.currentView.rendererName) && self.main.currentView.showFilterPanel {
+            
+            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentView.showFilterPanel ?? false) {
                 HStack(alignment: .top){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){

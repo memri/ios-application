@@ -28,6 +28,8 @@ public class Main: Event, ObservableObject {
     
     var cancellable:AnyCancellable? = nil
     
+    private var views:[String:[String:SessionView]] = [:]
+    
     public var podApi:PodAPI
     public var cache:Cache
     
@@ -44,6 +46,15 @@ public class Main: Event, ObservableObject {
         
         // Load NavigationCache (from cache and/or api)
         
+        
+        // Load view configuration (from cache and/or api)
+        podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
+            if error != nil { return }
+            
+            let jsonData = try! jsonDataFromFile("views_from_server")
+            self.views = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
+        }
+        
         // Load sessions (from cache and/or api)
         podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
             if error != nil { return }
@@ -51,9 +62,12 @@ public class Main: Event, ObservableObject {
             sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
             
             // Hook current session
+            var isCalled:Bool = false
             self.cancellable = self.sessions.objectWillChange.sink {
+                isCalled = false
                 DispatchQueue.main.async {
-                    self.setCurrentView()
+                    if !isCalled { self.setCurrentView() }
+                    else { isCalled = true }
                 }
             }
             
@@ -82,14 +96,64 @@ public class Main: Event, ObservableObject {
     public func setCurrentView(){
         // Set on sessions
         self.currentSession = self.sessions.currentSession // TODO filter to a single property
-        self.currentView = self.sessions.currentSession.currentView
+        self.currentView = cascadeView(self.sessions.currentSession.currentView)
         
         // Load data
         let searchResult = self.currentView.searchResult
         
         if searchResult.loading == 0 && searchResult.query.query != "" {
-            cache.loadPage(searchResult, 0, { (error) in })
+            cache.loadPage(searchResult, 0, { (error) in
+                self.setCurrentView()
+            })
         }
+    }
+    
+    public func cascadeView(_ session:SessionView) -> SessionView {
+        let cascadeOrder = ["datatype", "renderer"]
+        let searchOrder = ["defaults", "user"]
+        
+        let cascadedView = SessionView()
+        
+        let isList = !session.searchResult.query.query!.starts(with: "0x")
+        
+        var type:String? = nil
+        if (session.searchResult.data.count > 0 ) {
+            type = session.searchResult.data[0].type
+        }
+
+        /*
+         "{type:Note}"
+         "{renderer:list}"
+         "{[type:Note]}"
+         */
+        for viewDomain in searchOrder {
+            for orderType in cascadeOrder {
+                if orderType == "renderer" {
+                    // TODO the renderer may only be specified by the datatype, and this will fail when the renderer is first in order
+                    let renderName:String? = session.rendererName ?? cascadedView.rendererName ?? nil
+                    if let renderName = renderName {
+                        let needle = "{renderer:\(renderName)}"
+                        let rendererView = self.views[viewDomain]![needle]
+                        if let rendererView = rendererView { cascadedView.merge(rendererView) }
+                    }
+                }
+                else if orderType == "datatype" && type != nil {
+                    var needle:String
+                    if (isList) { needle = "{[type:\(type!)]}" }
+                    else { needle = "{type:\(type!)}" }
+                    
+                    let datatypeView = self.views[viewDomain]![needle]
+                    if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
+                }
+            }
+        }
+        
+        cascadedView.merge(session)
+        
+        session.searchResult.query = cascadedView.searchResult.query
+        cascadedView.searchResult = session.searchResult
+        
+        return cascadedView
     }
 
     /**
@@ -123,19 +187,25 @@ public class Main: Event, ObservableObject {
         var searchResult:SearchResult
         let view = SessionView()
         
-        let existingSR = cache.findCachedResult(query: item.id)
+        var existingSR:SearchResult?
+        if item.uid != nil {
+            existingSR = cache.findCachedResult(query: item.uid!)
+        }
         if let existingSR = existingSR {
             searchResult = existingSR
         }
         else {
-            searchResult = SearchResult(QueryOptions(query: item.id), [item])
+            var xxid = item.uid ?? ""
+            if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query | See also hack in api.swift
+            searchResult = SearchResult(QueryOptions(query: xxid), [item])
             searchResult.loading = 0 // Force to load the first time
             cache.addToCache(searchResult)
         }
         
         view.searchResult = searchResult
-        view.rendererName = "richTextEditor"
-        view.title = "new note"
+//        view = cascadeView(view)
+        
+        // Hack!!
         view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         
         self.openView(view)
@@ -154,8 +224,8 @@ public class Main: Event, ObservableObject {
 //
 //        dataItem.properties=["title": "new note", "content": ""]
         
-        self.currentView.searchResult.data.append(item) // TODO
         let realItem = self.cache.addToCache(item)
+        self.currentView.searchResult.data.append(realItem) // TODO
         self.openView(realItem)
     }
 
@@ -170,7 +240,9 @@ public class Main: Event, ObservableObject {
             back()
         case "add":
             let param0 = params[0].value as! DataItem
-            add(param0)
+            let item = DataItem()
+            try! item.merge(param0)
+            add(item)
         case "openView":
             if let item = item{
                 openView(item)
@@ -225,7 +297,7 @@ public class Main: Event, ObservableObject {
     }
     
     func star(){
-        let starButton = self.currentView.filterButtons.filter{$0.actionName == "star"}[0]
+        let starButton = self.currentView.filterButtons!.filter{$0.actionName == "star"}[0]
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
         self.objectWillChange.send()
     }
@@ -243,7 +315,7 @@ public class Main: Event, ObservableObject {
     }
     
     func toggleFilterPanel(){
-        self.currentView.showFilterPanel.toggle()
+        self.currentView.showFilterPanel!.toggle()
         self.objectWillChange.send()
     }
 
