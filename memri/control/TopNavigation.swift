@@ -72,7 +72,7 @@ struct TopNavigation: View {
                     Image(systemName: "ellipsis")
                 }
                 .sheet(isPresented: self.$show_contextpage) {
-                    ContextPane()
+                    ContextPane().environmentObject(self.main)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)

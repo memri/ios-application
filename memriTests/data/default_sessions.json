@@ -38,8 +38,46 @@
                         "actionArgs": []
                     },
                     "filterButtons": [],
-                    "actionItems": [],
-                    "navigateItems": [],
+                    "actionItems": [
+                        {
+                            "icon": "",
+                            "title": "Share with ...",
+                            "actionName": "share",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Add to list",
+                            "actionName": "addToList",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Duplicate Note",
+                            "actionName": "duplicateNote",
+                            "actionArgs": []
+                        }
+                    ],
+                    "navigateItems": [
+                        {
+                            "icon": "",
+                            "title": "Timeline of this note",
+                            "actionName": "noteTimeline",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Starred notes",
+                            "actionName": "starredNotes",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "All notes",
+                            "actionName": "allNotes",
+                            "actionArgs": []
+                        }
+                    ],
                     "contextButtons": [],
                     "icon": "testIcon",
                     "showLabels": false,
