@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TopNavigation: View {
     @EnvironmentObject var main: Main
-    
+    @State private var showNavigation: Bool = false
     @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
     
@@ -29,12 +29,17 @@ struct TopNavigation: View {
                 }
             }
             HStack{
-                Button(action: {}) {
+                Button(action: {
+                    self.showNavigation = true
+                }) {
                     Image(systemName: "line.horizontal.3")
                         .foregroundColor(.gray)
                         .font(Font.system(size: 20, weight: .medium))
-                }.padding(.horizontal, 5)
-            
+                }.sheet(isPresented: self.$showNavigation) {
+                    Navigation()
+                }
+                .padding(.horizontal, 5)
+
                 if main.currentView.backButton != nil {
                     Button(action: backButtonAction ) {
                         Image(systemName: main.currentView.backButton!.icon)
@@ -64,14 +69,14 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
+                    
                 Button(action: {
-                    print("render contextpane")
                     self.show_contextpage = true
                 }) {
                     Image(systemName: "ellipsis")
                 }
                 .sheet(isPresented: self.$show_contextpage) {
-                    ContextPane()
+                    ContextPane().environmentObject(self.main)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)

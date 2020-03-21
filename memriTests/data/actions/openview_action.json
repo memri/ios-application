@@ -2,7 +2,7 @@
     "actionName": "add",
     "actionArgs": [{
         "type": "note",
-        "predicates": {"owner": "{me}"},
+        "predicates": {"owner": []},
         "properties": {"title": "Untitled Note"}
     }]
 }

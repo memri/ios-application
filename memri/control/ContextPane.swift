@@ -9,55 +9,16 @@
 import SwiftUI
 
 struct ContextPane: View {
+    
     @EnvironmentObject var main: Main
-    
-    var title: String?
-    var subtitle: String?
-    var buttons: [ActionDescription] = []
-    var actions: [ActionDescription] = []
-    var navigate: [ActionDescription] = []
-    
-    let actionLabel = NSLocalizedString("actionLabel", comment: "")
-    var actionItems: Array<ActionDescription>? = nil
-    typealias actionMethod = () -> ()
-    var actionMethods = Dictionary<String, actionMethod>()
-    let noAction: actionMethod = actionNotFound
-    let shareAction: actionMethod = share
-    let addToListAction: actionMethod = addToList
-    let duplicateAction: actionMethod = duplicateNote
-
-    let navigateLabel = NSLocalizedString("navigateLabel", comment: "")
-    var navigationItems: Array<ActionDescription>? = nil
-    typealias navigationMethod = () -> ()
-    var navigationMethods = Dictionary<String, navigationMethod>()
-    let noteTimelineNavigation: navigationMethod = noteTimeline
-    let starredNotesNavigation: navigationMethod = starredNotes
-    let allNotesNavigation: navigationMethod = allNotes
-
-    let labelsLabel = NSLocalizedString("labelsLabel", comment: "")
-
-    init() {
-//        self.currentView = main.currentView
-//        self.actionItems = self.currentView.actionItems
-//        self.navigationItems = self.currentView.navigateItems
         
-        self.actionMethods.updateValue(shareAction, forKey: "share")
-        self.actionMethods.updateValue(addToListAction, forKey: "addToList")
-        self.actionMethods.updateValue(duplicateAction, forKey: "duplicateNote")
-
-        self.navigationMethods.updateValue(noteTimelineNavigation, forKey: "noteTimeline")
-        self.navigationMethods.updateValue(starredNotesNavigation, forKey: "starredNotes")
-        self.navigationMethods.updateValue(allNotesNavigation, forKey: "allNotes")
-    }
-    
-    
     var body: some View {
         VStack {
             VStack {
-                Text("\(main.currentView.title ?? "")")
+                Text("\(main.currentView.title!)")
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                Text("\(main.currentView.subtitle ?? "")")
+                Text(main.currentView.subtitle!)
                     .font(.body)
                 HorizontalLine().styleHorizontalLine()
             }
@@ -67,17 +28,17 @@ struct ContextPane: View {
             }
             VStack {
                 HStack {
-                    Text("\(actionLabel)")
+                    Text(NSLocalizedString("actionLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
                 List {
-                    ForEach (0 ..< (self.main.currentView.actionItems?.count ?? 0)) { i in
+                    ForEach (self.main.currentView.actionItems!) { actionItem in
                         Button(action:{
-                            (self.actionMethods[self.main.currentView.actionItems![i].actionName] ?? self.noAction)()
+                            self.main.executeAction(actionItem)
                         }) {
-                            Text(self.main.currentView.actionItems![i].title)
+                            Text(actionItem.title)
                         }
                     }
                 }
@@ -85,17 +46,17 @@ struct ContextPane: View {
             }
             VStack {
                 HStack {
-                    Text("\(navigateLabel)")
+                    Text(NSLocalizedString("navigateLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
                 List {
-                    ForEach (0 ..< (main.currentView.navigateItems?.count ?? 0)) { i in
+                    ForEach (self.main.currentView.navigateItems!) { navigateItem in
                         Button(action:{
-                            (self.navigationMethods[self.main.currentView.navigateItems![i].actionName] ?? self.noAction)()
+                            self.main.executeAction(navigateItem)
                         }) {
-                            Text(self.main.currentView.navigateItems![i].title)
+                            Text(navigateItem.title)
                         }
                     }
                 }
@@ -103,7 +64,7 @@ struct ContextPane: View {
             }
             VStack {
                 HStack {
-                    Text("\(labelsLabel)")
+                    Text(NSLocalizedString("labelsLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
@@ -113,34 +74,6 @@ struct ContextPane: View {
         }
         .padding()
     }
-}
-
-func share() {
-    print("share function called!")
-}
-
-func addToList() {
-    print("addToList function called!")
-}
-
-func duplicateNote() {
-    print("duplicateNote function called!")
-}
-
-func noteTimeline() {
-    print("noteTimeline function called!")
-}
-
-func starredNotes() {
-    print("starredNotes function called!")
-}
-
-func allNotes() {
-    print("allNotes function called!")
-}
-
-func actionNotFound() {
-    print("actionNotFound!")
 }
 
 struct ContentPane_Previews: PreviewProvider {
