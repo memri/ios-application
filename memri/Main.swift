@@ -276,6 +276,8 @@ public class Main: Event, ObservableObject {
         }
     }
     
+    // TODO move this to searchResult, suggestion: change searchResult to
+    // ResultSet (list, item, isList) and maintain only one per query. also add query to sessionview
     private var lastSearchResult:SearchResult?
     private var lastNeedle:String = ""
     func search(_ needle:String) {
