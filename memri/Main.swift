@@ -74,6 +74,7 @@ public class Main: Event, ObservableObject {
                 self.setCurrentView()
             }
         }
+        self.setCurrentView()
         
         return self
     }
