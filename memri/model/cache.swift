@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import RealmSwift
 
 // Stores data remote
 //public class RemoteStorage {
@@ -33,8 +34,41 @@ import Combine
 //    }
 //}
 
+let config = Realm.Configuration(
+    // Set the new schema version. This must be greater than the previously used
+    // version (if you've never set a schema version before, the version is 0).
+    schemaVersion: 2,
+
+    // Set the block which will be called automatically when opening a Realm with
+    // a schema version lower than the one set above
+    migrationBlock: { migration, oldSchemaVersion in
+        // We haven’t migrated anything yet, so oldSchemaVersion == 0
+        if (oldSchemaVersion < 2) {
+            // Nothing to do!
+            // Realm will automatically detect new properties and removed properties
+            // And will update the schema on disk automatically
+        }
+    })
+
+class Note:DataItem {
+    @objc dynamic var uid:String? = nil // 0x" + UUID().uuidString
+    @objc dynamic let type:String = "note"
+    
+    @objc var title:String? = nil
+    @objc var content:String? = nil
+    @objc var starred:Bool = false
+    @objc var deleted:Bool = false
+    
+    @objc let writtenBy:[Object]? = nil
+    @objc let sharedWith:[Object]? = nil
+    @objc let comments:[Object]? = nil
+    @objc let Log:[Object]? = nil
+}
+
 // Stores data locally
 public class LocalStorage {
+    private var realm:Realm
+    
     /**
      *
      */
@@ -53,7 +87,28 @@ public class LocalStorage {
      *
      */
     public func create(_ item:DataItem) {
-        
+//        let persons = realm.objects(Person.self)
+
+        try! realm.write() {
+            var properties = item.objectSchema.properties
+            let value:Any = [:]
+            for prop in properties {
+                value[prop] = item.subscript(key: prop).get()
+            }
+
+            let realmObject = realm.create(type(of: item).self, value: value, update: .modified)
+            return realmObject
+        }
+
+//        class Person: Object {
+//            // Optional string property, defaulting to nil
+//            @objc dynamic var name: String? = nil
+//
+//            // Optional int property, defaulting to nil
+//            // RealmOptional properties should always be declared with `let`,
+//            // as assigning to them directly will not work as desired
+//            let age = RealmOptional<Int>()
+//        }
     }
     
     /**
@@ -184,8 +239,13 @@ public class Cache {
     
     public init(_ podAPI: PodAPI){
         
+        // Tell Realm to use this new configuration object for the default Realm
+        Realm.Configuration.defaultConfiguration = config
+
+        let realm = try! Realm()
+        
         // Create localstorage object
-        localStorage = LocalStorage()
+        localStorage = LocalStorage(realm)
         
         self.podAPI = podAPI
         
@@ -307,10 +367,12 @@ public class Cache {
         let cachedItem:DataItem? = self.idCache[item.id]
         if let cachedItem = cachedItem {
             try! cachedItem.merge(item)
+            self.localStorage.update(item)
             return cachedItem
         }
         else if item.id != "" {
             self.idCache[item.id] = item
+            self.localStorage.create(item)
         }
 
         if item.type != "" && self.typeCache[item.type] == nil {
@@ -326,6 +388,8 @@ public class Cache {
                 else { self.onUpdate(item) }
             }
         })
+        
+        if (item.uid == nil) {self.onCreate(item)}
 
         return item
     }

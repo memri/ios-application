@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import RealmSwift
 
 protocol PropertyReflectable { }
 
@@ -13,57 +14,130 @@ extension PropertyReflectable {
     }
 }
 
-public class DataItem: Codable, Equatable, Identifiable, ObservableObject, PropertyReflectable {
-    private var uuid:String = UUID().uuidString
-    public var uid:String? = nil // 0x" + UUID().uuidString
-    public var type:String = ""
-    
-    @Published public var predicates:[String: [DataItem]] = [:]
-    @Published public var properties:[String: AnyCodable] = [:]
-    @Published private var deleted: Bool = false;
-    
-    public var isDeleted:Bool {
-        return deleted;
-    }
-    
-    public var id: String {
-        return self.uid ?? self.uuid
-    }
-    
+public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
+    public var id:String = UUID().uuidString
+    public var data:Note // TODO @Koen, help! how to generalize this
+    public var type:String  = "note"
+        
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
     }
     
-    public convenience required init(id:String=UUID().uuidString, type:String) {
-        self.init()
-        self.uid = id
-        self.type = type
-    }
-    
-    public convenience required init(id:String? = nil, type: String, predicates: [String: [DataItem]]? = [:],
-                            properties:[String: AnyCodable]? = [:]){
-        self.init()
-        self.uid = id ?? self.uid
-        self.type = type
-        self.predicates = predicates ?? self.predicates
-        self.properties = properties ?? self.properties
-    }
+//    public convenience required init(_ data:Note) {
+//        self.init()
+//        self.data = data
+//    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
         jsonErrorHandling(decoder) {
-            uid = try decoder.decodeIfPresent("uid") ?? uid
-            type = try decoder.decodeIfPresent("type") ?? type
-            predicates = try decoder.decodeIfPresent("predicates") ?? predicates
-            properties = try decoder.decodeIfPresent("properties") ?? properties
+            var properties = self.objectSchema.properties
+            for name in properties {
+                let prop = self.subscript(key: name)
+                prop.set(try decoder.decodeIfPresent(name) ?? prop.get())
+            }
         }
     }
     
-    public static func fromUid(uid:String)-> DataItem {
-        let di = DataItem()
-        di.uid = uid
-        return di
+    /**
+     *
+     */
+    public func getString(_ name:String) -> String {
+        return self.subscript(key: name).get()
+    }
+    
+    /**
+     *
+     */
+    public func set(_ name:String, _ value:Any) {
+        
+    }
+    
+    /**
+     *
+     */
+    public func findPredicateByEntity(_ item:DataItem) -> [String] {
+        var items:[String] = []
+//        for (name, list) in self.predicates {
+//            for index in 0...list.count {
+//                if (list[index] === item) {
+//                    items.append(name);
+//                    break;
+//                }
+//            }
+//        }
+        return items
+    }
+
+    
+    /**
+     * Does not copy the id property
+     */
+    public func duplicate() -> DataItem {
+        let copy = self.self()
+        copy.merge(self)
+        copy.uid = nil
+        return copy
+    }
+    
+    /**
+     * Sets deleted to true
+     * All methods and properties must throw when deleted = true;
+     */
+    public func delete() -> Bool {
+        if (self.deleted) { return false; }
+        self.deleted = true;
+        return true;
+    }
+    
+    /**
+     *
+     */
+    public func merge(_ source:DataItem) throws {
+//        // Items that do not have the same id should never merge
+//        if (source.uid != nil && self.uid != nil && source.uid != self.uid) {
+//            throw DataItemError.cannotMergeItemWithDifferentId
+//        }
+//
+//        if self.type == "" { self.type = source.type }
+//
+//        // Copy properties
+//        for (name, value) in source.properties {
+//            self.properties[name] = value
+//        }
+//
+//        // Copy predicates
+//        let sourcePredicates = source.predicates
+//        for (name, list) in self.predicates {
+//            let sourceList = sourcePredicates[name] ?? []
+//            outerLoop: for i in 0...list.count {
+//                for j in 0...sourceList.count {
+//                    if (list[i] === sourceList[j]) {
+//                        break outerLoop
+//                    }
+//                    self.predicates[name]?.append(sourceList[j])
+//                }
+//            }
+//        }
+    }
+    
+    /**
+     *
+     */
+    public func match(_ query:String) -> Bool{
+//        let properties: [String:AnyCodable] = self.properties
+//        for (name, _) in properties {
+//            if properties[name]!.value is String {
+//                let haystack = (properties[name]!.value as! String)
+//
+//                if haystack.lowercased().range(of: query.lowercased()) != nil {
+//                    return true
+//                }
+//            }
+//        }
+        
+        return false
     }
     
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
@@ -81,132 +155,10 @@ public class DataItem: Codable, Equatable, Identifiable, ObservableObject, Prope
         return items
     }
     
-    /**
-     *
-     */
-    public func findProperty(name: String) -> AnyCodable {
-        return self.properties[name]!
-    }
-    
-    /**
-     *
-     */
-    public func findEntityByPredicate(_ predicate:String) -> [DataItem] {
-        return self.predicates[predicate]!
-    }
-    
-    /**
-     *
-     */
-    public func findPredicateByEntity(_ item:DataItem) -> [String] {
-        var items:[String] = []
-        for (name, list) in self.predicates {
-            for index in 0...list.count {
-                if (list[index] === item) {
-                    items.append(name);
-                    break;
-                }
-            }
-        }
-        return items
-    }
-
-    
-    /**
-     * Does not copy the id property
-     */
-    public func duplicate() -> DataItem {
-        return DataItem(id:nil, type:self.type, predicates:self.predicates, properties:self.properties)
-    }
-    
-    /**
-     * Sets deleted to true
-     * All methods and properties must throw when deleted = true;
-     */
-    public func delete() -> Bool {
-        if (deleted) { return false; }
-        deleted = true;
-        return true;
-    }
-    
-    /**
-     *
-     */
-    public func setProperty(_ name:String, _ value:AnyCodable) {
-        self.properties[name] = value;
-    }
-    
-    /**
-     *
-     */
-    public func removeProperty(_ name:String) {
-        self.properties.remove(at: self.properties.index(forKey: name)!)
-    }
-    
-    /**
-     *
-     */
-    public func addPredicate(_ name:String, _ entity:DataItem) {
-        let list:[DataItem] = self.predicates[name] ?? []
-        self.predicates[name] = list
-        self.predicates[name]?.append(entity)
-    }
-    
-    /**
-     *
-     */
-    public func removePredicate(_ name:String, _ entity:DataItem) {
-        let index = self.predicates[name]?.firstIndex(of: entity) ?? -1
-        if (index > 0) { self.predicates[name]?.remove(at: index) }
-    }
-    
-    /**
-     *
-     */
-    public func merge(_ source:DataItem) throws {
-        // Items that do not have the same id should never merge
-        if (source.uid != nil && self.uid != nil && source.uid != self.uid) {
-            throw DataItemError.cannotMergeItemWithDifferentId
-        }
-        
-        if self.type == "" { self.type = source.type }
-        
-        // Copy properties
-        for (name, value) in source.properties {
-            self.properties[name] = value
-        }
-        
-        // Copy predicates
-        let sourcePredicates = source.predicates
-        for (name, list) in self.predicates {
-            let sourceList = sourcePredicates[name] ?? []
-            outerLoop: for i in 0...list.count {
-                for j in 0...sourceList.count {
-                    if (list[i] === sourceList[j]) {
-                        break outerLoop
-                    }
-                    self.predicates[name]?.append(sourceList[j])
-                }
-            }
-        }
-    }
-    
-    /**
-     *
-     */
-    public func match(_ query:String) -> Bool{
-        let properties: [String:AnyCodable] = self.properties
-        for (name, _) in properties {
-            if properties[name]!.value is String {
-                let haystack = (properties[name]!.value as! String)
-
-                if haystack.lowercased().range(of: query.lowercased()) != nil {
-                    return true
-                }
-            }
-        }
-        
-        return false
+    public static func fromUid(uid:String)-> DataItem {
+        let di = DataItem()
+        di.uid = uid
+        return di
     }
 }
 
@@ -218,7 +170,7 @@ public class SearchResult: ObservableObject, Codable {
     /**
      * Retrieves the data loaded from the pod
      */
-    @Published public var data: [DataItem] = []
+    @Published public var data: [Note] = []
     /**
      *
      */

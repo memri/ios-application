@@ -65,7 +65,7 @@
                     "actionArgs": []
                 },
                 {
-                    "icon": "chevron.down",
+                    "icon": "rhombus.fill",
                     "title": "Show Filter Panel",
                     "actionName": "toggleFilterPanel",
                     "actionArgs": []
