@@ -172,9 +172,9 @@ public class Main: Event, ObservableObject {
             let param0 = params[0].value as! DataItem
             add(param0)
         case "openView":
-            if let item = item{
+            if let item = item {
                 openView(item)
-            }else{
+            } else {
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
@@ -184,6 +184,8 @@ public class Main: Event, ObservableObject {
             toggleFilterPanel()
         case "star":
             star()
+        case "openContextView":
+            openContextView()
         case "share":
             shareNote()
         case "addToList":
@@ -245,6 +247,10 @@ public class Main: Event, ObservableObject {
     func toggleFilterPanel(){
         self.currentView.showFilterPanel.toggle()
         self.objectWillChange.send()
+    }
+
+    func openContextView() {
+        print("openContextView")
     }
 
     func shareNote() {

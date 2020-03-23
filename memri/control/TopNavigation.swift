@@ -66,7 +66,6 @@ struct TopNavigation: View {
                 }
                 
                 Button(action: {
-                    print("render contextpane")
                     self.show_contextpage = true
                 }) {
                     Image(systemName: "ellipsis")

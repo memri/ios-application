@@ -10,69 +10,16 @@ import SwiftUI
 
 struct ContextPane: View {
     
-    @EnvironmentObject var main: Main
-        
+    private let forgroundPercentageWidth: CGFloat = 0.75
+    
     var body: some View {
-        VStack {
-            VStack {
-                Text("\(main.currentView.title)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Text(main.currentView.subtitle)
-                    .font(.body)
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                Text("some stuff to add later ...")
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("actionLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-                List {
-                    ForEach (self.main.currentView.actionItems) { actionItem in
-                        Button(action:{
-                            self.main.executeAction(actionItem)
-                        }) {
-                            Text(actionItem.title)
-                        }
-                    }
-                }
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("navigateLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-                List {
-                    ForEach (self.main.currentView.navigateItems) { navigateItem in
-                        Button(action:{
-                            self.main.executeAction(navigateItem)
-                        }) {
-                            Text(navigateItem.title)
-                        }
-                    }
-                }
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("labelsLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-            }
-            Spacer()
+        ZStack {
+            BackgroundContextPane()
+                .opacity(0.25)
+            ForgroundContextPane()
+                .frame(width: UIScreen.main.bounds.width * forgroundPercentageWidth)
+                .offset(x: (UIScreen.main.bounds.width / 2.0) * (1.0 - forgroundPercentageWidth))
         }
-        .padding()
     }
 }
 
