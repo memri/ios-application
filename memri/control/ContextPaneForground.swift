@@ -13,20 +13,17 @@ struct ContextPaneForground: View {
     @EnvironmentObject var main: Main
 
     var body: some View {
-        VStack {
             VStack {
-                Text("\(main.currentView.title)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Text(main.currentView.subtitle)
-                    .font(.body)
-                Divider()
-            }
-            VStack {
-                Text("some stuff to add later ...")
-                Divider()
-            }
-            VStack {
+                VStack {
+                    Text(main.currentView.title ?? "No Title")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                    Text(main.currentView.subtitle ?? "No Subtitle")
+                        .font(.body)
+                    Divider()
+                    Text("some stuff to add later ...")
+                    Divider()
+                }
                 HStack {
                     Text(NSLocalizedString("actionLabel", comment: ""))
                         .fontWeight(.bold)
@@ -34,7 +31,7 @@ struct ContextPaneForground: View {
                     Spacer()
                 }
                 List {
-                    ForEach (self.main.currentView.actionItems) { actionItem in
+                    ForEach (self.main.currentView.actionItems ?? []) { actionItem in
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
@@ -43,8 +40,6 @@ struct ContextPaneForground: View {
                     }
                 }
                 Divider()
-            }
-            VStack {
                 HStack {
                     Text(NSLocalizedString("navigateLabel", comment: ""))
                         .fontWeight(.bold)
@@ -52,7 +47,7 @@ struct ContextPaneForground: View {
                     Spacer()
                 }
                 List {
-                    ForEach (self.main.currentView.navigateItems) { navigateItem in
+                    ForEach (self.main.currentView.navigateItems ?? []) { navigateItem in
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {
@@ -61,19 +56,16 @@ struct ContextPaneForground: View {
                     }
                 }
                 Divider()
-            }
-            VStack {
                 HStack {
                     Text(NSLocalizedString("labelsLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
                 }
+                Spacer()
             }
-            Spacer()
-        }
-        .padding()
-        .background(Color.white)
+            .padding()
+            .background(Color.white)
     }
 }
 

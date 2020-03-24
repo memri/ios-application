@@ -12,7 +12,7 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
-    @State var showContextPane: Bool = false
+    @State var showContextPane: Bool = true
     
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
                                         "richTextEditor": AnyView(RichTextRenderer()),
