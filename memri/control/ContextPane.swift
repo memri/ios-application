@@ -10,6 +10,8 @@ import SwiftUI
 
 struct ContextPane: View {
     
+    @EnvironmentObject var main: Main
+
     private let forgroundPercentageWidth: CGFloat = 0.75
     
     var body: some View {
