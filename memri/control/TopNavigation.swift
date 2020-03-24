@@ -10,8 +10,6 @@ import SwiftUI
 
 struct TopNavigation: View {
     @EnvironmentObject var main: Main
-    
-    @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
     
     var title: String = ""
@@ -65,22 +63,16 @@ struct TopNavigation: View {
                     .foregroundColor(.green)
                 }
                 
-                Button(action: {
-                    self.show_contextpage = true
-                }) {
+                Button(action: {}) {
                     Image(systemName: "ellipsis")
-                }
-                .sheet(isPresented: self.$show_contextpage) {
-                    ContextPane()
-                        .environmentObject(self.main)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
                 
             }.padding(.all, 30)
         }
-
     }
+    
     func actionButtonAction(){
         main.executeAction(main.currentView.actionButton!)
     }

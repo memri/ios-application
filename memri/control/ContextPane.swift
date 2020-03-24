@@ -14,9 +14,9 @@ struct ContextPane: View {
     
     var body: some View {
         ZStack {
-            BackgroundContextPane()
+            ContextPaneBackground()
                 .opacity(0.25)
-            ForgroundContextPane()
+            ContextPaneForground()
                 .frame(width: UIScreen.main.bounds.width * forgroundPercentageWidth)
                 .offset(x: (UIScreen.main.bounds.width / 2.0) * (1.0 - forgroundPercentageWidth))
         }

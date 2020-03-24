@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ForgroundContextPane: View {
+struct ContextPaneForground: View {
     
     @EnvironmentObject var main: Main
 
@@ -20,11 +20,11 @@ struct ForgroundContextPane: View {
                     .fontWeight(.bold)
                 Text(main.currentView.subtitle)
                     .font(.body)
-                HorizontalLine().styleHorizontalLine()
+                Divider()
             }
             VStack {
                 Text("some stuff to add later ...")
-                HorizontalLine().styleHorizontalLine()
+                Divider()
             }
             VStack {
                 HStack {
@@ -42,7 +42,7 @@ struct ForgroundContextPane: View {
                         }
                     }
                 }
-                HorizontalLine().styleHorizontalLine()
+                Divider()
             }
             VStack {
                 HStack {
@@ -60,7 +60,7 @@ struct ForgroundContextPane: View {
                         }
                     }
                 }
-                HorizontalLine().styleHorizontalLine()
+                Divider()
             }
             VStack {
                 HStack {
@@ -79,6 +79,6 @@ struct ForgroundContextPane: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
     static var previews: some View {
-        ForgroundContextPane().environmentObject(Main(name: "", key: "").mockBoot())
+        ContextPaneForground().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

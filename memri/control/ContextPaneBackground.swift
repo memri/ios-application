@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct BackgroundContextPane: View {
+struct ContextPaneBackground: View {
     
     @EnvironmentObject var main: Main
 
@@ -19,6 +19,6 @@ struct BackgroundContextPane: View {
 
 struct BackgroundPane_Previews: PreviewProvider {
     static var previews: some View {
-        BackgroundContextPane()
+        ContextPaneBackground()
     }
 }

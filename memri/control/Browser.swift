@@ -12,6 +12,7 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
+    @State var showContextPane: Bool = false
     
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
                                         "richTextEditor": AnyView(RichTextRenderer()),
@@ -23,11 +24,16 @@ struct Browser: View {
     
     var body: some View {
         return
-            VStack() {
-                TopNavigation(isEditMode: $isEditMode)
-                getRenderer().fullHeight()
-                Search()
-            }.fullHeight()
+            ZStack {
+                VStack() {
+                    TopNavigation(isEditMode: $isEditMode)
+                    getRenderer().fullHeight()
+                    Search()
+                }.fullHeight()
+                if self.showContextPane {
+                    animateInContextPane()
+                }
+        }
     }
     
     func getRenderer() -> AnyView{
@@ -41,6 +47,17 @@ struct Browser: View {
         default:
             return AnyView(ThumbnailRenderer())
         }
+    }
+}
+
+struct animateInContextPane: View {
+
+    @EnvironmentObject var main: Main
+
+    var body: some View {
+        ContextPane()
+            .transition(.slide)
+            .animation(Animation.easeIn.delay(15.0))
     }
 }
 
