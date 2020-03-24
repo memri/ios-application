@@ -27,12 +27,12 @@ struct Browser: View {
         return
             ZStack {
                 VStack() {
-                    TopNavigation(isEditMode: $isEditMode)
+                    TopNavigation(isEditMode: $isEditMode, showContextPane: $showContextPane)
                     getRenderer().fullHeight()
                     Search()
                 }.fullHeight()
                 if self.showContextPane {
-                    animateInContextPane()
+                    animateInContextPane(showContextPane: $showContextPane)
                 }
         }
     }
@@ -54,11 +54,12 @@ struct Browser: View {
 struct animateInContextPane: View {
 
     @EnvironmentObject var main: Main
+    @Binding var showContextPane: Bool
 
     var body: some View {
-        ContextPane()
-            .transition(.slide)
-            .animation(Animation.easeIn.delay(15.0))
+        ContextPane(showContextPane: $showContextPane)
+            .transition(.move(edge: .trailing))
+            .animation(.easeInOut(duration: 0.3))
     }
 }
 

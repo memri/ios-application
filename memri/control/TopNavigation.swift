@@ -12,6 +12,8 @@ struct TopNavigation: View {
     @EnvironmentObject var main: Main
     @State private var showNavigation: Bool = false
     @Binding var isEditMode:EditMode
+    @Binding var showContextPane: Bool
+
     
     var title: String = ""
 //    var action: ()->Void = {sessions.currentSession.back()}
@@ -69,7 +71,10 @@ struct TopNavigation: View {
                     .foregroundColor(.green)
                 }
                     
-                Button(action: {}) {
+                Button(action: {
+                    self.showContextPane.toggle()
+
+                }) {
                     Image(systemName: "ellipsis")
                 }
                 .padding(.horizontal , 5)
@@ -102,6 +107,6 @@ struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation(isEditMode: .constant(.inactive), showContextPane: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
