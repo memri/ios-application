@@ -9,6 +9,7 @@
 import SwiftUI
 import Combine
 
+
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
