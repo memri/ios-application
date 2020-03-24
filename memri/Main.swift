@@ -82,7 +82,6 @@ public class Main: Event, ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        print("in mockBoot sessions.title = \(self.sessions.currentView.title)")
         self.cancellable = self.sessions.objectWillChange.sink {
             DispatchQueue.main.async {
                 self.setCurrentView()
