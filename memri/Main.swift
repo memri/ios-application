@@ -8,7 +8,7 @@ import SwiftUI
  * each aimed at a different way to represent the data. For instance
  * an application that is focussed on voice-first instead of gui-first.
  */
-public class Main: Event, ObservableObject {
+public class Main: ObservableObject {
     public let name:String = "GUI"
 
     /**
@@ -28,7 +28,7 @@ public class Main: Event, ObservableObject {
     
     var cancellable:AnyCancellable? = nil
     
-    private var views:[String:[String:SessionView]] = [:]
+    private var defaultViews:[String:[String:SessionView]] = [:]
     
     public var podApi:PodAPI
     public var cache:Cache
@@ -37,8 +37,6 @@ public class Main: Event, ObservableObject {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
-        
-        super.init()
     }
     
     public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) {
@@ -52,7 +50,7 @@ public class Main: Event, ObservableObject {
             if error != nil { return }
             
             let jsonData = try! jsonDataFromFile("views_from_server")
-            self.views = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
+            self.defaultViews = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
         }
         
         // Load sessions (from cache and/or api)
@@ -73,9 +71,6 @@ public class Main: Event, ObservableObject {
             
             self.setCurrentView()
         }
-
-        // Fire ready event
-        self.fire("ready")
         
         callback(nil, true)
     }
@@ -93,6 +88,8 @@ public class Main: Event, ObservableObject {
     }
     
     public func setCurrentView(){
+        // we never have to call this manually (it will be called automatically when sessions changes), except for booting
+        
         // Set on sessions
         self.currentSession = self.sessions.currentSession // TODO filter to a single property
         self.currentView = cascadeView(self.sessions.currentSession.currentView)
@@ -100,24 +97,31 @@ public class Main: Event, ObservableObject {
         // Load data
         let searchResult = self.currentView.searchResult
         
+        // TODO: create enum for loading
         if searchResult.loading == 0 && searchResult.query.query != "" {
             cache.loadPage(searchResult, 0, { (error) in
+                // call again when data is loaded, so the view can adapt to the data
                 self.setCurrentView()
             })
         }
     }
     
-    public func cascadeView(_ session:SessionView) -> SessionView {
-        let cascadeOrder = ["datatype", "renderer"]
+    public func cascadeView(_ viewFromSession:SessionView) -> SessionView {
+        // TODO: get from default views
+        
+        // user overwrites defaults
+        let cascadeOrder = ["datatype", "renderer"]  // [leastImportant, mostImportant]
         let searchOrder = ["defaults", "user"]
         
         let cascadedView = SessionView()
         
-        let isList = !session.searchResult.query.query!.starts(with: "0x")
+        // TODO: infer from result
+        let isList = !viewFromSession.searchResult.query.query!.starts(with: "0x")
         
-        var type:String? = nil
-        if (session.searchResult.data.count > 0 ) {
-            type = session.searchResult.data[0].type
+        // TODO: infer from all results
+        var type:String = ""
+        if (viewFromSession.searchResult.data.count > 0 ) {
+            type = viewFromSession.searchResult.data[0].type
         }
 
         /*
@@ -125,32 +129,35 @@ public class Main: Event, ObservableObject {
          "{renderer:list}"
          "{[type:Note]}"
          */
+        
         for viewDomain in searchOrder {
             for orderType in cascadeOrder {
                 if orderType == "renderer" {
                     // TODO the renderer may only be specified by the datatype, and this will fail when the renderer is first in order
-                    let renderName:String? = session.rendererName ?? cascadedView.rendererName ?? nil
+                    let renderName:String? = viewFromSession.rendererName ?? cascadedView.rendererName ?? nil
                     if let renderName = renderName {
                         let needle = "{renderer:\(renderName)}"
-                        let rendererView = self.views[viewDomain]![needle]
+                        let defaultView = self.defaultViews[viewDomain] ?? [:]
+                        let rendererView = defaultView[needle]
                         if let rendererView = rendererView { cascadedView.merge(rendererView) }
                     }
                 }
-                else if orderType == "datatype" && type != nil {
+                else if orderType == "datatype" && type != "" {
                     var needle:String
-                    if (isList) { needle = "{[type:\(type!)]}" }
-                    else { needle = "{type:\(type!)}" }
-                    
-                    let datatypeView = self.views[viewDomain]![needle]
+                    if (isList) { needle = "{[type:\(type)]}" }
+                    else { needle = "{type:\(type)}" }
+                    let defaultView = self.defaultViews[viewDomain] ?? [:]
+                    let datatypeView = defaultView[needle]                    
                     if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
                 }
             }
         }
+        // this loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
+        cascadedView.merge(viewFromSession)
         
-        cascadedView.merge(session)
-        
-        session.searchResult.query = cascadedView.searchResult.query
-        cascadedView.searchResult = session.searchResult
+        // this is hacky now, will be solved later
+        viewFromSession.searchResult.query = cascadedView.searchResult.query
+        cascadedView.searchResult = viewFromSession.searchResult
         
         return cascadedView
     }
@@ -186,6 +193,7 @@ public class Main: Event, ObservableObject {
         var searchResult:SearchResult
         let view = SessionView()
         
+        //TODO: Solve by creating ResultSet
         var existingSR:SearchResult?
         if item.uid != nil {
             existingSR = cache.findCachedResult(query: item.uid!)
@@ -204,7 +212,7 @@ public class Main: Event, ObservableObject {
         view.searchResult = searchResult
 //        view = cascadeView(view)
         
-        // Hack!!
+        // TODO: compute in topnav
         view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         
         self.openView(view)
@@ -351,6 +359,7 @@ public class Main: Event, ObservableObject {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
         
+        
         let starButton = self.currentView.filterButtons!.filter{$0.actionName == "showStarred"}[0] // HACK
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
         
@@ -359,30 +368,31 @@ public class Main: Event, ObservableObject {
             self.currentView = lastStarredView!
             lastStarredView = nil
             self.objectWillChange.send()
-            return
         }
-        
-        // Otherwise create a new searchResult, mark it as starred (query??)
-        lastStarredView = self.currentView
-        let view = SessionView()
-        view.merge(self.currentView)
-        self.currentView = view
-        
-        // filter the results based on the starred property
-        var results:[DataItem] = []
-        let data = lastStarredView!.searchResult.data
-        for i in 0...data.count - 1 {
-            if (data[i].properties["starred"] != nil) {
-                let isStarred = data[i].properties["starred"]!.value as! Bool
-                if isStarred { results.append(data[i]) }
+        else{
+            // Otherwise create a new searchResult, mark it as starred (query??)
+            lastStarredView = self.currentView
+            let view = SessionView()
+            view.merge(self.currentView)
+            self.currentView = view
+            
+            // filter the results based on the starred property
+            var results:[DataItem] = []
+            let data = lastStarredView!.searchResult.data
+            // TODO: change to filter
+            for i in 0...data.count - 1 {
+                if (data[i].properties["starred"] != nil) {
+                    let isStarred = data[i].properties["starred"]!.value as! Bool
+                    if isStarred { results.append(data[i]) }
+                }
             }
+            
+            // Add searchResult to view
+            view.searchResult.data = results
+            view.title = "Starred \(view.title ?? "")"
+            
+            self.objectWillChange.send()
         }
-        
-        // Add searchResult to view
-        view.searchResult.data = results
-        view.title = "Starred \(view.title ?? "")"
-        
-        self.objectWillChange.send()
     }
     
     func toggleColor(object: ActionDescription, color1: UIColor, color2: UIColor){
@@ -435,43 +445,3 @@ public class Main: Event, ObservableObject {
 /**
  *
  */
-
-public class Event {
-    private var events:[String:[(_ event:EventObject) -> Void]] = [:]
-    
-    /**
-     *
-     */
-    public func fire(_ name:String, _ value:String="") {
-        let list = events[name]
-        
-        if let list = list {
-            let e = EventObject(value: value)
-            for i in 0...list.count {
-                list[i](e)
-            }
-        }
-    }
-    /**
-     *
-     */
-    public func on(_ name:String, _ callback:@escaping (_ event:EventObject) -> Void) {
-        if events[name] == nil { events[name] = [] }
-        events[name]!.append(callback)
-    }
-//    /**
-//     *
-//     */
-//    public func off(_ name:String, _ callback:@escaping (_ event:EventObject) -> Void) {
-//        if events[name] == nil { return }
-//
-//        let list = events[name]
-//        for i in 0...list!.count {
-//            if list[i] == callback { events[name]!.remove(at: i) }
-//        }
-//    }
-}
-
-public struct EventObject {
-    var value:String = ""
-}
