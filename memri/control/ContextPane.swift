@@ -11,73 +11,35 @@ import SwiftUI
 struct ContextPane: View {
     
     @EnvironmentObject var main: Main
-        
+    @Binding var showContextPane: Bool
+
+    private let forgroundPercentageWidth: CGFloat = 0.75
+    
+    @State var dragOffset = CGSize.zero
+    
     var body: some View {
-        VStack {
-            VStack {
-                Text("\(main.currentView.title!)")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                Text(main.currentView.subtitle!)
-                    .font(.body)
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                Text("some stuff to add later ...")
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("actionLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-                List {
-                    ForEach (self.main.currentView.actionItems!) { actionItem in
-                        Button(action:{
-                            self.main.executeAction(actionItem)
-                        }) {
-                            Text(actionItem.title)
-                        }
-                    }
-                }
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("navigateLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-                List {
-                    ForEach (self.main.currentView.navigateItems!) { navigateItem in
-                        Button(action:{
-                            self.main.executeAction(navigateItem)
-                        }) {
-                            Text(navigateItem.title)
-                        }
-                    }
-                }
-                HorizontalLine().styleHorizontalLine()
-            }
-            VStack {
-                HStack {
-                    Text(NSLocalizedString("labelsLabel", comment: ""))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.gray)
-                    Spacer()
-                }
-            }
-            Spacer()
+        ZStack {
+            ContextPaneBackground()
+                .opacity(0.25)
+                .edgesIgnoringSafeArea(.vertical)
+            ContextPaneForground()
+                .frame(width: UIScreen.main.bounds.width * forgroundPercentageWidth)
+                .offset(x: (UIScreen.main.bounds.width / 2.0) * (1.0 - forgroundPercentageWidth) + max(self.dragOffset.width, 0) )
+                .offset(y: 20)
+                .edgesIgnoringSafeArea(.vertical)
         }
-        .padding()
+        .gesture(DragGesture()
+        .onChanged({ value in
+            self.dragOffset = value.translation
+        })
+            .onEnded{ value in
+                self.showContextPane.toggle()
+        })
     }
 }
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane().environmentObject(Main(name: "", key: "").mockBoot())
+        ContextPane(showContextPane: .constant(true)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

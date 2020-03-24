@@ -69,11 +69,14 @@ struct Search: View {
                         self.main.search(self.searchText)
                     }
                 ForEach(self.main.currentView.filterButtons!){ filterButton in
+                    
+                    // TODO: buttonview
                     Button(action: {self.main.executeAction(filterButton)}) {
                         Image(systemName: filterButton.icon)
                     }.padding(.horizontal , 5)
                      .font(Font.system(size: 20, weight: .medium))
                         .foregroundColor(Color(filterButton.color))
+                    
                 }
             }.padding(.horizontal , 15)
             
