@@ -35,9 +35,11 @@ import RealmSwift
 //}
 
 let config = Realm.Configuration(
+    fileURL: URL(string: "file:///Users/rubendaniels/Development/realm/memri.realm"),
+    
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
-    schemaVersion: 2,
+    schemaVersion: 4,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -50,140 +52,49 @@ let config = Realm.Configuration(
         }
     })
 
-class Note:DataItem {
-    @objc dynamic var uid:String? = nil // 0x" + UUID().uuidString
-    @objc dynamic let type:String = "note"
-    
-    @objc var title:String? = nil
-    @objc var content:String? = nil
-    @objc var starred:Bool = false
-    @objc var deleted:Bool = false
-    
-    @objc let writtenBy:[Object]? = nil
-    @objc let sharedWith:[Object]? = nil
-    @objc let comments:[Object]? = nil
-    @objc let Log:[Object]? = nil
-}
-
-// Stores data locally
-public class LocalStorage {
-    private var realm:Realm
-    
-    /**
-     *
-     */
-    public func set(_ key:String, _ value:String) { // TODO Should throw or callback for out of disk and other failures
-        
-    }
-    
-    /**
-     *
-     */
-    public func get(_ key:String) -> String {
-        return "[]"
-    }
-    
-    /**
-     *
-     */
-    public func create(_ item:DataItem) {
-//        let persons = realm.objects(Person.self)
-
-        try! realm.write() {
-            var properties = item.objectSchema.properties
-            let value:Any = [:]
-            for prop in properties {
-                value[prop] = item.subscript(key: prop).get()
-            }
-
-            let realmObject = realm.create(type(of: item).self, value: value, update: .modified)
-            return realmObject
-        }
-
-//        class Person: Object {
-//            // Optional string property, defaulting to nil
-//            @objc dynamic var name: String? = nil
-//
-//            // Optional int property, defaulting to nil
-//            // RealmOptional properties should always be declared with `let`,
-//            // as assigning to them directly will not work as desired
-//            let age = RealmOptional<Int>()
-//        }
-    }
-    
-    /**
-     *
-     */
-    public func remove(_ item:DataItem) {
-        
-    }
-    
-    /**
-     *
-     */
-    public func update(_ item:DataItem) {
-        
-    }
-}
-
 // Schedules long term tasks like syncing with remote
 public class Scheduler {
-    private var queue: [Task] = []
-    private var localStorage: LocalStorage
-    public var cache: Cache? = nil
-    private var busy: Bool = false
+    private var queue:Results<Task>
+    private var realm:Realm
+    public var cache:Cache? = nil
+    private var busy:Bool = false
     
-    init(_ local:LocalStorage) {
-        localStorage = local
+    init(_ rlm:Realm) {
+        realm = rlm
         
         // For a future solution: https://stackoverflow.com/questions/46344963/swift-jsondecode-decoding-arrays-fails-if-single-element-decoding-fails
         
-        let decoder = JSONDecoder()
-        if (!jsonErrorHandling (decoder) {
-            let json = localStorage.get("scheduler").data(using: .utf8)!
-            queue = try decoder.decode([Task].self, from: json)
-            processQueue()
-        }) {
-            queue = []
-            persist()
-            // TODO fullSync()
-        }
-    }
-    
-    /**
-     *
-     */
-    public func add(_ task:Task) {
-        // Don't add the same update to the queue more than once
-        if queue.firstIndex(of: task) ?? -1 > -1 { return }
-        
-        queue.append(task)
-        persist()
+        queue = realm.objects(Task.self)
         processQueue()
     }
     
     /**
      *
      */
+    public func add(job:String, uid:String, type:String) {
+        // Don't add the same update to the queue more than once
+        let result = queue.filter("job = '\(job)' AND uid = \(uid)")
+        if result.count > 0 { return }
+        
+        // Add a task (should be auto added to the realm result set)
+        realm.create(Task.self, value: ["job":job, "uid":uid, "type":type])
+        
+        // Continue processing the queue
+        processQueue()
+    }
+    
+    /**
+     *
+     */
+    public func remove(job:String, uid:String) {
+        // Don't add the same update to the queue more than once
+        let result = queue.filter("job = '\(job)' AND uid = \(uid)")
+        if result.count == 0 { return }
+            
+        realm.delete(result[0])
+    }
     public func remove(_ task:Task) {
-        queue.remove(at: queue.firstIndex(of: task) ?? -1)
-        persist()
-    }
-    
-    /**
-     *
-     */
-    public func persist(){
-        localStorage.set("scheduler", serialize() ?? "") // TODO this may be increasingly slow and should then be refactored
-    }
-    
-    /**
-     *
-     */
-    public func serialize() -> String? {
-        return serializeJSON { (encoder) in
-            return try! encoder.encode(queue)
-        }
+        realm.delete(task)
     }
     
     /**
@@ -203,8 +114,10 @@ public class Scheduler {
 
         // TODO catch
         try? cache!.execute(task) { (error, success) -> Void in
-            queue.remove(at: 0)
-            if !success { queue.append(task) } // TODO keep a retry counter to not have stuck jobs ??
+            remove(task)
+            if !success {  // TODO keep a retry counter to not have stuck jobs ??
+                add(job:task.job, uid:task.uid, type:task.type)
+            }
             busy = false
             processQueue()
         }
@@ -212,26 +125,29 @@ public class Scheduler {
 }
 
 // Represents a task such as syncing with remote
-public struct Task: Equatable, Codable {
-    var job: String
-    var data: [String:String]
-//    var id: String = UUID().uuidString
+public class Task: Object, Codable {
+    var job:String
+    var type:String
+    var uid:String
 //
 //    public static func == (lt: Task, rt: Task) -> Bool {
-//        return lt.id == rt.id
+//        return lt.job == rt.job && lt.uid == rt.uid
 //    }
 }
 
 public class Cache {
     var podAPI: PodAPI
-    var queryCache: [String: SearchResult] = [:]
-    var typeCache: [String: SearchResult] = [:]
-    var idCache: [String: DataItem] = [:]
     
-    var cancellables: [AnyCancellable]? = nil
+    var cancellables:[AnyCancellable]? = nil
+    var queryCache:[String:SearchResult] = [:]
     
-    private var localStorage: LocalStorage
-    private var scheduler: Scheduler
+    let typeTable:[String:Object.Type] = [
+        "note": Note.self,
+        "logitem": LogItem.self
+    ]
+    
+    private var scheduler:Scheduler
+    private var realm:Realm
     
     enum CacheError: Error {
         case UnknownTaskJob(job: String)
@@ -242,37 +158,15 @@ public class Cache {
         // Tell Realm to use this new configuration object for the default Realm
         Realm.Configuration.defaultConfiguration = config
 
-        let realm = try! Realm()
+        realm = try! Realm()
         
-        // Create localstorage object
-        localStorage = LocalStorage(realm)
+        print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
         self.podAPI = podAPI
         
         // Create scheduler objects
-        scheduler = Scheduler(localStorage)
+        scheduler = Scheduler(realm)
         scheduler.cache = self
-        
-        // Load JSON from cache
-        let decoder = JSONDecoder()
-        
-        // Query Cache
-        if (!jsonErrorHandling (decoder) {
-            let json = localStorage.get("queryCache").data(using: .utf8)!
-            self.queryCache = try decoder.decode([String: SearchResult].self, from: json)
-        }) { self.queryCache = [:] }
-        
-        // Type Cache
-        if (!jsonErrorHandling (decoder) {
-            let json = localStorage.get("typeCache").data(using: .utf8)!
-            self.typeCache = try decoder.decode([String: SearchResult].self, from: json)
-        }) { self.typeCache = [:] }
-        
-        // ID Cache
-        if (!jsonErrorHandling (decoder) {
-            let json = localStorage.get("idCache").data(using: .utf8)!
-            self.idCache = try decoder.decode([String: DataItem].self, from: json)
-        }) { self.idCache = [:] }
     }
     
     /**
@@ -310,30 +204,30 @@ public class Cache {
     /**
      *
      */
-    public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
-        // Search in query cache
+    public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
         let q = query.query ?? ""
-        
-        if self.queryCache[q] != nil {
-            callback(nil, self.queryCache[q]!.data)
-            return
+        if (q != "") {
+            callback("Empty Query", nil)
         }
-        
-        // Parse query -> query types
-        if self.typeCache[q] != nil {
-            callback(nil, self.typeCache[q]!.data)
-            return
+        else if (q.starts(with: "0x")) {
+            let result = realm.objects(Note.self).filter("id = '\(q)'") // HACK
+            
+            callback(nil, [result[0]])
         }
-        
-        // Parse query -> ids
-        if self.idCache[q] != nil {
-            var results: [DataItem] = []
-            results.append(self.idCache[q]!)
-            callback(nil, results)
-            return
+        else {
+            let queryType = self.typeTable[q]
+            if let queryType = queryType {
+                let result = realm.objects(queryType) // TODO filter
+                
+                var returnValue:[DataItem] = []
+                for item in result { returnValue.append(item as! DataItem) }
+                
+                callback(nil, returnValue)
+            }
+            else {
+                callback(nil, [])
+            }
         }
-        
-        callback(nil, [])
     }
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: [DataItem]) -> Void) -> Void {}
@@ -342,56 +236,70 @@ public class Cache {
     /**
      *
      */
-    public func getItemById(_ id: String) -> DataItem? {
-        return self.idCache[id]
+    public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
+        let type = self.typeTable[type]
+        if let type = type {
+            let result = realm.objects(type).filter("uid = '\(uid)'")
+            if result.count == 0 { return nil }
+            else { return result[0] as? T }
+        }
+        return nil
     }
-    
-    /**
-     *
-     */
-    public func getItemByType(type: String) -> SearchResult? {
-        return self.typeCache[type]
-    }
-    
+
+//    /**
+//     *
+//     */
+//    public func getItemByType(type: String) -> SearchResult? {
+//        return self.typeCache[type]
+//    }
+//
     /**
      *
      */
     func findCachedResult(query: String) -> SearchResult? {
         return self.queryCache[query]
     }
-    
+
     /**
      *
      */
     public func addToCache(_ item:DataItem) -> DataItem {
-        let cachedItem:DataItem? = self.idCache[item.id]
-        if let cachedItem = cachedItem {
-            try! cachedItem.merge(item)
-            self.localStorage.update(item)
-            return cachedItem
-        }
-        else if item.id != "" {
-            self.idCache[item.id] = item
-            self.localStorage.create(item)
-        }
+        // Update item to the cache
+        
+        // Fetch item from the cache
+        
+        // Return item from the cache
+        
+        let cachedItem = self.createOrUpdate(item)
+        
+//        let cachedItem:DataItem? = self.idCache[item.id]
+//        if let cachedItem = cachedItem {
+//            try! cachedItem.merge(item)
+//            self.localStorage.update(item)
+//            return cachedItem
+//        }
+//        else if item.id != "" {
+//            self.idCache[item.id] = item
+//
+//        }
 
-        if item.type != "" && self.typeCache[item.type] == nil {
-            self.typeCache[item.type] = SearchResult()
-        }
+//        if item.type != "" && self.typeCache[item.type] == nil {
+//            self.typeCache[item.type] = SearchResult()
+//        }
 
-        self.typeCache[item.type]!.data.append(item) // TODO sort??
+//        self.typeCache[item.type]!.data.append(item) // TODO sort??
         
         cancellables?.append(item.objectWillChange.sink { (_) in
             DispatchQueue.main.async {
-                if (item.isDeleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
+                if (item.deleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
                 else if item.id == "" { self.onCreate(item) }
                 else { self.onUpdate(item) }
             }
         })
         
-        if (item.uid == nil) {self.onCreate(item)}
+//        if (item.uid == nil) {self.onCreate(item)}
 
-        return item
+        return cachedItem ?? item
     }
     
     public func loadPage(_ searchResult:SearchResult, _ index:Int, _ callback:((_ error:Error?) -> Void)) -> Void {
@@ -481,83 +389,92 @@ public class Cache {
         
         switch task.job {
         case "create":
-            let item = self.getItemById(task.data["id"]!) ?? DataItem()
-            podAPI.create(item) { (error, id) -> Void in
-                if error != nil { return callback(error, false) }
-                
-                // Set the new id from the server
-                item.setProperty("id", AnyCodable(id))
-                
-                callback(nil, true)
+            let item = self.getItemById(task.type, task.uid)
+            if let item = item {
+                podAPI.create(item) { (error, id) -> Void in
+                    if error != nil { return callback(error, false) }
+                    
+                    // Set the new id from the server
+                    item.uid = id
+                    
+                    callback(nil, true)
+                }
             }
         case "delete":
-            let id = task.data["id"]!
-            podAPI.remove(id) { (error, success) -> Void in
+            podAPI.remove(task.uid) { (error, success) -> Void in
                 callback(error, success)
             }
         case "update-property":
             fallthrough
         case "update":
-            let id = task.data["id"]!
-            let item = self.getItemById(id) ?? DataItem()
-            podAPI.update(item, callback)
+            let item = self.getItemById(task.type, task.uid)
+            if let item = item { podAPI.update(item, callback) }
         default:
             throw CacheError.UnknownTaskJob(job: task.job)
         }
     }
     
+    var newCounter = 0
     private func onCreate(_ item:DataItem) {
         // Store in local storage
-        localStorage.create(item)
-        persist() // HACK
+        let _ = createOrUpdate(item)
         
         // Create a task
-        let task = Task(job: "create", data: ["id": item.id])
-        
-        // Add task to the scheduler
-        scheduler.add(task)
+        scheduler.add(job:"create", uid:item.uid ?? "", type:item.type) // HACK uid should get some kind of new counted value
     }
     private func onRemove(_ item:DataItem) {
         if item.id == "" { return } // TODO edge case when it is being created...
         
         // Store in local storage
-        localStorage.remove(item)
-        persist() // HACK
+        remove(item)
         
         // Create a task
-        let task = Task(job: "delete", data: ["id": item.id])
-        
-        // Add task to the scheduler
-        scheduler.add(task)
+        scheduler.add(job: "delete", uid: item.uid ?? "", type:item.type)
     }
     private func onUpdate(_ item:DataItem) {
         // Store in local storage
-        localStorage.update(item)
-        persist() // HACK
+        let _ = createOrUpdate(item)
         
         // Create a task
-        let task = Task(job: "update", data: ["id": item.id])
-        
-        // Add task to the scheduler
-        scheduler.add(task)
+        scheduler.add(job: "update", uid: item.uid ?? "", type:item.type)
     }
     
     /**
-     * Temporary function until there is a good caching backend implemented
-     * TODO
+     *
      */
-    public func persist() -> Void {
-        // TODO this may be increasingly slow and should then be refactored
-        localStorage.set("queryCache", serializeJSON { (encoder) in
-            return try! encoder.encode(self.queryCache)
-        } ?? "")
-        
-        localStorage.set("typeCache", serializeJSON { (encoder) in
-            return try! encoder.encode(self.typeCache)
-        } ?? "")
-        
-        localStorage.set("idCache", serializeJSON { (encoder) in
-            return try! encoder.encode(self.idCache)
-        } ?? "")
+    public func createOrUpdate<T:DataItem>(_ item:T) -> T? {
+//        let persons = realm.objects(Person.self)
+
+        try! realm.write() { // TODO add this to dataitem.set()
+//            let properties = item.objectSchema.properties
+//            var value:[String:Any] = [:]
+//            for prop in properties {
+//                value[prop.name] = item[prop.name]
+//            }
+            
+            
+            
+            let type:Object.Type? = self.typeTable[item.type]
+            if let type = type {
+//                let value = ["uid": item.uid ?? "", "type": item.type]
+                realm.add(item, update: .modified)
+//                dump(value)
+//                let realmObject = realm.create(type, value: value, update: .modified) as! T
+//                print(item.uid)
+//                print(realmObject.uid)
+                return item //realmObject
+            }
+            else {
+                print("Unknown type while writing to realm: \(item.type)")
+                return nil
+            }
+        }
+    }
+    
+    /**
+     *
+     */
+    public func remove(_ item:DataItem) {
+        realm.delete(item) // TODO: Should this cast to the right type before deletion?
     }
 }

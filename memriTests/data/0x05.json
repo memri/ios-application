@@ -1,8 +1,6 @@
 [{
     "uid": "0x05",
     "type": "note",
-    "properties": {
-        "title": "fifth example note",
-        "content": "This is AGAINNN an example note"
-    }
+    "title": "fifth example note",
+    "content": "This is AGAINNN an example note"
 }]

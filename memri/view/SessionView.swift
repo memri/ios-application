@@ -33,7 +33,8 @@ public class ActionDescription: Decodable, Identifiable {
             // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
             switch self.actionName{
                 case "add":
-                    self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
+//                    self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
+                1+1
                 case "openView":
                 // TODO make this work
                 1+1
@@ -164,8 +165,8 @@ public class SessionView: ObservableObject, Decodable{
                                           title: "Back",
                                           actionName: "back",
                                           actionArgs: [])
-        print("TITLE \(searchResult.data[0].properties["title"]!)")
-        sv.title = searchResult.data[0].properties["title"]?.value as! String
+        print("TITLE \(searchResult.data[0].getString("title"))")
+        sv.title = searchResult.data[0].getString("title")
         sv.backTitle = currentView.title
         return sv
     }

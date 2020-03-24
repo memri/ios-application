@@ -59,7 +59,7 @@ public class Main: Event, ObservableObject {
         podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
             if error != nil { return }
             
-            sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
+            sessions = try! Sessions.fromJSONString(item.getString("json"))
             
             // Hook current session
             var isCalled:Bool = false
@@ -82,7 +82,7 @@ public class Main: Event, ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        print("in mockBoot sessions.title = \(self.sessions.currentView.title)")
+        print("in mockBoot sessions.title = \(self.sessions.currentView.title ?? "")")
         self.cancellable = self.sessions.objectWillChange.sink {
             DispatchQueue.main.async {
                 self.setCurrentView()
@@ -203,7 +203,6 @@ public class Main: Event, ObservableObject {
         }
         
         view.searchResult = searchResult
-//        view = cascadeView(view)
         
         // Hack!!
         view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
@@ -371,10 +370,7 @@ public class Main: Event, ObservableObject {
         var results:[DataItem] = []
         let data = lastStarredView!.searchResult.data
         for i in 0...data.count - 1 {
-            if (data[i].properties["starred"] != nil) {
-                let isStarred = data[i].properties["starred"]!.value as! Bool
-                if isStarred { results.append(data[i]) }
-            }
+            if data[i].starred { results.append(data[i]) }
         }
         
         // Add searchResult to view

@@ -14,29 +14,73 @@ extension PropertyReflectable {
     }
 }
 
+class Note:DataItem {
+    @objc var title:String? = nil
+    @objc var content:String? = nil
+    
+    let writtenBy = List<DataItem>()
+    let sharedWith = List<DataItem>()
+    let comments = List<DataItem>()
+    
+    required init () {
+        super.init()
+        
+        type = "note"
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+//        try! super.init(from: decoder)
+        
+        type = "note"
+        
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            content = try decoder.decodeIfPresent("content") ?? content
+        }
+        
+        try! self.doActualInit(from: decoder)
+    }
+}
+
+class LogItem:DataItem {
+    @objc var date:Int = 0
+    @objc var content:String? = nil
+    
+    let appliesTo = List<DataItem>()
+}
+
 public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
     public var id:String = UUID().uuidString
-    public var data:Note // TODO @Koen, help! how to generalize this
-    public var type:String  = "note"
+    
+    @objc var uid:String? = nil // 0x" + UUID().uuidString
+    @objc var type:String = "unknown"
+    
+    @objc var deleted:Bool = false
+    @objc var starred:Bool = false
+    let Log = List<LogItem>()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
     }
     
-//    public convenience required init(_ data:Note) {
-//        self.init()
-//        self.data = data
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
+    
+//    public required init(){
+//
 //    }
     
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
+//    public convenience required init(from decoder: Decoder) throws {
+//        self.init()
+    
+    public func doActualInit(from decoder: Decoder) throws {
         jsonErrorHandling(decoder) {
-            var properties = self.objectSchema.properties
-            for name in properties {
-                let prop = self.subscript(key: name)
-                prop.set(try decoder.decodeIfPresent(name) ?? prop.get())
-            }
+            uid = try decoder.decodeIfPresent("uid") ?? uid
+            starred = try decoder.decodeIfPresent("starred") ?? starred
+            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            //TODO log
         }
     }
     
@@ -44,14 +88,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
      *
      */
     public func getString(_ name:String) -> String {
-        return self.subscript(key: name).get()
+        return self[name] as? String ?? ""
     }
     
     /**
      *
      */
     public func set(_ name:String, _ value:Any) {
-        
+        try! self.realm!.write() { // TODO add this to dataitem.set()
+            self[name] = value
+        }
     }
     
     /**
@@ -74,12 +120,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
     /**
      * Does not copy the id property
      */
-    public func duplicate() -> DataItem {
-        let copy = self.self()
-        copy.merge(self)
-        copy.uid = nil
-        return copy
-    }
+//    public func duplicate() -> DataItem {
+//        let copy = self.objectSchema.objectClass.init() as! DataItem
+//        try! copy.merge(self) // TODO
+//        copy.uid = nil
+//        return copy
+//    }
     
     /**
      * Sets deleted to true
@@ -146,12 +192,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
         let jsonData = try jsonDataFromFile(file, ext)
-        let items: [DataItem] = try JSONDecoder().decode([DataItem].self, from: jsonData)
+        let items: [DataItem] = try JSONDecoder().decode([Note].self, from: jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> [DataItem] {
-        let items: [DataItem] = try JSONDecoder().decode([DataItem].self, from: Data(json.utf8))
+        let items: [DataItem] = try JSONDecoder().decode([Note].self, from: Data(json.utf8))
         return items
     }
     
@@ -170,7 +216,7 @@ public class SearchResult: ObservableObject, Codable {
     /**
      * Retrieves the data loaded from the pod
      */
-    @Published public var data: [Note] = []
+    @Published public var data:[DataItem] = []
     /**
      *
      */

@@ -69,9 +69,8 @@ struct ListRenderer: Renderer {
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
     
     func generatePreview(_ item:DataItem) -> String {
-        let content = item.properties["content"]
-        if let content = content { return content.value as! String }
-        return ""
+        let content = item.getString("content")
+        return content
     }
     
     var body: some View {
@@ -80,7 +79,7 @@ struct ListRenderer: Renderer {
                 List{
                     ForEach(main.currentView.searchResult.data) { dataItem in
                         VStack{
-                            Text(dataItem.properties["title"]!.value as! String)
+                            Text(dataItem.getString("title"))
                                 .bold()
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             Text(self.generatePreview(dataItem))
