@@ -77,7 +77,6 @@ public class Main: ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        print("in mockBoot sessions.title = \(self.sessions.currentView.title)")
         self.cancellable = self.sessions.objectWillChange.sink {
             DispatchQueue.main.async {
                 self.setCurrentView()
@@ -252,9 +251,9 @@ public class Main: ObservableObject {
             try! item.merge(param0)
             add(item)
         case "openView":
-            if let item = item{
+            if let item = item {
                 openView(item)
-            }else{
+            } else {
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
@@ -268,6 +267,8 @@ public class Main: ObservableObject {
             showStarred()
         case "showContextPane":
             allNotes() // TODO @Jess
+        case "openContextView":
+            openContextView()
         case "share":
             shareNote()
         case "addToList":
@@ -409,6 +410,10 @@ public class Main: ObservableObject {
     func toggleFilterPanel(){
         self.currentView.showFilterPanel!.toggle()
         self.objectWillChange.send()
+    }
+
+    func openContextView() {
+        print("openContextView")
     }
 
     func shareNote() {

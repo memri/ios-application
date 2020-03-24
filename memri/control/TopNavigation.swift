@@ -11,8 +11,9 @@ import SwiftUI
 struct TopNavigation: View {
     @EnvironmentObject var main: Main
     @State private var showNavigation: Bool = false
-    @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
+    @Binding var showContextPane: Bool
+
     
     var title: String = ""
 //    var action: ()->Void = {sessions.currentSession.back()}
@@ -71,20 +72,18 @@ struct TopNavigation: View {
                 }
                     
                 Button(action: {
-                    self.show_contextpage = true
+                    self.showContextPane.toggle()
+
                 }) {
                     Image(systemName: "ellipsis")
-                }
-                .sheet(isPresented: self.$show_contextpage) {
-                    ContextPane().environmentObject(self.main)
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
 
             }.padding(.all, 30)
         }
-
     }
+    
     func actionButtonAction(){
         main.executeAction(main.currentView.actionButton!)
     }
@@ -108,6 +107,6 @@ struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation(isEditMode: .constant(.inactive), showContextPane: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

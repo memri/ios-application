@@ -15,7 +15,7 @@ class NavigationTest: XCTestCase {
 
 
     func testNavigationInit() {
-        var navigationItems: [NavigationItem] = try! NavigationItem.fromJSON("navigationItems")
+//        var navigationItems: [NavigationItem] = try! NavigationItem.fromJSON("navigationItems")
 
     }
 
