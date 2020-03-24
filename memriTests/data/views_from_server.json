@@ -1,0 +1,196 @@
+{
+    "defaults": {
+        "{renderer:list}": {
+            "renderConfig": {
+                "list": {
+                    "slideLeftActions": [
+                        {
+                            "icon": "remove.ico",
+                            "title": "Remove",
+                            "actionName": "remove",
+                            "actionArgs": ["{.id}"]
+                        }
+                    ],
+                    "slideRightActions": [],
+                    "itemRenderer": "{.title}"
+                }
+            }
+        },
+
+        "{[type:note]}": {
+            "name": "notes",
+            "title": "Notes",
+            "query": {
+                "text": "notes",
+                "sortProperty": "date-created",
+                "sortAscending": 0
+            },
+            "rendererName": "list",
+            "renderConfig": {
+                "list": {
+                    "sortProperty": "date-created",
+                    "sortAscending": 0,
+                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
+                    "press": {
+                        "actionName": "openView",
+                        "actionArgs": ["{.id}"]
+                    },
+                    "longPress": {
+                        "actionName": "select",
+                        "actionArgs": ["{.id}"]
+                    }
+                }
+            },
+            "browsingMode": "default",
+            "actionButton": {
+                "icon": "plus",
+                "title": "Add Note",
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "properties": {"title": "Untitled Note"}
+                }]
+            },
+            "editActionButton": {
+                "icon": "pencil",
+                "title": "Edit Note",
+                "actionName": "toggleEdit",
+                "actionArgs": []
+            },
+            "filterButtons": [
+                {
+                    "icon": "star.fill",
+                    "title": "Show Starred Notes",
+                    "actionName": "showStarred",
+                    "actionArgs": []
+                },
+                {
+                    "icon": "chevron.down",
+                    "title": "Show Filter Panel",
+                    "actionName": "toggleFilterPanel",
+                    "actionArgs": []
+                }
+            ]
+        },
+
+        "{type:note}": {
+            "name": "note",
+            "title": "Note",
+            "rendererName": "richTextEditor",
+            "renderConfig": {
+                "richtexteditor": {
+                    "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
+                }
+            },
+            "editActionButton": {
+                "icon": "pencil",
+                "title": "Edit Note",
+                "actionName": "toggleEdit",
+                "actionArgs": []
+            },
+            "filterButtons": [
+                {
+                    "icon": "increase.indent",
+                    "title": "Show Timeline",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfig": {
+                            "timeline": {
+                                "timeProperty": "date-created"
+                            }
+                        },
+                        "query": {
+                            "text": "data:Log appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
+                        }
+                    }]
+                },
+                {
+                    "icon": "ellipsis",
+                    "title": "Show Context Panel",
+                    "actionName": "showContextPane",
+                    "actionArgs": []
+                }
+            ],
+            "contextButtons": [
+                {
+                    "icon": "star.ico",
+                    "title": "Star Note",
+                    "actionName": "star",
+                    "actionArgs": ["{.id}"]
+                },
+                {
+                    "icon": "schedule.ico",
+                    "title": "Schedule...",
+                    "actionName": "schedule",
+                    "actionArgs": []
+                }
+            ],
+            "actionItems": [
+                {
+                    "title": "Share with...",
+                    "actionName": "showOverlay",
+                    "actionArgs": ["shareWithPanel"]
+                },
+                {
+                    "title": "Add to list...",
+                    "actionName": "addToPanel",
+                    "actionArgs": []
+                },
+                {
+                    "title": "Duplicate Note",
+                    "actionName": "duplicate",
+                    "actionArgs": ["{.id}"]
+                }
+            ],
+            "navigateItems": [
+                {
+                    "title": "Timeline of this note",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfig": {
+                            "timeline": {
+                                "timeProperty": "date-created"
+                            }
+                        },
+                        "query": {
+                            "text": "data:Log appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
+                        }
+                    }]
+                },
+                {
+                    "title": "Starred notes",
+                    "actionName": "showStarred",
+                    "actionArgs": []
+                },
+                {
+                    "title": "All notes",
+                    "actionName": "openView",
+                    "actionArgs": ["notes"]
+                }
+            ]
+        }
+    },
+    
+    "user": {
+        "{type:note}": {
+            "renderConfig": {
+                "list": {
+                    "slideRightActions": [
+                        {
+                            "icon": "schedule.ico",
+                            "title": "Schedule",
+                            "actionName": "schedule",
+                            "actionArgs": ["{.id}"]
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

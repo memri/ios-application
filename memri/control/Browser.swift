@@ -18,7 +18,7 @@ struct Browser: View {
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
-    var currentRenderer: AnyView { renderers[main.currentView.rendererName,
+    var currentRenderer: AnyView { renderers[main.currentView.rendererName!,
                   default: AnyView(ThumbnailRenderer())]
     }
     

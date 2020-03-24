@@ -17,7 +17,7 @@ import Foundation
 extension String: Error {}
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
-    print("Reading from file \(file)")
+    print("Reading from file \(file).\(ext)")
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
     let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
     return jsonString
@@ -34,7 +34,6 @@ func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) -> 
         try convert()
         return true
     } catch {
-        dump(decoder)
         return false
     }
 }

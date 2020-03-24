@@ -6,27 +6,27 @@ public struct QueryOptions: Codable {
     /**
      * Retrieves the query which is used to load data from the pod
      */
-    var query: String = ""
+    var query: String? = nil
     
     /**
      * Retrieves the property that is used to sort on
      */
-    public var sortProperty: String? = ""
+    public var sortProperty: String? = nil
     /**
      * Retrieves whether the sort direction
      *   -1 no sorting is applied
      *    0 sort descending
      *    1 sort ascending
      */
-    public var sortAscending: Int = 0
+    public var sortAscending: Int? = nil
     /**
      * Retrieves the number of items per page
      */
-    public var pageCount: Int = 0
+    public var pageCount: Int? = nil
     /**
      *
      */
-    public var pageIndex: Int = 0
+    public var pageIndex: Int? = nil
     
     init(query:String) {
         self.query = query
@@ -91,7 +91,7 @@ public class PodAPI {
      */
     public func create(_ item:DataItem, _ callback: (_ error:Error?, _ id:String) -> Void) -> Void {
         print("created \(item)")
-        callback(nil, "0x00");
+        callback(nil, "0x" + UUID().uuidString);
     }
     /**
      *
@@ -141,7 +141,7 @@ public class PodAPI {
     /**
      *
      */
-    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {
+    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result
@@ -150,8 +150,13 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
-        if query.query.starts(with: "0x") {
-            callback(nil, try! DataItem.fromJSONFile(query.query))
+        if query.query!.starts(with: "0x") {
+            if query.query == "0x???" {
+                callback("nothing to do", nil)
+                return
+            }
+            
+            callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
         if query.query == "notes" {

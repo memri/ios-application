@@ -221,7 +221,7 @@ public class Cache {
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
         var receivedFromServer = false
-        func handle (_ error:Error?, _ items:[DataItem], _ cached:Bool) -> Void {
+        func handle (_ error:Error?, _ items:[DataItem]?, _ cached:Bool) -> Void {
             if receivedFromServer { return } 
             receivedFromServer = !cached
             
@@ -232,9 +232,11 @@ public class Cache {
             
             // Add all new data items to the cache
             var data:[DataItem] = []
-            if items.count > 0 {
-                for i in 0...items.count - 1 {
-                    data.append(self.addToCache(items[i]))
+            if let items = items {
+                if items.count > 0 {
+                    for i in 0...items.count - 1 {
+                        data.append(self.addToCache(items[i]))
+                    }
                 }
             }
             
@@ -250,21 +252,23 @@ public class Cache {
      */
     public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]) -> Void) -> Void {
         // Search in query cache
-        if self.queryCache[query.query] != nil {
-            callback(nil, self.queryCache[query.query]!.data)
+        let q = query.query ?? ""
+        
+        if self.queryCache[q] != nil {
+            callback(nil, self.queryCache[q]!.data)
             return
         }
         
         // Parse query -> query types
-        if self.typeCache[query.query] != nil {
-            callback(nil, self.typeCache[query.query]!.data)
+        if self.typeCache[q] != nil {
+            callback(nil, self.typeCache[q]!.data)
             return
         }
         
         // Parse query -> ids
-        if self.idCache[query.query] != nil {
+        if self.idCache[q] != nil {
             var results: [DataItem] = []
-            results.append(self.idCache[query.query]!)
+            results.append(self.idCache[q]!)
             callback(nil, results)
             return
         }
@@ -305,14 +309,14 @@ public class Cache {
             try! cachedItem.merge(item)
             return cachedItem
         }
-        else {
+        else if item.id != "" {
             self.idCache[item.id] = item
         }
 
         if item.type != "" && self.typeCache[item.type] == nil {
             self.typeCache[item.type] = SearchResult()
         }
-        
+
         self.typeCache[item.type]!.data.append(item) // TODO sort??
         
         cancellables?.append(item.objectWillChange.sink { (_) in
@@ -322,7 +326,7 @@ public class Cache {
                 else { self.onUpdate(item) }
             }
         })
-        
+
         return item
     }
     
@@ -370,12 +374,12 @@ public class Cache {
         filterResult.loading = searchResult.loading
         filterResult.pages = searchResult.pages
         
-        for i in 0...filterResult.data.count {
+        for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
             if (!filterResult.data[i].match(query)) {
                 filterResult.data.remove(at: i)
             }
         }
-        
+
         return filterResult
     }
         
@@ -401,7 +405,9 @@ public class Cache {
      */
     public func addToCache(_ result:SearchResult) {
         // Overwrite past results (even though sorting options etc, may differ ...
-        self.queryCache[result.query.query] = result
+        if let q = result.query.query {
+            self.queryCache[q] = result
+        }
     }
     
     /**
@@ -448,6 +454,8 @@ public class Cache {
         scheduler.add(task)
     }
     private func onRemove(_ item:DataItem) {
+        if item.id == "" { return } // TODO edge case when it is being created...
+        
         // Store in local storage
         localStorage.remove(item)
         persist() // HACK

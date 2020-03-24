@@ -10,6 +10,8 @@ import SwiftUI
 
 struct TopNavigation: View {
     @EnvironmentObject var main: Main
+    @State private var showNavigation: Bool = false
+    @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
     
     var title: String = ""
@@ -19,18 +21,24 @@ struct TopNavigation: View {
     var hideBack:Bool = false
     
     var body: some View {
-        
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                Text(main.currentView.title).font(.headline)
+                if main.currentView.title != nil{
+                    Text(main.currentView.title!).font(.headline)
+                }
             }
             HStack{
-                Button(action: {}) {
+                Button(action: {
+                    self.showNavigation = true
+                }) {
                     Image(systemName: "line.horizontal.3")
                         .foregroundColor(.gray)
                         .font(Font.system(size: 20, weight: .medium))
-                }.padding(.horizontal, 5)
+                }.sheet(isPresented: self.$showNavigation) {
+                    Navigation()
+                }
+                .padding(.horizontal, 5)
 
                 if main.currentView.backButton != nil {
                     Button(action: backButtonAction ) {
@@ -41,7 +49,6 @@ struct TopNavigation: View {
                                 .font(.subheadline)
                                 .foregroundColor(.black)
                         }
-
                     }
                 }
                 Spacer()
@@ -52,8 +59,8 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.gray)
                 }
-            
-                
+
+
                 if main.currentView.actionButton != nil {
                     Button(action: actionButtonAction) {
                         Image(systemName:
@@ -62,13 +69,15 @@ struct TopNavigation: View {
                     .padding(.horizontal , 5)
                     .foregroundColor(.green)
                 }
-                
-                Button(action: {}) {
+                    
+                Button(action: {
+                    self.show_contextpage = true
+                }) {
                     Image(systemName: "ellipsis")
                 }
                 .padding(.horizontal , 5)
                 .foregroundColor(.gray)
-                
+
             }.padding(.all, 30)
         }
     }

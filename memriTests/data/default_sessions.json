@@ -1,90 +1,41 @@
 {
-    "currentSessionIndex": 0,
+    "currentSessionIndex": 1,
     "sessions": [
         {
-            "currentViewIndex" :0,
+            "id": "0xS01",
+            "currentViewIndex": 1,
+            "views": [
+                {
+                    "searchResult": {
+                        "query": {
+                            "text": "notes",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
+                        }
+                    }
+                },
+                {
+                    "searchResult": {
+                        "query": { "query": "0x01" }
+                    },
+                    "editMode": true
+                }
+            ]
+        },
+        {
+            "id": "0xS02",
+            "currentViewIndex": 0,
             "views": [
                 {
                     "searchResult": {
                         "query": {
                             "query": "notes",
-                            "sortProperty": "None",
-                            "sortAscending": 1,
-                            "loading": 0,
-                            "pageCount": 0
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
                         }
                     },
-                    "name": "testname",
-                    "subtitle": "testSubtitle",
-                    "title": "notes",
-                    "rendererName": "list",
-                    "selection": [],
-                    "renderConfigs": {},
-                    "editButtons": [],
-                    "actionButton": {
-                        "icon": "plus",
-                        "title": "Add Note",
-                        "actionName": "add",
-                        "actionArgs": [{
-                            "type": "note",
-                            "_predicates": {"owner": "{me}"},
-                            "properties": {"title": "Untitled Note"}
-                        }]
-                    },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
-                        "actionArgs": []
-                    },
-                    "filterButtons": [],
-                    "actionItems": [
-                        {
-                            "icon": "",
-                            "title": "Share with ...",
-                            "actionName": "share",
-                            "actionArgs": []
-                        },
-                        {
-                            "icon": "",
-                            "title": "Add to list",
-                            "actionName": "addToList",
-                            "actionArgs": []
-                        },
-                        {
-                            "icon": "",
-                            "title": "Duplicate Note",
-                            "actionName": "duplicateNote",
-                            "actionArgs": []
-                        }
-                    ],
-                    "navigateItems": [
-                        {
-                            "icon": "",
-                            "title": "Timeline of this note",
-                            "actionName": "noteTimeline",
-                            "actionArgs": []
-                        },
-                        {
-                            "icon": "",
-                            "title": "Starred notes",
-                            "actionName": "starredNotes",
-                            "actionArgs": []
-                        },
-                        {
-                            "icon": "",
-                            "title": "All notes",
-                            "actionName": "allNotes",
-                            "actionArgs": []
-                        }
-                    ],
-                    "contextButtons": [],
-                    "icon": "testIcon",
-                    "showLabels": false,
-                    "contextMode": false,
-                    "filterMode": false,
-                    "editMode": false,
-                    "browsingMode": "default"
+                    "selection": ["0x5"],
+                    "scrollState": 64
                 }
             ]
         }

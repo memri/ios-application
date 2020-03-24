@@ -68,6 +68,12 @@ struct ListRenderer: Renderer {
     func getState() -> RenderState { RenderState() }
     func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
     
+    func generatePreview(_ item:DataItem) -> String {
+        let content = item.properties["content"]
+        if let content = content { return content.value as! String }
+        return ""
+    }
+    
     var body: some View {
         return VStack {
             NavigationView {
@@ -77,7 +83,7 @@ struct ListRenderer: Renderer {
                             Text(dataItem.properties["title"]!.value as! String)
                                 .bold()
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(dataItem.properties["content"]!.value as! String)
+                            Text(self.generatePreview(dataItem))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
                             self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
