@@ -11,7 +11,6 @@ import SwiftUI
 struct TopNavigation: View {
     @EnvironmentObject var main: Main
     @State private var showNavigation: Bool = false
-    @State private var show_contextpage: Bool = false
     @Binding var isEditMode:EditMode
     
     var title: String = ""
@@ -70,9 +69,7 @@ struct TopNavigation: View {
                     .foregroundColor(.green)
                 }
                     
-                Button(action: {
-                    self.show_contextpage = true
-                }) {
+                Button(action: {}) {
                     Image(systemName: "ellipsis")
                 }
                 .padding(.horizontal , 5)
