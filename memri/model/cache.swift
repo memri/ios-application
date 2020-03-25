@@ -10,30 +10,6 @@ import Foundation
 import Combine
 import RealmSwift
 
-// Stores data remote
-//public class RemoteStorage {
-//
-//    private var podApi: PodAPI
-//
-//    init(_ api:PodAPI) {
-//        podApi = api
-//    }
-//
-//    /**
-//     *
-//     */
-//    public func set(_ key:String, _ value:String) {
-//
-//    }
-//
-//    /**
-//     *
-//     */
-//    public func get(_ key:String) -> String {
-//
-//    }
-//}
-
 let config = Realm.Configuration(
     fileURL: URL(string: "file:///Users/rubendaniels/Development/realm/memri.realm"),
     
@@ -244,13 +220,6 @@ public class Cache {
         return nil
     }
 
-//    /**
-//     *
-//     */
-//    public func getItemByType(type: String) -> SearchResult? {
-//        return self.typeCache[type]
-//    }
-//
     /**
      *
      */
@@ -424,7 +393,6 @@ public class Cache {
      *
      */
     public func execute(_ task:Task, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
-        
         switch task.job {
         case "create":
             let item = self.getItemById(task.type, task.uid)

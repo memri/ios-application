@@ -68,13 +68,6 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
         return "uid"
     }
     
-//    public required init(){
-//
-//    }
-    
-//    public convenience required init(from decoder: Decoder) throws {
-//        self.init()
-    
     public func doActualInit(from decoder: Decoder) throws {
         jsonErrorHandling(decoder) {
             uid = try decoder.decodeIfPresent("uid") ?? uid
@@ -101,28 +94,17 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
     }
     
     /**
-     *
-     */
-    public func findPredicateByEntity(_ item:DataItem) -> [String] {
-        var items:[String] = []
-//        for (name, list) in self.predicates {
-//            for index in 0...list.count {
-//                if (list[index] === item) {
-//                    items.append(name);
-//                    break;
-//                }
-//            }
-//        }
-        return items
-    }
-    
-    /**
      * Sets deleted to true
      * All methods and properties must throw when deleted = true;
      */
     public func delete() -> Bool {
         if (self["deleted"] as! Bool) { return false; }
-        self["deleted"] = true;
+        
+        try! self.realm!.write() {
+            self["deleted"] = true;
+            self.realm!.delete(self)
+        }
+        
         return true;
     }
     
