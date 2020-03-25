@@ -196,14 +196,14 @@ public class Main: ObservableObject {
         
         //TODO: Solve by creating ResultSet
         var existingSR:SearchResult?
-        if item.uid != nil {
-            existingSR = cache.findCachedResult(query: item.uid!)
+        if item.getString("uid") != "" {
+            existingSR = cache.findCachedResult(query: item.getString("uid"))
         }
         if let existingSR = existingSR {
             searchResult = existingSR
         }
         else {
-            var xxid = item.uid ?? ""
+            var xxid = item.getString("uid")
             if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query | See also hack in api.swift
             searchResult = SearchResult(QueryOptions(query: xxid), [item])
             searchResult.loading = 0 // Force to load the first time
@@ -246,9 +246,7 @@ public class Main: ObservableObject {
         case "back":
             back()
         case "add":
-            let param0 = params[0].value as! DataItem
-            let item = DataItem()
-            try! item.merge(param0)
+            let item = Note(value: params[0].value)
             add(item)
         case "openView":
             if let item = item {
@@ -381,7 +379,8 @@ public class Main: ObservableObject {
             let data = lastStarredView!.searchResult.data
             // TODO: Change to filter
             for i in 0...data.count - 1 {
-                if data[i].starred { results.append(data[i]) }
+                let isStarred = data[i]["starred"] as? Bool ?? false
+                if isStarred { results.append(data[i]) }
             }
             
             // Add searchResult to view

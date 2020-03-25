@@ -48,7 +48,7 @@
                 "actionName": "add",
                 "actionArgs": [{
                     "type": "note",
-                    "properties": {"title": "Untitled Note"}
+                    "title": "Untitled Note"
                 }]
             },
             "editActionButton": {

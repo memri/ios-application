@@ -95,7 +95,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
      *
      */
     public func set(_ name:String, _ value:Any) {
-        try! self.realm!.write() { // TODO add this to dataitem.set()
+        try! self.realm!.write() {
             self[name] = value
         }
     }
@@ -115,73 +115,29 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
 //        }
         return items
     }
-
-    
-    /**
-     * Does not copy the id property
-     */
-//    public func duplicate() -> DataItem {
-//        let copy = self.objectSchema.objectClass.init() as! DataItem
-//        try! copy.merge(self) // TODO
-//        copy.uid = nil
-//        return copy
-//    }
     
     /**
      * Sets deleted to true
      * All methods and properties must throw when deleted = true;
      */
     public func delete() -> Bool {
-        if (self.deleted) { return false; }
-        self.deleted = true;
+        if (self["deleted"] as! Bool) { return false; }
+        self["deleted"] = true;
         return true;
     }
     
     /**
      *
      */
-    public func merge(_ source:DataItem) throws {
-//        // Items that do not have the same id should never merge
-//        if (source.uid != nil && self.uid != nil && source.uid != self.uid) {
-//            throw DataItemError.cannotMergeItemWithDifferentId
-//        }
-//
-//        if self.type == "" { self.type = source.type }
-//
-//        // Copy properties
-//        for (name, value) in source.properties {
-//            self.properties[name] = value
-//        }
-//
-//        // Copy predicates
-//        let sourcePredicates = source.predicates
-//        for (name, list) in self.predicates {
-//            let sourceList = sourcePredicates[name] ?? []
-//            outerLoop: for i in 0...list.count {
-//                for j in 0...sourceList.count {
-//                    if (list[i] === sourceList[j]) {
-//                        break outerLoop
-//                    }
-//                    self.predicates[name]?.append(sourceList[j])
-//                }
-//            }
-//        }
-    }
-    
-    /**
-     *
-     */
-    public func match(_ query:String) -> Bool{
-//        let properties: [String:AnyCodable] = self.properties
-//        for (name, _) in properties {
-//            if properties[name]!.value is String {
-//                let haystack = (properties[name]!.value as! String)
-//
-//                if haystack.lowercased().range(of: query.lowercased()) != nil {
-//                    return true
-//                }
-//            }
-//        }
+    public func match(_ needle:String) -> Bool{
+        let properties = self.objectSchema.properties
+        for prop in properties {
+            if let haystack = self[prop.name] as? String {
+                if haystack.lowercased().range(of: needle.lowercased()) != nil {
+                    return true
+                }
+            }
+        }
         
         return false
     }

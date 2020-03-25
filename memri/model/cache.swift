@@ -39,7 +39,7 @@ let config = Realm.Configuration(
     
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
-    schemaVersion: 4,
+    schemaVersion: 6,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -239,9 +239,7 @@ public class Cache {
     public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
         let type = self.typeTable[type]
         if let type = type {
-            let result = realm.objects(type).filter("uid = '\(uid)'")
-            if result.count == 0 { return nil }
-            else { return result[0] as? T }
+            return realm.objects(type).filter("uid = '\(uid)'").first as! T?
         }
         return nil
     }
@@ -259,46 +257,71 @@ public class Cache {
     func findCachedResult(query: String) -> SearchResult? {
         return self.queryCache[query]
     }
+    
+    var counter = 0 // HACK needs to be stored
+    private func generateUID() -> String {
+        return "0xNEW\(counter+=1)"
+    }
 
     /**
      *
      */
     public func addToCache(_ item:DataItem) -> DataItem {
-        // Update item to the cache
-        
         // Fetch item from the cache
+        var cachedItem:DataItem?
+        if let uid = item["uid"] as! String? {
+            cachedItem = self.getItemById(item.type, uid)
+        }
+        else {
+            item.uid = generateUID()
+        }
         
-        // Return item from the cache
-        
-        let cachedItem = self.createOrUpdate(item)
-        
-//        let cachedItem:DataItem? = self.idCache[item.id]
-//        if let cachedItem = cachedItem {
-//            try! cachedItem.merge(item)
-//            self.localStorage.update(item)
-//            return cachedItem
-//        }
-//        else if item.id != "" {
-//            self.idCache[item.id] = item
-//
-//        }
-
-//        if item.type != "" && self.typeCache[item.type] == nil {
-//            self.typeCache[item.type] = SearchResult()
-//        }
-
-//        self.typeCache[item.type]!.data.append(item) // TODO sort??
-        
-        cancellables?.append(item.objectWillChange.sink { (_) in
-            DispatchQueue.main.async {
-                if (item.deleted) { self.onRemove(item) } // TODO how to prevent calling this more than once
-                else if item.id == "" { self.onCreate(item) }
-                else { self.onUpdate(item) }
+        // Update properties to the cached item that are not nil
+        if let cachedItem = cachedItem {
+            let properties = cachedItem.objectSchema.properties
+            var value:[String:Any] = [:]
+            for prop in properties {
+                if (item[prop.name] != nil) {
+                    value[prop.name] = item[prop.name]
+                }
             }
-        })
+            
+            let itemType = self.typeTable[item.type]
+            if let itemType = itemType {
+                try! realm.write() {
+                    realm.create(itemType, value: value, update: .modified) // Should update cachedItem
+                }
+            }
+        }
+        // Or, if its not in the cache, add to the cache
+        else {
+            try! realm.write() {
+                realm.add(item) // , update: .modified
+            }
+            cachedItem = item
+        }
         
-//        if (item.uid == nil) {self.onCreate(item)}
+        // TODO hook updates using realm.observe()
+        let _ = cachedItem!.observe { (change) in
+            switch (change){
+            case .deleted:
+                self.onRemove(item)
+            case .change:
+                if (item["uid"] as! String).starts(with: "0xNEW") { // HACK
+                    self.onCreate(item)
+                }
+                else {
+                    // change = dict of changes
+                    self.onUpdate(item)
+                }
+            case .error(let error):
+                print(error)
+            }
+            
+            item.objectWillChange.send()
+        }
 
+        // Return item from the cache
         return cachedItem ?? item
     }
     
@@ -372,6 +395,21 @@ public class Cache {
         
     }
     
+    
+    /**
+     * Does not copy the id property
+     */
+    public func duplicate(_ item:DataItem) -> DataItem {
+        let T = self.typeTable[item.type]!
+        let copy = T.init() as! DataItem
+        let properties = item.objectSchema.properties
+        for prop in properties {
+            if prop.name == "uid" { continue }
+            copy[prop.name] = item[prop.name]
+        }
+        return copy
+    }
+    
     /**
      *
      */
@@ -417,64 +455,25 @@ public class Cache {
     var newCounter = 0
     private func onCreate(_ item:DataItem) {
         // Store in local storage
-        let _ = createOrUpdate(item)
+        try! realm.write() {
+            realm.add(item) // , update: .modified
+        }
         
         // Create a task
-        scheduler.add(job:"create", uid:item.uid ?? "", type:item.type) // HACK uid should get some kind of new counted value
+        scheduler.add(job:"create", uid:item.getString("uid"), type:item.getString("type")) // HACK uid should get some kind of new counted value
     }
     private func onRemove(_ item:DataItem) {
         if item.id == "" { return } // TODO edge case when it is being created...
         
-        // Store in local storage
-        remove(item)
+        try! realm.write() {
+            realm.delete(item)
+        }
         
         // Create a task
-        scheduler.add(job: "delete", uid: item.uid ?? "", type:item.type)
+        scheduler.add(job: "delete", uid: item.getString("uid"), type:item.getString("type"))
     }
     private func onUpdate(_ item:DataItem) {
-        // Store in local storage
-        let _ = createOrUpdate(item)
-        
         // Create a task
-        scheduler.add(job: "update", uid: item.uid ?? "", type:item.type)
-    }
-    
-    /**
-     *
-     */
-    public func createOrUpdate<T:DataItem>(_ item:T) -> T? {
-//        let persons = realm.objects(Person.self)
-
-        try! realm.write() { // TODO add this to dataitem.set()
-//            let properties = item.objectSchema.properties
-//            var value:[String:Any] = [:]
-//            for prop in properties {
-//                value[prop.name] = item[prop.name]
-//            }
-            
-            
-            
-            let type:Object.Type? = self.typeTable[item.type]
-            if let type = type {
-//                let value = ["uid": item.uid ?? "", "type": item.type]
-                realm.add(item, update: .modified)
-//                dump(value)
-//                let realmObject = realm.create(type, value: value, update: .modified) as! T
-//                print(item.uid)
-//                print(realmObject.uid)
-                return item //realmObject
-            }
-            else {
-                print("Unknown type while writing to realm: \(item.type)")
-                return nil
-            }
-        }
-    }
-    
-    /**
-     *
-     */
-    public func remove(_ item:DataItem) {
-        realm.delete(item) // TODO: Should this cast to the right type before deletion?
+        scheduler.add(job: "update", uid: item.getString("uid"), type:item.getString("type"))
     }
 }

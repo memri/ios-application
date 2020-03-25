@@ -157,12 +157,11 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
+        if query.query!.starts(with: "0xNEW") {
+            callback("nothing to do", nil)
+            return
+        }
         if query.query!.starts(with: "0x") {
-            if query.query == "0x???" {
-                callback("nothing to do", nil)
-                return
-            }
-            
             callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
