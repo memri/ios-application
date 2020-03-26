@@ -90,7 +90,9 @@ struct ListRenderer: Renderer {
                         }
 //                        .padding(.horizontal, 10)
 //                         .padding(.vertical, 7)
-                    }.onDelete{ indexSet in self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
+                    }.onDelete{ indexSet in
+                        self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
+                        self.main.objectWillChange.send()
                     }
                 }
                 .environment(\.editMode, $isEditMode)

@@ -3,8 +3,8 @@
         "uid": "0x01",
         "type": "note",
         "properties": {
-            "title": "first example note",
-            "content": "The dog cried wolf",
+            "title": "Shopping list",
+            "content": "potatoes, mayonaise",
             "starred": true
         }
     },
@@ -12,16 +12,16 @@
         "uid": "0x02",
         "type": "note",
         "properties": {
-            "title": "second example note",
-            "content": "This is again an example note"
+            "title": "To read list",
+            "content": "Age of surveillance capitalism"
         }
     },
     {
         "uid": "0x03",
         "type": "note",
         "properties": {
-            "title": "third example note",
-            "content": "This is AGAIN an example note",
+            "title": "Ideas for memri",
+            "content": "privacy by design, digital memory",
             "starred": true
         }
     },
@@ -29,16 +29,16 @@
         "uid": "0x04",
         "type": "note",
         "properties": {
-            "title": "fourth example note",
-            "content": "This is AGAINNNN an example note"
+            "title": "Love letter",
+            "content": "Roses are red, violets are blue"
         }
     },
     {
         "uid": "0x05",
         "type": "note",
         "properties": {
-            "title": "fifth example note",
-            "content": "This is AGAINNN an example note"
+            "title": "Notes to self",
+            "content": "Be in time with hour administration"
         }
     }
 ]

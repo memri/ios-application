@@ -13,8 +13,9 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
-    @State var showContextPane: Bool = false
-    
+//    @State var showContextPane: Bool = false
+    @State var showNavigation: Bool = false
+
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
@@ -24,16 +25,20 @@ struct Browser: View {
     }
     
     var body: some View {
-        return
-            ZStack {
-                VStack() {
-                    TopNavigation(isEditMode: $isEditMode, showContextPane: $showContextPane)
-                    getRenderer().fullHeight()
-                    Search()
-                }.fullHeight()
-                if self.showContextPane {
-                    animateInContextPane(showContextPane: $showContextPane)
-                }
+        ZStack {
+            VStack() {
+                TopNavigation(showNavigation: $showNavigation, isEditMode: $isEditMode)
+                getRenderer().fullHeight()
+                Search()
+            }.fullHeight()
+            if self.main.currentSession.showContextPane {
+                animateInContextPane()
+            }
+            if self.showNavigation{
+                Navigation(showNavigation: $showNavigation)
+                    .transition(.move(edge: .leading))
+                    .animation(.easeOut(duration: 0.3))
+            }
         }
     }
     
@@ -54,12 +59,11 @@ struct Browser: View {
 struct animateInContextPane: View {
 
     @EnvironmentObject var main: Main
-    @Binding var showContextPane: Bool
 
     var body: some View {
-        ContextPane(showContextPane: $showContextPane)
+        ContextPane()
             .transition(.move(edge: .trailing))
-            .animation(.easeInOut(duration: 0.3))
+            .animation(.easeOut(duration: 0.3))
     }
 }
 

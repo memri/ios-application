@@ -8,11 +8,10 @@
 
 import SwiftUI
 
-struct TopNavigation: View {
+public struct TopNavigation: View {
     @EnvironmentObject var main: Main
-    @State private var showNavigation: Bool = false
+    @Binding var showNavigation: Bool
     @Binding var isEditMode:EditMode
-    @Binding var showContextPane: Bool
 
     
     var title: String = ""
@@ -21,7 +20,7 @@ struct TopNavigation: View {
 
     var hideBack:Bool = false
     
-    var body: some View {
+    public var body: some View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
@@ -36,14 +35,12 @@ struct TopNavigation: View {
                     Image(systemName: "line.horizontal.3")
                         .foregroundColor(.gray)
                         .font(Font.system(size: 20, weight: .medium))
-                }.sheet(isPresented: self.$showNavigation) {
-                    Navigation()
                 }
                 .padding(.horizontal, 5)
 
-                if main.currentView.backButton != nil {
+                if main.currentSession.backButton != nil {
                     Button(action: backButtonAction ) {
-                        Image(systemName: main.currentView.backButton!.icon)
+                        Image(systemName: main.currentSession.backButton!.icon)
                         .foregroundColor(.gray)
                         if main.currentView.backTitle != nil{
                             Text(main.currentView.backTitle!)
@@ -72,8 +69,7 @@ struct TopNavigation: View {
                 }
                     
                 Button(action: {
-                    self.showContextPane.toggle()
-
+//                    self.showContextPane.toggle()
                 }) {
                     Image(systemName: "ellipsis")
                 }
@@ -89,7 +85,7 @@ struct TopNavigation: View {
     }
     
     func backButtonAction(){
-        main.executeAction(main.currentView.backButton!)
+        main.executeAction(main.currentSession.backButton!)
     }
     
     func editAction(){
@@ -104,9 +100,9 @@ struct TopNavigation: View {
     }
 }
 
-
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation(isEditMode: .constant(.inactive), showContextPane: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation(showNavigation: .constant(false),
+                      isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
