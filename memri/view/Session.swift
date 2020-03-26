@@ -15,7 +15,6 @@ public class Sessions: ObservableObject, Decodable {
 
     @Published var currentSessionIndex: Int = 0
     @Published var sessions: [Session] = []
-    
     var cancellables:[AnyCancellable]? = nil
     
     
@@ -101,12 +100,19 @@ public class Session: ObservableObject, Decodable, Equatable {
     
     @Published var currentViewIndex: Int = 0
     @Published var views: [SessionView] = [SessionView()]
+    @Published public var showFilterPanel: Bool = false
+    @Published public var showContextPane:Bool = false
+
     
     var cancellables: [AnyCancellable]?=nil
-    
-//    private enum CodingKeys: String, CodingKey {
-//        case sessionViews, currentSessionViewIndex
-//    }
+
+    var backButton: ActionDescription? {
+        if self.currentViewIndex > 0 {
+            return ActionDescription(icon: "chevron.left", actionName: "back")
+        }else{
+            return nil
+        }
+    }
     
     public var currentView: SessionView {
         if currentViewIndex >= 0 {
@@ -130,6 +136,8 @@ public class Session: ObservableObject, Decodable, Equatable {
             id = try decoder.decodeIfPresent("id") ?? id
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
             views = try decoder.decodeIfPresent("views") ?? views
+            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
+            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
         }
     }
     
@@ -144,7 +152,7 @@ public class Session: ObservableObject, Decodable, Equatable {
     public func postInit(){
         for sessionView in views{
             cancellables?.append(sessionView.objectWillChange.sink { (_) in
-                            self.objectWillChange.send()
+                self.objectWillChange.send()
             })
         }
     }

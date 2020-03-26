@@ -3,6 +3,7 @@
     "sessions": [
         {
             "currentViewIndex" :0,
+            "showFilterPanel": true,
             "views": [
                 {
                     "searchResult": {
@@ -57,7 +58,7 @@
                         ]
                     },
                     "name": "testname",
-                    "subtitle": "testSubtitle",
+                    "subtitle": "daily",
                     "title": "notes",
                     "rendererName": "list",
                     "selection": [],

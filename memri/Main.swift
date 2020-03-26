@@ -213,7 +213,7 @@ public class Main: ObservableObject {
 //        view = cascadeView(view)
         
         // TODO: compute in topnav
-        view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
+//        view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
         
         self.openView(view)
     }
@@ -266,9 +266,9 @@ public class Main: ObservableObject {
         case "showStarred":
             showStarred()
         case "showContextPane":
-            allNotes() // TODO @Jess
+            openContextPane() // TODO @Jess
         case "openContextView":
-            openContextView()
+            break
         case "share":
             shareNote()
         case "addToList":
@@ -408,11 +408,12 @@ public class Main: ObservableObject {
     }
     
     func toggleFilterPanel(){
-        self.currentView.showFilterPanel!.toggle()
+        self.currentSession.showFilterPanel.toggle()
         self.objectWillChange.send()
     }
 
-    func openContextView() {
+    func openContextPane() {
+        self.currentSession.showContextPane.toggle()
         print("openContextView")
     }
 

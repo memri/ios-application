@@ -92,7 +92,7 @@
                 {
                     "icon": "increase.indent",
                     "title": "Show Timeline",
-                    "actionName": "openView",
+                    "actionName": "!!!!!!!<CHANGED TO PREVENT CRASH FOR S&T>!!!!!",
                     "actionArgs": [{
                         "rendererName": "timeline",
                         "renderConfig": {

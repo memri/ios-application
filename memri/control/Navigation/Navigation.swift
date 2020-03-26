@@ -10,6 +10,10 @@ import SwiftUI
 
 struct Navigation: View {
     @EnvironmentObject var main: Main
+    @Binding var showNavigation: Bool
+
+    @State var dragOffset = CGSize.zero
+
     var navigationItems: [NavigationItem] = try! NavigationItem.fromJSON("navigationItems")
     
     var body: some View {
@@ -28,8 +32,17 @@ struct Navigation: View {
                 Color(red: 0.25, green: 0.11, blue: 0.4)
             )
         }.background(Color(red: 0.22, green: 0.15, blue: 0.35))
+         .offset(x: min(self.dragOffset.width, 0))
          .edgesIgnoringSafeArea(.vertical)
+         .gesture(DragGesture()
+            .onChanged({ value in
+                self.dragOffset = value.translation
+            })
+                .onEnded{ value in
+                    self.showNavigation.toggle()
+            })
     }
+
     
     func item(navigationItem: NavigationItem) -> AnyView{
         switch navigationItem.type{
@@ -45,6 +58,6 @@ struct Navigation: View {
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation().environmentObject(Main(name: "", key: "").mockBoot())
+        Navigation(showNavigation: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
