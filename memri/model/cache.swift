@@ -10,8 +10,8 @@ import Foundation
 import Combine
 import RealmSwift
 
-let config = Realm.Configuration(
-    fileURL: URL(string: "file:///Users/rubendaniels/Development/realm/memri.realm"),
+var config = Realm.Configuration(
+//    fileURL: URL(string: "file:///Users/rubendaniels/Development/realm/memri.realm"),
     
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
@@ -111,7 +111,21 @@ public class Task: Object, Codable {
 //    }
 }
 
+func getRealmPath() -> String{
+    var path = ""
+    let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
+    var realmDir = homeDir + "/realm.memri"
+    do {
+        try FileManager.default.createDirectory(atPath: realmDir, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+        print(error)
+    }
+    return realmDir
+}
+
 public class Cache {
+    
+    
     var podAPI: PodAPI
     
     var cancellables:[AnyCancellable]? = nil
@@ -131,7 +145,12 @@ public class Cache {
     
     public init(_ podAPI: PodAPI){
         
+                
         // Tell Realm to use this new configuration object for the default Realm
+        #if targetEnvironment(simulator)
+            config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
+        #endif
+        
         Realm.Configuration.defaultConfiguration = config
 
         realm = try! Realm()

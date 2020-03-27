@@ -10,6 +10,8 @@ import XCTest
 @testable import memri
 import RealmSwift
 
+
+
 let config = Realm.Configuration(
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
@@ -39,13 +41,17 @@ class CacheTest: XCTestCase {
 
     func testRealmCreate() {
         // Tell Realm to use this new configuration object for the default Realm
-        Realm.Configuration.defaultConfiguration = config
+//        Realm.Configuration.defaultConfiguration = config
+
+        print(config.fileURL!)
+        
+    
 
         let realm = try! Realm()
         
-        let note:DataItem = Note(value: ["id": "0x99", "type": "note", "contents": "test"])
-        let localStorage = LocalStorage(realm)
-        localStorage.create(note)
+//        let note:DataItem = Note(value: ["id": "0x99", "type": "note", "contents": "test"])
+//        let localStorage = LocalStorage(realm)
+//        localStorage.create(note)
     }
 
     func testPerformanceExample() {
