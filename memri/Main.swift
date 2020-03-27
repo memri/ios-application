@@ -57,7 +57,7 @@ public class Main: ObservableObject {
         podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
             if error != nil { return }
             
-            sessions = try! Sessions.fromJSONString(item.properties["json"]?.value as! String)
+            sessions = try! Sessions.fromJSONString(item.getString("json"))
             
             // Hook current session
             var isCalled:Bool = false
@@ -77,6 +77,7 @@ public class Main: ObservableObject {
     
     public func mockBoot() -> Main {
         self.sessions = try! Sessions.fromJSONFile("empty_sessions")
+        print("in mockBoot sessions.title = \(self.sessions.currentView.title ?? "")")
         self.cancellable = self.sessions.objectWillChange.sink {
             DispatchQueue.main.async {
                 self.setCurrentView()
@@ -195,14 +196,14 @@ public class Main: ObservableObject {
         
         //TODO: Solve by creating ResultSet
         var existingSR:SearchResult?
-        if item.uid != nil {
-            existingSR = cache.findCachedResult(query: item.uid!)
+        if item.getString("uid") != "" {
+            existingSR = cache.findCachedResult(query: item.getString("uid"))
         }
         if let existingSR = existingSR {
             searchResult = existingSR
         }
         else {
-            var xxid = item.uid ?? ""
+            var xxid = item.getString("uid")
             if xxid == "" { xxid = "0x???" } // Big Hack - need to find better way to understand the type of query | See also hack in api.swift
             searchResult = SearchResult(QueryOptions(query: xxid), [item])
             searchResult.loading = 0 // Force to load the first time
@@ -210,7 +211,6 @@ public class Main: ObservableObject {
         }
         
         view.searchResult = searchResult
-//        view = cascadeView(view)
         
         // TODO: compute in topnav
 //        view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
@@ -246,9 +246,7 @@ public class Main: ObservableObject {
         case "back":
             back()
         case "add":
-            let param0 = params[0].value as! DataItem
-            let item = DataItem()
-            try! item.merge(param0)
+            let item = Note(value: params[0].value)
             add(item)
         case "openView":
             if let item = item {
@@ -369,7 +367,7 @@ public class Main: ObservableObject {
             lastStarredView = nil
             self.objectWillChange.send()
         }
-        else{
+        else {
             // Otherwise create a new searchResult, mark it as starred (query??)
             lastStarredView = self.currentView
             let view = SessionView()
@@ -379,12 +377,10 @@ public class Main: ObservableObject {
             // filter the results based on the starred property
             var results:[DataItem] = []
             let data = lastStarredView!.searchResult.data
-            // TODO: change to filter
+            // TODO: Change to filter
             for i in 0...data.count - 1 {
-                if (data[i].properties["starred"] != nil) {
-                    let isStarred = data[i].properties["starred"]!.value as! Bool
-                    if isStarred { results.append(data[i]) }
-                }
+                let isStarred = data[i]["starred"] as? Bool ?? false
+                if isStarred { results.append(data[i]) }
             }
             
             // Add searchResult to view
@@ -442,7 +438,3 @@ public class Main: ObservableObject {
     }
 
 }
-
-/**
- *
- */

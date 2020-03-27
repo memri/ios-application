@@ -2,43 +2,33 @@
     {
         "uid": "0x01",
         "type": "note",
-        "properties": {
-            "title": "Shopping list",
-            "content": "potatoes, mayonaise",
-            "starred": true
-        }
+        "title": "Shopping list",
+        "content": "potatoes, mayonaise",
+        "starred": true
     },
     {
         "uid": "0x02",
         "type": "note",
-        "properties": {
-            "title": "To read list",
-            "content": "Age of surveillance capitalism"
-        }
+        "title": "To read list",
+        "content": "Age of surveillance capitalism"
     },
     {
         "uid": "0x03",
         "type": "note",
-        "properties": {
-            "title": "Ideas for memri",
-            "content": "privacy by design, digital memory",
-            "starred": true
-        }
+        "title": "Ideas for memri",
+        "content": "privacy by design, digital memory",
+        "starred": true
     },
     {
         "uid": "0x04",
         "type": "note",
-        "properties": {
-            "title": "Love letter",
-            "content": "Roses are red, violets are blue"
-        }
+        "title": "Love letter",
+        "content": "Roses are red, violets are blue"
     },
     {
         "uid": "0x05",
         "type": "note",
-        "properties": {
-            "title": "Notes to self",
-            "content": "Be in time with hour administration"
-        }
+        "title": "Notes to self",
+        "content": "Be in time with hour administration"
     }
 ]

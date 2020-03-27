@@ -1,8 +1,6 @@
 [{
     "uid": "0x02",
     "type": "note",
-    "properties": {
-        "title": "To read list",
-        "content": "Age of surveillance capitalism"
-    }
+    "title": "To read list",
+    "content": "Age of surveillance capitalism"
 }]

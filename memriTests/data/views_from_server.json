@@ -48,7 +48,7 @@
                 "actionName": "add",
                 "actionArgs": [{
                     "type": "note",
-                    "properties": {"title": "Untitled Note"}
+                    "title": "Untitled Note"
                 }]
             },
             "editActionButton": {
@@ -65,7 +65,7 @@
                     "actionArgs": []
                 },
                 {
-                    "icon": "chevron.down",
+                    "icon": "rhombus.fill",
                     "title": "Show Filter Panel",
                     "actionName": "toggleFilterPanel",
                     "actionArgs": []

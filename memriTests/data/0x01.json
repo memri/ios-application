@@ -1,9 +1,7 @@
 [{
     "uid": "0x01",
     "type": "note",
-    "properties": {
-        "title": "Shopping list",
-        "content": "potatoes, mayonaise",
-        "starred": true
-    }
+    "title": "Shopping list",
+    "content": "potatoes, mayonaise",
+    "starred": true
 }]

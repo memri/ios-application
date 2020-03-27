@@ -1,9 +1,7 @@
 [{
     "uid": "0x03",
     "type": "note",
-    "properties": {
-        "title": "Ideas for memri",
-        "content": "privacy by design, digital memory",
-        "starred": true
-    }
+    "title": "Ideas for memri",
+    "content": "privacy by design, digital memory",
+    "starred": true
 }]

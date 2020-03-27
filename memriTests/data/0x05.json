@@ -1,8 +1,6 @@
 [{
     "uid": "0x05",
     "type": "note",
-    "properties": {
-        "title": "Notes to self",
-        "content": "Be in time with hour administration"
-    }
+    "title": "Notes to self",
+    "content": "Be in time with hour administration"
 }]

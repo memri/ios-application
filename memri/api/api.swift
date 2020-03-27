@@ -75,6 +75,10 @@ public class SettingsData {
     }
 }
 
+class SessionResult:DataItem {
+    @objc var json:String? = nil
+}
+
 
 /*
  * Retrieves data from the pod, or executes actions on the pod.
@@ -99,12 +103,16 @@ public class PodAPI {
     public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
         if id == "sessions" {
             let jsonString = try! stringFromFile("default_sessions", "json")
-            callback(nil, DataItem(id: "sessions", type: "sessions", properties: ["json": AnyCodable(jsonString)]))
+            callback(nil, SessionResult(value: ["type": "sessions", "json": jsonString]))
             return
         }
         
-        callback(nil, DataItem(id: id, type: "note"))
+//        let note = Note()
+//        note.id = id
+        
+        callback(nil, Note(value: ["id": id]))
     }
+    
     /**
      *
      */
@@ -150,12 +158,11 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
+        if query.query!.starts(with: "0xNEW") {
+            callback("nothing to do", nil)
+            return
+        }
         if query.query!.starts(with: "0x") {
-            if query.query == "0x???" {
-                callback("nothing to do", nil)
-                return
-            }
-            
             callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
