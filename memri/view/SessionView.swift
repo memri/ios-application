@@ -71,12 +71,10 @@ public class SessionView: ObservableObject, Decodable{
     var renderConfigs: [String: RenderConfig]? = nil
     var editButtons: [ActionDescription]? = nil
     @Published var filterButtons: [ActionDescription]? = nil
-    @Published public var showFilterPanel: Bool? = nil
     var actionItems: [ActionDescription]? = nil
     var navigateItems: [ActionDescription]? = nil
     var contextButtons: [ActionDescription]? = nil
     var actionButton: ActionDescription? = nil
-    var backButton: ActionDescription? = nil
     var backTitle: String?=nil
     var editActionButton: ActionDescription?=nil
     var icon: String? = nil
@@ -101,12 +99,11 @@ public class SessionView: ObservableObject, Decodable{
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
             self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
-            self.showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? self.showFilterPanel
+
             self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
             self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
             self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
-            self.backButton = try decoder.decodeIfPresent("backButton") ?? self.backButton
             self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
             self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
             self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
@@ -142,8 +139,6 @@ public class SessionView: ObservableObject, Decodable{
         self.editMode = view.editMode ?? self.editMode ?? false
         self.browsingMode = view.browsingMode ?? self.browsingMode ?? "default"
         self.actionButton = view.actionButton ?? self.actionButton ?? nil
-        self.backButton = view.backButton ?? self.backButton ?? nil
-        self.showFilterPanel = view.showFilterPanel ?? self.showFilterPanel ?? false
         self.backTitle = view.backTitle ?? self.backTitle ?? ""
         self.editActionButton = view.editActionButton ?? self.editActionButton ?? nil
         self.isEditMode = view.isEditMode ?? self.isEditMode
@@ -161,11 +156,10 @@ public class SessionView: ObservableObject, Decodable{
         let sv = SessionView()
         sv.searchResult = searchResult
         sv.rendererName = rendererName
-        sv.backButton = ActionDescription(icon: "chevron.left",
-                                          title: "Back",
-                                          actionName: "back",
-                                          actionArgs: [])
-        print("TITLE \(searchResult.data[0].getString("title"))")
+//        sv.backButton = ActionDescription(icon: "chevron.left",
+//                                          title: "Back",
+//                                          actionName: "back",
+//                                          actionArgs: [])
         sv.title = searchResult.data[0].getString("title")
         sv.backTitle = currentView.title
         return sv

@@ -95,6 +95,7 @@ struct ListRenderer: Renderer {
                             item.delete()
                         }
                         self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
+                        self.main.objectWillChange.send()
                     }
                 }
                 .environment(\.editMode, $isEditMode)

@@ -13,7 +13,7 @@ struct ContextPaneForground: View {
     @EnvironmentObject var main: Main
 
     var body: some View {
-            VStack {
+        VStack(alignment: .leading) {
                 VStack {
                     Text(main.currentView.title ?? "No Title")
                         .font(.largeTitle)
@@ -28,14 +28,16 @@ struct ContextPaneForground: View {
                     Text(NSLocalizedString("actionLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
+                        .font(.headline)
                     Spacer()
-                }
-                List {
+                }.padding(.vertical, 20)
+                VStack(alignment: .leading, spacing: 20){
                     ForEach (self.main.currentView.actionItems ?? []) { actionItem in
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
                             Text(actionItem.title)
+                                .foregroundColor(.black)
                         }
                     }
                 }
@@ -45,26 +47,31 @@ struct ContextPaneForground: View {
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
-                }
-                List {
+                }.padding(.vertical, 20)
+//                List {
+                VStack(alignment: .leading, spacing: 20){
+
                     ForEach (self.main.currentView.navigateItems ?? []) { navigateItem in
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {
                             Text(navigateItem.title)
+                                .foregroundColor(.black)
                         }
                     }
                 }
+//                }
                 Divider()
                 HStack {
                     Text(NSLocalizedString("labelsLabel", comment: ""))
                         .fontWeight(.bold)
                         .foregroundColor(Color.gray)
                     Spacer()
-                }
+                }.padding(.vertical, 20)
                 Spacer()
             }
-            .padding()
+            .padding(.vertical, 60)
+            .padding(.leading, 16)
             .background(Color.white)
     }
 }
