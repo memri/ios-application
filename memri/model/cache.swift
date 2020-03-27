@@ -112,9 +112,8 @@ public class Task: Object, Codable {
 }
 
 func getRealmPath() -> String{
-    var path = ""
     let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
-    var realmDir = homeDir + "/realm.memri"
+    let realmDir = homeDir + "/realm.memri"
     do {
         try FileManager.default.createDirectory(atPath: realmDir, withIntermediateDirectories: true, attributes: nil)
     } catch {
