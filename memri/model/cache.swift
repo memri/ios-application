@@ -15,7 +15,7 @@ var config = Realm.Configuration(
     
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
-    schemaVersion: 6,
+    schemaVersion: 8,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -102,9 +102,9 @@ public class Scheduler {
 
 // Represents a task such as syncing with remote
 public class Task: Object, Codable {
-    var job:String
-    var type:String
-    var uid:String
+    @objc dynamic var job:String
+    @objc dynamic var type:String
+    @objc dynamic var uid:String
 //
 //    public static func == (lt: Task, rt: Task) -> Bool {
 //        return lt.job == rt.job && lt.uid == rt.uid
@@ -256,7 +256,7 @@ public class Cache {
     public func addToCache(_ item:DataItem) -> DataItem {
         // Fetch item from the cache
         var cachedItem:DataItem?
-        if let uid = item["uid"] as! String? {
+        if let uid = item.uid {
             cachedItem = self.getItemById(item.type, uid)
         }
         else {
@@ -294,7 +294,7 @@ public class Cache {
             case .deleted:
                 self.onRemove(item)
             case .change:
-                if (item["uid"] as! String).starts(with: "0xNEW") { // HACK
+                if item.getString("uid").starts(with: "0xNEW") { // HACK
                     self.onCreate(item)
                 }
                 else {
