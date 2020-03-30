@@ -113,6 +113,6 @@ struct ListRenderer: Renderer {
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").boot())
+        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

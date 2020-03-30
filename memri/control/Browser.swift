@@ -68,6 +68,6 @@ struct animateInContextPane: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(Main(name: "", key: "").boot())
+        Browser().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

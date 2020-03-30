@@ -36,6 +36,6 @@ struct RichTextRenderer: Renderer {
 
 struct RichTextRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextRenderer().environmentObject(Main(name: "", key: "").boot())
+        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

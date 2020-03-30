@@ -31,6 +31,6 @@ struct Application: View {
 
 struct Application_Previews: PreviewProvider {
     static var previews: some View {
-        Application().environmentObject(Main(name: "", key: "").boot())
+        Application().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

@@ -58,6 +58,6 @@ struct Navigation: View {
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation(showNavigation: .constant(false)).environmentObject(Main(name: "", key: "").boot())
+        Navigation(showNavigation: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

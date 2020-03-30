@@ -103,6 +103,6 @@ public struct TopNavigation: View {
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
         TopNavigation(showNavigation: .constant(false),
-                      isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").boot())
+                      isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

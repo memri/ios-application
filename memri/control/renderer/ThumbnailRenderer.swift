@@ -61,6 +61,6 @@ struct ThumbnailRenderer: View {
 
 struct ThumbnailRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRenderer().environmentObject(Main(name: "", key: "").boot())
+        ThumbnailRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

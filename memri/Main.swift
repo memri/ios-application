@@ -39,7 +39,7 @@ public class Main: ObservableObject {
         cache = Cache(podApi)
     }
     
-    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void = {_,_ in }) -> Main {
+    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) -> Main {
         // Load settings (from cache and/or api)
         
         // Load NavigationCache (from cache and/or api)
@@ -77,16 +77,17 @@ public class Main: ObservableObject {
     }
     
     public func mockBoot() -> Main {
-        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-        print("in mockBoot sessions.title = \(self.sessions.currentView.title ?? "")")
-        self.cancellable = self.sessions.objectWillChange.sink {
-            DispatchQueue.main.async {
-                self.setCurrentView()
-            }
-        }
-        self.setCurrentView()
-        
-        return self
+        return self.boot({_,_ in })
+//        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
+//        print("in mockBoot sessions.title = \(self.sessions.currentView.title ?? "")")
+//        self.cancellable = self.sessions.objectWillChange.sink {
+//            DispatchQueue.main.async {
+//                self.setCurrentView()
+//            }
+//        }
+//        self.setCurrentView()
+//
+//        return self
     }
     
     public func setCurrentView(){

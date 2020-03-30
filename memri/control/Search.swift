@@ -67,6 +67,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(Main(name: "", key: "").boot())
+        Search().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
