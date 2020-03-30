@@ -108,7 +108,7 @@ public class Session: ObservableObject, Decodable, Equatable {
 
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
-            return ActionDescription(icon: "chevron.left", actionName: "back")
+            return ActionDescription(icon: "chevron.left", actionName: .back)
         }else{
             return nil
         }
