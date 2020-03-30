@@ -78,6 +78,6 @@ struct ContextPaneForground: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPaneForground().environmentObject(Main(name: "", key: "").mockBoot())
+        ContextPaneForground().environmentObject(Main(name: "", key: "").boot())
     }
 }

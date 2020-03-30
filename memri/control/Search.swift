@@ -47,15 +47,17 @@ struct Search: View {
                     .onReceive(Just(searchText)) { (newValue: String) in
                         self.main.search(self.searchText)
                     }
-                ForEach(self.main.currentView.filterButtons!){ filterButton in
-                    
-                    // TODO: buttonview
-                    Button(action: {self.main.executeAction(filterButton)}) {
-                        Image(systemName: filterButton.icon)
-                    }.padding(.horizontal , 5)
-                     .font(Font.system(size: 20, weight: .medium))
-                        .foregroundColor(Color(filterButton.color))
-                    
+                if self.main.currentView.filterButtons != nil{
+                    ForEach(self.main.currentView.filterButtons!){ filterButton in
+                        
+                        // TODO: buttonview
+                        Button(action: {self.main.executeAction(filterButton)}) {
+                            Image(systemName: filterButton.icon)
+                        }.padding(.horizontal , 5)
+                         .font(Font.system(size: 20, weight: .medium))
+                            .foregroundColor(Color(filterButton.color))
+                        
+                    }
                 }
             }.padding(.horizontal , 15)
             FilterPanel()
@@ -65,6 +67,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(Main(name: "", key: "").mockBoot())
+        Search().environmentObject(Main(name: "", key: "").boot())
     }
 }

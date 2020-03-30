@@ -13,7 +13,6 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
-//    @State var showContextPane: Bool = false
     @State var showNavigation: Bool = false
 
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
@@ -69,6 +68,6 @@ struct animateInContextPane: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(Main(name: "", key: "").mockBoot())
+        Browser().environmentObject(Main(name: "", key: "").boot())
     }
 }

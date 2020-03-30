@@ -39,7 +39,7 @@ public class Main: ObservableObject {
         cache = Cache(podApi)
     }
     
-    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) {
+    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void = {_,_ in }) -> Main {
         // Load settings (from cache and/or api)
         
         // Load NavigationCache (from cache and/or api)
@@ -73,6 +73,7 @@ public class Main: ObservableObject {
         }
         
         callback(nil, true)
+        return self
     }
     
     public func mockBoot() -> Main {
