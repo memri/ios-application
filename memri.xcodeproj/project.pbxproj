@@ -29,6 +29,10 @@
 		5D3D961F24164B240004040E /* CodeExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D961E24164B240004040E /* CodeExtended.swift */; };
 		5D3D9621241675100004040E /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D9620241675100004040E /* util.swift */; };
 		5D3D962424168C810004040E /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
+		5D40910E242E166F00911641 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530C24268F390017393F /* Realm.framework */; };
+		5D40910F242E166F00911641 /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530C24268F390017393F /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5D409111242E168E00911641 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530D24268F390017393F /* RealmSwift.framework */; };
+		5D409112242E168E00911641 /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530D24268F390017393F /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D414AD7242B875F00A3DDFA /* FilterPanel.swift */; };
 		5D41618B23FFE2730017EC4A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D41618A23FFE2730017EC4A /* TestView.swift */; };
 		5D493FDE23FC15FF0034692B /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D493FDD23FC15FF0034692B /* RichTextEditor.swift */; };
@@ -75,10 +79,6 @@
 		5DF96DCE2417AA2B0051EA45 /* ListRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCD2417AA2B0051EA45 /* ListRenderer.swift */; };
 		5DF96DD02417AABB0051EA45 /* TextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */; };
 		5DFB0CBF24179FA6002FBDE7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB0CBE24179FA6002FBDE7 /* Session.swift */; };
-		8624530E24268F390017393F /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530C24268F390017393F /* Realm.framework */; };
-		8624530F24268F390017393F /* Realm.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530C24268F390017393F /* Realm.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8624531024268F390017393F /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530D24268F390017393F /* RealmSwift.framework */; };
-		8624531124268F390017393F /* RealmSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8624530D24268F390017393F /* RealmSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8656461424222C2000D071B4 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8656461324222C2000D071B4 /* Application.swift */; };
 		865646162422B68A00D071B4 /* default_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 865646152422B68A00D071B4 /* default_sessions.json */; };
 		865646182422B6A700D071B4 /* notes_from_server.json in Resources */ = {isa = PBXBuildFile; fileRef = 865646172422B6A700D071B4 /* notes_from_server.json */; };
@@ -124,14 +124,14 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		8624531224268F390017393F /* Embed Frameworks */ = {
+		5D409110242E166F00911641 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8624531124268F390017393F /* RealmSwift.framework in Embed Frameworks */,
-				8624530F24268F390017393F /* Realm.framework in Embed Frameworks */,
+				5D409112242E168E00911641 /* RealmSwift.framework in Embed Frameworks */,
+				5D40910F242E166F00911641 /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -228,9 +228,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8624530E24268F390017393F /* Realm.framework in Frameworks */,
+				5D40910E242E166F00911641 /* Realm.framework in Frameworks */,
 				5DA7BAFB241A72640087B81D /* QGrid in Frameworks */,
-				8624531024268F390017393F /* RealmSwift.framework in Frameworks */,
+				5D409111242E168E00911641 /* RealmSwift.framework in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -547,8 +547,7 @@
 				5D599BB323F2B77500F218A0 /* Sources */,
 				5D599BB423F2B77500F218A0 /* Frameworks */,
 				5D599BB523F2B77500F218A0 /* Resources */,
-				8624530B24268EB10017393F /* ShellScript */,
-				8624531224268F390017393F /* Embed Frameworks */,
+				5D409110242E166F00911641 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -713,25 +712,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		8624530B24268EB10017393F /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		5D599BB323F2B77500F218A0 /* Sources */ = {
@@ -1020,6 +1000,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/memri/Resources";
 				INFOPLIST_FILE = memriTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1027,6 +1008,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memriTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -1041,6 +1023,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/memri/Resources";
 				INFOPLIST_FILE = memriTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1048,6 +1031,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				NEW_SETTING = "";
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memriTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
