@@ -47,8 +47,11 @@ public struct TopNavigation: View {
                                 .font(.subheadline)
                                 .foregroundColor(.black)
                         }
-                    }
+                    }.padding(.horizontal, 5)
+
                 }
+
+                
                 Spacer()
                 if self.main.currentView.editActionButton != nil {
                     Button(action: editAction) {
@@ -60,7 +63,7 @@ public struct TopNavigation: View {
 
 
                 if main.currentView.actionButton != nil {
-                    Button(action: actionButtonAction) {
+                    Button(action:{self.main.executeAction(self.main.currentView.actionButton!)}) {
                         Image(systemName:
                             main.currentView.actionButton!.icon)
                     }
@@ -78,10 +81,6 @@ public struct TopNavigation: View {
 
             }.padding(.all, 30)
         }
-    }
-    
-    func actionButtonAction(){
-        main.executeAction(main.currentView.actionButton!)
     }
     
     func backButtonAction(){
