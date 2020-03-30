@@ -20,8 +20,9 @@
 		5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6A2408086800A0583B /* Session_v1.swift */; };
 		5D1A3E6D24080BD800A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
 		5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
-		5D228B062432385300464506 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* Action.swift */; };
 		5D228B042432275600464506 /* ActionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B032432275600464506 /* ActionDescription.swift */; };
+		5D228B062432385300464506 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* Action.swift */; };
+		5D228B082432416F00464506 /* ActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B072432416F00464506 /* ActionTest.swift */; };
 		5D2934F023FEA1CD0073E25F /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2934EF23FEA1CD0073E25F /* DataStore.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
@@ -155,8 +156,9 @@
 		5D1A3E68240807C100A0583B /* SessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTest.swift; sourceTree = "<group>"; };
 		5D1A3E6A2408086800A0583B /* Session_v1.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session_v1.swift; sourceTree = "<group>"; };
 		5D1A3E6C2408099900A0583B /* empty_session.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = empty_session.json; sourceTree = "<group>"; };
-		5D228B052432385300464506 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		5D228B032432275600464506 /* ActionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDescription.swift; sourceTree = "<group>"; };
+		5D228B052432385300464506 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
 		5D2934EF23FEA1CD0073E25F /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
 		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 			isa = PBXGroup;
 			children = (
 				5D78D06D242512FB00F7BD3B /* NavigationTest.swift */,
+				5D228B072432416F00464506 /* ActionTest.swift */,
 			);
 			path = control;
 			sourceTree = "<group>";
@@ -789,6 +792,7 @@
 				5D1A3E69240807C100A0583B /* SessionTest.swift in Sources */,
 				5D0A28B9240678EE00398B17 /* ModelTest.swift in Sources */,
 				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,
+				5D228B082432416F00464506 /* ActionTest.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,

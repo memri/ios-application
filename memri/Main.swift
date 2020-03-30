@@ -20,7 +20,6 @@ public class Main: ObservableObject {
     @Published public var browserEditMode:Bool = false
     @Published public var navigationEditMode:Bool = false
     @Published public var showOverlay:String? = nil
-    @Published public var showNavigation:Bool? = nil
 
 //    public let settings: Settings
     @Published public var sessions:Sessions = Sessions()
@@ -267,6 +266,8 @@ public class Main: ObservableObject {
             showStarred()
         case .showContextPane:
             openContextPane() // TODO @Jess
+        case .showNavigation:
+            showNavigation()
         case .openContextView:
             break
         case .share:
@@ -341,6 +342,11 @@ public class Main: ObservableObject {
             session.currentViewIndex -= 1
             session.objectWillChange.send()
         }
+    }
+    
+    func showNavigation(){
+        self.currentSession.showNavigation = true
+        self.objectWillChange.send()
     }
     
     func changeRenderer(rendererName: String){

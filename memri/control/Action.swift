@@ -9,39 +9,55 @@
 import SwiftUI
 
 struct Action: View {
-    
-    @EnvironmentObject var main: Main
+
     var action: ActionDescription?
-    
-    // type (button)
-    // foregroundColor
-    // text optional
-    // actionName
-    //
-    
+    @EnvironmentObject var main: Main
+
     var body: some View {
         VStack{
             if action != nil {
-                Button(action: {self.main.executeAction(self.action!)} ) {
-                    Image(systemName: main.currentSession.backButton!.icon)
-                    .foregroundColor(.gray)
-                    if main.currentView.backTitle != nil{
-                        Text(main.currentView.backTitle!)
-                            .font(.subheadline)
-                            .foregroundColor(.black)
-                    }
-                }.padding(.horizontal, 5)
-            } else{
+                getAction()
+            }
+            else {
                 EmptyView()
             }
-            
         }
     }
-        
+    func getAction() -> AnyView{
+        switch self.action!.actionType{
+        case .button:
+            return AnyView(ActionButton(action: self.action!))
+        default:
+            return AnyView(ActionButton(action: self.action!))
+        }
+    }
+
+
 }
 
 struct Action_Previews: PreviewProvider {
     static var previews: some View {
-        Action().environmentObject(Main(name: "", key: "").mockBoot())
+        Action(action: ActionDescription(icon: "chevron.left", title: "back", actionType: .button))
+            .environmentObject(Main(name: "", key: "").mockBoot())
+    }
+}
+
+struct ActionButton: View {
+    var action: ActionDescription
+    @EnvironmentObject var main: Main
+
+    
+    var body: some View {
+        Button(action: {self.main.executeAction(self.action)} ) {
+            if action.icon != nil {
+                Image(systemName: action.icon)
+                    .foregroundColor(Color(action.color))
+            }
+            if action.title != nil && action.showTitle {
+                Text(action.title!)
+                 .font(.subheadline)
+                 .foregroundColor(.black)
+             }
+        }
     }
 }

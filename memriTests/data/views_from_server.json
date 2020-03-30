@@ -46,6 +46,7 @@
                 "icon": "plus",
                 "title": "Add Note",
                 "actionName": "add",
+                "color": "green",
                 "actionArgs": [{
                     "type": "note",
                     "title": "Untitled Note"
