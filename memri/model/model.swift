@@ -15,8 +15,9 @@ extension PropertyReflectable {
 }
 
 class Note:DataItem {
-    @objc var title:String? = nil
-    @objc var content:String? = nil
+    @objc dynamic var title:String? = nil
+    @objc dynamic var content:String? = nil
+    override var type:String { "note" }
     
     let writtenBy = List<DataItem>()
     let sharedWith = List<DataItem>()
@@ -24,15 +25,10 @@ class Note:DataItem {
     
     required init () {
         super.init()
-        
-        type = "note"
     }
     
     public required init(from decoder: Decoder) throws {
         super.init()
-//        try! super.init(from: decoder)
-        
-        type = "note"
         
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
@@ -44,8 +40,9 @@ class Note:DataItem {
 }
 
 class LogItem:DataItem {
-    @objc var date:Int = 0
-    @objc var content:String? = nil
+    @objc dynamic var date:Int = 0
+    @objc dynamic var content:String? = nil
+    override var type:String { "logitem" }
     
     let appliesTo = List<DataItem>()
 }
@@ -53,11 +50,11 @@ class LogItem:DataItem {
 public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
     public var id:String = UUID().uuidString
     
-    @objc var uid:String? = nil // 0x" + UUID().uuidString
-    @objc var type:String = "unknown"
+    @objc dynamic var uid:String? = nil // 0x" + UUID().uuidString
+    var type:String { "unknown" }
     
-    @objc var deleted:Bool = false
-    @objc var starred:Bool = false
+    @objc dynamic var deleted:Bool = false
+    @objc dynamic var starred:Bool = false
     let Log = List<LogItem>()
         
     enum DataItemError: Error {
@@ -98,10 +95,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
      * All methods and properties must throw when deleted = true;
      */
     public func delete() -> Bool {
-        if (self["deleted"] as! Bool) { return false; }
+        if (self.deleted as! Bool) { return false; }
         
         try! self.realm!.write() {
-            self["deleted"] = true;
+            self.deleted = true;
             self.realm!.delete(self)
         }
         
