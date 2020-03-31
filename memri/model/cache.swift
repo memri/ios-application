@@ -15,7 +15,7 @@ var config = Realm.Configuration(
     
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
-    schemaVersion: 12,
+    schemaVersion: 14,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -47,13 +47,13 @@ public class Scheduler {
     /**
      *
      */
-    public func add(job:String, uid:String, type:String) {
+    public func add(_ item:DataItem) {
         // Don't add the same update to the queue more than once
-        let result = queue.filter("job = '\(job)' AND uid = \(uid)")
+        let result = queue.filter("item.uid = '\(item.getString("uid"))'")
         if result.count > 0 { return }
         
         // Add a task (should be auto added to the realm result set)
-        realm.create(Task.self, value: ["job":job, "uid":uid, "type":type])
+        realm.create(Task.self, value: ["item":item])
         
         // Continue processing the queue
         processQueue()
@@ -62,13 +62,14 @@ public class Scheduler {
     /**
      *
      */
-    public func remove(job:String, uid:String) {
+    public func remove(_ item:DataItem) {
         // Don't add the same update to the queue more than once
-        let result = queue.filter("job = '\(job)' AND uid = \(uid)")
-        if result.count == 0 { return }
-            
-        realm.delete(result[0])
+        let result = queue.filter("item.uid = '\(item.getString("uid"))'")
+        if let task = result.first {
+            realm.delete(task)
+        }
     }
+    
     public func remove(_ task:Task) {
         realm.delete(task)
     }
@@ -92,7 +93,7 @@ public class Scheduler {
         try? cache!.execute(task) { (error, success) -> Void in
             remove(task)
             if !success {  // TODO keep a retry counter to not have stuck jobs ??
-                add(job:task.job, uid:task.uid, type:task.type)
+                add(task.item!)
             }
             busy = false
             processQueue()
@@ -102,13 +103,7 @@ public class Scheduler {
 
 // Represents a task such as syncing with remote
 public class Task: Object, Codable {
-    @objc dynamic var job:String
-    @objc dynamic var type:String
-    @objc dynamic var uid:String
-//
-//    public static func == (lt: Task, rt: Task) -> Bool {
-//        return lt.job == rt.job && lt.uid == rt.uid
-//    }
+    @objc dynamic var item:DataItem?
 }
 
 func getRealmPath() -> String{
@@ -123,8 +118,6 @@ func getRealmPath() -> String{
 }
 
 public class Cache {
-    
-    
     var podAPI: PodAPI
     
     var cancellables:[AnyCancellable]? = nil
@@ -411,10 +404,9 @@ public class Cache {
      *
      */
     public func execute(_ task:Task, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
-        switch task.job {
-        case "create":
-            let item = self.getItemById(task.type, task.uid)
-            if let item = item {
+        if let item = task.item {
+            switch item.loadState.actionNeeded {
+            case .create:
                 podAPI.create(item) { (error, id) -> Void in
                     if error != nil { return callback(error, false) }
                     
@@ -423,18 +415,15 @@ public class Cache {
                     
                     callback(nil, true)
                 }
+            case .delete:
+                podAPI.remove(item.getString("uid")) { (error, success) -> Void in
+                    callback(error, success)
+                }
+            case .update:
+                podAPI.update(item, callback)
+            default:
+                throw CacheError.UnknownTaskJob(job: item.loadState.actionNeeded.rawValue)
             }
-        case "delete":
-            podAPI.remove(task.uid) { (error, success) -> Void in
-                callback(error, success)
-            }
-        case "update-property":
-            fallthrough
-        case "update":
-            let item = self.getItemById(task.type, task.uid)
-            if let item = item { podAPI.update(item, callback) }
-        default:
-            throw CacheError.UnknownTaskJob(job: task.job)
         }
     }
     
@@ -446,7 +435,8 @@ public class Cache {
         }
         
         // Create a task
-        scheduler.add(job:"create", uid:item.getString("uid"), type:item.getString("type")) // HACK uid should get some kind of new counted value
+        item.loadState.actionNeeded = .create
+        scheduler.add(item)
     }
     private func onRemove(_ item:DataItem) {
         if item.id == "" { return } // TODO edge case when it is being created...
@@ -456,10 +446,12 @@ public class Cache {
         }
         
         // Create a task
-        scheduler.add(job: "delete", uid: item.getString("uid"), type:item.getString("type"))
+        item.loadState.actionNeeded = .delete
+        scheduler.add(item)
     }
     private func onUpdate(_ item:DataItem) {
-        // Create a task
-        scheduler.add(job: "update", uid: item.getString("uid"), type:item.getString("type"))
+        // Update a task
+        item.loadState.actionNeeded = .update
+        scheduler.add(item)
     }
 }

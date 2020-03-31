@@ -4,7 +4,10 @@
         "type": "note",
         "title": "Shopping list",
         "content": "potatoes, mayonaise",
-        "starred": true
+        "starred": true,
+        "loadstate": {
+            "isPartiallyLoaded": true
+        }
     },
     {
         "uid": "0x02",
