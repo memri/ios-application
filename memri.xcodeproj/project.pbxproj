@@ -49,6 +49,8 @@
 		5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78D06D242512FB00F7BD3B /* NavigationTest.swift */; };
 		5D78D072242531BE00F7BD3B /* NavigationItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78D071242531BE00F7BD3B /* NavigationItem.swift */; };
 		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
+		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
+		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692924093E7000367905 /* sessions_manually_expanded.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692524093BD300367905 /* sessions_manually_expanded.json */; };
@@ -178,6 +180,8 @@
 		5D78D06A242500A500F7BD3B /* navigationItems.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = navigationItems.json; sourceTree = "<group>"; };
 		5D78D06D242512FB00F7BD3B /* NavigationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = NavigationTest.swift; path = memri/control/NavigationTest.swift; sourceTree = SOURCE_ROOT; };
 		5D78D071242531BE00F7BD3B /* NavigationItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationItem.swift; sourceTree = "<group>"; };
+		5DB66FB42431DD41007736D6 /* mainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainTest.swift; sourceTree = "<group>"; };
+		5DB66FB62431DEB0007736D6 /* realmTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = realmTest.swift; sourceTree = "<group>"; };
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
@@ -288,6 +292,7 @@
 			children = (
 				5D0A28B8240678EE00398B17 /* ModelTest.swift */,
 				86677DEA242A6751007A4782 /* CacheTest.swift */,
+				5DB66FB62431DEB0007736D6 /* realmTest.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -437,6 +442,7 @@
 		5D599BD023F2B77700F218A0 /* memriTests */ = {
 			isa = PBXGroup;
 			children = (
+				5DB66FB32431DD2D007736D6 /* main */,
 				5D0A28C024069A4E00398B17 /* control */,
 				5D0A28BF24069A4600398B17 /* view */,
 				5D0A28BE24069A3800398B17 /* model */,
@@ -463,6 +469,14 @@
 				5D78D071242531BE00F7BD3B /* NavigationItem.swift */,
 			);
 			path = Navigation;
+			sourceTree = "<group>";
+		};
+		5DB66FB32431DD2D007736D6 /* main */ = {
+			isa = PBXGroup;
+			children = (
+				5DB66FB42431DD41007736D6 /* mainTest.swift */,
+			);
+			path = main;
 			sourceTree = "<group>";
 		};
 		5DD1E9B623FD812C007BDF7B /* model */ = {
@@ -768,12 +782,14 @@
 				5D0A28B9240678EE00398B17 /* ModelTest.swift in Sources */,
 				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
+				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,
 				5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */,
 				5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */,
 				5D0A28C324069A6500398B17 /* SessionsViewTest.swift in Sources */,
+				5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */,
 				5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
