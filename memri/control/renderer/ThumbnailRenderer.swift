@@ -27,7 +27,7 @@ struct ThumbnailRenderer: View {
     var options2: [ActionDescription]=[]
     var editMode: Bool=false
 //    var renderConfig: RenderConfig=RenderConfig()
-    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: [])
+    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: [])
     )
     
     var cols: Int = 3

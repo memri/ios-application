@@ -20,7 +20,6 @@ public class Main: ObservableObject {
     @Published public var browserEditMode:Bool = false
     @Published public var navigationEditMode:Bool = false
     @Published public var showOverlay:String? = nil
-    @Published public var showNavigation:Bool? = nil
 
 //    public let settings: Settings
     @Published public var sessions:Sessions = Sessions()
@@ -245,43 +244,45 @@ public class Main: ObservableObject {
         let params = action.actionArgs
         
         switch action.actionName {
-        case "back":
+        case .back:
             back()
-        case "add":
+        case .add:
             let item = Note(value: params[0].value)
             add(item)
-        case "openView":
+        case .openView:
             if let item = item {
                 openView(item)
             } else {
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
-        case "toggleEdit":
+        case .toggleEdit:
             toggleEditMode()
-        case "toggleFilterPanel":
+        case .toggleFilterPanel:
             toggleFilterPanel()
-        case "star":
+        case .star:
             star()
-        case "showStarred":
+        case .showStarred:
             showStarred()
-        case "showContextPane":
+        case .showContextPane:
             openContextPane() // TODO @Jess
-        case "openContextView":
+        case .showNavigation:
+            showNavigation()
+        case .openContextView:
             break
-        case "share":
+        case .share:
             shareNote()
-        case "addToList":
+        case .addToList:
             addToList()
-        case "duplicateNote":
+        case .duplicateNote:
             duplicateNote()
-        case "noteTimeline":
+        case .noteTimeline:
             noteTimeline()
-        case "starredNotes":
+        case .starredNotes:
             starredNotes()
-        case "allNotes":
+        case .allNotes:
             allNotes()
-        case "exampleUnpack":
+        case .exampleUnpack:
             let (_, _) = (params[0].value, params[1].value) as! (String, Int)
             break
         default:
@@ -343,6 +344,11 @@ public class Main: ObservableObject {
         }
     }
     
+    func showNavigation(){
+        self.currentSession.showNavigation = true
+        self.objectWillChange.send()
+    }
+    
     func changeRenderer(rendererName: String){
         let session = currentSession
         session.currentView.rendererName = rendererName
@@ -360,7 +366,7 @@ public class Main: ObservableObject {
         }
         
         
-        let starButton = self.currentView.filterButtons!.filter{$0.actionName == "showStarred"}[0] // HACK
+        let starButton = self.currentView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
         
         // If showing starred items, return to normal view
