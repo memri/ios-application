@@ -4,5 +4,6 @@ stages:
 build_project:
   stage: build
   script:
+    - rm -r ~/realm.memri/*
     - xcodebuild clean -project memri.xcodeproj -scheme memri | xcpretty
     - xcodebuild test -project memri.xcodeproj -scheme memri -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.4' | xcpretty -s
