@@ -1,11 +1,11 @@
 {
     "searchResult": {
-        "query": "",
+        "query": {},
         "data": [],
         "sortProperty": "None",
         "sortAscending": 1,
         "loading": 0,
-        "pageCount": 0,
+        "pageCount": {},
     },
     "title": "testtitle",
     "rendererName": "list",
