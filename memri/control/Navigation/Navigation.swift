@@ -10,8 +10,6 @@ import SwiftUI
 
 struct Navigation: View {
     @EnvironmentObject var main: Main
-    @Binding var showNavigation: Bool
-
     @State var dragOffset = CGSize.zero
 
     var navigationItems: [NavigationItem] = try! NavigationItem.fromJSON("navigationItems")
@@ -39,7 +37,7 @@ struct Navigation: View {
                 self.dragOffset = value.translation
             })
                 .onEnded{ value in
-                    self.showNavigation.toggle()
+                    self.main.currentSession.showNavigation.toggle()
             })
     }
 
@@ -58,6 +56,6 @@ struct Navigation: View {
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation(showNavigation: .constant(false)).environmentObject(Main(name: "", key: "").mockBoot())
+        Navigation().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

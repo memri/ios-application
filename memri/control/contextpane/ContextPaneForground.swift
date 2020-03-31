@@ -36,7 +36,7 @@ struct ContextPaneForground: View {
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
-                            Text(actionItem.title)
+                            Text(actionItem.title ?? "")
                                 .foregroundColor(.black)
                         }
                     }
@@ -55,7 +55,7 @@ struct ContextPaneForground: View {
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {
-                            Text(navigateItem.title)
+                            Text(navigateItem.title ?? "")
                                 .foregroundColor(.black)
                         }
                     }

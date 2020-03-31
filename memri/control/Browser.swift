@@ -13,7 +13,6 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
-    @State var showNavigation: Bool = false
 
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
                                         "richTextEditor": AnyView(RichTextRenderer()),
@@ -26,15 +25,15 @@ struct Browser: View {
     var body: some View {
         ZStack {
             VStack() {
-                TopNavigation(showNavigation: $showNavigation, isEditMode: $isEditMode)
+                TopNavigation(isEditMode: $isEditMode)
                 getRenderer().fullHeight()
                 Search()
             }.fullHeight()
             if self.main.currentSession.showContextPane {
                 animateInContextPane()
             }
-            if self.showNavigation{
-                Navigation(showNavigation: $showNavigation)
+            if self.main.currentSession.showNavigation{
+                Navigation()
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))
             }

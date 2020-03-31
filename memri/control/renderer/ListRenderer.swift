@@ -61,7 +61,7 @@ struct ListRenderer: Renderer {
 
 //    var renderConfig: RenderConfig = RenderConfig()
     var renderConfig: RenderConfig = ListConfig(press:
-        ActionDescription(icon: nil, title: nil, actionName: "openView", actionArgs: []))
+        ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: []))
 
     func setState(_ state:RenderState) -> Bool { return false }
     
