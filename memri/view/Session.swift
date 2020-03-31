@@ -100,7 +100,7 @@ public class Session: ObservableObject, Decodable, Equatable {
     
     @Published var currentViewIndex: Int = 0
     @Published var views: [SessionView] = [SessionView()]
-    @Published public var showFilterPanel: Bool = false
+    @Published public var showFilterPanel:Bool = false
     @Published public var showContextPane:Bool = false
     @Published public var showNavigation:Bool = false
     
