@@ -47,15 +47,35 @@ class LogItem:DataItem {
     let appliesTo = List<DataItem>()
 }
 
+enum ActionNeeded:String, Codable {
+    case create
+//    case read
+    case delete
+    case update
+    case noop
+}
+
+struct DataItemState:Codable {
+    // Whether the data item is loaded partially and requires a full load
+    var isPartiallyLoaded:Bool? = nil
+    
+    // What action is needed on this data item to sync with the pod
+    var actionNeeded:ActionNeeded = .noop
+    
+    // Which fields to update
+    var updatedFields:[String] = []
+}
+
 public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
     public var id:String = UUID().uuidString
-    
-    @objc dynamic var uid:String? = nil // 0x" + UUID().uuidString
     var type:String { "unknown" }
     
+    @objc dynamic var uid:String? = nil
     @objc dynamic var deleted:Bool = false
     @objc dynamic var starred:Bool = false
-    let Log = List<LogItem>()
+    
+    let changelog = List<LogItem>()
+    var loadState = DataItemState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
