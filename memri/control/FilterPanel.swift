@@ -38,7 +38,7 @@ struct FilterPanel: View {
     
     var body: some View {
         VStack{
-            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel ?? false) {
+            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel) {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){

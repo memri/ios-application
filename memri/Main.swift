@@ -80,11 +80,22 @@ public class Main: ObservableObject {
     }
     
     public func setCurrentView(){
-        // we never have to call this manually (it will be called automatically when sessions changes), except for booting
+        // we never have to call this manually (it will be called automatically
+        // when sessions changes), except for booting
         
-        // Set on sessions
-        self.currentSession = self.sessions.currentSession // TODO filter to a single property
-        self.currentView = cascadeView(self.sessions.currentSession.currentView)
+        // Calculate cascaded view
+        let cascadedView = cascadeView(self.sessions.currentSession.currentView)
+        if let cascadedView = cascadedView {
+            
+            // Set current session
+            self.currentSession = self.sessions.currentSession // TODO filter to a single property
+            
+            // Set new view
+            self.currentView = cascadedView
+        }
+//        else {
+//            self.currentView.merge(self.currentView)
+//        }
         
         // Load data
         let searchResult = self.currentView.searchResult
@@ -103,7 +114,7 @@ public class Main: ObservableObject {
     "{renderer:list}"
     "{[type:Note]}"
     */
-    public func cascadeView(_ viewFromSession:SessionView) -> SessionView {
+    public func cascadeView(_ viewFromSession:SessionView) -> SessionView? {
         // Create a new view
         let cascadedView = SessionView()
         
@@ -196,9 +207,17 @@ public class Main: ObservableObject {
         viewFromSession.searchResult.query = cascadedView.searchResult.query
         cascadedView.searchResult = viewFromSession.searchResult
         
+        do {
+            try cascadedView.validate()
+        }
+        catch {
+            print("View Cascading Error: \(error)")
+//            return nil  // TODO look at this again after implementing resultset
+        }
+        
         return cascadedView
     }
-
+    
     /**
      * Adds a view to the history of the currentSession and displays it.
      * If the view was already part of the currentSession.views it reorders it on top

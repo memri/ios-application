@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 
 
-public class SessionView: ObservableObject, Decodable{
+public class SessionView: ObservableObject, Decodable {
     @Published public var searchResult: SearchResult = SearchResult()
     @Published public var title: String? = nil
     @Published var rendererName: String? = nil
@@ -96,6 +96,16 @@ public class SessionView: ObservableObject, Decodable{
         self.navigateItems = (self.navigateItems ?? []) + (view.navigateItems ?? []) // TODO filter out any duplicates
         self.contextButtons = (self.contextButtons ?? []) + (view.contextButtons ?? []) // TODO filter out any duplicates
     }
+    
+    /**
+     * Validates a merged view
+     */
+    public func validate() throws {
+        if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
+        if self.searchResult.query.query == "" { throw("No query is defined for this view") }
+        if self.actionButton == nil { throw("Missing action button in this view") }
+    }
+
     
     public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
         let sv = SessionView()
