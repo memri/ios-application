@@ -85,6 +85,7 @@ public class SessionView: ObservableObject, Decodable{
     var browsingMode: String? = nil
     @State var isEditMode: EditMode = .inactive
     @State var abc: Bool = false
+    var cascadeOrder:[String]? = nil
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -112,6 +113,7 @@ public class SessionView: ObservableObject, Decodable{
             self.filterMode = try decoder.decodeIfPresent("filterMode") ?? self.filterMode
             self.editMode = try decoder.decodeIfPresent("editMode") ?? self.editMode
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
+            self.cascadeOrder = try decoder.decodeIfPresent("cascadeOrder") ?? self.cascadeOrder
         }
     }
     
@@ -141,7 +143,7 @@ public class SessionView: ObservableObject, Decodable{
         self.actionButton = view.actionButton ?? self.actionButton ?? nil
         self.backTitle = view.backTitle ?? self.backTitle ?? ""
         self.editActionButton = view.editActionButton ?? self.editActionButton ?? nil
-        self.isEditMode = view.isEditMode ?? self.isEditMode
+        self.cascadeOrder = view.cascadeOrder ?? self.cascadeOrder ?? ["renderer", "datatype"]
         
         self.renderConfigs = view.renderConfigs ?? self.renderConfigs ?? [:] // TODO merge this properly
         

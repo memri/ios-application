@@ -240,7 +240,8 @@ public class Cache {
     
     var counter = 0 // HACK needs to be stored
     private func generateUID() -> String {
-        return "0xNEW\(counter+=1)"
+        counter += 1
+        return "0xNEW\(counter)"
     }
 
     /**
