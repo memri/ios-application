@@ -77,16 +77,6 @@ public class Main: ObservableObject {
     
     public func mockBoot() -> Main {
         return self.boot({_,_ in })
-//        self.sessions = try! Sessions.fromJSONFile("empty_sessions")
-//        print("in mockBoot sessions.title = \(self.sessions.currentView.title ?? "")")
-//        self.cancellable = self.sessions.objectWillChange.sink {
-//            DispatchQueue.main.async {
-//                self.setCurrentView()
-//            }
-//        }
-//        self.setCurrentView()
-//
-//        return self
     }
     
     public func setCurrentView(){
@@ -108,13 +98,13 @@ public class Main: ObservableObject {
         }
     }
     
+    /*
+    "{type:Note}"
+    "{renderer:list}"
+    "{[type:Note]}"
+    */
     public func cascadeView(_ viewFromSession:SessionView) -> SessionView {
-        // TODO: get from default views
-        
-        // user overwrites defaults
-        let cascadeOrder = ["datatype", "renderer"]  // [leastImportant, mostImportant]
-        let searchOrder = ["defaults", "user"]
-        
+        // Create a new view
         let cascadedView = SessionView()
         
         // TODO: infer from result
@@ -126,35 +116,80 @@ public class Main: ObservableObject {
             type = viewFromSession.searchResult.data[0].type
         }
 
-        /*
-         "{type:Note}"
-         "{renderer:list}"
-         "{[type:Note]}"
-         */
+        // Helper lists
+        var renderViews:[SessionView] = []
+        var datatypeViews:[SessionView] = []
+        var rendererNames:[String] = []
+        var cascadeOrders:[String:[[String]]] = ["defaults":[["renderer", "datatype"]], "user":[]]
+        let searchOrder = ["defaults", "user"]
+        var rendererName:String
         
-        for viewDomain in searchOrder {
-            for orderType in cascadeOrder {
-                if orderType == "renderer" {
-                    // TODO the renderer may only be specified by the datatype, and this will fail when the renderer is first in order
-                    let renderName:String? = viewFromSession.rendererName ?? cascadedView.rendererName ?? nil
-                    if let renderName = renderName {
-                        let needle = "{renderer:\(renderName)}"
-                        let defaultView = self.defaultViews[viewDomain] ?? [:]
-                        let rendererView = defaultView[needle]
-                        if let rendererView = rendererView { cascadedView.merge(rendererView) }
-                    }
+        // If we know the type of data we are rendering use it to determine the view
+        if type != "" {
+            // Determine query
+            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
+            
+            // Find views based on datatype
+            for key in searchOrder {
+                if let datatypeView = self.defaultViews[key]![needle] {
+                    datatypeViews.append(datatypeView)
+                    
+                    if let S = datatypeView.rendererName { rendererNames.append(S) }
+                    if let S = datatypeView.cascadeOrder { cascadeOrders[key]?.append(S) }
                 }
-                else if orderType == "datatype" && type != "" {
-                    var needle:String
-                    if (isList) { needle = "{[type:\(type)]}" }
-                    else { needle = "{type:\(type)}" }
-                    let defaultView = self.defaultViews[viewDomain] ?? [:]
-                    let datatypeView = defaultView[needle]                    
-                    if let datatypeView = datatypeView { cascadedView.merge(datatypeView) }
+            }
+            
+            rendererName = rendererNames[rendererNames.count - 1]
+        }
+        // Otherwise default to what we know from the view from the session
+        else {
+            rendererName = viewFromSession.rendererName ?? ""
+        }
+        
+        // Find renderer views
+        if rendererName != "" {
+            // Determine query
+            let needle = "{renderer:\(rendererName)}"
+            
+            for key in searchOrder {
+                if let rendererView = self.defaultViews[key]![needle] {
+                    renderViews.append(rendererView)
+                    
+                    if let S = rendererView.cascadeOrder { cascadeOrders[key]?.append(S) }
                 }
             }
         }
-        // this loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
+
+        // Choose cascade order
+        let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
+            ? cascadeOrders["user"]
+            : cascadeOrders["defaults"]) ?? []
+        
+        var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
+        if (cascadeOrder.count == 0) { cascadeOrder = ["renderer", "datatype"] }
+        
+        if (Set(preferredCascadeOrder).count > 1) {
+            print("Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
+        }
+        
+        // Cascade the different views
+        for key in cascadeOrder {
+            var views:[SessionView]
+            
+            if key == "renderer" { views = renderViews }
+            else if key == "datatype" { views = datatypeViews }
+            else {
+                print("Unknown cascadeOrder type found: \(key)")
+                break
+            }
+            
+            for view in views {
+                cascadedView.merge(view)
+            }
+        }
+        
+        // Cascade the view from the session
+        // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
         cascadedView.merge(viewFromSession)
         
         // this is hacky now, will be solved later
