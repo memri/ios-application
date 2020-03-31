@@ -10,19 +10,11 @@ import Foundation
 import Combine
 import SwiftUI
 
-public enum ActionName: String, Codable {
-    case back, add, openView, toggleEdit, toggleFilterPanel, star, showStarred, showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate, schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack, noop
-}
-
-
-public enum ActionType: String, Codable{
-    case button, emptytype
-}
 
 public class ActionDescription: Decodable, Identifiable {
     
-    
     public var id = UUID()
+    
     var color: UIColor = .systemGray
     var icon: String = ""
     var title: String? = nil
@@ -30,14 +22,17 @@ public class ActionDescription: Decodable, Identifiable {
     var actionArgs: [AnyCodable] = []
     var actionType: ActionType = .button
     var showTitle: Bool = false
+    var hasState: Bool = false
+    var activeColor: UIColor? = .systemGreen
+    var inactiveColor: UIColor? = .systemGray
     
     public convenience required init(from decoder: Decoder) throws{
         self.init()
         
         jsonErrorHandling(decoder) {
-            self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-            self.title = try decoder.decodeIfPresent("title") ?? self.title
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
+            self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
+            self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
             self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
@@ -69,9 +64,9 @@ public class ActionDescription: Decodable, Identifiable {
     
     public convenience init(icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
         self.init()
-        self.icon = icon ?? self.icon
-        self.title = title ?? self.title
         self.actionName = actionName ?? self.actionName
+        self.icon = icon ?? self.actionName.defaultIcon
+        self.title = title ?? self.title
         self.actionArgs = actionArgs ?? self.actionArgs
         self.actionType = actionType ?? self.actionType
     }
