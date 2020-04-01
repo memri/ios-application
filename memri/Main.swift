@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import RealmSwift
 
 /**
  * Represents the entire application user interface.
@@ -31,11 +32,13 @@ public class Main: ObservableObject {
     
     public var podApi:PodAPI
     public var cache:Cache
+    public var realm:Realm
     
     init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
+        realm = cache.realm
     }
     
     public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) -> Main {
@@ -43,6 +46,19 @@ public class Main: ObservableObject {
         
         // Load NavigationCache (from cache and/or api)
         
+        let settings = realm.objects(SettingCollection.self)
+        if (settings.count < 100) {
+            let s = SettingCollection(value: ["type": "device"])
+            do {
+                try realm.write() {
+                    realm.add(s, update: .modified)
+                }
+            }
+            catch {
+                print(error)
+            }
+            s.set("/test", "11")
+        }
         
         // Load view configuration (from cache and/or api)
         podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??

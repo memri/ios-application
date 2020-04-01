@@ -2,18 +2,6 @@ import Foundation
 import Combine
 import RealmSwift
 
-protocol PropertyReflectable { }
-
-extension PropertyReflectable {
-    subscript(key: String) -> Any? {
-        let m = Mirror(reflecting: self)
-        for child in m.children {
-            if child.label == key { return child.value }
-        }
-        return nil
-    }
-}
-
 enum ActionNeeded:String, Codable {
     case create
 //    case read
@@ -33,7 +21,7 @@ struct DataItemState:Codable {
     var updatedFields:[String] = []
 }
 
-public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
+public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public var id:String = UUID().uuidString
     var type:String { "unknown" }
     
