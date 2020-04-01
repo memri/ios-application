@@ -42,39 +42,6 @@ public struct QueryOptions: Codable {
     }
 }
 
-public class SettingsData {
-    /**
-     * Possible values: "default", "device", "group", "user"
-     */
-    public var type: String
-
-    /**
-     * Used by device and group (and perhaps user)
-     */
-    public var name: String
-    
-    private var data:[String:AnyObject] = [:]
-    
-    public init(_ type:String, _ name:String) {
-        self.type = type
-        self.name = name
-    }
-
-    /**
-     *
-     */
-    public func get(_ path:String) -> AnyObject? {
-        return data[path] ?? nil
-    }
-
-    /**
-     * Also responsible for saving the setting to the permanent storage
-     */
-    public func set(_ path:String, _ value:AnyObject) -> Void {
-        data[path] = value
-    }
-}
-
 class SessionResult:DataItem {
     @objc var json:String? = nil
 }

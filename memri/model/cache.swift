@@ -15,7 +15,7 @@ var config = Realm.Configuration(
     
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
-    schemaVersion: 15,
+    schemaVersion: 23,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -123,8 +123,8 @@ public class Cache {
     var cancellables:[AnyCancellable]? = nil
     var queryCache:[String:SearchResult] = [:]
     
-    private var scheduler:Scheduler
-    private var realm:Realm
+    var scheduler:Scheduler
+    var realm:Realm
     
     enum CacheError: Error {
         case UnknownTaskJob(job: String)
@@ -404,7 +404,7 @@ public class Cache {
      */
     public func execute(_ task:Task, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         if let item = task.item {
-            switch item.loadState.actionNeeded {
+            switch item.loadState!.actionNeeded {
             case .create:
                 podAPI.create(item) { (error, id) -> Void in
                     if error != nil { return callback(error, false) }
@@ -421,7 +421,7 @@ public class Cache {
             case .update:
                 podAPI.update(item, callback)
             default:
-                throw CacheError.UnknownTaskJob(job: item.loadState.actionNeeded.rawValue)
+                throw CacheError.UnknownTaskJob(job: item.loadState!.actionNeeded.rawValue)
             }
         }
     }
@@ -434,7 +434,7 @@ public class Cache {
         }
         
         // Create a task
-        item.loadState.actionNeeded = .create
+        item.loadState!.actionNeeded = .create
         scheduler.add(item)
     }
     private func onRemove(_ item:DataItem) {
@@ -445,12 +445,12 @@ public class Cache {
         }
         
         // Create a task
-        item.loadState.actionNeeded = .delete
+        item.loadState!.actionNeeded = .delete
         scheduler.add(item)
     }
     private func onUpdate(_ item:DataItem) {
         // Update a task
-        item.loadState.actionNeeded = .update
+        item.loadState!.actionNeeded = .update
         scheduler.add(item)
     }
 }
