@@ -29,16 +29,15 @@ func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
     return jsonData
 }
 
-func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) -> Bool {
+func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) {
     do {
         try convert()
-        return true
     } catch {
-        return false
+        print("JSON Parse Error: \(error)")
     }
 }
 
-func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool {
+func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     var path:String = "[Unknown]"
     
     if decoder.codingPath.count > 0 {
@@ -58,12 +57,10 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool
     
     do {
         try convert()
-        return true
     } catch {
 //        dump(decoder)
         print("JSON Parse Error at \(path)\n\nError: \(error)")
         raise(SIGINT)
-        return false
     }
 }
 

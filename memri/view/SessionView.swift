@@ -121,7 +121,7 @@ public class SessionView: ObservableObject, Decodable {
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
-        var jsonData = try jsonDataFromFile(file, ext)
+        let jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
     }

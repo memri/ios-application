@@ -35,7 +35,7 @@ class Note:DataItem {
             content = try decoder.decodeIfPresent("content") ?? content
         }
         
-        try! self.doActualInit(from: decoder)
+        try! self.initFomJSON(from: decoder)
     }
 }
 
@@ -85,11 +85,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
         return "uid"
     }
     
-    public func doActualInit(from decoder: Decoder) throws {
+    public func initFomJSON(from decoder: Decoder) throws {
         jsonErrorHandling(decoder) {
             uid = try decoder.decodeIfPresent("uid") ?? uid
             starred = try decoder.decodeIfPresent("starred") ?? starred
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            loadState = try decoder.decodeIfPresent("loadState") ?? loadState
             //TODO log
         }
     }
@@ -115,7 +116,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
      * All methods and properties must throw when deleted = true;
      */
     public func delete() -> Bool {
-        if (self.deleted as! Bool) { return false; }
+        if (self.deleted) { return false; }
         
         try! self.realm!.write() {
             self.deleted = true;

@@ -30,7 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        var sessions = Sessions()
 //        var browser: some View = Browser().environmentObject(sessions)
         
-        main.boot() { (error, success) in
+        let _ = main.boot() { (error, success) in
             print("Booted")
         }
 
