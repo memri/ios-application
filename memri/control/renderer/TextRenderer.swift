@@ -10,36 +10,32 @@ import Foundation
 import Combine
 import SwiftUI
 
-//
-//struct RichTextRenderer: Renderer {
-//    var name: String="singleItem"
-//    var icon: String=""
-//    var category: String=""
-//    var renderModes: [ActionDescription]=[]
-//    var options1: [ActionDescription]=[]
-//    var options2: [ActionDescription]=[]
-//    var editMode: Bool=false
-//    var renderConfig: RenderConfig=RenderConfig()
-//
-//    func setState(_ state:RenderState) -> Bool {return false}
-//    func getState() -> RenderState {RenderState()}
-//    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
-//    
-//    @EnvironmentObject var main: Main
-//
-//    var body: some View {
-//        return VStack{
-//                RichTextEditor(dataItem: main.currentView.searchResult.data[0])
-//                }
-//    }
-//    
-//    func canDisplayResultSet(items: [DataItem]) -> Bool {
-//        return items.count == 1
-//    }
-//}
-//
-//struct RichTextRenderer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
-//    }
-//}
+
+struct RichTextRenderer: Renderer {
+    var name: String="singleItem"
+    var icon: String=""
+    var category: String=""
+    var renderModes: [ActionDescription]=[]
+    var options1: [ActionDescription]=[]
+    var options2: [ActionDescription]=[]
+    var editMode: Bool=false
+    var renderConfig: RenderConfig=RenderConfig()
+
+    func setState(_ state:RenderState) -> Bool {return false}
+    func getState() -> RenderState {RenderState()}
+    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
+    
+    @EnvironmentObject var main: Main
+
+    var body: some View {
+        return VStack{
+                RichTextEditor(dataItem: main.currentView.searchResult.data[0])
+        }
+    }
+}
+
+struct RichTextRenderer_Previews: PreviewProvider {
+    static var previews: some View {
+        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+    }
+}

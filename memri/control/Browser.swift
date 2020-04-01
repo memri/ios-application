@@ -13,24 +13,21 @@ import Combine
 struct Browser: View {
     @EnvironmentObject var main: Main
     @State var isEditMode: EditMode = .inactive
-    
-    var renderers: [String: Renderer.Type] = ["list": ListRenderer.self,
-                      "thumbnail": ThumbnailRenderer.self]
 
-//    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
-//                                        "richTextEditor": AnyView(RichTextRenderer()),
-//                                        "thumbnail": AnyView(ThumbnailRenderer())]
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))), // TODO Koen??
+                                        "richTextEditor": AnyView(RichTextRenderer()),
+                                        "thumbnail": AnyView(ThumbnailRenderer())]
     
-//    var currentRenderer: Renderer { renderers[main.currentView.rendererName!,
-//                                              default: ThumbnailRenderer(main: main)]
-//    }
+    var currentRenderer: AnyView { renderers[main.currentView.rendererName!,
+                  default: AnyView(ThumbnailRenderer())]
+    }
     
     var body: some View {
         ZStack {
             VStack() {
                 TopNavigation(isEditMode: $isEditMode)
-                getRenderer().getRenderer().fullHeight()
-//                Search(renderers: Array(renderers.values))
+                getRenderer().fullHeight()
+                Search()
             }.fullHeight()
             if self.main.currentSession.showContextPane {
                 animateInContextPane()
@@ -43,34 +40,20 @@ struct Browser: View {
         }
     }
     
-    func getRenderer() -> Renderer {
-        type(of: self.renderers[self.main.currentView.rendererName!]!.init()).init(main: self.main)
-    
-    }
-//        return  ThumbnailRenderer()
-//        if false{
-////            return RichTextRenderer()
-//        }else{
-//            return RichTextRenderer()
-//        }
-//
-//        switch self.main.currentView.rendererName{
-//        case "list":
-//            return AnyView(ListRenderer(isEditMode: $isEditMode))
-//        case "richTextEditor":
-//            return AnyView(RichTextRenderer())
-//        case "thumbnail":
-//            return AnyView(ThumbnailRenderer())
-//        default:
-//            return AnyView(ThumbnailRenderer())
-//        }
-//    }
-    
-    
-    init(){
-
+    func getRenderer() -> AnyView{
+        switch self.main.currentView.rendererName{
+        case "list":
+            return AnyView(ListRenderer(isEditMode: $isEditMode))
+        case "richTextEditor":
+            return AnyView(RichTextRenderer())
+        case "thumbnail":
+            return AnyView(ThumbnailRenderer())
+        default:
+            return AnyView(ThumbnailRenderer())
+        }
     }
 }
+
 struct animateInContextPane: View {
 
     @EnvironmentObject var main: Main

@@ -36,7 +36,7 @@ struct ViewTypeButton: Identifiable {
 
 struct Search: View {
     @EnvironmentObject var main: Main
-    var renderers: [AnyView]
+
     @State var searchText=""
 
 
@@ -55,19 +55,24 @@ struct Search: View {
                         Action(action: filterButton)
                             .padding(.horizontal , 5)
                             .font(Font.system(size: 20, weight: .medium))
+
+                        
+//                        Button(action: {self.main.executeAction(filterButton)}) {
+//                            Image(systemName: filterButton.icon)
+//                        }.padding(.horizontal , 5)
+//                         .font(Font.system(size: 20, weight: .medium))
+//                            .foregroundColor(Color(filterButton.color))
+                        
                     }
                 }
             }.padding(.horizontal , 15)
-            FilterPanel(renderers: renderers)
+            FilterPanel()
         }
     }
 }
 
-//struct Search_Previews: PreviewProvider {
-//    static var previews: some View {
-//        Search(renderers:[AnyView(ListRenderer(isEditMode: .constant(.inactive))),
-////                          AnyView(RichTextRenderer()),
-//                          AnyView(ThumbnailRenderer())])
-//            .environmentObject(Main(name: "", key: "").mockBoot())
-//    }
-//}
+struct Search_Previews: PreviewProvider {
+    static var previews: some View {
+        Search().environmentObject(Main(name: "", key: "").mockBoot())
+    }
+}

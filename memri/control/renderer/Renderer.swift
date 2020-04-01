@@ -34,22 +34,18 @@ public class RenderConfig: Decodable {
 
 public class RenderState{}
 
-public class Renderer {
-//    var name: String {get set}
-//    var icon: String {get set}
-//    var category: String {get set}
-//
-//    var renderModes: [ActionDescription]  {get set}
-//    var options1: [ActionDescription] {get set}
-//    var options2: [ActionDescription] {get set}
-//    var renderConfig: RenderConfig {get set}
+public protocol Renderer: View {
+    var name: String {get set}
+    var icon: String {get set}
+    var category: String {get set}
+    
+    var renderModes: [ActionDescription]  {get set}
+    var options1: [ActionDescription] {get set}
+    var options2: [ActionDescription] {get set}
+    var editMode: Bool {get set}
+    var renderConfig: RenderConfig {get set}
 
-    
-    func canDisplayResultSet(items: [DataItem]) -> Bool{
-        return true
-    }
-    
-    func getRenderer() -> some View{
-        return EmptyView()
-    }
+    func setState(_ state:RenderState) -> Bool
+    func getState() -> RenderState
+    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
 }

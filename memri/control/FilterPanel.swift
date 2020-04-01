@@ -11,7 +11,6 @@ import SwiftUI
 struct FilterPanel: View {
     @EnvironmentObject var main: Main
     @State var showFilters=false
-    
 
     @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected: true,
                                                  rendererName: "list"),
@@ -33,21 +32,17 @@ struct FilterPanel: View {
                                 BrowseSetting(name: "Browse by type", selected: false),
                                 BrowseSetting(name: "Browse by folder", selected: false),
                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
-    
-    var renderers: [AnyView]
 
     var filterPanelRenderers = ["list", "thumbnail"]
     
     
     var body: some View {
         VStack{
-//            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel) {
+            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel) {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){
                             HStack(alignment: .top, spacing: 0) {
-
-                                
                                 ForEach(0..<self.viewTypeButtons.count) {i in
                                     Button(action: {self.setRenderer(i:i)}) {
                                         Image(systemName: self.viewTypeButtons[i].imgName)
@@ -57,9 +52,6 @@ struct FilterPanel: View {
                                     .background(self.viewTypeButtons[i].backGroundColor)
                                     .foregroundColor(self.viewTypeButtons[i].foreGroundColor)
                                 }
-                                
-                                
-                                
                             }
                         }
                         VStack(alignment: .leading){
@@ -89,16 +81,15 @@ struct FilterPanel: View {
                     }.padding(.horizontal, 20)
                 }.frame(minWidth: 0, maxWidth: .infinity, alignment: Alignment.topLeading)
                     .padding(.vertical, 10)
-//            }else{
-//                EmptyView()
-//            }
+            }else{
+                EmptyView()
+            }
         }
 
     }
-    init(renderers: [AnyView]){
+    init(){
         // THIS HIDEN THE LIST LINES
         UITableView.appearance().separatorColor = .clear
-        self.renderers = renderers
     }
     
     func setRenderer(i: Int){
@@ -114,11 +105,8 @@ struct FilterPanel: View {
 }
 
 
-//struct FilterPanel_Previews: PreviewProvider {
-//    static var previews: some View {
-//        FilterPanel(renderers: [AnyViewListRenderer(isEditMode: .constant(.inactive))),
-////                                AnyView(RichTextRenderer()),
-//                                AnyView(ThumbnailRenderer())])
-//            .environmentObject(Main(name: "", key: "").mockBoot())
-//    }
-//}
+struct FilterPanel_Previews: PreviewProvider {
+    static var previews: some View {
+        FilterPanel().environmentObject(Main(name: "", key: "").mockBoot())
+    }
+}
