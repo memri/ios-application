@@ -18,7 +18,8 @@ extension Text {
 }
 
 
-struct ThumbnailRenderer: View {
+struct ThumbnailRendererView: View {
+    
     var name: String="thumbnail"
     var icon: String=""
     var category: String=""
@@ -39,14 +40,20 @@ struct ThumbnailRenderer: View {
     @EnvironmentObject var main: Main
     
     var body: some View {
+        VStack{
         
-        QGrid(main.currentView.searchResult.data, columns: 3) { dataItem in
-            Text(dataItem.getString("title")).asThumbnail()
-                .onTapGesture {
-                    self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
-                    
-                }
+            QGrid(main.currentView.searchResult.data, columns: 3) { dataItem in
+                Text(dataItem.getString("title")).asThumbnail()
+                    .onTapGesture {
+                        self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                        
+                    }
+            }
         }
+    }
+    
+    func canDisplayResultSet(items: [DataItem]) -> Bool {
+        return true
     }
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
@@ -59,8 +66,8 @@ struct ThumbnailRenderer: View {
     }
 }
 
-struct ThumbnailRenderer_Previews: PreviewProvider {
-    static var previews: some View {
-        ThumbnailRenderer().environmentObject(Main(name: "", key: "").mockBoot())
-    }
-}
+//struct ThumbnailRenderer_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ThumbnailRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+//    }
+//}

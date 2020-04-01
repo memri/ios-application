@@ -46,9 +46,35 @@ class ListConfig: RenderConfig {
     }
 }
 
-struct ListRenderer: Renderer {
-    @EnvironmentObject var main: Main
+class ThumbnailRenderer: Renderer {
+    var rendererView: ThumbnailRendererView
     
+    required init(main: Main) {
+        self.rendererView = ThumbnailRendererView().environmentObject(main) as! ThumbnailRendererView
+    }
+    func getRenderer() -> some View
+    {
+        return self.rendererView
+    }
+}
+
+
+class ListRenderer: Renderer{
+    
+    var rendererView: ListRendererView 
+    
+    required init(main: Main) {
+        self.rendererView = ListRendererView(isEditMode: .constant(.inactive)).environmentObject(main) as! ListRendererView
+    }
+    
+    func getRenderer() -> some View
+    {
+        return self.rendererView
+    }
+}
+
+struct ListRendererView: View {
+    @EnvironmentObject var main: Main
     var name: String="list"
     var icon: String=""
     var category: String=""
@@ -59,7 +85,6 @@ struct ListRenderer: Renderer {
     @Binding var isEditMode: EditMode
     @State var abc: Bool=false
 
-//    var renderConfig: RenderConfig = RenderConfig()
     var renderConfig: RenderConfig = ListConfig(press:
         ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: []))
 
@@ -71,6 +96,10 @@ struct ListRenderer: Renderer {
     func generatePreview(_ item:DataItem) -> String {
         let content = item.getString("content")
         return content
+    }
+    
+    func canDisplayResultSet(items: [DataItem]) -> Bool {
+        return true
     }
     
     var body: some View {
@@ -110,9 +139,9 @@ struct ListRenderer: Renderer {
         main.executeAction(actionDescription, dataItem)
     }
 }
-
-struct ListRenderer_Previews: PreviewProvider {
-    static var previews: some View {
-        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
-    }
-}
+//
+//struct ListRenderer_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
+//    }
+//}
