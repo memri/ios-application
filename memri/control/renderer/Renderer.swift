@@ -18,15 +18,18 @@ public class RenderConfig: Decodable {
     var options1: [ActionDescription] = []
     var options2: [ActionDescription] = []
     
-//    init(name: String, icon: String, category: String, items: [ActionDescription], options1: [ActionDescription],
-//         options2: [ActionDescription]){
-//        self.name=name
-//        self.icon=icon
-//        self.category=category
-//        self.items=items
-//        self.options1=options1
-//        self.options2=options2
-//    }
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.name = try decoder.decodeIfPresent("name") ?? self.name
+            self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
+            self.category = try decoder.decodeIfPresent("category") ?? self.category
+            self.items = try decoder.decodeIfPresent("items") ?? self.items
+            self.options1 = try decoder.decodeIfPresent("options1") ?? self.options1
+            self.options2 = try decoder.decodeIfPresent("options2") ?? self.options2
+        }
+    }
 }
 
 public class RenderState{}

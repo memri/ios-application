@@ -51,84 +51,44 @@ public class ActionDescription: Decodable, Identifiable {
                 default: break
             }
             
-            let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
-            self.actionArgs = try self.decodeActionArgs(ctr, DataItemFamily.self, .actionArgs)
-//                container.decode(family:DataItemFamily.self, forKey:.actionArgs)
-            
-//            var family = DataItemFamily.self
-//            var key = ActionDescriptionKeys.actionArgs
-//            var container = try ctr.nestedUnkeyedContainer(forKey: key)
-//            var list = [Decodable]()
-//            var tmpContainer = container
-//            while !container.isAtEnd {
-//                let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
-//                let family:DataItemFamily = try typeContainer.decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
-//                if let type = family.getType() as? Decodable.Type {
-//                    list.append(try tmpContainer.decode(type))
-//                }
-//            }
-//            self.actionArgs = list
-            
-                    
-//            // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
-//            switch self.actionName{
-//            case .add:
-//                break
-////                    self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
-//            case .openView:
-//                break
-//                // TODO make this work
-////                    self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
-//            default:
-//                break
-//            }
+            let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
+            self.actionArgs = try self.decodeActionArgs(container)
         }
     }
     
-    func decodeActionArgs<U : ClassFamily>(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>,
-                                                          _ family:U.Type, _ key:ActionDescriptionKeys) throws -> [AnyCodable] {
-        var container = try ctr.nestedUnkeyedContainer(forKey: key)
+    func decodeActionArgs(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>) throws -> [AnyCodable] {
+        var container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
         var list = [AnyCodable]()
-        var tmpContainer = container
-//        while !container.isAtEnd {
-//            print(container.currentIndex)
-//
-////            let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
-////            let family: U = try typeContainer.decode(U.self, forKey: U.discriminator)
-////            if let type = family.getType() as? T.Type {
-//            if let type = self.actionName.argumentTypes[container.currentIndex] as? T.Type {
-//                dump(type)
-//                list.append(try tmpContainer.decode(type))
-//            }
-//        }
+        var tmpContainer = container // Force a copy of the container
+        let path = getCodingPathString(tmpContainer.codingPath)
+        
+        print("Decoding: \(path)")
+        
         if let count = container.count {
-            if (self.actionName == .add) {
-                1+1
-                dump(self.actionName.argumentTypes[0])
-            }
-            
             if (self.actionName.argumentTypes.count > 0) {
                 for i in 0...count - 1 {
-                    let type = self.actionName.argumentTypes[i]
-                    if let type = type as? DataItemFamily.Type {
-                        let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
-                        let family:U = try typeContainer.decode(U.self, forKey: U.discriminator)
-                        let t = family.getType() // { //as? Decodable.Type
-                        list.append(AnyCodable(try tmpContainer.decode(t)))
-//                        }
-                        
-//                        dump(type)
-//                        print(getCodingPathString(tmpContainer.codingPath))
-//                        let result = try tmpContainer.decode(type)
-//                        dump(result)
-//                        list.append(AnyCodable(result))
-                    }
-                    else if let type = type as? Note.Type {
-                        dump(type)
-                        print(getCodingPathString(tmpContainer.codingPath))
-                        let result = try tmpContainer.decode(type)
-                        dump(result)
-                        list.append(AnyCodable(result))
+                    do {
+                        let type = self.actionName.argumentTypes[i]
+                        if let _ = type as? DataItemFamily.Type {
+                            let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
+                            let family:DataItemFamily = try typeContainer.decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
+                            list.append(AnyCodable(try tmpContainer.decode(family.getType())))
+                        }
+                        else if let type = type as? SessionView.Type {
+                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                        }
+                        else if let type = type as? String.Type {
+                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                        }
+                        else if let type = type as? Double.Type {
+                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                        }
+                        else if let type = type as? Int.Type {
+                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                        }
+                    } catch {
+                        print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
+                        raise(SIGINT)
                     }
                 }
             }

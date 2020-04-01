@@ -33,7 +33,7 @@ func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) {
     do {
         try convert()
     } catch {
-        print("JSON Parse Error: \(error)")
+        print("\nJSON Parse Error: \(error.localizedDescription)\n")
     }
 }
 
@@ -64,7 +64,7 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
         try convert()
     } catch {
 //        dump(decoder)
-        print("JSON Parse Error at \(path)\n\nError: \(error)")
+        print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
         raise(SIGINT)
     }
 }
@@ -78,7 +78,7 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
         let data = try encode(encoder)
         json = String(data: data, encoding: .utf8) ?? ""
     } catch {
-        print("Unexpected error: \(error)")
+        print("\nUnexpected error: \(error.localizedDescription)\n")
     }
     
     return json

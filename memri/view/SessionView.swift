@@ -33,7 +33,7 @@ public class SessionView: ObservableObject, Decodable {
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
-        jsonErrorHandling(decoder) {
+//        jsonErrorHandling(decoder) {
             self.searchResult = try decoder.decodeIfPresent("searchResult") ?? self.searchResult
             self.title = try decoder.decodeIfPresent("title") ?? self.title
             self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
@@ -57,7 +57,7 @@ public class SessionView: ObservableObject, Decodable {
             self.editMode = try decoder.decodeIfPresent("editMode") ?? self.editMode
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
             self.cascadeOrder = try decoder.decodeIfPresent("cascadeOrder") ?? self.cascadeOrder
-        }
+//        }
     }
     
     public func merge(_ view:SessionView) {
@@ -103,7 +103,9 @@ public class SessionView: ObservableObject, Decodable {
     public func validate() throws {
         if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
         if self.searchResult.query.query == "" { throw("No query is defined for this view") }
-        if self.actionButton == nil { throw("Missing action button in this view") }
+        if self.actionButton == nil && self.editActionButton == nil {
+            throw("Missing action button in this view")
+        }
     }
 
     

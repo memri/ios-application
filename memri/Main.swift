@@ -325,17 +325,13 @@ public class Main: ObservableObject {
         case .openContextView:
             break
         case .share:
-            shareNote()
+            showSharePanel()
         case .addToList:
             addToList()
-        case .duplicateNote:
-            duplicateNote()
-        case .noteTimeline:
-            noteTimeline()
-        case .starredNotes:
-            starredNotes()
-        case .allNotes:
-            allNotes()
+        case .duplicate:
+            if let item = item {
+                add(self.cache.duplicate(item))
+            }
         case .exampleUnpack:
             let (_, _) = (params[0].value, params[1].value) as! (String, Int)
             break
@@ -472,31 +468,13 @@ public class Main: ObservableObject {
 
     func openContextPane() {
         self.currentSession.showContextPane.toggle()
-        print("openContextView")
     }
 
-    func shareNote() {
+    func showSharePanel() {
         print("shareNote")
     }
 
     func addToList() {
         print("addToList")
     }
-    
-    func duplicateNote() {
-        print("duplicateNote")
-    }
-    
-    func noteTimeline() {
-        print("noteTimeline")
-    }
-    
-    func starredNotes() {
-        print("starredNotes")
-    }
-    
-    func allNotes() {
-        print("allNotes")
-    }
-
 }

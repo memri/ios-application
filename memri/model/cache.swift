@@ -123,11 +123,6 @@ public class Cache {
     var cancellables:[AnyCancellable]? = nil
     var queryCache:[String:SearchResult] = [:]
     
-    let typeTable:[String:Object.Type] = [
-        "note": Note.self,
-        "logitem": LogItem.self
-    ]
-    
     private var scheduler:Scheduler
     private var realm:Realm
     
@@ -202,12 +197,13 @@ public class Cache {
             callback(nil, [result[0]])
         }
         else {
-            let queryType = self.typeTable[q]
-            if let queryType = queryType {
-                let result = realm.objects(queryType) // TODO filter
+            let type = DataItemFamily(rawValue: q)
+            if let type = type {
+                let queryType = DataItemFamily.getType(type)
+                let result = realm.objects(queryType()) // TODO filter
                 
                 var returnValue:[DataItem] = []
-                for item in result { returnValue.append(item as! DataItem) }
+                for item in result { returnValue.append(item) }
                 
                 callback(nil, returnValue)
             }
@@ -224,9 +220,10 @@ public class Cache {
      *
      */
     public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
-        let type = self.typeTable[type]
+        let type = DataItemFamily(rawValue: type)
         if let type = type {
-            return realm.objects(type).filter("uid = '\(uid)'").first as! T?
+            let item = DataItemFamily.getType(type)
+            return realm.objects(item()).filter("uid = '\(uid)'").first as! T?
         }
         return nil
     }
@@ -238,9 +235,8 @@ public class Cache {
         return self.queryCache[query]
     }
     
-    var counter = 0 // HACK needs to be stored
     private func generateUID() -> String {
-        counter += 1
+        let counter = UUID().uuidString
         return "0xNEW\(counter)"
     }
 
@@ -267,10 +263,11 @@ public class Cache {
                 }
             }
             
-            let itemType = self.typeTable[item.type]
-            if let itemType = itemType {
+            let type = DataItemFamily(rawValue: item.type)
+            if let type = type {
+                let itemType = DataItemFamily.getType(type)
                 try! realm.write() {
-                    realm.create(itemType, value: value, update: .modified) // Should update cachedItem
+                    realm.create(itemType(), value: value, update: .modified) // Should update cachedItem
                 }
             }
         }
@@ -381,8 +378,9 @@ public class Cache {
      * Does not copy the id property
      */
     public func duplicate(_ item:DataItem) -> DataItem {
-        let T = self.typeTable[item.type]!
-        let copy = T.init() as! DataItem
+        let type = DataItemFamily(rawValue: item.type)!
+        let T = DataItemFamily.getType(type)
+        let copy = T().init()
         let properties = item.objectSchema.properties
         for prop in properties {
             if prop.name == "uid" { continue }
