@@ -17,12 +17,9 @@ public class Main: ObservableObject {
      */
     @Published public var currentSession:Session = Session()
     @Published public var currentView:SessionView = SessionView()
-    
-    @Published public var browserEditMode:Bool = false
-    @Published public var navigationEditMode:Bool = false
-    @Published public var showOverlay:String? = nil
 
-//    public let settings: Settings
+    public var settings:Settings
+    
     @Published public var sessions:Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
@@ -39,55 +36,45 @@ public class Main: ObservableObject {
         podApi = PodAPI(key)
         cache = Cache(podApi)
         realm = cache.realm
+        settings = Settings(realm)
     }
     
-    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) -> Main {
+    public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
         // Load settings (from cache and/or api)
-        
-        // Load NavigationCache (from cache and/or api)
-        
-        let settings = realm.objects(SettingCollection.self)
-        if (settings.count < 100) {
-            let s = SettingCollection(value: ["type": "device"])
-            do {
-                try realm.write() {
-                    realm.add(s, update: .modified)
+        self.settings.ready = {
+            // Load NavigationCache (from cache and/or api)
+            
+            // Load view configuration (from cache and/or api)
+            self.podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
+                if error != nil { return }
+                
+                let jsonData = try! jsonDataFromFile("views_from_server")
+                self.defaultViews = try! JSONDecoder()
+                    .decode([String:[String:SessionView]].self, from: jsonData)
+            }
+            
+            // Load sessions (from cache and/or api)
+            self.podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
+                if error != nil { return }
+                
+                self.sessions = try! Sessions.fromJSONString(item.getString("json"))
+                
+                // Hook current session
+                var isCalled:Bool = false
+                self.cancellable = self.sessions.objectWillChange.sink {
+                    isCalled = false
+                    DispatchQueue.main.async {
+                        if !isCalled { self.setCurrentView() }
+                        else { isCalled = true }
+                    }
                 }
-            }
-            catch {
-                print(error)
-            }
-            s.set("/test", "11")
-        }
-        
-        // Load view configuration (from cache and/or api)
-        podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
-            if error != nil { return }
-            
-            let jsonData = try! jsonDataFromFile("views_from_server")
-            self.defaultViews = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
-        }
-        
-        // Load sessions (from cache and/or api)
-        podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
-            if error != nil { return }
-            
-            sessions = try! Sessions.fromJSONString(item.getString("json"))
-            
-            // Hook current session
-            var isCalled:Bool = false
-            self.cancellable = self.sessions.objectWillChange.sink {
-                isCalled = false
-                DispatchQueue.main.async {
-                    if !isCalled { self.setCurrentView() }
-                    else { isCalled = true }
-                }
+                
+                self.setCurrentView()
             }
             
-            self.setCurrentView()
+            callback(nil, true)
         }
         
-        callback(nil, true)
         return self
     }
     

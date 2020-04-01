@@ -10,7 +10,7 @@ enum ActionNeeded:String, Codable {
     case noop
 }
 
-struct DataItemState:Codable {
+class DataItemState:Object,Codable {
     // Whether the data item is loaded partially and requires a full load
     var isPartiallyLoaded:Bool? = nil
     
@@ -30,7 +30,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var starred:Bool = false
     
     let changelog = List<LogItem>()
-    var loadState = DataItemState()
+    @objc dynamic var loadState:DataItemState? = DataItemState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
