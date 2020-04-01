@@ -301,8 +301,8 @@ public class Main: ObservableObject {
         case .back:
             back()
         case .add:
-            let item = Note(value: params[0].value)
-            add(item)
+            let copy = self.cache.duplicate(params[0].value as! DataItem)
+            add(copy)
         case .openView:
             if let item = item {
                 openView(item)

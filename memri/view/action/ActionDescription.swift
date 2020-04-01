@@ -26,6 +26,10 @@ public class ActionDescription: Decodable, Identifiable {
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
     
+    enum ActionDescriptionKeys: String, CodingKey {
+      case actionArgs
+    }
+    
     public convenience required init(from decoder: Decoder) throws{
         self.init()
         
@@ -41,25 +45,96 @@ public class ActionDescription: Decodable, Identifiable {
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             
             switch colorString{
-            case "gray", "systemGray": self.color = .systemGray
-            case "yellow","systemYellow": self.color = .systemYellow
-            case "green", "systemGreen": self.color = .systemGreen
-            default: break
+                case "gray", "systemGray": self.color = .systemGray
+                case "yellow","systemYellow": self.color = .systemYellow
+                case "green", "systemGreen": self.color = .systemGreen
+                default: break
             }
+            
+            let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
+            self.actionArgs = try self.decodeActionArgs(ctr, DataItemFamily.self, .actionArgs)
+//                container.decode(family:DataItemFamily.self, forKey:.actionArgs)
+            
+//            var family = DataItemFamily.self
+//            var key = ActionDescriptionKeys.actionArgs
+//            var container = try ctr.nestedUnkeyedContainer(forKey: key)
+//            var list = [Decodable]()
+//            var tmpContainer = container
+//            while !container.isAtEnd {
+//                let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
+//                let family:DataItemFamily = try typeContainer.decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
+//                if let type = family.getType() as? Decodable.Type {
+//                    list.append(try tmpContainer.decode(type))
+//                }
+//            }
+//            self.actionArgs = list
+            
                     
-            // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
-            switch self.actionName{
-            case .add:
-                break
-//                    self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
-            case .openView:
-                break
-                // TODO make this work
-//                    self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
-            default:
-                break
+//            // we manually set the objects for the actionArgs key, since it has a somewhat dynamic value
+//            switch self.actionName{
+//            case .add:
+//                break
+////                    self.actionArgs[0] = AnyCodable(try DataItem(from: self.actionArgs[0].value))
+//            case .openView:
+//                break
+//                // TODO make this work
+////                    self.actionArgs[0] = AnyCodable(try! SessionView(from: self.actionArgs[0].value))
+//            default:
+//                break
+//            }
+        }
+    }
+    
+    func decodeActionArgs<U : ClassFamily>(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>,
+                                                          _ family:U.Type, _ key:ActionDescriptionKeys) throws -> [AnyCodable] {
+        var container = try ctr.nestedUnkeyedContainer(forKey: key)
+        var list = [AnyCodable]()
+        var tmpContainer = container
+//        while !container.isAtEnd {
+//            print(container.currentIndex)
+//
+////            let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
+////            let family: U = try typeContainer.decode(U.self, forKey: U.discriminator)
+////            if let type = family.getType() as? T.Type {
+//            if let type = self.actionName.argumentTypes[container.currentIndex] as? T.Type {
+//                dump(type)
+//                list.append(try tmpContainer.decode(type))
+//            }
+//        }
+        if let count = container.count {
+            if (self.actionName == .add) {
+                1+1
+                dump(self.actionName.argumentTypes[0])
+            }
+            
+            if (self.actionName.argumentTypes.count > 0) {
+                for i in 0...count - 1 {
+                    let type = self.actionName.argumentTypes[i]
+                    if let type = type as? DataItemFamily.Type {
+                        let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
+                        let family:U = try typeContainer.decode(U.self, forKey: U.discriminator)
+                        let t = family.getType() // { //as? Decodable.Type
+                        list.append(AnyCodable(try tmpContainer.decode(t)))
+//                        }
+                        
+//                        dump(type)
+//                        print(getCodingPathString(tmpContainer.codingPath))
+//                        let result = try tmpContainer.decode(type)
+//                        dump(result)
+//                        list.append(AnyCodable(result))
+                    }
+                    else if let type = type as? Note.Type {
+                        dump(type)
+                        print(getCodingPathString(tmpContainer.codingPath))
+                        let result = try tmpContainer.decode(type)
+                        dump(result)
+                        list.append(AnyCodable(result))
+                    }
+                }
             }
         }
+        
+        return list
     }
     
     public convenience init(icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){

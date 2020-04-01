@@ -37,22 +37,27 @@ func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) {
     }
 }
 
-func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
+func getCodingPathString(_ codingPath:[CodingKey]) -> String {
     var path:String = "[Unknown]"
     
-    if decoder.codingPath.count > 0 {
+    if codingPath.count > 0 {
         path = ""
-        for i in 0...decoder.codingPath.count - 1 {
-            if decoder.codingPath[i].intValue == nil {
+        for i in 0...codingPath.count - 1 {
+            if codingPath[i].intValue == nil {
                 if i > 0 { path += "." }
-                path += "\(decoder.codingPath[i].stringValue)"
+                path += "\(codingPath[i].stringValue)"
             }
             else {
-                path += "[\(Int(decoder.codingPath[i].intValue ?? -1))]"
+                path += "[\(Int(codingPath[i].intValue ?? -1))]"
             }
         }
     }
     
+    return path
+}
+
+func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
+    let path = getCodingPathString(decoder.codingPath)
     print("Decoding: \(path)")
     
     do {

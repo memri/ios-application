@@ -14,39 +14,6 @@ extension PropertyReflectable {
     }
 }
 
-class Note:DataItem {
-    @objc dynamic var title:String? = nil
-    @objc dynamic var content:String? = nil
-    override var type:String { "note" }
-    
-    let writtenBy = List<DataItem>()
-    let sharedWith = List<DataItem>()
-    let comments = List<DataItem>()
-    
-    required init () {
-        super.init()
-    }
-    
-    public required init(from decoder: Decoder) throws {
-        super.init()
-        
-        jsonErrorHandling(decoder) {
-            title = try decoder.decodeIfPresent("title") ?? title
-            content = try decoder.decodeIfPresent("content") ?? content
-        }
-        
-        try! self.initFomJSON(from: decoder)
-    }
-}
-
-class LogItem:DataItem {
-    @objc dynamic var date:Int = 0
-    @objc dynamic var content:String? = nil
-    override var type:String { "logitem" }
-    
-    let appliesTo = List<DataItem>()
-}
-
 enum ActionNeeded:String, Codable {
     case create
 //    case read
@@ -148,12 +115,14 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
         let jsonData = try jsonDataFromFile(file, ext)
-        let items: [DataItem] = try JSONDecoder().decode([Note].self, from: jsonData)
+        
+        let items:[DataItem] = try JSONDecoder().decode(family:DataItemFamily.self, from:jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> [DataItem] {
-        let items: [DataItem] = try JSONDecoder().decode([Note].self, from: Data(json.utf8))
+        let items:[DataItem] = try JSONDecoder()
+            .decode(family:DataItemFamily.self, from:Data(json.utf8))
         return items
     }
     
@@ -205,7 +174,7 @@ public class SearchResult: ObservableObject, Codable {
             data = try decoder.decodeIfPresent("data") ?? data
             query = try decoder.decodeIfPresent("query") ?? query
             loading = try decoder.decodeIfPresent("loading") ?? loading
-            pages = try decoder.decodeIfPresent("pageCount") ?? pages
+            pages = try decoder.decodeIfPresent("pages") ?? pages
 
             // If the searchResult is initiatlized with data we set the state to loading done
             if (!(data.isEmpty && loading == 0)) {
