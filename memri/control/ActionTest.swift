@@ -21,7 +21,6 @@ class actionTest: XCTestCase {
 
     func testActionDescription() throws {
         let actionDescription = ActionDescription(actionName: .back)
-        print(actionDescription.icon)
         XCTAssertTrue(actionDescription.icon == "chevron.left")
     }
     

@@ -23,6 +23,7 @@ public class ActionDescription: Decodable, Identifiable {
     var actionType: ActionType = .button
     var showTitle: Bool = false
     var hasState: Bool = false
+    var state: Bool? = false
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
     
@@ -33,11 +34,14 @@ public class ActionDescription: Decodable, Identifiable {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
+            self.activeColor = self.actionName.defaultActiveColor
+            self.inactiveColor = self.actionName.defaultInactiveColor
             self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
 
         
+            // TODO decode colorString for active/inactive in function
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             
             switch colorString{
