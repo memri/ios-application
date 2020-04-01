@@ -16,8 +16,8 @@ public struct TopNavigation: View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                if main.currentView.title != nil{
-                    Text(main.currentView.title!).font(.headline)
+                if main.computedView.title != nil{
+                    Text(main.computedView.title!).font(.headline)
                 }
             }
             HStack(spacing: 20){
@@ -28,15 +28,17 @@ public struct TopNavigation: View {
                 Action(action: main.currentSession.backButton)
                 
                 Spacer()
-                if self.main.currentView.editActionButton != nil {
-                    Button(action: editAction) {
-                        Image(systemName: main.currentView.editActionButton!.icon)
-                    }
-                    .foregroundColor(.gray)
-                }
+                
+                Action(action: main.computedView.editActionButton)
+//                if self.main.currentView.editActionButton != nil {
+//                    Button(action: editAction) {
+//                        Image(systemName: main.currentView.editActionButton!.icon)
+//                    }
+//                    .foregroundColor(.gray)
+//                }
                 
                 
-                Action(action: main.currentView.actionButton)
+                Action(action: main.computedView.actionButton)
                 Action(action: ActionDescription(icon: "ellipsis", actionName: .noop))
                     
             }.padding(.all, 30)

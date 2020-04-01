@@ -24,10 +24,8 @@ public class SessionView: ObservableObject, Decodable {
     var showLabels: Bool? = nil
     var contextMode: Bool? = nil
     var filterMode: Bool? = nil
-    var editMode: Bool? = nil
     var browsingMode: String? = nil
-    @State var isEditMode: EditMode = .inactive
-    @State var abc: Bool = false
+    @Published var isEditMode: Bool? = nil
     var cascadeOrder:[String]? = nil
     
     public convenience required init(from decoder: Decoder) throws {
@@ -54,7 +52,7 @@ public class SessionView: ObservableObject, Decodable {
             self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
             self.contextMode = try decoder.decodeIfPresent("contextMode") ?? self.contextMode
             self.filterMode = try decoder.decodeIfPresent("filterMode") ?? self.filterMode
-            self.editMode = try decoder.decodeIfPresent("editMode") ?? self.editMode
+            self.isEditMode = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
             self.cascadeOrder = try decoder.decodeIfPresent("cascadeOrder") ?? self.cascadeOrder
         }
@@ -81,7 +79,7 @@ public class SessionView: ObservableObject, Decodable {
         self.showLabels = view.showLabels ?? self.showLabels ?? true
         self.contextMode = view.contextMode ?? self.contextMode ?? false
         self.filterMode = view.filterMode ?? self.filterMode ?? false
-        self.editMode = view.editMode ?? self.editMode ?? false
+        self.isEditMode = view.isEditMode ?? self.isEditMode ?? false
         self.browsingMode = view.browsingMode ?? self.browsingMode ?? "default"
         self.actionButton = view.actionButton ?? self.actionButton ?? nil
         self.backTitle = view.backTitle ?? self.backTitle ?? ""
@@ -126,22 +124,16 @@ public class SessionView: ObservableObject, Decodable {
         return items
     }
     
-    public func toggleEditMode(){
-        switch self.isEditMode{
-            case .active:
-                self.isEditMode = .inactive
-            case .inactive:
-                self.isEditMode = .active
-//                self.$isEditMode.wrappedValue = .active
-                print(self.isEditMode)
-            default:
-                break
-        }
-        self.isEditMode = .active
-        print(self.abc)
-        self.abc.toggle()
-        self.abc=true
-        self.$abc.wrappedValue = true
-        print(self.abc)
-    }
+//    public func toggleEditMode(){
+//        switch self.isEditMode{
+//            case .active:
+//                self.isEditMode = .inactive
+//            case .inactive:
+//                self.isEditMode = .active
+////                self.$isEditMode.wrappedValue = .active
+//            default:
+//                break
+//        }
+//
+//    }
 }

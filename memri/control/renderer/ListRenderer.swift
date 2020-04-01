@@ -77,7 +77,7 @@ struct ListRenderer: Renderer {
         return VStack {
             NavigationView {
                 List{
-                    ForEach(main.currentView.searchResult.data) { dataItem in
+                    ForEach(main.computedView.searchResult.data) { dataItem in
                         VStack{
                             Text(dataItem.getString("title"))
                                 .bold()
@@ -91,14 +91,14 @@ struct ListRenderer: Renderer {
 //                         .padding(.vertical, 7)
                     }.onDelete{ indexSet in
                         for i in indexSet {
-                            let item = self.main.currentView.searchResult.data[i]
+                            let item = self.main.computedView.searchResult.data[i]
                             item.delete()
                         }
-                        self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
+                        self.main.computedView.searchResult.data.remove(atOffsets: indexSet)
                         self.main.objectWillChange.send()
                     }
                 }
-                .environment(\.editMode, $isEditMode)
+//                .environment(\.editMode, self.main.currentSession.currentView.isEditMode!)
                 .navigationBarTitle("")
                 .navigationBarHidden(true)
             }

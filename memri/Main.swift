@@ -15,7 +15,7 @@ public class Main: ObservableObject {
      * The current session that is active in the application
      */
     @Published public var currentSession:Session = Session()
-    @Published public var currentView:SessionView = SessionView()
+    @Published public var computedView:SessionView = SessionView()
     
     @Published public var browserEditMode:Bool = false
     @Published public var navigationEditMode:Bool = false
@@ -91,14 +91,14 @@ public class Main: ObservableObject {
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
             // Set new view
-            self.currentView = cascadedView
+            self.computedView = cascadedView
         }
 //        else {
 //            self.currentView.merge(self.currentView)
 //        }
         
         // Load data
-        let searchResult = self.currentView.searchResult
+        let searchResult = self.computedView.searchResult
         
         // TODO: create enum for loading
         if searchResult.loading == 0 && searchResult.query.query != "" {
@@ -117,6 +117,7 @@ public class Main: ObservableObject {
     public func cascadeView(_ viewFromSession:SessionView) -> SessionView? {
         // Create a new view
         let cascadedView = SessionView()
+        let previousView = self.currentSession.currentView
         
         // TODO: infer from result
         let isList = !viewFromSession.searchResult.query.query!.starts(with: "0x")
@@ -215,6 +216,20 @@ public class Main: ObservableObject {
 //            return nil  // TODO look at this again after implementing resultset
         }
         
+        // turn off editMode when navigating
+        if previousView.isEditMode == true {
+            previousView.isEditMode = false
+        }
+        
+        // hide filterpanel if view doesnt have a button to open it
+        if self.currentSession.showFilterPanel{
+            if cascadedView.filterButtons!.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
+                self.currentSession.showFilterPanel = false
+            }
+        }
+        
+        
+        
         return cascadedView
     }
     
@@ -287,7 +302,7 @@ public class Main: ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         let realItem = self.cache.addToCache(item)
-        self.currentView.searchResult.data.append(realItem) // TODO
+        self.computedView.searchResult.data.append(realItem) // TODO
         self.openView(realItem)
     }
 
@@ -310,7 +325,7 @@ public class Main: ObservableObject {
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
-        case .toggleEdit:
+        case .toggleEditMode:
             toggleEditMode()
         case .toggleFilterPanel:
             toggleFilterPanel()
@@ -350,7 +365,7 @@ public class Main: ObservableObject {
     private var lastNeedle:String = ""
     private var lastTitle:String? = nil
     func search(_ needle:String) {
-        if self.currentView.rendererName != "list" && self.currentView.rendererName != "thumbnail" {
+        if self.computedView.rendererName != "list" && self.computedView.rendererName != "thumbnail" {
             return
         }
         
@@ -360,26 +375,26 @@ public class Main: ObservableObject {
         
         if needle == "" {
             if lastSearchResult != nil {
-                self.currentView.searchResult = lastSearchResult!
+                self.computedView.searchResult = lastSearchResult!
                 lastSearchResult = nil
-                self.currentView.title = lastTitle
+                self.computedView.title = lastTitle
                 self.objectWillChange.send() // TODO why is this not triggered
             }
             return
         }
 
         if lastSearchResult == nil {
-            lastSearchResult = self.currentView.searchResult
-            lastTitle = self.currentView.title
+            lastSearchResult = self.computedView.searchResult
+            lastTitle = self.computedView.title
         }
         
         let searchResult = self.cache.filter(lastSearchResult!, needle)
-        self.currentView.searchResult = searchResult
+        self.computedView.searchResult = searchResult
         if searchResult.data.count == 0 {
-            self.currentView.title = "No results"
+            self.computedView.title = "No results"
         }
         else {
-            self.currentView.title = "\(searchResult.data.count) items found"
+            self.computedView.title = "\(searchResult.data.count) items found"
         }
         self.objectWillChange.send() // TODO why is this not triggered
     }
@@ -399,7 +414,7 @@ public class Main: ObservableObject {
     }
     
     func showNavigation(){
-        self.currentSession.showNavigation = true
+        self.sessions.showNavigation = true
         self.objectWillChange.send()
     }
     
@@ -420,21 +435,21 @@ public class Main: ObservableObject {
         }
         
         
-        let starButton = self.currentView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
+        let starButton = self.computedView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
         toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
         
         // If showing starred items, return to normal view
         if lastStarredView != nil {
-            self.currentView = lastStarredView!
+            self.computedView = lastStarredView!
             lastStarredView = nil
             self.objectWillChange.send()
         }
         else {
             // Otherwise create a new searchResult, mark it as starred (query??)
-            lastStarredView = self.currentView
+            lastStarredView = self.computedView
             let view = SessionView()
-            view.merge(self.currentView)
-            self.currentView = view
+            view.merge(self.computedView)
+            self.computedView = view
             
             // filter the results based on the starred property
             var results:[DataItem] = []
@@ -462,7 +477,9 @@ public class Main: ObservableObject {
     }
     
     func toggleEditMode(){
-        //currently handled in browser
+        let editMode = self.currentSession.currentView.isEditMode ?? false
+        self.currentSession.currentView.isEditMode = !editMode
+        self.currentSession.objectWillChange.send()
     }
     
     func toggleFilterPanel(){

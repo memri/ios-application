@@ -37,7 +37,7 @@ struct Navigation: View {
                 self.dragOffset = value.translation
             })
                 .onEnded{ value in
-                    self.main.currentSession.showNavigation.toggle()
+                    self.main.sessions.showNavigation.toggle()
             })
     }
 

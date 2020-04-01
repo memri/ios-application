@@ -15,6 +15,8 @@ public class Sessions: ObservableObject, Decodable {
 
     @Published var currentSessionIndex: Int = 0
     @Published var sessions: [Session] = []
+    @Published public var showNavigation:Bool = false
+
     var cancellables:[AnyCancellable]? = nil
     
     
@@ -102,7 +104,6 @@ public class Session: ObservableObject, Decodable, Equatable {
     @Published var views: [SessionView] = [SessionView()]
     @Published public var showFilterPanel:Bool = false
     @Published public var showContextPane:Bool = false
-    @Published public var showNavigation:Bool = false
     
     var cancellables: [AnyCancellable]?=nil
 
