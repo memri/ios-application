@@ -51,11 +51,17 @@ struct Search: View {
                     ForEach(self.main.computedView.filterButtons!){ filterButton in
                         
                         // TODO: buttonview
-                        Button(action: {self.main.executeAction(filterButton)}) {
-                            Image(systemName: filterButton.icon)
-                        }.padding(.horizontal , 5)
-                         .font(Font.system(size: 20, weight: .medium))
-                            .foregroundColor(Color(filterButton.color))
+                        
+                        Action(action: filterButton)
+                            .padding(.horizontal , 5)
+                            .font(Font.system(size: 20, weight: .medium))
+
+                        
+//                        Button(action: {self.main.executeAction(filterButton)}) {
+//                            Image(systemName: filterButton.icon)
+//                        }.padding(.horizontal , 5)
+//                         .font(Font.system(size: 20, weight: .medium))
+//                            .foregroundColor(Color(filterButton.color))
                         
                     }
                 }

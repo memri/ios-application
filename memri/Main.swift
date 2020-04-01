@@ -433,10 +433,9 @@ public class Main: ObservableObject {
         if lastNeedle != "" {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
-        
-        
+
         let starButton = self.computedView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
-        toggleColor(object: starButton, color1: .gray, color2: .systemYellow)
+        toggleActive(object: starButton)
         
         // If showing starred items, return to normal view
         if lastStarredView != nil {
@@ -468,11 +467,13 @@ public class Main: ObservableObject {
         }
     }
     
-    func toggleColor(object: ActionDescription, color1: UIColor, color2: UIColor){
-        switch object.color{
-            case color1: object.color = color2
-            case color2: object.color = color1
-            default: object.color = color1
+    func toggleActive(object: ActionDescription){
+        if let state = object.state{
+            switch state{
+            case true: object.color = object.inactiveColor ?? object.color
+            case false: object.color = object.activeColor ?? object.color
+            }
+            object.state!.toggle()
         }
     }
     
