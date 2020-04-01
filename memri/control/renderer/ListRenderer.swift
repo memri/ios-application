@@ -92,7 +92,7 @@ struct ListRenderer: Renderer {
                     }.onDelete{ indexSet in
                         for i in indexSet {
                             let item = self.main.currentView.searchResult.data[i]
-                            item.delete()
+                            let _ = item.delete()
                         }
                         self.main.currentView.searchResult.data.remove(atOffsets: indexSet)
                         self.main.objectWillChange.send()

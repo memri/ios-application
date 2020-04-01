@@ -1,14 +1,14 @@
 {
     "defaults": {
         "{renderer:list}": {
-            "renderConfig": {
+            "renderConfigs": {
                 "list": {
                     "slideLeftActions": [
                         {
                             "icon": "remove.ico",
                             "title": "Remove",
                             "actionName": "remove",
-                            "actionArgs": ["{.id}"]
+                            "actionArgs": []
                         }
                     ],
                     "slideRightActions": [],
@@ -26,18 +26,18 @@
                 "sortAscending": 0
             },
             "rendererName": "list",
-            "renderConfig": {
+            "renderConfigs": {
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
                     "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
                     "press": {
                         "actionName": "openView",
-                        "actionArgs": ["{.id}"]
+                        "actionArgs": []
                     },
                     "longPress": {
                         "actionName": "select",
-                        "actionArgs": ["{.id}"]
+                        "actionArgs": []
                     }
                 }
             },
@@ -46,7 +46,6 @@
                 "icon": "plus",
                 "title": "Add Note",
                 "actionName": "add",
-                "color": "green",
                 "actionArgs": [{
                     "type": "note",
                     "title": "Untitled Note"
@@ -78,7 +77,7 @@
             "name": "note",
             "title": "Note",
             "rendererName": "richTextEditor",
-            "renderConfig": {
+            "renderConfigs": {
                 "richtexteditor": {
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                 }
@@ -93,18 +92,20 @@
                 {
                     "icon": "increase.indent",
                     "title": "Show Timeline",
-                    "actionName": "noop",
+                    "actionName": "openView",
                     "actionArgs": [{
                         "rendererName": "timeline",
-                        "renderConfig": {
+                        "renderConfigs": {
                             "timeline": {
                                 "timeProperty": "date-created"
                             }
                         },
-                        "query": {
-                            "text": "data:Log appliesTo:{.id}",
-                            "sortProperty": "date-created",
-                            "sortAscending": 0
+                        "searchResult": {
+                            "query": {
+                                "text": "data:Log appliesTo:{.id}",
+                                "sortProperty": "date-created",
+                                "sortAscending": 0
+                            }
                         }
                     }]
                 },
@@ -120,7 +121,7 @@
                     "icon": "star.ico",
                     "title": "Star Note",
                     "actionName": "star",
-                    "actionArgs": ["{.id}"]
+                    "actionArgs": []
                 },
                 {
                     "icon": "schedule.ico",
@@ -143,7 +144,7 @@
                 {
                     "title": "Duplicate Note",
                     "actionName": "duplicate",
-                    "actionArgs": ["{.id}"]
+                    "actionArgs": []
                 }
             ],
             "navigateItems": [
@@ -152,15 +153,17 @@
                     "actionName": "openView",
                     "actionArgs": [{
                         "rendererName": "timeline",
-                        "renderConfig": {
+                        "renderConfigs": {
                             "timeline": {
                                 "timeProperty": "date-created"
                             }
                         },
-                        "query": {
-                            "text": "data:Log appliesTo:{.id}",
-                            "sortProperty": "date-created",
-                            "sortAscending": 0
+                        "searchResult": {
+                            "query": {
+                                "text": "type:logitem appliesTo:{.id}",
+                                "sortProperty": "date-created",
+                                "sortAscending": 0
+                            }
                         }
                     }]
                 },
@@ -171,7 +174,7 @@
                 },
                 {
                     "title": "All notes",
-                    "actionName": "openView",
+                    "actionName": "openViewByName",
                     "actionArgs": ["notes"]
                 }
             ]
@@ -180,14 +183,14 @@
     
     "user": {
         "{type:note}": {
-            "renderConfig": {
+            "renderConfigs": {
                 "list": {
                     "slideRightActions": [
                         {
                             "icon": "schedule.ico",
                             "title": "Schedule",
                             "actionName": "schedule",
-                            "actionArgs": ["{.id}"]
+                            "actionArgs": []
                         }
                     ]
                 }

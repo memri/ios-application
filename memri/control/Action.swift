@@ -49,7 +49,7 @@ struct ActionButton: View {
     
     var body: some View {
         Button(action: {self.main.executeAction(self.action)} ) {
-            if action.icon != nil {
+            if action.icon != "" {
                 Image(systemName: action.icon)
                     .foregroundColor(Color(action.color))
             }

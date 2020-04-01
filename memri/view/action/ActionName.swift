@@ -23,7 +23,10 @@ extension String {
 }
 
 public enum ActionName: String, Codable {
-    case back, add, openView, toggleEdit, toggleFilterPanel, star, showStarred, showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate, schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack, noop
+    case back, add, openView, openViewByName, toggleEdit, toggleFilterPanel, star, showStarred,
+        showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate,
+        schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
+        noop
     
     var defaultIcon: String {
         switch self {
@@ -64,6 +67,19 @@ public enum ActionName: String, Codable {
 //        }
 //    }
     
+    var argumentTypes: [Any.Type] {
+        switch self {
+        case .add:
+            return [DataItemFamily.self]
+        case .openView:
+            return [SessionView.self]
+        case .openViewByName:
+            return [String.self]
+        default:
+            return []
+        }
+    }
+    
     var defaultHasState: Bool {
         switch self {
         case .star, .showStarred, .toggleEdit, .toggleFilterPanel:
@@ -86,7 +102,10 @@ public enum ActionName: String, Codable {
     
     var defaultInactiveColor: UIColor? {
         switch self {
-        case .back, .add, .openView, .toggleEdit, .toggleFilterPanel, .star, .showStarred, .showContextPane, .showOverlay, .openContextView, .share, .showNavigation, .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline, .starredNotes, .allNotes, .exampleUnpack:
+        case .back, .add, .openView, .openViewByName, .toggleEdit, .toggleFilterPanel, .star,
+             .showStarred, .showContextPane, .showOverlay, .openContextView, .share, .showNavigation,
+             .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
+             .starredNotes, .allNotes, .exampleUnpack:
             return .systemGray
         default:
             return nil

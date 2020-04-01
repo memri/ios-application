@@ -105,6 +105,8 @@
 		8665ADD7241A8120005B3FA5 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD6241A8120005B3FA5 /* Main.swift */; };
 		8665ADD9241A8387005B3FA5 /* cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD8241A8387005B3FA5 /* cache.swift */; };
 		86677DEB242A6751007A4782 /* CacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86677DEA242A6751007A4782 /* CacheTest.swift */; };
+		869789EA24344A530003756B /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789E924344A530003756B /* schema.swift */; };
+		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -225,6 +227,8 @@
 		8665ADD6241A8120005B3FA5 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		8665ADD8241A8387005B3FA5 /* cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = cache.swift; sourceTree = "<group>"; };
 		86677DEA242A6751007A4782 /* CacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTest.swift; sourceTree = "<group>"; };
+		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; };
+		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
 		C806E06D2426694300C050E9 /* ContextPaneBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneBackground.swift; sourceTree = "<group>"; };
 		C818E60F241D365F0051E653 /* Shapes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shapes.swift; sourceTree = "<group>"; };
@@ -363,6 +367,7 @@
 				5DD17B6D241294E90018A8F1 /* AnyEncodable.swift */,
 				5D3D961E24164B240004040E /* CodeExtended.swift */,
 				5DE95A69241BC954003ABA63 /* DecodableDict.swift */,
+				869789EB24344C7E0003756B /* HeterogeneousCollections.swift */,
 			);
 			path = codable;
 			sourceTree = "<group>";
@@ -501,6 +506,7 @@
 		5DD1E9B623FD812C007BDF7B /* model */ = {
 			isa = PBXGroup;
 			children = (
+				869789E924344A530003756B /* schema.swift */,
 				5D38DE162405776B00FF9B70 /* model.swift */,
 				8665ADD8241A8387005B3FA5 /* cache.swift */,
 			);
@@ -758,6 +764,7 @@
 				5D78D072242531BE00F7BD3B /* NavigationItem.swift in Sources */,
 				5D78D0692424D4D900F7BD3B /* Navigation.swift in Sources */,
 				5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */,
+				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				5D0EBA2924040D6300D9D842 /* Browser_v1.swift in Sources */,
@@ -784,6 +791,7 @@
 				5DD28B772417BAF900CE9F6A /* ThumbnailRenderer.swift in Sources */,
 				5D228B042432275600464506 /* ActionDescription.swift in Sources */,
 				5D3D9621241675100004040E /* util.swift in Sources */,
+				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Session.swift in Sources */,
 				5DD1E9BA23FD81C5007BDF7B /* Renderer.swift in Sources */,

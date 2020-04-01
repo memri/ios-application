@@ -29,41 +29,43 @@ func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
     return jsonData
 }
 
-func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) -> Bool {
+func jsonErrorHandling(_ decoder: JSONDecoder, _ convert: () throws -> Void) {
     do {
         try convert()
-        return true
     } catch {
-        return false
+        print("\nJSON Parse Error: \(error.localizedDescription)\n")
     }
 }
 
-func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) -> Bool {
+func getCodingPathString(_ codingPath:[CodingKey]) -> String {
     var path:String = "[Unknown]"
     
-    if decoder.codingPath.count > 0 {
+    if codingPath.count > 0 {
         path = ""
-        for i in 0...decoder.codingPath.count - 1 {
-            if decoder.codingPath[i].intValue == nil {
+        for i in 0...codingPath.count - 1 {
+            if codingPath[i].intValue == nil {
                 if i > 0 { path += "." }
-                path += "\(decoder.codingPath[i].stringValue)"
+                path += "\(codingPath[i].stringValue)"
             }
             else {
-                path += "[\(Int(decoder.codingPath[i].intValue ?? -1))]"
+                path += "[\(Int(codingPath[i].intValue ?? -1))]"
             }
         }
     }
     
+    return path
+}
+
+func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
+    let path = getCodingPathString(decoder.codingPath)
     print("Decoding: \(path)")
     
     do {
         try convert()
-        return true
     } catch {
 //        dump(decoder)
-        print("JSON Parse Error at \(path)\n\nError: \(error)")
+        print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
         raise(SIGINT)
-        return false
     }
 }
 
@@ -76,7 +78,7 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
         let data = try encode(encoder)
         json = String(data: data, encoding: .utf8) ?? ""
     } catch {
-        print("Unexpected error: \(error)")
+        print("\nUnexpected error: \(error.localizedDescription)\n")
     }
     
     return json
