@@ -16,6 +16,18 @@ import Foundation
 
 extension String: Error {}
 
+func unserialize<T:Decodable>(_ s:String) -> T {
+    let data = s.data(using: .utf8)!
+    let output:T = try! JSONDecoder().decode(T.self, from: data)
+    return output
+}
+
+func serialize(_ a:AnyCodable) -> String {
+    let data = try! JSONEncoder().encode(a)
+    let string = String(data: data, encoding: .utf8)!
+    return string
+}
+
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     print("Reading from file \(file).\(ext)")
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)

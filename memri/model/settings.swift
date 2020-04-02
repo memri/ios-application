@@ -34,30 +34,7 @@ public class Settings {
         // TODO: This could probably be optimized, but lets first get familiar with the process
         
         let allSettings = realm.objects(SettingCollection.self)
-        if (allSettings.count == 0) {
-            defaults = SettingCollection(value: ["type": "defaults"])
-            device = SettingCollection(value: ["type": "device"])
-            user = SettingCollection(value: ["type": "user"])
-            
-            do {
-                try realm.write() {
-                    realm.add(defaults, update: .modified)
-                    realm.add(device, update: .modified)
-                    realm.add(user, update: .modified)
-                }
-            }
-            catch {
-                print(error)
-            }
-            
-            // Load default settings from disk
-            let jsonData = try! jsonDataFromFile("default_settings")
-            let values = try! JSONDecoder().decode([String:AnyCodable].self, from: jsonData)
-            for (key, value) in values {
-                defaults.set(key, value)
-            }
-        }
-        else {
+        if (allSettings.count > 0) {
             for i in 0...allSettings.count - 1 {
                 switch allSettings[i].type {
                     case "defaults": defaults = allSettings[i]
@@ -68,9 +45,39 @@ public class Settings {
                 }
             }
         }
+        else {
+            print("Error: Settings are not initialized")
+        }
         
         _ready = true
         if let callback = callback { callback() }
+    }
+    
+    /**
+     *
+     */
+    public func install() {
+        var defaults = SettingCollection(value: ["type": "defaults"])
+        var device = SettingCollection(value: ["type": "device"])
+        var user = SettingCollection(value: ["type": "user"])
+        
+        do {
+            try realm.write() {
+                realm.add(defaults, update: .modified)
+                realm.add(device, update: .modified)
+                realm.add(user, update: .modified)
+            }
+        }
+        catch {
+            print(error)
+        }
+        
+        // Load default settings from disk
+        let jsonData = try! jsonDataFromFile("default_settings")
+        let values = try! JSONDecoder().decode([String:AnyCodable].self, from: jsonData)
+        for (key, value) in values {
+            defaults.set(key, value)
+        }
     }
     
     /**
@@ -125,18 +132,6 @@ class SettingCollection:Object {
     
     override static func primaryKey() -> String? {
         return "type"
-    }
-    
-    private func unserialize<T:Decodable>(_ s:String) -> T {
-        let data = s.data(using: .utf8)!
-        let output:T = try! JSONDecoder().decode(T.self, from: data)
-        return output
-    }
-    
-    private func serialize(_ a:AnyCodable) -> String {
-        let data = try! JSONEncoder().encode(a)
-        let string = String(data: data, encoding: .utf8)!
-        return string
     }
     
     /**

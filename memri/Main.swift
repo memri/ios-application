@@ -13,66 +13,90 @@ public class Main: ObservableObject {
     public let name:String = "GUI"
 
     /**
+     *
+     */
+    @Published public var sessions:Sessions = Sessions()
+    /**
      * The current session that is active in the application
      */
     @Published public var currentSession:Session = Session()
+    /**
+     *
+     */
     @Published public var computedView:SessionView = SessionView()
-
+    /**
+     *
+     */
     public var settings:Settings
-    
-    @Published public var sessions:Sessions = Sessions()
-//    public let navigationCache: NavigationCache
-    
-    var cancellable:AnyCancellable? = nil
-    
-    private var defaultViews:[String:[String:SessionView]] = [:]
-    
+    /**
+     *
+     */
+    public var installer:Installer
+    /**
+     *
+     */
     public var podApi:PodAPI
+    /**
+     *
+     */
     public var cache:Cache
+    /**
+     *
+     */
     public var realm:Realm
     
+    
+//    public let navigationCache: NavigationCache
+    
+    private var cancellable:AnyCancellable? = nil
+    private var defaultViews:[String:[String:SessionView]] = [:]
+    
     init(name:String, key:String) {
-        // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
         realm = cache.realm
         settings = Settings(realm)
+        installer = Installer(realm)
     }
     
     public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
-        // Load settings (from cache and/or api)
-        self.settings.ready = {
-            // Load NavigationCache (from cache and/or api)
+        // Make sure we are installed properly
+        self.installer.installIfNeeded(self) {
             
-            // Load view configuration (from cache and/or api)
-            self.podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
-                if error != nil { return }
+            // Load settings (from cache and/or api)
+            self.settings.ready = {
+                // Load NavigationCache (from cache and/or api)
                 
-                let jsonData = try! jsonDataFromFile("views_from_server")
-                self.defaultViews = try! JSONDecoder()
-                    .decode([String:[String:SessionView]].self, from: jsonData)
-            }
-            
-            // Load sessions (from cache and/or api)
-            self.podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
-                if error != nil { return }
-                
-                self.sessions = try! Sessions.fromJSONString(item.getString("json"))
-                
-                // Hook current session
-                var isCalled:Bool = false
-                self.cancellable = self.sessions.objectWillChange.sink {
-                    isCalled = false
-                    DispatchQueue.main.async {
-                        if !isCalled { self.setCurrentView() }
-                        else { isCalled = true }
-                    }
+                // Load view configuration (from cache and/or api)
+                self.podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
+                    if error != nil { return }
+                    
+                    let jsonData = try! jsonDataFromFile("views_from_server")
+                    self.defaultViews = try! JSONDecoder()
+                        .decode([String:[String:SessionView]].self, from: jsonData)
                 }
                 
-                self.setCurrentView()
+                // Load sessions (from cache and/or api)
+                self.podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
+                    if error != nil { return }
+                    
+                    self.sessions = try! Sessions.fromJSONString(item.getString("json"))
+                    
+                    // Hook current session
+                    var isCalled:Bool = false
+                    self.cancellable = self.sessions.objectWillChange.sink {
+                        isCalled = false
+                        DispatchQueue.main.async {
+                            if !isCalled { self.setCurrentView() }
+                            else { isCalled = true }
+                        }
+                    }
+                    
+                    self.setCurrentView()
+                }
+                
+                callback(nil, true)
             }
-            
-            callback(nil, true)
         }
         
         return self

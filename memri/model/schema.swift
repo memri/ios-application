@@ -62,8 +62,9 @@ class Note:DataItem {
 }
 
 class LogItem:DataItem {
-    @objc dynamic var date:Int = 0
-    @objc dynamic var content:String? = nil
+    @objc dynamic var date:Date? = nil
+    @objc dynamic var contents:String? = nil
+    @objc dynamic var action:String? = nil
     override var type:String { "logitem" }
     
     let appliesTo = List<DataItem>()
