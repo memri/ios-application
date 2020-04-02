@@ -33,12 +33,11 @@ struct FilterPanel: View {
                                 BrowseSetting(name: "Browse by folder", selected: false),
                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
 
-    var filterPanelRenderers = ["list", "thumbnail"]
-    
+ 
     
     var body: some View {
         VStack{
-            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel) {
+            if self.main.currentSession.showFilterPanel {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){

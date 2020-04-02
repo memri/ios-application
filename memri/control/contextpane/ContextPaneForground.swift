@@ -15,10 +15,10 @@ struct ContextPaneForground: View {
     var body: some View {
         VStack(alignment: .leading) {
                 VStack {
-                    Text(main.currentView.title ?? "No Title")
+                    Text(main.computedView.title ?? "No Title")
                         .font(.largeTitle)
                         .fontWeight(.bold)
-                    Text(main.currentView.subtitle ?? "No Subtitle")
+                    Text(main.computedView.subtitle ?? "No Subtitle")
                         .font(.body)
                     Divider()
                     Text("some stuff to add later ...")
@@ -32,7 +32,7 @@ struct ContextPaneForground: View {
                     Spacer()
                 }.padding(.vertical, 20)
                 VStack(alignment: .leading, spacing: 20){
-                    ForEach (self.main.currentView.actionItems ?? []) { actionItem in
+                    ForEach (self.main.computedView.actionItems ?? []) { actionItem in
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
@@ -51,7 +51,7 @@ struct ContextPaneForground: View {
 //                List {
                 VStack(alignment: .leading, spacing: 20){
 
-                    ForEach (self.main.currentView.navigateItems ?? []) { navigateItem in
+                    ForEach (self.main.computedView.navigateItems ?? []) { navigateItem in
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {

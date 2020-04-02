@@ -18,7 +18,7 @@ struct Browser: View {
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
-    var currentRenderer: AnyView { renderers[main.currentView.rendererName!,
+    var currentRenderer: AnyView { renderers[main.computedView.rendererName!,
                   default: AnyView(ThumbnailRenderer())]
     }
     
@@ -32,7 +32,7 @@ struct Browser: View {
             if self.main.currentSession.showContextPane {
                 animateInContextPane()
             }
-            if self.main.currentSession.showNavigation{
+            if self.main.sessions.showNavigation{
                 Navigation()
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))
@@ -41,7 +41,7 @@ struct Browser: View {
     }
     
     func getRenderer() -> AnyView{
-        switch self.main.currentView.rendererName{
+        switch self.main.computedView.rendererName{
         case "list":
             return AnyView(ListRenderer(isEditMode: $isEditMode))
         case "richTextEditor":
