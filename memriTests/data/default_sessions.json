@@ -5,6 +5,7 @@
             "currentViewIndex": 0,
             "views": [
                 {
+                    "name": "test",
                     "searchResult": {
                         "query": {
                             "query": "notes",

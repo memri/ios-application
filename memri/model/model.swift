@@ -121,19 +121,25 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
 }
 
-public class SearchResult: ObservableObject, Codable {
+public class SearchResult: Object, ObservableObject, Codable {
+    let uid = UUID().uuidString
+    
+    public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
+        return lt.uid == rt.uid
+    }
+    
     /**
      *
      */
-    public var query: QueryOptions = QueryOptions(query: "")
+    @objc dynamic var query: QueryOptions? = QueryOptions(query: "")
     /**
      * Retrieves the data loaded from the pod
      */
-    @Published public var data:[DataItem] = []
+    public var data:[DataItem] = []
     /**
      *
      */
-    public var pages: [Int:Bool] = [:]
+    let pages = List<Int>()
     /**
      * Returns the loading state
      *  -2 loading data failed
@@ -141,7 +147,7 @@ public class SearchResult: ObservableObject, Codable {
      *  0 loading idle
      *  1 loading data from server
      */
-    public var loading: Int = 0
+    var loading: Int = 0
     
     public convenience required init(_ query: QueryOptions? = nil, _ data:[DataItem]?) {
         self.init()
@@ -151,7 +157,9 @@ public class SearchResult: ObservableObject, Codable {
         
         if (data != nil) {
             loading = -1
-            pages[query?.pageIndex ?? 0] = true
+            if !pages.contains(query?.pageIndex.value ?? 0) {
+                pages.append(query?.pageIndex.value ?? 0)
+            }
         }
     }
     
@@ -161,13 +169,20 @@ public class SearchResult: ObservableObject, Codable {
         jsonErrorHandling(decoder) {
             data = try decoder.decodeIfPresent("data") ?? data
             query = try decoder.decodeIfPresent("query") ?? query
-            loading = try decoder.decodeIfPresent("loading") ?? loading
-            pages = try decoder.decodeIfPresent("pages") ?? pages
+//            loading = try decoder.decodeIfPresent("loading") ?? loading
+            
+            decodeIntoList(decoder, "pages", self.pages)
 
             // If the searchResult is initiatlized with data we set the state to loading done
             if (!(data.isEmpty && loading == 0)) {
                 loading = -1
             }
+        }
+    }
+    
+    func setPagesLoaded(_ pageIndex:Int) {
+        if !pages.contains(pageIndex) {
+            pages.append(pageIndex)
         }
     }
     

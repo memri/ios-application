@@ -48,7 +48,7 @@ struct Search: View {
                         self.main.search(self.searchText)
                     }
                 if self.main.computedView.filterButtons != nil{
-                    ForEach(self.main.computedView.filterButtons!){ filterButton in
+                    ForEach(self.main.computedView.filterButtons){ filterButton in
                         
                         // TODO: buttonview
                         

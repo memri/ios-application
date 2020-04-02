@@ -44,6 +44,10 @@ class ListConfig: RenderConfig {
     required init(from decoder: Decoder) throws {
         fatalError("init(from:) has not been implemented")
     }
+    
+    required init() {
+        super.init()
+    }
 }
 
 struct ListRenderer: Renderer {
@@ -77,7 +81,7 @@ struct ListRenderer: Renderer {
         return VStack {
             NavigationView {
                 List{
-                    ForEach(main.computedView.searchResult.data) { dataItem in
+                    ForEach(main.computedView.searchResult!.data) { dataItem in
                         VStack{
                             Text(dataItem.getString("title"))
                                 .bold()
@@ -91,10 +95,10 @@ struct ListRenderer: Renderer {
 //                         .padding(.vertical, 7)
                     }.onDelete{ indexSet in
                         for i in indexSet {
-                            let item = self.main.computedView.searchResult.data[i]
+                            let item = self.main.computedView.searchResult!.data[i]
                             let _ = item.delete()
                         }
-                        self.main.computedView.searchResult.data.remove(atOffsets: indexSet)
+                        self.main.computedView.searchResult!.data.remove(atOffsets: indexSet)
                         self.main.objectWillChange.send()
                     }
                 }
@@ -115,4 +119,22 @@ struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
         ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
     }
+}
+
+public class RenderState{}
+
+public protocol Renderer: View {
+    var name: String {get set}
+    var icon: String {get set}
+    var category: String {get set}
+    
+    var renderModes: [ActionDescription]  {get set}
+    var options1: [ActionDescription] {get set}
+    var options2: [ActionDescription] {get set}
+    var editMode: Bool {get set}
+    var renderConfig: RenderConfig {get set}
+
+    func setState(_ state:RenderState) -> Bool
+    func getState() -> RenderState
+    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void)
 }

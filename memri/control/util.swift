@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 //func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{
 //    for var (prop, name) in tuples.map({(AnyCodable($0), $1)}){
@@ -94,4 +95,13 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
     }
     
     return json
+}
+
+func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:List<T>) {
+    let parsed:[T]? = try! decoder.decodeIfPresent(key)
+    if let parsed = parsed {
+        for item in parsed {
+            list.append(item)
+        }
+    }
 }

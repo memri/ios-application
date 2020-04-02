@@ -16,7 +16,7 @@ var config = Realm.Configuration(
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
 
-    schemaVersion: 28,
+    schemaVersion: 31,
 
     // Set the block which will be called automatically when opening a Realm with
     // a schema version lower than the one set above
@@ -308,12 +308,12 @@ public class Cache {
         // Set state to loading
         searchResult.loading = 1
         
-        if searchResult.query.query == "" {
+        if searchResult.query!.query == "" {
             callback("No query specified")
             return
         }
         
-        let _ = self.query(searchResult.query) { (error, result, success) -> Void in
+        let _ = self.query(searchResult.query!) { (error, result, success) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
 
@@ -328,7 +328,7 @@ public class Cache {
             if let result = result { searchResult.data = result }
 
             // We've successfully loaded page 0
-            searchResult.pages[0] = true;
+            searchResult.setPagesLoaded(0)
 
             // First time loading is done
             searchResult.loading = -1
@@ -341,12 +341,13 @@ public class Cache {
      * Client side filter //, with a fallback to the server
      */
     public func filter(_ searchResult:SearchResult, _ query:String) -> SearchResult {
-        var options = searchResult.query
+        let options = searchResult.query!
         options.query = query
         
         let filterResult = SearchResult(options, searchResult.data)
         filterResult.loading = searchResult.loading
-        filterResult.pages = searchResult.pages
+        filterResult.pages.removeAll()
+        filterResult.pages.append(objectsIn: searchResult.pages)
         
         for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
             if (!filterResult.data[i].match(query)) {
@@ -362,9 +363,9 @@ public class Cache {
      */
     public func reload(_ searchResult:SearchResult) -> Void {
         // Reload all pages
-        for (page, _) in searchResult.pages {
-            let _ = self.loadPage(searchResult, page, { (error) in })
-        }
+//        for (page, _) in searchResult.pages {
+//            let _ = self.loadPage(searchResult, page, { (error) in })
+//        }
     }
     
     /**
@@ -395,7 +396,7 @@ public class Cache {
      */
     public func addToCache(_ result:SearchResult) {
         // Overwrite past results (even though sorting options etc, may differ ...
-        if let q = result.query.query {
+        if let q = result.query!.query {
             self.queryCache[q] = result
         }
     }

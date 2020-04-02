@@ -1,44 +1,52 @@
 import Foundation
-import UIKit
 import Combine
+import RealmSwift
 
-public struct QueryOptions: Codable {
+public class QueryOptions: Object, Codable {
     /**
      * Retrieves the query which is used to load data from the pod
      */
-    var query: String? = nil
+    @objc dynamic var query: String? = nil
     
     /**
      * Retrieves the property that is used to sort on
      */
-    public var sortProperty: String? = nil
+    @objc dynamic var sortProperty: String? = nil
     /**
      * Retrieves whether the sort direction
      *   -1 no sorting is applied
      *    0 sort descending
      *    1 sort ascending
      */
-    public var sortAscending: Int? = nil
+    let sortAscending = RealmOptional<Int>()
     /**
      * Retrieves the number of items per page
      */
-    public var pageCount: Int? = nil
+    let pageCount = RealmOptional<Int>()
     /**
      *
      */
-    public var pageIndex: Int? = nil
+    let pageIndex = RealmOptional<Int>()
     
     init(query:String) {
+        super.init()
+        
         self.query = query
     }
     
-    public init(from decoder: Decoder) throws {
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
         jsonErrorHandling(decoder) {
             query = try decoder.decodeIfPresent("query") ?? query
             sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
-            sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
-            pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount   
+            sortAscending.value = try decoder.decodeIfPresent("sortAscending") ?? sortAscending.value
+            pageCount.value = try decoder.decodeIfPresent("pageCount") ?? pageCount.value
         }
+    }
+    
+    required init() {
+        super.init()
     }
 }
 
@@ -117,6 +125,8 @@ public class PodAPI {
      *
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
+        
+        print(query.query)
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result

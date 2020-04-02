@@ -63,7 +63,7 @@ public class Main: ObservableObject {
         
         // Make sure memri is installed properly
         self.installer.installIfNeeded(self) {
-            
+
             // Load settings
             self.settings.load() {
                 
@@ -71,7 +71,7 @@ public class Main: ObservableObject {
                 // TODO
                 
                 // Load view configuration
-                self.sessions.load(realm) {
+                try! self.sessions.load(realm) {
                     
                     // Hook current session
                     var isCalled:Bool = false
@@ -99,6 +99,7 @@ public class Main: ObservableObject {
         return self.boot({_,_ in })
     }
     
+    var NORECURTEMPVARIABLEFIXTHISWHENIMPLEMENTINGRESULTSET = false
     public func setCurrentView(){
         // we never have to call this manually (it will be called automatically
         // when sessions changes), except for booting
@@ -117,13 +118,20 @@ public class Main: ObservableObject {
 //        }
         
         // Load data
-        let searchResult = self.computedView.searchResult
+        let searchResult = self.sessions.currentView.searchResult!
         
         // TODO: create enum for loading
-        if searchResult.loading == 0 && searchResult.query.query != "" {
+        if searchResult.loading == 0 && searchResult.query!.query != "" && !NORECURTEMPVARIABLEFIXTHISWHENIMPLEMENTINGRESULTSET {
+            
+            print(searchResult.query!.query)
+            
+            NORECURTEMPVARIABLEFIXTHISWHENIMPLEMENTINGRESULTSET = true
             cache.loadPage(searchResult, 0, { (error) in
-                // call again when data is loaded, so the view can adapt to the data
-                self.setCurrentView()
+                if error == nil {
+                    // call again when data is loaded, so the view can adapt to the data
+                    self.setCurrentView()
+                    NORECURTEMPVARIABLEFIXTHISWHENIMPLEMENTINGRESULTSET = false
+                }
             })
         }
     }
@@ -197,7 +205,7 @@ public class Main: ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         let realItem = self.cache.addToCache(item)
-        self.computedView.searchResult.data.append(realItem) // TODO
+        self.computedView.searchResult!.data.append(realItem) // TODO
         self.openView(realItem)
     }
 
@@ -325,7 +333,7 @@ public class Main: ObservableObject {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
 
-        let starButton = self.computedView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
+        let starButton = self.computedView.filterButtons.filter{$0.actionName == .showStarred}[0] // HACK
         toggleActive(object: starButton)
         
         // If showing starred items, return to normal view
@@ -343,7 +351,7 @@ public class Main: ObservableObject {
             
             // filter the results based on the starred property
             var results:[DataItem] = []
-            let data = lastStarredView!.searchResult.data
+            let data = lastStarredView!.searchResult!.data
             // TODO: Change to filter
             for i in 0...data.count - 1 {
                 let isStarred = data[i]["starred"] as? Bool ?? false
@@ -351,7 +359,7 @@ public class Main: ObservableObject {
             }
             
             // Add searchResult to view
-            view.searchResult.data = results
+            view.searchResult!.data = results
             view.title = "Starred \(view.title ?? "")"
             
             self.objectWillChange.send()
@@ -359,18 +367,18 @@ public class Main: ObservableObject {
     }
     
     func toggleActive(object: ActionDescription){
-        if let state = object.state{
+        if let state = object.state.value {
             switch state{
             case true: object.color = object.inactiveColor ?? object.color
             case false: object.color = object.activeColor ?? object.color
             }
-            object.state!.toggle()
+            object.state.value!.toggle()
         }
     }
     
     func toggleEditMode(){
-        let editMode = self.currentSession.currentView.isEditMode ?? false
-        self.currentSession.currentView.isEditMode = !editMode
+        let editMode = self.currentSession.currentView.isEditMode.value ?? false
+        self.currentSession.currentView.isEditMode.value = !editMode
         self.currentSession.objectWillChange.send()
     }
     

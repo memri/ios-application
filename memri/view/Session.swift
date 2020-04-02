@@ -58,10 +58,14 @@ public class Sessions: Object, ObservableObject, Decodable {
             uid = try decoder.decodeIfPresent("uid") ?? uid
             currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
             
-            let sessions:[Session]? = try decoder.decodeIfPresent("sessions")
-            if let sessions = sessions {
-                for session in sessions { self.sessions.append(session) }
-            }
+//            if self.realm != nil {
+//                try! self.realm!.write {
+//                    decodeIntoList(decoder, "sessions", self.sessions)
+//                }
+//            }
+//            else {
+                decodeIntoList(decoder, "sessions", self.sessions)
+//            }
         }
         
         self.postInit()
@@ -106,7 +110,8 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    public func load(_ realm:Realm, _ callback: () -> Void) {
+    public func load(_ realm:Realm, _ callback: () -> Void) throws {
+        
         // Load the default views from the package
         let jsonData = try! jsonDataFromFile("views_from_server")
         self.defaultViews = try! JSONDecoder()
@@ -121,12 +126,18 @@ public class Sessions: Object, ObservableObject, Decodable {
         
         // Active this session to make sure its stored in realm
         try! realm.write {
-            realm.add(self, update: .modified)
+            if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid)'").first {
+                // Sync with the cached version
+                self.merge(fromCache)
+                
+                // Turn myself in a managed object by realm
+                realm.add(self, update: .modified)
+            }
+            else {
+                throw "Exception: Could not initialize sessions"
+            }
         }
-        
-        // Expand all views
-        self.expandAllViews()
-        
+
         // Done
         callback()
     }
@@ -137,49 +148,16 @@ public class Sessions: Object, ObservableObject, Decodable {
     public func install(_ realm:Realm) {
         // Load default sessions from the package
         let defaultSessions = try! Sessions.fromJSONFile("default_sessions")
-        dump(defaultSessions.sessions[0].views[0])
-        print("ZzZZZZZZZZZZZZ")
-        
-        for session in defaultSessions.sessions {
-            for view in session.views {
-                print(view.searchResult.query.query)
-                print("--------------------")
-            }
-        }
         
         fetchUID(realm)
         
-        for session in defaultSessions.sessions {
-            for view in session.views {
-                print(view.searchResult.query.query)
-                print("--------------------")
-            }
-        }
-        
         // Force same primary key
         defaultSessions.uid = self.uid
-        
-        for session in defaultSessions.sessions {
-            for view in session.views {
-                print(view.searchResult.query.query)
-                print("--------------------")
-            }
-        }
         
         // Store session
         try! realm.write {
             realm.add(defaultSessions, update: .modified)
         }
-        
-        for session in defaultSessions.sessions {
-            for view in session.views {
-                print(view.searchResult.query.query)
-                print("--------------------")
-            }
-        }
-        
-        // Store all views
-        defaultSessions.persistAllViews()
     }
     
     /**
@@ -190,6 +168,18 @@ public class Sessions: Object, ObservableObject, Decodable {
         if (index > 0) { throw "Should never happen" } // Should never happen
         
         currentSessionIndex = index
+    }
+    
+    public func merge(_ sessions:Sessions) {
+        let properties = self.objectSchema.properties
+        for prop in properties {
+            if prop.name == "sessions" {
+                self.sessions.append(objectsIn: sessions.sessions)
+            }
+            else {
+                self[prop.name] = sessions[prop.name]
+            }
+        }
     }
 
     /*
@@ -202,28 +192,29 @@ public class Sessions: Object, ObservableObject, Decodable {
             ? self.currentSession.currentView
             : argView!
         
-        dump(viewFromSession)
-        
         // Create a new view
         let computedView = SessionView()
         let previousView = self.currentSession.currentView
+        let searchResult = viewFromSession.searchResult!
         
         // TODO: infer from result
-        let isList = !viewFromSession.searchResult.query.query!.starts(with: "0x")
+        let isList = !searchResult.query!.query!.starts(with: "0x")
         
         // TODO: infer from all results
         var type:String = ""
-        if (viewFromSession.searchResult.data.count > 0 ) {
-            type = viewFromSession.searchResult.data[0].type
+        if (searchResult.data.count > 0 ) {
+            type = searchResult.data[0].type
         }
 
         // Helper lists
         var renderViews:[SessionView] = []
         var datatypeViews:[SessionView] = []
         var rendererNames:[String] = []
-        var cascadeOrders:[String:[[String]]] = ["defaults":[["renderer", "datatype"]], "user":[]]
+        var cascadeOrders:[String:[List<String>]] = ["defaults":[List()], "user":[]]
         let searchOrder = ["defaults", "user"]
         var rendererName:String
+        
+        cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
         
         // If we know the type of data we are rendering use it to determine the view
         if type != "" {
@@ -236,7 +227,9 @@ public class Sessions: Object, ObservableObject, Decodable {
                     datatypeViews.append(datatypeView)
                     
                     if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if let S = datatypeView.cascadeOrder { cascadeOrders[key]?.append(S) }
+                    if datatypeView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+                    }
                 }
             }
             
@@ -256,7 +249,9 @@ public class Sessions: Object, ObservableObject, Decodable {
                 if let rendererView = self.defaultViews[key]![needle] {
                     renderViews.append(rendererView)
                     
-                    if let S = rendererView.cascadeOrder { cascadeOrders[key]?.append(S) }
+                    if rendererView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(rendererView.cascadeOrder)
+                    }
                 }
             }
         }
@@ -267,7 +262,10 @@ public class Sessions: Object, ObservableObject, Decodable {
             : cascadeOrders["defaults"]) ?? []
         
         var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
-        if (cascadeOrder.count == 0) { cascadeOrder = ["renderer", "datatype"] }
+        if (cascadeOrder.count == 0) {
+            cascadeOrder = List()
+            cascadeOrder.append(objectsIn: ["renderer", "datatype"])
+        }
         
         if (Set(preferredCascadeOrder).count > 1) {
             print("Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
@@ -294,55 +292,46 @@ public class Sessions: Object, ObservableObject, Decodable {
         computedView.merge(viewFromSession)
         
         // this is hacky now, will be solved later
-        viewFromSession.searchResult.query = computedView.searchResult.query
-        computedView.searchResult = viewFromSession.searchResult
+//        viewFromSession.searchResult!.query = computedView.searchResult!.query // Disabled because this would now constitute a write action to realm. Still need to solve this when implementing ResultSet
+//        print(viewFromSession.searchResult!.uid)
+//        print(computedView.searchResult!.uid)
+//        
+//        computedView.searchResult = viewFromSession.searchResult
+//        
+//        print(viewFromSession.searchResult!.uid)
+//        print(computedView.searchResult!.uid)
+//        dump(viewFromSession.searchResult == searchResult)
+
         
         do {
             try computedView.validate()
         }
         catch {
-            print("View Cascading Error: \(error)")
+            dump(computedView.rendererName)
+            
+            print("Error: Invalid Computed View: \(error)")
 //            return nil  // TODO look at this again after implementing resultset
         }
         
         // turn off editMode when navigating
-        if previousView.isEditMode == true {
-            previousView.isEditMode = false
+        if previousView.isEditMode.value == true {
+            try! realm!.write {
+                previousView.isEditMode.value = false
+            }
         }
         
         // hide filterpanel if view doesnt have a button to open it
-        if self.currentSession.showFilterPanel{
-            if computedView.filterButtons!.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
-                self.currentSession.showFilterPanel = false
+        if self.currentSession.showFilterPanel {
+            if computedView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
+                try! realm!.write {
+                    self.currentSession.showFilterPanel = false
+                }
             }
         }
         
         return computedView
     }
     
-    /**
-     *
-     */
-    public func persistAllViews(){
-        for session in sessions {
-            for view in session.views {
-                dump(view)
-                print("--------------------")
-                view.persist()
-            }
-        }
-    }
-    
-    /**
-     *
-     */
-    public func expandAllViews(){
-        for session in sessions {
-            for view in session.views {
-                view.expand()
-            }
-        }
-    }
     /**
      * Find a session using text
      */
@@ -409,15 +398,12 @@ public class Session: Object, ObservableObject, Decodable {
         
         jsonErrorHandling(decoder) {
             id = try decoder.decodeIfPresent("id") ?? id
+            
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-            
-            let views:[SessionView]? = try decoder.decodeIfPresent("views")
-            if let views = views {
-                for view in views { self.views.append(view) }
-            }
-            
             showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
             showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
+            
+            decodeIntoList(decoder, "views", self.views)
         }
     }
     
@@ -426,13 +412,13 @@ public class Session: Object, ObservableObject, Decodable {
         self.postInit()
     }
     
-    deinit {
-        if let realm = self.realm {
-            try! realm.write {
-                realm.delete(self)
-            }
-        }
-    }
+//    deinit {
+//        if let realm = self.realm {
+//            try! realm.write {
+//                realm.delete(self)
+//            }
+//        }
+//    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
