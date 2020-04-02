@@ -18,11 +18,15 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @Published @objc dynamic var currentSessionIndex: Int = 0
+    @objc dynamic var loadState:SyncState? = SyncState()
     /**
      *
      */
-    @Published @objc dynamic var showNavigation: Bool = false
+    @objc dynamic var currentSessionIndex: Int = 0
+    /**
+     *
+     */
+    @objc dynamic var showNavigation: Bool = false
     /**
      *
      */
@@ -107,6 +111,9 @@ public class Sessions: Object, ObservableObject, Decodable {
             realm.add(self, update: .modified)
         }
         
+        // Expand all views
+        self.expandAllViews()
+        
         // Done
         callback()
     }
@@ -116,7 +123,7 @@ public class Sessions: Object, ObservableObject, Decodable {
      */
     public func install(_ realm:Realm) {
         // Load default sessions from the package
-        let defaultSessions = try! Sessions.fromJSONString("default_sessions")
+        let defaultSessions = try! Sessions.fromJSONFile("default_sessions")
         
         // Force same primary key
         defaultSessions.uid = self.uid
@@ -125,6 +132,9 @@ public class Sessions: Object, ObservableObject, Decodable {
         try! realm.write {
             realm.add(defaultSessions, update: .modified)
         }
+        
+        // Store all views
+        defaultSessions.persistAllViews()
     }
     
     /**
@@ -146,6 +156,8 @@ public class Sessions: Object, ObservableObject, Decodable {
         let viewFromSession = argView == nil
             ? self.currentSession.currentView
             : argView!
+        
+        dump(viewFromSession)
         
         // Create a new view
         let computedView = SessionView()
@@ -262,7 +274,28 @@ public class Sessions: Object, ObservableObject, Decodable {
         
         return computedView
     }
-
+    
+    /**
+     *
+     */
+    public func persistAllViews(){
+        for session in sessions {
+            for view in session.views {
+                view.persist()
+            }
+        }
+    }
+    
+    /**
+     *
+     */
+    public func expandAllViews(){
+        for session in sessions {
+            for view in session.views {
+                view.expand()
+            }
+        }
+    }
     /**
      * Find a session using text
      */
@@ -291,7 +324,11 @@ public class Session: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @Published @objc dynamic var currentViewIndex: Int = 0
+    @objc dynamic var loadState:SyncState? = SyncState()
+    /**
+     *
+     */
+    @objc dynamic var currentViewIndex: Int = 0
     /**
      *
      */
@@ -299,11 +336,11 @@ public class Session: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @Published @objc dynamic var showFilterPanel:Bool = false
+    @objc dynamic var showFilterPanel:Bool = false
     /**
      *
      */
-    @Published @objc dynamic var showContextPane:Bool = false
+    @objc dynamic var showContextPane:Bool = false
     
     var cancellables: [AnyCancellable] = []
 

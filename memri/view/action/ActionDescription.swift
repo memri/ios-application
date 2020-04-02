@@ -11,11 +11,10 @@ import Combine
 import SwiftUI
 
 
-public class ActionDescription: Decodable, Identifiable {
+public class ActionDescription: Codable, Identifiable {
     
     public var id = UUID()
     
-    var color: UIColor = .systemGray
     var icon: String = ""
     var title: String? = nil
     var actionName: ActionName = .noop
@@ -24,8 +23,14 @@ public class ActionDescription: Decodable, Identifiable {
     var showTitle: Bool = false
     var hasState: Bool = false
     var state: Bool? = false
+    
+    var color: UIColor = .systemGray
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
+    
+    private enum CodingKeys: String, CodingKey {
+        case icon, title, actionName, actionArgs, actionType, showTitle, hasState, state
+    }
     
     enum ActionDescriptionKeys: String, CodingKey {
       case actionArgs

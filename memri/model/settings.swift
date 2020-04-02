@@ -68,7 +68,7 @@ public class Settings {
             defaults.set(key, value)
         }
         
-        set("device/name", "iphone")
+        device.set("/name", "iphone")
     }
     
     /**
@@ -119,7 +119,7 @@ class SettingCollection:Object {
     @objc dynamic var type:String = ""
     
     let settings = List<Setting>()
-    @objc dynamic var loadState:DataItemState? = DataItemState()
+    @objc dynamic var loadState:SyncState? = SyncState()
     
     override static func primaryKey() -> String? {
         return "type"
@@ -129,7 +129,8 @@ class SettingCollection:Object {
      *
      */
     public func get<T:Decodable>(_ path:String) -> T? {
-        let item = self.settings.filter("key = '\(path)'").first
+        let needle = self.type + path
+        let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
             return unserialize(item.json)
         }
@@ -146,8 +147,9 @@ class SettingCollection:Object {
      * Also responsible for saving the setting to the permanent storage
      */
     public func set(_ path:String, _ value:AnyCodable) -> Void {
+        let key = self.type + path
         try! self.realm!.write {
-            let s = Setting(value: ["key": path, "json": serialize(value)])
+            let s = Setting(value: ["key": key, "json": serialize(value)])
             self.realm!.add(s, update: .modified)
             if settings.index(of: s) == nil { settings.append(s) }
             

@@ -3,7 +3,7 @@ import Combine
 import RealmSwift
 
 
-public class SessionView: Object, ObservableObject, Decodable {
+public class SessionView: Object, ObservableObject, Codable {
     @Published public var searchResult: SearchResult = SearchResult()
     @Published public var title: String? = nil
     @Published var rendererName: String? = nil
@@ -29,6 +29,17 @@ public class SessionView: Object, ObservableObject, Decodable {
     var cascadeOrder:[String]? = nil
     
     @objc dynamic var json:String? = nil
+    /**
+     *
+     */
+    @objc dynamic var loadState:SyncState? = SyncState()
+    
+    private enum CodingKeys: String, CodingKey {
+        case searchResult, title, rendererName, name, subtitle, selection, renderConfigs,
+            editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
+            backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
+            browsingMode, cascadeOrder
+    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -43,7 +54,6 @@ public class SessionView: Object, ObservableObject, Decodable {
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
             self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
-
             self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
             self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
             self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
@@ -107,16 +117,31 @@ public class SessionView: Object, ObservableObject, Decodable {
             throw("Missing action button in this view")
         }
     }
-
+    
+    /**
+     *
+     */
+    public func persist() {
+        try! self.realm!.write {
+            self.json = serialize(self)
+        }
+    }
+    /**
+     *
+     */
+    public func expand() {
+        if let view:SessionView = unserialize(self.json ?? "") {
+            let properties = self.objectSchema.properties
+            for prop in properties {
+                self[prop.name] = view[prop.name]
+            }
+        }
+    }
     
     public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
         let sv = SessionView()
         sv.searchResult = searchResult
         sv.rendererName = rendererName
-//        sv.backButton = ActionDescription(icon: "chevron.left",
-//                                          title: "Back",
-//                                          actionName: "back",
-//                                          actionArgs: [])
         sv.title = searchResult.data[0].getString("title")
         sv.backTitle = currentView.title
         return sv
@@ -127,17 +152,4 @@ public class SessionView: Object, ObservableObject, Decodable {
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
     }
-    
-//    public func toggleEditMode(){
-//        switch self.isEditMode{
-//            case .active:
-//                self.isEditMode = .inactive
-//            case .inactive:
-//                self.isEditMode = .active
-////                self.$isEditMode.wrappedValue = .active
-//            default:
-//                break
-//        }
-//
-//    }
 }

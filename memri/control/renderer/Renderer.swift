@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 
-public class RenderConfig: Decodable {
+public class RenderConfig: Codable {
     var name: String = ""
     var icon: String = ""
     var category: String = ""
