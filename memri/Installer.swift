@@ -21,6 +21,10 @@ public class Installer {
         let installLogs = realm.objects(LogItem.self).filter("action = 'install'")
         
         if (installLogs.count == 0) {
+            print("Installing defaults in the database")
+            
+            // Load default navigation items in database
+            
             // Load default objects in database
             
             // Load default settings in database

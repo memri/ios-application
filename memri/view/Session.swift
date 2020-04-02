@@ -67,18 +67,24 @@ public class Sessions: Object, ObservableObject, Decodable {
         self.postInit()
     }
     
+    private func fetchUID(_ realm:Realm){
+        // When the uid is not yet set
+        if self.uid == "" {
+            
+            // Fetch device name
+            let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
+            if let setting = setting {
+                
+                // Set it as the uid
+                self.uid = unserialize(setting.json)
+            }
+        }
+    }
+    
     public convenience init(_ realm:Realm) {
         self.init()
         
-        // Fetch device name
-        let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
-        if let setting = setting {
-            uid = unserialize(setting.json)
-        }
-        else {
-            print("Error: installation has been corrupted")
-            uid = "unknown"
-        }
+        fetchUID(realm)
         
         self.postInit()
     }
@@ -106,6 +112,13 @@ public class Sessions: Object, ObservableObject, Decodable {
         self.defaultViews = try! JSONDecoder()
             .decode([String:[String:SessionView]].self, from: jsonData)
         
+        fetchUID(realm)
+        
+        if self.uid == "" {
+            print("Error: installation has been corrupted")
+            uid = "unknown"
+        }
+        
         // Active this session to make sure its stored in realm
         try! realm.write {
             realm.add(self, update: .modified)
@@ -124,13 +137,45 @@ public class Sessions: Object, ObservableObject, Decodable {
     public func install(_ realm:Realm) {
         // Load default sessions from the package
         let defaultSessions = try! Sessions.fromJSONFile("default_sessions")
+        dump(defaultSessions.sessions[0].views[0])
+        print("ZzZZZZZZZZZZZZ")
+        
+        for session in defaultSessions.sessions {
+            for view in session.views {
+                print(view.searchResult.query.query)
+                print("--------------------")
+            }
+        }
+        
+        fetchUID(realm)
+        
+        for session in defaultSessions.sessions {
+            for view in session.views {
+                print(view.searchResult.query.query)
+                print("--------------------")
+            }
+        }
         
         // Force same primary key
         defaultSessions.uid = self.uid
         
+        for session in defaultSessions.sessions {
+            for view in session.views {
+                print(view.searchResult.query.query)
+                print("--------------------")
+            }
+        }
+        
         // Store session
         try! realm.write {
             realm.add(defaultSessions, update: .modified)
+        }
+        
+        for session in defaultSessions.sessions {
+            for view in session.views {
+                print(view.searchResult.query.query)
+                print("--------------------")
+            }
         }
         
         // Store all views
@@ -281,6 +326,8 @@ public class Sessions: Object, ObservableObject, Decodable {
     public func persistAllViews(){
         for session in sessions {
             for view in session.views {
+                dump(view)
+                print("--------------------")
                 view.persist()
             }
         }
@@ -377,6 +424,14 @@ public class Session: Object, ObservableObject, Decodable {
     required init() {
         super.init()
         self.postInit()
+    }
+    
+    deinit {
+        if let realm = self.realm {
+            try! realm.write {
+                realm.delete(self)
+            }
+        }
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {

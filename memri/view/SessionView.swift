@@ -18,7 +18,7 @@ public class SessionView: Object, ObservableObject, Codable {
     var navigateItems: [ActionDescription]? = nil
     var contextButtons: [ActionDescription]? = nil
     var actionButton: ActionDescription? = nil
-    var backTitle: String?=nil
+    var backTitle: String? = nil
     var editActionButton: ActionDescription?=nil
     var icon: String? = nil
     var showLabels: Bool? = nil
@@ -28,6 +28,9 @@ public class SessionView: Object, ObservableObject, Codable {
     @Published var isEditMode: Bool? = nil
     var cascadeOrder:[String]? = nil
     
+    /**
+     * @private
+     */
     @objc dynamic var json:String? = nil
     /**
      *
@@ -68,6 +71,14 @@ public class SessionView: Object, ObservableObject, Codable {
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
             self.cascadeOrder = try decoder.decodeIfPresent("cascadeOrder") ?? self.cascadeOrder
 //        }
+    }
+    
+    deinit {
+        if let realm = self.realm {
+            try! realm.write {
+                realm.delete(self)
+            }
+        }
     }
     
     public func merge(_ view:SessionView) {
@@ -123,7 +134,10 @@ public class SessionView: Object, ObservableObject, Codable {
      */
     public func persist() {
         try! self.realm!.write {
-            self.json = serialize(self)
+//            self.json = serialize(self)
+            let data = try! JSONEncoder().encode(self)
+            self.json = String(data: data, encoding: .utf8)!
+            dump(self.json)
         }
     }
     /**
