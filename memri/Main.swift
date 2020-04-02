@@ -15,7 +15,7 @@ public class Main: ObservableObject {
     /**
      *
      */
-    @Published public var sessions:Sessions = Sessions()
+    @Published public var sessions:Sessions
     /**
      * The current session that is active in the application
      */
@@ -49,7 +49,6 @@ public class Main: ObservableObject {
 //    public let navigationCache: NavigationCache
     
     private var cancellable:AnyCancellable? = nil
-    private var defaultViews:[String:[String:SessionView]] = [:]
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
@@ -57,30 +56,22 @@ public class Main: ObservableObject {
         realm = cache.realm
         settings = Settings(realm)
         installer = Installer(realm)
+        sessions = Sessions(realm)
     }
     
     public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
-        // Make sure we are installed properly
+        
+        // Make sure memri is installed properly
         self.installer.installIfNeeded(self) {
             
-            // Load settings (from cache and/or api)
-            self.settings.ready = {
+            // Load settings
+            self.settings.load() {
+                
                 // Load NavigationCache (from cache and/or api)
+                // TODO
                 
-                // Load view configuration (from cache and/or api)
-                self.podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
-                    if error != nil { return }
-                    
-                    let jsonData = try! jsonDataFromFile("views_from_server")
-                    self.defaultViews = try! JSONDecoder()
-                        .decode([String:[String:SessionView]].self, from: jsonData)
-                }
-                
-                // Load sessions (from cache and/or api)
-                self.podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
-                    if error != nil { return }
-                    
-                    self.sessions = try! Sessions.fromJSONString(item.getString("json"))
+                // Load view configuration
+                self.sessions.load(realm) {
                     
                     // Hook current session
                     var isCalled:Bool = false
@@ -92,10 +83,12 @@ public class Main: ObservableObject {
                         }
                     }
                     
+                    // Load current view
                     self.setCurrentView()
+                    
+                    // Done
+                    callback(nil, true)
                 }
-                
-                callback(nil, true)
             }
         }
         
@@ -111,14 +104,13 @@ public class Main: ObservableObject {
         // when sessions changes), except for booting
         
         // Calculate cascaded view
-        let cascadedView = cascadeView(self.sessions.currentSession.currentView)
-        if let cascadedView = cascadedView {
+        if let computedView = self.sessions.computeView() {
             
             // Set current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
             // Set new view
-            self.computedView = cascadedView
+            self.computedView = computedView
         }
 //        else {
 //            self.currentView.merge(self.currentView)
@@ -134,130 +126,6 @@ public class Main: ObservableObject {
                 self.setCurrentView()
             })
         }
-    }
-    
-    /*
-    "{type:Note}"
-    "{renderer:list}"
-    "{[type:Note]}"
-    */
-    public func cascadeView(_ viewFromSession:SessionView) -> SessionView? {
-        // Create a new view
-        let cascadedView = SessionView()
-        let previousView = self.currentSession.currentView
-        
-        // TODO: infer from result
-        let isList = !viewFromSession.searchResult.query.query!.starts(with: "0x")
-        
-        // TODO: infer from all results
-        var type:String = ""
-        if (viewFromSession.searchResult.data.count > 0 ) {
-            type = viewFromSession.searchResult.data[0].type
-        }
-
-        // Helper lists
-        var renderViews:[SessionView] = []
-        var datatypeViews:[SessionView] = []
-        var rendererNames:[String] = []
-        var cascadeOrders:[String:[[String]]] = ["defaults":[["renderer", "datatype"]], "user":[]]
-        let searchOrder = ["defaults", "user"]
-        var rendererName:String
-        
-        // If we know the type of data we are rendering use it to determine the view
-        if type != "" {
-            // Determine query
-            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
-            
-            // Find views based on datatype
-            for key in searchOrder {
-                if let datatypeView = self.defaultViews[key]![needle] {
-                    datatypeViews.append(datatypeView)
-                    
-                    if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if let S = datatypeView.cascadeOrder { cascadeOrders[key]?.append(S) }
-                }
-            }
-            
-            rendererName = rendererNames[rendererNames.count - 1]
-        }
-        // Otherwise default to what we know from the view from the session
-        else {
-            rendererName = viewFromSession.rendererName ?? ""
-        }
-        
-        // Find renderer views
-        if rendererName != "" {
-            // Determine query
-            let needle = "{renderer:\(rendererName)}"
-            
-            for key in searchOrder {
-                if let rendererView = self.defaultViews[key]![needle] {
-                    renderViews.append(rendererView)
-                    
-                    if let S = rendererView.cascadeOrder { cascadeOrders[key]?.append(S) }
-                }
-            }
-        }
-
-        // Choose cascade order
-        let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
-            ? cascadeOrders["user"]
-            : cascadeOrders["defaults"]) ?? []
-        
-        var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
-        if (cascadeOrder.count == 0) { cascadeOrder = ["renderer", "datatype"] }
-        
-        if (Set(preferredCascadeOrder).count > 1) {
-            print("Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
-        }
-        
-        // Cascade the different views
-        for key in cascadeOrder {
-            var views:[SessionView]
-            
-            if key == "renderer" { views = renderViews }
-            else if key == "datatype" { views = datatypeViews }
-            else {
-                print("Unknown cascadeOrder type found: \(key)")
-                break
-            }
-            
-            for view in views {
-                cascadedView.merge(view)
-            }
-        }
-        
-        // Cascade the view from the session
-        // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
-        cascadedView.merge(viewFromSession)
-        
-        // this is hacky now, will be solved later
-        viewFromSession.searchResult.query = cascadedView.searchResult.query
-        cascadedView.searchResult = viewFromSession.searchResult
-        
-        do {
-            try cascadedView.validate()
-        }
-        catch {
-            print("View Cascading Error: \(error)")
-//            return nil  // TODO look at this again after implementing resultset
-        }
-        
-        // turn off editMode when navigating
-        if previousView.isEditMode == true {
-            previousView.isEditMode = false
-        }
-        
-        // hide filterpanel if view doesnt have a button to open it
-        if self.currentSession.showFilterPanel{
-            if cascadedView.filterButtons!.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
-                self.currentSession.showFilterPanel = false
-            }
-        }
-        
-        
-        
-        return cascadedView
     }
     
     /**
@@ -278,7 +146,7 @@ public class Main: ObservableObject {
         
         // Make sure to listen to changes in the view
         // TODO Will this be set more than once on a view???
-        session.cancellables?.append(view.objectWillChange.sink { (_) in
+        session.cancellables.append(view.objectWillChange.sink { (_) in
             session.objectWillChange.send()
         })
     }

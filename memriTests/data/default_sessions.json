@@ -1,29 +1,7 @@
 {
-    "currentSessionIndex": 1,
+    "currentSessionIndex": 0,
     "sessions": [
         {
-            "id": "0xS01",
-            "currentViewIndex": 1,
-            "views": [
-                {
-                    "searchResult": {
-                        "query": {
-                            "text": "notes",
-                            "sortProperty": "date-created",
-                            "sortAscending": 0
-                        }
-                    }
-                },
-                {
-                    "searchResult": {
-                        "query": { "query": "0x01" }
-                    },
-                    "editMode": true
-                }
-            ]
-        },
-        {
-            "id": "0xS02",
             "currentViewIndex": 0,
             "views": [
                 {
@@ -33,9 +11,7 @@
                             "sortProperty": "date-created",
                             "sortAscending": 0
                         }
-                    },
-                    "selection": ["0x5"],
-                    "scrollState": 64
+                    }
                 }
             ]
         }

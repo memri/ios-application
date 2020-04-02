@@ -1,9 +1,9 @@
 import Foundation
 import Combine
-import SwiftUI
+import RealmSwift
 
 
-public class SessionView: ObservableObject, Decodable {
+public class SessionView: Object, ObservableObject, Decodable {
     @Published public var searchResult: SearchResult = SearchResult()
     @Published public var title: String? = nil
     @Published var rendererName: String? = nil
@@ -27,6 +27,8 @@ public class SessionView: ObservableObject, Decodable {
     var browsingMode: String? = nil
     @Published var isEditMode: Bool? = nil
     var cascadeOrder:[String]? = nil
+    
+    @objc dynamic var json:String? = nil
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()

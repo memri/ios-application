@@ -27,6 +27,7 @@ public class Installer {
             main.settings.install()
             
             // Load default views in database
+            main.sessions.install(main.realm)
             
             // Installation complete
             try! realm.write {

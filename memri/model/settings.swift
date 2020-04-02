@@ -16,21 +16,11 @@ public class Settings {
     var device:SettingCollection = SettingCollection()
     var user:SettingCollection = SettingCollection()
     
-    private var callback:(() -> Void)? = nil
-    private var _ready:Bool = false
-    var ready:(() -> Void)? {
-        get {
-            return callback
-        }
-        set(f) {
-            callback = f
-            if _ready && callback != nil { callback!() }
-        }
-    }
-    
     init(_ rlm:Realm) {
         realm = rlm
-        
+    }
+    
+    public func load(_ callback: () -> Void) {
         // TODO: This could probably be optimized, but lets first get familiar with the process
         
         let allSettings = realm.objects(SettingCollection.self)
@@ -49,17 +39,16 @@ public class Settings {
             print("Error: Settings are not initialized")
         }
         
-        _ready = true
-        if let callback = callback { callback() }
+        callback()
     }
     
     /**
      *
      */
     public func install() {
-        var defaults = SettingCollection(value: ["type": "defaults"])
-        var device = SettingCollection(value: ["type": "device"])
-        var user = SettingCollection(value: ["type": "user"])
+        let defaults = SettingCollection(value: ["type": "defaults"])
+        let device = SettingCollection(value: ["type": "device"])
+        let user = SettingCollection(value: ["type": "user"])
         
         do {
             try realm.write() {
@@ -78,6 +67,8 @@ public class Settings {
         for (key, value) in values {
             defaults.set(key, value)
         }
+        
+        set("device/name", "iphone")
     }
     
     /**

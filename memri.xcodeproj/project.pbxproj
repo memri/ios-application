@@ -84,6 +84,8 @@
 		5DF96DD02417AABB0051EA45 /* TextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCF2417AABB0051EA45 /* TextRenderer.swift */; };
 		5DFB0CBF24179FA6002FBDE7 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB0CBE24179FA6002FBDE7 /* Session.swift */; };
 		861439F22435942A008D6B5B /* Installer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861439F12435942A008D6B5B /* Installer.swift */; };
+		861439F52435AF8C008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
+		861439F62435AF91008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
 		86229DCC243508B00013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		86229DCD243509F60013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		8656461424222C2000D071B4 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8656461324222C2000D071B4 /* Application.swift */; };
@@ -217,6 +219,7 @@
 		75A2622B303AD831114E4167 /* Pods-memri-memriUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memri-memriUITests.release.xcconfig"; path = "Target Support Files/Pods-memri-memriUITests/Pods-memri-memriUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7EBEF912311A82914DCE2C3D /* Pods-memriTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.release.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.release.xcconfig"; sourceTree = "<group>"; };
 		861439F12435942A008D6B5B /* Installer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installer.swift; sourceTree = "<group>"; };
+		861439F42435AF8C008D6B5B /* test_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_sessions.json; sourceTree = "<group>"; };
 		86229DCB243508B00013750A /* default_settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_settings.json; sourceTree = "<group>"; };
 		8656461324222C2000D071B4 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		865646152422B68A00D071B4 /* default_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_sessions.json; sourceTree = "<group>"; };
@@ -308,6 +311,7 @@
 				5D78D06A242500A500F7BD3B /* navigationItems.json */,
 				5DC1692B2409453200367905 /* empty_sessions.json */,
 				865646152422B68A00D071B4 /* default_sessions.json */,
+				861439F42435AF8C008D6B5B /* test_sessions.json */,
 				5D0A28B7240677EE00398B17 /* test_dataItems.json */,
 				865646172422B6A700D071B4 /* notes_from_server.json */,
 				86229DCB243508B00013750A /* default_settings.json */,
@@ -741,6 +745,7 @@
 				8656462D2423941500D071B4 /* 0x01.json in Resources */,
 				865646302423941500D071B4 /* 0x04.json in Resources */,
 				8656462F2423941500D071B4 /* 0x03.json in Resources */,
+				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
 				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
 				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
@@ -763,6 +768,7 @@
 				865646162422B68A00D071B4 /* default_sessions.json in Resources */,
 				5DE95A6E241BCD34003ABA63 /* back_action.json in Resources */,
 				5D0A28BB24067E8000398B17 /* test_dataItems.json in Resources */,
+				861439F52435AF8C008D6B5B /* test_sessions.json in Resources */,
 				5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */,
 				865646342423A7D500D071B4 /* views_from_server.json in Resources */,
 				8656461C24238BF400D071B4 /* 0x01.json in Resources */,
