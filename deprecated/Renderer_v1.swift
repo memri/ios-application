@@ -28,7 +28,7 @@
 //    var id = UUID()
 //    var imgName: String
 //    var selected: Bool
-//    var backGroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
+//    var backgroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
 //    var foreGroundColor: Color { self.selected ? Color.green : Color.gray}
 //}
 //

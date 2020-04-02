@@ -30,7 +30,7 @@ struct ViewTypeButton: Identifiable {
     var imgName: String
     var selected: Bool
     var rendererName: String
-    var backGroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
+    var backgroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
     var foreGroundColor: Color { self.selected ? Color.green : Color.gray}
 }
 
@@ -53,7 +53,6 @@ struct Search: View {
                         // TODO: buttonview
                         
                         Action(action: filterButton)
-                            .padding(.horizontal , 5)
                             .font(Font.system(size: 20, weight: .medium))
 
                         
