@@ -26,7 +26,7 @@ public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEdit, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        noop
+        setRenderer, noop
     
     var defaultIcon: String {
         switch self {
@@ -89,6 +89,10 @@ public enum ActionName: String, Codable {
         }
     }
     
+    var defaultBackgroundColor: UIColor{
+        return .white
+    }
+    
     var defaultActiveColor: UIColor? {
         switch self {
         case .toggleEdit:
@@ -99,6 +103,7 @@ public enum ActionName: String, Codable {
             return nil
         }
     }
+    
     
     var defaultInactiveColor: UIColor? {
         switch self {
@@ -112,8 +117,16 @@ public enum ActionName: String, Codable {
         }
     }
     
-    var defaultActionState: Bool {
+    var defaultState: Bool {
         return false
+    }
+    
+    var defaultActiveBackGroundColor: UIColor{
+        return .white
+    }
+    
+    var defaultInactiveBackGroundColor: UIColor{
+        return .white
     }
     
     

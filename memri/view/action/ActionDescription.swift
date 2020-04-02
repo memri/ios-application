@@ -16,6 +16,7 @@ public class ActionDescription: Decodable, Identifiable {
     public var id = UUID()
     
     var color: UIColor = .systemGray
+    var backgroundColor: UIColor = .white
     var icon: String = ""
     var title: String? = nil
     var actionName: ActionName = .noop
@@ -26,6 +27,32 @@ public class ActionDescription: Decodable, Identifiable {
     var state: Bool? = false
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
+    var activeBackgroundColor: UIColor? = .white
+    var inactiveBackGroundColor: UIColor? = .white
+    
+    var computedColor: UIColor{
+        if self.hasState {
+            if self.state != nil && self.state!{
+                return self.activeColor!
+            }else{
+                return self.inactiveColor!
+            }
+        } else{
+            return self.color
+        }
+    }
+    
+    var computedBackgroundColor: UIColor{
+        if self.hasState {
+            if self.state != nil && self.state!{
+                return self.activeBackgroundColor!
+            }else{
+                return self.inactiveBackGroundColor!
+            }
+        } else{
+            return self.backgroundColor
+        }
+    }
     
     enum ActionDescriptionKeys: String, CodingKey {
       case actionArgs
@@ -36,13 +63,19 @@ public class ActionDescription: Decodable, Identifiable {
         
         jsonErrorHandling(decoder) {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
+            self.state = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
+            self.hasState = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
             self.activeColor = self.actionName.defaultActiveColor
             self.inactiveColor = self.actionName.defaultInactiveColor
+            self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
+            self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+            self.backgroundColor = self.actionName.defaultBackgroundColor
             self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
+
 
         
             // TODO decode colorString for active/inactive in function

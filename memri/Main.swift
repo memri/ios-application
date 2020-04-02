@@ -32,6 +32,23 @@ public class Main: ObservableObject {
     public var podApi:PodAPI
     public var cache:Cache
     
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))),
+                                        "richTextEditor": AnyView(RichTextRenderer()),
+                                        "thumbnail": AnyView(ThumbnailRenderer())]
+    
+    var renderObjects: [String: RendererObject] = ["list": ListRendererObject(),
+                                                   "richTextEditor": RichTextRendererObject(),
+                                                   "thumbnail": ThumbnailRendererObject()]
+    
+    var renderObjectTuples: [(key: String, value: RendererObject)]{
+        return renderObjects.sorted{$0.key < $1.key}
+    }
+
+    
+    var currentRenderer: AnyView {
+        self.renderers[self.currentView.rendererName ?? "", default: AnyView(ThumbnailRenderer())]
+    }
+    
     init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
@@ -290,6 +307,10 @@ public class Main: ObservableObject {
         self.currentView.searchResult.data.append(realItem) // TODO
         self.openView(realItem)
     }
+    
+    public func getRenderConfig(name: String) -> RenderConfig{
+        return self.renderObjects[name]!.renderConfig
+    }
 
     /**
      * Executes the action as described in the action description
@@ -317,7 +338,7 @@ public class Main: ObservableObject {
         case .star:
             star()
         case .showStarred:
-            showStarred()
+            showStarred(starButton: action)
         case .showContextPane:
             openContextPane() // TODO @Jess
         case .showNavigation:
@@ -326,6 +347,9 @@ public class Main: ObservableObject {
             break
         case .share:
             showSharePanel()
+        case .setRenderer:
+            dump(action)
+            changeRenderer(rendererObject: action as! RendererObject)
         case .addToList:
             addToList()
         case .duplicate:
@@ -399,10 +423,11 @@ public class Main: ObservableObject {
         self.objectWillChange.send()
     }
     
-    func changeRenderer(rendererName: String){
-        let session = currentSession
-        session.currentView.rendererName = rendererName
-        session.objectWillChange.send()
+    func changeRenderer(rendererObject: RendererObject){
+        self.setInactive(objects: Array(self.renderObjects.values))
+        setActive(object: rendererObject)
+        currentSession.currentView.rendererName = rendererObject.name
+        currentSession.objectWillChange.send()
     }
     
     func star() {
@@ -410,14 +435,11 @@ public class Main: ObservableObject {
     }
     
     var lastStarredView:SessionView?
-    func showStarred(){
+    func showStarred(starButton: ActionDescription){
         if lastNeedle != "" {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
-        
-        
-        let starButton = self.currentView.filterButtons!.filter{$0.actionName == .showStarred}[0] // HACK
-        
+                
         toggleActive(object: starButton)
         
         // If showing starred items, return to normal view
@@ -451,12 +473,19 @@ public class Main: ObservableObject {
     }
     
     func toggleActive(object: ActionDescription){
-        if let state = object.state{
-            switch state{
-            case true: object.color = object.inactiveColor ?? object.color
-            case false: object.color = object.activeColor ?? object.color
-            }
+        if object.state != nil{
             object.state!.toggle()
+        }
+    }
+    
+    func setActive(object: ActionDescription){
+        object.color = object.activeColor ?? object.color
+        object.state = true
+    }
+    
+    func setInactive(objects: [ActionDescription]){
+        for obj in renderObjects.values{
+            obj.state = false
         }
     }
     
