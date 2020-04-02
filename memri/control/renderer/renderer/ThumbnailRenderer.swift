@@ -26,7 +26,8 @@ struct ThumbnailRenderer: View {
     }
     
     var body: some View {
-        QGrid(main.currentView.searchResult.data, columns: renderConfig.cols) { dataItem in
+        QGrid(main.computedView.searchResult.data, columns: renderConfig.cols) { dataItem in
+
             Text(dataItem.getString("title")).asThumbnail()
                 .onTapGesture {
                     self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)

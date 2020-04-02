@@ -54,7 +54,7 @@
             "editActionButton": {
                 "icon": "pencil",
                 "title": "Edit Note",
-                "actionName": "toggleEdit",
+                "actionName": "toggleEditMode",
                 "actionArgs": []
             },
             "filterButtons": [
@@ -85,7 +85,7 @@
             "editActionButton": {
                 "icon": "pencil",
                 "title": "Edit Note",
-                "actionName": "toggleEdit",
+                "actionName": "toggleEditMode",
                 "actionArgs": []
             },
             "filterButtons": [

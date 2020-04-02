@@ -1,6 +1,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import RealmSwift
 
 /**
  * Represents the entire application user interface.
@@ -15,13 +16,10 @@ public class Main: ObservableObject {
      * The current session that is active in the application
      */
     @Published public var currentSession:Session = Session()
-    @Published public var currentView:SessionView = SessionView()
-    
-    @Published public var browserEditMode:Bool = false
-    @Published public var navigationEditMode:Bool = false
-    @Published public var showOverlay:String? = nil
+    @Published public var computedView:SessionView = SessionView()
 
-//    public let settings: Settings
+    public var settings:Settings
+    
     @Published public var sessions:Sessions = Sessions()
 //    public let navigationCache: NavigationCache
     
@@ -31,6 +29,7 @@ public class Main: ObservableObject {
     
     public var podApi:PodAPI
     public var cache:Cache
+    public var realm:Realm
     
     var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))),
                                         "richTextEditor": AnyView(RichTextRenderer()),
@@ -46,49 +45,53 @@ public class Main: ObservableObject {
 
     
     var currentRenderer: AnyView {
-        self.renderers[self.currentView.rendererName ?? "", default: AnyView(ThumbnailRenderer())]
+        self.renderers[self.computedView.rendererName ?? "", default: AnyView(ThumbnailRenderer())]
     }
     
     init(name:String, key:String) {
         // Instantiate api
         podApi = PodAPI(key)
         cache = Cache(podApi)
+        realm = cache.realm
+        settings = Settings(realm)
     }
     
-    public func boot(_ callback: (_ error:Error?, _ success:Bool) -> Void) -> Main {
+    public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
         // Load settings (from cache and/or api)
-        
-        // Load NavigationCache (from cache and/or api)
-        
-        
-        // Load view configuration (from cache and/or api)
-        podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
-            if error != nil { return }
+        self.settings.ready = {
+            // Load NavigationCache (from cache and/or api)
             
-            let jsonData = try! jsonDataFromFile("views_from_server")
-            self.defaultViews = try! JSONDecoder().decode([String:[String:SessionView]].self, from: jsonData)
-        }
-        
-        // Load sessions (from cache and/or api)
-        podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
-            if error != nil { return }
-            
-            sessions = try! Sessions.fromJSONString(item.getString("json"))
-            
-            // Hook current session
-            var isCalled:Bool = false
-            self.cancellable = self.sessions.objectWillChange.sink {
-                isCalled = false
-                DispatchQueue.main.async {
-                    if !isCalled { self.setCurrentView() }
-                    else { isCalled = true }
-                }
+            // Load view configuration (from cache and/or api)
+            self.podApi.get("views") { (error, item) in // TODO store in database objects in the dgraph??
+                if error != nil { return }
+                
+                let jsonData = try! jsonDataFromFile("views_from_server")
+                self.defaultViews = try! JSONDecoder()
+                    .decode([String:[String:SessionView]].self, from: jsonData)
             }
             
-            self.setCurrentView()
+            // Load sessions (from cache and/or api)
+            self.podApi.get("sessions") { (error, item) in // TODO store in database objects in the dgraph??
+                if error != nil { return }
+                
+                self.sessions = try! Sessions.fromJSONString(item.getString("json"))
+                
+                // Hook current session
+                var isCalled:Bool = false
+                self.cancellable = self.sessions.objectWillChange.sink {
+                    isCalled = false
+                    DispatchQueue.main.async {
+                        if !isCalled { self.setCurrentView() }
+                        else { isCalled = true }
+                    }
+                }
+                
+                self.setCurrentView()
+            }
+            
+            callback(nil, true)
         }
         
-        callback(nil, true)
         return self
     }
     
@@ -108,14 +111,14 @@ public class Main: ObservableObject {
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
             // Set new view
-            self.currentView = cascadedView
+            self.computedView = cascadedView
         }
 //        else {
 //            self.currentView.merge(self.currentView)
 //        }
         
         // Load data
-        let searchResult = self.currentView.searchResult
+        let searchResult = self.computedView.searchResult
         
         // TODO: create enum for loading
         if searchResult.loading == 0 && searchResult.query.query != "" {
@@ -134,6 +137,7 @@ public class Main: ObservableObject {
     public func cascadeView(_ viewFromSession:SessionView) -> SessionView? {
         // Create a new view
         let cascadedView = SessionView()
+        let previousView = self.currentSession.currentView
         
         // TODO: infer from result
         let isList = !viewFromSession.searchResult.query.query!.starts(with: "0x")
@@ -232,6 +236,20 @@ public class Main: ObservableObject {
 //            return nil  // TODO look at this again after implementing resultset
         }
         
+        // turn off editMode when navigating
+        if previousView.isEditMode == true {
+            previousView.isEditMode = false
+        }
+        
+        // hide filterpanel if view doesnt have a button to open it
+        if self.currentSession.showFilterPanel{
+            if cascadedView.filterButtons!.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
+                self.currentSession.showFilterPanel = false
+            }
+        }
+        
+        
+        
         return cascadedView
     }
     
@@ -304,7 +322,7 @@ public class Main: ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         let realItem = self.cache.addToCache(item)
-        self.currentView.searchResult.data.append(realItem) // TODO
+        self.computedView.searchResult.data.append(realItem) // TODO
         self.openView(realItem)
     }
     
@@ -331,7 +349,7 @@ public class Main: ObservableObject {
                 let param0 = params[0].value as! SessionView
                 openView(param0)
             }
-        case .toggleEdit:
+        case .toggleEditMode:
             toggleEditMode()
         case .toggleFilterPanel:
             toggleFilterPanel()
@@ -348,7 +366,6 @@ public class Main: ObservableObject {
         case .share:
             showSharePanel()
         case .setRenderer:
-            dump(action)
             changeRenderer(rendererObject: action as! RendererObject)
         case .addToList:
             addToList()
@@ -370,7 +387,7 @@ public class Main: ObservableObject {
     private var lastNeedle:String = ""
     private var lastTitle:String? = nil
     func search(_ needle:String) {
-        if self.currentView.rendererName != "list" && self.currentView.rendererName != "thumbnail" {
+        if self.computedView.rendererName != "list" && self.computedView.rendererName != "thumbnail" {
             return
         }
         
@@ -380,26 +397,26 @@ public class Main: ObservableObject {
         
         if needle == "" {
             if lastSearchResult != nil {
-                self.currentView.searchResult = lastSearchResult!
+                self.computedView.searchResult = lastSearchResult!
                 lastSearchResult = nil
-                self.currentView.title = lastTitle
+                self.computedView.title = lastTitle
                 self.objectWillChange.send() // TODO why is this not triggered
             }
             return
         }
 
         if lastSearchResult == nil {
-            lastSearchResult = self.currentView.searchResult
-            lastTitle = self.currentView.title
+            lastSearchResult = self.computedView.searchResult
+            lastTitle = self.computedView.title
         }
         
         let searchResult = self.cache.filter(lastSearchResult!, needle)
-        self.currentView.searchResult = searchResult
+        self.computedView.searchResult = searchResult
         if searchResult.data.count == 0 {
-            self.currentView.title = "No results"
+            self.computedView.title = "No results"
         }
         else {
-            self.currentView.title = "\(searchResult.data.count) items found"
+            self.computedView.title = "\(searchResult.data.count) items found"
         }
         self.objectWillChange.send() // TODO why is this not triggered
     }
@@ -419,7 +436,7 @@ public class Main: ObservableObject {
     }
     
     func showNavigation(){
-        self.currentSession.showNavigation = true
+        self.sessions.showNavigation = true
         self.objectWillChange.send()
     }
     
@@ -439,21 +456,21 @@ public class Main: ObservableObject {
         if lastNeedle != "" {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
-                
+        
         toggleActive(object: starButton)
         
         // If showing starred items, return to normal view
         if lastStarredView != nil {
-            self.currentView = lastStarredView!
+            self.computedView = lastStarredView!
             lastStarredView = nil
             self.objectWillChange.send()
         }
         else {
             // Otherwise create a new searchResult, mark it as starred (query??)
-            lastStarredView = self.currentView
+            lastStarredView = self.computedView
             let view = SessionView()
-            view.merge(self.currentView)
-            self.currentView = view
+            view.merge(self.computedView)
+            self.computedView = view
             
             // filter the results based on the starred property
             var results:[DataItem] = []
@@ -490,7 +507,9 @@ public class Main: ObservableObject {
     }
     
     func toggleEditMode(){
-        //currently handled in browser
+        let editMode = self.currentSession.currentView.isEditMode ?? false
+        self.currentSession.currentView.isEditMode = !editMode
+        self.currentSession.objectWillChange.send()
     }
     
     func toggleFilterPanel(){

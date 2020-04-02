@@ -2,18 +2,6 @@ import Foundation
 import Combine
 import RealmSwift
 
-protocol PropertyReflectable { }
-
-extension PropertyReflectable {
-    subscript(key: String) -> Any? {
-        let m = Mirror(reflecting: self)
-        for child in m.children {
-            if child.label == key { return child.value }
-        }
-        return nil
-    }
-}
-
 enum ActionNeeded:String, Codable {
     case create
 //    case read
@@ -22,7 +10,7 @@ enum ActionNeeded:String, Codable {
     case noop
 }
 
-struct DataItemState:Codable {
+class DataItemState:Object,Codable {
     // Whether the data item is loaded partially and requires a full load
     var isPartiallyLoaded:Bool? = nil
     
@@ -33,7 +21,7 @@ struct DataItemState:Codable {
     var updatedFields:[String] = []
 }
 
-public class DataItem: Object, Codable, Identifiable, ObservableObject, PropertyReflectable {
+public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public var id:String = UUID().uuidString
     var type:String { "unknown" }
     
@@ -42,7 +30,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject, Property
     @objc dynamic var starred:Bool = false
     
     let changelog = List<LogItem>()
-    var loadState = DataItemState()
+    @objc dynamic var loadState:DataItemState? = DataItemState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId

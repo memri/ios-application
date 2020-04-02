@@ -6,7 +6,10 @@ import PlaygroundSupport
 
 
 
+var x: Bool? = nil
 
+
+dump(x?.toggle())
 
 
 

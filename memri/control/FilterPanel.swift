@@ -23,19 +23,18 @@ struct FilterPanel: View {
                                 BrowseSetting(name: "Browse by folder", selected: false),
                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
 
-    var filterPanelRenderers = ["list", "thumbnail"]
-    
+ 
     
     var body: some View {
         VStack{
-            if filterPanelRenderers.contains(self.main.currentView.rendererName!) && (self.main.currentSession.showFilterPanel) {
+            if self.main.currentSession.showFilterPanel {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){
                             HStack(alignment: .top) {
                                 ForEach(self.main.renderObjectTuples, id: \.0) { index, item in
                                     Group{
-                                        if item.candisplayresultset(items: self.main.currentView.searchResult.data){
+                                        if item.candisplayresultset(items: self.main.computedView.searchResult.data){
                                             Action(action: item)
                                         }
                                     }
@@ -77,11 +76,10 @@ struct FilterPanel: View {
         }
 
     }
-//    init(){
-//        // THIS HIDEN THE LIST LINES
-//        // TODO: get rid of this
-//        UITableView.appearance().separatorColor = .clear
-//    }
+    init(){
+        // TODO: move to list
+        UITableView.appearance().separatorColor = .clear
+    }
 }
 
 

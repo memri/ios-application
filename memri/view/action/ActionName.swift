@@ -23,7 +23,7 @@ extension String {
 }
 
 public enum ActionName: String, Codable {
-    case back, add, openView, openViewByName, toggleEdit, toggleFilterPanel, star, showStarred,
+    case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         setRenderer, noop
@@ -34,7 +34,7 @@ public enum ActionName: String, Codable {
             return "chevron.left"
         case .add:
             return "plus"
-        case .toggleEdit:
+        case .toggleEditMode:
             return "pencil"
         case .toggleFilterPanel:
             return "rhombus.fill"
@@ -82,7 +82,7 @@ public enum ActionName: String, Codable {
     
     var defaultHasState: Bool {
         switch self {
-        case .star, .showStarred, .toggleEdit, .toggleFilterPanel:
+        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel:
             return true
         default:
             return false
@@ -95,7 +95,7 @@ public enum ActionName: String, Codable {
     
     var defaultActiveColor: UIColor? {
         switch self {
-        case .toggleEdit:
+        case .toggleEditMode:
             return .systemGreen
         case .showStarred:
             return .systemYellow
@@ -107,7 +107,7 @@ public enum ActionName: String, Codable {
     
     var defaultInactiveColor: UIColor? {
         switch self {
-        case .back, .add, .openView, .openViewByName, .toggleEdit, .toggleFilterPanel, .star,
+        case .back, .add, .openView, .openViewByName, .toggleEditMode, .toggleFilterPanel, .star,
              .showStarred, .showContextPane, .showOverlay, .openContextView, .share, .showNavigation,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
              .starredNotes, .allNotes, .exampleUnpack:

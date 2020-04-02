@@ -49,7 +49,7 @@ struct RichTextRenderer: Renderer {
 
     var body: some View {
         return VStack{
-                _RichTextEditor(dataItem: main.currentView.searchResult.data[0])
+                _RichTextEditor(dataItem: main.computedView.searchResult.data[0])
         }
     }
 }

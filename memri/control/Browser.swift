@@ -24,7 +24,7 @@ struct Browser: View {
             if self.main.currentSession.showContextPane {
                 animateInContextPane()
             }
-            if self.main.currentSession.showNavigation{
+            if self.main.sessions.showNavigation{
                 Navigation()
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))
