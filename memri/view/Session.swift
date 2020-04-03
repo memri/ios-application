@@ -47,6 +47,8 @@ public class Sessions: Object, ObservableObject, Decodable {
     private var cancellables: [AnyCancellable] = []
     private var defaultViews: [String:[String:SessionView]] = [:]
     
+    private var cache:Cache? = nil
+    
     public override static func primaryKey() -> String? {
         return "uid"
     }
@@ -71,6 +73,28 @@ public class Sessions: Object, ObservableObject, Decodable {
         self.postInit()
     }
     
+    public convenience init(_ realm:Realm) {
+        self.init()
+        
+        fetchUID(realm)
+        
+        self.postInit()
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    private func postInit(){
+        self.cancellables = []
+        for session in sessions{
+            self.cancellables.append(session.objectWillChange.sink { (_) in
+                print("session \(session) was changed")
+                self.objectWillChange.send()
+            })
+        }
+    }
+    
     private func fetchUID(_ realm:Realm){
         // When the uid is not yet set
         if self.uid == "" {
@@ -85,32 +109,12 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    public convenience init(_ realm:Realm) {
-        self.init()
-        
-        fetchUID(realm)
-        
-        self.postInit()
-    }
-    
-    required init() {
-        super.init()
-    }
-    
-    public func postInit(){
-        self.cancellables = []
-        for session in sessions{
-            self.cancellables.append(session.objectWillChange.sink { (_) in
-                print("session \(session) was changed")
-                self.objectWillChange.send()
-            })
-        }
-    }
-    
     /**
      *
      */
-    public func load(_ realm:Realm, _ callback: () -> Void) throws {
+    public func load(_ realm:Realm, _ ch:Cache, _ callback: () -> Void) throws {
+        // Store cache for use within computeView()
+        self.cache = ch
         
         // Load the default views from the package
         let jsonData = try! jsonDataFromFile("views_from_server")
@@ -124,7 +128,7 @@ public class Sessions: Object, ObservableObject, Decodable {
             uid = "unknown"
         }
         
-        // Active this session to make sure its stored in realm
+        // Activate this session to make sure its stored in realm
         try! realm.write {
             if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid)'").first {
                 // Sync with the cached version
@@ -193,17 +197,21 @@ public class Sessions: Object, ObservableObject, Decodable {
             : argView!
         
         // Create a new view
-        let computedView = ComputedView()
+        let computedView = ComputedView(self.cache!)
         let previousView = self.currentSession.currentView
-        let searchResult = viewFromSession.searchResult!
+        
+        var isList:Bool = true
+        var type:String = ""
         
         // TODO: infer from result
-        let isList = !searchResult.query!.query!.starts(with: "0x")
+        if let queryOptions = viewFromSession.queryOptions {
+            isList = !queryOptions.query!.starts(with: "0x")
         
-        // TODO: infer from all results
-        var type:String = ""
-        if (searchResult.data.count > 0 ) {
-            type = searchResult.data[0].type
+            // TODO: infer from all results
+            let resultSet = cache!.getResultSet(queryOptions)
+            if (resultSet.data.count > 0 ) { // TODO change resultset
+                type = resultSet.data[0].type
+            }
         }
 
         // Helper lists
@@ -289,26 +297,12 @@ public class Sessions: Object, ObservableObject, Decodable {
         
         // Cascade the view from the session
         // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
-        computedView.merge(viewFromSession)
-        
-        // this is hacky now, will be solved later
-//        viewFromSession.searchResult!.query = computedView.searchResult!.query // Disabled because this would now constitute a write action to realm. Still need to solve this when implementing ResultSet
-//        print(viewFromSession.searchResult!.uid)
-//        print(computedView.searchResult!.uid)
-//        
-//        computedView.searchResult = viewFromSession.searchResult
-//        
-//        print(viewFromSession.searchResult!.uid)
-//        print(computedView.searchResult!.uid)
-//        dump(viewFromSession.searchResult == searchResult)
-
+        computedView.finalMerge(viewFromSession)
         
         do {
             try computedView.validate()
         }
         catch {
-            dump(computedView.rendererName)
-            
             print("Error: Invalid Computed View: \(error)")
 //            return nil  // TODO look at this again after implementing resultset
         }

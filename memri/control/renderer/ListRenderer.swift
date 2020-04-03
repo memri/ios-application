@@ -81,7 +81,7 @@ struct ListRenderer: Renderer {
         return VStack {
             NavigationView {
                 List{
-                    ForEach(main.computedView.searchResult.data) { dataItem in
+                    ForEach(main.computedView.resultSet.data) { dataItem in
                         VStack{
                             Text(dataItem.getString("title"))
                                 .bold()
@@ -95,10 +95,10 @@ struct ListRenderer: Renderer {
 //                         .padding(.vertical, 7)
                     }.onDelete{ indexSet in
                         for i in indexSet {
-                            let item = self.main.computedView.searchResult.data[i]
+                            let item = self.main.computedView.resultSet.data[i]
                             let _ = item.delete()
                         }
-                        self.main.computedView.searchResult.data.remove(atOffsets: indexSet)
+                        self.main.computedView.resultSet.data.remove(atOffsets: indexSet)
                         self.main.objectWillChange.send()
                     }
                 }

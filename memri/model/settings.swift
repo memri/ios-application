@@ -153,7 +153,7 @@ class SettingCollection:Object {
             self.realm!.add(s, update: .modified)
             if settings.index(of: s) == nil { settings.append(s) }
             
-            loadState!.actionNeeded = .update
+            loadState!.actionNeeded = "update"
         }
     }
 }

@@ -22,11 +22,26 @@ public class QueryOptions: Object, Codable {
     /**
      * Retrieves the number of items per page
      */
-    let pageCount = RealmOptional<Int>()
+    let pageCount = RealmOptional<Int>() // Todo move to ResultSet
     /**
      *
      */
-    let pageIndex = RealmOptional<Int>()
+    let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
+    /**
+     * Returns a string representation of the data in QueryOptions that is unique for that data
+     * Each QueryOptions object with the same data will return the same uniqueString
+     */
+    var uniqueString:String {
+        var result:[String] = []
+        
+        result.append((self.query ?? "").sha256())
+        result.append(self.sortProperty ?? "")
+        
+        let sortAsc = self.sortAscending.value ?? -1
+        result.append(String(sortAsc))
+            
+        return result.joined(separator: ":")
+    }
     
     init(query:String) {
         super.init()
@@ -47,6 +62,14 @@ public class QueryOptions: Object, Codable {
     
     required init() {
         super.init()
+    }
+    
+    public func merge(_ queryOptions:QueryOptions) {
+        self.query = queryOptions.query ?? self.query ?? nil
+        self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? ""
+        self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? -1
+        self.pageCount.value = queryOptions.pageCount.value ?? self.pageCount.value ?? 0
+        self.pageIndex.value = queryOptions.pageIndex.value ?? self.pageIndex.value ?? 0
     }
 }
 

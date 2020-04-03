@@ -6,12 +6,10 @@
             "views": [
                 {
                     "name": "test",
-                    "searchResult": {
-                        "query": {
-                            "query": "notes",
-                            "sortProperty": "date-created",
-                            "sortAscending": 0
-                        }
+                    "queryOptions": {
+                        "query": "notes",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
                     }
                 }
             ]

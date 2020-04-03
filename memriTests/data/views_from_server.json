@@ -21,9 +21,9 @@
         "{[type:note]}": {
             "name": "notes",
             "title": "Notes",
-            "query": {
+            "queryOptions": {
                 "text": "notes",
-                "sortProperty": "date-created",
+                "sortProperty": "date-modified",
                 "sortAscending": 0
             },
             "rendererName": "list",
@@ -105,7 +105,7 @@
                             }
                         ],
                         "searchResult": {
-                            "query": {
+                            "queryOptions": {
                                 "text": "data:Log appliesTo:{.id}",
                                 "sortProperty": "date-created",
                                 "sortAscending": 0
@@ -164,7 +164,7 @@
                             }
                         ],
                         "searchResult": {
-                            "query": {
+                            "queryOptions": {
                                 "text": "type:logitem appliesTo:{.id}",
                                 "sortProperty": "date-created",
                                 "sortAscending": 0

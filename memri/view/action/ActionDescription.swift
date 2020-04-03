@@ -56,6 +56,7 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
             self.hasState = try decoder.decodeIfPresent("hasState") ?? self.hasState
 
+            // TODO get default color from actionName
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             self.color = UIColor.init(named: colorString) ?? .systemGray
             

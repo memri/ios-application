@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import CryptoKit
 
 //func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{
 //    for var (prop, name) in tuples.map({(AnyCodable($0), $1)}){
@@ -15,7 +16,18 @@ import RealmSwift
 //    }
 //}
 
-extension String: Error {}
+extension String: Error {
+    func sha256() -> String {
+        // Convert the string to data
+        let data = self.data(using: .utf8)!
+
+        // Hash the data
+        let digest = SHA256.hash(data: data)
+
+        // Return the hash string 
+        return digest.compactMap { String(format: "%02x", $0) }.joined()
+    }
+}
 
 func unserialize<T:Decodable>(_ s:String) -> T {
     let data = s.data(using: .utf8)!

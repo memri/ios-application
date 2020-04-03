@@ -2,23 +2,15 @@ import Foundation
 import Combine
 import RealmSwift
 
-enum ActionNeeded:String, Codable {
-    case create
-//    case read
-    case delete
-    case update
-    case noop
-}
-
-class SyncState:Object,Codable {
+class SyncState: Object, Codable {
     // Whether the data item is loaded partially and requires a full load
-    var isPartiallyLoaded:Bool? = nil
+    @objc dynamic var isPartiallyLoaded:Bool = false
     
     // What action is needed on this data item to sync with the pod
-    var actionNeeded:ActionNeeded = .noop
+    @objc dynamic var actionNeeded:String = ""
     
     // Which fields to update
-    var updatedFields:[String] = []
+    let updatedFields = List<String>()
 }
 
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
@@ -121,9 +113,9 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
 }
 
-public class SearchResult: Object, ObservableObject, Codable {
+public class SearchResult: ObservableObject {
     let uid = UUID().uuidString
-    
+
     public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
         return lt.uid == rt.uid
     }
@@ -131,15 +123,15 @@ public class SearchResult: Object, ObservableObject, Codable {
     /**
      *
      */
-    @objc dynamic var query: QueryOptions? = QueryOptions(query: "")
+    var queryOptions: QueryOptions = QueryOptions(query: "")
     /**
      * Retrieves the data loaded from the pod
      */
-    public var data:[DataItem] = []
+    var data:[DataItem] = []
     /**
      *
      */
-    let pages = List<Int>()
+    var pages:[Int] = []
     /**
      * Returns the loading state
      *  -2 loading data failed
@@ -149,33 +141,19 @@ public class SearchResult: Object, ObservableObject, Codable {
      */
     var loading: Int = 0
     
-    public convenience required init(_ query: QueryOptions? = nil, _ data:[DataItem]?) {
+    public convenience required init(_ queryOptions: QueryOptions? = nil, _ data:[DataItem]?) {
         self.init()
         
-        self.query = query ?? self.query
         self.data = data ?? []
         
-        if (data != nil) {
-            loading = -1
-            if !pages.contains(query?.pageIndex.value ?? 0) {
-                pages.append(query?.pageIndex.value ?? 0)
-            }
-        }
-    }
-    
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            data = try decoder.decodeIfPresent("data") ?? data
-            query = try decoder.decodeIfPresent("query") ?? query
-//            loading = try decoder.decodeIfPresent("loading") ?? loading
+        if let queryOptions = queryOptions {
+            self.queryOptions = queryOptions
             
-            decodeIntoList(decoder, "pages", self.pages)
-
-            // If the searchResult is initiatlized with data we set the state to loading done
-            if (!(data.isEmpty && loading == 0)) {
+            if (data != nil) {
                 loading = -1
+                if !pages.contains(queryOptions.pageIndex.value ?? 0) {
+                    pages.append(queryOptions.pageIndex.value ?? 0)
+                }
             }
         }
     }

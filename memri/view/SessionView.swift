@@ -7,7 +7,7 @@ public class SessionView: Object, ObservableObject, Codable {
     /**
      *
      */
-    @objc dynamic var searchResult: SearchResult? = SearchResult()
+    @objc dynamic var queryOptions: QueryOptions? = QueryOptions()
     
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
@@ -40,7 +40,7 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var loadState:SyncState? = SyncState()
     
     private enum CodingKeys: String, CodingKey {
-        case searchResult, title, rendererName, name, subtitle, selection, renderConfigs,
+        case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
             backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
             browsingMode, cascadeOrder
@@ -50,7 +50,7 @@ public class SessionView: Object, ObservableObject, Codable {
         self.init()
         
 //        jsonErrorHandling(decoder) {
-        self.searchResult = try decoder.decodeIfPresent("searchResult") ?? self.searchResult
+        self.queryOptions = try decoder.decodeIfPresent("queryOptions") ?? self.queryOptions
         self.name = try decoder.decodeIfPresent("name") ?? self.name
         self.title = try decoder.decodeIfPresent("title") ?? self.title
         self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
@@ -98,7 +98,8 @@ public class ComputedView: ObservableObject {
     /**
      *
      */
-    var searchResult: SearchResult = SearchResult()
+    var queryOptions: QueryOptions = QueryOptions()
+    var resultSet: SearchResult = SearchResult()
 
     var name: String = ""
     var title: String = ""
@@ -125,17 +126,16 @@ public class ComputedView: ObservableObject {
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
     
+    private let cache:Cache
+    
+    init(_ ch:Cache){
+        cache = ch
+    }
+    
     public func merge(_ view:SessionView) {
         // TODO this function is called way too often
         
-        let query = view.searchResult!.query!
-        if let qry = self.searchResult.query {
-            qry.query = query.query ?? qry.query ?? nil
-            qry.sortProperty = query.sortProperty ?? qry.sortProperty ?? ""
-            qry.sortAscending.value = query.sortAscending.value ?? qry.sortAscending.value ?? -1
-            qry.pageCount.value = query.pageCount.value ?? qry.pageCount.value ?? 0
-            qry.pageIndex.value = query.pageIndex.value ?? qry.pageIndex.value ?? 0
-        }
+        self.queryOptions.merge(view.queryOptions!)
         
         self.name = view.name ?? self.name
         self.title = view.title ?? self.title
@@ -162,13 +162,18 @@ public class ComputedView: ObservableObject {
         self.actionButton = view.actionButton ?? self.actionButton
         self.editActionButton = view.editActionButton ?? self.editActionButton
     }
+    
+    public func finalMerge(_ view:SessionView) {
+        merge(view)
+        self.resultSet = cache.getResultSet(self.queryOptions)
+    }
 
     /**
      * Validates a merged view
      */
     public func validate() throws {
         if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
-        if self.searchResult.query!.query == "" { throw("No query is defined for this view") }
+        if self.queryOptions.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
             throw("Missing action button in this view")
         }

@@ -121,18 +121,17 @@ func getRealmPath() -> String{
 public class Cache {
     var podAPI: PodAPI
     
-    var cancellables:[AnyCancellable]? = nil
-    var queryCache:[String:SearchResult] = [:]
-    
     var scheduler:Scheduler
     var realm:Realm
+    
+    private var cancellables:[AnyCancellable]? = nil
+    private var queryIndex:[String:SearchResult] = [:]
     
     enum CacheError: Error {
         case UnknownTaskJob(job: String)
     }
     
     public init(_ podAPI: PodAPI){
-        
                 
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
@@ -215,7 +214,19 @@ public class Cache {
     }
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: [DataItem]) -> Void) -> Void {}
-    public func fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem]{ [DataItem()]}
+    
+    public func getResultSet(_ queryOptions:QueryOptions) -> SearchResult {
+        let key = queryOptions.uniqueString
+        if let resultset = queryIndex[key] {
+            return resultset
+        }
+        else {
+            let resultset = SearchResult()
+            queryIndex[key] = resultset
+            resultset.queryOptions.merge(queryOptions)
+            return resultset
+        }
+    }
     
     /**
      *
@@ -227,13 +238,6 @@ public class Cache {
             return realm.objects(item()).filter("uid = '\(uid)'").first as! T?
         }
         return nil
-    }
-
-    /**
-     *
-     */
-    func findCachedResult(query: String) -> SearchResult? {
-        return self.queryCache[query]
     }
     
     private func generateUID() -> String {
@@ -308,12 +312,12 @@ public class Cache {
         // Set state to loading
         searchResult.loading = 1
         
-        if searchResult.query!.query == "" {
+        if searchResult.queryOptions.query == "" {
             callback("No query specified")
             return
         }
         
-        let _ = self.query(searchResult.query!) { (error, result, success) -> Void in
+        let _ = self.query(searchResult.queryOptions) { (error, result, success) -> Void in
             if (error != nil) {
                 /* TODO: trigger event or so */
 
@@ -341,13 +345,13 @@ public class Cache {
      * Client side filter //, with a fallback to the server
      */
     public func filter(_ searchResult:SearchResult, _ query:String) -> SearchResult {
-        let options = searchResult.query!
+        let options = searchResult.queryOptions
         options.query = query
         
         let filterResult = SearchResult(options, searchResult.data)
         filterResult.loading = searchResult.loading
         filterResult.pages.removeAll()
-        filterResult.pages.append(objectsIn: searchResult.pages)
+        filterResult.pages.append(contentsOf: searchResult.pages)
         
         for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
             if (!filterResult.data[i].match(query)) {
@@ -394,20 +398,10 @@ public class Cache {
     /**
      *
      */
-    public func addToCache(_ result:SearchResult) {
-        // Overwrite past results (even though sorting options etc, may differ ...
-        if let q = result.query!.query {
-            self.queryCache[q] = result
-        }
-    }
-    
-    /**
-     *
-     */
     public func execute(_ task:Task, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         if let item = task.item {
             switch item.loadState!.actionNeeded {
-            case .create:
+            case "create":
                 podAPI.create(item) { (error, id) -> Void in
                     if error != nil { return callback(error, false) }
                     
@@ -416,14 +410,14 @@ public class Cache {
                     
                     callback(nil, true)
                 }
-            case .delete:
+            case "delete":
                 podAPI.remove(item.getString("uid")) { (error, success) -> Void in
                     callback(error, success)
                 }
-            case .update:
+            case "update":
                 podAPI.update(item, callback)
             default:
-                throw CacheError.UnknownTaskJob(job: item.loadState!.actionNeeded.rawValue)
+                throw CacheError.UnknownTaskJob(job: item.loadState!.actionNeeded)
             }
         }
     }
@@ -436,7 +430,7 @@ public class Cache {
         }
         
         // Create a task
-        item.loadState!.actionNeeded = .create
+        item.loadState!.actionNeeded = "create"
         scheduler.add(item)
     }
     private func onRemove(_ item:DataItem) {
@@ -447,12 +441,12 @@ public class Cache {
         }
         
         // Create a task
-        item.loadState!.actionNeeded = .delete
+        item.loadState!.actionNeeded = "delete"
         scheduler.add(item)
     }
     private func onUpdate(_ item:DataItem) {
         // Update a task
-        item.loadState!.actionNeeded = .update
+        item.loadState!.actionNeeded = "update"
         scheduler.add(item)
     }
 }
