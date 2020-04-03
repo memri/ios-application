@@ -191,6 +191,7 @@ public class Cache {
             item.syncState!.actionNeeded = "create"
         }
         
+        // Add item to realm
         try realm.write() {
             realm.add(item, update: .modified)
         }

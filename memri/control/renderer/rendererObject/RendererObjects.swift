@@ -10,12 +10,13 @@ import Foundation
 import SwiftUI
 
 class RendererObject: ActionDescription, ObservableObject{
-    var name = ""
+    @objc dynamic var name = ""
+    @objc dynamic var renderConfig: RenderConfig? = RenderConfig()
     
-    var renderConfig: RenderConfig = RenderConfig()
     func canDisplayResultSet(items: [DataItem]) -> Bool{
         return true
     }
+    
     required init(){
         super.init()
         self.hasState = true
@@ -23,6 +24,7 @@ class RendererObject: ActionDescription, ObservableObject{
         self.activeBackgroundColor = Color(white: 0.95).uiColor()
         self.actionName = .setRenderer
     }
+    
     func candisplayresultset(items: [DataItem]) -> Bool{
         return true
     }

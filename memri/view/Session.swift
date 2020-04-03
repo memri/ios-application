@@ -8,6 +8,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 import RealmSwift
 
 public class Sessions: Object, ObservableObject, Decodable {
@@ -34,7 +35,7 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    let sessions = List<Session>() // @Published
+    let sessions = RealmSwift.List<Session>() // @Published
     /**
      *
      */
@@ -232,7 +233,7 @@ public class Sessions: Object, ObservableObject, Decodable {
         var renderViews:[SessionView] = []
         var datatypeViews:[SessionView] = []
         var rendererNames:[String] = []
-        var cascadeOrders:[String:[List<String>]] = ["defaults":[List()], "user":[]]
+        var cascadeOrders:[String:[RealmSwift.List<String>]] = ["defaults":[List()], "user":[]]
         let searchOrder = ["defaults", "user"]
         var rendererName:String
         
@@ -389,7 +390,7 @@ public class Session: Object, ObservableObject, Decodable {
     /**
      *
      */
-    let views = List<SessionView>() // @Published
+    let views = RealmSwift.List<SessionView>() // @Published
     /**
      *
      */

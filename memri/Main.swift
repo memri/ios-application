@@ -47,28 +47,32 @@ public class Main: ObservableObject {
      */
     public var realm: Realm
     
+    // TODO @koen these renderer objects seem slightly out of place here.
+    // Could there be some kind of .renderers object that sits on main?
+    var renderers: [String: AnyView] = [
+        "list": AnyView(ListRenderer()),
+        "richTextEditor": AnyView(RichTextRenderer()),
+        "thumbnail": AnyView(ThumbnailRenderer())
+    ]
     
-//    public let navigationCache: NavigationCache
+    var renderObjects: [String: RendererObject] = [
+        "list": ListRendererObject(),
+        "richTextEditor": RichTextRendererObject(),
+        "thumbnail": ThumbnailRendererObject()
+    ]
     
-    private var cancellable: AnyCancellable? = nil
-    private var scheduled: Bool = false
-    
-    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
-                                        "richTextEditor": AnyView(RichTextRenderer()),
-                                        "thumbnail": AnyView(ThumbnailRenderer())]
-    
-    var renderObjects: [String: RendererObject] = ["list": ListRendererObject(),
-                                                   "richTextEditor": RichTextRendererObject(),
-                                                   "thumbnail": ThumbnailRendererObject()]
-    
-    
-    var renderObjectTuples: [(key: String, value: RendererObject)]{
+    var renderObjectTuples: [(key: String, value: RendererObject)] {
         return renderObjects.sorted{$0.key < $1.key}
     }
     
     var currentRenderer: AnyView {
         self.renderers[self.computedView.rendererName, default: AnyView(ThumbnailRenderer())]
     }
+    
+//    public let navigationCache: NavigationCache
+    
+    private var cancellable: AnyCancellable? = nil
+    private var scheduled: Bool = false
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
@@ -95,16 +99,6 @@ public class Main: ObservableObject {
                 
                 // Load view configuration
                 try! self.sessions.load(realm, cache) {
-                    
-                    // Hook current session
-//                    var isCalled:Bool = false
-//                    self.cancellable = self.sessions.objectWillChange.sink {
-//                        isCalled = false
-//                        DispatchQueue.main.async {
-//                            if !isCalled { self.setCurrentView() }
-//                            else { isCalled = true }
-//                        }
-//                    }
                     
                     // Load current view
                     self.setCurrentView()
@@ -242,7 +236,7 @@ public class Main: ObservableObject {
     }
     
     public func getRenderConfig(name: String) -> RenderConfig{
-        return self.renderObjects[name]!.renderConfig
+        return self.renderObjects[name]!.renderConfig!
     }
 
     /**
