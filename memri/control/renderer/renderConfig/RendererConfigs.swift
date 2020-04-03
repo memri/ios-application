@@ -50,43 +50,52 @@ public class RenderConfig: Object, Codable {
     }
 }
 
-class multiItemConfig: RenderConfig {
-    var press: ActionDescription? = ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: [])
-
-}
-
-class ListConfig: multiItemConfig {
-    var cascadeOrder: [String] = []
-    var slideLeftActions: [ActionDescription] = []
-    var slideRightActions: [ActionDescription] = []
-    var type: String = "list"
-    var browse: String = ""
-    var sortProperty: String = ""
-    var sortAscending: Int = 0
-    var itemRenderer: String = ""
-    var longPress: ActionDescription? = nil
+class ListConfig: RenderConfig {
+    @objc dynamic var type: String = "list"
+    @objc dynamic var browse: String = ""
+    @objc dynamic var itemRenderer: String = ""
+    @objc dynamic var longPress: ActionDescription? = nil
+    @objc dynamic var press: ActionDescription? = nil
     
+    let cascadeOrder = List<String>()
+    let slideLeftActions = List<ActionDescription>()
+    let slideRightActions = List<ActionDescription>()
 
-    init(name: String?=nil, icon: String?=nil, category: String?=nil, items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
-         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil, slideLeftActions: [ActionDescription]?=nil,
-         slideRightActions: [ActionDescription]?=nil, type: String?=nil, browse: String?=nil, sortProperty: String?=nil,
-         sortAscending: Int?=nil, itemRenderer: String?=nil, longPress: ActionDescription?=nil, press: ActionDescription? = nil){
+    // TODO: Why do we need this contructor?
+    init(name: String?=nil, icon: String?=nil, category: String?=nil,
+         items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
+         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil,
+         slideLeftActions: [ActionDescription]?=nil, slideRightActions: [ActionDescription]?=nil,
+         type: String?=nil, browse: String?=nil, itemRenderer: String?=nil,
+         longPress: ActionDescription?=nil, press: ActionDescription? = nil){
+        
         super.init()
-        self.cascadeOrder=cascadeOrder ?? self.cascadeOrder
-        self.slideLeftActions=slideLeftActions ?? self.slideLeftActions
-        self.slideRightActions=slideRightActions ?? self.slideRightActions
+        
         self.type=type ?? self.type
         self.browse=browse ?? self.browse
-        self.sortProperty=sortProperty ?? self.sortProperty
-        self.sortAscending=sortAscending ?? self.sortAscending
         self.itemRenderer=itemRenderer ?? self.itemRenderer
         self.longPress=longPress ?? self.longPress
         self.press = press ?? self.press
+        
+        self.cascadeOrder.append(objectsIn: cascadeOrder ?? [])
+        self.slideLeftActions.append(objectsIn: slideLeftActions ?? [])
+        self.slideRightActions.append(objectsIn: slideRightActions ?? [])
     }
     
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+            self.browse = try decoder.decodeIfPresent("browse") ?? self.browse
+            self.itemRenderer = try decoder.decodeIfPresent("itemRenderer") ?? self.itemRenderer
+            self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
+            self.press = try decoder.decodeIfPresent("press") ?? self.press
+            
+            decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
+            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
+        }
     }
     
     required init() {
@@ -94,39 +103,55 @@ class ListConfig: multiItemConfig {
     }
 }
 
-class ThumbnailConfig: multiItemConfig {
-    var cascadeOrder: [String] = []
-    var slideLeftActions: [ActionDescription] = []
-    var slideRightActions: [ActionDescription] = []
-    var type: String = "thumbnail"
-    var browse: String = ""
-    var sortProperty: String = ""
-    var sortAscending: Int = 0
-    var itemRenderer: String = ""
-    var longPress: ActionDescription? = nil
-    var cols: Int = 3
+class ThumbnailConfig: RenderConfig {
+    @objc dynamic var type: String = "thumbnail"
+    @objc dynamic var browse: String = ""
+    @objc dynamic var itemRenderer: String = ""
+    @objc dynamic var longPress: ActionDescription? = nil
+    @objc dynamic var press: ActionDescription? = nil
+    @objc dynamic var cols: Int = 3
+    
+    let cascadeOrder = List<String>()
+    let slideLeftActions = List<ActionDescription>()
+    let slideRightActions = List<ActionDescription>()
 
-    init(name: String?=nil, icon: String?=nil, category: String?=nil, items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
-         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil, slideLeftActions: [ActionDescription]?=nil,
-         slideRightActions: [ActionDescription]?=nil, type: String?=nil, browse: String?=nil, sortProperty: String?=nil,
-         sortAscending: Int?=nil, itemRenderer: String?=nil, longPress: ActionDescription?=nil, press: ActionDescription? = nil, cols: Int? = nil){
+    // TODO: Why do we need this contructor?
+    init(name: String?=nil, icon: String?=nil, category: String?=nil,
+         items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
+         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil,
+         slideLeftActions: [ActionDescription]?=nil, slideRightActions: [ActionDescription]?=nil,
+         type: String?=nil, browse: String?=nil, itemRenderer: String?=nil,
+         longPress: ActionDescription?=nil, press: ActionDescription? = nil, cols: Int? = nil){
+        
         super.init()
-        self.cascadeOrder=cascadeOrder ?? self.cascadeOrder
-        self.slideLeftActions=slideLeftActions ?? self.slideLeftActions
-        self.slideRightActions=slideRightActions ?? self.slideRightActions
+        
         self.type=type ?? self.type
         self.browse=browse ?? self.browse
-        self.sortProperty=sortProperty ?? self.sortProperty
-        self.sortAscending=sortAscending ?? self.sortAscending
         self.itemRenderer=itemRenderer ?? self.itemRenderer
         self.longPress=longPress ?? self.longPress
         self.press = press ?? self.press
         self.cols = cols ?? self.cols
+        
+        self.cascadeOrder.append(objectsIn: cascadeOrder ?? [])
+        self.slideLeftActions.append(objectsIn: slideLeftActions ?? [])
+        self.slideRightActions.append(objectsIn: slideRightActions ?? [])
     }
     
-    
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+            self.browse = try decoder.decodeIfPresent("browse") ?? self.browse
+            self.itemRenderer = try decoder.decodeIfPresent("itemRenderer") ?? self.itemRenderer
+            self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
+            self.press = try decoder.decodeIfPresent("press") ?? self.press
+            self.cols = try decoder.decodeIfPresent("cols") ?? self.cols
+            
+            decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
+            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
+        }
     }
     
     required init() {

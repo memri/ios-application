@@ -188,13 +188,11 @@ public class Cache {
             item.uid = DataItem.generateUID()
             
             // Schedule to be created on the pod
-            item.syncState!.actionNeeded = "create"
+            try realm.write() { item.syncState!.actionNeeded = "create" }
         }
         
         // Add item to realm
-        try realm.write() {
-            realm.add(item, update: .modified)
-        }
+        try realm.write() { realm.add(item, update: .modified) }
         
         // Update the sync state when the item changes
         let _ = item.observe { (objectChange) in
@@ -203,13 +201,17 @@ public class Cache {
                     try! self.realm.write {
                         let syncState = item.syncState!
                         
-                        // Mark item for updating
-                        syncState.actionNeeded = "update"
+                        // Update state in realm
+                        try self.realm.write() {
                         
-                        // Record which field was updated
-                        for prop in propChanges {
-                            if !syncState.updatedFields.contains(prop.name) {
-                                syncState.updatedFields.append(prop.name)
+                            // Mark item for updating
+                            syncState.actionNeeded = "update"
+                            
+                            // Record which field was updated
+                            for prop in propChanges {
+                                if !syncState.updatedFields.contains(prop.name) {
+                                    syncState.updatedFields.append(prop.name)
+                                }
                             }
                         }
                     }

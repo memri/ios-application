@@ -39,7 +39,7 @@ struct ListRenderer: Renderer {
                             Text(self.generatePreview(dataItem))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
-                            self.onTap(actionDescription: (self.renderConfig).press!,
+                            self.onTap(actionDescription: self.renderConfig.press!,
                                        dataItem: dataItem)
                         }
                     }.onDelete{ indexSet in

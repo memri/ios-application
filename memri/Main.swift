@@ -178,7 +178,7 @@ public class Main: ObservableObject {
                 self.scheduled = false
                 
                 // Update UI
-                self.sessions.objectWillChange.send()
+                self.objectWillChange.send()
             }
         }
     }
@@ -386,7 +386,6 @@ public class Main: ObservableObject {
     func star() {
         
     }
-    
 
     var lastStarredView:ComputedView?
     func showStarred(starButton: ActionDescription){
