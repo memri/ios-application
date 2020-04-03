@@ -13,7 +13,6 @@ import RealmSwift
     TODO:
     - create a renderConfigs class that has a list for each render config indexed by the name
     - change the json back to the dict as it was before
-    - Strange! realm has 0 actiondescriptions
 */
 
 public class RenderConfig: Object, Codable {

@@ -11,7 +11,7 @@ import Combine
 import RealmSwift
 
 public class ActionDescription: Object, Codable, Identifiable {
-    public var id = UUID() // TODO why is this here?
+//    public var id = UUID() // TODO why is this here?
     
     var actionName: ActionName = .noop
     var actionArgs: [AnyCodable] = []
@@ -95,8 +95,8 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
             self.backgroundColor = self.actionName.defaultBackgroundColor
             
-            let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
-            self.actionArgs = try self.decodeActionArgs(container)
+            // Decode arguments
+            try self.decodeActionArgs(decoder)
             
             self._actionName = self.actionName.rawValue
             self._actionType = self.actionType.rawValue
@@ -123,20 +123,31 @@ public class ActionDescription: Object, Codable, Identifiable {
         }
     }
     
-    func decodeActionArgs(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>) throws -> [AnyCodable] {
+    func decodeActionArgs(_ decoder: Decoder) throws {
+        // Some Decoder magic
+        let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
         var container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
-        var list = [AnyCodable]()
-        var tmpContainer = container // Force a copy of the container
+        
+        // Force a copy of the container (not sure why)
+        var tmpContainer = container
+        
+        // Calculate and print coding path for debugging
         let path = getCodingPathString(tmpContainer.codingPath)
+        print("Decoding: \(path)")
+        
+        // Create encoder for serialization
         let encoder = JSONEncoder()
         
         func addArgument<T:Encodable>(_ item:T){
+            // Store item in the arguments list
+            self.actionArgs.append(AnyCodable(item))
+            
+            // Encode item as a string
             let data = try! encoder.encode(item)
+            
+            // And add to _actionArgs for storage in realm
             self._actionArgs.append(String(data: data, encoding: .utf8) ?? "")
-            list.append(AnyCodable(item))
         }
-        
-        print("Decoding: \(path)")
         
         if let count = container.count {
             if (self.actionName.argumentTypes.count > 0) {
@@ -170,8 +181,6 @@ public class ActionDescription: Object, Codable, Identifiable {
                 }
             }
         }
-        
-        return list
     }
     
 //    public static func == (lhs: ActionDescription, rhs: ActionDescription) -> Bool {
