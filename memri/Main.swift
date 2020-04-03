@@ -23,7 +23,7 @@ public class Main: ObservableObject {
     /**
      *
      */
-    @Published public var computedView:SessionView = SessionView()
+    @Published public var computedView:ComputedView = ComputedView()
     /**
      *
      */
@@ -118,7 +118,7 @@ public class Main: ObservableObject {
 //        }
         
         // Load data
-        let searchResult = self.sessions.currentView.searchResult!
+        let searchResult = self.computedView.searchResult
         
         // TODO: create enum for loading
         if searchResult.loading == 0 && searchResult.query!.query != "" && !NORECURTEMPVARIABLEFIXTHISWHENIMPLEMENTINGRESULTSET {
@@ -160,10 +160,6 @@ public class Main: ObservableObject {
     }
     
     func openView(_ item:DataItem){
-//        let session = self.currentSession
-//        let view = SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([item]),
-//                rendererName: "richTextEditor")
-        
         var searchResult:SearchResult
         let view = SessionView()
         
@@ -185,9 +181,6 @@ public class Main: ObservableObject {
         
         view.searchResult = searchResult
         
-        // TODO: compute in topnav
-//        view.backButton = ActionDescription(icon: "chevron.left", title: "Back", actionName: "back", actionArgs: [])
-        
         self.openView(view)
     }
     
@@ -205,7 +198,7 @@ public class Main: ObservableObject {
 //        dataItem.properties=["title": "new note", "content": ""]
         
         let realItem = self.cache.addToCache(item)
-        self.computedView.searchResult!.data.append(realItem) // TODO
+        self.computedView.searchResult.data.append(realItem) // TODO
         self.openView(realItem)
     }
 
@@ -276,7 +269,7 @@ public class Main: ObservableObject {
             if lastSearchResult != nil {
                 self.computedView.searchResult = lastSearchResult!
                 lastSearchResult = nil
-                self.computedView.title = lastTitle
+                self.computedView.title = lastTitle ?? ""
                 self.objectWillChange.send() // TODO why is this not triggered
             }
             return
@@ -327,7 +320,7 @@ public class Main: ObservableObject {
         
     }
     
-    var lastStarredView:SessionView?
+    var lastStarredView:ComputedView?
     func showStarred(){
         if lastNeedle != "" {
             self.search("") // Reset search | should update the UI state as well. Don't know how
@@ -345,13 +338,12 @@ public class Main: ObservableObject {
         else {
             // Otherwise create a new searchResult, mark it as starred (query??)
             lastStarredView = self.computedView
-            let view = SessionView()
-            view.merge(self.computedView)
+            let view = self.sessions.computeView()!
             self.computedView = view
             
             // filter the results based on the starred property
             var results:[DataItem] = []
-            let data = lastStarredView!.searchResult!.data
+            let data = lastStarredView!.searchResult.data
             // TODO: Change to filter
             for i in 0...data.count - 1 {
                 let isStarred = data[i]["starred"] as? Bool ?? false
@@ -359,8 +351,8 @@ public class Main: ObservableObject {
             }
             
             // Add searchResult to view
-            view.searchResult!.data = results
-            view.title = "Starred \(view.title ?? "")"
+            view.searchResult.data = results
+            view.title = "Starred \(view.title)"
             
             self.objectWillChange.send()
         }

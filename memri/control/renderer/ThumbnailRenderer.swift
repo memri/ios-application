@@ -40,7 +40,7 @@ struct ThumbnailRenderer: View {
     
     var body: some View {
         
-        QGrid(main.computedView.searchResult!.data, columns: 3) { dataItem in
+        QGrid(main.computedView.searchResult.data, columns: 3) { dataItem in
             Text(dataItem.getString("title")).asThumbnail()
                 .onTapGesture {
                     self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
@@ -51,11 +51,6 @@ struct ThumbnailRenderer: View {
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
         main.executeAction(actionDescription, dataItem)
-        
-//    func onTap(dataItem: DataItem){
-//        main.openView(SessionView.fromSearchResult(searchResult: SearchResult.fromDataItems([dataItem]),
-//        rendererName: "richTextEditor"))
-//    }
     }
 }
 

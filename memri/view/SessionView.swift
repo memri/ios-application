@@ -86,11 +86,50 @@ public class SessionView: Object, ObservableObject, Codable {
 //        }
 //    }
     
+    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
+        return items
+    }
+}
+
+public class ComputedView: ObservableObject {
+
+    /**
+     *
+     */
+    var searchResult: SearchResult = SearchResult()
+
+    var name: String = ""
+    var title: String = ""
+    var rendererName: String = ""
+    var subtitle: String = ""
+    var backTitle: String = ""
+    var icon: String = ""
+    var browsingMode: String = ""
+
+    var showLabels: Bool = true
+    var contextMode: Bool = false
+    var filterMode: Bool = false
+    var isEditMode: Bool = false
+
+    var cascadeOrder: [String] = []
+    var renderConfigs: [RenderConfig] = []
+    var selection: [DataItem] = []
+    var editButtons: [ActionDescription] = []
+    var filterButtons: [ActionDescription] = []
+    var actionItems: [ActionDescription] = []
+    var navigateItems: [ActionDescription] = []
+    var contextButtons: [ActionDescription] = []
+
+    var actionButton: ActionDescription? = nil
+    var editActionButton: ActionDescription? = nil
+    
     public func merge(_ view:SessionView) {
         // TODO this function is called way too often
         
         let query = view.searchResult!.query!
-        if let qry = self.searchResult!.query {
+        if let qry = self.searchResult.query {
             qry.query = query.query ?? qry.query ?? nil
             qry.sortProperty = query.sortProperty ?? qry.sortProperty ?? ""
             qry.sortAscending.value = query.sortAscending.value ?? qry.sortAscending.value ?? -1
@@ -98,55 +137,40 @@ public class SessionView: Object, ObservableObject, Codable {
             qry.pageIndex.value = query.pageIndex.value ?? qry.pageIndex.value ?? 0
         }
         
-        self.name = view.name ?? self.name ?? ""
-        self.title = view.title ?? self.title ?? ""
-        self.rendererName = view.rendererName ?? self.rendererName ?? ""
-        self.subtitle = view.subtitle ?? self.subtitle ?? ""
-        self.backTitle = view.backTitle ?? self.backTitle ?? ""
-        self.icon = view.icon ?? self.icon ?? ""
-        self.browsingMode = view.browsingMode ?? self.browsingMode ?? ""
+        self.name = view.name ?? self.name
+        self.title = view.title ?? self.title
+        self.rendererName = view.rendererName ?? self.rendererName
+        self.subtitle = view.subtitle ?? self.subtitle
+        self.backTitle = view.backTitle ?? self.backTitle
+        self.icon = view.icon ?? self.icon
+        self.browsingMode = view.browsingMode ?? self.browsingMode
         
-        self.showLabels.value = view.showLabels.value ?? self.showLabels.value ?? true
-        self.contextMode.value = view.contextMode.value ?? self.contextMode.value ?? false
-        self.filterMode.value = view.filterMode.value ?? self.filterMode.value ?? false
-        self.isEditMode.value = view.isEditMode.value ?? self.isEditMode.value ?? false
+        self.showLabels = view.showLabels.value ?? self.showLabels
+        self.contextMode = view.contextMode.value ?? self.contextMode
+        self.filterMode = view.filterMode.value ?? self.filterMode
+        self.isEditMode = view.isEditMode.value ?? self.isEditMode
         
-        self.cascadeOrder.append(objectsIn: view.cascadeOrder)
-        self.renderConfigs.append(objectsIn: view.renderConfigs)
-        self.selection.append(objectsIn: view.selection)
-        self.editButtons.append(objectsIn: view.editButtons)
-        self.filterButtons.append(objectsIn: view.filterButtons)
-        self.actionItems.append(objectsIn: view.actionItems)
-        self.navigateItems.append(objectsIn: view.navigateItems)
-        self.contextButtons.append(objectsIn: view.contextButtons)
+        self.cascadeOrder.append(contentsOf: view.cascadeOrder)
+        self.renderConfigs.append(contentsOf: view.renderConfigs)
+        self.selection.append(contentsOf: view.selection)
+        self.editButtons.append(contentsOf: view.editButtons)
+        self.filterButtons.append(contentsOf: view.filterButtons)
+        self.actionItems.append(contentsOf: view.actionItems)
+        self.navigateItems.append(contentsOf: view.navigateItems)
+        self.contextButtons.append(contentsOf: view.contextButtons)
         
-        self.actionButton = view.actionButton ?? self.actionButton ?? nil
-        self.editActionButton = view.editActionButton ?? self.editActionButton ?? nil
+        self.actionButton = view.actionButton ?? self.actionButton
+        self.editActionButton = view.editActionButton ?? self.editActionButton
     }
-    
+
     /**
      * Validates a merged view
      */
     public func validate() throws {
         if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
-        if self.searchResult!.query!.query == "" { throw("No query is defined for this view") }
+        if self.searchResult.query!.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
             throw("Missing action button in this view")
         }
-    }
-    
-    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
-        let sv = SessionView()
-        sv.searchResult = searchResult
-        sv.rendererName = rendererName
-        sv.title = searchResult.data[0].getString("title")
-        sv.backTitle = currentView.title
-        return sv
-    }
-    
-    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
-        let jsonData = try jsonDataFromFile(file, ext)
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
-        return items
     }
 }

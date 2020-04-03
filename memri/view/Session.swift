@@ -187,13 +187,13 @@ public class Sessions: Object, ObservableObject, Decodable {
     "{renderer:list}"
     "{[type:Note]}"
     */
-    public func computeView(_ argView:SessionView? = nil) -> SessionView? {
+    public func computeView(_ argView:SessionView? = nil) -> ComputedView? {
         let viewFromSession = argView == nil
             ? self.currentSession.currentView
             : argView!
         
         // Create a new view
-        let computedView = SessionView()
+        let computedView = ComputedView()
         let previousView = self.currentSession.currentView
         let searchResult = viewFromSession.searchResult!
         
