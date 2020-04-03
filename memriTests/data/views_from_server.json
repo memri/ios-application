@@ -104,12 +104,10 @@
                                 "timeProperty": "date-created"
                             }
                         ],
-                        "searchResult": {
-                            "queryOptions": {
-                                "text": "data:Log appliesTo:{.id}",
-                                "sortProperty": "date-created",
-                                "sortAscending": 0
-                            }
+                        "queryOptions": {
+                            "text": "data:Log appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
                         }
                     }]
                 },
@@ -163,12 +161,10 @@
                                 "timeProperty": "date-created"
                             }
                         ],
-                        "searchResult": {
-                            "queryOptions": {
-                                "text": "type:logitem appliesTo:{.id}",
-                                "sortProperty": "date-created",
-                                "sortAscending": 0
-                            }
+                        "queryOptions": {
+                            "text": "type:logitem appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
                         }
                     }]
                 },

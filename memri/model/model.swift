@@ -63,6 +63,27 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
+    public func merge(_ item:DataItem) throws {
+        // TODO needs to detect lists which will always be set
+        // TODO needs to detect optionals which will always be set
+        throw "Not implemented"
+//        let properties = cachedItem.objectSchema.properties
+//        var value:[String:Any] = [:]
+//        for prop in properties {
+//            if (item[prop.name] != nil) {
+//                value[prop.name] = item[prop.name]
+//            }
+//        }
+//
+//        let type = DataItemFamily(rawValue: item.type)
+//        if let type = type {
+//            let itemType = DataItemFamily.getType(type)
+//            try! realm.write() {
+//                realm.create(itemType(), value: value, update: .modified) // Should update cachedItem
+//            }
+//        }
+    }
+    
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
     }
@@ -87,15 +108,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
 }
 
-/*
-    * resultSet.type should return the type of the result or "_mixed_"
-    * resultSet.isList should return true if the query could return more than 1 item
-        * Based on the query if there is no data yet
-    * computeView and setCurrentView should not be called until there is data
-    - resultSet should contain all the logic to load its data (??)
-    * setCurrentView should be called directly instead of through bindings, and should trigger the bindings update itself
- */
-public class SearchResult: ObservableObject {
+public class ResultSet: ObservableObject {
 //    let uid = UUID().uuidString
 //
 //    public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
@@ -109,7 +122,7 @@ public class SearchResult: ObservableObject {
     /**
      * Retrieves the data loaded from the pod
      */
-    var data: [DataItem] = []
+    var items: [DataItem] = []
     /**
      *
      */
@@ -132,114 +145,87 @@ public class SearchResult: ObservableObject {
         // TODO change this to be a proper query parser
         return !(self.queryOptions.query ?? "").starts(with: "0x")
     }
-    
     /**
-     * Returns the loading state
-     *  -2 loading data failed
-     *  -1 data is loaded from the server
-     *  0 loading idle
-     *  1 loading data from server
+     *
      */
-    private var loading: Int = 0
+    var item: DataItem? {
+        if isList && count > 0 { return items[0] }
+        else { return nil }
+    }
+    
+    private var loading: Bool = false
     private var pages: [Int] = []
     private let cache: Cache
     
     required init(_ ch:Cache) {
         cache = ch
     }
-//
-//    public convenience required init(_ queryOptions: QueryOptions? = nil, _ data:[DataItem]?) {
-//        self.init()
-//
-//        self.data = data ?? []
-//
-//        if let queryOptions = queryOptions {
-//            self.queryOptions = queryOptions
-//
-//            if (data != nil) {
-//                loading = -1
-//                if !pages.contains(queryOptions.pageIndex.value ?? 0) {
-//                    pages.append(queryOptions.pageIndex.value ?? 0)
-//                }
-//            }
-//        }
-//    }
     
     func load(_ callback:(_ error:Error?) -> Void) throws {
-        // Set state to loading
-        loading = 1
         
-        if queryOptions.query == "" {
-            throw "Exception: No query specified when loading result set"
-        }
+        // Only execute one loading process at the time
+        if !loading {
         
-        cache.query(queryOptions) { (error, result, success) -> Void in
-            if (error != nil) {
-                // Set loading state to error
-                loading = -2
-
-                callback(error)
-                return
+            // Validate queryOptions
+            if queryOptions.query == "" {
+                throw "Exception: No query specified when loading result set"
             }
+            
+            // Set state to loading
+            loading = true
+            
+            // Execute the query
+            cache.query(queryOptions) { (error, result) -> Void in
+                if let result = result {
+                    
+                    // Set data and count
+                    items = result
+                    count = items.count
 
-            // TODO this only works when retrieving 1 page. It will break for pagination
-            if let result = result { data = result }
+                    // We've successfully loaded page 0
+                    setPagesLoaded(0) // TODO This is not used at the moment
 
-            // We've successfully loaded page 0
-            setPagesLoaded(0)
+                    // First time loading is done
+                    loading = false
 
-            // First time loading is done
-            loading = -1
+                    // Done
+                    callback(nil)
+                }
+                else if (error != nil) {
+                    // Set loading state to error
+                    loading = false
 
-            callback(nil)
+                    // Done with errors
+                    callback(error)
+                }
+            }
         }
     }
     
-//    let resultSet = cache.getResultSet(queryOptions)
-//
-//    // TODO: This is still a hack. ResultSet should fetch the data based on the query
-//    resultSet.data = [item]
-//
-//    // TODO move this to resultSet
-//    // Only load the item if it is partially loaded
-//    if item.syncState!.isPartiallyLoaded {
-//        resultSet.loading = 0
-//    }
-//    else {
-//        resultSet.loading = -1
-//    }
-    
-    
-//    // Load data
-//    let resultSet = self.computedView.resultSet
-//
-//    // TODO: create enum for loading
-//    if resultSet.loading == 0 && resultSet.queryOptions.query != "" {
-//        cache.loadPage(resultSet, 0, { (error) in
-//            if error == nil {
-//                // call again when data is loaded, so the view can adapt to the data
-//                self.setCurrentView()
-//            }
-//        })
-//    }
+    func forceItemsUpdate(_ result:[DataItem]) {
+        items = result
+        count = items.count
+        
+        self.objectWillChange.send() // TODO create our own publishers
+    }
 
     /**
      * Client side filter //, with a fallback to the server
      */
-    public func filter(_ searchResult:SearchResult, _ query:String) -> SearchResult {
+    public func filter(_ searchResult:ResultSet, _ query:String) -> ResultSet {
         let options = searchResult.queryOptions
         options.query = query
         
-        let filterResult = SearchResult(cache)
+        let filterResult = ResultSet(cache)
         filterResult.queryOptions = options
-        filterResult.data = searchResult.data
+        filterResult.items = searchResult.items
         filterResult.loading = searchResult.loading
         filterResult.pages.removeAll()
         filterResult.pages.append(contentsOf: searchResult.pages)
         
-        for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
-            if (!filterResult.data[i].match(query)) {
-                filterResult.data.remove(at: i)
+        for i in stride(from: filterResult.items.count - 1, through: 0, by: -1) {
+            if (!filterResult.items[i].match(query)) {
+                filterResult.items.remove(at: i)
             }
         }
 
@@ -249,7 +235,7 @@ public class SearchResult: ObservableObject {
     /**
      * Executes the query again
      */
-    public func reload(_ searchResult:SearchResult) -> Void {
+    public func reload(_ searchResult:ResultSet) -> Void {
         // Reload all pages
 //        for (page, _) in searchResult.pages {
 //            let _ = self.loadPage(searchResult, page, { (error) in })

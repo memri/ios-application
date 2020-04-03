@@ -55,7 +55,7 @@ public class Main: ObservableObject {
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
-        cache = Cache(podApi)
+        cache = Cache(podApi, scheduleUIUpdate)
         realm = cache.realm
         settings = Settings(realm)
         installer = Installer(realm)
@@ -133,8 +133,14 @@ public class Main: ObservableObject {
         else {
             
             // Updating the data in the resultset of the session view
-            resultSet.load() {
-                setCurrentView()
+            resultSet.load() { (error) in
+                
+                // Only update when data was retrieved successfully
+                if error == nil {
+                    
+                    // Update the current view based on the new info
+                    setCurrentView()
+                }
             }
         }
     }
@@ -203,8 +209,11 @@ public class Main: ObservableObject {
         // Copy template
         let copy = self.cache.duplicate(template)
         
-        // Open view with cached version of copy
-        self.openView(self.cache.addToCache(copy))
+        // Add the new item to the cache
+        self.cache.addToCache(copy)
+        
+        // Open view with the now managed copy
+        self.openView(copy)
     }
 
     /**
@@ -267,7 +276,7 @@ public class Main: ObservableObject {
     
     // TODO move this to searchResult, suggestion: change searchResult to
     // ResultSet (list, item, isList) and maintain only one per query. also add query to sessionview
-    private var lastSearchResult:SearchResult?
+    private var lastSearchResult:ResultSet?
     private var lastNeedle:String = ""
     private var lastTitle:String? = nil
     func search(_ needle:String) {
@@ -368,7 +377,7 @@ public class Main: ObservableObject {
             
             // filter the results based on the starred property
             var results:[DataItem] = []
-            let data = lastStarredView!.resultSet.data
+            let data = lastStarredView!.resultSet.items
             // TODO: Change to filter
             for i in 0...data.count - 1 {
                 let isStarred = data[i]["starred"] as? Bool ?? false

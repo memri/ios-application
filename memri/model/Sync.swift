@@ -38,9 +38,11 @@ class Sync {
     
     private var podApi: PodAPI
     private var realm: Realm
+    public var cache: Cache = Cache
     
     private var scheduled: Bool = false
     private var syncing: Bool = false
+    private var backgroundSyncing: Bool = false
     
     init(_ api:PodAPI, _ rlm:Realm) {
         podApi = api
@@ -51,22 +53,92 @@ class Sync {
         
         // Schedule syncing to the pod to see if there are any jobs that remain
         schedule()
+        
+        // Run any priority syncs in the background
+        prioritySyncAll()
     }
     
     /**
      *
      */
-    public func syncQuery() {
-        // Store query in a log item
+    public func syncQuery(_ queryOptions:QueryOptions) {
+        // TODO if this query was executed recently, considering postponing action
         
-        // Set syncstate to "fetch"
+        // Store query in a log item
+        var logitem = LogItem()
+        logitem.contents = serialize(queryOptions)
+        logitem.action = "query"
+        logitem.date = Date()
+        
+        // Set syncstate to "fetch" in order to get priority treatment for querying
+        logitem.syncState?.actionNeeded = "fetch"
+        
+        // Add to realm
+        try! realm.write {
+            realm.add(logitem)
+        }
         
         // Execute query with priority
-
+        prioritySync(queryOptions, logitem)
     }
     
-    private func prioritySync(){
-        // Execute query objects
+    private func prioritySyncAll() {
+        //
+        if !backgroundSyncing {
+            
+            //
+            backgroundSyncing = true
+            
+            // TODO make async in order to not hurt init when cache is not set
+            
+            // Execute query objects
+            prioritySync()
+            
+            //
+            backgroundSyncing = false
+        }
+    }
+    
+    private func prioritySync(_ queryOptions:QueryOptions, _ logitem:LogItem) {
+        
+        // Call out to the pod with the query
+        podAPI.query(query) { (error, items) in
+            if let items = items {
+                
+                // Find resultset that belongs to this query
+                let resultSet = cache.getResultSet(queryOptions)
+                
+                // The result that we'll add to resultset
+                let result:[DataItem] = []
+                
+                for item in items {
+                    // TODO handle sync errors
+                    try! cache.addToCache(item)
+                    
+                    // Add item to result
+                    result.append(item)
+                }
+                
+                // Find added items
+                // TODO this could be skipped by re-executing resultSet.load()
+                for item in resultSet.items {
+                    if item.syncState!.actionNeeded == "created" {
+                        result.append(item)
+                    }
+                }
+                
+                // Update resultset with the new results
+                resultSet.forceItemsUpdate(items)
+                
+                // We no longer need to process this log item
+                logitem.syncState!.actionNeeded = ""
+                // TODO consider deleting the log item
+            }
+            else {
+                // Ignore errors (we'll retry next time)
+                // TODO consider resorting so that it is not retried too often
+            }
+        }
     }
     
     /**

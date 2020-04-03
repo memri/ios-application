@@ -48,14 +48,15 @@ public class Cache {
     var sync: Sync
     var realm: Realm
     
-    private var cancellables:[AnyCancellable]? = nil
-    private var queryIndex:[String:SearchResult] = [:]
+    private var cancellables: [AnyCancellable]? = nil
+    private var queryIndex: [String:ResultSet] = [:]
+    private var scheduleUIUpdate: () -> Void
     
     enum CacheError: Error {
         case UnknownTaskJob(job: String)
     }
     
-    public init(_ api: PodAPI){
+    public init(_ api: PodAPI, _ updateUI: () -> Void){
                 
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
@@ -69,85 +70,108 @@ public class Cache {
         print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
         podApi = api
+        scheduleUIUpdate = updateUI
         
         // Create scheduler objects
         sync = Sync(podApi, realm)
-        scheduler.cache = self
+        sync.cache = self
     }
     
     /**
      * Loads data from cache
      */
-    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
-        var receivedFromServer = false
-        func handle (_ error:Error?, _ items:[DataItem]?, _ cached:Bool) -> Void {
-            if receivedFromServer { return } 
-            receivedFromServer = !cached
-            
-            if (error != nil) {
-                callback(error, nil, nil)
-                return
-            }
-            
-            // Add all new data items to the cache
-            var data:[DataItem] = []
-            if let items = items {
-                if items.count > 0 {
-                    for i in 0...items.count - 1 {
-                        data.append(self.addToCache(items[i]))
-                    }
-                }
-            }
-            
-            callback(nil, data, cached)
-        }
-        
-        queryLocal(query) { (error, items) in handle(error, items, true) }
-        podApi.query(query) { (error, items) in handle(error, items, false) }
-    }
+//    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
+//        var receivedFromServer = false
+//        func handle (_ error:Error?, _ items:[DataItem]?, _ cached:Bool) -> Void {
+//            if receivedFromServer { return }
+//            receivedFromServer = !cached
+//
+//            if (error != nil) {
+//                callback(error, nil, nil)
+//                return
+//            }
+//
+//            // Add all new data items to the cache
+//            var data:[DataItem] = []
+//            if let items = items {
+//                if items.count > 0 {
+//                    for i in 0...items.count - 1 {
+//                        data.append(self.addToCache(items[i]))
+//                    }
+//                }
+//            }
+//
+//            callback(nil, data, cached)
+//        }
+//
+//        queryLocal(query) { (error, items) in handle(error, items, true) }
+//        podApi.query(query) { (error, items) in handle(error, items, false) }
+//    }
     
     /**
      *
      */
-    public func queryLocal(_ query:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
-        let q = query.query ?? ""
+    public func query(_ queryOptions:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
+        
+        let q = queryOptions.query ?? ""
         if (q != "") {
             callback("Empty Query", nil)
         }
-        else if (q.starts(with: "0x")) {
-            let result = realm.objects(Note.self).filter("id = '\(q)'") // HACK
-            
-            callback(nil, [result[0]])
-        }
         else {
-            let type = DataItemFamily(rawValue: q)
-            if let type = type {
-                let queryType = DataItemFamily.getType(type)
-                let result = realm.objects(queryType()) // TODO filter
+            // Schedule the real query
+            sync.syncQuery(queryOptions)
+            
+            if (q.starts(with: "0x")) {
+                let result = realm.objects(Note.self).filter("id = '\(q)'") // HACK
                 
-                var returnValue:[DataItem] = []
-                for item in result { returnValue.append(item) }
-                
-                callback(nil, returnValue)
+                callback(nil, [result[0]])
             }
             else {
-                callback(nil, [])
+                let type = DataItemFamily(rawValue: q)
+                if let type = type {
+                    let queryType = DataItemFamily.getType(type)
+                    let result = realm.objects(queryType()).filter("deleted = false") // TODO filter
+                    
+                    var returnValue:[DataItem] = []
+                    for item in result { returnValue.append(item) }
+                    
+                    callback(nil, returnValue)
+                }
+                else {
+                    callback(nil, [])
+                }
             }
         }
     }
 
     public func findQueryResult(_ query:QueryOptions, _ callback: (_ error: Error?, _ result: [DataItem]) -> Void) -> Void {}
     
-    public func getResultSet(_ queryOptions:QueryOptions) -> SearchResult {
+    public func getResultSet(_ queryOptions:QueryOptions) -> ResultSet {
+        // Create a unique key from query options
         let key = queryOptions.uniqueString
-        if let resultset = queryIndex[key] {
-            return resultset
+        
+        // Look for a resultset based on the key
+        if let resultSet = queryIndex[key] {
+            
+            // Return found resultset
+            return resultSet
         }
         else {
-            let resultset = SearchResult(self)
-            queryIndex[key] = resultset
-            resultset.queryOptions.merge(queryOptions)
-            return resultset
+            // Create new result set
+            let resultSet = ResultSet(self)
+            
+            // Store resultset in the lookup table
+            queryIndex[key] = resultSet
+            
+            // Make sure the new resultset has the right query properties
+            resultSet.queryOptions.merge(queryOptions)
+            
+            // Make sure the UI updates when the resultset updates
+            self.cancellables.append(resultSet.objectWillChange.sink { (_) in
+                scheduleUIUpdate()
+            })
+            
+            return resultSet
         }
     }
     
@@ -171,45 +195,44 @@ public class Cache {
     /**
      *
      */
-    public func addToCache(_ item:DataItem) -> DataItem {
-        // Fetch item from the cache
-        var cachedItem:DataItem?
+    public func addToCache(_ item:DataItem) throws {
+        // Check if this is a new item or an existing one
         if let uid = item.uid {
-            cachedItem = self.getItemById(item.type, uid)
+            
+            // Fetch item from the cache to double check
+            if let cachedItem:DataItem? = self.getItemById(item.type, uid) {
+                
+                // Check if there are local changes
+                if cachedItem.syncState!.actionNeeded != "" {
+                    
+                    // Try to merge without overwriting local changes
+                    if !item.safeMerge(cachedItem) {
+                        
+                        // Merging failed
+                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+                    }
+                }
+                
+                // If the item is partially loaded, then lets not overwrite the database
+                if item.syncState!.isPartiallyLoaded {
+                    try! item.merge(cachedItem)
+                }
+            }
         }
         else {
+            // Create a new ID
             item.uid = generateUID()
+            
+            // Schedule to be created on the pod
             item.syncState!.actionNeeded = "create"
         }
         
-        // Update properties to the cached item that are not nil
-        if let cachedItem = cachedItem {
-            let properties = cachedItem.objectSchema.properties
-            var value:[String:Any] = [:]
-            for prop in properties {
-                if (item[prop.name] != nil) {
-                    value[prop.name] = item[prop.name]
-                }
-            }
-            
-            let type = DataItemFamily(rawValue: item.type)
-            if let type = type {
-                let itemType = DataItemFamily.getType(type)
-                try! realm.write() {
-                    realm.create(itemType(), value: value, update: .modified) // Should update cachedItem
-                }
-            }
-        }
-        // Or, if its not in the cache, add to the cache
-        else {
-            try! realm.write() {
-                realm.add(item) // , update: .modified
-            }
-            cachedItem = item
+        try realm.write() {
+            realm.add(item, update: .modified)
         }
         
         // Update the sync state when the item changes
-        let _ = cachedItem!.observe { (change) in
+        let _ = item!.observe { (change) in
             if change == .change {
                 if !item.syncState!.actionNeeded {
                     try! realm.write {
@@ -218,15 +241,13 @@ public class Cache {
                 }
             }
         }
-        // Trigger Sync.schedule() when the SyncState changes
-        let _ = cachedItem!.syncState.observe { (change) in
+        
+        // Trigger sync.schedule() when the SyncState changes
+        let _ = item!.syncState.observe { (change) in
             if change == .change && actionNeeded != "" {
                 sync.schedule()
             }
         }
-
-        // Return item from the cache
-        return cachedItem ?? item
     }
     
     /**

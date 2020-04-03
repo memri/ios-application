@@ -99,7 +99,7 @@ public class ComputedView: ObservableObject {
      *
      */
     var queryOptions: QueryOptions = QueryOptions()
-    var resultSet: SearchResult
+    var resultSet: ResultSet
 
     var name: String = ""
     var title: String = ""
@@ -130,7 +130,7 @@ public class ComputedView: ObservableObject {
     
     init(_ ch:Cache){
         cache = ch
-        resultSet = SearchResult(cache)
+        resultSet = ResultSet(cache)
     }
     
     public func merge(_ view:SessionView) {
