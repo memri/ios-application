@@ -7,7 +7,7 @@
                 {
                     "name": "test",
                     "queryOptions": {
-                        "query": "notes",
+                        "query": "note",
                         "sortProperty": "date-created",
                         "sortAscending": 0
                     }

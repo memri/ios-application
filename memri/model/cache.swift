@@ -90,7 +90,7 @@ public class Cache {
             sync.syncQuery(queryOptions)
             
             if (q.starts(with: "0x")) {
-                let result = realm.objects(Note.self).filter("id = '\(q)'") // HACK
+                let result = realm.objects(Note.self).filter("uid = '\(q)'") // HACK
                 
                 callback(nil, [result[0]])
             }
@@ -106,7 +106,7 @@ public class Cache {
                     callback(nil, returnValue)
                 }
                 else {
-                    callback(nil, [])
+                    callback("Unknown type send by server: \(q)", nil)
                 }
             }
         }
@@ -178,7 +178,9 @@ public class Cache {
                 
                 // If the item is partially loaded, then lets not overwrite the database
                 if item.syncState!.isPartiallyLoaded {
-                    item.merge(cachedItem)
+                    
+                    // Merge in the properties from cachedItem that are not already set
+                    item.merge(cachedItem, true)
                 }
             }
         }

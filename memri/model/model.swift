@@ -125,20 +125,17 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return true
     }
     
-    public func merge(_ item:DataItem) {
-        // TODO needs to detect lists which will always be set
-        // TODO needs to detect optionals which will always be set
-        
+    public func merge(_ item:DataItem, _ mergeDefaults:Bool=false) {
         // Store these changes in realm
         if let realm = self.realm {
-            try! realm.write { doMerge(item) }
+            try! realm.write { doMerge(item, mergeDefaults) }
         }
         else {
-            doMerge(item)
+            doMerge(item, mergeDefaults)
         }
     }
     
-    private func doMerge(_ item:DataItem) {
+    private func doMerge(_ item:DataItem, _ mergeDefaults:Bool=false) {
         let properties = self.objectSchema.properties
         for prop in properties {
             
@@ -147,8 +144,21 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
                 continue
             }
             
-            if item[prop.name] != nil {
-                self[prop.name] = item[prop.name]
+            // Perhaps not needed:
+            // - TODO needs to detect lists which will always be set
+            // - TODO needs to detect optionals which will always be set
+            
+            // Merge only the ones that self doesnt already have
+            if mergeDefaults {
+                if self[prop.name] != nil {
+                    self[prop.name] = item[prop.name]
+                }
+            }
+            // Merge all that item doesnt already have
+            else {
+                if item[prop.name] != nil {
+                    self[prop.name] = item[prop.name]
+                }
             }
         }
     }
@@ -223,7 +233,7 @@ public class ResultSet: ObservableObject {
      *
      */
     var item: DataItem? {
-        if isList && count > 0 { return items[0] }
+        if !isList && count > 0 { return items[0] }
         else { return nil }
     }
     

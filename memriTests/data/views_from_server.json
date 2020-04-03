@@ -19,10 +19,10 @@
         },
 
         "{[type:note]}": {
-            "name": "notes",
+            "name": "all-notes",
             "title": "Notes",
             "queryOptions": {
-                "text": "notes",
+                "text": "note",
                 "sortProperty": "date-modified",
                 "sortAscending": 0
             },
@@ -176,7 +176,7 @@
                 {
                     "title": "All notes",
                     "actionName": "openViewByName",
-                    "actionArgs": ["notes"]
+                    "actionArgs": ["all-notes"]
                 }
             ]
         }
