@@ -19,7 +19,7 @@ class RendererObject: ActionDescription, ObservableObject{
     
     required init(){
         super.init()
-        self.hasState = true
+        self.hasState.value = true
         self.actionName = .setRenderer
         self.activeBackgroundColor = Color(white: 0.95).uiColor()
         self.actionName = .setRenderer
