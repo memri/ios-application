@@ -115,8 +115,12 @@ class Sync {
                     // TODO handle sync errors
                     try! cache.addToCache(item)
                     
-                    // Add item to result
-                    result.append(item)
+                    // Ignore items marked for deletion
+                    if item.syncState!.actionNeeded != "deleted" {
+                        
+                        // Add item to result
+                        result.append(item)
+                    }
                 }
                 
                 // Find added items

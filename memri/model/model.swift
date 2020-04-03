@@ -63,25 +63,84 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
+    private func isEqualProperty(_ fieldName:String, _ item:DataItem) {
+        let prop = self.objectSchema.properties[fieldName]!
+        
+        // Optional
+        if prop.isOptional {
+            return self[fieldName].value == item[fieldName].value
+        }
+        // List
+        else if prop.objectClassName != nil {
+            return false // TODO implement a list compare and a way to add to updatedFields
+        }
+        else {
+            return self[fieldName] == item[fieldName]
+        }
+        
+        return true
+    }
+    
+    public func safeMerge(_ item:DataItem) -> Bool {
+        
+        // Ignore when marked for deletion
+        if self.syncState!.actionNeeded == "delete" { return true }
+        
+        // Do not update when the version is not higher then what we already have
+        if item.syncState!.version =< self.syncState!.version { return true }
+        
+        // Make sure to not overwrite properties that have been changed
+        let updatedFields = self.syncState!.updatedFields
+        
+        // Compare all properties and make sure they are the same
+        for fieldName in updatedFields {
+            if !isEqualProperty(fieldName, item) { return false }
+        }
+        
+        // Merge with item
+        merge(item)
+        
+        return true
+    }
+    
     public func merge(_ item:DataItem) throws {
         // TODO needs to detect lists which will always be set
         // TODO needs to detect optionals which will always be set
-        throw "Not implemented"
-//        let properties = cachedItem.objectSchema.properties
-//        var value:[String:Any] = [:]
-//        for prop in properties {
-//            if (item[prop.name] != nil) {
-//                value[prop.name] = item[prop.name]
-//            }
-//        }
-//
-//        let type = DataItemFamily(rawValue: item.type)
-//        if let type = type {
-//            let itemType = DataItemFamily.getType(type)
-//            try! realm.write() {
-//                realm.create(itemType(), value: value, update: .modified) // Should update cachedItem
-//            }
-//        }
+        
+        // Store these changes in realm
+        if let realm = self.realm {
+            try self.realm.write {
+                doMerge(item)
+            }
+        }
+        else {
+            doMerge(item)
+        }
+    }
+    
+    private func doMerge(_ item:DataItem) {
+        let properties = self.objectSchema.properties
+        for prop in properties {
+            
+            // Optional
+            if prop.isOptional {
+                if item[prop.name].value != nil {
+                    self[prop.name].value = item[prop.name].value
+                }
+            }
+            // List
+            else if prop.objectClassName != nil {
+                if item[prop.name].count > 0 {
+                    self[prop.name].removeAll()
+                    self[prop.name].append(contentsOf: item[prop.name])
+                }
+            }
+            else {
+                if item[prop.name].value != nil {
+                    self[prop.name] = item[prop.name]
+                }
+            }
+        }
     }
     
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {

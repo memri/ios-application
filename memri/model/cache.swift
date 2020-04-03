@@ -215,7 +215,7 @@ public class Cache {
                 
                 // If the item is partially loaded, then lets not overwrite the database
                 if item.syncState!.isPartiallyLoaded {
-                    try! item.merge(cachedItem)
+                    item.merge(cachedItem)
                 }
             }
         }
@@ -236,7 +236,15 @@ public class Cache {
             if change == .change {
                 if !item.syncState!.actionNeeded {
                     try! realm.write {
-                        item.syncState!.actionNeeded = "update"
+                        let syncState = item.syncState!
+                        
+                        // Mark item for updating
+                        syncState.actionNeeded = "update"
+                        
+                        // Record which field was updated
+                        if !syncState.updatedFields.contains(change.name) {
+                            syncState.updatedFields.append(change.name)
+                        }
                     }
                 }
             }
