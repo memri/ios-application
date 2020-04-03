@@ -2,17 +2,6 @@ import Foundation
 import Combine
 import RealmSwift
 
-class SyncState: Object, Codable {
-    // Whether the data item is loaded partially and requires a full load
-    @objc dynamic var isPartiallyLoaded:Bool = false
-    
-    // What action is needed on this data item to sync with the pod
-    @objc dynamic var actionNeeded:String = ""
-    
-    // Which fields to update
-    let updatedFields = List<String>()
-}
-
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public var id:String = UUID().uuidString
     var type:String { "unknown" }
@@ -22,7 +11,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var starred:Bool = false
     
     let changelog = List<LogItem>()
-    @objc dynamic var loadState:SyncState? = SyncState()
+    @objc dynamic var syncState:SyncState? = SyncState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
@@ -37,7 +26,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             uid = try decoder.decodeIfPresent("uid") ?? uid
             starred = try decoder.decodeIfPresent("starred") ?? starred
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-            loadState = try decoder.decodeIfPresent("loadState") ?? loadState
+            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             //TODO log
         }
     }
@@ -56,21 +45,6 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         try! self.realm!.write() {
             self[name] = value
         }
-    }
-    
-    /**
-     * Sets deleted to true
-     * All methods and properties must throw when deleted = true;
-     */
-    public func delete() -> Bool {
-        if (self.deleted) { return false; }
-        
-        try! self.realm!.write() {
-            self.deleted = true;
-            self.realm!.delete(self)
-        }
-        
-        return true;
     }
     
     /**
@@ -113,12 +87,20 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
 }
 
+/*
+    * resultSet.type should return the type of the result or "_mixed_"
+    * resultSet.isList should return true if the query could return more than 1 item
+        * Based on the query if there is no data yet
+    * computeView and setCurrentView should not be called until there is data
+    - resultSet should contain all the logic to load its data (??)
+    * setCurrentView should be called directly instead of through bindings, and should trigger the bindings update itself
+ */
 public class SearchResult: ObservableObject {
-    let uid = UUID().uuidString
-
-    public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
-        return lt.uid == rt.uid
-    }
+//    let uid = UUID().uuidString
+//
+//    public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
+//        return lt.uid == rt.uid
+//    }
     
     /**
      *
@@ -127,11 +109,30 @@ public class SearchResult: ObservableObject {
     /**
      * Retrieves the data loaded from the pod
      */
-    var data:[DataItem] = []
+    var data: [DataItem] = []
     /**
      *
      */
-    var pages:[Int] = []
+    var count: Int = 0
+    /**
+     *
+     */
+    var determinedType: String? {
+        if (self.queryOptions.query != nil) {
+            return "note" // TODO implement (more) proper query language
+        }
+        else {
+            return nil
+        }
+    }
+    /**
+     *
+     */
+    var isList: Bool {
+        // TODO change this to be a proper query parser
+        return !(self.queryOptions.query ?? "").starts(with: "0x")
+    }
+    
     /**
      * Returns the loading state
      *  -2 loading data failed
@@ -139,38 +140,133 @@ public class SearchResult: ObservableObject {
      *  0 loading idle
      *  1 loading data from server
      */
-    var loading: Int = 0
+    private var loading: Int = 0
+    private var pages: [Int] = []
+    private let cache: Cache
     
-    public convenience required init(_ queryOptions: QueryOptions? = nil, _ data:[DataItem]?) {
-        self.init()
+    required init(_ ch:Cache) {
+        cache = ch
+    }
+//
+//    public convenience required init(_ queryOptions: QueryOptions? = nil, _ data:[DataItem]?) {
+//        self.init()
+//
+//        self.data = data ?? []
+//
+//        if let queryOptions = queryOptions {
+//            self.queryOptions = queryOptions
+//
+//            if (data != nil) {
+//                loading = -1
+//                if !pages.contains(queryOptions.pageIndex.value ?? 0) {
+//                    pages.append(queryOptions.pageIndex.value ?? 0)
+//                }
+//            }
+//        }
+//    }
+    
+    func load(_ callback:(_ error:Error?) -> Void) throws {
+        // Set state to loading
+        loading = 1
         
-        self.data = data ?? []
+        if queryOptions.query == "" {
+            throw "Exception: No query specified when loading result set"
+        }
         
-        if let queryOptions = queryOptions {
-            self.queryOptions = queryOptions
-            
-            if (data != nil) {
-                loading = -1
-                if !pages.contains(queryOptions.pageIndex.value ?? 0) {
-                    pages.append(queryOptions.pageIndex.value ?? 0)
-                }
+        cache.query(queryOptions) { (error, result, success) -> Void in
+            if (error != nil) {
+                // Set loading state to error
+                loading = -2
+
+                callback(error)
+                return
+            }
+
+            // TODO this only works when retrieving 1 page. It will break for pagination
+            if let result = result { data = result }
+
+            // We've successfully loaded page 0
+            setPagesLoaded(0)
+
+            // First time loading is done
+            loading = -1
+
+            callback(nil)
+        }
+    }
+    
+//    let resultSet = cache.getResultSet(queryOptions)
+//
+//    // TODO: This is still a hack. ResultSet should fetch the data based on the query
+//    resultSet.data = [item]
+//
+//    // TODO move this to resultSet
+//    // Only load the item if it is partially loaded
+//    if item.syncState!.isPartiallyLoaded {
+//        resultSet.loading = 0
+//    }
+//    else {
+//        resultSet.loading = -1
+//    }
+    
+    
+//    // Load data
+//    let resultSet = self.computedView.resultSet
+//
+//    // TODO: create enum for loading
+//    if resultSet.loading == 0 && resultSet.queryOptions.query != "" {
+//        cache.loadPage(resultSet, 0, { (error) in
+//            if error == nil {
+//                // call again when data is loaded, so the view can adapt to the data
+//                self.setCurrentView()
+//            }
+//        })
+//    }
+
+    /**
+     * Client side filter //, with a fallback to the server
+     */
+    public func filter(_ searchResult:SearchResult, _ query:String) -> SearchResult {
+        let options = searchResult.queryOptions
+        options.query = query
+        
+        let filterResult = SearchResult(cache)
+        filterResult.queryOptions = options
+        filterResult.data = searchResult.data
+        filterResult.loading = searchResult.loading
+        filterResult.pages.removeAll()
+        filterResult.pages.append(contentsOf: searchResult.pages)
+        
+        for i in stride(from: filterResult.data.count - 1, through: 0, by: -1) {
+            if (!filterResult.data[i].match(query)) {
+                filterResult.data.remove(at: i)
             }
         }
+
+        return filterResult
+    }
+        
+    /**
+     * Executes the query again
+     */
+    public func reload(_ searchResult:SearchResult) -> Void {
+        // Reload all pages
+//        for (page, _) in searchResult.pages {
+//            let _ = self.loadPage(searchResult, page, { (error) in })
+//        }
+    }
+    
+    /**
+     *
+     */
+    public func resort(_ options:QueryOptions) {
+        
     }
     
     func setPagesLoaded(_ pageIndex:Int) {
         if !pages.contains(pageIndex) {
             pages.append(pageIndex)
         }
-    }
-    
-    /**
-     *
-     */
-    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
-        let obj = SearchResult()
-        obj.data = data
-        return obj
     }
     
     private enum CodingKeys: String, CodingKey {

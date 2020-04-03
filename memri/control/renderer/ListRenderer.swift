@@ -66,6 +66,8 @@ struct ListRenderer: Renderer {
 //    var renderConfig: RenderConfig = RenderConfig()
     var renderConfig: RenderConfig = ListConfig(press:
         ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: []))
+    
+    var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
 
     func setState(_ state:RenderState) -> Bool { return false }
     
@@ -94,12 +96,19 @@ struct ListRenderer: Renderer {
 //                        .padding(.horizontal, 10)
 //                         .padding(.vertical, 7)
                     }.onDelete{ indexSet in
+                        
+                        // TODO this should happen automatically in ResultSet
+                        self.main.computedView.resultSet.data.remove(atOffsets: indexSet)
+                        
+                        // I'm sure there is a better way of doing this...
+                        let items:[DataItem] = []
                         for i in indexSet {
                             let item = self.main.computedView.resultSet.data[i]
-                            let _ = item.delete()
+                            items.append(item)
                         }
-                        self.main.computedView.resultSet.data.remove(atOffsets: indexSet)
-                        self.main.objectWillChange.send()
+                        
+                        // Execute Action
+                        self.main.executeAction(deleteAction, nil, items)
                     }
                 }
 //                .environment(\.editMode, self.main.currentSession.currentView.isEditMode!)

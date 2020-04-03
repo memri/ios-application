@@ -18,7 +18,7 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @objc dynamic var loadState:SyncState? = SyncState()
+    @objc dynamic var syncState:SyncState? = SyncState()
     /**
      *
      */
@@ -191,7 +191,7 @@ public class Sessions: Object, ObservableObject, Decodable {
     "{renderer:list}"
     "{[type:Note]}"
     */
-    public func computeView(_ argView:SessionView? = nil) -> ComputedView? {
+    public func computeView(_ argView:SessionView? = nil) throws -> ComputedView {
         let viewFromSession = argView == nil
             ? self.currentSession.currentView
             : argView!
@@ -203,15 +203,25 @@ public class Sessions: Object, ObservableObject, Decodable {
         var isList:Bool = true
         var type:String = ""
         
-        // TODO: infer from result
+        // Fetch query from the view from session
         if let queryOptions = viewFromSession.queryOptions {
-            isList = !queryOptions.query!.starts(with: "0x")
-        
-            // TODO: infer from all results
+            
+            // Look up the associated result set
             let resultSet = cache!.getResultSet(queryOptions)
-            if (resultSet.data.count > 0 ) { // TODO change resultset
-                type = resultSet.data[0].type
+            
+            // Determine whether this is a list or a single item resultset
+            isList = resultSet.isList
+            
+            // Fetch the type of the results
+            if let determinedType = resultSet.determinedType {
+                type = determinedType
             }
+            else {
+                throw "Exception: ResultSet does not know the type of its data"
+            }
+        }
+        else {
+            throw "Exception: Cannot compute a view without a query to fetch data"
         }
 
         // Helper lists
@@ -225,7 +235,7 @@ public class Sessions: Object, ObservableObject, Decodable {
         cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
         
         // If we know the type of data we are rendering use it to determine the view
-        if type != "" {
+        if type != "mixed" {
             // Determine query
             let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
             
@@ -263,6 +273,9 @@ public class Sessions: Object, ObservableObject, Decodable {
                 }
             }
         }
+        else {
+            throw "Exception: Could not find which renderer to use. renderName not set in this view"
+        }
 
         // Choose cascade order
         let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
@@ -276,7 +289,7 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
         
         if (Set(preferredCascadeOrder).count > 1) {
-            print("Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
+            print("Warn: Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
         }
         
         // Cascade the different views
@@ -286,8 +299,7 @@ public class Sessions: Object, ObservableObject, Decodable {
             if key == "renderer" { views = renderViews }
             else if key == "datatype" { views = datatypeViews }
             else {
-                print("Unknown cascadeOrder type found: \(key)")
-                break
+                throw ("Exception: Unknown cascadeOrder type specified: \(key)")
             }
             
             for view in views {
@@ -303,8 +315,7 @@ public class Sessions: Object, ObservableObject, Decodable {
             try computedView.validate()
         }
         catch {
-            print("Error: Invalid Computed View: \(error)")
-//            return nil  // TODO look at this again after implementing resultset
+            throw "Exception: Invalid Computed View: \(error)"
         }
         
         // turn off editMode when navigating
@@ -354,7 +365,7 @@ public class Session: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @objc dynamic var loadState:SyncState? = SyncState()
+    @objc dynamic var syncState:SyncState? = SyncState()
     /**
      *
      */

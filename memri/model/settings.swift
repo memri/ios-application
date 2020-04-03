@@ -119,7 +119,7 @@ class SettingCollection:Object {
     @objc dynamic var type:String = ""
     
     let settings = List<Setting>()
-    @objc dynamic var loadState:SyncState? = SyncState()
+    @objc dynamic var syncState:SyncState? = SyncState()
     
     override static func primaryKey() -> String? {
         return "type"
@@ -153,7 +153,7 @@ class SettingCollection:Object {
             self.realm!.add(s, update: .modified)
             if settings.index(of: s) == nil { settings.append(s) }
             
-            loadState!.actionNeeded = "update"
+            syncState!.actionNeeded = "update"
         }
     }
 }

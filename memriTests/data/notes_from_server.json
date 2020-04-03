@@ -5,7 +5,7 @@
         "title": "Shopping list",
         "content": "potatoes, mayonaise",
         "starred": true,
-        "loadstate": {
+        "syncState": {
             "isPartiallyLoaded": true
         }
     },

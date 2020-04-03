@@ -10,45 +10,48 @@ import RealmSwift
  * an application that is focussed on voice-first instead of gui-first.
  */
 public class Main: ObservableObject {
-    public let name:String = "GUI"
-
     /**
      *
      */
-    @Published public var sessions:Sessions
+    public let name: String = "GUI"
+    /**
+     *
+     */
+    @Published public var sessions: Sessions
     /**
      * The current session that is active in the application
      */
-    @Published public var currentSession:Session = Session()
+    @Published public var currentSession: Session = Session()
     /**
      *
      */
-    @Published public var computedView:ComputedView
+    @Published public var computedView: ComputedView
     /**
      *
      */
-    public var settings:Settings
+    public var settings: Settings
     /**
      *
      */
-    public var installer:Installer
+    public var installer: Installer
     /**
      *
      */
-    public var podApi:PodAPI
+    public var podApi: PodAPI
     /**
      *
      */
-    public var cache:Cache
+    public var cache: Cache
     /**
      *
      */
-    public var realm:Realm
+    public var realm: Realm
     
     
 //    public let navigationCache: NavigationCache
     
-    private var cancellable:AnyCancellable? = nil
+    private var cancellable: AnyCancellable? = nil
+    private var scheduledUIUpdate: Bool = false
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
@@ -75,14 +78,14 @@ public class Main: ObservableObject {
                 try! self.sessions.load(realm, cache) {
                     
                     // Hook current session
-                    var isCalled:Bool = false
-                    self.cancellable = self.sessions.objectWillChange.sink {
-                        isCalled = false
-                        DispatchQueue.main.async {
-                            if !isCalled { self.setCurrentView() }
-                            else { isCalled = true }
-                        }
-                    }
+//                    var isCalled:Bool = false
+//                    self.cancellable = self.sessions.objectWillChange.sink {
+//                        isCalled = false
+//                        DispatchQueue.main.async {
+//                            if !isCalled { self.setCurrentView() }
+//                            else { isCalled = true }
+//                        }
+//                    }
                     
                     // Load current view
                     self.setCurrentView()
@@ -100,45 +103,58 @@ public class Main: ObservableObject {
         return self.boot({_,_ in })
     }
     
-    /*
-        - resultSet.type should return the type of the result or "_mixed_"
-        - resultSet.isList should return true if the query could return more than 1 item
-            - Based on the query if there is no data yet
-        - computeView and setCurrentView should not be called until there is data
-        - resultSet should contain all the logic to load its data (??)
-        - setCurrentView should be called directly instead of through bindings, and should trigger the bindings update itself
-        -
-     
-     */
-    
     public func setCurrentView(){
-        // we never have to call this manually (it will be called automatically
-        // when sessions changes), except for booting
+        // Fetch the resultset associated with the current view
+        var resultSet = cache.getResultSet(self.currentSession.currentView.queryOptions!)
         
-        // Calculate cascaded view
-        if let computedView = self.sessions.computeView() {
+        // If we can guess the type of the result based on the query, let's compute the view
+        if resultSet.determinedType != nil {
             
-            // Set current session
+            // Calculate cascaded view
+            let computedView = self.sessions.computeView()
+                
+            // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
-            // Set new view
+            // Set the newly computed view
             self.computedView = computedView
+            
+            // Load data in the resultset of the computed view
+            self.computedView.resultSet.load() {
+                
+                // Update the UI
+                scheduleUIUpdate()
+            }
+            
+            // Update the UI
+            scheduleUIUpdate()
         }
-//        else {
-//            self.currentView.merge(self.currentView)
-//        }
-        
-        // Load data
-        let resultSet = self.computedView.resultSet
-        
-        // TODO: create enum for loading
-        if resultSet.loading == 0 && resultSet.queryOptions.query != "" {
-            cache.loadPage(resultSet, 0, { (error) in
-                if error == nil {
-                    // call again when data is loaded, so the view can adapt to the data
-                    self.setCurrentView()
-                }
-            })
+        // Otherwise let's execute the query first
+        else {
+            
+            // Updating the data in the resultset of the session view
+            resultSet.load() {
+                setCurrentView()
+            }
+        }
+    }
+    
+    func scheduleUIUpdate(){
+        // Don't schedule when we are already scheduled
+        if !scheduledUIUpdate {
+            
+            // Prevent multiple calls to the dispatch queue
+            scheduledUIUpdate = true
+            
+            // Schedule update
+            DispatchQueue.main.async {
+                
+                // Reset scheduled
+                scheduledUIUpdate = false
+                
+                // Update UI
+                sessions.objectWillChange.send()
+            }
         }
     }
     
@@ -162,33 +178,17 @@ public class Main: ObservableObject {
             session.currentViewIndex = session.views.count - 1
         }
         
-        // Make sure to listen to changes in the view
-        // TODO Will this be set more than once on a view???
-        session.cancellables.append(view.objectWillChange.sink { (_) in
-            session.objectWillChange.send()
-        })
-        
-        sessions.objectWillChange.send()
+        setCurrentView()
     }
     
     func openView(_ item:DataItem){
+        // Create a new view
         let view = SessionView()
-        let queryOptions = view.queryOptions!
-        queryOptions.query = item.getString("uid")
-        let resultSet = cache.getResultSet(queryOptions)
         
-        // TODO: This is still a hack. ResultSet should fetch the data based on the query
-        resultSet.data = [item]
+        // Set the query options to load the item
+        view.queryOptions!.query = item.getString("uid")
         
-        // TODO move this to resultSet
-        // Only load the item if it is partially loaded
-        if item.loadState!.isPartiallyLoaded {
-            resultSet.loading = 0
-        }
-        else {
-            resultSet.loading = -1
-        }
-        
+        // Open the view
         self.openView(view)
     }
     
@@ -210,7 +210,7 @@ public class Main: ObservableObject {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil) -> Void {
+    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) -> Void {
         let params = action.actionArgs
         
         switch action.actionName {
@@ -218,6 +218,16 @@ public class Main: ObservableObject {
             back()
         case .add:
             addFromTemplate(params[0].value as! DataItem)
+        case .delete:
+            if let item = item {
+                cache.delete(item)
+            }
+            else if let items = items {
+                cache.delete(items)
+            }
+            
+            // Update UI
+            scheduleUIUpdate()
         case .openView:
             if let item = item {
                 openView(item)
@@ -275,7 +285,7 @@ public class Main: ObservableObject {
                 lastSearchResult = nil
                 self.computedView.title = lastTitle ?? ""
                 
-                sessions.objectWillChange.send()
+                scheduleUIUpdate()
             }
             return
         }
@@ -294,7 +304,7 @@ public class Main: ObservableObject {
             self.computedView.title = "\(searchResult.data.count) items found"
         }
         
-        sessions.objectWillChange.send()
+        scheduleUIUpdate()
     }
         
     func back(){
@@ -309,7 +319,8 @@ public class Main: ObservableObject {
             try! realm.write {
                 session.currentViewIndex -= 1
             }
-            sessions.objectWillChange.send()
+            
+            setCurrentView()
         }
     }
     
@@ -317,7 +328,8 @@ public class Main: ObservableObject {
         try! realm.write {
             self.sessions.showNavigation = true
         }
-        sessions.objectWillChange.send()
+        
+        scheduleUIUpdate()
     }
     
     func changeRenderer(rendererName: String){
@@ -325,7 +337,8 @@ public class Main: ObservableObject {
         try! realm.write {
             session.currentView.rendererName = rendererName
         }
-        sessions.objectWillChange.send()
+        
+        setCurrentView()
     }
     
     func star() {
@@ -366,7 +379,7 @@ public class Main: ObservableObject {
             view.resultSet.data = results
             view.title = "Starred \(view.title)"
             
-            sessions.objectWillChange.send()
+            scheduleUIUpdate()
         }
     }
     
@@ -381,7 +394,8 @@ public class Main: ObservableObject {
                 object.state.value!.toggle()
             }
         }
-        sessions.objectWillChange.send()
+        
+        scheduleUIUpdate()
     }
     
     func toggleEditMode(){
@@ -389,21 +403,24 @@ public class Main: ObservableObject {
         try! realm.write {
             self.currentSession.currentView.isEditMode.value = !editMode
         }
-        sessions.objectWillChange.send()
+        
+        setCurrentView()
     }
     
     func toggleFilterPanel(){
         try! realm.write {
             self.currentSession.showFilterPanel.toggle()
         }
-        sessions.objectWillChange.send()
+        
+        scheduleUIUpdate()
     }
 
     func openContextPane() {
         try! realm.write {
             self.currentSession.showContextPane.toggle()
         }
-        sessions.objectWillChange.send()
+        
+        scheduleUIUpdate()
     }
 
     func showSharePanel() {

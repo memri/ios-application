@@ -37,7 +37,7 @@ public class SessionView: Object, ObservableObject, Codable {
     /**
      *
      */
-    @objc dynamic var loadState:SyncState? = SyncState()
+    @objc dynamic var syncState:SyncState? = SyncState()
     
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
@@ -99,7 +99,7 @@ public class ComputedView: ObservableObject {
      *
      */
     var queryOptions: QueryOptions = QueryOptions()
-    var resultSet: SearchResult = SearchResult()
+    var resultSet: SearchResult
 
     var name: String = ""
     var title: String = ""
@@ -130,6 +130,7 @@ public class ComputedView: ObservableObject {
     
     init(_ ch:Cache){
         cache = ch
+        resultSet = SearchResult(cache)
     }
     
     public func merge(_ view:SessionView) {
