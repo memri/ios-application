@@ -86,7 +86,6 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.hasState.value
             self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
-            // TODO get default color from actionName
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             self.color = UIColor.init(named: colorString) ?? self.actionName.defaultColor
             
@@ -95,23 +94,12 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
             self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
             self.backgroundColor = self.actionName.defaultBackgroundColor
-
-//            switch colorString{
-//                case "gray", "systemGray": self.color = .systemGray
-//                case "yellow","systemYellow": self.color = .systemYellow
-//                case "green", "systemGreen": self.color = .systemGreen
-//                default: self.color = self.actionName.defaultColor
-//            }
             
             let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
             self.actionArgs = try self.decodeActionArgs(container)
             
             self._actionName = self.actionName.rawValue
             self._actionType = self.actionType.rawValue
-            
-//            for arg in self.actionArgs {
-//                self._actionArgs.append(serialize(arg))
-//            }
         }
     }
     
@@ -130,9 +118,9 @@ public class ActionDescription: Object, Codable, Identifiable {
     }
     
     public required init() {
-//        for arg in self._actionArgs {
-//            self.actionArgs.append(unserialize(arg))
-//        }
+        for arg in self._actionArgs {
+            self.actionArgs.append(unserialize(arg))
+        }
     }
     
     func decodeActionArgs(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>) throws -> [AnyCodable] {
@@ -140,6 +128,13 @@ public class ActionDescription: Object, Codable, Identifiable {
         var list = [AnyCodable]()
         var tmpContainer = container // Force a copy of the container
         let path = getCodingPathString(tmpContainer.codingPath)
+        let encoder = JSONEncoder()
+        
+        func addArgument<T:Encodable>(_ item:T){
+            let data = try! encoder.encode(item)
+            self._actionArgs.append(String(data: data, encoding: .utf8) ?? "")
+            list.append(AnyCodable(item))
+        }
         
         print("Decoding: \(path)")
         
@@ -153,19 +148,20 @@ public class ActionDescription: Object, Codable, Identifiable {
                                 .nestedContainer(keyedBy: Discriminator.self)
                             let family:DataItemFamily = try typeContainer
                                 .decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
-                            list.append(AnyCodable(try tmpContainer.decode(family.getType())))
+                            
+                            addArgument(try tmpContainer.decode(family.getType()))
                         }
                         else if let type = type as? SessionView.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? String.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? Double.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? Int.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                     } catch {
                         print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")

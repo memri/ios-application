@@ -5,7 +5,6 @@
             "currentViewIndex": 0,
             "views": [
                 {
-                    "name": "test",
                     "queryOptions": {
                         "query": "note",
                         "sortProperty": "date-created",
