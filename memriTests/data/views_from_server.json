@@ -8,11 +8,15 @@
                         {
                             "icon": "remove.ico",
                             "title": "Remove",
-                            "actionName": "remove",
-                            "actionArgs": []
+                            "actionName": "remove"
                         }
                     ],
-                    "slideRightActions": [],
+                    "press": {
+                        "actionName": "openView"
+                    },
+                    "longPress": {
+                        "actionName": "select"
+                    },
                     "itemRenderer": "{.title}"
                 }
             ]
@@ -32,15 +36,7 @@
                     "for": "list",
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
-                    "press": {
-                        "actionName": "openView",
-                        "actionArgs": []
-                    },
-                    "longPress": {
-                        "actionName": "select",
-                        "actionArgs": []
-                    }
+                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
                 }
             ],
             "browsingMode": "default",
