@@ -13,12 +13,12 @@ import SwiftUI
 
 struct ListRenderer: Renderer {
     @EnvironmentObject var main: Main
-    var name="list"
+    let name="list"
     var renderConfig: ListConfig {
         return self.main.getRenderConfig(name: self.name) as! ListConfig
     }
     
-    @Binding var isEditMode: EditMode
+//    @Binding var isEditMode: EditMode
 
     func generatePreview(_ item:DataItem) -> String {
         let content = item.getString("content")
@@ -49,11 +49,10 @@ struct ListRenderer: Renderer {
                         self.main.objectWillChange.send()
                     }
                 }
-                .environment(\.editMode, $isEditMode)
+                .environment(\.editMode, $main.sessions.isEditMode)
                 .navigationBarTitle("")
                 .navigationBarHidden(true)
             }
-
         }
     }
     
@@ -65,6 +64,6 @@ struct ListRenderer: Renderer {
 
 struct ListRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
+        ListRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

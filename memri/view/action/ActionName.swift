@@ -89,6 +89,15 @@ public enum ActionName: String, Codable {
         }
     }
     
+    var defaultColor: UIColor {
+        switch self{
+        case .add:
+            return .systemGreen
+        default:
+            return .systemGray
+        }
+    }
+    
     var defaultBackgroundColor: UIColor{
         return .white
     }

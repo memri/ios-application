@@ -25,20 +25,9 @@ struct BrowseSetting: Identifiable {
     var fontWeight: Font.Weight? {self.selected ? .bold : .none}
 }
 
-struct ViewTypeButton: Identifiable {
-    var id = UUID()
-    var imgName: String
-    var selected: Bool
-    var rendererName: String
-    var backgroundColor: Color { self.selected ? Color(white: 0.95) : Color(white: 1.0)}
-    var foreGroundColor: Color { self.selected ? Color.green : Color.gray}
-}
-
 struct Search: View {
     @EnvironmentObject var main: Main
-
     @State var searchText=""
-
 
     var body: some View {
         VStack{
@@ -49,19 +38,8 @@ struct Search: View {
                     }
                 if self.main.computedView.filterButtons != nil{
                     ForEach(self.main.computedView.filterButtons!){ filterButton in
-                        
-                        // TODO: buttonview
-                        
                         Action(action: filterButton)
                             .font(Font.system(size: 20, weight: .medium))
-
-                        
-//                        Button(action: {self.main.executeAction(filterButton)}) {
-//                            Image(systemName: filterButton.icon)
-//                        }.padding(.horizontal , 5)
-//                         .font(Font.system(size: 20, weight: .medium))
-//                            .foregroundColor(Color(filterButton.color))
-                        
                     }
                 }
             }.padding(.horizontal , 15)
