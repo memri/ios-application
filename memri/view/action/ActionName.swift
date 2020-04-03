@@ -26,7 +26,7 @@ public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        noop
+        delete, noop
     
     var defaultIcon: String {
         switch self {
@@ -105,7 +105,7 @@ public enum ActionName: String, Codable {
         case .back, .add, .openView, .openViewByName, .toggleEditMode, .toggleFilterPanel, .star,
              .showStarred, .showContextPane, .showOverlay, .openContextView, .share, .showNavigation,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
-             .starredNotes, .allNotes, .exampleUnpack:
+             .starredNotes, .allNotes, .delete, .exampleUnpack:
             return .systemGray
         default:
             return nil

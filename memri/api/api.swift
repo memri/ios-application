@@ -149,7 +149,6 @@ public class PodAPI {
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         
-        print(query.query)
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result

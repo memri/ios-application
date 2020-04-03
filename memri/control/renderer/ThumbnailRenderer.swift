@@ -40,7 +40,7 @@ struct ThumbnailRenderer: View {
     
     var body: some View {
         
-        QGrid(main.computedView.resultSet.data, columns: 3) { dataItem in
+        QGrid(main.computedView.resultSet.items, columns: 3) { dataItem in
             Text(dataItem.getString("title")).asThumbnail()
                 .onTapGesture {
                     self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)

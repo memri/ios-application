@@ -48,15 +48,15 @@ public class Cache {
     var sync: Sync
     var realm: Realm
     
-    private var cancellables: [AnyCancellable]? = nil
+    private var cancellables: [AnyCancellable] = []
     private var queryIndex: [String:ResultSet] = [:]
-    private var scheduleUIUpdate: () -> Void
     
-    enum CacheError: Error {
-        case UnknownTaskJob(job: String)
-    }
+    /**
+     * @private
+     */
+    public var scheduleUIUpdate: (() -> Void)? = nil
     
-    public init(_ api: PodAPI, _ updateUI: () -> Void){
+    public init(_ api: PodAPI){
                 
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
@@ -70,7 +70,6 @@ public class Cache {
         print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
         podApi = api
-        scheduleUIUpdate = updateUI
         
         // Create scheduler objects
         sync = Sync(podApi, realm)
@@ -78,43 +77,12 @@ public class Cache {
     }
     
     /**
-     * Loads data from cache
-     */
-//    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?, _ cached:Bool?) -> Void) {
-//        var receivedFromServer = false
-//        func handle (_ error:Error?, _ items:[DataItem]?, _ cached:Bool) -> Void {
-//            if receivedFromServer { return }
-//            receivedFromServer = !cached
-//
-//            if (error != nil) {
-//                callback(error, nil, nil)
-//                return
-//            }
-//
-//            // Add all new data items to the cache
-//            var data:[DataItem] = []
-//            if let items = items {
-//                if items.count > 0 {
-//                    for i in 0...items.count - 1 {
-//                        data.append(self.addToCache(items[i]))
-//                    }
-//                }
-//            }
-//
-//            callback(nil, data, cached)
-//        }
-//
-//        queryLocal(query) { (error, items) in handle(error, items, true) }
-//        podApi.query(query) { (error, items) in handle(error, items, false) }
-//    }
-    
-    /**
      *
      */
     public func query(_ queryOptions:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
-        
+
         let q = queryOptions.query ?? ""
-        if (q != "") {
+        if (q == "") {
             callback("Empty Query", nil)
         }
         else {
@@ -168,7 +136,7 @@ public class Cache {
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
-                scheduleUIUpdate()
+                self.scheduleUIUpdate!()
             })
             
             return resultSet
@@ -186,11 +154,6 @@ public class Cache {
         }
         return nil
     }
-    
-    private func generateUID() -> String {
-        let counter = UUID().uuidString
-        return "0xNEW\(counter)"
-    }
 
     /**
      *
@@ -200,7 +163,7 @@ public class Cache {
         if let uid = item.uid {
             
             // Fetch item from the cache to double check
-            if let cachedItem:DataItem? = self.getItemById(item.type, uid) {
+            if let cachedItem:DataItem = self.getItemById(item.type, uid) {
                 
                 // Check if there are local changes
                 if cachedItem.syncState!.actionNeeded != "" {
@@ -209,7 +172,7 @@ public class Cache {
                     if !item.safeMerge(cachedItem) {
                         
                         // Merging failed
-                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid!)"
                     }
                 }
                 
@@ -221,7 +184,7 @@ public class Cache {
         }
         else {
             // Create a new ID
-            item.uid = generateUID()
+            item.uid = DataItem.generateUID()
             
             // Schedule to be created on the pod
             item.syncState!.actionNeeded = "create"
@@ -232,18 +195,20 @@ public class Cache {
         }
         
         // Update the sync state when the item changes
-        let _ = item!.observe { (change) in
-            if change == .change {
-                if !item.syncState!.actionNeeded {
-                    try! realm.write {
+        let _ = item.observe { (objectChange) in
+            if case let .change(propChanges) = objectChange {
+                if item.syncState!.actionNeeded == "" {
+                    try! self.realm.write {
                         let syncState = item.syncState!
                         
                         // Mark item for updating
                         syncState.actionNeeded = "update"
                         
                         // Record which field was updated
-                        if !syncState.updatedFields.contains(change.name) {
-                            syncState.updatedFields.append(change.name)
+                        for prop in propChanges {
+                            if !syncState.updatedFields.contains(prop.name) {
+                                syncState.updatedFields.append(prop.name)
+                            }
                         }
                     }
                 }
@@ -251,9 +216,11 @@ public class Cache {
         }
         
         // Trigger sync.schedule() when the SyncState changes
-        let _ = item!.syncState.observe { (change) in
-            if change == .change && actionNeeded != "" {
-                sync.schedule()
+        let _ = item.syncState!.observe { (objectChange) in
+            if case .change = objectChange {
+                if item.syncState!.actionNeeded != "" {
+                    self.sync.schedule()
+                }
             }
         }
     }
@@ -264,7 +231,7 @@ public class Cache {
      */
     public func delete(_ item:DataItem) {
         if (!item.deleted) {
-            try! self.realm!.write {
+            try! self.realm.write {
                 item.deleted = true;
                 item.syncState!.actionNeeded = "delete"
             }
@@ -272,7 +239,7 @@ public class Cache {
     }
     
     public func delete(_ items:[DataItem]) {
-        try! self.realm!.write {
+        try! self.realm.write {
             for item in items {
                 if (!item.deleted) {
                     item.deleted = true

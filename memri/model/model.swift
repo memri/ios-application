@@ -63,19 +63,41 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
-    private func isEqualProperty(_ fieldName:String, _ item:DataItem) {
-        let prop = self.objectSchema.properties[fieldName]!
-        
-        // Optional
-        if prop.isOptional {
-            return self[fieldName].value == item[fieldName].value
-        }
-        // List
-        else if prop.objectClassName != nil {
-            return false // TODO implement a list compare and a way to add to updatedFields
-        }
-        else {
-            return self[fieldName] == item[fieldName]
+    private func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
+        for prop in self.objectSchema.properties { // Seems inefficient
+            if prop.name == fieldName {
+                // Optional
+//                if prop.isOptional {
+//                    return self[fieldName] == item[fieldName]
+//                }
+                // List
+//                else
+                if prop.objectClassName != nil {
+                    return false // TODO implement a list compare and a way to add to updatedFields
+                }
+                else {
+                    if prop.isOptional {
+                        1+1
+                    }
+                    
+                    let item1 = self[fieldName];
+                    let item2 = item[fieldName]
+                    
+                    if let item1 = item1 as? String {
+                        return item1 == item2 as! String
+                    }
+                    if let item1 = item1 as? Int {
+                        return item1 == item2 as! Int
+                    }
+                    if let item1 = item1 as? Double {
+                        return item1 == item2 as! Double
+                    }
+                    if let item1 = item1 as? Object {
+                        return item1 == item2 as! Object
+                    }
+                }
+                break
+            }
         }
         
         return true
@@ -87,7 +109,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         if self.syncState!.actionNeeded == "delete" { return true }
         
         // Do not update when the version is not higher then what we already have
-        if item.syncState!.version =< self.syncState!.version { return true }
+        if item.syncState!.version <= self.syncState!.version { return true }
         
         // Make sure to not overwrite properties that have been changed
         let updatedFields = self.syncState!.updatedFields
@@ -103,15 +125,13 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return true
     }
     
-    public func merge(_ item:DataItem) throws {
+    public func merge(_ item:DataItem) {
         // TODO needs to detect lists which will always be set
         // TODO needs to detect optionals which will always be set
         
         // Store these changes in realm
         if let realm = self.realm {
-            try self.realm.write {
-                doMerge(item)
-            }
+            try! realm.write { doMerge(item) }
         }
         else {
             doMerge(item)
@@ -122,29 +142,24 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         let properties = self.objectSchema.properties
         for prop in properties {
             
-            // Optional
-            if prop.isOptional {
-                if item[prop.name].value != nil {
-                    self[prop.name].value = item[prop.name].value
-                }
+            // Exclude SyncState
+            if prop.name == "SyncState" {
+                continue
             }
-            // List
-            else if prop.objectClassName != nil {
-                if item[prop.name].count > 0 {
-                    self[prop.name].removeAll()
-                    self[prop.name].append(contentsOf: item[prop.name])
-                }
-            }
-            else {
-                if item[prop.name].value != nil {
-                    self[prop.name] = item[prop.name]
-                }
+            
+            if item[prop.name] != nil {
+                self[prop.name] = item[prop.name]
             }
         }
     }
     
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
+    }
+    
+    public class func generateUID() -> String {
+        let counter = UUID().uuidString
+        return "0xNEW\(counter)"
     }
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
@@ -232,7 +247,7 @@ public class ResultSet: ObservableObject {
             
             // Set state to loading
             loading = true
-            
+        
             // Execute the query
             cache.query(queryOptions) { (error, result) -> Void in
                 if let result = result {

@@ -21,6 +21,19 @@ class SyncState: Object, Codable {
     
     // Which fields to update
     let updatedFields = List<String>()
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
+            version = try decoder.decodeIfPresent("version") ?? version
+        }
+    }
+    
+    required init() {
+        super.init()
+    }
 }
 
 /*
@@ -38,7 +51,7 @@ class Sync {
     
     private var podApi: PodAPI
     private var realm: Realm
-    public var cache: Cache = Cache
+    public var cache: Cache? = nil
     
     private var scheduled: Bool = false
     private var syncing: Bool = false
@@ -65,18 +78,18 @@ class Sync {
         // TODO if this query was executed recently, considering postponing action
         
         // Store query in a log item
-        var logitem = LogItem()
-        logitem.contents = serialize(queryOptions)
+        let logitem = LogItem()
+        let data = try! JSONEncoder().encode(queryOptions)
+        logitem.contents = String(data: data, encoding: .utf8) ?? ""
         logitem.action = "query"
         logitem.date = Date()
+        logitem.uid = DataItem.generateUID()
         
         // Set syncstate to "fetch" in order to get priority treatment for querying
         logitem.syncState?.actionNeeded = "fetch"
         
         // Add to realm
-        try! realm.write {
-            realm.add(logitem)
-        }
+        try! realm.write { realm.add(logitem) }
         
         // Execute query with priority
         prioritySync(queryOptions, logitem)
@@ -92,7 +105,7 @@ class Sync {
             // TODO make async in order to not hurt init when cache is not set
             
             // Execute query objects
-            prioritySync()
+//            prioritySync()
             
             //
             backgroundSyncing = false
@@ -102,18 +115,18 @@ class Sync {
     private func prioritySync(_ queryOptions:QueryOptions, _ logitem:LogItem) {
         
         // Call out to the pod with the query
-        podAPI.query(query) { (error, items) in
+        podApi.query(queryOptions) { (error, items) in
             if let items = items {
                 
                 // Find resultset that belongs to this query
-                let resultSet = cache.getResultSet(queryOptions)
+                let resultSet = cache!.getResultSet(queryOptions)
                 
                 // The result that we'll add to resultset
-                let result:[DataItem] = []
+                var result:[DataItem] = []
                 
                 for item in items {
                     // TODO handle sync errors
-                    try! cache.addToCache(item)
+                    try! cache!.addToCache(item)
                     
                     // Ignore items marked for deletion
                     if item.syncState!.actionNeeded != "deleted" {
@@ -135,7 +148,7 @@ class Sync {
                 resultSet.forceItemsUpdate(items)
                 
                 // We no longer need to process this log item
-                logitem.syncState!.actionNeeded = ""
+                try! realm.write { logitem.syncState!.actionNeeded = "" }
                 // TODO consider deleting the log item
             }
             else {
@@ -159,10 +172,10 @@ class Sync {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 
                 // Reset scheduled
-                scheduled = false
+                self.scheduled = false
                 
                 // Start syncing local data to the pod
-                syncToPod()
+                self.syncToPod()
             }
         }
     }
@@ -193,7 +206,7 @@ class Sync {
     public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         switch item.syncState!.actionNeeded {
         case "create":
-            podAPI.create(item) { (error, id) -> Void in
+            podApi.create(item) { (error, id) -> Void in
                 if error != nil { return callback(error, false) }
                 
                 // Set the new id from the server
@@ -202,7 +215,7 @@ class Sync {
                 callback(nil, true)
             }
         case "delete":
-            podAPI.remove(item.getString("uid")) { (error, success) -> Void in
+            podApi.remove(item.getString("uid")) { (error, success) -> Void in
                 if (error == nil) {
                     // Remove from local storage
                     try! realm.write() {
@@ -213,9 +226,13 @@ class Sync {
                 callback(error, success)
             }
         case "update":
-            podAPI.update(item, callback)
+            podApi.update(item, callback)
+        case "fetch":
+            // TODO
+            1+1
         default:
-            throw CacheError.UnknownTaskJob(job: item.syncState!.actionNeeded)
+            // Ignore unknown tasks
+            print("Unknown sync state action: \(item.syncState!.actionNeeded)")
         }
     }
 }

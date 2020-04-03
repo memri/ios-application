@@ -51,16 +51,18 @@ public class Main: ObservableObject {
 //    public let navigationCache: NavigationCache
     
     private var cancellable: AnyCancellable? = nil
-    private var scheduledUIUpdate: Bool = false
+    private var scheduled: Bool = false
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
-        cache = Cache(podApi, scheduleUIUpdate)
+        cache = Cache(podApi)
         realm = cache.realm
         settings = Settings(realm)
         installer = Installer(realm)
         sessions = Sessions(realm)
         computedView = ComputedView(cache)
+        
+        cache.scheduleUIUpdate = scheduleUIUpdate
     }
     
     public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
@@ -105,13 +107,13 @@ public class Main: ObservableObject {
     
     public func setCurrentView(){
         // Fetch the resultset associated with the current view
-        var resultSet = cache.getResultSet(self.currentSession.currentView.queryOptions!)
+        let resultSet = cache.getResultSet(self.currentSession.currentView.queryOptions!)
         
         // If we can guess the type of the result based on the query, let's compute the view
         if resultSet.determinedType != nil {
             
             // Calculate cascaded view
-            let computedView = self.sessions.computeView()
+            let computedView = try! self.sessions.computeView() // TODO handle errors better
                 
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
@@ -120,10 +122,14 @@ public class Main: ObservableObject {
             self.computedView = computedView
             
             // Load data in the resultset of the computed view
-            self.computedView.resultSet.load() {
-                
-                // Update the UI
-                scheduleUIUpdate()
+            try! self.computedView.resultSet.load { (error) in
+                if error != nil {
+                    print("Error: could not load result: \(error!)")
+                }
+                else {
+                    // Update the UI
+                    scheduleUIUpdate()
+                }
             }
             
             // Update the UI
@@ -133,13 +139,15 @@ public class Main: ObservableObject {
         else {
             
             // Updating the data in the resultset of the session view
-            resultSet.load() { (error) in
+            try! resultSet.load { (error) in
                 
                 // Only update when data was retrieved successfully
-                if error == nil {
-                    
+                if error != nil {
+                    print("Error: could not load result: \(error!)")
+                }
+                else {
                     // Update the current view based on the new info
-                    setCurrentView()
+                    scheduleUIUpdate()
                 }
             }
         }
@@ -147,19 +155,19 @@ public class Main: ObservableObject {
     
     func scheduleUIUpdate(){
         // Don't schedule when we are already scheduled
-        if !scheduledUIUpdate {
+        if !scheduled {
             
             // Prevent multiple calls to the dispatch queue
-            scheduledUIUpdate = true
+            scheduled = true
             
             // Schedule update
             DispatchQueue.main.async {
                 
                 // Reset scheduled
-                scheduledUIUpdate = false
+                self.scheduled = false
                 
                 // Update UI
-                sessions.objectWillChange.send()
+                self.sessions.objectWillChange.send()
             }
         }
     }
@@ -210,7 +218,7 @@ public class Main: ObservableObject {
         let copy = self.cache.duplicate(template)
         
         // Add the new item to the cache
-        self.cache.addToCache(copy)
+        try! self.cache.addToCache(copy)
         
         // Open view with the now managed copy
         self.openView(copy)
@@ -304,13 +312,13 @@ public class Main: ObservableObject {
             lastTitle = self.computedView.title
         }
         
-        let searchResult = self.cache.filter(lastSearchResult!, needle)
+        let searchResult = lastSearchResult!.filter(lastSearchResult!, needle)
         self.computedView.resultSet = searchResult
-        if searchResult.data.count == 0 {
+        if searchResult.count == 0 {
             self.computedView.title = "No results"
         }
         else {
-            self.computedView.title = "\(searchResult.data.count) items found"
+            self.computedView.title = "\(searchResult.count) items found"
         }
         
         scheduleUIUpdate()
@@ -372,7 +380,7 @@ public class Main: ObservableObject {
         else {
             // Otherwise create a new searchResult, mark it as starred (query??)
             lastStarredView = self.computedView
-            let view = self.sessions.computeView()!
+            let view = try! self.sessions.computeView()
             self.computedView = view
             
             // filter the results based on the starred property
@@ -385,7 +393,7 @@ public class Main: ObservableObject {
             }
             
             // Add searchResult to view
-            view.resultSet.data = results
+            view.resultSet.items = results
             view.title = "Starred \(view.title)"
             
             scheduleUIUpdate()
