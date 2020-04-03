@@ -26,8 +26,37 @@ public class ActionDescription: Object, Codable, Identifiable {
     let state = RealmOptional<Bool>()
     
     var color: UIColor = .systemGray
+    var backgroundColor: UIColor = .white
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
+    var activeBackgroundColor: UIColor? = .white
+    var inactiveBackGroundColor: UIColor? = .white
+    
+    var computedColor: UIColor{
+        if self.hasState {
+            if self.state.value != nil && self.state.value!{
+                return self.activeColor!
+            }else{
+                return self.inactiveColor!
+            }
+        } else{
+            return self.color
+        }
+    }
+    
+    var computedBackgroundColor: UIColor{
+        if self.hasState {
+            if self.state.value != nil && self.state.value!{
+                return self.activeBackgroundColor!
+            }
+            else {
+                return self.inactiveBackGroundColor!
+            }
+        }
+        else {
+            return self.backgroundColor
+        }
+    }
     
     // Helper properties
     let _actionArgs = List<String>() // Used to store actionArgs as JSON in realm
@@ -55,6 +84,7 @@ public class ActionDescription: Object, Codable, Identifiable {
             
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
             self.hasState = try decoder.decodeIfPresent("hasState") ?? self.hasState
+            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
             // TODO get default color from actionName
             let colorString = try decoder.decodeIfPresent("color") ?? ""
@@ -62,6 +92,16 @@ public class ActionDescription: Object, Codable, Identifiable {
             
             self.activeColor = self.actionName.defaultActiveColor
             self.inactiveColor = self.actionName.defaultInactiveColor
+            self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
+            self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+            self.backgroundColor = self.actionName.defaultBackgroundColor
+
+//            switch colorString{
+//                case "gray", "systemGray": self.color = .systemGray
+//                case "yellow","systemYellow": self.color = .systemYellow
+//                case "green", "systemGreen": self.color = .systemGreen
+//                default: self.color = self.actionName.defaultColor
+//            }
             
             let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
             self.actionArgs = try self.decodeActionArgs(container)
@@ -140,6 +180,17 @@ public class ActionDescription: Object, Codable, Identifiable {
     
 //    public static func == (lhs: ActionDescription, rhs: ActionDescription) -> Bool {
 //        return true
+//    }
+
+//    public convenience init(color: UIColor?=nil, icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
+//        self.init()
+//        self.actionName = actionName ?? self.actionName
+//        self.color = color ?? self.actionName.defaultColor
+//        self.icon = icon ?? self.actionName.defaultIcon
+//        self.title = title ?? self.title
+//        self.actionArgs = actionArgs ?? self.actionArgs
+//        self.actionType = actionType ?? self.actionType
+//
 //    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {

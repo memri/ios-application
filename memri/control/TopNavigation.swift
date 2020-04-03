@@ -10,7 +10,6 @@ import SwiftUI
 
 public struct TopNavigation: View {
     @EnvironmentObject var main: Main
-    @Binding var isEditMode:EditMode
         
     public var body: some View {
         ZStack{
@@ -30,13 +29,6 @@ public struct TopNavigation: View {
                 Spacer()
                 
                 Action(action: main.computedView.editActionButton)
-//                if self.main.currentView.editActionButton != nil {
-//                    Button(action: editAction) {
-//                        Image(systemName: main.currentView.editActionButton!.icon)
-//                    }
-//                    .foregroundColor(.gray)
-//                }
-                
                 
                 Action(action: main.computedView.actionButton)
                 Action(action: ActionDescription(icon: "ellipsis", actionName: .noop))
@@ -44,25 +36,10 @@ public struct TopNavigation: View {
             }.padding(.all, 30)
         }
     }
-    
-    func backButtonAction(){
-        main.executeAction(main.currentSession.backButton!)
-    }
-    
-    func editAction(){
-        switch self.isEditMode{
-            case .active:
-                self.isEditMode = .inactive
-            case .inactive:
-                self.isEditMode = .active
-            default:
-                break
-        }
-    }
 }
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation(isEditMode: .constant(.inactive)).environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

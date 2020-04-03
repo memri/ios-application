@@ -19,32 +19,17 @@ extension Text {
 
 
 struct ThumbnailRenderer: View {
-    var name: String="thumbnail"
-    var icon: String=""
-    var category: String=""
-    var renderModes: [ActionDescription]=[]
-    var options1: [ActionDescription]=[]
-    var options2: [ActionDescription]=[]
-    var editMode: Bool=false
-//    var renderConfig: RenderConfig=RenderConfig()
-    var renderConfig: RenderConfig = ListConfig(press: ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: [])
-    )
-    
-    var cols: Int = 3
-
-    func setState(_ state:RenderState) -> Bool {return false}
-    func getState() -> RenderState {RenderState()}
-    func setCurrentView(_ session:Session, _ callback:(_ error:Error, _ success:Bool) -> Void) {}
-    
     @EnvironmentObject var main: Main
+    var name: String="thumbnail"
+    var renderConfig: ThumbnailConfig {
+        return self.main.getRenderConfig(name: self.name) as! ThumbnailConfig
+    }
     
     var body: some View {
-        
-        QGrid(main.computedView.resultSet.items, columns: 3) { dataItem in
+        QGrid(main.computedView.resultSet.items, columns: renderConfig.cols) { dataItem in
             Text(dataItem.getString("title")).asThumbnail()
                 .onTapGesture {
                     self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
-                    
                 }
         }
     }

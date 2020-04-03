@@ -12,16 +12,6 @@ struct FilterPanel: View {
     @EnvironmentObject var main: Main
     @State var showFilters=false
 
-    @State var viewTypeButtons = [ViewTypeButton(imgName: "line.horizontal.3", selected: true,
-                                                 rendererName: "list"),
-                                  ViewTypeButton(imgName: "square.grid.3x2.fill", selected: false,
-                                                   rendererName: "thumbnail"),
-                                  ViewTypeButton(imgName: "calendar", selected: false,
-                                                 rendererName: "list"),
-                                  ViewTypeButton(imgName: "location.fill", selected: false,
-                                                 rendererName: "list"),
-                                  ViewTypeButton(imgName: "chart.bar.fill", selected: false,
-                                                 rendererName: "list")]
     
     @State var sorters = [SortButton(name: "Select property", selected: false),
                           SortButton(name: "Date modified", selected: false),
@@ -41,18 +31,17 @@ struct FilterPanel: View {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){
-                            HStack(alignment: .top, spacing: 0) {
-                                ForEach(0..<self.viewTypeButtons.count) {i in
-                                    Button(action: {self.setRenderer(i:i)}) {
-                                        Image(systemName: self.viewTypeButtons[i].imgName)
+                            HStack(alignment: .top) {
+                                ForEach(self.main.renderObjectTuples, id: \.0) { index, item in
+                                    Group{
+                                        if item.candisplayresultset(items: self.main.computedView.resultSet.items){
+                                            Action(action: item)
+                                        }
                                     }
-                                    .padding(.horizontal, 7)
-                                    .padding(.vertical, 6)
-                                    .background(self.viewTypeButtons[i].backGroundColor)
-                                    .foregroundColor(self.viewTypeButtons[i].foreGroundColor)
                                 }
                             }
-                        }
+                        }.offset(x: 4)
+                        
                         VStack(alignment: .leading){
                             ForEach(self.browseSettings) { browseSetting in
                                 Text(browseSetting.name)
@@ -67,14 +56,15 @@ struct FilterPanel: View {
                         .frame(minWidth: 0, maxWidth: .infinity,alignment: Alignment.topLeading)
                     
                     VStack(alignment: .leading){
-                        Text("SORT").font(.headline)                                .padding(.vertical, 6)
+                        Text("SORT")
+                            .font(.headline)
+                            .padding(.vertical, 6)
                         
                         ForEach(self.sorters) { sorter in
                             Text(sorter.name)
                                 .foregroundColor(sorter.color)
                                 .fontWeight(sorter.fontWeight)
                                 .padding(.vertical, 10)
-                            
                         }
                         
                     }.padding(.horizontal, 20)
@@ -87,19 +77,8 @@ struct FilterPanel: View {
 
     }
     init(){
-        // THIS HIDEN THE LIST LINES
+        // TODO: move to list
         UITableView.appearance().separatorColor = .clear
-    }
-    
-    func setRenderer(i: Int){
-        self.main.changeRenderer(rendererName: self.viewTypeButtons[i].rendererName)
-        self.resetSelected()
-        self.viewTypeButtons[i].selected = true
-    }
-    func resetSelected(){
-        for i in 0..<self.viewTypeButtons.count{
-            self.viewTypeButtons[i].selected=false
-        }
     }
 }
 

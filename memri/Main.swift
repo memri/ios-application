@@ -53,6 +53,23 @@ public class Main: ObservableObject {
     private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false
     
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
+                                        "richTextEditor": AnyView(RichTextRenderer()),
+                                        "thumbnail": AnyView(ThumbnailRenderer())]
+    
+    var renderObjects: [String: RendererObject] = ["list": ListRendererObject(),
+                                                   "richTextEditor": RichTextRendererObject(),
+                                                   "thumbnail": ThumbnailRendererObject()]
+    
+    
+    var renderObjectTuples: [(key: String, value: RendererObject)]{
+        return renderObjects.sorted{$0.key < $1.key}
+    }
+    
+    var currentRenderer: AnyView {
+        self.renderers[self.computedView.rendererName, default: AnyView(ThumbnailRenderer())]
+    }
+    
     init(name:String, key:String) {
         podApi = PodAPI(key)
         cache = Cache(podApi)
@@ -223,6 +240,10 @@ public class Main: ObservableObject {
         // Open view with the now managed copy
         self.openView(copy)
     }
+    
+    public func getRenderConfig(name: String) -> RenderConfig{
+        return self.renderObjects[name]!.renderConfig
+    }
 
     /**
      * Executes the action as described in the action description
@@ -253,13 +274,13 @@ public class Main: ObservableObject {
                 openView(param0)
             }
         case .toggleEditMode:
-            toggleEditMode()
+            toggleEditMode(editButton: action)
         case .toggleFilterPanel:
             toggleFilterPanel()
         case .star:
             star()
         case .showStarred:
-            showStarred()
+            showStarred(starButton: action)
         case .showContextPane:
             openContextPane() // TODO @Jess
         case .showNavigation:
@@ -268,6 +289,8 @@ public class Main: ObservableObject {
             break
         case .share:
             showSharePanel()
+        case .setRenderer:
+            changeRenderer(rendererObject: action as! RendererObject)
         case .addToList:
             addToList()
         case .duplicate:
@@ -349,12 +372,20 @@ public class Main: ObservableObject {
         scheduleUIUpdate()
     }
     
-    func changeRenderer(rendererName: String){
+    func changeRenderer(rendererObject: RendererObject){
+        //
+        self.setInactive(objects: Array(self.renderObjects.values))
+    
+        //
+        setActive(object: rendererObject)
+    
+        //
         let session = currentSession
         try! realm.write {
-            session.currentView.rendererName = rendererName
+            session.currentView.rendererName = rendererObject.name
         }
         
+        //
         setCurrentView()
     }
     
@@ -362,13 +393,13 @@ public class Main: ObservableObject {
         
     }
     
+
     var lastStarredView:ComputedView?
-    func showStarred(){
+    func showStarred(starButton: ActionDescription){
         if lastNeedle != "" {
             self.search("") // Reset search | should update the UI state as well. Don't know how
         }
 
-        let starButton = self.computedView.filterButtons.filter{$0.actionName == .showStarred}[0] // HACK
         toggleActive(object: starButton)
         
         // If showing starred items, return to normal view
@@ -401,26 +432,33 @@ public class Main: ObservableObject {
     }
     
     func toggleActive(object: ActionDescription){
-        if let state = object.state.value {
-            switch state{
-            case true: object.color = object.inactiveColor ?? object.color
-            case false: object.color = object.activeColor ?? object.color
-            }
-            
-            try! realm.write {
-                object.state.value!.toggle()
-            }
+        try! realm.write {
+            object.state.value!.toggle()
         }
         
         scheduleUIUpdate()
     }
     
-    func toggleEditMode(){
-        let editMode = self.currentSession.currentView.isEditMode.value ?? false
-        try! realm.write {
-            self.currentSession.currentView.isEditMode.value = !editMode
+    func setActive(object: ActionDescription){
+        object.color = object.activeColor ?? object.color
+        object.state.value = true
+    }
+    
+    func setInactive(objects: [ActionDescription]){
+        for obj in renderObjects.values{
+            obj.state.value = false
         }
-        
+    }
+    
+    func toggleEditMode(editButton: ActionDescription){
+    
+        //
+        self.sessions.toggleEditMode()
+    
+        //
+        self.toggleActive(object: editButton)
+    
+        //
         setCurrentView()
     }
     

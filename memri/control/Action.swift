@@ -51,7 +51,10 @@ struct ActionButton: View {
         Button(action: {self.main.executeAction(self.action)} ) {
             if action.icon != "" {
                 Image(systemName: action.icon)
-                    .foregroundColor(Color(action.color))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .foregroundColor(Color(action.computedColor))
+                    .background(Color(action.computedBackgroundColor))
             }
             if action.title != nil && action.showTitle {
                 Text(action.title!)

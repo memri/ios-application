@@ -9,13 +9,13 @@
 import SwiftUI
 import Combine
 
-struct RichTextEditor: UIViewRepresentable {
+struct _RichTextEditor: UIViewRepresentable {
     @ObservedObject public var dataItem: DataItem
 
     class Coordinator: NSObject, UITextViewDelegate {
-        var control: RichTextEditor
+        var control: _RichTextEditor
 
-        init(_ control: RichTextEditor) {
+        init(_ control: _RichTextEditor) {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
@@ -35,15 +35,27 @@ struct RichTextEditor: UIViewRepresentable {
     }
     
     func updateUIView(_ uiView: UITextView, context: Context) {}
-    func makeCoordinator() -> RichTextEditor.Coordinator {
+    func makeCoordinator() -> _RichTextEditor.Coordinator {
         let coordinator = Coordinator(self)
         return coordinator
     }
 
 }
 
+struct RichTextRenderer: Renderer {
+    //wrapper
+    var renderConfig: RenderConfig=RenderConfig()
+    @EnvironmentObject var main: Main
+
+    var body: some View {
+        return VStack{
+            _RichTextEditor(dataItem: main.computedView.resultSet.item!)
+        }
+    }
+}
+
 struct RichTextEditor_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextEditor(dataItem: DataItem.fromUid(uid: "0x01"))
+        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

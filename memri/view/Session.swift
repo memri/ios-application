@@ -30,6 +30,10 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
+    var isEditMode: EditMode = .inactive
+    /**
+     *
+     */
     let sessions = List<Session>() // @Published
     /**
      *
@@ -341,6 +345,18 @@ public class Sessions: Object, ObservableObject, Decodable {
      * Find a session using text
      */
     public func findSession(_ query:String) -> Void {}
+    
+    // TODO make this realm compatible
+    func toggleEditMode(){
+        switch self.isEditMode{
+            case .active:
+                self.isEditMode = .inactive
+            case .inactive:
+                self.isEditMode = .active
+            default:
+                break
+        }
+    }
 
     /**
      * Clear all sessions and create a new one
