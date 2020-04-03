@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-class RendererObject: ActionDescription{
+class RendererObject: ActionDescription, ObservableObject{
     var name = ""
     
     var renderConfig: RenderConfig = RenderConfig()

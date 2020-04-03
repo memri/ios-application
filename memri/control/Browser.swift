@@ -12,12 +12,11 @@ import Combine
 
 struct Browser: View {
     @EnvironmentObject var main: Main
-    @State var isEditMode: EditMode = .inactive
     
     var body: some View {
         ZStack {
             VStack() {
-                TopNavigation(isEditMode: $isEditMode)
+                TopNavigation()
                 main.currentRenderer.fullHeight()
                 Search()
             }.fullHeight()

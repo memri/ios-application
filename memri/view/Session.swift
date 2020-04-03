@@ -16,6 +16,8 @@ public class Sessions: ObservableObject, Decodable {
     @Published var currentSessionIndex: Int = 0
     @Published var sessions: [Session] = []
     @Published public var showNavigation:Bool = false
+    @Published public var isEditMode: EditMode = .inactive
+
 
     var cancellables:[AnyCancellable]? = nil
     
@@ -79,6 +81,17 @@ public class Sessions: ObservableObject, Decodable {
      * Find a session using text
      */
     public func findSession(_ query:String) -> Void {}
+    
+    func toggleEditMode(){
+        switch self.isEditMode{
+            case .active:
+                self.isEditMode = .inactive
+            case .inactive:
+                self.isEditMode = .active
+            default:
+                break
+        }
+    }
 
     /**
      * Clear all sessions and create a new one

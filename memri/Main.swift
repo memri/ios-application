@@ -31,7 +31,7 @@ public class Main: ObservableObject {
     public var cache:Cache
     public var realm:Realm
     
-    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer(isEditMode: .constant(.inactive))),
+    var renderers: [String: AnyView] = ["list": AnyView(ListRenderer()),
                                         "richTextEditor": AnyView(RichTextRenderer()),
                                         "thumbnail": AnyView(ThumbnailRenderer())]
     
@@ -39,10 +39,10 @@ public class Main: ObservableObject {
                                                    "richTextEditor": RichTextRendererObject(),
                                                    "thumbnail": ThumbnailRendererObject()]
     
+    
     var renderObjectTuples: [(key: String, value: RendererObject)]{
         return renderObjects.sorted{$0.key < $1.key}
     }
-
     
     var currentRenderer: AnyView {
         self.renderers[self.computedView.rendererName ?? "", default: AnyView(ThumbnailRenderer())]
@@ -350,7 +350,7 @@ public class Main: ObservableObject {
                 openView(param0)
             }
         case .toggleEditMode:
-            toggleEditMode()
+            toggleEditMode(editButton: action)
         case .toggleFilterPanel:
             toggleFilterPanel()
         case .star:
@@ -506,9 +506,9 @@ public class Main: ObservableObject {
         }
     }
     
-    func toggleEditMode(){
-        let editMode = self.currentSession.currentView.isEditMode ?? false
-        self.currentSession.currentView.isEditMode = !editMode
+    func toggleEditMode(editButton: ActionDescription){
+        self.sessions.toggleEditMode()
+        self.toggleActive(object: editButton)
         self.currentSession.objectWillChange.send()
     }
     

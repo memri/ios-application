@@ -76,7 +76,6 @@ public class ActionDescription: Decodable, Identifiable {
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
 
-
         
             // TODO decode colorString for active/inactive in function
             let colorString = try decoder.decodeIfPresent("color") ?? ""
@@ -85,7 +84,7 @@ public class ActionDescription: Decodable, Identifiable {
                 case "gray", "systemGray": self.color = .systemGray
                 case "yellow","systemYellow": self.color = .systemYellow
                 case "green", "systemGreen": self.color = .systemGreen
-                default: break
+                default: self.color = self.actionName.defaultColor
             }
             
             let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
@@ -134,13 +133,15 @@ public class ActionDescription: Decodable, Identifiable {
         return list
     }
     
-    public convenience init(icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
+    public convenience init(color: UIColor?=nil, icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
         self.init()
         self.actionName = actionName ?? self.actionName
+        self.color = color ?? self.actionName.defaultColor
         self.icon = icon ?? self.actionName.defaultIcon
         self.title = title ?? self.title
         self.actionArgs = actionArgs ?? self.actionArgs
         self.actionType = actionType ?? self.actionType
+        
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
