@@ -13,10 +13,6 @@ class RendererObject: ActionDescription, ObservableObject{
     @objc dynamic var name = ""
     @objc dynamic var renderConfig: RenderConfig? = RenderConfig()
     
-    func canDisplayResultSet(items: [DataItem]) -> Bool{
-        return true
-    }
-    
     required init(){
         super.init()
         self.hasState.value = true
@@ -25,10 +21,9 @@ class RendererObject: ActionDescription, ObservableObject{
         self.actionName = .setRenderer
     }
     
-    func candisplayresultset(items: [DataItem]) -> Bool{
+    func canDisplayResultSet(items: [DataItem]) -> Bool{
         return true
     }
-
 }
 
 class ListRendererObject: RendererObject{
@@ -38,7 +33,7 @@ class ListRendererObject: RendererObject{
         self.icon = "line.horizontal.3"
         self.renderConfig = ListConfig()
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         // checks if everything can be casted to note
         return items.count == items.compactMap({$0 as? Note}).count
     }
@@ -52,7 +47,7 @@ class ThumbnailRendererObject: RendererObject{
         self.renderConfig = ThumbnailConfig()
 
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         // checks if everything can be casted to note
         return items.count == items.compactMap({$0 as? Note}).count
     }
@@ -63,7 +58,7 @@ class RichTextRendererObject: RendererObject{
         self.name = "richTextEditor"
         self.icon = "pencil"
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         if items.count>0{
             if items.count == 1 && items[0] is Note{
                 return true
@@ -82,7 +77,7 @@ class CalendarRendererObject: RendererObject{
         self.name = "calendar"
         self.icon = "calendar"
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         return false
     }
 }
@@ -93,7 +88,7 @@ class MapRendererObject: RendererObject{
         self.name = "map"
         self.icon = "location.fill"
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         return false
     }
 }
@@ -104,7 +99,7 @@ class graphRendererObject: RendererObject{
         self.name = "graph"
         self.icon = "chart.bar.fill"
     }
-    override func candisplayresultset(items: [DataItem]) -> Bool{
+    override func canDisplayResultSet(items: [DataItem]) -> Bool{
         return false
     }
 }

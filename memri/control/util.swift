@@ -119,7 +119,8 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
     do {
         let data = try encode(encoder)
         json = String(data: data, encoding: .utf8) ?? ""
-    } catch {
+    }
+    catch {
         print("\nUnexpected error: \(error.localizedDescription)\n")
     }
     

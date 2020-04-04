@@ -242,55 +242,34 @@ public class Main: ObservableObject {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) -> Void {
+    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
         let params = action.actionArgs
         
         switch action.actionName {
-        case .back:
-            back()
-        case .add:
-            addFromTemplate(params[0].value as! DataItem)
+        case .back: back()
+        case .add: addFromTemplate(params[0].value as! DataItem)
         case .delete:
-            if let item = item {
-                cache.delete(item)
-            }
-            else if let items = items {
-                cache.delete(items)
-            }
-            
-            // Update UI
+            if let item = item { cache.delete(item) }
+            else if let items = items { cache.delete(items) }
             scheduleUIUpdate()
         case .openView:
-            if let item = item {
-                openView(item)
-            } else {
-                let param0 = params[0].value as! SessionView
-                openView(param0)
-            }
-        case .toggleEditMode:
-            toggleEditMode(editButton: action)
-        case .toggleFilterPanel:
-            toggleFilterPanel()
+            if (params.count > 0) { openView(params[0].value as! SessionView) }
+            else if let item = item { openView(item) }
+            else if let items = items { openView(items) }
+        case .toggleEditMode: toggleEditMode(editButton: action)
+        case .toggleFilterPanel: toggleFilterPanel()
         case .star:
-            star()
-        case .showStarred:
-            showStarred(starButton: action)
-        case .showContextPane:
-            openContextPane() // TODO @Jess
-        case .showNavigation:
-            showNavigation()
-        case .openContextView:
-            break
-        case .share:
-            showSharePanel()
-        case .setRenderer:
-            changeRenderer(rendererObject: action as! RendererObject)
-        case .addToList:
-            addToList()
+            if let item = item { star([item]) }
+            else if let items = items { star(items) }
+        case .showStarred: showStarred(starButton: action)
+        case .showContextPane: openContextPane()
+        case .showNavigation: showNavigation()
+        case .openContextView: break
+        case .share: showSharePanel()
+        case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
+        case .addToList: addToList()
         case .duplicate:
-            if let item = item {
-                addFromTemplate(item)
-            }
+            if let item = item { addFromTemplate(item) }
         case .exampleUnpack:
             let (_, _) = (params[0].value, params[1].value) as! (String, Int)
             break
@@ -299,43 +278,13 @@ public class Main: ObservableObject {
         }
     }
     
-    // TODO move this to searchResult, suggestion: change searchResult to
-    // ResultSet (list, item, isList) and maintain only one per query. also add query to sessionview
-    private var lastSearchResult:ResultSet?
-    private var lastNeedle:String = ""
-    private var lastTitle:String? = nil
-    func search(_ needle:String) {
-        if self.computedView.rendererName != "list" && self.computedView.rendererName != "thumbnail" {
-            return
-        }
+    func filterResultSet(_ filterText:String) {
+        // Filter the view
+        self.computedView.filterText = filterText
         
-        if lastNeedle == needle { return } // TODO removing this causes an infinite loop because onReceive is called based on the objectWillChange.send() - that is unexpected to me
-        
-        lastNeedle = needle
-        
-        if needle == "" {
-            if lastSearchResult != nil {
-                self.computedView.resultSet = lastSearchResult!
-                lastSearchResult = nil
-                self.computedView.title = lastTitle ?? ""
-                
-                scheduleUIUpdate()
-            }
-            return
-        }
-
-        if lastSearchResult == nil {
-            lastSearchResult = self.computedView.resultSet
-            lastTitle = self.computedView.title
-        }
-        
-        let searchResult = lastSearchResult!.filter(lastSearchResult!, needle)
-        self.computedView.resultSet = searchResult
-        if searchResult.count == 0 {
-            self.computedView.title = "No results"
-        }
-        else {
-            self.computedView.title = "\(searchResult.count) items found"
+        // Save the state
+        try! realm.write {
+            self.currentSession.currentView.filterText = filterText
         }
         
         scheduleUIUpdate()
@@ -345,9 +294,7 @@ public class Main: ObservableObject {
         let session = currentSession
         
         if session.currentViewIndex == 0 {
-            print("Can't go back. Already at earliest view in session")
-//            session.objectWillChange.send()
-            return
+            print("Warn: Can't go back. Already at earliest view in session")
         }
         else {
             try! realm.write {
@@ -383,45 +330,54 @@ public class Main: ObservableObject {
         setCurrentView()
     }
     
-    func star() {
+    func star(_ items:[DataItem]) {
+        try! realm.write {
+            for item in items {
+                item.starred = true
+            }
+        }
         
+        // TODO if starring is every allowed in a list resultset view,
+        // it won't be updated as of now
+        
+        scheduleUIUpdate()
     }
 
     var lastStarredView:ComputedView?
     func showStarred(starButton: ActionDescription){
-        if lastNeedle != "" {
-            self.search("") // Reset search | should update the UI state as well. Don't know how
-        }
-
-        toggleActive(object: starButton)
-        
-        // If showing starred items, return to normal view
-        if lastStarredView != nil {
-            self.computedView = lastStarredView!
-            lastStarredView = nil
-            self.objectWillChange.send()
-        }
-        else {
-            // Otherwise create a new searchResult, mark it as starred (query??)
-            lastStarredView = self.computedView
-            let view = try! self.sessions.computeView()
-            self.computedView = view
-            
-            // filter the results based on the starred property
-            var results:[DataItem] = []
-            let data = lastStarredView!.resultSet.items
-            // TODO: Change to filter
-            for i in 0...data.count - 1 {
-                let isStarred = data[i]["starred"] as? Bool ?? false
-                if isStarred { results.append(data[i]) }
-            }
-            
-            // Add searchResult to view
-            view.resultSet.items = results
-            view.title = "Starred \(view.title)"
-            
-            scheduleUIUpdate()
-        }
+//        if lastNeedle != "" {
+//            self.filterResultSet("") // Reset search | should update the UI state as well. Don't know how
+//        }
+//
+//        toggleActive(object: starButton)
+//
+//        // If showing starred items, return to normal view
+//        if lastStarredView != nil {
+//            self.computedView = lastStarredView!
+//            lastStarredView = nil
+//            self.objectWillChange.send()
+//        }
+//        else {
+//            // Otherwise create a new searchResult, mark it as starred (query??)
+//            lastStarredView = self.computedView
+//            let view = try! self.sessions.computeView()
+//            self.computedView = view
+//
+//            // filter the results based on the starred property
+//            var results:[DataItem] = []
+//            let data = lastStarredView!.resultSet.items
+//            // TODO: Change to filter
+//            for i in 0...data.count - 1 {
+//                let isStarred = data[i]["starred"] as? Bool ?? false
+//                if isStarred { results.append(data[i]) }
+//            }
+//
+//            // Add searchResult to view
+//            view.resultSet.items = results
+//            view.title = "Starred \(view.title)"
+//
+//            scheduleUIUpdate()
+//        }
     }
     
     func toggleActive(object: ActionDescription){

@@ -34,7 +34,7 @@ struct Search: View {
             HStack{
                 TextField("type your search query here", text: $searchText)
                     .onReceive(Just(searchText)) { (newValue: String) in
-                        self.main.search(self.searchText)
+                        self.main.filterResultSet(self.searchText)
                     }
                 
                 ForEach(self.main.computedView.filterButtons){ filterButton in

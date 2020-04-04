@@ -16,6 +16,7 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var backTitle: String? = nil
     @objc dynamic var icon: String? = nil
     @objc dynamic var browsingMode: String? = nil
+    @objc dynamic var filterText: String? = nil
     
     let showLabels = RealmOptional<Bool>()
     let contextMode = RealmOptional<Bool>()
@@ -58,6 +59,7 @@ public class SessionView: Object, ObservableObject, Codable {
             self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
             self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
+            self.filterText = try decoder.decodeIfPresent("filterText") ?? self.filterText
             
             self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
             self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
@@ -102,9 +104,7 @@ public class ComputedView: ObservableObject {
     var resultSet: ResultSet
 
     var name: String = ""
-    var title: String = ""
     var rendererName: String = ""
-    var subtitle: String = ""
     var backTitle: String = ""
     var icon: String = ""
     var browsingMode: String = ""
@@ -126,6 +126,72 @@ public class ComputedView: ObservableObject {
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
     
+    private var _title: String = ""
+    private var _titleTemp: String? = nil
+    var title: String {
+        get {
+            return _titleTemp ?? _title
+        }
+        set (newSubtitle) {
+            if newSubtitle == "" { _titleTemp = nil }
+            else { _titleTemp = newSubtitle }
+        }
+    }
+    
+    private var _subtitle: String = ""
+    private var _subtitleTemp: String? = nil
+    var subtitle: String {
+        get {
+            return _subtitleTemp ?? _subtitle
+        }
+        set (newSubtitle) {
+            if newSubtitle == "" { _subtitleTemp = nil }
+            else { _subtitleTemp = newSubtitle }
+        }
+    }
+    
+    private var _filterText: String = ""
+    var filterText: String {
+        get {
+            return _filterText
+        }
+        set (newFilter) {
+            // Do nothing if we already have this filter text set
+            if _filterText == newFilter { return }
+            
+            // Store the new value
+            _filterText = newFilter
+            
+            // If this is a multi item result set
+            if self.resultSet.isList {
+                
+                // TODO we should probably ask the renderer if this is preferred
+                // Some renderers such as the charts would probably rather highlight the
+                // found results instead of filtering the other data points out
+                
+                // Filter the result set
+                self.resultSet.filterText = _filterText
+            }
+            else {
+                print("Warn: Filtering for single items not Implemented Yet!")
+            }
+            
+            if _filterText == "" {
+                title = ""
+                subtitle = ""
+            }
+            else {
+                // Set the title to an appropriate message
+                if resultSet.count == 0 { title = "No results" }
+                else if resultSet.count == 1 { title = "1 item found" }
+                else { title = "\(resultSet.count) items found" }
+                
+                // Temporarily hide the subtitle
+                // subtitle = " " // TODO how to clear the subtitle ?? 
+            }
+        }
+    }
+    
     private let cache:Cache
     
     init(_ ch:Cache){
@@ -139,12 +205,14 @@ public class ComputedView: ObservableObject {
         self.queryOptions.merge(view.queryOptions!)
         
         self.name = view.name ?? self.name
-        self.title = view.title ?? self.title
         self.rendererName = view.rendererName ?? self.rendererName
-        self.subtitle = view.subtitle ?? self.subtitle
         self.backTitle = view.backTitle ?? self.backTitle
         self.icon = view.icon ?? self.icon
         self.browsingMode = view.browsingMode ?? self.browsingMode
+        
+        _title = view.title ?? _title
+        _subtitle = view.subtitle ?? _subtitle
+        _filterText = view.filterText ?? _filterText
         
         self.showLabels = view.showLabels.value ?? self.showLabels
         self.contextMode = view.contextMode.value ?? self.contextMode
@@ -168,8 +236,14 @@ public class ComputedView: ObservableObject {
     }
     
     public func finalMerge(_ view:SessionView) {
+        // Merge view into self
         merge(view)
+        
+        // Update search result to match the query
         self.resultSet = cache.getResultSet(self.queryOptions)
+        
+        // Filter the results
+        filterText = _filterText
     }
 
     /**

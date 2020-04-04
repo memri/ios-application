@@ -195,12 +195,6 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 }
 
 public class ResultSet: ObservableObject {
-//    let uid = UUID().uuidString
-//
-//    public static func == (lt: SearchResult, rt: SearchResult) -> Bool {
-//        return lt.uid == rt.uid
-//    }
-    
     /**
      *
      */
@@ -238,10 +232,24 @@ public class ResultSet: ObservableObject {
         if !isList && count > 0 { return items[0] }
         else { return nil }
     }
+    /**
+     *
+     */
+    var filterText: String {
+        get {
+            return _filterText
+        }
+        set (newFilter) {
+            _filterText = newFilter
+            filter()
+        }
+    }
     
     private var loading: Bool = false
     private var pages: [Int] = []
     private let cache: Cache
+    private var _filterText: String = ""
+    private var _unfilteredItems: [DataItem]? = nil
     
     required init(_ ch:Cache) {
         cache = ch
@@ -298,24 +306,41 @@ public class ResultSet: ObservableObject {
     /**
      * Client side filter //, with a fallback to the server
      */
-    public func filter(_ searchResult:ResultSet, _ query:String) -> ResultSet {
-        let options = searchResult.queryOptions
-        options.query = query
-        
-        let filterResult = ResultSet(cache)
-        filterResult.queryOptions = options
-        filterResult.items = searchResult.items
-        filterResult.loading = searchResult.loading
-        filterResult.pages.removeAll()
-        filterResult.pages.append(contentsOf: searchResult.pages)
-        
-        for i in stride(from: filterResult.items.count - 1, through: 0, by: -1) {
-            if (!filterResult.items[i].match(query)) {
-                filterResult.items.remove(at: i)
+    public func filter() {
+        // Cancel filtering
+        if _filterText == "" {
+            
+            // If we filtered before...
+            if let _unfilteredItems = _unfilteredItems{
+                
+                // Put back the items of this resultset
+                items = _unfilteredItems
+                count = _unfilteredItems.count
             }
         }
-
-        return filterResult
+            
+        // Filter using _filterText
+        else {
+            // Array to store filter results
+            var filterResult:[DataItem] = []
+            
+            // Filter through items
+            let searchSet = _unfilteredItems ?? items
+            if searchSet.count >  0 {
+                for i in 0...searchSet.count - 1 {
+                    if searchSet[i].match(_filterText) {
+                        filterResult.append(searchSet[i])
+                    }
+                }
+            }
+            
+            // Store the items of this resultset
+            if _unfilteredItems == nil { _unfilteredItems = items }
+            
+            // Set the filtered result
+            items = filterResult
+            count = filterResult.count
+        }
     }
         
     /**

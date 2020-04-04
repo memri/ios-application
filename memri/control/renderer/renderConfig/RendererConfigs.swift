@@ -11,15 +11,10 @@ import RealmSwift
 
 /*
     TODO:
-    * create a renderConfigs class that has a list for each render config indexed by the name
-    * change the json back to the dict as it was before
- 
     - fix search
     - fix starring
     - including back and restart behavior
-    - Check the other TODO in this file
     - Clean up of sessionview, queryoptions, session, renderConfig, etc
-    - Adding an item is broken (we need regression tests asap)
 */
 
 public class RenderConfigs: Object, Codable {
@@ -141,8 +136,6 @@ class ListConfig: RenderConfig {
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
-        
-        // TODO check that the render config props are decoded as well
         
         jsonErrorHandling(decoder) {
             self.type = try decoder.decodeIfPresent("type") ?? self.type
