@@ -36,10 +36,12 @@ public class ActionDescription: Object, Codable, Identifiable {
         if self.hasState.value == true {
             if self.state.value == true {
                 return self.activeColor!
-            }else{
+            }
+            else {
                 return self.inactiveColor!
             }
-        } else{
+        }
+        else {
             return self.color
         }
     }
@@ -77,7 +79,6 @@ public class ActionDescription: Object, Codable, Identifiable {
         jsonErrorHandling(decoder) {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
-            self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
             
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
@@ -146,6 +147,7 @@ public class ActionDescription: Object, Codable, Identifiable {
         let encoder = JSONEncoder()
         
         func addArgument<T:Encodable>(_ item:T){
+            
             // Store item in the arguments list
             self.actionArgs.append(AnyCodable(item))
             

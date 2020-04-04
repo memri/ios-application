@@ -18,6 +18,8 @@ import RealmSwift
     - fix starring
     - including back and restart behavior
     - Check the other TODO in this file
+    - Clean up of sessionview, queryoptions, session, renderConfig, etc
+    - Adding an item is broken (we need regression tests asap)
 */
 
 public class RenderConfigs: Object, Codable {
