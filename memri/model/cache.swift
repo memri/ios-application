@@ -85,7 +85,7 @@ public class Cache {
             callback("Empty Query", nil)
         }
         else {
-            // Schedule the real query
+            // Schedule the query to sync from the pod
             sync.syncQuery(queryOptions)
             
             if (q.starts(with: "0x")) {
@@ -94,10 +94,14 @@ public class Cache {
                 callback(nil, [result[0]])
             }
             else {
-                let type = DataItemFamily(rawValue: q)
+                // Query format: <type><space><filter-text>
+                let (typeName, filter) = parseQuery(q)
+                
+                let type = DataItemFamily(rawValue: typeName)
                 if let type = type {
                     let queryType = DataItemFamily.getType(type)
-                    let result = realm.objects(queryType()).filter("deleted = false") // TODO filter
+                    let result = realm.objects(queryType())
+                        .filter("deleted = false " + (filter ?? ""))
                     
                     var returnValue:[DataItem] = []
                     for item in result { returnValue.append(item) }
@@ -108,6 +112,17 @@ public class Cache {
                     callback("Unknown type send by server: \(q)", nil)
                 }
             }
+        }
+    }
+    
+    private func parseQuery(_ query: String) -> (type:String, filter:String?) {
+        if let _ = query.firstIndex(of: " ") {
+            let splits = query.split(separator: " ")
+            let type = String(splits[0])
+            return (type, String(splits.dropFirst().joined(separator: " ")))
+        }
+        else {
+            return (query, nil)
         }
     }
 

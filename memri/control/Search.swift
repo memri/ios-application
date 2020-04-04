@@ -27,21 +27,19 @@ struct BrowseSetting: Identifiable {
 
 struct Search: View {
     @EnvironmentObject var main: Main
-    @State var searchText=""
 
     var body: some View {
         VStack{
             HStack{
                 TextField("type your search query here", text: $main.computedView.filterText)
-//                    .onReceive(Just(searchText)) { (newValue: String) in
-//                        self.main.filterResultSet(self.searchText)
-//                    }
                 
                 ForEach(self.main.computedView.filterButtons){ filterButton in
                     Action(action: filterButton)
                         .font(Font.system(size: 20, weight: .medium))
                 }
-            }.padding(.horizontal , 15)
+            }
+            .padding(.horizontal , 15)
+            
             FilterPanel()
         }
     }

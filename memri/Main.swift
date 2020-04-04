@@ -331,41 +331,35 @@ public class Main: ObservableObject {
         scheduleUIUpdate()
     }
 
-    var lastStarredView:ComputedView?
     func showStarred(starButton: ActionDescription){
-//        if lastNeedle != "" {
-//            self.filterResultSet("") // Reset search | should update the UI state as well. Don't know how
-//        }
-//
-//        toggleActive(object: starButton)
-//
-//        // If showing starred items, return to normal view
-//        if lastStarredView != nil {
-//            self.computedView = lastStarredView!
-//            lastStarredView = nil
-//            self.objectWillChange.send()
-//        }
-//        else {
-//            // Otherwise create a new searchResult, mark it as starred (query??)
-//            lastStarredView = self.computedView
-//            let view = try! self.sessions.computeView()
-//            self.computedView = view
-//
-//            // filter the results based on the starred property
-//            var results:[DataItem] = []
-//            let data = lastStarredView!.resultSet.items
-//            // TODO: Change to filter
-//            for i in 0...data.count - 1 {
-//                let isStarred = data[i]["starred"] as? Bool ?? false
-//                if isStarred { results.append(data[i]) }
-//            }
-//
-//            // Add searchResult to view
-//            view.resultSet.items = results
-//            view.title = "Starred \(view.title)"
-//
-//            scheduleUIUpdate()
-//        }
+        
+        // Toggle state of the star button
+        toggleActive(object: starButton)
+        
+        // If button is active lets create a filtered view
+        if starButton.state.value == true {
+            // Get a handle to the view to filter
+            let viewToFilter = self.currentSession.currentView
+            
+            // Create Starred View
+            let starredView = SessionView(value: viewToFilter)
+            
+            // Update the title
+            starredView.title = "Starred \(computedView.title)"
+            
+            // Alter the query to add the starred requirement
+            starredView.queryOptions = QueryOptions()
+            starredView.queryOptions!.merge(viewToFilter.queryOptions!)
+            starredView.queryOptions!.query! += " AND starred = true" // TODO this is very naive
+            // TODO perhaps add queryOptions.localOnly = true to prevent server load
+            
+            // Open View
+            openView(starredView)
+        }
+        else {
+            // Go back to the previous view
+            back()
+        }
     }
     
     func toggleActive(object: ActionDescription){
