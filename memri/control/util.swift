@@ -81,15 +81,27 @@ func getCodingPathString(_ codingPath:[CodingKey]) -> String {
     return path
 }
 
+//extension Error {
+//    var debugDescription: String {
+//        return "\(String(describing: type(of: self))).\(String(describing: self)) (code \((self as NSError).code))"
+//    }
+//}
+
 func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     let path = getCodingPathString(decoder.codingPath)
     print("Decoding: \(path)")
     
     do {
         try convert()
-    } catch {
-//        dump(decoder)
-        print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
+    }
+    catch DecodingError.dataCorrupted(let context) {
+        let path = getCodingPathString(context.codingPath)
+        print("\nJSON Parse Error at \(path)\nError: \(context.debugDescription)\n")
+        raise(SIGINT)
+    }
+    catch {
+        dump(error)
+        print("\nJSON Parse Error at \(path)\nError: \(error)\n")
         raise(SIGINT)
     }
 }

@@ -11,9 +11,34 @@ import RealmSwift
 
 /*
     TODO:
-    - create a renderConfigs class that has a list for each render config indexed by the name
-    - change the json back to the dict as it was before
+    * create a renderConfigs class that has a list for each render config indexed by the name
+    * change the json back to the dict as it was before
+ 
+    - fix search
+    - fix starring
+    - including back and restart behavior
+    - Check the other TODO in this file
 */
+
+public class RenderConfigs: Object, Codable {
+    /**
+     *
+     */
+    @objc dynamic var list: ListConfig? = nil
+    /**
+     *
+     */
+    @objc dynamic var thumbnail: ThumbnailConfig? = nil
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.list = try decoder.decodeIfPresent("list") ?? self.list
+            self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
+        }
+    }
+}
 
 public class RenderConfig: Object, Codable {
     /**
@@ -77,10 +102,10 @@ class ListConfig: RenderConfig {
         
         super.init()
         
-        self.type=type ?? self.type
-        self.browse=browse ?? self.browse
-        self.itemRenderer=itemRenderer ?? self.itemRenderer
-        self.longPress=longPress ?? self.longPress
+        self.type = type ?? self.type
+        self.browse = browse ?? self.browse
+        self.itemRenderer = itemRenderer ?? self.itemRenderer
+        self.longPress = longPress ?? self.longPress
         self.press = press ?? self.press
         
         self.cascadeOrder.append(objectsIn: cascadeOrder ?? [])
@@ -90,6 +115,8 @@ class ListConfig: RenderConfig {
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
+        
+        // TODO check that the render config props are decoded as well
         
         jsonErrorHandling(decoder) {
             self.type = try decoder.decodeIfPresent("type") ?? self.type
@@ -131,10 +158,10 @@ class ThumbnailConfig: RenderConfig {
         
         super.init()
         
-        self.type=type ?? self.type
-        self.browse=browse ?? self.browse
-        self.itemRenderer=itemRenderer ?? self.itemRenderer
-        self.longPress=longPress ?? self.longPress
+        self.type = type ?? self.type
+        self.browse = browse ?? self.browse
+        self.itemRenderer = itemRenderer ?? self.itemRenderer
+        self.longPress = longPress ?? self.longPress
         self.press = press ?? self.press
         self.cols = cols ?? self.cols
         

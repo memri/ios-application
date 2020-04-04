@@ -1,9 +1,8 @@
 {
     "defaults": {
         "{renderer:list}": {
-            "renderConfigs": [
-                {
-                    "for": "list",
+            "renderConfigs": {
+                "list": {
                     "slideLeftActions": [
                         {
                             "icon": "remove.ico",
@@ -19,7 +18,7 @@
                     },
                     "itemRenderer": "{.title}"
                 }
-            ]
+            }
         },
 
         "{[type:note]}": {
@@ -31,14 +30,13 @@
                 "sortAscending": 0
             },
             "rendererName": "list",
-            "renderConfigs": [
-                {
-                    "for": "list",
+            "renderConfigs": {
+                "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
                     "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
                 }
-            ],
+            },
             "browsingMode": "default",
             "actionButton": {
                 "icon": "plus",
@@ -75,12 +73,11 @@
             "name": "note",
             "title": "Note",
             "rendererName": "richTextEditor",
-            "renderConfigs": [
-                {
-                    "for": "richtexteditor",
+            "renderConfigs": {
+                "richtexteditor": {
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                 }
-            ],
+            },
             "editActionButton": {
                 "icon": "pencil",
                 "title": "Edit Note",
@@ -94,12 +91,11 @@
                     "actionName": "openView",
                     "actionArgs": [{
                         "rendererName": "timeline",
-                        "renderConfigs": [
-                            {
-                                "for": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
                                 "timeProperty": "date-created"
                             }
-                        ],
+                        },
                         "queryOptions": {
                             "text": "data:Log appliesTo:{.id}",
                             "sortProperty": "date-created",
@@ -151,12 +147,11 @@
                     "actionName": "openView",
                     "actionArgs": [{
                         "rendererName": "timeline",
-                        "renderConfigs": [
-                            {
-                                "for": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
                                 "timeProperty": "date-created"
                             }
-                        ],
+                        },
                         "queryOptions": {
                             "text": "type:logitem appliesTo:{.id}",
                             "sortProperty": "date-created",
@@ -180,9 +175,8 @@
     
     "user": {
         "{type:note}": {
-            "renderConfigs": [
-                {
-                    "for": "list",
+            "renderConfigs": {
+                "list": {
                     "slideRightActions": [
                         {
                             "icon": "schedule.ico",
@@ -192,7 +186,7 @@
                         }
                     ]
                 }
-            ]
+            }
         }
     }
 }

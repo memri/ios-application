@@ -23,7 +23,6 @@ public class SessionView: Object, ObservableObject, Codable {
     let isEditMode = RealmOptional<Bool>()
     
     let cascadeOrder = List<String>()
-    let renderConfigs = List<RenderConfig>()
     let selection = List<DataItem>()
     let editButtons = List<ActionDescription>()
     let filterButtons = List<ActionDescription>()
@@ -31,6 +30,7 @@ public class SessionView: Object, ObservableObject, Codable {
     let navigateItems = List<ActionDescription>()
     let contextButtons = List<ActionDescription>()
     
+    @objc dynamic var renderConfigs: RenderConfigs? = nil
     @objc dynamic var actionButton: ActionDescription? = nil
     @objc dynamic var editActionButton: ActionDescription? = nil
     
@@ -49,33 +49,33 @@ public class SessionView: Object, ObservableObject, Codable {
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
-//        jsonErrorHandling(decoder) {
-        self.queryOptions = try decoder.decodeIfPresent("queryOptions") ?? self.queryOptions
-        self.name = try decoder.decodeIfPresent("name") ?? self.name
-        self.title = try decoder.decodeIfPresent("title") ?? self.title
-        self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
-        self.subtitle = try decoder.decodeIfPresent("subtitle") ?? self.subtitle
-        self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
-        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-        self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
-        
-        self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
-        self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
-        self.filterMode.value = try decoder.decodeIfPresent("filterMode") ?? self.filterMode.value
-        self.isEditMode.value = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode.value
-        
-        decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
-        decodeIntoList(decoder, "renderConfigs", self.renderConfigs)
-        decodeIntoList(decoder, "selection", self.selection)
-        decodeIntoList(decoder, "editButtons", self.editButtons)
-        decodeIntoList(decoder, "filterButtons", self.filterButtons)
-        decodeIntoList(decoder, "actionItems", self.actionItems)
-        decodeIntoList(decoder, "navigateItems", self.navigateItems)
-        decodeIntoList(decoder, "contextButtons", self.contextButtons)
-        
-        self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
-        self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
-//        }
+        jsonErrorHandling(decoder) {
+            self.queryOptions = try decoder.decodeIfPresent("queryOptions") ?? self.queryOptions
+            self.name = try decoder.decodeIfPresent("name") ?? self.name
+            self.title = try decoder.decodeIfPresent("title") ?? self.title
+            self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
+            self.subtitle = try decoder.decodeIfPresent("subtitle") ?? self.subtitle
+            self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
+            self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
+            self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
+            
+            self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
+            self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
+            self.filterMode.value = try decoder.decodeIfPresent("filterMode") ?? self.filterMode.value
+            self.isEditMode.value = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode.value
+            
+            decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "selection", self.selection)
+            decodeIntoList(decoder, "editButtons", self.editButtons)
+            decodeIntoList(decoder, "filterButtons", self.filterButtons)
+            decodeIntoList(decoder, "actionItems", self.actionItems)
+            decodeIntoList(decoder, "navigateItems", self.navigateItems)
+            decodeIntoList(decoder, "contextButtons", self.contextButtons)
+            
+            self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
+            self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
+            self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
+        }
     }
     
 //    deinit {
@@ -115,7 +115,6 @@ public class ComputedView: ObservableObject {
     var isEditMode: Bool = false
 
     var cascadeOrder: [String] = []
-    var renderConfigs: [RenderConfig] = []
     var selection: [DataItem] = []
     var editButtons: [ActionDescription] = []
     var filterButtons: [ActionDescription] = []
@@ -123,6 +122,7 @@ public class ComputedView: ObservableObject {
     var navigateItems: [ActionDescription] = []
     var contextButtons: [ActionDescription] = []
 
+    var renderConfigs: RenderConfigs = RenderConfigs()
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
     
@@ -152,7 +152,6 @@ public class ComputedView: ObservableObject {
         self.isEditMode = view.isEditMode.value ?? self.isEditMode
         
         self.cascadeOrder.append(contentsOf: view.cascadeOrder)
-        self.renderConfigs.append(contentsOf: view.renderConfigs)
         self.selection.append(contentsOf: view.selection)
         self.editButtons.append(contentsOf: view.editButtons)
         self.filterButtons.append(contentsOf: view.filterButtons)
@@ -160,6 +159,7 @@ public class ComputedView: ObservableObject {
         self.navigateItems.append(contentsOf: view.navigateItems)
         self.contextButtons.append(contentsOf: view.contextButtons)
         
+        self.renderConfigs = view.renderConfigs ?? self.renderConfigs
         self.actionButton = view.actionButton ?? self.actionButton
         self.editActionButton = view.editActionButton ?? self.editActionButton
     }
@@ -174,6 +174,9 @@ public class ComputedView: ObservableObject {
      */
     public func validate() throws {
         if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
+        if self.renderConfigs[self.rendererName] == nil {
+            throw("Missing renderConfig for \(self.rendererName) in this view")
+        }
         if self.queryOptions.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
             throw("Missing action button in this view")
