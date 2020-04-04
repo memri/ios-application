@@ -1,44 +1,75 @@
 import Foundation
-import UIKit
 import Combine
+import RealmSwift
 
-public struct QueryOptions: Codable {
+public class QueryOptions: Object, Codable {
     /**
      * Retrieves the query which is used to load data from the pod
      */
-    var query: String? = nil
+    @objc dynamic var query: String? = nil
     
     /**
      * Retrieves the property that is used to sort on
      */
-    public var sortProperty: String? = nil
+    @objc dynamic var sortProperty: String? = nil
     /**
      * Retrieves whether the sort direction
      *   -1 no sorting is applied
      *    0 sort descending
      *    1 sort ascending
      */
-    public var sortAscending: Int? = nil
+    let sortAscending = RealmOptional<Int>()
     /**
      * Retrieves the number of items per page
      */
-    public var pageCount: Int? = nil
+    let pageCount = RealmOptional<Int>() // Todo move to ResultSet
     /**
      *
      */
-    public var pageIndex: Int? = nil
+    let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
+    /**
+     * Returns a string representation of the data in QueryOptions that is unique for that data
+     * Each QueryOptions object with the same data will return the same uniqueString
+     */
+    var uniqueString:String {
+        var result:[String] = []
+        
+        result.append((self.query ?? "").sha256())
+        result.append(self.sortProperty ?? "")
+        
+        let sortAsc = self.sortAscending.value ?? -1
+        result.append(String(sortAsc))
+            
+        return result.joined(separator: ":")
+    }
     
     init(query:String) {
+        super.init()
+        
         self.query = query
     }
     
-    public init(from decoder: Decoder) throws {
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
         jsonErrorHandling(decoder) {
             query = try decoder.decodeIfPresent("query") ?? query
             sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
-            sortAscending = try decoder.decodeIfPresent("sortAscending") ?? sortAscending
-            pageCount = try decoder.decodeIfPresent("pageCount") ?? pageCount   
+            sortAscending.value = try decoder.decodeIfPresent("sortAscending") ?? sortAscending.value
+            pageCount.value = try decoder.decodeIfPresent("pageCount") ?? pageCount.value
         }
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    public func merge(_ queryOptions:QueryOptions) {
+        self.query = queryOptions.query ?? self.query ?? nil
+        self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? ""
+        self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? -1
+        self.pageCount.value = queryOptions.pageCount.value ?? self.pageCount.value ?? 0
+        self.pageIndex.value = queryOptions.pageIndex.value ?? self.pageIndex.value ?? 0
     }
 }
 
@@ -117,6 +148,7 @@ public class PodAPI {
      *
      */
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
+        
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
         //            // get result
@@ -133,7 +165,7 @@ public class PodAPI {
             callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
-        if query.query == "notes" {
+        if query.query == "note" {
             callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
             return
         }

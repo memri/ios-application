@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import RealmSwift
+import CryptoKit
 
 //func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{
 //    for var (prop, name) in tuples.map({(AnyCodable($0), $1)}){
@@ -14,7 +16,30 @@ import Foundation
 //    }
 //}
 
-extension String: Error {}
+extension String: Error {
+    func sha256() -> String {
+        // Convert the string to data
+        let data = self.data(using: .utf8)!
+
+        // Hash the data
+        let digest = SHA256.hash(data: data)
+
+        // Return the hash string 
+        return digest.compactMap { String(format: "%02x", $0) }.joined()
+    }
+}
+
+func unserialize<T:Decodable>(_ s:String) -> T {
+    let data = s.data(using: .utf8)!
+    let output:T = try! JSONDecoder().decode(T.self, from: data)
+    return output
+}
+
+func serialize(_ a:AnyCodable) -> String {
+    let data = try! JSONEncoder().encode(a)
+    let string = String(data: data, encoding: .utf8)!
+    return string
+}
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     print("Reading from file \(file).\(ext)")
@@ -56,15 +81,32 @@ func getCodingPathString(_ codingPath:[CodingKey]) -> String {
     return path
 }
 
+//extension Error {
+//    var debugDescription: String {
+//        return "\(String(describing: type(of: self))).\(String(describing: self)) (code \((self as NSError).code))"
+//    }
+//}
+
 func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     let path = getCodingPathString(decoder.codingPath)
     print("Decoding: \(path)")
     
     do {
         try convert()
-    } catch {
-//        dump(decoder)
-        print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
+    }
+    catch DecodingError.dataCorrupted(let context) {
+        let path = getCodingPathString(context.codingPath)
+        print("\nJSON Parse Error at \(path)\nError: \(context.debugDescription)\n")
+        raise(SIGINT)
+    }
+    catch Swift.DecodingError.keyNotFound(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        print("\nJSON Parse Error at \(path)\nError: \(context.debugDescription)\n")
+        raise(SIGINT)
+    }
+    catch {
+        dump(error)
+        print("\nJSON Parse Error at \(path)\nError: \(error)\n")
         raise(SIGINT)
     }
 }
@@ -77,9 +119,19 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
     do {
         let data = try encode(encoder)
         json = String(data: data, encoding: .utf8) ?? ""
-    } catch {
+    }
+    catch {
         print("\nUnexpected error: \(error.localizedDescription)\n")
     }
     
     return json
+}
+
+func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:List<T>) {
+    let parsed:[T]? = try! decoder.decodeIfPresent(key)
+    if let parsed = parsed {
+        for item in parsed {
+            list.append(item)
+        }
+    }
 }

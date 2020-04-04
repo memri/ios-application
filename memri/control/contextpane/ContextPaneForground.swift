@@ -32,7 +32,7 @@ struct ContextPaneForground: View {
                     Spacer()
                 }.padding(.vertical, 20)
                 VStack(alignment: .leading, spacing: 20){
-                    ForEach (self.main.computedView.actionItems ?? []) { actionItem in
+                    ForEach (self.main.computedView.actionItems) { actionItem in
                         Button(action:{
                             self.main.executeAction(actionItem)
                         }) {
@@ -51,7 +51,7 @@ struct ContextPaneForground: View {
 //                List {
                 VStack(alignment: .leading, spacing: 20){
 
-                    ForEach (self.main.computedView.navigateItems ?? []) { navigateItem in
+                    ForEach (self.main.computedView.navigateItems) { navigateItem in
                         Button(action:{
                             self.main.executeAction(navigateItem)
                         }) {

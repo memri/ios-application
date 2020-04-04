@@ -1,141 +1,271 @@
 import Foundation
 import Combine
-import SwiftUI
+import RealmSwift
 
-
-public class SessionView: ObservableObject, Decodable {
-    @Published public var searchResult: SearchResult = SearchResult()
-    @Published public var title: String? = nil
-    @Published var rendererName: String? = nil
+public class SessionView: Object, ObservableObject, Codable {
     
-    var name: String? = nil
-    var subtitle: String? = nil
-    var selection: [String]? = nil
-    var renderConfigs: [String: RenderConfig]? = nil
-    var editButtons: [ActionDescription]? = nil
-    @Published var filterButtons: [ActionDescription]? = nil
-    var actionItems: [ActionDescription]? = nil
-    var navigateItems: [ActionDescription]? = nil
-    var contextButtons: [ActionDescription]? = nil
-    var actionButton: ActionDescription? = nil
-    var backTitle: String?=nil
-    var editActionButton: ActionDescription?=nil
-    var icon: String? = nil
-    var showLabels: Bool? = nil
-    var contextMode: Bool? = nil
-    var filterMode: Bool? = nil
-    var browsingMode: String? = nil
-    @Published var isEditMode: Bool? = nil
-    var cascadeOrder:[String]? = nil
+    /**
+     *
+     */
+    @objc dynamic var queryOptions: QueryOptions? = QueryOptions()
+    
+    @objc dynamic var name: String? = nil
+    @objc dynamic var title: String? = nil
+    @objc dynamic var rendererName: String? = nil
+    @objc dynamic var subtitle: String? = nil
+    @objc dynamic var backTitle: String? = nil
+    @objc dynamic var icon: String? = nil
+    @objc dynamic var browsingMode: String? = nil
+    @objc dynamic var filterText: String? = nil
+    
+    let showLabels = RealmOptional<Bool>()
+    let contextMode = RealmOptional<Bool>()
+    let filterMode = RealmOptional<Bool>()
+    let isEditMode = RealmOptional<Bool>()
+    
+    let cascadeOrder = List<String>()
+    let selection = List<DataItem>()
+    let editButtons = List<ActionDescription>()
+    let filterButtons = List<ActionDescription>()
+    let actionItems = List<ActionDescription>()
+    let navigateItems = List<ActionDescription>()
+    let contextButtons = List<ActionDescription>()
+    
+    @objc dynamic var renderConfigs: RenderConfigs? = nil
+    @objc dynamic var actionButton: ActionDescription? = nil
+    @objc dynamic var editActionButton: ActionDescription? = nil
+    
+    /**
+     *
+     */
+    @objc dynamic var syncState:SyncState? = SyncState()
+    
+    private enum CodingKeys: String, CodingKey {
+        case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
+            editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
+            backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
+            browsingMode, cascadeOrder
+    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
-//        jsonErrorHandling(decoder) {
-            self.searchResult = try decoder.decodeIfPresent("searchResult") ?? self.searchResult
+        jsonErrorHandling(decoder) {
+            self.queryOptions = try decoder.decodeIfPresent("queryOptions") ?? self.queryOptions
+            self.name = try decoder.decodeIfPresent("name") ?? self.name
             self.title = try decoder.decodeIfPresent("title") ?? self.title
             self.rendererName = try decoder.decodeIfPresent("rendererName") ?? self.rendererName
-            self.name = try decoder.decodeIfPresent("name") ?? self.name
             self.subtitle = try decoder.decodeIfPresent("subtitle") ?? self.subtitle
-            self.selection = try decoder.decodeIfPresent("selection") ?? self.selection
-            self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
-            self.editButtons = try decoder.decodeIfPresent("editButtons") ?? self.editButtons
-            self.filterButtons = try decoder.decodeIfPresent("filterButtons") ?? self.filterButtons
-
-            self.actionItems = try decoder.decodeIfPresent("actionItems") ?? self.actionItems
-            self.navigateItems = try decoder.decodeIfPresent("navigateItems") ?? self.navigateItems
-            self.contextButtons = try decoder.decodeIfPresent("contextButtons") ?? self.contextButtons
-            self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
             self.backTitle = try decoder.decodeIfPresent("backTitle") ?? self.backTitle
-            self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
             self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-            self.showLabels = try decoder.decodeIfPresent("showLabels") ?? self.showLabels
-            self.contextMode = try decoder.decodeIfPresent("contextMode") ?? self.contextMode
-            self.filterMode = try decoder.decodeIfPresent("filterMode") ?? self.filterMode
-            self.isEditMode = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
-            self.cascadeOrder = try decoder.decodeIfPresent("cascadeOrder") ?? self.cascadeOrder
-//        }
-    }
-    
-    public func merge(_ view:SessionView) {
-        let query = view.searchResult.query
-        let sr = self.searchResult
-        
-        // TODO this function is called way too often
-        
-        sr.query.query = query.query ?? sr.query.query ?? nil
-        sr.query.sortProperty = query.sortProperty ?? sr.query.sortProperty ?? ""
-        sr.query.sortAscending = query.sortAscending ?? sr.query.sortAscending ?? -1
-        sr.query.pageCount = query.pageCount ?? sr.query.pageCount ?? 0
-        sr.query.pageIndex = query.pageIndex ?? sr.query.pageIndex ?? 0
-        
-        self.title = view.title ?? self.title ?? ""
-        self.rendererName = view.rendererName ?? self.rendererName ?? ""
-        self.name = view.name ?? self.name ?? ""
-        self.subtitle = view.subtitle ?? self.subtitle ?? ""
-        self.selection = view.selection ?? self.selection ?? []
-        self.icon = view.icon ?? self.icon ?? ""
-        self.showLabels = view.showLabels ?? self.showLabels ?? true
-        self.contextMode = view.contextMode ?? self.contextMode ?? false
-        self.filterMode = view.filterMode ?? self.filterMode ?? false
-        self.isEditMode = view.isEditMode ?? self.isEditMode ?? false
-        self.browsingMode = view.browsingMode ?? self.browsingMode ?? "default"
-        self.actionButton = view.actionButton ?? self.actionButton ?? nil
-        self.backTitle = view.backTitle ?? self.backTitle ?? ""
-        self.editActionButton = view.editActionButton ?? self.editActionButton ?? nil
-        self.cascadeOrder = view.cascadeOrder ?? self.cascadeOrder ?? ["renderer", "datatype"]
-        
-        self.renderConfigs = view.renderConfigs ?? self.renderConfigs ?? [:] // TODO merge this properly
-        
-        self.editButtons = (self.editButtons ?? []) + (view.editButtons ?? []) // TODO filter out any duplicates
-        self.filterButtons = (self.filterButtons ?? []) + (view.filterButtons ?? []) // TODO filter out any duplicates
-        self.actionItems = (self.actionItems ?? []) + (view.actionItems ?? []) // TODO filter out any duplicates
-        self.navigateItems = (self.navigateItems ?? []) + (view.navigateItems ?? []) // TODO filter out any duplicates
-        self.contextButtons = (self.contextButtons ?? []) + (view.contextButtons ?? []) // TODO filter out any duplicates
-    }
-    
-    /**
-     * Validates a merged view
-     */
-    public func validate() throws {
-        if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
-        if self.searchResult.query.query == "" { throw("No query is defined for this view") }
-        if self.actionButton == nil && self.editActionButton == nil {
-            throw("Missing action button in this view")
+            self.filterText = try decoder.decodeIfPresent("filterText") ?? self.filterText
+            
+            self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
+            self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
+            self.filterMode.value = try decoder.decodeIfPresent("filterMode") ?? self.filterMode.value
+            self.isEditMode.value = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode.value
+            
+            decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "selection", self.selection)
+            decodeIntoList(decoder, "editButtons", self.editButtons)
+            decodeIntoList(decoder, "filterButtons", self.filterButtons)
+            decodeIntoList(decoder, "actionItems", self.actionItems)
+            decodeIntoList(decoder, "navigateItems", self.navigateItems)
+            decodeIntoList(decoder, "contextButtons", self.contextButtons)
+            
+            self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
+            self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
+            self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
         }
     }
-
     
-    public static func fromSearchResult(searchResult: SearchResult, rendererName: String = "list", currentView: SessionView) -> SessionView{
-        let sv = SessionView()
-        sv.searchResult = searchResult
-        sv.rendererName = rendererName
-//        sv.backButton = ActionDescription(icon: "chevron.left",
-//                                          title: "Back",
-//                                          actionName: "back",
-//                                          actionArgs: [])
-        sv.title = searchResult.data[0].getString("title")
-        sv.backTitle = currentView.title
-        return sv
-    }
+//    deinit {
+//        if let realm = self.realm {
+//            try! realm.write {
+//                realm.delete(self)
+//            }
+//        }
+//    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
         let jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
     }
+}
+
+public class ComputedView: ObservableObject {
+
+    /**
+     *
+     */
+    var queryOptions: QueryOptions = QueryOptions()
+    var resultSet: ResultSet
+
+    var name: String = ""
+    var rendererName: String = ""
+    var backTitle: String = ""
+    var icon: String = ""
+    var browsingMode: String = ""
+
+    var showLabels: Bool = true
+    var contextMode: Bool = false
+    var filterMode: Bool = false
+    var isEditMode: Bool = false
+
+    var cascadeOrder: [String] = []
+    var selection: [DataItem] = []
+    var editButtons: [ActionDescription] = []
+    var filterButtons: [ActionDescription] = []
+    var actionItems: [ActionDescription] = []
+    var navigateItems: [ActionDescription] = []
+    var contextButtons: [ActionDescription] = []
+
+    var sessionView: SessionView? = nil
+    var renderConfigs: RenderConfigs = RenderConfigs()
+    var actionButton: ActionDescription? = nil
+    var editActionButton: ActionDescription? = nil
     
-//    public func toggleEditMode(){
-//        switch self.isEditMode{
-//            case .active:
-//                self.isEditMode = .inactive
-//            case .inactive:
-//                self.isEditMode = .active
-////                self.$isEditMode.wrappedValue = .active
-//            default:
-//                break
-//        }
-//
-//    }
+    private var _title: String = ""
+    private var _titleTemp: String? = nil
+    var title: String {
+        get {
+            return _titleTemp ?? _title
+        }
+        set (newSubtitle) {
+            if newSubtitle == "" { _titleTemp = nil }
+            else { _titleTemp = newSubtitle }
+        }
+    }
+    
+    private var _subtitle: String = ""
+    private var _subtitleTemp: String? = nil
+    var subtitle: String {
+        get {
+            return _subtitleTemp ?? _subtitle
+        }
+        set (newSubtitle) {
+            if newSubtitle == "" { _subtitleTemp = nil }
+            else { _subtitleTemp = newSubtitle }
+        }
+    }
+    
+    private var _filterText: String = ""
+    var filterText: String {
+        get {
+            return _filterText
+        }
+        set (newFilter) {
+            
+            // Store the new value
+            _filterText = newFilter
+            
+            // If this is a multi item result set
+            if self.resultSet.isList {
+                
+                // TODO we should probably ask the renderer if this is preferred
+                // Some renderers such as the charts would probably rather highlight the
+                // found results instead of filtering the other data points out
+                
+                // Filter the result set
+                self.resultSet.filterText = _filterText
+            }
+            else {
+                print("Warn: Filtering for single items not Implemented Yet!")
+            }
+            
+            if _filterText == "" {
+                title = ""
+                subtitle = ""
+            }
+            else {
+                // Set the title to an appropriate message
+                if resultSet.count == 0 { title = "No results" }
+                else if resultSet.count == 1 { title = "1 item found" }
+                else { title = "\(resultSet.count) items found" }
+                
+                // Temporarily hide the subtitle
+                // subtitle = " " // TODO how to clear the subtitle ??
+            }
+            
+            // Save the state on the session view
+            try! cache.realm.write { sessionView!.filterText = filterText }
+        }
+    }
+    
+    private let cache:Cache
+    
+    init(_ ch:Cache){
+        cache = ch
+        resultSet = ResultSet(cache)
+    }
+    
+    public func merge(_ view:SessionView) {
+        // TODO this function is called way too often
+        
+        self.queryOptions.merge(view.queryOptions!)
+        
+        self.name = view.name ?? self.name
+        self.rendererName = view.rendererName ?? self.rendererName
+        self.backTitle = view.backTitle ?? self.backTitle
+        self.icon = view.icon ?? self.icon
+        self.browsingMode = view.browsingMode ?? self.browsingMode
+        
+        _title = view.title ?? _title
+        _subtitle = view.subtitle ?? _subtitle
+        _filterText = view.filterText ?? _filterText
+        
+        self.showLabels = view.showLabels.value ?? self.showLabels
+        self.contextMode = view.contextMode.value ?? self.contextMode
+        self.filterMode = view.filterMode.value ?? self.filterMode
+        self.isEditMode = view.isEditMode.value ?? self.isEditMode
+        
+        self.cascadeOrder.append(contentsOf: view.cascadeOrder)
+        self.selection.append(contentsOf: view.selection)
+        self.editButtons.append(contentsOf: view.editButtons)
+        self.filterButtons.append(contentsOf: view.filterButtons)
+        self.actionItems.append(contentsOf: view.actionItems)
+        self.navigateItems.append(contentsOf: view.navigateItems)
+        self.contextButtons.append(contentsOf: view.contextButtons)
+        
+        if let renderConfigs = view.renderConfigs {
+            self.renderConfigs.merge(renderConfigs)
+        }
+        
+        self.actionButton = view.actionButton ?? self.actionButton
+        self.editActionButton = view.editActionButton ?? self.editActionButton
+    }
+    
+    public func finalMerge(_ view:SessionView) {
+        // Merge view into self
+        merge(view)
+        
+        // Store session view on self
+        sessionView = view
+        
+        // Update search result to match the query
+        self.resultSet = cache.getResultSet(self.queryOptions)
+        
+        // Filter the results
+        filterText = _filterText
+    }
+
+    /**
+     * Validates a merged view
+     */
+    public func validate() throws {
+        if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
+        
+        let renderProps = self.renderConfigs.objectSchema.properties
+        if renderProps.filter({ (property) in property.name == self.rendererName }).count == 0 {
+//            throw("Missing renderConfig for \(self.rendererName) in this view")
+            print("Warn: Missing renderConfig for \(self.rendererName) in this view")
+        }
+        
+        if self.queryOptions.query == "" { throw("No query is defined for this view") }
+        if self.actionButton == nil && self.editActionButton == nil {
+            throw("Missing action button in this view")
+        }
+    }
 }

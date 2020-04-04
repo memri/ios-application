@@ -2,25 +2,6 @@ import Foundation
 import Combine
 import RealmSwift
 
-enum ActionNeeded:String, Codable {
-    case create
-//    case read
-    case delete
-    case update
-    case noop
-}
-
-class DataItemState:Object,Codable {
-    // Whether the data item is loaded partially and requires a full load
-    var isPartiallyLoaded:Bool? = nil
-    
-    // What action is needed on this data item to sync with the pod
-    var actionNeeded:ActionNeeded = .noop
-    
-    // Which fields to update
-    var updatedFields:[String] = []
-}
-
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public var id:String = UUID().uuidString
     var type:String { "unknown" }
@@ -30,7 +11,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var starred:Bool = false
     
     let changelog = List<LogItem>()
-    @objc dynamic var loadState:DataItemState? = DataItemState()
+    @objc dynamic var syncState:SyncState? = SyncState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
@@ -40,14 +21,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "uid"
     }
     
-    public func initFomJSON(from decoder: Decoder) throws {
-        jsonErrorHandling(decoder) {
-            uid = try decoder.decodeIfPresent("uid") ?? uid
-            starred = try decoder.decodeIfPresent("starred") ?? starred
-            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-            loadState = try decoder.decodeIfPresent("loadState") ?? loadState
-            //TODO log
-        }
+    /**
+     * @private
+     */
+    public func superDecode(from decoder: Decoder) throws {
+        uid = try decoder.decodeIfPresent("uid") ?? uid
+        starred = try decoder.decodeIfPresent("starred") ?? starred
+        deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+        syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+        
+        decodeIntoList(decoder, "changelog", self.changelog)
     }
     
     /**
@@ -67,21 +50,6 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
     
     /**
-     * Sets deleted to true
-     * All methods and properties must throw when deleted = true;
-     */
-    public func delete() -> Bool {
-        if (self.deleted) { return false; }
-        
-        try! self.realm!.write() {
-            self.deleted = true;
-            self.realm!.delete(self)
-        }
-        
-        return true;
-    }
-    
-    /**
      *
      */
     public func match(_ needle:String) -> Bool{
@@ -97,8 +65,113 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
+    private func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
+        for prop in self.objectSchema.properties { // Seems inefficient
+            if prop.name == fieldName {
+                // Optional
+//                if prop.isOptional {
+//                    return self[fieldName] == item[fieldName]
+//                }
+                // List
+//                else
+                if prop.objectClassName != nil {
+                    return false // TODO implement a list compare and a way to add to updatedFields
+                }
+                else {
+                    if prop.isOptional {
+                        1+1
+                    }
+                    
+                    let item1 = self[fieldName];
+                    let item2 = item[fieldName]
+                    
+                    if let item1 = item1 as? String {
+                        return item1 == item2 as! String
+                    }
+                    if let item1 = item1 as? Int {
+                        return item1 == item2 as! Int
+                    }
+                    if let item1 = item1 as? Double {
+                        return item1 == item2 as! Double
+                    }
+                    if let item1 = item1 as? Object {
+                        return item1 == item2 as! Object
+                    }
+                }
+                break
+            }
+        }
+        
+        return true
+    }
+    
+    public func safeMerge(_ item:DataItem) -> Bool {
+        
+        // Ignore when marked for deletion
+        if self.syncState!.actionNeeded == "delete" { return true }
+        
+        // Do not update when the version is not higher then what we already have
+        if item.syncState!.version <= self.syncState!.version { return true }
+        
+        // Make sure to not overwrite properties that have been changed
+        let updatedFields = self.syncState!.updatedFields
+        
+        // Compare all properties and make sure they are the same
+        for fieldName in updatedFields {
+            if !isEqualProperty(fieldName, item) { return false }
+        }
+        
+        // Merge with item
+        merge(item)
+        
+        return true
+    }
+    
+    public func merge(_ item:DataItem, _ mergeDefaults:Bool=false) {
+        // Store these changes in realm
+        if let realm = self.realm {
+            try! realm.write { doMerge(item, mergeDefaults) }
+        }
+        else {
+            doMerge(item, mergeDefaults)
+        }
+    }
+    
+    private func doMerge(_ item:DataItem, _ mergeDefaults:Bool=false) {
+        let properties = self.objectSchema.properties
+        for prop in properties {
+            
+            // Exclude SyncState
+            if prop.name == "SyncState" {
+                continue
+            }
+            
+            // Perhaps not needed:
+            // - TODO needs to detect lists which will always be set
+            // - TODO needs to detect optionals which will always be set
+            
+            // Merge only the ones that self doesnt already have
+            if mergeDefaults {
+                if self[prop.name] != nil {
+                    self[prop.name] = item[prop.name]
+                }
+            }
+            // Merge all that item doesnt already have
+            else {
+                if item[prop.name] != nil {
+                    self[prop.name] = item[prop.name]
+                }
+            }
+        }
+    }
+    
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
+    }
+    
+    public class func generateUID() -> String {
+        let counter = UUID().uuidString
+        return "0xNEW\(counter)"
     }
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
@@ -121,66 +194,191 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
 }
 
-public class SearchResult: ObservableObject, Codable {
+public class ResultSet: ObservableObject {
     /**
      *
      */
-    public var query: QueryOptions = QueryOptions(query: "")
+    var queryOptions: QueryOptions = QueryOptions(query: "")
     /**
      * Retrieves the data loaded from the pod
      */
-    @Published public var data:[DataItem] = []
+    var items: [DataItem] = []
     /**
      *
      */
-    public var pages: [Int:Bool] = [:]
+    var count: Int = 0
     /**
-     * Returns the loading state
-     *  -2 loading data failed
-     *  -1 data is loaded from the server
-     *  0 loading idle
-     *  1 loading data from server
+     *
      */
-    public var loading: Int = 0
-    
-    public convenience required init(_ query: QueryOptions? = nil, _ data:[DataItem]?) {
-        self.init()
-        
-        self.query = query ?? self.query
-        self.data = data ?? []
-        
-        if (data != nil) {
-            loading = -1
-            pages[query?.pageIndex ?? 0] = true
+    var determinedType: String? {
+        if (self.queryOptions.query != nil) {
+            return "note" // TODO implement (more) proper query language
+        }
+        else {
+            return nil
+        }
+    }
+    /**
+     *
+     */
+    var isList: Bool {
+        // TODO change this to be a proper query parser
+        return !(self.queryOptions.query ?? "").starts(with: "0x")
+    }
+    /**
+     *
+     */
+    var item: DataItem? {
+        if !isList && count > 0 { return items[0] }
+        else { return nil }
+    }
+    /**
+     *
+     */
+    var filterText: String {
+        get {
+            return _filterText
+        }
+        set (newFilter) {
+            _filterText = newFilter
+            filter()
         }
     }
     
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
+    private var loading: Bool = false
+    private var pages: [Int] = []
+    private let cache: Cache
+    private var _filterText: String = ""
+    private var _unfilteredItems: [DataItem]? = nil
+    
+    required init(_ ch:Cache) {
+        cache = ch
+    }
+    
+    func load(_ callback:(_ error:Error?) -> Void) throws {
         
-        jsonErrorHandling(decoder) {
-            data = try decoder.decodeIfPresent("data") ?? data
-            query = try decoder.decodeIfPresent("query") ?? query
-            loading = try decoder.decodeIfPresent("loading") ?? loading
-            pages = try decoder.decodeIfPresent("pages") ?? pages
+        // Only execute one loading process at the time
+        if !loading {
+        
+            // Validate queryOptions
+            if queryOptions.query == "" {
+                throw "Exception: No query specified when loading result set"
+            }
+            
+            // Set state to loading
+            loading = true
+        
+            // Execute the query
+            cache.query(queryOptions) { (error, result) -> Void in
+                if let result = result {
+                    
+                    // Set data and count
+                    items = result
+                    count = items.count
+                    
+                    // Resapply filter
+                    if _unfilteredItems != nil {
+                        _unfilteredItems = nil
+                        filter()
+                    }
 
-            // If the searchResult is initiatlized with data we set the state to loading done
-            if (!(data.isEmpty && loading == 0)) {
-                loading = -1
+                    // We've successfully loaded page 0
+                    setPagesLoaded(0) // TODO This is not used at the moment
+
+                    // First time loading is done
+                    loading = false
+
+                    // Done
+                    callback(nil)
+                }
+                else if (error != nil) {
+                    // Set loading state to error
+                    loading = false
+
+                    // Done with errors
+                    callback(error)
+                }
             }
         }
     }
     
+    func forceItemsUpdate(_ result:[DataItem]) {
+        
+        // Set data and count
+        items = result
+        count = items.count
+
+        // Resapply filter
+        if _unfilteredItems != nil {
+            _unfilteredItems = nil
+            filter()
+        }
+        
+        self.objectWillChange.send() // TODO create our own publishers
+    }
+
+    /**
+     * Client side filter //, with a fallback to the server
+     */
+    public func filter() {
+        // Cancel filtering
+        if _filterText == "" {
+            
+            // If we filtered before...
+            if let _unfilteredItems = _unfilteredItems{
+                
+                // Put back the items of this resultset
+                items = _unfilteredItems
+                count = _unfilteredItems.count
+            }
+        }
+            
+        // Filter using _filterText
+        else {
+            // Array to store filter results
+            var filterResult:[DataItem] = []
+            
+            // Filter through items
+            let searchSet = _unfilteredItems ?? items
+            if searchSet.count >  0 {
+                for i in 0...searchSet.count - 1 {
+                    if searchSet[i].match(_filterText) {
+                        filterResult.append(searchSet[i])
+                    }
+                }
+            }
+            
+            // Store the items of this resultset
+            if _unfilteredItems == nil { _unfilteredItems = items }
+            
+            // Set the filtered result
+            items = filterResult
+            count = filterResult.count
+        }
+        
+        self.objectWillChange.send() // TODO create our own publishers
+    }
+        
+    /**
+     * Executes the query again
+     */
+    public func reload(_ searchResult:ResultSet) -> Void {
+        // Reload all pages
+//        for (page, _) in searchResult.pages {
+//            let _ = self.loadPage(searchResult, page, { (error) in })
+//        }
+    }
+    
     /**
      *
      */
-    public static func fromDataItems(_ data: [DataItem]) -> SearchResult {
-        let obj = SearchResult()
-        obj.data = data
-        return obj
+    public func resort(_ options:QueryOptions) {
+        
     }
     
-    private enum CodingKeys: String, CodingKey {
-        case query, pages, data
+    func setPagesLoaded(_ pageIndex:Int) {
+        if !pages.contains(pageIndex) {
+            pages.append(pageIndex)
+        }
     }
 }

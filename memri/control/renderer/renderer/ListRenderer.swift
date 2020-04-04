@@ -13,23 +13,26 @@ import SwiftUI
 
 struct ListRenderer: Renderer {
     @EnvironmentObject var main: Main
-    let name="list"
-    var renderConfig: ListConfig {
-        return self.main.getRenderConfig(name: self.name) as! ListConfig
-    }
     
-//    @Binding var isEditMode: EditMode
+    let name = "list"
+    var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
 
     func generatePreview(_ item:DataItem) -> String {
-        let content = item.getString("content")
+        let content = String(item.getString("content")
+            .replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
+            .prefix(100))
         return content
+    }
+    
+    var renderConfig: ListConfig {
+        return self.main.computedView.renderConfigs.list!
     }
     
     var body: some View {
         return VStack {
             NavigationView {
                 List{
-                    ForEach(main.computedView.searchResult.data) { dataItem in
+                    ForEach(main.computedView.resultSet.items) { dataItem in
                         VStack{
                             Text(dataItem.getString("title"))
                                 .bold()
@@ -37,16 +40,25 @@ struct ListRenderer: Renderer {
                             Text(self.generatePreview(dataItem))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
-                            self.onTap(actionDescription: (self.renderConfig).press!,
-                                       dataItem: dataItem)
+                            if let press = self.renderConfig.press {
+                                self.main.executeAction(press, dataItem)
+                            }
                         }
                     }.onDelete{ indexSet in
+                        
+                        // TODO this should happen automatically in ResultSet
+                        self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
+                        
+                        // I'm sure there is a better way of doing this...
+                        var items:[DataItem] = []
                         for i in indexSet {
-                            let item = self.main.computedView.searchResult.data[i]
-                            let _ = item.delete()
+                            let item = self.main.computedView.resultSet.items[i]
+                            items.append(item)
                         }
-                        self.main.computedView.searchResult.data.remove(atOffsets: indexSet)
-                        self.main.objectWillChange.send()
+                        
+                        // Execute Action
+                        self.main.executeAction(self.deleteAction, nil, items)
+
                     }
                 }
                 .environment(\.editMode, $main.sessions.isEditMode)
@@ -55,11 +67,6 @@ struct ListRenderer: Renderer {
             }
         }
     }
-    
-    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        main.executeAction(actionDescription, dataItem)
-    }
-    
 }
 
 struct ListRenderer_Previews: PreviewProvider {

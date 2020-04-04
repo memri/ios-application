@@ -7,101 +7,233 @@
 //
 
 import Foundation
+import RealmSwift
 
-public class RenderConfig: Decodable {
-    var name: String = ""
-    var icon: String = ""
-    var category: String = ""
-    var items: [ActionDescription] = []
-    var options1: [ActionDescription] = []
-    var options2: [ActionDescription] = []
+/*
+    TODO:
+    - fix search
+    - fix starring
+    - including back and restart behavior
+    - Clean up of sessionview, queryoptions, session, renderConfig, etc
+*/
+
+public class RenderConfigs: Object, Codable {
+    /**
+     *
+     */
+    @objc dynamic var list: ListConfig? = nil
+    /**
+     *
+     */
+    @objc dynamic var thumbnail: ThumbnailConfig? = nil
+    
+    /**
+     *
+     */
+    public func merge(_ renderConfigs:RenderConfigs) {
+        if let config = renderConfigs.list {
+            if self.list == nil { self.list = ListConfig() }
+            self.list!.merge(config)
+        }
+        if let config = renderConfigs.thumbnail {
+            if self.thumbnail == nil { self.thumbnail = ThumbnailConfig() }
+            self.thumbnail!.merge(config)
+        }
+    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
         jsonErrorHandling(decoder) {
-            self.name = try decoder.decodeIfPresent("name") ?? self.name
-            self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-            self.category = try decoder.decodeIfPresent("category") ?? self.category
-            self.items = try decoder.decodeIfPresent("items") ?? self.items
-            self.options1 = try decoder.decodeIfPresent("options1") ?? self.options1
-            self.options2 = try decoder.decodeIfPresent("options2") ?? self.options2
+            self.list = try decoder.decodeIfPresent("list") ?? self.list
+            self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
         }
     }
 }
 
-class multiItemConfig: RenderConfig {
-    var press: ActionDescription? = ActionDescription(icon: nil, title: nil, actionName: .openView, actionArgs: [])
-
+public class RenderConfig: Object, Codable {
+    /**
+     *
+     */
+    @objc dynamic var name: String? = nil
+    /**
+     *
+     */
+    @objc dynamic var icon: String? = nil
+    /**
+     *
+     */
+    @objc dynamic var category: String? = nil
+    /**
+     *
+     */
+    let items = List<ActionDescription>()
+    /**
+     *
+     */
+    let options1 = List<ActionDescription>()
+    /**
+     *
+     */
+    let options2 = List<ActionDescription>()
+    
+    /**
+     *
+     */
+    public func superMerge(_ renderConfig:RenderConfig) {
+        self.name = renderConfig.name ?? self.name
+        self.icon = renderConfig.icon ?? self.icon
+        self.category = renderConfig.category ?? self.category
+        
+        self.items.append(objectsIn: renderConfig.items)
+        self.options1.append(objectsIn: renderConfig.options1)
+        self.options2.append(objectsIn: renderConfig.options2)
+    }
+    
+    /**
+     * @private
+     */
+    public func superDecode(from decoder: Decoder) throws {
+        self.name = try decoder.decodeIfPresent("name") ?? self.name
+        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
+        self.category = try decoder.decodeIfPresent("category") ?? self.category
+        
+        decodeIntoList(decoder, "items", self.items)
+        decodeIntoList(decoder, "options1", self.options1)
+        decodeIntoList(decoder, "options2", self.options2)
+    }
 }
 
-class ListConfig: multiItemConfig {
-    var cascadeOrder: [String] = []
-    var slideLeftActions: [ActionDescription] = []
-    var slideRightActions: [ActionDescription] = []
-    var type: String = "list"
-    var browse: String = ""
-    var sortProperty: String = ""
-    var sortAscending: Int = 0
-    var itemRenderer: String = ""
-    var longPress: ActionDescription? = nil
+class ListConfig: RenderConfig {
+    @objc dynamic var type: String? = "list"
+    @objc dynamic var browse: String? = ""
+    @objc dynamic var itemRenderer: String? = ""
+    @objc dynamic var longPress: ActionDescription? = nil
+    @objc dynamic var press: ActionDescription? = nil
     
+    let slideLeftActions = List<ActionDescription>()
+    let slideRightActions = List<ActionDescription>()
 
-    init(name: String?=nil, icon: String?=nil, category: String?=nil, items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
-         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil, slideLeftActions: [ActionDescription]?=nil,
-         slideRightActions: [ActionDescription]?=nil, type: String?=nil, browse: String?=nil, sortProperty: String?=nil,
-         sortAscending: Int?=nil, itemRenderer: String?=nil, longPress: ActionDescription?=nil, press: ActionDescription? = nil){
+    // TODO: Why do we need this contructor?
+    init(name: String?=nil, icon: String?=nil, category: String?=nil,
+         items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
+         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil,
+         slideLeftActions: [ActionDescription]?=nil, slideRightActions: [ActionDescription]?=nil,
+         type: String?=nil, browse: String?=nil, itemRenderer: String?=nil,
+         longPress: ActionDescription?=nil, press: ActionDescription? = nil){
+        
         super.init()
-        self.cascadeOrder=cascadeOrder ?? self.cascadeOrder
-        self.slideLeftActions=slideLeftActions ?? self.slideLeftActions
-        self.slideRightActions=slideRightActions ?? self.slideRightActions
-        self.type=type ?? self.type
-        self.browse=browse ?? self.browse
-        self.sortProperty=sortProperty ?? self.sortProperty
-        self.sortAscending=sortAscending ?? self.sortAscending
-        self.itemRenderer=itemRenderer ?? self.itemRenderer
-        self.longPress=longPress ?? self.longPress
+        
+        self.type = type ?? self.type
+        self.browse = browse ?? self.browse
+        self.itemRenderer = itemRenderer ?? self.itemRenderer
+        self.longPress = longPress ?? self.longPress
         self.press = press ?? self.press
+        
+        self.slideLeftActions.append(objectsIn: slideLeftActions ?? [])
+        self.slideRightActions.append(objectsIn: slideRightActions ?? [])
     }
     
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+            self.browse = try decoder.decodeIfPresent("browse") ?? self.browse
+            self.itemRenderer = try decoder.decodeIfPresent("itemRenderer") ?? self.itemRenderer
+            self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
+            self.press = try decoder.decodeIfPresent("press") ?? self.press
+            
+            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
+            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
     
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    required init() {
+        super.init()
+    }
+    
+    public func merge(_ listConfig:ListConfig) {
+        self.type = listConfig.type ?? self.type
+        self.browse = listConfig.browse ?? self.browse
+        self.itemRenderer = listConfig.itemRenderer ?? self.itemRenderer
+        self.longPress = listConfig.longPress ?? self.longPress
+        self.press = listConfig.press ?? self.press
+        
+        self.slideLeftActions.append(objectsIn: listConfig.slideLeftActions)
+        self.slideRightActions.append(objectsIn: listConfig.slideRightActions)
+        
+        super.superMerge(listConfig)
     }
 }
 
-class ThumbnailConfig: multiItemConfig {
-    var cascadeOrder: [String] = []
-    var slideLeftActions: [ActionDescription] = []
-    var slideRightActions: [ActionDescription] = []
-    var type: String = "thumbnail"
-    var browse: String = ""
-    var sortProperty: String = ""
-    var sortAscending: Int = 0
-    var itemRenderer: String = ""
-    var longPress: ActionDescription? = nil
-    var cols: Int = 3
+class ThumbnailConfig: RenderConfig {
+    @objc dynamic var type: String? = "thumbnail"
+    @objc dynamic var browse: String? = ""
+    @objc dynamic var itemRenderer: String? = ""
+    @objc dynamic var longPress: ActionDescription? = nil
+    @objc dynamic var press: ActionDescription? = nil
+    let cols = RealmOptional<Int>()
+    
+    let slideLeftActions = List<ActionDescription>()
+    let slideRightActions = List<ActionDescription>()
 
-    init(name: String?=nil, icon: String?=nil, category: String?=nil, items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
-         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil, slideLeftActions: [ActionDescription]?=nil,
-         slideRightActions: [ActionDescription]?=nil, type: String?=nil, browse: String?=nil, sortProperty: String?=nil,
-         sortAscending: Int?=nil, itemRenderer: String?=nil, longPress: ActionDescription?=nil, press: ActionDescription? = nil, cols: Int? = nil){
+    // TODO: Why do we need this contructor?
+    init(name: String?=nil, icon: String?=nil, category: String?=nil,
+         items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,
+         options2: [ActionDescription]?=nil, cascadeOrder: [String]?=nil,
+         slideLeftActions: [ActionDescription]?=nil, slideRightActions: [ActionDescription]?=nil,
+         type: String?=nil, browse: String?=nil, itemRenderer: String?=nil,
+         longPress: ActionDescription?=nil, press: ActionDescription? = nil, cols: Int? = nil){
+        
         super.init()
-        self.cascadeOrder=cascadeOrder ?? self.cascadeOrder
-        self.slideLeftActions=slideLeftActions ?? self.slideLeftActions
-        self.slideRightActions=slideRightActions ?? self.slideRightActions
-        self.type=type ?? self.type
-        self.browse=browse ?? self.browse
-        self.sortProperty=sortProperty ?? self.sortProperty
-        self.sortAscending=sortAscending ?? self.sortAscending
-        self.itemRenderer=itemRenderer ?? self.itemRenderer
-        self.longPress=longPress ?? self.longPress
+        
+        self.type = type ?? self.type
+        self.browse = browse ?? self.browse
+        self.itemRenderer = itemRenderer ?? self.itemRenderer
+        self.longPress = longPress ?? self.longPress
         self.press = press ?? self.press
-        self.cols = cols ?? self.cols
+        self.cols.value = cols ?? 3
+        
+        self.slideLeftActions.append(objectsIn: slideLeftActions ?? [])
+        self.slideRightActions.append(objectsIn: slideRightActions ?? [])
     }
     
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+            self.browse = try decoder.decodeIfPresent("browse") ?? self.browse
+            self.itemRenderer = try decoder.decodeIfPresent("itemRenderer") ?? self.itemRenderer
+            self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
+            self.press = try decoder.decodeIfPresent("press") ?? self.press
+            self.cols.value = try decoder.decodeIfPresent("cols") ?? 3
+            
+            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
+            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
     
-    required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
+    required init() {
+        super.init()
+    }
+    
+    public func merge(_ thumbnailConfig:ThumbnailConfig) {
+        self.type = thumbnailConfig.type ?? self.type
+        self.browse = thumbnailConfig.browse ?? self.browse
+        self.itemRenderer = thumbnailConfig.itemRenderer ?? self.itemRenderer
+        self.longPress = thumbnailConfig.longPress ?? self.longPress
+        self.press = thumbnailConfig.press ?? self.press
+        self.cols.value = thumbnailConfig.cols.value ?? self.cols.value
+        
+        self.slideLeftActions.append(objectsIn: thumbnailConfig.slideLeftActions)
+        self.slideRightActions.append(objectsIn: thumbnailConfig.slideRightActions)
+        
+        super.superMerge(thumbnailConfig)
     }
 }

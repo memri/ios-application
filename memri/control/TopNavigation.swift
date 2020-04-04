@@ -15,9 +15,7 @@ public struct TopNavigation: View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                if main.computedView.title != nil{
-                    Text(main.computedView.title!).font(.headline)
-                }
+                Text(main.computedView.title).font(.headline)
             }
             HStack(spacing: 20){
                 

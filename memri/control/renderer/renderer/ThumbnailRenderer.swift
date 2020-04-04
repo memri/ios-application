@@ -22,22 +22,22 @@ struct ThumbnailRenderer: View {
     @EnvironmentObject var main: Main
     var name: String="thumbnail"
     var renderConfig: ThumbnailConfig {
-        return self.main.getRenderConfig(name: self.name) as! ThumbnailConfig
+        return self.main.computedView.renderConfigs.thumbnail!
     }
     
     var body: some View {
-        QGrid(main.computedView.searchResult.data, columns: renderConfig.cols) { dataItem in
-
+        QGrid(main.computedView.resultSet.items, columns: renderConfig.cols.value!) { dataItem in
             Text(dataItem.getString("title")).asThumbnail()
                 .onTapGesture {
-                    self.onTap(actionDescription: (self.renderConfig as! ListConfig).press!, dataItem: dataItem)
+                    if let press = self.renderConfig.press {
+                        self.main.executeAction(press, dataItem)
+                    }
                 }
         }
     }
     
     func onTap(actionDescription: ActionDescription, dataItem: DataItem){
         main.executeAction(actionDescription, dataItem)
-        
     }
 }
 

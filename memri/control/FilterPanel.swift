@@ -34,7 +34,7 @@ struct FilterPanel: View {
                             HStack(alignment: .top) {
                                 ForEach(self.main.renderObjectTuples, id: \.0) { index, item in
                                     Group{
-                                        if item.candisplayresultset(items: self.main.computedView.searchResult.data){
+                                        if item.canDisplayResultSet(items: self.main.computedView.resultSet.items){
                                             Action(action: item)
                                         }
                                     }

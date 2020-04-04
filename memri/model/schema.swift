@@ -55,15 +55,16 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
+            
+            try! self.superDecode(from: decoder)
         }
-        
-        try! self.initFomJSON(from: decoder)
     }
 }
 
 class LogItem:DataItem {
-    @objc dynamic var date:Int = 0
-    @objc dynamic var content:String? = nil
+    @objc dynamic var date:Date? = nil
+    @objc dynamic var contents:String? = nil
+    @objc dynamic var action:String? = nil
     override var type:String { "logitem" }
     
     let appliesTo = List<DataItem>()

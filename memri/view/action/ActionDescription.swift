@@ -8,50 +8,65 @@
 
 import Foundation
 import Combine
-import SwiftUI
+import RealmSwift
 
-
-public class ActionDescription: Decodable, Identifiable {
+public class ActionDescription: Object, Codable, Identifiable {
+//    public var id = UUID() // TODO why is this here?
     
-    public var id = UUID()
-    
-    var color: UIColor = .systemGray
-    var backgroundColor: UIColor = .white
-    var icon: String = ""
-    var title: String? = nil
     var actionName: ActionName = .noop
     var actionArgs: [AnyCodable] = []
     var actionType: ActionType = .button
-    var showTitle: Bool = false
-    var hasState: Bool = false
-    var state: Bool? = false
+    
+    @objc dynamic var icon: String = ""
+    @objc dynamic var title: String? = nil
+    
+    @objc dynamic var showTitle: Bool = false // TODO Is there ever a place where the AD determines whether the title is shown?
+    
+    let hasState = RealmOptional<Bool>()
+    let state = RealmOptional<Bool>() // TODO is state ever set on a default view?
+    
+    var color: UIColor = .systemGray
+    var backgroundColor: UIColor = .white
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
     var activeBackgroundColor: UIColor? = .white
     var inactiveBackGroundColor: UIColor? = .white
     
     var computedColor: UIColor{
-        if self.hasState {
-            if self.state != nil && self.state!{
+        if self.hasState.value == true {
+            if self.state.value == true {
                 return self.activeColor!
-            }else{
+            }
+            else {
                 return self.inactiveColor!
             }
-        } else{
+        }
+        else {
             return self.color
         }
     }
     
     var computedBackgroundColor: UIColor{
-        if self.hasState {
-            if self.state != nil && self.state!{
+        if self.hasState.value == true {
+            if self.state.value == true {
                 return self.activeBackgroundColor!
-            }else{
+            }
+            else {
                 return self.inactiveBackGroundColor!
             }
-        } else{
+        }
+        else {
             return self.backgroundColor
         }
+    }
+    
+    // Helper properties
+    let _actionArgs = List<String>() // Used to store actionArgs as JSON in realm
+    @objc dynamic var _actionName: String = "noop" // Used to store actionName as string in realm
+    @objc dynamic var _actionType: String = "button" // Used to store actionType as string in realm
+    
+    private enum CodingKeys: String, CodingKey {
+        case icon, title, actionName, actionArgs, actionType, showTitle, hasState, state
     }
     
     enum ActionDescriptionKeys: String, CodingKey {
@@ -63,42 +78,85 @@ public class ActionDescription: Decodable, Identifiable {
         
         jsonErrorHandling(decoder) {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
-            self.state = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
-            self.hasState = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
+            self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
+            
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
+            
+            self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
+            self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.hasState.value
+            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
+
+            let colorString = try decoder.decodeIfPresent("color") ?? ""
+            self.color = UIColor.init(named: colorString) ?? self.actionName.defaultColor
+            
             self.activeColor = self.actionName.defaultActiveColor
             self.inactiveColor = self.actionName.defaultInactiveColor
             self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
             self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
             self.backgroundColor = self.actionName.defaultBackgroundColor
-            self.actionArgs = try decoder.decodeIfPresent("actionArgs") ?? self.actionArgs
-            self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
-            self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
-
-        
-            // TODO decode colorString for active/inactive in function
-            let colorString = try decoder.decodeIfPresent("color") ?? ""
             
-            switch colorString{
-                case "gray", "systemGray": self.color = .systemGray
-                case "yellow","systemYellow": self.color = .systemYellow
-                case "green", "systemGreen": self.color = .systemGreen
-                default: self.color = self.actionName.defaultColor
-            }
+            // Decode arguments
+            try self.decodeActionArgs(decoder)
             
-            let container = try decoder.container(keyedBy:ActionDescriptionKeys.self)
-            self.actionArgs = try self.decodeActionArgs(container)
+            self._actionName = self.actionName.rawValue
+            self._actionType = self.actionType.rawValue
         }
     }
     
-    func decodeActionArgs(_ ctr:KeyedDecodingContainer<ActionDescriptionKeys>) throws -> [AnyCodable] {
-        var container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
-        var list = [AnyCodable]()
-        var tmpContainer = container // Force a copy of the container
-        let path = getCodingPathString(tmpContainer.codingPath)
+    public convenience init(icon: String?=nil, title: String?=nil,
+                            actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil,
+                            actionType: ActionType?=nil){
+        self.init()
         
+        self.actionName = actionName ?? self.actionName
+        self.icon = icon ?? self.actionName.defaultIcon
+        self.title = title ?? self.title
+        self.actionArgs = actionArgs ?? self.actionArgs
+        self.actionType = actionType ?? self.actionType
+        
+        print("create action description runtime: \(self.actionName)")
+    }
+    
+    public required init() {
+        for arg in self._actionArgs {
+            self.actionArgs.append(unserialize(arg))
+        }
+    }
+    
+    func decodeActionArgs(_ decoder: Decoder) throws {
+        var container:UnkeyedDecodingContainer
+        
+        // Some Decoder magic
+        do {
+            let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
+            container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
+        }
+        catch {
+            return // No actionArgs found
+        }
+        
+        // Force a copy of the container (not sure why)
+        var tmpContainer = container
+        
+        // Calculate and print coding path for debugging
+        let path = getCodingPathString(tmpContainer.codingPath)
         print("Decoding: \(path)")
+        
+        // Create encoder for serialization
+        let encoder = JSONEncoder()
+        
+        func addArgument<T:Encodable>(_ item:T){
+            
+            // Store item in the arguments list
+            self.actionArgs.append(AnyCodable(item))
+            
+            // Encode item as a string
+            let data = try! encoder.encode(item)
+            
+            // And add to _actionArgs for storage in realm
+            self._actionArgs.append(String(data: data, encoding: .utf8) ?? "")
+        }
         
         if let count = container.count {
             if (self.actionName.argumentTypes.count > 0) {
@@ -106,21 +164,24 @@ public class ActionDescription: Decodable, Identifiable {
                     do {
                         let type = self.actionName.argumentTypes[i]
                         if let _ = type as? DataItemFamily.Type {
-                            let typeContainer = try container.nestedContainer(keyedBy: Discriminator.self)
-                            let family:DataItemFamily = try typeContainer.decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
-                            list.append(AnyCodable(try tmpContainer.decode(family.getType())))
+                            let typeContainer = try container
+                                .nestedContainer(keyedBy: Discriminator.self)
+                            let family:DataItemFamily = try typeContainer
+                                .decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
+                            
+                            addArgument(try tmpContainer.decode(family.getType()))
                         }
                         else if let type = type as? SessionView.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? String.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? Double.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                         else if let type = type as? Int.Type {
-                            list.append(AnyCodable(try tmpContainer.decode(type)))
+                            addArgument(try tmpContainer.decode(type))
                         }
                     } catch {
                         print("\nJSON Parse Error at \(path)\nError: \(error.localizedDescription)\n")
@@ -129,20 +190,22 @@ public class ActionDescription: Decodable, Identifiable {
                 }
             }
         }
-        
-        return list
     }
     
-    public convenience init(color: UIColor?=nil, icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
-        self.init()
-        self.actionName = actionName ?? self.actionName
-        self.color = color ?? self.actionName.defaultColor
-        self.icon = icon ?? self.actionName.defaultIcon
-        self.title = title ?? self.title
-        self.actionArgs = actionArgs ?? self.actionArgs
-        self.actionType = actionType ?? self.actionType
-        
-    }
+//    public static func == (lhs: ActionDescription, rhs: ActionDescription) -> Bool {
+//        return true
+//    }
+
+//    public convenience init(color: UIColor?=nil, icon: String?=nil, title: String?=nil, actionName: ActionName?=nil, actionArgs: [AnyCodable]?=nil, actionType: ActionType?=nil){
+//        self.init()
+//        self.actionName = actionName ?? self.actionName
+//        self.color = color ?? self.actionName.defaultColor
+//        self.icon = icon ?? self.actionName.defaultIcon
+//        self.title = title ?? self.title
+//        self.actionArgs = actionArgs ?? self.actionArgs
+//        self.actionType = actionType ?? self.actionType
+//
+//    }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
         let jsonData = try jsonDataFromFile(file, ext)

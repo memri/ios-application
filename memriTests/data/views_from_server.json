@@ -7,22 +7,26 @@
                         {
                             "icon": "remove.ico",
                             "title": "Remove",
-                            "actionName": "remove",
-                            "actionArgs": []
+                            "actionName": "delete"
                         }
                     ],
-                    "slideRightActions": [],
+                    "press": {
+                        "actionName": "openView"
+                    },
+                    "longPress": {
+                        "actionName": "select"
+                    },
                     "itemRenderer": "{.title}"
                 }
             }
         },
 
         "{[type:note]}": {
-            "name": "notes",
+            "name": "all-notes",
             "title": "Notes",
-            "query": {
-                "text": "notes",
-                "sortProperty": "date-created",
+            "queryOptions": {
+                "text": "note",
+                "sortProperty": "date-modified",
                 "sortAscending": 0
             },
             "rendererName": "list",
@@ -30,15 +34,7 @@
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}",
-                    "press": {
-                        "actionName": "openView",
-                        "actionArgs": []
-                    },
-                    "longPress": {
-                        "actionName": "select",
-                        "actionArgs": []
-                    }
+                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
                 }
             },
             "browsingMode": "default",
@@ -100,12 +96,10 @@
                                 "timeProperty": "date-created"
                             }
                         },
-                        "searchResult": {
-                            "query": {
-                                "text": "data:Log appliesTo:{.id}",
-                                "sortProperty": "date-created",
-                                "sortAscending": 0
-                            }
+                        "queryOptions": {
+                            "text": "data:Log appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
                         }
                     }]
                 },
@@ -158,12 +152,10 @@
                                 "timeProperty": "date-created"
                             }
                         },
-                        "searchResult": {
-                            "query": {
-                                "text": "type:logitem appliesTo:{.id}",
-                                "sortProperty": "date-created",
-                                "sortAscending": 0
-                            }
+                        "queryOptions": {
+                            "text": "type:logitem appliesTo:{.id}",
+                            "sortProperty": "date-created",
+                            "sortAscending": 0
                         }
                     }]
                 },
@@ -175,7 +167,7 @@
                 {
                     "title": "All notes",
                     "actionName": "openViewByName",
-                    "actionArgs": ["notes"]
+                    "actionArgs": ["all-notes"]
                 }
             ]
         }
