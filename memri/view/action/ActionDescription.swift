@@ -124,9 +124,16 @@ public class ActionDescription: Object, Codable, Identifiable {
     }
     
     func decodeActionArgs(_ decoder: Decoder) throws {
+        var container:UnkeyedDecodingContainer
+        
         // Some Decoder magic
-        let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
-        var container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
+        do {
+            let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
+            container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
+        }
+        catch {
+            return // No actionArgs found
+        }
         
         // Force a copy of the container (not sure why)
         var tmpContainer = container

@@ -229,7 +229,7 @@ public class Main: ObservableObject {
         let copy = self.cache.duplicate(template)
         
         // Add the new item to the cache
-        try! self.cache.addToCache(copy)
+        _ = try! self.cache.addToCache(copy)
         
         // Open view with the now managed copy
         self.openView(copy)

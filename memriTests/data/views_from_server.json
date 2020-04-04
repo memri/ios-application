@@ -7,7 +7,7 @@
                         {
                             "icon": "remove.ico",
                             "title": "Remove",
-                            "actionName": "remove"
+                            "actionName": "delete"
                         }
                     ],
                     "press": {

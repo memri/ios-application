@@ -15,16 +15,17 @@ struct ListRenderer: Renderer {
     @EnvironmentObject var main: Main
     
     let name = "list"
-    var renderConfig: ListConfig {
-        return self.main.getRenderConfig(name: self.name) as! ListConfig
-    }
     var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
-    
-//    @Binding var isEditMode: EditMode
 
     func generatePreview(_ item:DataItem) -> String {
-        let content = item.getString("content")
+        let content = String(item.getString("content")
+            .replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
+            .prefix(100))
         return content
+    }
+    
+    var renderConfig: ListConfig {
+        return self.main.computedView.renderConfigs.list!
     }
     
     var body: some View {
@@ -39,8 +40,9 @@ struct ListRenderer: Renderer {
                             Text(self.generatePreview(dataItem))
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         }.onTapGesture {
-                            self.onTap(actionDescription: self.renderConfig.press!,
-                                       dataItem: dataItem)
+                            if let press = self.renderConfig.press {
+                                self.main.executeAction(press, dataItem)
+                            }
                         }
                     }.onDelete{ indexSet in
                         
@@ -65,11 +67,6 @@ struct ListRenderer: Renderer {
             }
         }
     }
-    
-    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        main.executeAction(actionDescription, dataItem)
-    }
-    
 }
 
 struct ListRenderer_Previews: PreviewProvider {

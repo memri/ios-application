@@ -114,6 +114,8 @@ class Sync {
     
     private func prioritySync(_ queryOptions:QueryOptions, _ logitem:LogItem) {
         
+        print("Syncing from pod with query: \(queryOptions.query!)")
+        
         // Call out to the pod with the query
         podApi.query(queryOptions) { (error, items) in
             if let items = items {
@@ -126,13 +128,13 @@ class Sync {
                 
                 for item in items {
                     // TODO handle sync errors
-                    try! cache!.addToCache(item)
+                    let cachedItem = try! cache!.addToCache(item)
                     
                     // Ignore items marked for deletion
-                    if item.syncState!.actionNeeded != "deleted" {
+                    if cachedItem.syncState!.actionNeeded != "deleted" {
                         
                         // Add item to result
-                        result.append(item)
+                        result.append(cachedItem)
                     }
                 }
                 

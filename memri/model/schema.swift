@@ -55,9 +55,9 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
+            
+            try! self.superDecode(from: decoder)
         }
-        
-        try! self.initFomJSON(from: decoder)
     }
 }
 

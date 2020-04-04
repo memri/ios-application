@@ -3,7 +3,7 @@
         "uid": "0x01",
         "type": "note",
         "title": "Shopping list",
-        "content": "potatoes, mayonaise",
+        "content": "- potatoes\n- mayonaise",
         "starred": true,
         "syncState": {
             "isPartiallyLoaded": true,

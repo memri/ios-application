@@ -21,14 +21,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "uid"
     }
     
-    public func initFomJSON(from decoder: Decoder) throws {
-        jsonErrorHandling(decoder) {
-            uid = try decoder.decodeIfPresent("uid") ?? uid
-            starred = try decoder.decodeIfPresent("starred") ?? starred
-            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-            //TODO log
-        }
+    /**
+     * @private
+     */
+    public func superDecode(from decoder: Decoder) throws {
+        uid = try decoder.decodeIfPresent("uid") ?? uid
+        starred = try decoder.decodeIfPresent("starred") ?? starred
+        deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+        syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+        
+        decodeIntoList(decoder, "changelog", self.changelog)
     }
     
     /**

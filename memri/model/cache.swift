@@ -157,12 +157,17 @@ public class Cache {
     /**
      *
      */
-    public func addToCache(_ item:DataItem) throws {
+    public func addToCache(_ item:DataItem) throws -> DataItem {
         // Check if this is a new item or an existing one
         if let uid = item.uid {
             
             // Fetch item from the cache to double check
             if let cachedItem:DataItem = self.getItemById(item.type, uid) {
+                
+                // Do nothing when the version is not higher then what we already have
+                if item.syncState!.version <= cachedItem.syncState!.version {
+                    return cachedItem
+                }
                 
                 // Check if there are local changes
                 if cachedItem.syncState!.actionNeeded != "" {
@@ -227,6 +232,8 @@ public class Cache {
                 }
             }
         }
+        
+        return item
     }
     
     /**
