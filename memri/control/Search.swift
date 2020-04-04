@@ -32,10 +32,10 @@ struct Search: View {
     var body: some View {
         VStack{
             HStack{
-                TextField("type your search query here", text: $searchText)
-                    .onReceive(Just(searchText)) { (newValue: String) in
-                        self.main.filterResultSet(self.searchText)
-                    }
+                TextField("type your search query here", text: $main.computedView.filterText)
+//                    .onReceive(Just(searchText)) { (newValue: String) in
+//                        self.main.filterResultSet(self.searchText)
+//                    }
                 
                 ForEach(self.main.computedView.filterButtons){ filterButton in
                     Action(action: filterButton)

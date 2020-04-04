@@ -122,6 +122,7 @@ public class ComputedView: ObservableObject {
     var navigateItems: [ActionDescription] = []
     var contextButtons: [ActionDescription] = []
 
+    var sessionView: SessionView? = nil
     var renderConfigs: RenderConfigs = RenderConfigs()
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
@@ -156,8 +157,6 @@ public class ComputedView: ObservableObject {
             return _filterText
         }
         set (newFilter) {
-            // Do nothing if we already have this filter text set
-            if _filterText == newFilter { return }
             
             // Store the new value
             _filterText = newFilter
@@ -187,8 +186,11 @@ public class ComputedView: ObservableObject {
                 else { title = "\(resultSet.count) items found" }
                 
                 // Temporarily hide the subtitle
-                // subtitle = " " // TODO how to clear the subtitle ?? 
+                // subtitle = " " // TODO how to clear the subtitle ??
             }
+            
+            // Save the state on the session view
+            try! cache.realm.write { sessionView!.filterText = filterText }
         }
     }
     
@@ -238,6 +240,9 @@ public class ComputedView: ObservableObject {
     public func finalMerge(_ view:SessionView) {
         // Merge view into self
         merge(view)
+        
+        // Store session view on self
+        sessionView = view
         
         // Update search result to match the query
         self.resultSet = cache.getResultSet(self.queryOptions)

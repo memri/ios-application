@@ -275,6 +275,12 @@ public class ResultSet: ObservableObject {
                     // Set data and count
                     items = result
                     count = items.count
+                    
+                    // Resapply filter
+                    if _unfilteredItems != nil {
+                        _unfilteredItems = nil
+                        filter()
+                    }
 
                     // We've successfully loaded page 0
                     setPagesLoaded(0) // TODO This is not used at the moment
@@ -297,8 +303,16 @@ public class ResultSet: ObservableObject {
     }
     
     func forceItemsUpdate(_ result:[DataItem]) {
+        
+        // Set data and count
         items = result
         count = items.count
+
+        // Resapply filter
+        if _unfilteredItems != nil {
+            _unfilteredItems = nil
+            filter()
+        }
         
         self.objectWillChange.send() // TODO create our own publishers
     }
@@ -341,6 +355,8 @@ public class ResultSet: ObservableObject {
             items = filterResult
             count = filterResult.count
         }
+        
+        self.objectWillChange.send() // TODO create our own publishers
     }
         
     /**
@@ -364,9 +380,5 @@ public class ResultSet: ObservableObject {
         if !pages.contains(pageIndex) {
             pages.append(pageIndex)
         }
-    }
-    
-    private enum CodingKeys: String, CodingKey {
-        case query, pages, data
     }
 }

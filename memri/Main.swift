@@ -277,18 +277,6 @@ public class Main: ObservableObject {
             print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
     }
-    
-    func filterResultSet(_ filterText:String) {
-        // Filter the view
-        self.computedView.filterText = filterText
-        
-        // Save the state
-        try! realm.write {
-            self.currentSession.currentView.filterText = filterText
-        }
-        
-        scheduleUIUpdate()
-    }
         
     func back(){
         let session = currentSession
@@ -337,7 +325,7 @@ public class Main: ObservableObject {
             }
         }
         
-        // TODO if starring is every allowed in a list resultset view,
+        // TODO if starring is ever allowed in a list resultset view,
         // it won't be updated as of now
         
         scheduleUIUpdate()
