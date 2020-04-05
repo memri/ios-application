@@ -104,7 +104,7 @@ public enum ActionName: String, Codable {
     
     var defaultActiveColor: UIColor? {
         switch self {
-        case .toggleEditMode:
+        case .toggleEditMode, .toggleFilterPanel:
             return .systemGreen
         case .showStarred:
             return .systemYellow

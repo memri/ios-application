@@ -29,8 +29,11 @@ struct ContextPane: View {
                 .onChanged({ value in
                     self.dragOffset = value.translation
                 })
-                    .onEnded{ value in
+                .onEnded{ value in
+                    try! self.main.realm.write {
                         self.main.currentSession.showContextPane.toggle()
+                    }
+                    self.main.scheduleUIUpdate()
                 })
         }
 

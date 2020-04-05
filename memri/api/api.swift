@@ -165,7 +165,7 @@ public class PodAPI {
             callback(nil, try! DataItem.fromJSONFile(query.query!))
             return
         }
-        if query.query == "note" {
+        if query.query!.prefix(4) == "note" {
             callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
             return
         }

@@ -84,7 +84,7 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
             
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
-            self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.hasState.value
+            self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
             self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
             let colorString = try decoder.decodeIfPresent("color") ?? ""
