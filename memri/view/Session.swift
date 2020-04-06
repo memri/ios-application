@@ -91,9 +91,11 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
     
     private func decorate(_ session:Session) {
-        self.cancellables.append(session.objectWillChange.sink { (_) in
-            self.objectWillChange.send()
-        })
+        rlmTokens.append(session.observe({ (objectChange) in
+            if case .change = objectChange {
+                self.objectWillChange.send()
+            }
+        }))
     }
     
     private func fetchUID(_ realm:Realm){

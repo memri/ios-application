@@ -20,13 +20,9 @@ extension Main {
             try! realm.write {
                 self.currentSession.currentView.toggleActive(action)
                 self.computedView.toggleActive(action)
-                print(self.currentSession.currentView.isActive(action))
-                
             }
         }
 
-        
-        print(self.currentSession.currentView.isActive(action))
         switch action.actionName {
         case .back: back()
         case .add: addFromTemplate(params[0].value as! DataItem)
