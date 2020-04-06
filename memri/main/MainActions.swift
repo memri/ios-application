@@ -9,17 +9,24 @@
 import Foundation
 
 extension Main {
+    
+    /**
+     * Executes the action as described in the action description
+     */
     public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
         let params = action.actionArgs
         
-        if action.hasState.value != nil && action.hasState.value!{
+        if action.hasState.value == true {
             try! realm.write {
                 self.currentSession.currentView.toggleActive(action)
                 self.computedView.toggleActive(action)
+                print(self.currentSession.currentView.isActive(action))
+                
             }
-            scheduleUIUpdate()            
         }
+
         
+        print(self.currentSession.currentView.isActive(action))
         switch action.actionName {
         case .back: back()
         case .add: addFromTemplate(params[0].value as! DataItem)
@@ -51,6 +58,7 @@ extension Main {
         default:
           print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
+        
     }
           
       func back(){
@@ -72,8 +80,6 @@ extension Main {
           try! realm.write {
               self.sessions.showNavigation = true
           }
-          
-          scheduleUIUpdate()
       }
       
       func changeRenderer(rendererObject: RendererObject){
@@ -102,8 +108,6 @@ extension Main {
           
           // TODO if starring is ever allowed in a list resultset view,
           // it won't be updated as of now
-          
-          scheduleUIUpdate()
       }
 
       func showStarred(starButton: ActionDescription){
@@ -173,16 +177,12 @@ extension Main {
           try! realm.write {
               self.currentSession.showFilterPanel.toggle()
           }
-          
-          scheduleUIUpdate()
       }
 
       func openContextPane() {
           try! realm.write {
               self.currentSession.showContextPane.toggle()
           }
-          
-          scheduleUIUpdate()
       }
 
       func showSharePanel() {

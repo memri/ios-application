@@ -100,6 +100,11 @@ public class Main: ObservableObject {
                 // Load view configuration
                 try! self.sessions.load(realm, cache) {
                     
+                    // Update view when sessions changes
+                    self.cancellable = self.sessions.objectWillChange.sink { (_) in
+                        self.scheduleUIUpdate()
+                    }
+                    
                     // Load current view
                     self.setComputedView()
                     
@@ -187,22 +192,13 @@ public class Main: ObservableObject {
      * Adds a view to the history of the currentSession and displays it.
      * If the view was already part of the currentSession.views it reorders it on top
      */
-    func openView(_ view:SessionView){
+    func openView(_ view:SessionView) {
         let session = self.currentSession
         
-        // Write updates to realm
-        try! realm.write {
+        // Add view to session
+        session.addView(view)
         
-            // Remove all items after the current index
-            session.views.removeSubrange((session.currentViewIndex + 1)...)
-            
-            // Add the view to the session
-            session.views.append(view)
-            
-            // Update the index pointer
-            session.currentViewIndex = session.views.count - 1
-        }
-        
+        // Recompute view
         setComputedView()
     }
     
@@ -234,9 +230,4 @@ public class Main: ObservableObject {
         // Open view with the now managed copy
         self.openView(copy)
     }
-
-    /**
-     * Executes the action as described in the action description
-     */
-  
 }

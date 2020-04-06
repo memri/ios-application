@@ -31,7 +31,11 @@ public class ActionDescription: Object, Codable, Identifiable {
     var inactiveBackGroundColor: UIColor? = .white
     
     var actionStateName: String? {
-        if self.hasState.value != nil  && self.hasState.value!{
+        if self.hasState.value == true {
+            print("rawvalue \(self.actionName.rawValue)")
+            if self.actionName.rawValue == ""{
+                1+1
+            }
             return self.actionName.rawValue
         } else{
             return nil

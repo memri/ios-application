@@ -47,9 +47,8 @@ struct Navigation: View {
             })
             .onEnded{ value in
                 try! self.main.realm.write {
-                    self.main.sessions.showNavigation.toggle()
+                    self.main.sessions.showNavigation = false
                 }
-                self.main.scheduleUIUpdate()
             })
         .edgesIgnoringSafeArea(.vertical)
     }
