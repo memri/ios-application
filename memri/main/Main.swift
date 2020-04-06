@@ -46,6 +46,10 @@ public class Main: ObservableObject {
      *
      */
     public var realm: Realm
+    /**
+     *
+     */
+    public var navigation: MainNavigation
     
     // TODO @koen these renderer objects seem slightly out of place here.
     // Could there be some kind of .renderers object that sits on main?
@@ -69,8 +73,6 @@ public class Main: ObservableObject {
         self.renderers[self.computedView.rendererName, default: AnyView(ThumbnailRenderer())]
     }
     
-//    public let navigationCache: NavigationCache
-    
     private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false
     
@@ -82,6 +84,7 @@ public class Main: ObservableObject {
         installer = Installer(realm)
         sessions = Sessions(realm)
         computedView = ComputedView(cache)
+        navigation = MainNavigation(realm)
         
         cache.scheduleUIUpdate = scheduleUIUpdate
     }
@@ -95,16 +98,17 @@ public class Main: ObservableObject {
             self.settings.load() {
                 
                 // Load NavigationCache (from cache and/or api)
-                // TODO
-                
-                // Load view configuration
-                try! self.sessions.load(realm, cache) {
+                self.navigation.load() {
                     
-                    // Load current view
-                    self.setComputedView()
-                    
-                    // Done
-                    callback(nil, true)
+                    // Load view configuration
+                    try! self.sessions.load(realm, cache) {
+                        
+                        // Load current view
+                        self.setComputedView()
+                        
+                        // Done
+                        callback(nil, true)
+                    }
                 }
             }
         }
