@@ -20,9 +20,11 @@ struct Browser: View {
                 main.currentRenderer.fullHeight()
                 Search()
             }.fullHeight()
+            
             if self.main.currentSession.showContextPane {
                 animateInContextPane()
             }
+            
             if self.main.sessions.showNavigation{
                 Navigation()
                     .transition(.move(edge: .leading))

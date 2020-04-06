@@ -70,7 +70,8 @@ struct FilterPanel: View {
                     }.padding(.horizontal, 20)
                 }.frame(minWidth: 0, maxWidth: .infinity, alignment: Alignment.topLeading)
                     .padding(.vertical, 10)
-            }else{
+            }
+            else{
                 EmptyView()
             }
         }

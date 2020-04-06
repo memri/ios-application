@@ -80,6 +80,7 @@ public class Cache {
      */
     public func query(_ queryOptions:QueryOptions, _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
 
+        // Do nothing when the query is empty. Should not happen.
         let q = queryOptions.query ?? ""
         if (q == "") {
             callback("Empty Query", nil)
@@ -88,27 +89,34 @@ public class Cache {
             // Schedule the query to sync from the pod
             sync.syncQuery(queryOptions)
             
+            // Detect querying for a single item based on uid (hack!)
             if (q.starts(with: "0x")) {
                 let result = realm.objects(Note.self).filter("uid = '\(q)'") // HACK
                 
                 callback(nil, [result[0]])
             }
+            // Query based on a simple format:
+            // Query format: <type><space><filter-text>
             else {
-                // Query format: <type><space><filter-text>
+                // Parse query
                 let (typeName, filter) = parseQuery(q)
                 
+                // Look up type and filter results
                 let type = DataItemFamily(rawValue: typeName)
                 if let type = type {
                     let queryType = DataItemFamily.getType(type)
                     let result = realm.objects(queryType())
                         .filter("deleted = false " + (filter ?? ""))
                     
+                    // Construct return array
                     var returnValue:[DataItem] = []
                     for item in result { returnValue.append(item) }
                     
+                    // Done
                     callback(nil, returnValue)
                 }
                 else {
+                    // Done
                     callback("Unknown type send by server: \(q)", nil)
                 }
             }
@@ -180,7 +188,7 @@ public class Cache {
             if let cachedItem:DataItem = self.getItemById(item.type, uid) {
                 
                 // Do nothing when the version is not higher then what we already have
-                if item.syncState!.version <= cachedItem.syncState!.version {
+                if !cachedItem.syncState!.isPartiallyLoaded && item.syncState!.version <= cachedItem.syncState!.version {
                     return cachedItem
                 }
                 

@@ -257,7 +257,7 @@ public class Main: ObservableObject {
             else if let item = item { openView(item) }
             else if let items = items { openView(items) }
         case .toggleEditMode: toggleEditMode(editButton: action)
-        case .toggleFilterPanel: toggleFilterPanel()
+        case .toggleFilterPanel: toggleFilterPanel(filterPanelButton: action)
         case .star:
             if let item = item { star([item]) }
             else if let items = items { star(items) }
@@ -393,7 +393,9 @@ public class Main: ObservableObject {
         setCurrentView()
     }
     
-    func toggleFilterPanel(){
+    func toggleFilterPanel(filterPanelButton: ActionDescription){
+        self.toggleActive(object: filterPanelButton)
+        
         try! realm.write {
             self.currentSession.showFilterPanel.toggle()
         }
