@@ -29,6 +29,7 @@
                 "sortProperty": "date-modified",
                 "sortAscending": 0
             },
+            "emptyResultText": "There are no notes here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
