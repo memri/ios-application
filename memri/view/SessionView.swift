@@ -18,6 +18,7 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var icon: String? = nil
     @objc dynamic var browsingMode: String? = nil
     @objc dynamic var filterText: String? = nil
+    @objc dynamic var emptyResultText: String? = nil
     
     let showLabels = RealmOptional<Bool>()
     let contextMode = RealmOptional<Bool>()
@@ -45,7 +46,7 @@ public class SessionView: Object, ObservableObject, Codable {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
             backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
-            browsingMode, cascadeOrder
+            browsingMode, cascadeOrder, emptyResultText
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -61,6 +62,7 @@ public class SessionView: Object, ObservableObject, Codable {
             self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
             self.browsingMode = try decoder.decodeIfPresent("browsingMode") ?? self.browsingMode
             self.filterText = try decoder.decodeIfPresent("filterText") ?? self.filterText
+            self.emptyResultText = try decoder.decodeIfPresent("emptyResultText") ?? self.emptyResultText
             
             self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
             self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
@@ -130,15 +132,27 @@ public class ComputedView: ObservableObject {
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
     
+    private var _emptyResultText: String = "No items found"
+    private var _emptyResultTextTemp: String? = nil
+    var emptyResultText: String {
+        get {
+            return _emptyResultTextTemp ?? _emptyResultText
+        }
+        set (newEmptyResultText) {
+            if newEmptyResultText == "" { _emptyResultTextTemp = nil }
+            else { _emptyResultTextTemp = newEmptyResultText }
+        }
+    }
+    
     private var _title: String = ""
     private var _titleTemp: String? = nil
     var title: String {
         get {
             return _titleTemp ?? _title
         }
-        set (newSubtitle) {
-            if newSubtitle == "" { _titleTemp = nil }
-            else { _titleTemp = newSubtitle }
+        set (newTitle) {
+            if newTitle == "" { _titleTemp = nil }
+            else { _titleTemp = newTitle }
         }
     }
     
@@ -181,6 +195,7 @@ public class ComputedView: ObservableObject {
             if _filterText == "" {
                 title = ""
                 subtitle = ""
+                emptyResultText = ""
             }
             else {
                 // Set the title to an appropriate message
@@ -190,6 +205,8 @@ public class ComputedView: ObservableObject {
                 
                 // Temporarily hide the subtitle
                 // subtitle = " " // TODO how to clear the subtitle ??
+                
+                emptyResultText = "No results found using '\(_filterText)'"
             }
             
             // Save the state on the session view
@@ -218,6 +235,7 @@ public class ComputedView: ObservableObject {
         _title = view.title ?? _title
         _subtitle = view.subtitle ?? _subtitle
         _filterText = view.filterText ?? _filterText
+        _emptyResultText = view.emptyResultText ?? _emptyResultText
         
         self.showLabels = view.showLabels.value ?? self.showLabels
         self.contextMode = view.contextMode.value ?? self.contextMode

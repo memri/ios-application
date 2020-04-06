@@ -17,7 +17,9 @@ struct Browser: View {
         ZStack {
             VStack() {
                 TopNavigation()
-                main.currentRenderer.fullHeight()
+                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
+                    self.main.currentRenderer.fullHeight()
+                }.fullHeight()
                 Search()
             }.fullHeight()
             

@@ -198,6 +198,10 @@ public class ResultSet: ObservableObject {
     /**
      *
      */
+    var isLoading: Bool = false
+    /**
+     *
+     */
     var determinedType: String? {
         if (self.queryOptions.query != nil) {
             return "note" // TODO implement (more) proper query language
@@ -233,7 +237,6 @@ public class ResultSet: ObservableObject {
         }
     }
     
-    private var loading: Bool = false
     private var pages: [Int] = []
     private let cache: Cache
     private var _filterText: String = ""
@@ -246,7 +249,7 @@ public class ResultSet: ObservableObject {
     func load(_ callback:(_ error:Error?) -> Void) throws {
         
         // Only execute one loading process at the time
-        if !loading {
+        if !isLoading {
         
             // Validate queryOptions
             if queryOptions.query == "" {
@@ -254,7 +257,10 @@ public class ResultSet: ObservableObject {
             }
             
             // Set state to loading
-            loading = true
+            isLoading = true
+            
+            // Make sure the loading state is updated in the UI
+            updateUI()
         
             // Execute the query
             cache.query(queryOptions) { (error, result) -> Void in
@@ -274,18 +280,21 @@ public class ResultSet: ObservableObject {
                     setPagesLoaded(0) // TODO This is not used at the moment
 
                     // First time loading is done
-                    loading = false
+                    isLoading = false
 
                     // Done
                     callback(nil)
                 }
                 else if (error != nil) {
                     // Set loading state to error
-                    loading = false
+                    isLoading = false
 
                     // Done with errors
                     callback(error)
                 }
+                
+                // Make sure the loading state is updated in the UI
+                updateUI()
             }
         }
     }
@@ -302,6 +311,10 @@ public class ResultSet: ObservableObject {
             filter()
         }
         
+        updateUI()
+    }
+    
+    private func updateUI(){
         self.objectWillChange.send() // TODO create our own publishers
     }
 

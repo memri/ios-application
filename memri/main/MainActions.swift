@@ -9,6 +9,10 @@
 import Foundation
 
 extension Main {
+    
+    /**
+     * Executes the action as described in the action description
+     */
     public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
           let params = action.actionArgs
           
@@ -64,8 +68,6 @@ extension Main {
           try! realm.write {
               self.sessions.showNavigation = true
           }
-          
-          scheduleUIUpdate()
       }
       
       func changeRenderer(rendererObject: RendererObject){
@@ -94,8 +96,6 @@ extension Main {
           
           // TODO if starring is ever allowed in a list resultset view,
           // it won't be updated as of now
-          
-          scheduleUIUpdate()
       }
 
       func showStarred(starButton: ActionDescription){
@@ -167,16 +167,12 @@ extension Main {
           try! realm.write {
               self.currentSession.showFilterPanel.toggle()
           }
-          
-          scheduleUIUpdate()
       }
 
       func openContextPane() {
           try! realm.write {
               self.currentSession.showContextPane.toggle()
           }
-          
-          scheduleUIUpdate()
       }
 
       func showSharePanel() {

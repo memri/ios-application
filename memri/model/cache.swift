@@ -47,6 +47,7 @@ public class Cache {
     var sync: Sync
     var realm: Realm
     
+    private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
     private var queryIndex: [String:ResultSet] = [:]
     
@@ -223,7 +224,7 @@ public class Cache {
         try realm.write() { realm.add(item, update: .modified) }
         
         // Update the sync state when the item changes
-        let _ = item.observe { (objectChange) in
+        rlmTokens.append(item.observe { (objectChange) in
             if case let .change(propChanges) = objectChange {
                 if item.syncState!.actionNeeded == "" {
                     try! self.realm.write {
@@ -245,16 +246,16 @@ public class Cache {
                     }
                 }
             }
-        }
+        })
         
         // Trigger sync.schedule() when the SyncState changes
-        let _ = item.syncState!.observe { (objectChange) in
+        rlmTokens.append(item.syncState!.observe { (objectChange) in
             if case .change = objectChange {
                 if item.syncState!.actionNeeded != "" {
                     self.sync.schedule()
                 }
             }
-        }
+        })
         
         return item
     }

@@ -49,6 +49,7 @@ public class Sessions: Object, ObservableObject, Decodable {
         return currentSession.currentView
     }
     
+    private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
     private var defaultViews: [String:[String:SessionView]] = [:]
     
@@ -65,14 +66,7 @@ public class Sessions: Object, ObservableObject, Decodable {
             uid = try decoder.decodeIfPresent("uid") ?? uid
             currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
             
-//            if self.realm != nil {
-//                try! self.realm!.write {
-//                    decodeIntoList(decoder, "sessions", self.sessions)
-//                }
-//            }
-//            else {
-                decodeIntoList(decoder, "sessions", self.sessions)
-//            }
+            decodeIntoList(decoder, "sessions", self.sessions)
         }
         
         self.postInit()
@@ -91,13 +85,15 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
     
     private func postInit(){
-        self.cancellables = []
-        for session in sessions{
-            self.cancellables.append(session.objectWillChange.sink { (_) in
-                print("session \(session) was changed")
-                self.objectWillChange.send()
-            })
+        for session in sessions {
+            decorate(session)
         }
+    }
+    
+    private func decorate(_ session:Session) {
+        self.cancellables.append(session.objectWillChange.sink { (_) in
+            self.objectWillChange.send()
+        })
     }
     
     private func fetchUID(_ realm:Realm){
@@ -112,6 +108,21 @@ public class Sessions: Object, ObservableObject, Decodable {
                 self.uid = unserialize(setting.json)
             }
         }
+    }
+    
+    public func addSession(_ session:Session) {
+        // TODO: If session == nil session = Session()
+        
+        try! realm!.write {
+        
+            // Add session to array
+            sessions.append(session)
+            
+            // Update the index pointer
+            currentSessionIndex = sessions.count - 1
+        }
+        
+        decorate(session)
     }
     
     /**
@@ -134,17 +145,22 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
         
         // Activate this session to make sure its stored in realm
-        try! realm.write {
-            if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid)'").first {
-                // Sync with the cached version
-                self.merge(fromCache)
-                
-                // Turn myself in a managed object by realm
-                realm.add(self, update: .modified)
-            }
-            else {
-                throw "Exception: Could not initialize sessions"
-            }
+        if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid)'").first {
+            // Sync with the cached version
+            try! self.merge(fromCache)
+            
+            // Turn myself in a managed object by realm
+            try! realm.write { realm.add(self, update: .modified) }
+            
+            // Notify Main of any changes
+            rlmTokens.append(self.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
+        else {
+            throw "Exception: Could not initialize sessions"
         }
 
         // Done
@@ -179,16 +195,25 @@ public class Sessions: Object, ObservableObject, Decodable {
         currentSessionIndex = index
     }
     
-    public func merge(_ sessions:Sessions) {
-        let properties = self.objectSchema.properties
-        for prop in properties {
-            if prop.name == "sessions" {
-                self.sessions.append(objectsIn: sessions.sessions)
-            }
-            else {
-                self[prop.name] = sessions[prop.name]
+    public func merge(_ sessions:Sessions) throws {
+        if self.sessions.count > 0 { throw "Not implemented" }
+        
+        func doMerge() {
+            let properties = self.objectSchema.properties
+            for prop in properties {
+                if prop.name == "sessions" {
+                    self.sessions.append(objectsIn: sessions.sessions)
+                }
+                else {
+                    self[prop.name] = sessions[prop.name]
+                }
             }
         }
+        
+        if let realm = realm { try! realm.write { doMerge() } }
+        else { doMerge() }
+        
+        postInit() // TODO make sure postInit doesnt set listeners twice on the same object
     }
 
     /*
@@ -400,7 +425,8 @@ public class Session: Object, ObservableObject, Decodable {
      */
     @objc dynamic var showContextPane:Bool = false
     
-    var cancellables: [AnyCancellable] = []
+    private var rlmTokens: [NotificationToken] = []
+    private var cancellables: [AnyCancellable] = []
 
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
@@ -434,6 +460,28 @@ public class Session: Object, ObservableObject, Decodable {
         self.postInit()
     }
     
+    public func postInit(){
+        for view in views{
+            decorate(view)
+        }
+        
+        if realm != nil {
+            rlmTokens.append(self.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
+    }
+    
+    private func decorate(_ view:SessionView) {
+        rlmTokens.append(view.observe({ (objectChange) in
+            if case .change = objectChange {
+                self.objectWillChange.send()
+            }
+        }))
+    }
+    
 //    deinit {
 //        if let realm = self.realm {
 //            try! realm.write {
@@ -442,20 +490,29 @@ public class Session: Object, ObservableObject, Decodable {
 //        }
 //    }
     
+    public func addView(_ view:SessionView) {
+        // Write updates to realm
+        try! realm!.write {
+        
+            // Remove all items after the current index
+            views.removeSubrange((currentViewIndex + 1)...)
+            
+            // Add the view to the session
+            views.append(view)
+            
+            // Update the index pointer
+            currentViewIndex = views.count - 1
+        }
+        
+        decorate(view)
+    }
+    
     public class func from_json(_ file: String, ext: String = "json") throws -> Session {
         let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
         let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
         let jsonData = jsonString.data(using: .utf8)!
         let session: Session = try! JSONDecoder().decode(Session.self, from: jsonData)
         return session
-    }
-    
-    public func postInit(){
-        for sessionView in views{
-            cancellables.append(sessionView.objectWillChange.sink { (_) in
-                self.objectWillChange.send()
-            })
-        }
     }
 
     public static func == (lt: Session, rt: Session) -> Bool {

@@ -29,41 +29,57 @@ struct ListRenderer: Renderer {
     }
     
     var body: some View {
-        return VStack {
-            NavigationView {
-                List{
-                    ForEach(main.computedView.resultSet.items) { dataItem in
-                        VStack{
-                            Text(dataItem.getString("title"))
-                                .bold()
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Text(self.generatePreview(dataItem))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }.onTapGesture {
-                            if let press = self.renderConfig.press {
-                                self.main.executeAction(press, dataItem)
-                            }
-                        }
-                    }.onDelete{ indexSet in
-                        
-                        // TODO this should happen automatically in ResultSet
-                        self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
-                        
-                        // I'm sure there is a better way of doing this...
-                        var items:[DataItem] = []
-                        for i in indexSet {
-                            let item = self.main.computedView.resultSet.items[i]
-                            items.append(item)
-                        }
-                        
-                        // Execute Action
-                        self.main.executeAction(self.deleteAction, nil, items)
-
-                    }
+        return VStack{
+            if main.computedView.resultSet.count == 0 {
+                HStack (alignment: .top)  {
+                    Spacer()
+                    Text(self.main.computedView.emptyResultText)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 16, weight: .regular, design: .default))
+                        .opacity(0.7)
+                    Spacer()
                 }
-                .environment(\.editMode, $main.sessions.isEditMode)
-                .navigationBarTitle("")
-                .navigationBarHidden(true)
+                .padding(.all, 30)
+                .padding(.top, 40)
+                Spacer()
+            }
+            else {
+                NavigationView {
+                    List{
+                    
+                        ForEach(main.computedView.resultSet.items) { dataItem in
+                            VStack{
+                                Text(dataItem.getString("title"))
+                                    .bold()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Text(self.generatePreview(dataItem))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }.onTapGesture {
+                                if let press = self.renderConfig.press {
+                                    self.main.executeAction(press, dataItem)
+                                }
+                            }
+                        }.onDelete{ indexSet in
+                            
+                            // TODO this should happen automatically in ResultSet
+                            self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
+                            
+                            // I'm sure there is a better way of doing this...
+                            var items:[DataItem] = []
+                            for i in indexSet {
+                                let item = self.main.computedView.resultSet.items[i]
+                                items.append(item)
+                            }
+                            
+                            // Execute Action
+                            self.main.executeAction(self.deleteAction, nil, items)
+
+                        }
+                    }
+                    .environment(\.editMode, $main.sessions.isEditMode)
+                    .navigationBarTitle("")
+                    .navigationBarHidden(true)
+                }
             }
         }
     }
