@@ -19,11 +19,9 @@ public class ActionDescription: Object, Codable, Identifiable {
     
     @objc dynamic var icon: String = ""
     @objc dynamic var title: String? = nil
-    
     @objc dynamic var showTitle: Bool = false // TODO Is there ever a place where the AD determines whether the title is shown?
     
     let hasState = RealmOptional<Bool>()
-    let state = RealmOptional<Bool>() // TODO is state ever set on a default view?
     
     var color: UIColor = .systemGray
     var backgroundColor: UIColor = .white
@@ -32,9 +30,17 @@ public class ActionDescription: Object, Codable, Identifiable {
     var activeBackgroundColor: UIColor? = .white
     var inactiveBackGroundColor: UIColor? = .white
     
-    var computedColor: UIColor{
+    var actionStateName: String? {
+        if self.hasState.value != nil  && self.hasState.value!{
+            return self.actionName.rawValue
+        } else{
+            return nil
+        }
+    }
+    
+    public func computeColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
-            if self.state.value == true {
+            if state {
                 return self.activeColor!
             }
             else {
@@ -46,9 +52,9 @@ public class ActionDescription: Object, Codable, Identifiable {
         }
     }
     
-    var computedBackgroundColor: UIColor{
+    public func computeBackgroundColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
-            if self.state.value == true {
+            if state {
                 return self.activeBackgroundColor!
             }
             else {
@@ -66,7 +72,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     @objc dynamic var _actionType: String = "button" // Used to store actionType as string in realm
     
     private enum CodingKeys: String, CodingKey {
-        case icon, title, actionName, actionArgs, actionType, showTitle, hasState, state
+        case icon, title, actionName, actionArgs, actionType, showTitle, hasState
     }
     
     enum ActionDescriptionKeys: String, CodingKey {
@@ -85,7 +91,7 @@ public class ActionDescription: Object, Codable, Identifiable {
             
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
             self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
-            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
+//            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             self.color = UIColor.init(named: colorString) ?? self.actionName.defaultColor
@@ -212,4 +218,5 @@ public class ActionDescription: Object, Codable, Identifiable {
         let description: ActionDescription = try! JSONDecoder().decode(ActionDescription.self, from: jsonData)
         return description
     }
+    
 }

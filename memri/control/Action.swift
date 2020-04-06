@@ -45,6 +45,10 @@ struct Action_Previews: PreviewProvider {
 struct ActionButton: View {
     var action: ActionDescription
     @EnvironmentObject var main: Main
+    
+    var isActive: Bool {
+        return self.main.computedView.isActive(action)
+    }
 
     
     var body: some View {
@@ -53,8 +57,8 @@ struct ActionButton: View {
                 Image(systemName: action.icon)
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
-                    .foregroundColor(Color(action.computedColor))
-                    .background(Color(action.computedBackgroundColor))
+                    .foregroundColor(Color(action.computeColor(state: isActive)))
+                    .foregroundColor(Color(action.computeBackgroundColor(state: isActive)))
             }
             if action.title != nil && action.showTitle {
                 Text(action.title!)

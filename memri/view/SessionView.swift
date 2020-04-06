@@ -31,6 +31,7 @@ public class SessionView: Object, ObservableObject, Codable {
     let actionItems = RealmSwift.List<ActionDescription>()
     let navigateItems = RealmSwift.List<ActionDescription>()
     let contextButtons = RealmSwift.List<ActionDescription>()
+    let activeStates = RealmSwift.List<String>()
     
     @objc dynamic var renderConfigs: RenderConfigs? = nil
     @objc dynamic var actionButton: ActionDescription? = nil
@@ -45,7 +46,7 @@ public class SessionView: Object, ObservableObject, Codable {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
             backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
-            browsingMode, cascadeOrder
+            browsingMode, cascadeOrder, activeStates
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -74,6 +75,8 @@ public class SessionView: Object, ObservableObject, Codable {
             decodeIntoList(decoder, "actionItems", self.actionItems)
             decodeIntoList(decoder, "navigateItems", self.navigateItems)
             decodeIntoList(decoder, "contextButtons", self.contextButtons)
+            decodeIntoList(decoder, "activeStates", self.activeStates)
+
             
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
@@ -93,6 +96,16 @@ public class SessionView: Object, ObservableObject, Codable {
         let jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
+    }
+    
+    public func toggleActive(_ action: ActionDescription){
+        if let stateName = action.actionStateName{
+            if let index = activeStates.index(of: stateName){
+                activeStates.remove(at: index)
+            } else{
+                activeStates.append(stateName)
+            }
+        }
     }
 }
 
@@ -122,6 +135,7 @@ public class ComputedView: ObservableObject {
     var actionItems: [ActionDescription] = []
     var navigateItems: [ActionDescription] = []
     var contextButtons: [ActionDescription] = []
+    var activeStates: [String] = []
     
     var renderer: RendererObject? = nil // TODO 
     var rendererView: AnyView? = nil // TODO
@@ -270,5 +284,24 @@ public class ComputedView: ObservableObject {
         if self.actionButton == nil && self.editActionButton == nil {
             throw("Missing action button in this view")
         }
+    }
+    
+    public func toggleActive(_ action: ActionDescription){
+        if let stateName = action.actionStateName{
+            if let index = activeStates.firstIndex(of: stateName){
+                activeStates.remove(at: index)
+            } else{
+                activeStates.append(stateName)
+            }
+        }
+    }
+    
+    public func isActive(_ action: ActionDescription) -> Bool{
+        if let stateName = action.actionStateName{
+            if activeStates.contains(stateName){
+                return true
+            }
+        }
+        return false
     }
 }

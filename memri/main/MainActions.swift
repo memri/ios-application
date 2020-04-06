@@ -10,40 +10,48 @@ import Foundation
 
 extension Main {
     public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
-          let params = action.actionArgs
-          
-          switch action.actionName {
-          case .back: back()
-          case .add: addFromTemplate(params[0].value as! DataItem)
-          case .delete:
-              if let item = item { cache.delete(item) }
-              else if let items = items { cache.delete(items) }
-              scheduleUIUpdate()
-          case .openView:
-              if (params.count > 0) { openView(params[0].value as! SessionView) }
-              else if let item = item { openView(item) }
-              else if let items = items { openView(items) }
-          case .toggleEditMode: toggleEditMode(editButton: action)
-          case .toggleFilterPanel: toggleFilterPanel(filterPanelButton: action)
-          case .star:
-              if let item = item { star([item]) }
-              else if let items = items { star(items) }
-          case .showStarred: showStarred(starButton: action)
-          case .showContextPane: openContextPane()
-          case .showNavigation: showNavigation()
-          case .openContextView: break
-          case .share: showSharePanel()
-          case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
-          case .addToList: addToList()
-          case .duplicate:
-              if let item = item { addFromTemplate(item) }
-          case .exampleUnpack:
-              let (_, _) = (params[0].value, params[1].value) as! (String, Int)
-              break
-          default:
-              print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
-          }
-      }
+        let params = action.actionArgs
+        
+        if action.hasState.value != nil && action.hasState.value!{
+            try! realm.write {
+                self.currentSession.currentView.toggleActive(action)
+                self.computedView.toggleActive(action)
+            }
+            scheduleUIUpdate()            
+        }
+        
+        switch action.actionName {
+        case .back: back()
+        case .add: addFromTemplate(params[0].value as! DataItem)
+        case .delete:
+          if let item = item { cache.delete(item) }
+          else if let items = items { cache.delete(items) }
+          scheduleUIUpdate()
+        case .openView:
+          if (params.count > 0) { openView(params[0].value as! SessionView) }
+          else if let item = item { openView(item) }
+          else if let items = items { openView(items) }
+        case .toggleEditMode: toggleEditMode(editButton: action)
+        case .toggleFilterPanel: toggleFilterPanel(filterPanelButton: action)
+        case .star:
+          if let item = item { star([item]) }
+          else if let items = items { star(items) }
+        case .showStarred: showStarred(starButton: action)
+        case .showContextPane: openContextPane()
+        case .showNavigation: showNavigation()
+        case .openContextView: break
+        case .share: showSharePanel()
+        case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
+        case .addToList: addToList()
+        case .duplicate:
+          if let item = item { addFromTemplate(item) }
+        case .exampleUnpack:
+          let (_, _) = (params[0].value, params[1].value) as! (String, Int)
+          break
+        default:
+          print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
+        }
+    }
           
       func back(){
           let session = currentSession
@@ -70,10 +78,10 @@ extension Main {
       
       func changeRenderer(rendererObject: RendererObject){
           //
-          self.setInactive(objects: Array(self.renderObjects.values))
+//          self.setInactive(objects: Array(self.renderObjects.values))
       
           //
-          setActive(object: rendererObject)
+//          setActive(object: rendererObject)
       
           //
           let session = currentSession
@@ -100,11 +108,9 @@ extension Main {
 
       func showStarred(starButton: ActionDescription){
           
-          // Toggle state of the star button
-          toggleActive(object: starButton)
           
           // If button is active lets create a filtered view
-          if starButton.state.value == true {
+        if self.computedView.isActive(starButton) {
               
               // Get a handle to the view to filter
               let viewToFilter = self.currentSession.currentView
@@ -130,24 +136,24 @@ extension Main {
           }
       }
       
-      func toggleActive(object: ActionDescription){
-          try! realm.write {
-              object.state.value!.toggle()
-          }
-          
-          scheduleUIUpdate()
-      }
+//      func toggleActive(_ object: ActionDescription){
+//          try! realm.write {
+//              object.state.value!.toggle()
+//          }
+//
+//          scheduleUIUpdate()
+//      }
       
-      func setActive(object: ActionDescription){
-          object.color = object.activeColor ?? object.color
-          object.state.value = true
-      }
-      
-      func setInactive(objects: [ActionDescription]){
-          for obj in renderObjects.values{
-              obj.state.value = false
-          }
-      }
+//      func setActive(object: ActionDescription){
+//          object.color = object.activeColor ?? object.color
+//          object.state.value = true
+//      }
+//
+//      func setInactive(objects: [ActionDescription]){
+//          for obj in renderObjects.values{
+//              obj.state.value = false
+//          }
+//      }
       
       func toggleEditMode(editButton: ActionDescription){
       
@@ -155,14 +161,14 @@ extension Main {
           self.sessions.toggleEditMode()
       
           //
-          self.toggleActive(object: editButton)
+//          self.toggleActive(object: editButton)
       
           //
           setComputedView()
       }
       
       func toggleFilterPanel(filterPanelButton: ActionDescription){
-          self.toggleActive(object: filterPanelButton)
+//          self.toggleActive(object: filterPanelButton)
           
           try! realm.write {
               self.currentSession.showFilterPanel.toggle()
