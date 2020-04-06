@@ -43,13 +43,14 @@ struct Action_Previews: PreviewProvider {
 }
 
 struct ActionButton: View {
-    var action: ActionDescription
     @EnvironmentObject var main: Main
     
+    var action: ActionDescription
+    
     var isActive: Bool {
-        return self.main.computedView.isActive(action)
+        return action.hasState.value == true &&
+            self.main.computedView.hasState(action.actionStateName ?? action.actionName.rawValue)
     }
-
     
     var body: some View {
         Button(action: {self.main.executeAction(self.action)} ) {

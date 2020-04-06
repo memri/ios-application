@@ -11,8 +11,7 @@ import Combine
 import RealmSwift
 
 public class ActionDescription: Object, Codable, Identifiable {
-//    public var id = UUID() // TODO why is this here?
-    
+
     var actionName: ActionName = .noop
     var actionArgs: [AnyCodable] = []
     var actionType: ActionType = .button
@@ -20,6 +19,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     @objc dynamic var icon: String = ""
     @objc dynamic var title: String? = nil
     @objc dynamic var showTitle: Bool = false // TODO Is there ever a place where the AD determines whether the title is shown?
+    @objc dynamic var actionStateName:String? = nil
     
     let hasState = RealmOptional<Bool>()
     
@@ -29,19 +29,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     var inactiveColor: UIColor? = .systemGray
     var activeBackgroundColor: UIColor? = .white
     var inactiveBackGroundColor: UIColor? = .white
-    
-    var actionStateName: String? {
-        if self.hasState.value == true {
-            print("rawvalue \(self.actionName.rawValue)")
-            if self.actionName.rawValue == ""{
-                1+1
-            }
-            return self.actionName.rawValue
-        } else{
-            return nil
-        }
-    }
-    
+        
     public func computeColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
             if state {
@@ -89,13 +77,13 @@ public class ActionDescription: Object, Codable, Identifiable {
         jsonErrorHandling(decoder) {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
+            self.actionStateName = try decoder.decodeIfPresent("actionStateName") ?? self.actionStateName
             
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
             
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
             self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
-//            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             self.color = UIColor.init(named: colorString) ?? self.actionName.defaultColor

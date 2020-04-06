@@ -73,6 +73,7 @@ public class Main: ObservableObject {
     
     private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false
+    private var scheduledComputeView: Bool = false
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
@@ -188,6 +189,25 @@ public class Main: ObservableObject {
         }
     }
     
+    func scheduleComputeView(){
+        // Don't schedule when we are already scheduled
+        if !scheduledComputeView {
+            
+            // Prevent multiple calls to the dispatch queue
+            scheduledComputeView = true
+            
+            // Schedule update
+            DispatchQueue.main.async {
+                
+                // Reset scheduled
+                self.scheduledComputeView = false
+                
+                // Update UI
+                self.setComputedView()
+            }
+        }
+    }
+    
     /**
      * Adds a view to the history of the currentSession and displays it.
      * If the view was already part of the currentSession.views it reorders it on top
@@ -199,7 +219,7 @@ public class Main: ObservableObject {
         session.addView(view)
         
         // Recompute view
-        setComputedView()
+        scheduleComputeView()
     }
     
     func openView(_ item:DataItem){

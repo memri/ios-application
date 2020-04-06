@@ -93,35 +93,26 @@ public class SessionView: Object, ObservableObject, Codable {
 //        }
 //    }
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
-        let jsonData = try jsonDataFromFile(file, ext)
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
-        return items
-    }
-    
-    public func isActive(_ action: ActionDescription) -> Bool{
-        if let stateName = action.actionStateName{
-            if activeStates.contains(stateName){
-//                if action.actionName == .showStarred{
-//                    1+1
-//                }
-                return true
-            }
+    public func hasState(_ stateName:String) -> Bool{
+        if activeStates.contains(stateName){
+            return true
         }
         return false
     }
     
-    public func toggleActive(_ action: ActionDescription){
-        if let stateName = action.actionStateName{
-            if let index = activeStates.index(of: stateName){
-                activeStates.remove(at: index)
-                
-            } else{
-                activeStates.append(stateName)
-            }
+    public func toggleState(_ stateName:String) {
+        if let index = activeStates.index(of: stateName){
+            activeStates.remove(at: index)
         }
-        print("sessionview")
-        dump(activeStates)
+        else {
+            activeStates.append(stateName)
+        }
+    }
+    
+    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
+        return items
     }
 }
 
@@ -319,34 +310,19 @@ public class ComputedView: ObservableObject {
         }
     }
     
-    public func toggleActive(_ action: ActionDescription){
-        if let stateName = action.actionStateName{
-            if let index = activeStates.firstIndex(of: stateName){
-                activeStates.remove(at: index)
-            } else{
-                activeStates.append(stateName)
-            }
+    public func toggleState(_ stateName:String) {
+        if let index = activeStates.firstIndex(of: stateName){
+            activeStates.remove(at: index)
         }
-        print("computedView")
-        dump(activeStates)
+        else {
+            activeStates.append(stateName)
+        }
     }
     
-    public func isActive(_ action: ActionDescription) -> Bool{
-        if let stateName = action.actionStateName{
-            if activeStates.contains(stateName){
-                if action.actionName == .showStarred{
-                    1+1
-                }
-                return true
-            }
+    public func hasState(_ stateName:String) -> Bool{
+        if activeStates.contains(stateName){
+            return true
         }
-        print("isactive computedView")
-        dump(activeStates)
-        if action.actionName == .showStarred{
-            1+1
-        }
-        print(action.actionStateName ?? "")
-        print(action.actionName)
         return false
     }
 }
