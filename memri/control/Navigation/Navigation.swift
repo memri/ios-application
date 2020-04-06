@@ -36,8 +36,10 @@ struct Navigation: View {
             .onChanged({ value in
                 self.dragOffset = value.translation
             })
-                .onEnded{ value in
-                    self.main.sessions.showNavigation.toggle()
+            .onEnded{ value in
+                try! self.main.realm.write {
+                    self.main.sessions.showNavigation = false
+                }
             })
     }
 
