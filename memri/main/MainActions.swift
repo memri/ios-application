@@ -16,13 +16,6 @@ extension Main {
     public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
         let params = action.actionArgs
         
-        if action.hasState.value == true {
-            try! realm.write {
-                self.currentSession.currentView.toggleActive(action)
-                self.computedView.toggleActive(action)
-            }
-        }
-
         switch action.actionName {
         case .back: back()
         case .add: addFromTemplate(params[0].value as! DataItem)
@@ -55,6 +48,16 @@ extension Main {
           print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
         }
         
+        if action.hasState.value == true {
+            dump(self.currentSession.currentView.activeStates)
+            
+            try! realm.write {
+                self.currentSession.currentView.toggleActive(action)
+                self.computedView.toggleActive(action)
+            }
+            
+            dump(self.currentSession.currentView.activeStates)
+        }
     }
           
       func back(){

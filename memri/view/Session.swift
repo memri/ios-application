@@ -91,11 +91,14 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
     
     private func decorate(_ session:Session) {
-        rlmTokens.append(session.observe({ (objectChange) in
-            if case .change = objectChange {
-                self.objectWillChange.send()
-            }
-        }))
+        if realm != nil {
+        
+            rlmTokens.append(session.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
     }
     
     private func fetchUID(_ realm:Realm){
