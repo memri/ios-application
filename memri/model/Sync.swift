@@ -14,6 +14,7 @@ class SyncState: Object, Codable {
     @objc dynamic var isPartiallyLoaded:Bool = false
     
     // What action is needed on this data item to sync with the pod
+    // Enum: "create", "delete", "update"
     @objc dynamic var actionNeeded:String = ""
     
     // The last version loaded from the server

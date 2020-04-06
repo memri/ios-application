@@ -101,7 +101,7 @@ public class Main: ObservableObject {
                 try! self.sessions.load(realm, cache) {
                     
                     // Load current view
-                    self.setCurrentView()
+                    self.setComputedView()
                     
                     // Done
                     callback(nil, true)
@@ -116,7 +116,7 @@ public class Main: ObservableObject {
         return self.boot({_,_ in })
     }
     
-    public func setCurrentView(){
+    public func setComputedView(){
         // Fetch the resultset associated with the current view
         let resultSet = cache.getResultSet(self.currentSession.currentView.queryOptions!)
         
@@ -158,7 +158,7 @@ public class Main: ObservableObject {
                 }
                 else {
                     // Update the current view based on the new info
-                    scheduleUIUpdate()
+                    scheduleUIUpdate() // TODO shouldn't this be setCurrentView??
                 }
             }
         }
@@ -203,7 +203,7 @@ public class Main: ObservableObject {
             session.currentViewIndex = session.views.count - 1
         }
         
-        setCurrentView()
+        setComputedView()
     }
     
     func openView(_ item:DataItem){
@@ -233,10 +233,6 @@ public class Main: ObservableObject {
         
         // Open view with the now managed copy
         self.openView(copy)
-    }
-    
-    public func getRenderConfig(name: String) -> RenderConfig{
-        return self.renderObjects[name]!.renderConfig!
     }
 
     /**
@@ -289,7 +285,7 @@ public class Main: ObservableObject {
                 session.currentViewIndex -= 1
             }
             
-            setCurrentView()
+            setComputedView()
         }
     }
     
@@ -315,7 +311,7 @@ public class Main: ObservableObject {
         }
         
         //
-        setCurrentView()
+        setComputedView()
     }
     
     func star(_ items:[DataItem]) {
@@ -338,6 +334,7 @@ public class Main: ObservableObject {
         
         // If button is active lets create a filtered view
         if starButton.state.value == true {
+            
             // Get a handle to the view to filter
             let viewToFilter = self.currentSession.currentView
             
@@ -390,7 +387,7 @@ public class Main: ObservableObject {
         self.toggleActive(object: editButton)
     
         //
-        setCurrentView()
+        setComputedView()
     }
     
     func toggleFilterPanel(filterPanelButton: ActionDescription){

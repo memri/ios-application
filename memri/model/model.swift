@@ -56,7 +56,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         let properties = self.objectSchema.properties
         for prop in properties {
             if let haystack = self[prop.name] as? String {
-                if haystack.lowercased().range(of: needle.lowercased()) != nil {
+                if haystack.lowercased().contains(needle.lowercased()) {
                     return true
                 }
             }
@@ -66,39 +66,27 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
     
     private func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
-        for prop in self.objectSchema.properties { // Seems inefficient
-            if prop.name == fieldName {
-                // Optional
-//                if prop.isOptional {
-//                    return self[fieldName] == item[fieldName]
-//                }
-                // List
-//                else
-                if prop.objectClassName != nil {
-                    return false // TODO implement a list compare and a way to add to updatedFields
-                }
-                else {
-                    if prop.isOptional {
-                        1+1
-                    }
-                    
-                    let item1 = self[fieldName];
-                    let item2 = item[fieldName]
-                    
-                    if let item1 = item1 as? String {
-                        return item1 == item2 as! String
-                    }
-                    if let item1 = item1 as? Int {
-                        return item1 == item2 as! Int
-                    }
-                    if let item1 = item1 as? Double {
-                        return item1 == item2 as! Double
-                    }
-                    if let item1 = item1 as? Object {
-                        return item1 == item2 as! Object
-                    }
-                }
-                break
+        let prop = self.objectSchema[fieldName]!
+
+        // List
+        if prop.objectClassName != nil {
+            return false // TODO implement a list compare and a way to add to updatedFields
+        }
+        else {
+            let value1 = self[fieldName];
+            let value2 = item[fieldName]
+            
+            if let item1 = value1 as? String {
+                return item1 == value2 as! String
+            }
+            if let item1 = value1 as? Int {
+                return item1 == value2 as! Int
+            }
+            if let item1 = value1 as? Double {
+                return item1 == value2 as! Double
+            }
+            if let item1 = value1 as? Object {
+                return item1 == value2 as! Object
             }
         }
         

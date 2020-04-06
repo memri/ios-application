@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 import RealmSwift
 
 public class SessionView: Object, ObservableObject, Codable {
@@ -23,13 +24,13 @@ public class SessionView: Object, ObservableObject, Codable {
     let filterMode = RealmOptional<Bool>()
     let isEditMode = RealmOptional<Bool>()
     
-    let cascadeOrder = List<String>()
-    let selection = List<DataItem>()
-    let editButtons = List<ActionDescription>()
-    let filterButtons = List<ActionDescription>()
-    let actionItems = List<ActionDescription>()
-    let navigateItems = List<ActionDescription>()
-    let contextButtons = List<ActionDescription>()
+    let cascadeOrder = RealmSwift.List<String>()
+    let selection = RealmSwift.List<DataItem>()
+    let editButtons = RealmSwift.List<ActionDescription>()
+    let filterButtons = RealmSwift.List<ActionDescription>()
+    let actionItems = RealmSwift.List<ActionDescription>()
+    let navigateItems = RealmSwift.List<ActionDescription>()
+    let contextButtons = RealmSwift.List<ActionDescription>()
     
     @objc dynamic var renderConfigs: RenderConfigs? = nil
     @objc dynamic var actionButton: ActionDescription? = nil
@@ -121,7 +122,9 @@ public class ComputedView: ObservableObject {
     var actionItems: [ActionDescription] = []
     var navigateItems: [ActionDescription] = []
     var contextButtons: [ActionDescription] = []
-
+    
+    var renderer: RendererObject? = nil // TODO 
+    var rendererView: AnyView? = nil // TODO
     var sessionView: SessionView? = nil
     var renderConfigs: RenderConfigs = RenderConfigs()
     var actionButton: ActionDescription? = nil
