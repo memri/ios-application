@@ -14,6 +14,7 @@ import RealmSwift
 enum DataItemFamily: String, ClassFamily {
     case note = "note"
     case logitem = "logitem"
+    case label = "label"
 
     static var discriminator: Discriminator = .type
 
@@ -23,6 +24,8 @@ enum DataItemFamily: String, ClassFamily {
             return Note.self
         case .logitem:
             return LogItem.self
+        case .label:
+            return Label.self
         }
     }
 }
@@ -44,6 +47,10 @@ class Note:DataItem {
     let writtenBy = List<DataItem>()
     let sharedWith = List<DataItem>()
     let comments = List<DataItem>()
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
     
     required init () {
         super.init()
@@ -68,6 +75,28 @@ class LogItem:DataItem {
     override var type:String { "logitem" }
     
     let appliesTo = List<DataItem>()
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            date = try decoder.decodeIfPresent("date") ?? date
+            contents = try decoder.decodeIfPresent("contents") ?? contents
+            action = try decoder.decodeIfPresent("action") ?? action
+            
+            decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
 }
 
 class Label:DataItem {
@@ -76,9 +105,27 @@ class Label:DataItem {
     @objc dynamic var color:String? = nil
     override var type:String { "label" }
     
-//    public override static func primaryKey() -> String? {
-//        return "name"
-//    }
+    public override static func primaryKey() -> String? {
+        return "name"
+    }
     
     let appliesTo = List<DataItem>() // TODO make two-way binding in realm
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            comment = try decoder.decodeIfPresent("comment") ?? comment
+            color = try decoder.decodeIfPresent("color") ?? color
+            
+            decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
 }

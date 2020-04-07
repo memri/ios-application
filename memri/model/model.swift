@@ -3,24 +3,39 @@ import Combine
 import RealmSwift
 
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
-    public var id:String = UUID().uuidString
+    /**
+     *
+     */
     var type:String { "unknown" }
     
+    /**
+     *
+     */
     @objc dynamic var uid:String? = nil
+    /**
+     *
+     */
     @objc dynamic var deleted:Bool = false
+    /**
+     *
+     */
     @objc dynamic var starred:Bool = false
-    
+
+    /**
+     *
+     */
     let changelog = List<LogItem>()
-    let labels = List<Label>()
-    
+    /**
+     *
+     */
+    let labels = List<memri.Label>()
+    /**
+     *
+     */
     @objc dynamic var syncState:SyncState? = SyncState()
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
-    }
-    
-    public override static func primaryKey() -> String? {
-        return "uid"
     }
     
     /**
@@ -33,6 +48,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         syncState = try decoder.decodeIfPresent("syncState") ?? syncState
         
         decodeIntoList(decoder, "changelog", self.changelog)
+        decodeIntoList(decoder, "labels", self.labels)
     }
     
     /**

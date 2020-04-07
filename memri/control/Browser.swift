@@ -21,28 +21,7 @@ struct Browser: View {
                 }.fullHeight()
                 Search()
             }.fullHeight()
-            
-            if self.main.currentSession.showContextPane {
-                animateInContextPane()
-            }
-            
-            if self.main.sessions.showNavigation{
-                Navigation()
-                    .transition(.move(edge: .leading))
-                    .animation(.easeOut(duration: 0.3))
-            }
         }
-    }
-}
-
-struct animateInContextPane: View {
-
-    @EnvironmentObject var main: Main
-
-    var body: some View {
-        ContextPane()
-            .transition(.move(edge: .trailing))
-            .animation(.easeOut(duration: 0.3))
     }
 }
 

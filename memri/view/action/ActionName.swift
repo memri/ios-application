@@ -26,7 +26,7 @@ public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        delete, setRenderer, select, selectAll, unselectAll, noop
+        delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView, noop
     
     var defaultIcon: String {
         switch self {
@@ -56,6 +56,8 @@ public enum ActionName: String, Codable {
         switch self {
         case .back:
             return "back"
+        case .showAddLabel:
+            return "Add Label"
         default:
             return self.rawValue.camelCaseToWords().lowercased()
         }
@@ -143,7 +145,6 @@ public enum ActionName: String, Codable {
             return nil
         }
     }
-    
     
     var defaultInactiveColor: UIColor? {
         switch self {

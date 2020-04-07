@@ -12,6 +12,8 @@ struct ContextPaneForground: View {
     
     @EnvironmentObject var main: Main
     
+    var addLabelAction = ActionDescription(icon: nil, title: nil, actionName: .showAddLabel, actionArgs: [], actionType: .none)
+    var openLabelViewAction = ActionDescription(icon: nil, title: nil, actionName: .openLabelView, actionArgs: [], actionType: .none)
     var paddingLeft:CGFloat = 25
 
     var body: some View {
@@ -53,7 +55,7 @@ struct ContextPaneForground: View {
                     .padding(.horizontal, paddingLeft)
                 Spacer()
             }
-            .padding(.top, 20)
+            .padding(.top, 15)
             .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0){
                 ForEach (self.main.computedView.actionItems) { actionItem in
@@ -62,7 +64,7 @@ struct ContextPaneForground: View {
                     }) {
                         Text(actionItem.title ?? "")
                             .foregroundColor(.black)
-                            .opacity(0.8)
+                            .opacity(0.6)
                             .font(.system(size: 20, weight: .regular, design: .default))
                             .padding(.vertical, 10)
                     }
@@ -78,25 +80,22 @@ struct ContextPaneForground: View {
                     .padding(.horizontal, paddingLeft)
                 Spacer()
             }
-            .padding(.top, 20)
+            .padding(.top, 15)
             .padding(.bottom, 10)
-//                List {
             VStack(alignment: .leading, spacing: 0){
-
                 ForEach (self.main.computedView.navigateItems) { navigateItem in
                     Button(action:{
                         self.main.executeAction(navigateItem)
                     }) {
                         Text(navigateItem.title ?? "")
                             .foregroundColor(.black)
-                            .opacity(0.8)
+                            .opacity(0.6)
                             .font(.system(size: 20, weight: .regular, design: .default))
                             .padding(.vertical, 10)
                     }
                     .padding(.horizontal, self.paddingLeft)
                 }
             }
-//                }
             Divider()
             HStack {
                 Text(NSLocalizedString("labelsLabel", comment: ""))
@@ -106,8 +105,36 @@ struct ContextPaneForground: View {
                     .padding(.horizontal, paddingLeft)
                 Spacer()
             }
-            .padding(.top, 20)
-            .padding(.bottom, 10)
+            .padding(.top, 15)
+            .padding(.bottom, 15)
+            VStack(alignment: .leading, spacing: 10){
+                ForEach (self.main.computedView.resultSet.item!.labels) { labelItem in
+                    Button(action:{
+                        self.main.executeAction(self.openLabelViewAction, labelItem)
+                    }) {
+                        Text(labelItem.name)
+                            .foregroundColor(.black)
+                            .opacity(0.6)
+                            .font(.system(size: 20, weight: .regular, design: .default))
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 15)
+                            .frame(minWidth: 150, alignment: .leading)
+                    }
+                    .background(Color(hex: labelItem.color ?? "#ffd966ff"))
+                    .cornerRadius(5)
+                    .padding(.horizontal, self.paddingLeft)
+                }
+                Button(action:{
+                    self.main.executeAction(self.addLabelAction)
+                }) {
+                    Text(self.addLabelAction.title!)
+                        .foregroundColor(.black)
+                        .opacity(0.6)
+                        .font(.system(size: 20, weight: .regular, design: .default))
+                        .padding(.vertical, 10)
+                }
+                .padding(.horizontal, self.paddingLeft)
+            }
             Spacer()
         }
         .padding(.top, 60)
