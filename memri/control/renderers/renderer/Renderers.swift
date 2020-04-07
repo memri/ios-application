@@ -10,7 +10,6 @@ import Combine
 import RealmSwift
 import SwiftUI
 
-// TODO add to Main
 public class Renderers {
     var all: [String: Renderer] = [
         "list":             ListRenderer(),
