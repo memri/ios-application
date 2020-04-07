@@ -268,6 +268,24 @@ public class ComputedView: ObservableObject {
         resultSet = ResultSet(cache)
     }
     
+    public func getRenderConfig(_ rendererName:String) -> RenderConfig {
+        if let config = self.renderConfigs[rendererName] {
+            return config as! RenderConfig
+        }
+        else {
+            if rendererName == "list" {
+//                self.sessionView!.renderConfigs![rendererName] = ListConfig()
+                self.renderConfigs[rendererName] = ListConfig()
+            }
+            else if rendererName == "thumbnail" {
+//                self.sessionView!.renderConfigs![rendererName] = ThumbnailConfig()
+                self.renderConfigs[rendererName] = ThumbnailConfig()
+            }
+        }
+        
+        return self.renderConfigs[rendererName] as! RenderConfig
+    }
+    
     public func merge(_ view:SessionView) {
         // TODO this function is called way too often
         

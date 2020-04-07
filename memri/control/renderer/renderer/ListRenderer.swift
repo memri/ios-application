@@ -25,7 +25,7 @@ struct ListRenderer: Renderer {
     }
     
     var renderConfig: ListConfig {
-        return self.main.computedView.renderConfigs.list!
+        return self.main.computedView.getRenderConfig(name) as! ListConfig
     }
     
     var body: some View {

@@ -20,9 +20,10 @@ extension Text {
 
 struct ThumbnailRenderer: View {
     @EnvironmentObject var main: Main
+    
     var name: String="thumbnail"
     var renderConfig: ThumbnailConfig {
-        return self.main.computedView.renderConfigs.thumbnail!
+        return self.main.computedView.getRenderConfig(name) as! ThumbnailConfig
     }
     
     var body: some View {

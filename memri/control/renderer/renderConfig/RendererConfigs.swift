@@ -175,7 +175,7 @@ class ThumbnailConfig: RenderConfig {
     @objc dynamic var itemRenderer: String? = ""
     @objc dynamic var longPress: ActionDescription? = nil
     @objc dynamic var press: ActionDescription? = nil
-    let cols = RealmOptional<Int>()
+    let cols = RealmOptional<Int>(3)
     
     let slideLeftActions = List<ActionDescription>()
     let slideRightActions = List<ActionDescription>()
