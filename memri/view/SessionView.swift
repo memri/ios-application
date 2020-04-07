@@ -273,13 +273,19 @@ public class ComputedView: ObservableObject {
             return config as! RenderConfig
         }
         else {
-            if rendererName == "list" {
-//                self.sessionView!.renderConfigs![rendererName] = ListConfig()
-                self.renderConfigs[rendererName] = ListConfig()
-            }
-            else if rendererName == "thumbnail" {
-//                self.sessionView!.renderConfigs![rendererName] = ThumbnailConfig()
-                self.renderConfigs[rendererName] = ThumbnailConfig()
+            try! cache.realm.write {
+                if self.sessionView!.renderConfigs == nil {
+                    self.sessionView!.renderConfigs = RenderConfigs()
+                }
+                
+                if rendererName == "list" {
+                    self.sessionView!.renderConfigs![rendererName] = ListConfig()
+                    self.renderConfigs[rendererName] = ListConfig()
+                }
+                else if rendererName == "thumbnail" {
+                    self.sessionView!.renderConfigs![rendererName] = ThumbnailConfig()
+                    self.renderConfigs[rendererName] = ThumbnailConfig()
+                }
             }
         }
         
