@@ -519,31 +519,6 @@ public class DynamicView: ObservableObject {
             return ""
         }
         
-//        // Fetch the value of the right property on the right object
-//        switch object {
-//        case "sessions":
-//            return main.sessions[prop] as! String
-//        case "currentSession":
-//            fallthrough
-//        case "session":
-//            return main.currentSession[prop] as! String
-//        case "computedView":
-//            return main.computedView.getPropertyValue(prop) as! String
-//        case "sessionView":
-//            return main.currentSession.currentView[prop] as! String
-//        case "view":
-//            return main.computedView.getPropertyValue(prop) as! String
-//        case "dataItem":
-//            if let item = main.computedView.resultSet.item {
-//                return item.getString(prop)
-//            }
-//            else {
-//                print("Warning: No item found to update")
-//            }
-//        default:
-//            print("Warning: Unknown object to query: \(object) \(prop)")
-//        }
-        
         return ""
     }
     
