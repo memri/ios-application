@@ -159,12 +159,15 @@ extension Main {
         self.openView(view)
     }
     
-    public func openView(_ viewDeclaration: String) {
+    public func openView(_ viewDeclaration: String, _ stateName:String?=nil) {
         // If this is a dynamic view
         if (viewDeclaration.prefix(1) == "{") {
             
             // Generate the session view
             let view = DynamicView(viewDeclaration, self).generateView()
+            
+            // Toggle the state to true
+            if let stateName = stateName { view.toggleState(stateName) }
             
             // Open the view
             openView(view)
@@ -250,7 +253,7 @@ extension Main {
             """
             
             // Open View
-            openView(viewDeclaration)
+            openView(viewDeclaration, starButton.actionStateName)
         }
         else {
             // Go back to the previous view
