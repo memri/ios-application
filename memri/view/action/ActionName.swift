@@ -82,7 +82,7 @@ public enum ActionName: String, Codable {
     
     var defaultHasState: Bool {
         switch self {
-        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel:
+        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
             return true
         default:
             return false
@@ -100,7 +100,7 @@ public enum ActionName: String, Codable {
         case .toggleFilterPanel:
             return "{currentSession.showFilterPanel}"
         case .showContextPane:
-            return "showContextPane"
+            return "{currentSession.showContextPane}"
         case .showNavigation:
             return "{sessions.showNavigation}"
         default:

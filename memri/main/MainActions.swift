@@ -102,6 +102,7 @@ extension Main {
     }
     
     func hasState(_ statePattern:String, _ item:DataItem? = nil) -> Bool {
+        
         // Parse the state pattern
         let (objectToQuery, propToQuery) = DynamicView.parseExpression(statePattern, "view")
         

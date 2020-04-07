@@ -33,10 +33,10 @@ public class ActionDescription: Object, Codable, Identifiable {
     public func computeColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
             if state {
-                return self.activeColor!
+                return self.activeColor ?? .systemGray
             }
             else {
-                return self.inactiveColor!
+                return self.inactiveColor ?? .systemGray
             }
         }
         else {
