@@ -525,10 +525,10 @@ public class DynamicView: ObservableObject {
                 return item[prop]
             }
             else {
-                print("Warning: No item found to update")
+                print("Warning: No item found to get the property off")
             }
         default:
-            print("Warning: Unknown object to query: \(object) \(prop)")
+            print("Warning: Unknown object to get the property off: \(object) \(prop)")
         }
         
         return nil

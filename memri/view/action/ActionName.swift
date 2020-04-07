@@ -139,7 +139,7 @@ public enum ActionName: String, Codable {
         switch self {
         case .toggleEditMode, .toggleFilterPanel:
             return .systemGreen
-        case .showStarred:
+        case .showStarred, .star:
             return .systemYellow
         default:
             return nil

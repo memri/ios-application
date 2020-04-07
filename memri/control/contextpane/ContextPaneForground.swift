@@ -44,7 +44,7 @@ struct ContextPaneForground: View {
                     .padding(.vertical, 10)
                     .multilineTextAlignment(.center)
                     .font(.system(size: 14, weight: .regular, design: .default))
-                    .opacity(0.5)
+                    .opacity(0.6)
                 Divider()
             }
             HStack {
