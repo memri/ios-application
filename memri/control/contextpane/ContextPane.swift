@@ -23,21 +23,27 @@ struct ContextPane: View {
                     .opacity(0.60)
                     .edgesIgnoringSafeArea(.vertical)
                     .transition(.opacity)
-                    .animation(.easeOut(duration: 0.3))
+                    .animation(.easeOut(duration: 0.6))
+                    .gesture(TapGesture()
+                        .onEnded{ value in
+                            try! self.main.realm.write {
+                                self.main.currentSession.showContextPane.toggle()
+                            }
+                        })
             
                 ContextPaneForground()
                     .frame(width: UIScreen.main.bounds.width * forgroundPercentageWidth)
                     .offset(x: (UIScreen.main.bounds.width / 2.0) * (1.0 - forgroundPercentageWidth) + max(self.dragOffset.width, 0) )
                     .edgesIgnoringSafeArea(.vertical)
                     .gesture(DragGesture()
-                    .onChanged({ value in
-                        self.dragOffset = value.translation
-                    })
-                    .onEnded{ value in
-                        try! self.main.realm.write {
-                            self.main.currentSession.showContextPane.toggle()
-                        }
-                    })
+                        .onChanged({ value in
+                            self.dragOffset = value.translation
+                        })
+                        .onEnded{ value in
+                            try! self.main.realm.write {
+                                self.main.currentSession.showContextPane.toggle()
+                            }
+                        })
                     .transition(.move(edge: .trailing))
                     .animation(.easeOut(duration: 0.3))
             }
