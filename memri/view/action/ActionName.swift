@@ -38,12 +38,14 @@ public enum ActionName: String, Codable {
             return "pencil"
         case .toggleFilterPanel:
             return "rhombus.fill"
-        case .showStarred:
+        case .showStarred, .star:
             return "star.fill"
         case .showContextPane:
             return "ellipsis"
         case .showNavigation:
             return "line.horizontal.3"
+        case .schedule:
+            return "alarm"
         default:
             // this icon looks like an error
             return "exclamationmark.bubble"

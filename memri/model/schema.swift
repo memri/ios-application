@@ -69,3 +69,16 @@ class LogItem:DataItem {
     
     let appliesTo = List<DataItem>()
 }
+
+class Label:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var comment:String? = nil
+    @objc dynamic var color:String? = nil
+    override var type:String { "label" }
+    
+//    public override static func primaryKey() -> String? {
+//        return "name"
+//    }
+    
+    let appliesTo = List<DataItem>() // TODO make two-way binding in realm
+}

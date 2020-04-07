@@ -56,6 +56,7 @@ struct ActionButton: View {
         Button(action: {self.main.executeAction(self.action)} ) {
             if action.icon != "" {
                 Image(systemName: action.icon)
+                    .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
                     .foregroundColor(Color(action.computeColor(state: isActive)))

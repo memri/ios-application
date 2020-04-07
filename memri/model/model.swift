@@ -11,6 +11,8 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var starred:Bool = false
     
     let changelog = List<LogItem>()
+    let labels = List<Label>()
+    
     @objc dynamic var syncState:SyncState? = SyncState()
         
     enum DataItemError: Error {
