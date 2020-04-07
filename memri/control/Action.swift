@@ -48,8 +48,8 @@ struct ActionButton: View {
     var action: ActionDescription
     
     var isActive: Bool {
-        return action.hasState.value == true &&
-            self.main.computedView.hasState(action.actionStateName ?? action.actionName.rawValue)
+        return action.hasState.value == true && action.actionStateName != nil &&
+            main.hasState(action.actionStateName!)
     }
     
     var body: some View {

@@ -76,7 +76,7 @@ struct ListRenderer: Renderer {
 
                         }
                     }
-                    .environment(\.editMode, $main.sessions.isEditMode)
+                    .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
                 }

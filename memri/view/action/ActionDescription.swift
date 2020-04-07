@@ -78,6 +78,9 @@ public class ActionDescription: Object, Codable, Identifiable {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
             self.actionStateName = try decoder.decodeIfPresent("actionStateName") ?? self.actionStateName
+            if self.actionStateName == nil && self.actionName.defaultHasState {
+                self.actionStateName = self.actionName.defaultActionStateName
+            }
             
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle

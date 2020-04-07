@@ -16,59 +16,146 @@ extension Main {
     public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
         let params = action.actionArgs
         
-        // For use configured ActionDescriptions we track state in order to manage
-        // the ActionButton's state for them
-        var stateValue = false
-        let currentView = self.computedView.sessionView
-        if action.hasState.value == true && action.actionStateName != nil {
-            stateValue = self.computedView.hasState(action.actionStateName!)
-        }
-        
-        switch action.actionName {
-        case .back: back()
-        case .add: addFromTemplate(params[0].value as! DataItem)
-        case .delete:
-            if let item = item { cache.delete(item) }
-            else if let items = items { cache.delete(items) }
-            scheduleUIUpdate()
-        case .openView:
-            if (params.count > 0) { openView(params[0].value as! SessionView) }
-            else if let item = item { openView(item) }
-            else if let items = items { openView(items) }
-        case .toggleEditMode: toggleEditMode(editButton: action)
-        case .toggleFilterPanel: toggleFilterPanel(filterPanelButton: action)
-        case .star:
-            if let item = item { star([item]) }
-            else if let items = items { star(items) }
-        case .showStarred: showStarred(starButton: action)
-        case .showContextPane: openContextPane()
-        case .showNavigation: showNavigation()
-        case .openContextView: break
-        case .share: showSharePanel()
-        case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
-        case .addToList: addToList()
-        case .duplicate:
-            if let item = item { addFromTemplate(item) }
-        case .exampleUnpack:
-            let (_, _) = (params[0].value, params[1].value) as! (String, Int)
-            break
-        default:
-            print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
-        }
-        
-        // If this is a state button and there is a user set actionStateName
-        if action.hasState.value == true && action.actionStateName != nil {
-            
-            // If the actions didnt change the current view or the value is moving to true
-            if currentView == self.computedView.sessionView || stateValue {
-                
-                // Toggle the state of the button
-                try! realm.write {
-                    self.computedView.toggleState(action.actionStateName!)
-                    self.computedView.sessionView!.toggleState(action.actionStateName!)
-                }
+        if action.actionName.opensView {
+            switch action.actionName {
+            case .openView:
+                if (params.count > 0) { openView(params[0].value as! SessionView) }
+                else if let item = item { openView(item) }
+                else if let items = items { openView(items) }
+            case .openViewByName:
+                openView(params[0].value as! String)
+            case .showStarred:
+                showStarred(starButton: action)
+            default:
+                print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
             }
         }
+        else {
+            
+            // Track state of the action and toggle the state variable based on actionStateName
+            if action.hasState.value == true, let actionStateName = action.actionStateName{
+                toggleState(actionStateName, item)
+            }
+            
+            switch action.actionName {
+            case .back: back()
+            case .add: addFromTemplate(params[0].value as! DataItem)
+            case .delete:
+                if let item = item { cache.delete(item) }
+                else if let items = items { cache.delete(items) }
+                scheduleUIUpdate()
+            case .star:
+                if let item = item { star([item]) }
+                else if let items = items { star(items) }
+            case .share: showSharePanel()
+            case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
+            case .addToList: addToList()
+            case .duplicate:
+                if let item = item { addFromTemplate(item) }
+            case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
+                break // Do nothing
+            case .exampleUnpack:
+                let (_, _) = (params[0].value, params[1].value) as! (String, Int)
+                break
+            default:
+                print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
+            }
+        }
+    }
+    
+    private func parseStatePatter(_ statePattern:String) -> (object:String, prop:String) {
+        // By default we update the named property on the view
+        var objectToUpdate:String = "view", propToUpdate:String = statePattern
+        
+        // We'll use this regular expression to match the name of the object and property
+        let pattern = #"\{([^\.]+).(.*)\}"#
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+        
+        // Weird complex way to execute a regex
+        let nsrange = NSRange(statePattern.startIndex..<statePattern.endIndex, in: statePattern)
+        regex.enumerateMatches(in: statePattern, options: [], range: nsrange) { (match, _, stop) in
+            guard let match = match else { return }
+
+            if match.numberOfRanges == 3,
+              let rangeObject = Range(match.range(at: 1), in: statePattern),
+              let rangeProp = Range(match.range(at: 2), in: statePattern)
+            {
+                objectToUpdate = String(statePattern[rangeObject])
+                propToUpdate = String(statePattern[rangeProp])
+            }
+        }
+        
+        return (objectToUpdate, propToUpdate)
+    }
+    
+    func toggleState(_ statePattern:String, _ item:DataItem? = nil) {
+        // Parse the state pattern
+        let (objectToUpdate, propToUpdate) = parseStatePatter(statePattern)
+        
+        // TODO error handling
+        
+        // Persist these changes
+        try! realm.write {
+
+            // Toggle the right property on the right object
+            switch objectToUpdate {
+            case "sessions":
+                self.sessions[propToUpdate] = !(self.sessions[propToUpdate] as! Bool)
+            case "currentSession":
+                fallthrough
+            case "session":
+                self.currentSession[propToUpdate] = !(self.currentSession[propToUpdate] as! Bool)
+            case "computedView":
+                self.computedView.toggleState(propToUpdate)
+            case "sessionView":
+                self.currentSession.currentView.toggleState(propToUpdate)
+                setComputedView()
+            case "view":
+                self.computedView.toggleState(propToUpdate)
+                self.currentSession.currentView.toggleState(propToUpdate)
+            case "dataItem":
+                if let item = item {
+                    item[propToUpdate] = !(item[propToUpdate] as! Bool)
+                }
+                else {
+                    print("Warning: No item found to update")
+                }
+            default:
+                print("Warning: Unknown object to update: \(objectToUpdate)")
+            }
+        }
+    }
+    
+    func hasState(_ statePattern:String, _ item:DataItem? = nil) -> Bool {
+        // Parse the state pattern
+        let (objectToQuery, propToQuery) = parseStatePatter(statePattern)
+        
+        // Toggle the right property on the right object
+        switch objectToQuery {
+        case "sessions":
+            return self.sessions[propToQuery] as! Bool
+        case "currentSession":
+            fallthrough
+        case "session":
+            return self.currentSession[propToQuery] as! Bool
+        case "computedView":
+            return self.computedView.hasState(propToQuery)
+        case "sessionView":
+            return self.currentSession.currentView.hasState(propToQuery)
+        case "view":
+            return self.computedView.hasState(propToQuery)
+        case "dataItem":
+            if let item = item {
+                return item[propToQuery] as! Bool
+            }
+            else {
+                print("Warning: No item found to update")
+            }
+        default:
+            print("Warning: Unknown object to update: \(objectToQuery)")
+        }
+        
+        return false
     }
           
     func back(){
@@ -86,11 +173,11 @@ extension Main {
         }
     }
     
-    func showNavigation(){
-        try! realm.write {
-            self.sessions.showNavigation = true
-        }
-    }
+//    func showNavigation(){
+//        try! realm.write {
+//            self.sessions.showNavigation = true
+//        }
+//    }
     
     func changeRenderer(rendererObject: RendererObject){
         //
@@ -151,29 +238,30 @@ extension Main {
         }
     }
     
-    func toggleEditMode(editButton: ActionDescription){
+//    func toggleEditMode(editButton: ActionDescription){
+//
+//        //
+//        self.sessions.toggleEditMode()
+//
+//        //
+////        self.toggleActive(object: editButton)
+//
+//        //
+//        scheduleComputeView()
+//    }
     
-        //
-        self.sessions.toggleEditMode()
-    
-        //
-//        self.toggleActive(object: editButton)
-    
-        //
-        scheduleComputeView()
-    }
-    
-    func toggleFilterPanel(filterPanelButton: ActionDescription){
-        try! realm.write {
-            self.currentSession.showFilterPanel.toggle()
-        }
-    }
+//    func toggleFilterPanel(filterPanelButton: ActionDescription){
+//        try! realm.write {
+//            self.currentSession.showFilterPanel.toggle()
+//        }
+//    }
 
-    func openContextPane() {
-        try! realm.write {
-            self.currentSession.showContextPane.toggle()
-        }
-    }
+//    func openContextPane() {
+//        try! realm.write {
+//            self.computedView.toggleState("showContextPane")
+//            self.currentSession.currentView.toggleState("showContextPane")
+//        }
+//    }
 
     func showSharePanel() {
         print("shareNote")

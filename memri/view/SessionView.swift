@@ -21,9 +21,6 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var emptyResultText: String? = nil
     
     let showLabels = RealmOptional<Bool>()
-    let contextMode = RealmOptional<Bool>()
-    let filterMode = RealmOptional<Bool>()
-    let isEditMode = RealmOptional<Bool>()
     
     let cascadeOrder = RealmSwift.List<String>()
     let selection = RealmSwift.List<DataItem>()
@@ -46,7 +43,7 @@ public class SessionView: Object, ObservableObject, Codable {
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
-            backTitle, editActionButton, icon, showLabels, contextMode, filterMode, isEditMode,
+            backTitle, editActionButton, icon, showLabels,
             browsingMode, cascadeOrder, activeStates, emptyResultText
     }
     
@@ -66,9 +63,6 @@ public class SessionView: Object, ObservableObject, Codable {
             self.emptyResultText = try decoder.decodeIfPresent("emptyResultText") ?? self.emptyResultText
             
             self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
-            self.contextMode.value = try decoder.decodeIfPresent("contextMode") ?? self.contextMode.value
-            self.filterMode.value = try decoder.decodeIfPresent("filterMode") ?? self.filterMode.value
-            self.isEditMode.value = try decoder.decodeIfPresent("isEditMode") ?? self.isEditMode.value
             
             decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
             decodeIntoList(decoder, "selection", self.selection)
@@ -131,9 +125,6 @@ public class ComputedView: ObservableObject {
     var browsingMode: String = ""
 
     var showLabels: Bool = true
-    var contextMode: Bool = false
-    var filterMode: Bool = false
-    var isEditMode: Bool = false
 
     var cascadeOrder: [String] = []
     var selection: [DataItem] = []
@@ -257,9 +248,6 @@ public class ComputedView: ObservableObject {
         _emptyResultText = view.emptyResultText ?? _emptyResultText
         
         self.showLabels = view.showLabels.value ?? self.showLabels
-        self.contextMode = view.contextMode.value ?? self.contextMode
-        self.filterMode = view.filterMode.value ?? self.filterMode
-        self.isEditMode = view.isEditMode.value ?? self.isEditMode
         
         self.cascadeOrder.append(contentsOf: view.cascadeOrder)
         self.selection.append(contentsOf: view.selection)
