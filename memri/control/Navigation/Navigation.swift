@@ -26,7 +26,7 @@ struct Navigation: View {
             }
             VStack{
                 ScrollView(.vertical) {
-                    ForEach(self.main.navigation.items){ navigationItem in
+                    ForEach(self.main.navigation.items, id: \.self){ navigationItem in
                         self.item(navigationItem: navigationItem)
                     }
                 }
@@ -40,19 +40,17 @@ struct Navigation: View {
         .offset(x:  offsetLeft  + min(self.dragOffset.width, 0) )
 
         .gesture(DragGesture()
-            .onChanged({ value in
+            .onChanged{ value in
                self.dragOffset = value.translation
-            })
+            }
             .onEnded{ value in
                 try! self.main.realm.write {
-                    self.main.sessions.showNavigation.toggle()
+                    self.main.sessions.showNavigation = false
                 }
-                self.main.scheduleUIUpdate()
             })
         .edgesIgnoringSafeArea(.vertical)
     }
 
-    
     func item(navigationItem: NavigationItem) -> AnyView{
         switch navigationItem.type{
         case "item":
@@ -84,7 +82,9 @@ struct NavigationItemView: View{
             Spacer()
         }
         .onTapGesture {
-            self.main.openView(self.item.view!)
+            if let item = self.item.view {
+                self.main.openView(item)
+            }
         }
     }
 }

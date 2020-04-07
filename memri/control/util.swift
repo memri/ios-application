@@ -104,6 +104,11 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
         print("\nJSON Parse Error at \(path)\nError: \(context.debugDescription)\n")
         raise(SIGINT)
     }
+    catch Swift.DecodingError.typeMismatch(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        print("\nJSON Parse Error at \(path)\nError: \(context.debugDescription)\n")
+        raise(SIGINT)
+    }
     catch {
         dump(error)
         print("\nJSON Parse Error at \(path)\nError: \(error)\n")

@@ -49,7 +49,9 @@ struct RichTextRenderer: Renderer {
 
     var body: some View {
         return VStack{
-            _RichTextEditor(dataItem: main.computedView.resultSet.item!)
+            if main.computedView.resultSet.item != nil {
+                _RichTextEditor(dataItem: main.computedView.resultSet.item!)
+            }
         }
     }
 }

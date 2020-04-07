@@ -14,8 +14,11 @@ extension StringProtocol {
     var firstCapitalized: String { prefix(1).capitalized + dropFirst() }
 }
 
-class MainNavigation {
-    var items: [NavigationItem]
+public class MainNavigation {
+    /**
+     *
+     */
+    var items: [NavigationItem] = []
     
     private var realm:Realm
     
@@ -27,7 +30,15 @@ class MainNavigation {
      *
      */
     public func load(_ callback: () -> Void) {
+        // Fetch navigation from realm and sort based on the order property
+        let navItems = realm.objects(NavigationItem.self).sorted(byKeyPath: "order")
         
+        // Add items to the items array
+        for item in navItems {
+            items.append(item)
+        }
+        
+        callback()
     }
     /**
      *
@@ -35,41 +46,46 @@ class MainNavigation {
     public func install() {
         // Load default navigation items from pacakge
         let jsonData = try! jsonDataFromFile("default_navigation")
-        items =  try! JSONDecoder().decode([NavigationItem].self, from: jsonData)
+        items = try! JSONDecoder().decode([NavigationItem].self, from: jsonData)
         
-        realm
+        try! realm.write {
+        
+            // Store default items in realm
+            for item in items {
+                realm.add(item)
+            }
+        }
     }
     
 }
 
-class NavigationItem: Object, ObservableObject, Codable {
-        
-    public var id = UUID()
-
+public class NavigationItem: Object, ObservableObject, Codable {
     /**
      * Used as the caption in the navigation
      */
-    public var title: String
+    @objc dynamic var title: String = ""
     /**
      * Name of the view it opens
      */
-    public var view: String?
+    @objc dynamic var view: String? = nil
     /**
      * Defines the position in the navigation
      */
-    public var count: Int = 0
+    @objc dynamic var order: Int = 0
     /**
      *  0 = Item
      *  1 = Heading
      *  2 = Line
      */
-    public var type: String = "item"
+    @objc dynamic var type: String = "item"
     
     public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
         jsonErrorHandling(decoder) {
             self.title = try decoder.decodeIfPresent("title") ?? self.title
             self.view = try decoder.decodeIfPresent("view") ?? self.view
-            self.count = try decoder.decodeIfPresent("count") ?? self.count
+            self.order = try decoder.decodeIfPresent("order") ?? self.order
             self.type = try decoder.decodeIfPresent("type") ?? self.type
         }
     }

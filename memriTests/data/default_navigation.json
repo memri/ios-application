@@ -1,91 +1,91 @@
 [
     {
-        "type": 1,
+        "type": "heading",
         "title": "inbox"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "All",
         "view": "all-inbox"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Email",
         "view": "email"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Messages",
         "view": "messages"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Social Media",
         "view": "social-media"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Reminders to read",
         "view": "reminders-read"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Reminders to watch",
         "view": "reminders-watch"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "Reminders to buy",
         "view": "reminders-buy"
     },
     {
-        "type": 1,
+        "type": "heading",
         "title": "vault"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "All",
         "view": "all-vault"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "credits cards",
         "view": "credit-cards"
     },
     {
-        "type": 1,
+        "type": "heading",
         "title": "browse"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "notes",
         "view": "notes"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "lists",
         "view": "lists"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "web pages",
         "view": "web-pages"
     },
     {
-        "type": 2
+        "type": "line"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "All people",
         "view": "all-people"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "family",
         "view": "family"
     },
     {
-        "type": 0,
+        "type": "item",
         "title": "friends",
         "view": "friends"
     }

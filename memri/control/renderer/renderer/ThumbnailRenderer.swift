@@ -20,19 +20,37 @@ extension Text {
 
 struct ThumbnailRenderer: View {
     @EnvironmentObject var main: Main
+    
     var name: String="thumbnail"
     var renderConfig: ThumbnailConfig {
-        return self.main.computedView.renderConfigs.thumbnail!
+        return self.main.computedView.getRenderConfig(name) as! ThumbnailConfig
     }
     
     var body: some View {
-        QGrid(main.computedView.resultSet.items, columns: renderConfig.cols.value!) { dataItem in
-            Text(dataItem.getString("title")).asThumbnail()
-                .onTapGesture {
-                    if let press = self.renderConfig.press {
-                        self.main.executeAction(press, dataItem)
-                    }
+        VStack {
+            if main.computedView.resultSet.count == 0 {
+                HStack (alignment: .top)  {
+                    Spacer()
+                    Text(self.main.computedView.emptyResultText)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 16, weight: .regular, design: .default))
+                        .opacity(0.7)
+                    Spacer()
                 }
+                .padding(.all, 30)
+                .padding(.top, 40)
+                Spacer()
+            }
+            else {
+                QGrid(main.computedView.resultSet.items, columns: renderConfig.cols.value!) { dataItem in
+                    Text(dataItem.getString("title")).asThumbnail()
+                        .onTapGesture {
+                            if let press = self.renderConfig.press {
+                                self.main.executeAction(press, dataItem)
+                            }
+                        }
+                }
+            }
         }
     }
     
