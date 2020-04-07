@@ -130,7 +130,7 @@ public class Main: ObservableObject {
         if resultSet.determinedType != nil {
             
             // Calculate cascaded view
-            let computedView = try! self.sessions.computeView() // TODO handle errors better
+                let computedView = try! self.sessions.computeView() // TODO handle errors better
                 
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property

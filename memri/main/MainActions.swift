@@ -62,35 +62,10 @@ extension Main {
             }
         }
     }
-    
-    private func parseStatePatter(_ statePattern:String) -> (object:String, prop:String) {
-        // By default we update the named property on the view
-        var objectToUpdate:String = "view", propToUpdate:String = statePattern
         
-        // We'll use this regular expression to match the name of the object and property
-        let pattern = #"\{([^\.]+).(.*)\}"#
-        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-        
-        // Weird complex way to execute a regex
-        let nsrange = NSRange(statePattern.startIndex..<statePattern.endIndex, in: statePattern)
-        regex.enumerateMatches(in: statePattern, options: [], range: nsrange) { (match, _, stop) in
-            guard let match = match else { return }
-
-            if match.numberOfRanges == 3,
-              let rangeObject = Range(match.range(at: 1), in: statePattern),
-              let rangeProp = Range(match.range(at: 2), in: statePattern)
-            {
-                objectToUpdate = String(statePattern[rangeObject])
-                propToUpdate = String(statePattern[rangeProp])
-            }
-        }
-        
-        return (objectToUpdate, propToUpdate)
-    }
-    
     func toggleState(_ statePattern:String, _ item:DataItem? = nil) {
         // Parse the state pattern
-        let (objectToUpdate, propToUpdate) = parseStatePatter(statePattern)
+        let (objectToUpdate, propToUpdate) = DynamicView.parseExpression(statePattern, "view")
         
         // TODO error handling
         
@@ -121,14 +96,14 @@ extension Main {
                     print("Warning: No item found to update")
                 }
             default:
-                print("Warning: Unknown object to update: \(objectToUpdate)")
+                print("Warning: Unknown object to update: \(statePattern)")
             }
         }
     }
     
     func hasState(_ statePattern:String, _ item:DataItem? = nil) -> Bool {
         // Parse the state pattern
-        let (objectToQuery, propToQuery) = parseStatePatter(statePattern)
+        let (objectToQuery, propToQuery) = DynamicView.parseExpression(statePattern, "view")
         
         // Toggle the right property on the right object
         switch objectToQuery {
@@ -152,7 +127,7 @@ extension Main {
                 print("Warning: No item found to update")
             }
         default:
-            print("Warning: Unknown object to update: \(objectToQuery)")
+            print("Warning: Unknown object to query: \(statePattern) \(objectToQuery) \(propToQuery)")
         }
         
         return false
@@ -211,26 +186,44 @@ extension Main {
         
         // If button is active lets create a filtered view
         if !self.computedView.hasState(starButton.actionName.rawValue) {
+        
+            // Define a dynamic view that shows a starred subset of the current view
+            let viewDeclaration = """
+            {
+                "copyCurrentView": true,
+                "queryOptions": {
+                    "query": "{computedView.queryOptions.query} AND starred = true"
+                },
+                "title": "Starred {computedView.title}"
+            }
+            """
             
-            // Get a handle to the view to filter
-            let viewToFilter = self.currentSession.currentView
-            
-            // Create Starred View
-            let starredView = SessionView(value: viewToFilter)
-            
-            // Update the title
-            starredView.title = "Starred \(computedView.title)"
-            
-            // Alter the query to add the starred requirement
-            starredView.queryOptions = QueryOptions()
-            starredView.queryOptions!.merge(viewToFilter.queryOptions!)
-            starredView.queryOptions!.query! += " AND starred = true" // TODO this is very naive
-            // TODO perhaps add queryOptions.localOnly = true to prevent server load
-            
-            starredView.activeStates.append(starButton.actionName.rawValue)
+            // Generate the session view
+            // TODO move this to inside openview
+            let starredView = DynamicView(viewDeclaration, self).generateView()
             
             // Open View
             openView(starredView)
+            
+//            // Get a handle to the view to filter
+//            let viewToFilter = self.currentSession.currentView
+//
+//            // Create Starred View
+//            let starredView = SessionView(value: viewToFilter)
+//
+//            // Update the title
+//            starredView.title = "Starred \(computedView.title)"
+//
+//            // Alter the query to add the starred requirement
+//            starredView.queryOptions = QueryOptions()
+//            starredView.queryOptions!.merge(viewToFilter.queryOptions!)
+//            starredView.queryOptions!.query! += " AND starred = true" // TODO this is very naive
+//            // TODO perhaps add queryOptions.localOnly = true to prevent server load
+//
+//            starredView.activeStates.append(starButton.actionName.rawValue)
+//
+//            // Open View
+//            openView(starredView)
         }
         else {
             // Go back to the previous view

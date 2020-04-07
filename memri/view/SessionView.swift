@@ -9,6 +9,7 @@ public class SessionView: Object, ObservableObject, Codable {
      *
      */
     @objc dynamic var queryOptions: QueryOptions? = QueryOptions()
+    @objc dynamic var renderConfigs: RenderConfigs? = RenderConfigs()
     
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
@@ -31,7 +32,6 @@ public class SessionView: Object, ObservableObject, Codable {
     let contextButtons = RealmSwift.List<ActionDescription>()
     let activeStates = RealmSwift.List<String>()
     
-    @objc dynamic var renderConfigs: RenderConfigs? = nil
     @objc dynamic var actionButton: ActionDescription? = nil
     @objc dynamic var editActionButton: ActionDescription? = nil
     
@@ -101,6 +101,43 @@ public class SessionView: Object, ObservableObject, Codable {
         else {
             activeStates.append(stateName)
         }
+    }
+    
+    public func copy() -> SessionView {
+        let view = SessionView()
+        
+        view.queryOptions!.merge(self.queryOptions!)
+        
+        view.name = self.name
+        view.rendererName = self.rendererName
+        view.backTitle = self.backTitle
+        view.icon = self.icon
+        view.browsingMode = self.browsingMode
+        
+        view.title = self.title
+        view.subtitle = self.subtitle
+        view.filterText = self.filterText
+        view.emptyResultText = self.emptyResultText
+        
+        view.showLabels.value = self.showLabels.value
+        
+        view.cascadeOrder.append(objectsIn: self.cascadeOrder)
+        view.selection.append(objectsIn: self.selection)
+        view.editButtons.append(objectsIn: self.editButtons)
+        view.filterButtons.append(objectsIn: self.filterButtons)
+        view.actionItems.append(objectsIn: self.actionItems)
+        view.navigateItems.append(objectsIn: self.navigateItems)
+        view.contextButtons.append(objectsIn: self.contextButtons)
+        view.activeStates.append(objectsIn: self.activeStates)
+        
+        if let renderConfigs = self.renderConfigs {
+            view.renderConfigs!.merge(renderConfigs)
+        }
+        
+        view.actionButton = self.actionButton
+        view.editActionButton = self.editActionButton
+        
+        return view
     }
     
     public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
@@ -313,4 +350,237 @@ public class ComputedView: ObservableObject {
         }
         return false
     }
+    
+    public func getPropertyValue(_ name:String) -> Any {
+        let type: Mirror = Mirror(reflecting:self)
+
+        for child in type.children {
+            if child.label! == name || child.label! == "_" + name {
+                return child.value
+            }
+        }
+        
+        return ""
+    }
+    
+}
+
+public class DynamicView: ObservableObject {
+    /**
+     *
+     */
+    var declaration:String
+    /**
+     *
+     */
+    var copyCurrentView:Bool = false
+    /**
+     *
+     */
+    var parsed: [String:Any] = [:]
+    
+    private var main:Main
+    
+    init(_ decl:String, _ mn:Main) {
+        declaration = decl
+        main = mn
+        
+        parsed = parse() ?? [:]
+        copyCurrentView = parsed["copyFrom"] as? Bool ?? false
+    }
+    
+    func parse() -> [String:Any]? {
+        let data = declaration.data(using: .utf8)!
+        
+        let json = try! JSONSerialization.jsonObject(with: data, options: [])
+        if let object = json as? [String: Any] {
+            return object
+        }
+//        else if let object = json as? [Any] {
+//            // json is an array
+//        }
+        else {
+            print("Warn: Invalid JSON while parsing view")
+        }
+        
+        return nil
+    }
+    
+    func generateView() -> SessionView {
+        var view:SessionView
+        
+        // Copy from an existing view if so desired
+        if copyCurrentView {
+            view = main.currentSession.currentView.copy()
+        }
+        else {
+            view = SessionView()
+        }
+        
+        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) {
+            for (key, _) in parsed {
+                
+                // Skip copyCurrentView as this is only for ComputableView
+                if key == "copyCurrentView" { continue }
+                
+                do {
+                    // If its an object continue the walk to find strings to update
+                    if let prop = object[key] as? Object {
+                        recursiveWalk(prop, parsed[key] as! [String:Any])
+                    }
+                    // Update strings
+                    else if let prop = parsed[key] as? String {
+                        object[key] = computeString(prop)
+                    }
+                }
+                catch { // Error can be thrown by illegal subscript access
+                    print("Warn: Could not find property: \(key)")
+                }
+            }
+        }
+        
+        recursiveWalk(view, parsed)
+        
+        return view
+    }
+    
+    public func computeString(_ expr:String) -> String {
+        // We'll use this regular expression to match the name of the object and property
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+).([^\{]*)\})?)"#
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+
+        var result:String = ""
+        
+        // Weird complex way to execute a regex
+        let nsrange = NSRange(expr.startIndex..<expr.endIndex, in: expr)
+        regex.enumerateMatches(in: expr, options: [], range: nsrange) { (match, _, stop) in
+            guard let match = match else { return }
+
+            // We should have 4 matches
+            if match.numberOfRanges == 4 {
+                
+                // Fetch the text portion of the match
+                if let rangeText = Range(match.range(at: 1), in: expr) {
+                    result += String(expr[rangeText])
+                }
+                
+                // compute the string result of the expression
+                if let rangeObject = Range(match.range(at: 2), in: expr),
+                  let rangeProp = Range(match.range(at: 3), in: expr) {
+                    result += queryObject(String(expr[rangeObject]), String(expr[rangeProp]))
+                }
+            }
+        }
+        
+        return result
+    }
+    
+    public func queryObject(_ object:String, _ prop:String) -> String{
+        if object == "" || prop == "" { return "" } // TODO think about having a default object
+        
+        // Split the property by dots to look up each property separately
+        let propParts = prop.split(separator: ".")
+        
+        // Get the first property of the object
+        var value:Any? = getProperty(object, String(propParts[0]))
+        
+        // Check if the value is not nil
+        if value != nil {
+            
+            // Loop through the properties and fetch each
+            if propParts.count > 1 {
+                for i in 1...propParts.count - 1 {
+                    value = (value as! Object)[String(propParts[i])]
+                }
+            }
+            
+            // Return the value as a string
+            return value as! String
+        }
+        else {
+            return ""
+        }
+        
+//        // Fetch the value of the right property on the right object
+//        switch object {
+//        case "sessions":
+//            return main.sessions[prop] as! String
+//        case "currentSession":
+//            fallthrough
+//        case "session":
+//            return main.currentSession[prop] as! String
+//        case "computedView":
+//            return main.computedView.getPropertyValue(prop) as! String
+//        case "sessionView":
+//            return main.currentSession.currentView[prop] as! String
+//        case "view":
+//            return main.computedView.getPropertyValue(prop) as! String
+//        case "dataItem":
+//            if let item = main.computedView.resultSet.item {
+//                return item.getString(prop)
+//            }
+//            else {
+//                print("Warning: No item found to update")
+//            }
+//        default:
+//            print("Warning: Unknown object to query: \(object) \(prop)")
+//        }
+        
+        return ""
+    }
+    
+    public func getProperty(_ object:String, _ prop:String) -> Any? {
+        // Fetch the value of the right property on the right object
+        switch object {
+        case "sessions":
+            return main.sessions[prop]
+        case "currentSession":
+            fallthrough
+        case "session":
+            return main.currentSession[prop]
+        case "computedView":
+            return main.computedView.getPropertyValue(prop)
+        case "sessionView":
+            return main.currentSession.currentView[prop]
+        case "view":
+            return main.computedView.getPropertyValue(prop)
+        case "dataItem":
+            if let item = main.computedView.resultSet.item {
+                return item[prop]
+            }
+            else {
+                print("Warning: No item found to update")
+            }
+        default:
+            print("Warning: Unknown object to query: \(object) \(prop)")
+        }
+        
+        return nil
+    }
+    
+    public class func parseExpression(_ expression:String, _ defObject:String) -> (object:String, prop:String) {
+        // By default we update the named property on the view
+        var objectToUpdate:String = defObject, propToUpdate:String = expression
+        
+        // We'll use this regular expression to match the name of the object and property
+        let pattern = #"\{([^\.]+).(.*)\}"#
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+        
+        // Weird complex way to execute a regex
+        let nsrange = NSRange(expression.startIndex..<expression.endIndex, in: expression)
+        regex.enumerateMatches(in: expression, options: [], range: nsrange) { (match, _, stop) in
+            guard let match = match else { return }
+
+            if match.numberOfRanges == 3,
+              let rangeObject = Range(match.range(at: 1), in: expression),
+              let rangeProp = Range(match.range(at: 2), in: expression)
+            {
+                objectToUpdate = String(expression[rangeObject])
+                propToUpdate = String(expression[rangeProp])
+            }
+        }
+        
+        return (objectToUpdate, propToUpdate)
+    }
+
 }
