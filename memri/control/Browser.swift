@@ -9,7 +9,6 @@
 import SwiftUI
 import Combine
 
-
 struct Browser: View {
     @EnvironmentObject var main: Main
     
@@ -18,7 +17,7 @@ struct Browser: View {
             VStack() {
                 TopNavigation()
                 Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
-                    self.main.currentRenderer.fullHeight()
+                    self.main.renderers.allViews[self.main.computedView.rendererName].fullHeight()
                 }.fullHeight()
                 Search()
             }.fullHeight()

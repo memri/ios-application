@@ -10,7 +10,7 @@ import SwiftUI
 
 struct FilterPanel: View {
     @EnvironmentObject var main: Main
-    @State var showFilters=false
+    @State var showFilters = false
 
     
     @State var sorters = [SortButton(name: "Select property", selected: false),
@@ -19,20 +19,18 @@ struct FilterPanel: View {
                           SortButton(name: "Date created", selected: true)]
 
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
-                                BrowseSetting(name: "Browse by type", selected: false),
-                                BrowseSetting(name: "Browse by folder", selected: false),
-                                BrowseSetting(name: "Year-Month-Day view", selected: false)]
-
- 
+                                 BrowseSetting(name: "Browse by type", selected: false),
+                                 BrowseSetting(name: "Browse by folder", selected: false),
+                                 BrowseSetting(name: "Year-Month-Day view", selected: false)]
     
     var body: some View {
-        VStack{
+        VStack {
             if self.main.currentSession.showFilterPanel {
                 HStack(){
                     VStack(alignment: .leading){
                         HStack(alignment: .bottom){
                             HStack(alignment: .top) {
-                                ForEach(self.main.renderObjectTuples, id: \.0) { index, item in
+                                ForEach(self.main.renderers.tuples, id: \.0) { index, item in
                                     Group{
                                         if item.canDisplayResultSet(items: self.main.computedView.resultSet.items){
                                             Action(action: item)
@@ -41,7 +39,7 @@ struct FilterPanel: View {
                                 }
                             }
                         }.offset(x: 4)
-                        
+
                         VStack(alignment: .leading){
                             ForEach(self.browseSettings) { browseSetting in
                                 Text(browseSetting.name)
@@ -51,7 +49,6 @@ struct FilterPanel: View {
                                     .padding(.vertical, 10)
                             }
                         }
-                        
                     }.padding(.horizontal , 20)
                         .frame(minWidth: 0, maxWidth: .infinity,alignment: Alignment.topLeading)
                     

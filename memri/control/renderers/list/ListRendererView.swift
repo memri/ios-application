@@ -11,7 +11,7 @@ import Combine
 import SwiftUI
 
 
-struct ListRenderer: Renderer {
+struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
@@ -25,7 +25,7 @@ struct ListRenderer: Renderer {
     }
     
     var renderConfig: ListConfig {
-        return self.main.computedView.getRenderConfig(name) as! ListConfig
+        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
     var body: some View {
@@ -85,8 +85,8 @@ struct ListRenderer: Renderer {
     }
 }
 
-struct ListRenderer_Previews: PreviewProvider {
+struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

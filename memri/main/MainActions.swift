@@ -48,7 +48,7 @@ extension Main {
                 if let item = item { star([item]) }
                 else if let items = items { star(items) }
             case .share: showSharePanel()
-            case .setRenderer: changeRenderer(rendererObject: action as! RendererObject)
+            case .setRenderer: changeRenderer(rendererObject: action as! Renderer)
             case .addToList: addToList()
             case .duplicate:
                 if let item = item { addFromTemplate(item) }
@@ -208,7 +208,7 @@ extension Main {
         }
     }
     
-    func changeRenderer(rendererObject: RendererObject){
+    func changeRenderer(rendererObject: Renderer){
         //
 //        self.setInactive(objects: Array(self.renderObjects.values))
     
