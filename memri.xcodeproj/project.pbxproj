@@ -522,13 +522,13 @@
 			path = memriUITests;
 			sourceTree = "<group>";
 		};
-		5D78D0702425319400F7BD3B /* Navigation */ = {
+		5D78D0702425319400F7BD3B /* navigation */ = {
 			isa = PBXGroup;
 			children = (
 				5D78D0682424D4D900F7BD3B /* Navigation.swift */,
 				5D78D071242531BE00F7BD3B /* NavigationItem.swift */,
 			);
-			path = Navigation;
+			path = navigation;
 			sourceTree = "<group>";
 		};
 		5D81A07C243343AF006E1FA9 /* action */ = {
@@ -591,7 +591,7 @@
 			isa = PBXGroup;
 			children = (
 				5D414AD6242B4E4700A3DDFA /* contextpane */,
-				5D78D0702425319400F7BD3B /* Navigation */,
+				5D78D0702425319400F7BD3B /* navigation */,
 				5D41E2A52417A20E001D4482 /* renderers */,
 				5D599BBE23F2B77500F218A0 /* Browser.swift */,
 				86A5D83B243B3FFF00F8FAD8 /* Loading.swift */,
