@@ -33,7 +33,6 @@ struct ContextPane: View {
                     try! self.main.realm.write {
                         self.main.currentSession.showContextPane.toggle()
                     }
-                    self.main.scheduleUIUpdate()
                 })
         }
 

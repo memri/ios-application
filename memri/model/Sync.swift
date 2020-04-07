@@ -18,7 +18,7 @@ class SyncState: Object, Codable {
     @objc dynamic var actionNeeded:String = ""
     
     // The last version loaded from the server
-    @objc dynamic var version:Int = 0 // TODO don't overwrite if the version is same or higher
+    @objc dynamic var version:Int = 0
     
     // Which fields to update
     let updatedFields = List<String>()

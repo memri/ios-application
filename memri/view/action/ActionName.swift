@@ -24,7 +24,7 @@ extension String {
 
 public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
-        showContextPane, showOverlay, openContextView, share, showNavigation, addToPanel, duplicate,
+        showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, noop
     
@@ -82,12 +82,41 @@ public enum ActionName: String, Codable {
     
     var defaultHasState: Bool {
         switch self {
-        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel:
+        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
             return true
         default:
             return false
         }
     }
+    
+    var defaultActionStateName: String? {
+        switch self {
+        case .star:
+            return "{dataItem.starred}"
+        case .showStarred:
+            return "showStarred" // uses openView underneath
+        case .toggleEditMode:
+            return "{currentSession.editMode}"
+        case .toggleFilterPanel:
+            return "{currentSession.showFilterPanel}"
+        case .showContextPane:
+            return "{currentSession.showContextPane}"
+        case .showNavigation:
+            return "{sessions.showNavigation}"
+        default:
+            return nil
+        }
+    }
+    
+    var opensView: Bool {
+        switch self {
+        case .showStarred, .openView, .openViewByName:
+            return true
+        default:
+            return false
+        }
+    }
+
     
     var defaultColor: UIColor {
         switch self{
@@ -117,7 +146,7 @@ public enum ActionName: String, Codable {
     var defaultInactiveColor: UIColor? {
         switch self {
         case .back, .add, .openView, .openViewByName, .toggleEditMode, .toggleFilterPanel, .star,
-             .showStarred, .showContextPane, .showOverlay, .openContextView, .share, .showNavigation,
+             .showStarred, .showContextPane, .showOverlay, .share, .showNavigation,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
              .starredNotes, .allNotes, .delete, .select, .selectAll, .unselectAll, .exampleUnpack:
             return .systemGray
