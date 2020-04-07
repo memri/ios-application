@@ -112,9 +112,19 @@ public class ActionDescription: Object, Codable, Identifiable {
         
         self.actionName = actionName ?? self.actionName
         self.icon = icon ?? self.actionName.defaultIcon
-        self.title = title ?? self.title
+        self.title = title ?? self.actionName.defaultTitle
         self.actionArgs = actionArgs ?? self.actionArgs
         self.actionType = actionType ?? self.actionType
+        
+        self.hasState.value = self.actionName.defaultHasState
+        self.color = self.actionName.defaultColor
+        self.actionStateName = self.actionName.defaultActionStateName
+        
+        self.activeColor = self.actionName.defaultActiveColor
+        self.inactiveColor = self.actionName.defaultInactiveColor
+        self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
+        self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+        self.backgroundColor = self.actionName.defaultBackgroundColor
         
         print("create action description runtime: \(self.actionName)")
     }
