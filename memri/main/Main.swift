@@ -207,47 +207,4 @@ public class Main: ObservableObject {
             }
         }
     }
-    
-    /**
-     * Adds a view to the history of the currentSession and displays it.
-     * If the view was already part of the currentSession.views it reorders it on top
-     */
-    func openView(_ view:SessionView) {
-        let session = self.currentSession
-        
-        // Add view to session
-        session.addView(view)
-        
-        // Recompute view
-        scheduleComputeView()
-    }
-    
-    func openView(_ item:DataItem){
-        // Create a new view
-        let view = SessionView()
-        
-        // Set the query options to load the item
-        view.queryOptions!.query = item.getString("uid")
-        
-        // Open the view
-        self.openView(view)
-    }
-    
-    public func openView(_ view: String) {}
-    public func openView(_ items: [DataItem]) {}
-
-    /**
-     * Add a new data item and displays that item in the UI
-     * in edit mode
-     */
-    public func addFromTemplate(_ template:DataItem) {
-        // Copy template
-        let copy = self.cache.duplicate(template)
-        
-        // Add the new item to the cache
-        _ = try! self.cache.addToCache(copy)
-        
-        // Open view with the now managed copy
-        self.openView(copy)
-    }
 }

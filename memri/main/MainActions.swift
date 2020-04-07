@@ -133,6 +133,62 @@ extension Main {
         
         return false
     }
+
+    /**
+     * Adds a view to the history of the currentSession and displays it.
+     * If the view was already part of the currentSession.views it reorders it on top
+     */
+    func openView(_ view:SessionView) {
+        let session = self.currentSession
+        
+        // Add view to session
+        session.addView(view)
+        
+        // Recompute view
+        scheduleComputeView()
+    }
+    
+    func openView(_ item:DataItem){
+        // Create a new view
+        let view = SessionView()
+        
+        // Set the query options to load the item
+        view.queryOptions!.query = item.getString("uid")
+        
+        // Open the view
+        self.openView(view)
+    }
+    
+    public func openView(_ viewDeclaration: String) {
+        // If this is a dynamic view
+        if (viewDeclaration.prefix(1) == "{") {
+            
+            // Generate the session view
+            let view = DynamicView(viewDeclaration, self).generateView()
+            
+            // Open the view
+            openView(view)
+        }
+        else {
+            // TODO find view by name
+        }
+    }
+    public func openView(_ items: [DataItem]) {}
+
+    /**
+     * Add a new data item and displays that item in the UI
+     * in edit mode
+     */
+    public func addFromTemplate(_ template:DataItem) {
+        // Copy template
+        let copy = self.cache.duplicate(template)
+        
+        // Add the new item to the cache
+        _ = try! self.cache.addToCache(copy)
+        
+        // Open view with the now managed copy
+        self.openView(copy)
+    }
           
     func back(){
         let session = currentSession
@@ -148,12 +204,6 @@ extension Main {
             scheduleComputeView()
         }
     }
-    
-//    func showNavigation(){
-//        try! realm.write {
-//            self.sessions.showNavigation = true
-//        }
-//    }
     
     func changeRenderer(rendererObject: RendererObject){
         //
@@ -186,7 +236,7 @@ extension Main {
     func showStarred(starButton: ActionDescription){
         
         // If button is active lets create a filtered view
-        if !self.computedView.hasState(starButton.actionName.rawValue) {
+        if !self.computedView.hasState(starButton.actionStateName!) {
         
             // Define a dynamic view that shows a starred subset of the current view
             let viewDeclaration = """
@@ -199,63 +249,14 @@ extension Main {
             }
             """
             
-            // Generate the session view
-            // TODO move this to inside openview
-            let starredView = DynamicView(viewDeclaration, self).generateView()
-            
             // Open View
-            openView(starredView)
-            
-//            // Get a handle to the view to filter
-//            let viewToFilter = self.currentSession.currentView
-//
-//            // Create Starred View
-//            let starredView = SessionView(value: viewToFilter)
-//
-//            // Update the title
-//            starredView.title = "Starred \(computedView.title)"
-//
-//            // Alter the query to add the starred requirement
-//            starredView.queryOptions = QueryOptions()
-//            starredView.queryOptions!.merge(viewToFilter.queryOptions!)
-//            starredView.queryOptions!.query! += " AND starred = true" // TODO this is very naive
-//            // TODO perhaps add queryOptions.localOnly = true to prevent server load
-//
-//            starredView.activeStates.append(starButton.actionName.rawValue)
-//
-//            // Open View
-//            openView(starredView)
+            openView(viewDeclaration)
         }
         else {
             // Go back to the previous view
             back()
         }
     }
-    
-//    func toggleEditMode(editButton: ActionDescription){
-//
-//        //
-//        self.sessions.toggleEditMode()
-//
-//        //
-////        self.toggleActive(object: editButton)
-//
-//        //
-//        scheduleComputeView()
-//    }
-    
-//    func toggleFilterPanel(filterPanelButton: ActionDescription){
-//        try! realm.write {
-//            self.currentSession.showFilterPanel.toggle()
-//        }
-//    }
-
-//    func openContextPane() {
-//        try! realm.write {
-//            self.computedView.toggleState("showContextPane")
-//            self.currentSession.currentView.toggleState("showContextPane")
-//        }
-//    }
 
     func showSharePanel() {
         print("shareNote")
