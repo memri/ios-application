@@ -24,6 +24,7 @@ public class Installer {
             print("Installing defaults in the database")
             
             // Load default navigation items in database
+            main.navigation.install()
             
             // Load default objects in database
             
