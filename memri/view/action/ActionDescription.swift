@@ -11,19 +11,17 @@ import Combine
 import RealmSwift
 
 public class ActionDescription: Object, Codable, Identifiable {
-//    public var id = UUID() // TODO why is this here?
-    
+
     var actionName: ActionName = .noop
     var actionArgs: [AnyCodable] = []
     var actionType: ActionType = .button
     
     @objc dynamic var icon: String = ""
     @objc dynamic var title: String? = nil
-    
     @objc dynamic var showTitle: Bool = false // TODO Is there ever a place where the AD determines whether the title is shown?
+    @objc dynamic var actionStateName:String? = nil
     
     let hasState = RealmOptional<Bool>()
-    let state = RealmOptional<Bool>() // TODO is state ever set on a default view?
     
     var color: UIColor = .systemGray
     var backgroundColor: UIColor = .white
@@ -31,14 +29,14 @@ public class ActionDescription: Object, Codable, Identifiable {
     var inactiveColor: UIColor? = .systemGray
     var activeBackgroundColor: UIColor? = .white
     var inactiveBackGroundColor: UIColor? = .white
-    
-    var computedColor: UIColor{
+        
+    public func computeColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
-            if self.state.value == true {
-                return self.activeColor!
+            if state {
+                return self.activeColor ?? .systemGray
             }
             else {
-                return self.inactiveColor!
+                return self.inactiveColor ?? .systemGray
             }
         }
         else {
@@ -46,9 +44,9 @@ public class ActionDescription: Object, Codable, Identifiable {
         }
     }
     
-    var computedBackgroundColor: UIColor{
+    public func computeBackgroundColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
-            if self.state.value == true {
+            if state {
                 return self.activeBackgroundColor!
             }
             else {
@@ -66,7 +64,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     @objc dynamic var _actionType: String = "button" // Used to store actionType as string in realm
     
     private enum CodingKeys: String, CodingKey {
-        case icon, title, actionName, actionArgs, actionType, showTitle, hasState, state
+        case icon, title, actionName, actionArgs, actionType, showTitle, hasState
     }
     
     enum ActionDescriptionKeys: String, CodingKey {
@@ -79,13 +77,16 @@ public class ActionDescription: Object, Codable, Identifiable {
         jsonErrorHandling(decoder) {
             self.actionName = try decoder.decodeIfPresent("actionName") ?? self.actionName
             self.actionType = try decoder.decodeIfPresent("actionType") ?? self.actionType
+            self.actionStateName = try decoder.decodeIfPresent("actionStateName") ?? self.actionStateName
+            if self.actionStateName == nil && self.actionName.defaultHasState {
+                self.actionStateName = self.actionName.defaultActionStateName
+            }
             
             self.icon = try decoder.decodeIfPresent("icon") ?? self.actionName.defaultIcon
             self.title = try decoder.decodeIfPresent("title") ?? self.actionName.defaultTitle
             
             self.showTitle = try decoder.decodeIfPresent("showTitle") ?? self.showTitle
             self.hasState.value = try decoder.decodeIfPresent("hasState") ?? self.actionName.defaultHasState
-            self.state.value = try decoder.decodeIfPresent("state") ?? self.actionName.defaultState
 
             let colorString = try decoder.decodeIfPresent("color") ?? ""
             self.color = UIColor.init(named: colorString) ?? self.actionName.defaultColor
@@ -111,9 +112,19 @@ public class ActionDescription: Object, Codable, Identifiable {
         
         self.actionName = actionName ?? self.actionName
         self.icon = icon ?? self.actionName.defaultIcon
-        self.title = title ?? self.title
+        self.title = title ?? self.actionName.defaultTitle
         self.actionArgs = actionArgs ?? self.actionArgs
         self.actionType = actionType ?? self.actionType
+        
+        self.hasState.value = self.actionName.defaultHasState
+        self.color = self.actionName.defaultColor
+        self.actionStateName = self.actionName.defaultActionStateName
+        
+        self.activeColor = self.actionName.defaultActiveColor
+        self.inactiveColor = self.actionName.defaultInactiveColor
+        self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
+        self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+        self.backgroundColor = self.actionName.defaultBackgroundColor
         
         print("create action description runtime: \(self.actionName)")
     }
@@ -212,4 +223,5 @@ public class ActionDescription: Object, Codable, Identifiable {
         let description: ActionDescription = try! JSONDecoder().decode(ActionDescription.self, from: jsonData)
         return description
     }
+    
 }

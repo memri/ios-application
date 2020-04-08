@@ -31,10 +31,6 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    var isEditMode: EditMode = .inactive
-    /**
-     *
-     */
     let sessions = RealmSwift.List<Session>() // @Published
     /**
      *
@@ -91,9 +87,14 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
     
     private func decorate(_ session:Session) {
-        self.cancellables.append(session.objectWillChange.sink { (_) in
-            self.objectWillChange.send()
-        })
+        if realm != nil {
+        
+            rlmTokens.append(session.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
     }
     
     private func fetchUID(_ realm:Realm){
@@ -152,6 +153,9 @@ public class Sessions: Object, ObservableObject, Decodable {
             // Turn myself in a managed object by realm
             try! realm.write { realm.add(self, update: .modified) }
             
+            // Add listeners to all session objects
+            postInit()
+            
             // Notify Main of any changes
             rlmTokens.append(self.observe({ (objectChange) in
                 if case .change = objectChange {
@@ -196,8 +200,6 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
     
     public func merge(_ sessions:Sessions) throws {
-        if self.sessions.count > 0 { throw "Not implemented" }
-        
         func doMerge() {
             let properties = self.objectSchema.properties
             for prop in properties {
@@ -212,8 +214,6 @@ public class Sessions: Object, ObservableObject, Decodable {
         
         if let realm = realm { try! realm.write { doMerge() } }
         else { doMerge() }
-        
-        postInit() // TODO make sure postInit doesnt set listeners twice on the same object
     }
 
     /*
@@ -349,9 +349,9 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
         
         // turn off editMode when navigating
-        if previousView.isEditMode.value == true {
+        if currentSession.editMode == true {
             try! realm!.write {
-                previousView.isEditMode.value = false
+                currentSession.editMode = false
             }
         }
         
@@ -371,18 +371,6 @@ public class Sessions: Object, ObservableObject, Decodable {
      * Find a session using text
      */
     public func findSession(_ query:String) -> Void {}
-    
-    // TODO make this realm compatible
-    func toggleEditMode(){
-        switch self.isEditMode{
-            case .active:
-                self.isEditMode = .inactive
-            case .inactive:
-                self.isEditMode = .active
-            default:
-                break
-        }
-    }
 
     /**
      * Clear all sessions and create a new one
@@ -424,6 +412,24 @@ public class Session: Object, ObservableObject, Decodable {
      *
      */
     @objc dynamic var showContextPane:Bool = false
+    /**
+     *
+     */
+    @objc dynamic var editMode:Bool = false
+    
+    /**
+     *
+     */
+    var isEditMode: EditMode {
+        get {
+            if editMode { return .active }
+            else { return .inactive }
+        }
+        set (value) {
+            if value == .active { editMode = true }
+            else { editMode = false }
+        }
+    }
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
@@ -450,6 +456,7 @@ public class Session: Object, ObservableObject, Decodable {
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
             showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
             showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
+            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
             
             decodeIntoList(decoder, "views", self.views)
         }

@@ -73,6 +73,7 @@ public class Main: ObservableObject {
     
     private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false
+    private var scheduledComputeView: Bool = false
     
     init(name:String, key:String) {
         podApi = PodAPI(key)
@@ -129,7 +130,7 @@ public class Main: ObservableObject {
         if resultSet.determinedType != nil {
             
             // Calculate cascaded view
-            let computedView = try! self.sessions.computeView() // TODO handle errors better
+                let computedView = try! self.sessions.computeView() // TODO handle errors better
                 
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
@@ -188,46 +189,22 @@ public class Main: ObservableObject {
         }
     }
     
-    /**
-     * Adds a view to the history of the currentSession and displays it.
-     * If the view was already part of the currentSession.views it reorders it on top
-     */
-    func openView(_ view:SessionView) {
-        let session = self.currentSession
-        
-        // Add view to session
-        session.addView(view)
-        
-        // Recompute view
-        setComputedView()
-    }
-    
-    func openView(_ item:DataItem){
-        // Create a new view
-        let view = SessionView()
-        
-        // Set the query options to load the item
-        view.queryOptions!.query = item.getString("uid")
-        
-        // Open the view
-        self.openView(view)
-    }
-    
-    public func openView(_ view: String) {}
-    public func openView(_ items: [DataItem]) {}
-
-    /**
-     * Add a new data item and displays that item in the UI
-     * in edit mode
-     */
-    public func addFromTemplate(_ template:DataItem) {
-        // Copy template
-        let copy = self.cache.duplicate(template)
-        
-        // Add the new item to the cache
-        _ = try! self.cache.addToCache(copy)
-        
-        // Open view with the now managed copy
-        self.openView(copy)
+    func scheduleComputeView(){
+        // Don't schedule when we are already scheduled
+        if !scheduledComputeView {
+            
+            // Prevent multiple calls to the dispatch queue
+            scheduledComputeView = true
+            
+            // Schedule update
+            DispatchQueue.main.async {
+                
+                // Reset scheduled
+                self.scheduledComputeView = false
+                
+                // Update UI
+                self.setComputedView()
+            }
+        }
     }
 }
