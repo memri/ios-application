@@ -1,15 +1,17 @@
 //
-//  actionTest.swift
+//  renderConfigTest.swift
 //  memriTests
 //
-//  Created by Koen van der Veen on 30/03/2020.
+//  Created by Koen van der Veen on 08/04/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
+import Foundation
 import XCTest
 @testable import memri
 
-class actionTest: XCTestCase {
+
+class RenderConfigTest: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -19,13 +21,13 @@ class actionTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testActionDescription() throws {
-        let actionDescription = ActionDescription(actionName: .back)
-        XCTAssertTrue(actionDescription.icon == "chevron.left")
+    func testLoadListConfig() throws {
+        var listConfig = try! ListConfig.fromJSONFile("listconfig")
     }
     
-    func testAction() throws {
-        let action: ActionName = .add
+    func testLoadItemComponent() throws {
+        var x = try! ItemRenderer.fromJSONFile("itemcomponent")
+//        var listConfig = try! ViewComponent.fromJSONFile("listconfig")
     }
 
     func testPerformanceExample() throws {
@@ -36,3 +38,4 @@ class actionTest: XCTestCase {
     }
 
 }
+

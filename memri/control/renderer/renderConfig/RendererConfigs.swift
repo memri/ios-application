@@ -8,6 +8,7 @@
 
 import Foundation
 import RealmSwift
+import SwiftUI
 
 /*
     TODO:
@@ -67,15 +68,15 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    let items = List<ActionDescription>()
+    let items = RealmSwift.List<ActionDescription>()
     /**
      *
      */
-    let options1 = List<ActionDescription>()
+    let options1 = RealmSwift.List<ActionDescription>()
     /**
      *
      */
-    let options2 = List<ActionDescription>()
+    let options2 = RealmSwift.List<ActionDescription>()
     
     /**
      *
@@ -102,17 +103,23 @@ public class RenderConfig: Object, Codable {
         decodeIntoList(decoder, "options1", self.options1)
         decodeIntoList(decoder, "options2", self.options2)
     }
+    
+    func generatePreview(_ item:DataItem) -> String {
+        let content = item.getString("content")
+        return content
+    }
+
 }
 
-class ListConfig: RenderConfig {
+public class ListConfig: RenderConfig {
     @objc dynamic var type: String? = "list"
     @objc dynamic var browse: String? = ""
     @objc dynamic var itemRenderer: String? = ""
     @objc dynamic var longPress: ActionDescription? = nil
     @objc dynamic var press: ActionDescription? = nil
     
-    let slideLeftActions = List<ActionDescription>()
-    let slideRightActions = List<ActionDescription>()
+    let slideLeftActions = RealmSwift.List<ActionDescription>()
+    let slideRightActions = RealmSwift.List<ActionDescription>()
 
     // TODO: Why do we need this contructor?
     init(name: String?=nil, icon: String?=nil, category: String?=nil,
@@ -167,7 +174,26 @@ class ListConfig: RenderConfig {
         
         super.superMerge(listConfig)
     }
+    
+    func renderItem(item: DataItem) -> some View {
+        return VStack{
+                    Text(item.getString("title"))
+                        .bold()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Text(self.generatePreview(item))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+    }
+    
+    
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> ListConfig {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let config: ListConfig = try! JSONDecoder().decode(ListConfig.self, from: jsonData)
+        return config
+    }
+    
 }
+
 
 class ThumbnailConfig: RenderConfig {
     @objc dynamic var type: String? = "thumbnail"
@@ -177,8 +203,8 @@ class ThumbnailConfig: RenderConfig {
     @objc dynamic var press: ActionDescription? = nil
     let cols = RealmOptional<Int>(3)
     
-    let slideLeftActions = List<ActionDescription>()
-    let slideRightActions = List<ActionDescription>()
+    let slideLeftActions = RealmSwift.List<ActionDescription>()
+    let slideRightActions = RealmSwift.List<ActionDescription>()
 
     // TODO: Why do we need this contructor?
     init(name: String?=nil, icon: String?=nil, category: String?=nil,

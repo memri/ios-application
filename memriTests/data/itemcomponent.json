@@ -1,0 +1,16 @@
+{"parentView":
+    {
+        "type": "vstack",
+        "children":
+            [
+                {"type": "text",
+                 "content": "title"
+                },
+                {"type": "text",
+                 "content": "lorum ipsum"
+                }
+            ]
+    }
+}
+
+
