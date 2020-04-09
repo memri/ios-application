@@ -43,6 +43,11 @@ class ViewTest: XCTestCase {
 //        sessions.currentSession.executeAction(action: addDescription)
 //        sessions.currentSession.executeAction(action: openViewDescription)
     }
+    
+    func testCompiledView(){
+        let data = try! jsonDataFromFile("views_from_server")
+        let (parsed, named) = try! CompiledView.parseNamedViewDict(data)
+    }
 
     func testPerformanceExample() {
         // This is an example of a performance test case.
