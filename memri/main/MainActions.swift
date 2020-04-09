@@ -13,15 +13,18 @@ extension Main {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ item:DataItem? = nil, _ items:[DataItem]? = nil) {
+    public func executeAction(_ action:ActionDescription, _ itm:DataItem? = nil, _ itms:[DataItem]? = nil) {
+        
         let params = action.actionArgs
+        let item = itm ?? computedView.resultSet.item
+        let selection = itms ?? computedView.selection
         
         if action.actionName.opensView {
             switch action.actionName {
             case .openView:
                 if (params.count > 0) { openView(params[0].value as! SessionView) }
+                else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
                 else if let item = item { openView(item) }
-                else if let items = items { openView(items) }
             case .openViewByName:
                 openView(params[0].value as! String)
             case .showStarred:
@@ -33,7 +36,8 @@ extension Main {
         else {
             
             // Track state of the action and toggle the state variable based on actionStateName
-            if action.hasState.value == true, let actionStateName = action.actionStateName{
+            if selection.count == 0 && action.hasState.value == true,
+              let actionStateName = action.actionStateName {
                 toggleState(actionStateName, item)
             }
             
@@ -41,17 +45,19 @@ extension Main {
             case .back: back()
             case .add: addFromTemplate(params[0].value as! DataItem)
             case .delete:
-                if let item = item { cache.delete(item) }
-                else if let items = items { cache.delete(items) }
+                if selection.count > 0 { cache.delete(selection) }
+                else if let item = item { cache.delete(item) }
                 scheduleUIUpdate()
             case .star:
-                if let item = item { star([item]) }
-                else if let items = items { star(items) }
+                if selection.count > 0, let item = item { star(selection, item.starred) }
             case .share: showSharePanel()
             case .setRenderer: changeRenderer(rendererObject: action as! Renderer)
             case .addToList: addToList()
             case .duplicate:
-                if let item = item { addFromTemplate(item) }
+                if selection.count > 0 {
+                    selection.forEach{ item in addFromTemplate(item) }
+                }
+                else if let item = item { addFromTemplate(item) }
             case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
                 break // Do nothing
             case .exampleUnpack:
@@ -63,7 +69,10 @@ extension Main {
         }
     }
         
-    func toggleState(_ statePattern:String, _ item:DataItem? = nil) {
+    func toggleState(_ statePattern:String, _ itm:DataItem? = nil) {
+        // Make sure we have an item update
+        let item = itm ?? computedView.resultSet.item
+        
         // Parse the state pattern
         let (objectToUpdate, propToUpdate) = DynamicView.parseExpression(statePattern, "view")
         
@@ -91,6 +100,9 @@ extension Main {
             case "dataItem":
                 if let item = item {
                     item[propToUpdate] = !(item[propToUpdate] as! Bool)
+                    
+                    // TODO currently there are no listeners on data??
+                    scheduleUIUpdate()
                 }
                 else {
                     print("Warning: No item found to update")
@@ -101,7 +113,9 @@ extension Main {
         }
     }
     
-    func hasState(_ statePattern:String, _ item:DataItem? = nil) -> Bool {
+    func hasState(_ statePattern:String, _ itm:DataItem? = nil) -> Bool {
+        // Make sure we have an item update
+        let item = itm ?? computedView.resultSet.item
         
         // Parse the state pattern
         let (objectToQuery, propToQuery) = DynamicView.parseExpression(statePattern, "view")
@@ -125,7 +139,7 @@ extension Main {
                 return item[propToQuery] as! Bool
             }
             else {
-                print("Warning: No item found to update")
+                print("Warning: No item found to query")
             }
         default:
             print("Warning: Unknown object to query: \(statePattern) \(objectToQuery) \(propToQuery)")
@@ -225,10 +239,10 @@ extension Main {
         scheduleComputeView()
     }
     
-    func star(_ items:[DataItem]) {
+    func star(_ items:[DataItem], _ toValue:Bool=true) {
         try! realm.write {
             for item in items {
-                item.starred = true
+                item.starred = toValue
             }
         }
         

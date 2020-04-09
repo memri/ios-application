@@ -5,6 +5,10 @@
         "title": "Shopping list",
         "content": "- potatoes\n- mayonaise",
         "starred": true,
+        "labels": [
+            { "name": "Daily Log", "color": "#83ac06" },
+            { "name": "Polis", "color": "#ffd966" }
+        ],
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
@@ -15,6 +19,10 @@
         "type": "note",
         "title": "To read list",
         "content": "Age of surveillance capitalism",
+        "labels": [
+            { "name": "Daily Log", "color": "#83ac06" },
+            { "name": "Polis", "color": "#ffd966" }
+        ],
         "syncState": {
             "version": 1
         }

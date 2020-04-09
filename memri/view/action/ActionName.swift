@@ -26,7 +26,7 @@ public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        delete, setRenderer, select, selectAll, unselectAll, noop
+        delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView, noop
     
     var defaultIcon: String {
         switch self {
@@ -38,12 +38,14 @@ public enum ActionName: String, Codable {
             return "pencil"
         case .toggleFilterPanel:
             return "rhombus.fill"
-        case .showStarred:
+        case .showStarred, .star:
             return "star.fill"
         case .showContextPane:
             return "ellipsis"
         case .showNavigation:
             return "line.horizontal.3"
+        case .schedule:
+            return "alarm"
         default:
             // this icon looks like an error
             return "exclamationmark.bubble"
@@ -54,6 +56,8 @@ public enum ActionName: String, Codable {
         switch self {
         case .back:
             return "back"
+        case .showAddLabel:
+            return "Add Label"
         default:
             return self.rawValue.camelCaseToWords().lowercased()
         }
@@ -135,13 +139,12 @@ public enum ActionName: String, Codable {
         switch self {
         case .toggleEditMode, .toggleFilterPanel:
             return .systemGreen
-        case .showStarred:
+        case .showStarred, .star:
             return .systemYellow
         default:
             return nil
         }
     }
-    
     
     var defaultInactiveColor: UIColor? {
         switch self {

@@ -40,33 +40,16 @@
             },
             "browsingMode": "default",
             "actionButton": {
-                "icon": "plus",
-                "title": "Add Note",
                 "actionName": "add",
                 "actionArgs": [{
                     "type": "note",
                     "title": "Untitled Note"
                 }]
             },
-            "editActionButton": {
-                "icon": "pencil",
-                "title": "Edit Note",
-                "actionName": "toggleEditMode",
-                "actionArgs": []
-            },
+            "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
-                {
-                    "icon": "star.fill",
-                    "title": "Show Starred Notes",
-                    "actionName": "showStarred",
-                    "actionArgs": []
-                },
-                {
-                    "icon": "rhombus.fill",
-                    "title": "Show Filter Panel",
-                    "actionName": "toggleFilterPanel",
-                    "actionArgs": []
-                }
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
             ]
         },
 
@@ -79,12 +62,7 @@
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                 }
             },
-            "editActionButton": {
-                "icon": "pencil",
-                "title": "Edit Note",
-                "actionName": "toggleEditMode",
-                "actionArgs": []
-            },
+            "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
                 {
                     "icon": "increase.indent",
@@ -104,26 +82,11 @@
                         }
                     }]
                 },
-                {
-                    "icon": "ellipsis",
-                    "title": "Show Context Panel",
-                    "actionName": "showContextPane",
-                    "actionArgs": []
-                }
+                { "actionName": "showContextPane" }
             ],
             "contextButtons": [
-                {
-                    "icon": "star.ico",
-                    "title": "Star Note",
-                    "actionName": "star",
-                    "actionArgs": []
-                },
-                {
-                    "icon": "schedule.ico",
-                    "title": "Schedule...",
-                    "actionName": "schedule",
-                    "actionArgs": []
-                }
+                { "actionName": "star" },
+                { "actionName": "schedule" }
             ],
             "actionItems": [
                 {
