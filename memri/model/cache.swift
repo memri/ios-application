@@ -109,6 +109,8 @@ public class Cache {
                     let result = realm.objects(queryType())
                         .filter("deleted = false " + (filter ?? ""))
                     
+//                    print("Using filter: deleted = false \(filter ?? "")")
+                    
                     // Construct return array
                     var returnValue:[DataItem] = []
                     for item in result { returnValue.append(item) }
