@@ -191,6 +191,37 @@ extension Main {
     public func openView(_ items: [DataItem]) {}
 
     /**
+     * Adds a view to the history of the currentSession and displays it.
+     * If the view was already part of the currentSession.views it reorders it on top
+     */
+    func openSession(_ session:Session) {
+        let sessions = self.sessions // TODO generalize
+        
+        // Add view to session and set it as current
+        sessions.addSession(session)
+        
+        // Recompute view
+        scheduleComputeView()
+    }
+    /**
+     *
+     */
+    public func openSession(_ name:String) {
+        // Fetch a dynamic view based on its name
+        let (session, view) = views.getSessionOrView(name, wrapView:true)
+        if let session = session {
+            
+            // Open the view
+            print(session.currentViewIndex)
+            print(session.views.count)
+            openSession(session)
+        }
+        else {
+            print("Warn: Could not find session: '\(name)")
+        }
+    }
+    
+    /**
      * Add a new data item and displays that item in the UI
      * in edit mode
      */
@@ -254,7 +285,7 @@ extension Main {
         if !self.computedView.hasState(starButton.actionStateName!) {
         
             // Open named view 'showStarred'
-            openView("showStarred", starButton.actionStateName)
+            openView("filter-starred", starButton.actionStateName)
         }
         else {
             // Go back to the previous view

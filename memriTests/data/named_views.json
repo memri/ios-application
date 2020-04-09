@@ -1,10 +1,25 @@
 [
     {
-        "name": "showStarred",
+        "name": "filter-starred",
         "fromTemplate": "{view}",
         "queryOptions": {
             "query": "{computedView.queryOptions.query} AND starred = true"
         },
         "title": "Starred {computedView.title}"
+    },
+    
+    {
+        "name": "shopping-notes",
+        "views": [
+            "all-notes",
+            {
+                "title": "Shopping Notes",
+                "queryOptions": {
+                    "query": "note AND title BEGINSWITH[c] 'shopping'",
+                    "sortProperty": "date-modified",
+                    "sortAscending": 0
+                }
+            }
+        ]
     }
 ]
