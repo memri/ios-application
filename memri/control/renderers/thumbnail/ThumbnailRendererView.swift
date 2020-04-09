@@ -18,12 +18,13 @@ extension Text {
 }
 
 
-struct ThumbnailRenderer: View {
+struct ThumbnailRendererView: View {
     @EnvironmentObject var main: Main
     
     var name: String="thumbnail"
+    
     var renderConfig: ThumbnailConfig {
-        return self.main.computedView.getRenderConfig(name) as! ThumbnailConfig
+        return self.main.computedView.renderConfigs[name] as? ThumbnailConfig ?? ThumbnailConfig()
     }
     
     var body: some View {
@@ -42,7 +43,7 @@ struct ThumbnailRenderer: View {
                 Spacer()
             }
             else {
-                QGrid(main.computedView.resultSet.items, columns: renderConfig.cols.value!) { dataItem in
+                QGrid(main.items, columns: renderConfig.cols.value!) { dataItem in
                     Text(dataItem.getString("title")).asThumbnail()
                         .onTapGesture {
                             if let press = self.renderConfig.press {
@@ -59,8 +60,8 @@ struct ThumbnailRenderer: View {
     }
 }
 
-struct ThumbnailRenderer_Previews: PreviewProvider {
+struct ThumbnailRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+        ThumbnailRendererView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

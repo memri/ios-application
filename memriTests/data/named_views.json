@@ -1,0 +1,10 @@
+[
+    {
+        "name": "showStarred",
+        "fromTemplate": "{view}",
+        "queryOptions": {
+            "query": "{computedView.queryOptions.query} AND starred = true"
+        },
+        "title": "Starred {computedView.title}"
+    }
+]

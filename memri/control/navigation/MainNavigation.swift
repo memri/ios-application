@@ -56,7 +56,6 @@ public class MainNavigation {
             }
         }
     }
-    
 }
 
 public class NavigationItem: Object, ObservableObject, Codable {

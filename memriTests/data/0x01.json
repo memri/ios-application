@@ -3,5 +3,10 @@
     "type": "note",
     "title": "Shopping list",
     "content": "- potatoes\n- mayonaise\n- avocados",
-    "starred": true
+    "starred": true,
+    "labels": [
+        { "name": "Daily Log", "color": "#FF0000" },
+        { "name": "Polis", "color": "#00FF00" }
+    ],
+    "syncState": { "version": 1 }
 }]

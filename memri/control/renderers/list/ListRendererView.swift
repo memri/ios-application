@@ -11,12 +11,12 @@ import Combine
 import SwiftUI
 
 
-struct ListRenderer: Renderer {
+struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
     var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
-
+    
     func generatePreview(_ item:DataItem) -> String {
         let content = String(item.getString("content")
             .replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
@@ -25,7 +25,7 @@ struct ListRenderer: Renderer {
     }
     
     var renderConfig: ListConfig {
-        return self.main.computedView.getRenderConfig(name) as! ListConfig
+        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
     var body: some View {
@@ -46,14 +46,10 @@ struct ListRenderer: Renderer {
             else {
                 NavigationView {
                     List{
-                    
-                        ForEach(main.computedView.resultSet.items) { dataItem in
+                        ForEach(main.items) { dataItem in
                             VStack{
-                                Text(dataItem.getString("title"))
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text(self.generatePreview(dataItem))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                ItemRenderer(baseComponent: self.renderConfig.renderDescription,
+                                             item: dataItem)
                             }.onTapGesture {
                                 if let press = self.renderConfig.press {
                                     self.main.executeAction(press, dataItem)
@@ -62,12 +58,12 @@ struct ListRenderer: Renderer {
                         }.onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet
-                            self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
+                            self.main.items.remove(atOffsets: indexSet)
                             
                             // I'm sure there is a better way of doing this...
                             var items:[DataItem] = []
                             for i in indexSet {
-                                let item = self.main.computedView.resultSet.items[i]
+                                let item = self.main.items[i]
                                 items.append(item)
                             }
                             
@@ -85,8 +81,8 @@ struct ListRenderer: Renderer {
     }
 }
 
-struct ListRenderer_Previews: PreviewProvider {
+struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

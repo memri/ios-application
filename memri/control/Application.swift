@@ -22,10 +22,17 @@ struct Application: View {
     @EnvironmentObject var main: Main
     
     var body: some View {
-        return
-            ZStack() {
-                Browser()
-            }.fullHeight()
+        ZStack() {
+            Browser()
+            
+            ContextPane()
+
+            if self.main.sessions.showNavigation {
+                Navigation()
+                    .transition(.move(edge: .leading))
+                    .animation(.easeOut(duration: 0.3))
+            }
+        }.fullHeight()
     }
 }
 

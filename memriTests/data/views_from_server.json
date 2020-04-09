@@ -1,4 +1,13 @@
 {
+    "templates": {
+        "{[type:*]}": {
+            
+        },
+        "{type:*}": {
+            
+        }
+    },
+    
     "defaults": {
         "{renderer:list}": {
             "renderConfigs": {
@@ -16,7 +25,24 @@
                     "longPress": {
                         "actionName": "select"
                     },
-                    "itemRenderer": "{.title}"
+                    "itemRenderer": "{.title}",
+                    "renderDescription": {
+                        "type": "vstack",
+                        "children": [
+                            {
+                                "type": "text",
+                                "property": "title",
+                                "bold": true
+                            },
+                            {
+                                "type": "text",
+                                "property": "content",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            }
+                        ]
+                    }
                 }
             }
         },
@@ -25,7 +51,7 @@
             "name": "all-notes",
             "title": "Notes",
             "queryOptions": {
-                "text": "note",
+                "query": "note",
                 "sortProperty": "date-modified",
                 "sortAscending": 0
             },
@@ -40,33 +66,16 @@
             },
             "browsingMode": "default",
             "actionButton": {
-                "icon": "plus",
-                "title": "Add Note",
                 "actionName": "add",
                 "actionArgs": [{
                     "type": "note",
                     "title": "Untitled Note"
                 }]
             },
-            "editActionButton": {
-                "icon": "pencil",
-                "title": "Edit Note",
-                "actionName": "toggleEditMode",
-                "actionArgs": []
-            },
+            "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
-                {
-                    "icon": "star.fill",
-                    "title": "Show Starred Notes",
-                    "actionName": "showStarred",
-                    "actionArgs": []
-                },
-                {
-                    "icon": "rhombus.fill",
-                    "title": "Show Filter Panel",
-                    "actionName": "toggleFilterPanel",
-                    "actionArgs": []
-                }
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
             ]
         },
 
@@ -79,12 +88,7 @@
                     "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
                 }
             },
-            "editActionButton": {
-                "icon": "pencil",
-                "title": "Edit Note",
-                "actionName": "toggleEditMode",
-                "actionArgs": []
-            },
+            "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
                 {
                     "icon": "increase.indent",
@@ -98,32 +102,17 @@
                             }
                         },
                         "queryOptions": {
-                            "text": "data:Log appliesTo:{.id}",
+                            "query": "data:Log appliesTo:{.id}",
                             "sortProperty": "date-created",
                             "sortAscending": 0
                         }
                     }]
                 },
-                {
-                    "icon": "ellipsis",
-                    "title": "Show Context Panel",
-                    "actionName": "showContextPane",
-                    "actionArgs": []
-                }
+                { "actionName": "showContextPane" }
             ],
             "contextButtons": [
-                {
-                    "icon": "star.ico",
-                    "title": "Star Note",
-                    "actionName": "star",
-                    "actionArgs": []
-                },
-                {
-                    "icon": "schedule.ico",
-                    "title": "Schedule...",
-                    "actionName": "schedule",
-                    "actionArgs": []
-                }
+                { "actionName": "star" },
+                { "actionName": "schedule" }
             ],
             "actionItems": [
                 {
@@ -154,7 +143,7 @@
                             }
                         },
                         "queryOptions": {
-                            "text": "type:logitem appliesTo:{.id}",
+                            "query": "type:logitem appliesTo:{.id}",
                             "sortProperty": "date-created",
                             "sortAscending": 0
                         }

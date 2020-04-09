@@ -25,9 +25,9 @@ enum ComponentFamily: String, ClassFamily {
     }
 }
 
-class ComponentClass: Decodable{
+class ItemRendererComponent: Decodable{
     
-    var element: ComponentClass? = nil
+    var element: ItemRendererComponent? = nil
     
     enum ComponentClassCodingKeys: String, CodingKey {
       case type
@@ -35,8 +35,8 @@ class ComponentClass: Decodable{
       case children
     }
     
-    func asView()-> AnyView {
-        return self.element!.asView()
+    func asView(item: DataItem)-> AnyView {
+        return self.element!.asView(item: item)
     }
     
     required convenience init(from decoder: Decoder) throws {
@@ -47,13 +47,19 @@ class ComponentClass: Decodable{
             
             switch try container.decode(String.self, forKey: .type) {
             case "vstack":
-                self.element = VStackComponentClass(children: try container.decode([ComponentClass].self,
+                self.element = VStackComponentClass(children: try container.decode([ItemRendererComponent].self,
                                                                         forKey: .children))
             case "text":
                 self.element = try TextComponentClass(from: decoder)
             default: fatalError("Unknown type")
             }
         }
+    }
+    
+    public static func fromJSONFile(_ file: String, ext: String = "json") throws -> ItemRendererComponent {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let comp: ItemRendererComponent = try! JSONDecoder().decode(ItemRendererComponent.self, from: jsonData)
+        return comp
     }
     
 }

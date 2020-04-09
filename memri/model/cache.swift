@@ -227,23 +227,24 @@ public class Cache {
         rlmTokens.append(item.observe { (objectChange) in
             if case let .change(propChanges) = objectChange {
                 if item.syncState!.actionNeeded == "" {
-                    try! self.realm.write {
-                        let syncState = item.syncState!
+                    
+                    let syncState = item.syncState!
+                    
+                    func doAction(){
+                    
+                        // Mark item for updating
+                        syncState.actionNeeded = "update"
                         
-                        // Update state in realm
-                        try self.realm.write() {
-                        
-                            // Mark item for updating
-                            syncState.actionNeeded = "update"
-                            
-                            // Record which field was updated
-                            for prop in propChanges {
-                                if !syncState.updatedFields.contains(prop.name) {
-                                    syncState.updatedFields.append(prop.name)
-                                }
+                        // Record which field was updated
+                        for prop in propChanges {
+                            if !syncState.updatedFields.contains(prop.name) {
+                                syncState.updatedFields.append(prop.name)
                             }
                         }
                     }
+                    
+                    if self.realm.isInWriteTransaction { doAction() }
+                    else { try! self.realm.write { doAction() } }
                 }
             }
         })

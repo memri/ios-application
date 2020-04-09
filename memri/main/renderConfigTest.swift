@@ -22,11 +22,12 @@ class RenderConfigTest: XCTestCase {
     }
 
     func testLoadListConfig() throws {
-        var listConfig = try! ListConfig.fromJSONFile("listconfig")
+//        var listConfig = try! ListConfig.fromJSONFile("listconfig")
     }
     
     func testLoadItemComponent() throws {
-        var x = try! ItemRenderer.fromJSONFile("itemcomponent")
+        var x = try! ItemRenderer(baseComponent: try! ComponentClass.fromJSONFile("list_item_component"))
+//        var x = try! ItemRenderer.fromJSONFile("list_item_component")
 //        var listConfig = try! ViewComponent.fromJSONFile("listconfig")
     }
 

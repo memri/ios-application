@@ -8,19 +8,15 @@
 
 import SwiftUI
 
-
-
-
 struct ItemRenderer: View, Decodable {
     var baseComponent: ComponentClass? = nil
     
-//    @ObservedObject var item: DataItem = DataItem()
-
-    
+    @ObservedObject var item: DataItem = Note(value: ["content": "test",
+                                                      "title": "test"])
     var body: some View {
         Group{
             if baseComponent != nil{
-                baseComponent!.asView()
+                baseComponent!.asView(item: item)
             }else{
                 EmptyView()
             }
@@ -31,29 +27,24 @@ struct ItemRenderer: View, Decodable {
         case parentView
     }
     
-//    func setItem(item: DataItem){
-//        if let component = baseComponent{
-//            self.item = item
-//            component.setItem(item: item)
-//        }
-//    }
+    init(baseComponent: ComponentClass?=nil, item:DataItem?=nil){
+        self.baseComponent = baseComponent ?? self.baseComponent
+        self.item = item ?? self.item
+        
+    }
     
     public init(from decoder: Decoder) throws {
+        self.init()
         let container = try decoder.container(keyedBy: RendererConfigKeys.self)
         baseComponent = try container.decode(ComponentClass.self, forKey: .parentView)
     }
-    
-    
-    public static func fromJSONFile(_ file: String, ext: String = "json") throws -> ItemRenderer {
-        let jsonData = try jsonDataFromFile(file, ext)
-        let rend: ItemRenderer = try! JSONDecoder().decode(ItemRenderer.self, from: jsonData)
-        return rend
-    }
-    
+
 }
-//
+
 struct ItemRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        try! ItemRenderer.fromJSONFile("itemcomponent")
+        try! ItemRenderer(baseComponent: try! ComponentClass.fromJSONFile("list_item_component"),
+                          item: Note(value: ["title": "Some note",
+                                             "content": "- content\n -content \n- content"]))
     }
 }

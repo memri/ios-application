@@ -15,10 +15,6 @@ public class Main: ObservableObject {
      */
     public let name: String = "GUI"
     /**
-     *
-     */
-    @Published public var sessions: Sessions
-    /**
      * The current session that is active in the application
      */
     @Published public var currentSession: Session = Session()
@@ -26,6 +22,14 @@ public class Main: ObservableObject {
      *
      */
     @Published public var computedView: ComputedView
+    /**
+     *
+     */
+    @Published public var sessions: Sessions
+    /**
+     *
+     */
+    public var views: Views
     /**
      *
      */
@@ -50,27 +54,24 @@ public class Main: ObservableObject {
      *
      */
     public var navigation: MainNavigation
-    
-    // TODO @koen these renderer objects seem slightly out of place here.
-    // Could there be some kind of .renderers object that sits on main?
-    var renderers: [String: AnyView] = [
-        "list": AnyView(ListRenderer()),
-        "richTextEditor": AnyView(RichTextRenderer()),
-        "thumbnail": AnyView(ThumbnailRenderer())
-    ]
-    
-    var renderObjects: [String: RendererObject] = [
-        "list": ListRendererObject(),
-        "richTextEditor": RichTextRendererObject(),
-        "thumbnail": ThumbnailRendererObject()
-    ]
-    
-    var renderObjectTuples: [(key: String, value: RendererObject)] {
-        return renderObjects.sorted{$0.key < $1.key}
+    /**
+     *
+     */
+    public var renderers: Renderers
+    /**
+     *
+     */
+    public var currentRendererView: AnyView{
+        self.renderers.allViews[self.computedView.rendererName]!
     }
     
-    var currentRenderer: AnyView {
-        self.renderers[self.computedView.rendererName, default: AnyView(ThumbnailRenderer())]
+    public var items: [DataItem]{
+        get{
+            self.computedView.resultSet.items
+        }
+        set{
+            self.computedView.resultSet.items = newValue
+        }
     }
     
     private var cancellable: AnyCancellable? = nil
@@ -84,8 +85,10 @@ public class Main: ObservableObject {
         settings = Settings(realm)
         installer = Installer(realm)
         sessions = Sessions(realm)
+        views = Views(realm)
         computedView = ComputedView(cache)
         navigation = MainNavigation(realm)
+        renderers = Renderers()
         
         cache.scheduleUIUpdate = scheduleUIUpdate
     }
@@ -101,19 +104,23 @@ public class Main: ObservableObject {
                 // Load NavigationCache (from cache and/or api)
                 self.navigation.load() {
                 
-                    // Load view configuration
-                    try! self.sessions.load(realm, cache) {
-                        
-                        // Update view when sessions changes
-                        self.cancellable = self.sessions.objectWillChange.sink { (_) in
-                            self.scheduleUIUpdate()
+                    // Load views configuration
+                    try! self.views.load(self) {
+                    
+                        // Load sessions configuration
+                        try! self.sessions.load(realm, cache) {
+                            
+                            // Update view when sessions changes
+                            self.cancellable = self.sessions.objectWillChange.sink { (_) in
+                                self.scheduleUIUpdate()
+                            }
+                            
+                            // Load current view
+                            self.setComputedView()
+                            
+                            // Done
+                            callback(nil, true)
                         }
-                        
-                        // Load current view
-                        self.setComputedView()
-                        
-                        // Done
-                        callback(nil, true)
                     }
                 }
             }
@@ -134,7 +141,7 @@ public class Main: ObservableObject {
         if resultSet.determinedType != nil {
             
             // Calculate cascaded view
-                let computedView = try! self.sessions.computeView() // TODO handle errors better
+            let computedView = try! self.views.computeView() // TODO handle errors better
                 
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property

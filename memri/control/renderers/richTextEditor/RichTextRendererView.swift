@@ -42,10 +42,11 @@ struct _RichTextEditor: UIViewRepresentable {
 
 }
 
-struct RichTextRenderer: Renderer {
-    //wrapper
-    var renderConfig: RenderConfig=RenderConfig()
+struct RichTextRendererView: View {
     @EnvironmentObject var main: Main
+    
+    //wrapper
+    var renderConfig: RenderConfig = RenderConfig()
 
     var body: some View {
         return VStack{
@@ -56,8 +57,8 @@ struct RichTextRenderer: Renderer {
     }
 }
 
-struct RichTextEditor_Previews: PreviewProvider {
+struct RichTextRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+        RichTextRendererView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
