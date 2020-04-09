@@ -25,7 +25,7 @@ class actionTest: XCTestCase {
     }
     
     func testAction() throws {
-        let action: ActionName = .openContextView
+        let action: ActionName = .add
     }
 
     func testPerformanceExample() throws {

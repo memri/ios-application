@@ -28,7 +28,7 @@ class ViewTest: XCTestCase {
     }
 
     func testLoadSessionViewFromJson() {
-        let sessionView =  try! SessionView.from_json("empty_sessionview")
+        let sessionView =  try! SessionView.fromJSONFile("empty_sessionview")
         XCTAssert(sessionView.title == "testtitle")
     }
     
