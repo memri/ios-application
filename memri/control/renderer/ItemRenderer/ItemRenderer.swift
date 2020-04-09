@@ -12,8 +12,9 @@ import SwiftUI
 
 
 struct ItemRenderer: View, Decodable {
-    var baseComponent: Component? = nil
-    @ObservedObject var item: DataItem = DataItem()
+    var baseComponent: ComponentClass? = nil
+    
+//    @ObservedObject var item: DataItem = DataItem()
 
     
     var body: some View {
@@ -39,7 +40,7 @@ struct ItemRenderer: View, Decodable {
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: RendererConfigKeys.self)
-        baseComponent = try container.decode(Component.self, forKey: .parentView)
+        baseComponent = try container.decode(ComponentClass.self, forKey: .parentView)
     }
     
     
@@ -50,7 +51,7 @@ struct ItemRenderer: View, Decodable {
     }
     
 }
-
+//
 struct ItemRenderer_Previews: PreviewProvider {
     static var previews: some View {
         try! ItemRenderer.fromJSONFile("itemcomponent")

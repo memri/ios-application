@@ -106,12 +106,12 @@ public class Cache {
                 let type = DataItemFamily(rawValue: typeName)
                 if let type = type {
                     let queryType = DataItemFamily.getType(type)
-                    let result = realm.objects(queryType())
+                    let result = realm.objects(queryType() as! Object.Type)
                         .filter("deleted = false " + (filter ?? ""))
                     
                     // Construct return array
                     var returnValue:[DataItem] = []
-                    for item in result { returnValue.append(item) }
+                    for item in result { returnValue.append(item as! DataItem) }
                     
                     // Done
                     callback(nil, returnValue)
@@ -173,7 +173,7 @@ public class Cache {
         let type = DataItemFamily(rawValue: type)
         if let type = type {
             let item = DataItemFamily.getType(type)
-            return realm.objects(item()).filter("uid = '\(uid)'").first as! T?
+            return realm.objects(item() as! Object.Type).filter("uid = '\(uid)'").first as! T?
         }
         return nil
     }
@@ -289,8 +289,8 @@ public class Cache {
      */
     public func duplicate(_ item:DataItem) -> DataItem {
         let type = DataItemFamily(rawValue: item.type)!
-        let T = DataItemFamily.getType(type)
-        let copy = T().init()
+        let T = DataItemFamily.getType(type) as! () -> DataItem.Type
+        var copy = T().init()
         let properties = item.objectSchema.properties
         for prop in properties {
             if prop.name == "uid" { continue }

@@ -25,6 +25,7 @@
 		5D228B042432275600464506 /* ActionDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B032432275600464506 /* ActionDescription.swift */; };
 		5D228B062432385300464506 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* Action.swift */; };
 		5D228B082432416F00464506 /* ActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B072432416F00464506 /* ActionTest.swift */; };
+		5D22DF0F243F1A8E003FC1EB /* ComponentClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D22DF0E243F1A8E003FC1EB /* ComponentClass.swift */; };
 		5D2492FB2434E75A00BCE8DD /* RendererObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2492FA2434E75A00BCE8DD /* RendererObjects.swift */; };
 		5D2934F023FEA1CD0073E25F /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2934EF23FEA1CD0073E25F /* DataStore.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
@@ -57,6 +58,7 @@
 		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
 		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
+		5DB88A3D243F3320003F5075 /* ComponentClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB88A3C243F3320003F5075 /* ComponentClasses.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692924093E7000367905 /* sessions_manually_expanded.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692524093BD300367905 /* sessions_manually_expanded.json */; };
@@ -179,6 +181,7 @@
 		5D228B032432275600464506 /* ActionDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionDescription.swift; sourceTree = "<group>"; };
 		5D228B052432385300464506 /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
+		5D22DF0E243F1A8E003FC1EB /* ComponentClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentClass.swift; sourceTree = "<group>"; };
 		5D2492FA2434E75A00BCE8DD /* RendererObjects.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererObjects.swift; sourceTree = "<group>"; };
 		5D2934EF23FEA1CD0073E25F /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
@@ -213,6 +216,7 @@
 		5D98DBD8243B598100046F3E /* MainActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainActions.swift; sourceTree = "<group>"; };
 		5DB66FB42431DD41007736D6 /* mainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainTest.swift; sourceTree = "<group>"; };
 		5DB66FB62431DEB0007736D6 /* realmTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = realmTest.swift; sourceTree = "<group>"; };
+		5DB88A3C243F3320003F5075 /* ComponentClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComponentClasses.swift; sourceTree = "<group>"; };
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
@@ -403,6 +407,15 @@
 				5D3D96222416764A0004040E /* codable */,
 			);
 			path = extension;
+			sourceTree = "<group>";
+		};
+		5D22DF0D243F1A77003FC1EB /* ComponentClass */ = {
+			isa = PBXGroup;
+			children = (
+				5D22DF0E243F1A8E003FC1EB /* ComponentClass.swift */,
+				5DB88A3C243F3320003F5075 /* ComponentClasses.swift */,
+			);
+			path = ComponentClass;
 			sourceTree = "<group>";
 		};
 		5D2492F82434E72800BCE8DD /* renderer */ = {
@@ -619,6 +632,7 @@
 		5DDB7373243DCB370089806E /* ItemRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				5D22DF0D243F1A77003FC1EB /* ComponentClass */,
 				5DDB7379243E31A20089806E /* Component */,
 				5DDB7374243DCB560089806E /* ItemRenderer.swift */,
 			);
@@ -1021,8 +1035,10 @@
 				5D38DE152405776300FF9B70 /* control.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* SessionView.swift in Sources */,
+				5DB88A3D243F3320003F5075 /* ComponentClasses.swift in Sources */,
 				5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */,
 				5D41618B23FFE2730017EC4A /* TestView.swift in Sources */,
+				5D22DF0F243F1A8E003FC1EB /* ComponentClass.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
 				5DD1E9B823FD814E007BDF7B /* Note.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,

@@ -22,16 +22,6 @@ struct VStackComponent: View, Decodable {
         }
     }
     
-//    var x: VStack<AnyView>{
-//        return VStack{
-//            y()
-//        }
-//    }
-//    
-//    func y() -> AnyView{
-//        return AnyView(Text("ABC"))
-//    }
-    
     private enum CodingKeys: String, CodingKey {
         case children
     }
