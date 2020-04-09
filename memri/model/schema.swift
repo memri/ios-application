@@ -18,7 +18,7 @@ enum DataItemFamily: String, ClassFamily {
 
     static var discriminator: Discriminator = .type
 
-    func getType() -> AnyObject.Type {
+    func getType() -> DataItem.Type {
         switch self {
         case .note:
             return Note.self

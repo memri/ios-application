@@ -180,7 +180,7 @@ public class ActionDescription: Object, Codable, Identifiable {
                             let family:DataItemFamily = try typeContainer
                                 .decode(DataItemFamily.self, forKey: DataItemFamily.discriminator)
                             
-                            addArgument(try tmpContainer.decode(family.getType() as! DataItem.Type))
+                            addArgument(try tmpContainer.decode(family.getType()))
                         }
                         else if let type = type as? SessionView.Type {
                             addArgument(try tmpContainer.decode(type))
