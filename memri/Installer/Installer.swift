@@ -32,6 +32,9 @@ public class Installer {
             main.settings.install()
             
             // Load default views in database
+            main.views.install()
+            
+            // Load default sessions in database
             main.sessions.install(main.realm)
             
             // Installation complete

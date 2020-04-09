@@ -74,7 +74,7 @@ extension Main {
         let item = itm ?? computedView.resultSet.item
         
         // Parse the state pattern
-        let (objectToUpdate, propToUpdate) = DynamicView.parseExpression(statePattern, "view")
+        let (objectToUpdate, propToUpdate) = CompiledView.parseExpression(statePattern, "view")
         
         // TODO error handling
         
@@ -118,7 +118,7 @@ extension Main {
         let item = itm ?? computedView.resultSet.item
         
         // Parse the state pattern
-        let (objectToQuery, propToQuery) = DynamicView.parseExpression(statePattern, "view")
+        let (objectToQuery, propToQuery) = CompiledView.parseExpression(statePattern, "view")
         
         // Toggle the right property on the right object
         switch objectToQuery {
@@ -173,12 +173,10 @@ extension Main {
         self.openView(view)
     }
     
-    public func openView(_ viewDeclaration: String, _ stateName:String?=nil) {
-        // If this is a dynamic view
-        if (viewDeclaration.prefix(1) == "{") {
-            
-            // Generate the session view
-            let view = DynamicView(viewDeclaration, self).generateView()
+    public func openView(_ viewName: String, _ stateName:String?=nil) {
+        
+        // Fetch a dynamic view based on its name
+        if let view:SessionView = views.getSessionView(viewName) {
             
             // Toggle the state to true
             if let stateName = stateName { view.toggleState(stateName) }
@@ -187,7 +185,7 @@ extension Main {
             openView(view)
         }
         else {
-            // TODO find view by name
+            print("Warn: Could not find view: '\(viewName)")
         }
     }
     public func openView(_ items: [DataItem]) {}
@@ -255,19 +253,8 @@ extension Main {
         // If button is active lets create a filtered view
         if !self.computedView.hasState(starButton.actionStateName!) {
         
-            // Define a dynamic view that shows a starred subset of the current view
-            let viewDeclaration = """
-            {
-                "copyCurrentView": true,
-                "queryOptions": {
-                    "query": "{computedView.queryOptions.query} AND starred = true"
-                },
-                "title": "Starred {computedView.title}"
-            }
-            """
-            
-            // Open View
-            openView(viewDeclaration, starButton.actionStateName)
+            // Open named view 'showStarred'
+            openView("showStarred", starButton.actionStateName)
         }
         else {
             // Go back to the previous view

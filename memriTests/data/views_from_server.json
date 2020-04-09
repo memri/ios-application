@@ -1,4 +1,13 @@
 {
+    "templates": {
+        "{[type:*]}": {
+            
+        },
+        "{type:*}": {
+            
+        }
+    },
+    
     "defaults": {
         "{renderer:list}": {
             "renderConfigs": {
@@ -25,7 +34,7 @@
             "name": "all-notes",
             "title": "Notes",
             "queryOptions": {
-                "text": "note",
+                "query": "note",
                 "sortProperty": "date-modified",
                 "sortAscending": 0
             },
@@ -76,7 +85,7 @@
                             }
                         },
                         "queryOptions": {
-                            "text": "data:Log appliesTo:{.id}",
+                            "query": "data:Log appliesTo:{.id}",
                             "sortProperty": "date-created",
                             "sortAscending": 0
                         }
@@ -117,7 +126,7 @@
                             }
                         },
                         "queryOptions": {
-                            "text": "type:logitem appliesTo:{.id}",
+                            "query": "type:logitem appliesTo:{.id}",
                             "sortProperty": "date-created",
                             "sortAscending": 0
                         }
