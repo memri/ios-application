@@ -17,7 +17,7 @@ struct Browser: View {
             VStack() {
                 TopNavigation()
                 Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
-                    self.main.renderers.allViews[self.main.computedView.rendererName].fullHeight()
+                    self.main.currentRendererView.fullHeight()
                 }.fullHeight()
                 Search()
             }.fullHeight()

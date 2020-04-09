@@ -32,7 +32,7 @@ struct FilterPanel: View {
                             HStack(alignment: .top) {
                                 ForEach(self.main.renderers.tuples, id: \.0) { index, item in
                                     Group{
-                                        if item.canDisplayResultSet(items: self.main.computedView.resultSet.items){
+                                        if item.canDisplayResultSet(items: self.main.items){
                                             Action(action: item)
                                         }
                                     }

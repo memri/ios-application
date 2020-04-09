@@ -43,7 +43,7 @@ struct ThumbnailRendererView: View {
                 Spacer()
             }
             else {
-                QGrid(main.computedView.resultSet.items, columns: renderConfig.cols.value!) { dataItem in
+                QGrid(main.items, columns: renderConfig.cols.value!) { dataItem in
                     Text(dataItem.getString("title")).asThumbnail()
                         .onTapGesture {
                             if let press = self.renderConfig.press {

@@ -58,6 +58,21 @@ public class Main: ObservableObject {
      *
      */
     public var renderers: Renderers
+    /**
+     *
+     */
+    public var currentRendererView: AnyView{
+        self.renderers.allViews[self.computedView.rendererName]!
+    }
+    
+    public var items: [DataItem]{
+        get{
+            self.computedView.resultSet.items
+        }
+        set{
+            self.computedView.resultSet.items = newValue
+        }
+    }
     
     private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false

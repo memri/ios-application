@@ -47,7 +47,7 @@ struct ListRendererView: View {
                 NavigationView {
                     List{
                     
-                        ForEach(main.computedView.resultSet.items) { dataItem in
+                        ForEach(main.items) { dataItem in
                             VStack{
                                 Text(dataItem.getString("title"))
                                     .bold()
@@ -62,12 +62,12 @@ struct ListRendererView: View {
                         }.onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet
-                            self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
+                            self.main.items.remove(atOffsets: indexSet)
                             
                             // I'm sure there is a better way of doing this...
                             var items:[DataItem] = []
                             for i in indexSet {
-                                let item = self.main.computedView.resultSet.items[i]
+                                let item = self.main.items[i]
                                 items.append(item)
                             }
                             
