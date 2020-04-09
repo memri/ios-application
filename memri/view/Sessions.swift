@@ -47,9 +47,6 @@ public class Sessions: Object, ObservableObject, Decodable {
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
-    private var defaultViews: [String:[String:SessionView]] = [:]
-    
-    private var cache:Cache? = nil
     
     public override static func primaryKey() -> String? {
         return "uid"
@@ -130,14 +127,8 @@ public class Sessions: Object, ObservableObject, Decodable {
      *
      */
     public func load(_ realm:Realm, _ ch:Cache, _ callback: () -> Void) throws {
-        // Store cache for use within computeView()
-        self.cache = ch
         
-        // Load the default views from the package
-        let jsonData = try! jsonDataFromFile("views_from_server")
-        self.defaultViews = try! JSONDecoder()
-            .decode([String:[String:SessionView]].self, from: jsonData)
-        
+        // Determine self.uid
         fetchUID(realm)
         
         if self.uid == "" {
@@ -214,157 +205,6 @@ public class Sessions: Object, ObservableObject, Decodable {
         
         if let realm = realm { try! realm.write { doMerge() } }
         else { doMerge() }
-    }
-
-    /*
-    "{type:Note}"
-    "{renderer:list}"
-    "{[type:Note]}"
-    */
-    public func computeView(_ argView:SessionView? = nil) throws -> ComputedView {
-        let viewFromSession = argView == nil
-            ? self.currentSession.currentView
-            : argView!
-        
-        // Create a new view
-        let computedView = ComputedView(self.cache!)
-        let previousView = self.currentSession.currentView
-        
-        var isList:Bool = true
-        var type:String = ""
-        
-        // Fetch query from the view from session
-        if let queryOptions = viewFromSession.queryOptions {
-            
-            // Look up the associated result set
-            let resultSet = cache!.getResultSet(queryOptions)
-            
-            // Determine whether this is a list or a single item resultset
-            isList = resultSet.isList
-            
-            // Fetch the type of the results
-            if let determinedType = resultSet.determinedType {
-                type = determinedType
-            }
-            else {
-                throw "Exception: ResultSet does not know the type of its data"
-            }
-        }
-        else {
-            throw "Exception: Cannot compute a view without a query to fetch data"
-        }
-
-        // Helper lists
-        var renderViews:[SessionView] = []
-        var datatypeViews:[SessionView] = []
-        var rendererNames:[String] = []
-        var cascadeOrders:[String:[RealmSwift.List<String>]] = ["defaults":[List()], "user":[]]
-        let searchOrder = ["defaults", "user"]
-        var rendererName:String
-        
-        cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
-        
-        // If we know the type of data we are rendering use it to determine the view
-        if type != "mixed" {
-            // Determine query
-            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
-            
-            // Find views based on datatype
-            for key in searchOrder {
-                if let datatypeView = self.defaultViews[key]![needle] {
-                    datatypeViews.append(datatypeView)
-                    
-                    if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if datatypeView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
-                    }
-                }
-            }
-            
-            rendererName = rendererNames[rendererNames.count - 1]
-        }
-        // Otherwise default to what we know from the view from the session
-        else {
-            rendererName = viewFromSession.rendererName ?? ""
-        }
-        
-        // Find renderer views
-        if rendererName != "" {
-            // Determine query
-            let needle = "{renderer:\(rendererName)}"
-            
-            for key in searchOrder {
-                if let rendererView = self.defaultViews[key]![needle] {
-                    renderViews.append(rendererView)
-                    
-                    if rendererView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(rendererView.cascadeOrder)
-                    }
-                }
-            }
-        }
-        else {
-            throw "Exception: Could not find which renderer to use. renderName not set in this view"
-        }
-
-        // Choose cascade order
-        let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
-            ? cascadeOrders["user"]
-            : cascadeOrders["defaults"]) ?? []
-        
-        var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
-        if (cascadeOrder.count == 0) {
-            cascadeOrder = List()
-            cascadeOrder.append(objectsIn: ["renderer", "datatype"])
-        }
-        
-        if (Set(preferredCascadeOrder).count > 1) {
-            print("Warn: Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
-        }
-        
-        // Cascade the different views
-        for key in cascadeOrder {
-            var views:[SessionView]
-            
-            if key == "renderer" { views = renderViews }
-            else if key == "datatype" { views = datatypeViews }
-            else {
-                throw ("Exception: Unknown cascadeOrder type specified: \(key)")
-            }
-            
-            for view in views {
-                computedView.merge(view)
-            }
-        }
-        
-        // Cascade the view from the session
-        // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
-        computedView.finalMerge(viewFromSession)
-        
-        do {
-            try computedView.validate()
-        }
-        catch {
-            throw "Exception: Invalid Computed View: \(error)"
-        }
-        
-        // turn off editMode when navigating
-        if currentSession.editMode == true {
-            try! realm!.write {
-                currentSession.editMode = false
-            }
-        }
-        
-        // hide filterpanel if view doesnt have a button to open it
-        if self.currentSession.showFilterPanel {
-            if computedView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
-                try! realm!.write {
-                    self.currentSession.showFilterPanel = false
-                }
-            }
-        }
-        
-        return computedView
     }
     
     /**

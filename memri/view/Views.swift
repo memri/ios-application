@@ -3,6 +3,292 @@ import Combine
 import SwiftUI
 import RealmSwift
 
+// Move to integrate with some of the sessions features so that Sessions can be nested
+public class Views {
+    /**
+     *
+     */
+    var compiledViews: [String:CompiledView] = [:]
+    /**
+     *
+     */
+    var defaultViews: [String:[String:DynamicView]] = [:]
+    
+    private var realm:Realm
+    private var main:Main? = nil
+
+    init(_ rlm:Realm) {
+        realm = rlm
+    }
+    
+    /**
+     *
+     */
+    public func load(_ mn:Main, _ callback: () -> Void) throws {
+        // Store main for use within computeView()
+        self.main = mn
+        
+        // Load the default views from the package
+        let data = try! jsonDataFromFile("views_from_server")
+        let (parsed, named) = try! CompiledView.parseNamedViewDict(data)
+        
+        // Set the parsed views to the defaultViews property for later use in computeView
+        self.defaultViews = parsed
+        
+        // Add the named views to the compiled views
+        for (name, view) in named {
+            compiledViews[name] = compileView(view)
+        }
+        
+        // Done
+        callback()
+    }
+    
+    /**
+     *
+     */
+    public func install() {
+        
+        // Load named views from the package
+        let namedViews = try! CompiledView.parseNamedViewList(jsonDataFromFile("named_views"))
+        
+        // Store named views
+        if let namedViews = namedViews {
+            try! realm.write {
+                for dynamicView in namedViews {
+                    realm.add(dynamicView, update: .modified)
+                }
+            }
+        }
+    }
+    
+    /**
+     *
+     */
+    public func getDynamicView (_ viewName:String) -> DynamicView? {
+        var dynamicView:DynamicView?
+        
+        // If a declaration is passed instead of a name create new DynamicView
+        if viewName.prefix(1) == "{" {
+            dynamicView = DynamicView(viewName)
+        }
+        // Otherwise load from the database the dynamic view with that name
+        else {
+            dynamicView = realm.objects(DynamicView.self).filter("name = '\(viewName)'").first
+        }
+        
+        return dynamicView
+    }
+    
+    /**
+     *
+     */
+    public func getCompiledView (_ viewName:String) -> CompiledView? {
+        if let dynamicView = getDynamicView(viewName) {
+            return compileView(dynamicView)
+        }
+        
+        return nil
+    }
+    
+    /**
+     *
+     */
+    public func getSessionView (_ viewName:String) -> SessionView? {
+        if let compiledView = getCompiledView(viewName) {
+            return try! compiledView.generateView()
+        }
+        
+        return nil
+    }
+    /**
+     *
+     */
+    public func getSessionView (_ view:DynamicView?) -> SessionView? {
+        if let dynamicView = view {
+            return try! compileView(dynamicView).generateView()
+        }
+        
+        return nil
+    }
+    
+    /**
+     *
+     */
+    func compileView(_ dynamicView:DynamicView) -> CompiledView {
+        // If we have a cached version, let's return that
+        if let compiledView = compiledViews[dynamicView.name] {
+            return compiledView
+        }
+        
+        // Create a compiled view based on the dynamic view
+        let compiledView = try! CompiledView(dynamicView, main!)
+        
+        // Add the dynamic view for easy reference
+        compiledViews[dynamicView.name] = compiledView
+        
+        return compiledView
+    }
+    
+    /*
+    "{type:Note}"
+    "{renderer:list}"
+    "{[type:Note]}"
+    */
+    public func computeView(_ argView:SessionView? = nil) throws -> ComputedView {
+        guard let main = self.main else {
+            throw "Exception: Main is not defined in views"
+        }
+
+        let viewFromSession = argView == nil
+            ? main.sessions.currentSession.currentView
+            : argView!
+        
+        // Create a new view
+        let computedView = ComputedView(main.cache)
+        
+        var isList:Bool = true
+        var type:String = ""
+        
+        // Fetch query from the view from session
+        if let queryOptions = viewFromSession.queryOptions {
+            
+            // Look up the associated result set
+            let resultSet = main.cache.getResultSet(queryOptions)
+            
+            // Determine whether this is a list or a single item resultset
+            isList = resultSet.isList
+            
+            // Fetch the type of the results
+            if let determinedType = resultSet.determinedType {
+                type = determinedType
+            }
+            else {
+                throw "Exception: ResultSet does not know the type of its data"
+            }
+        }
+        else {
+            throw "Exception: Cannot compute a view without a query to fetch data"
+        }
+
+        // Helper lists
+        var renderViews:[SessionView] = []
+        var datatypeViews:[SessionView] = []
+        var rendererNames:[String] = []
+        var cascadeOrders:[String:[RealmSwift.List<String>]] = ["defaults":[List()], "user":[]]
+        let searchOrder = ["defaults", "user"]
+        var rendererName:String
+        
+        cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
+        
+        // If we know the type of data we are rendering use it to determine the view
+        if type != "mixed" {
+            // Determine query
+            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
+            
+            // Find views based on datatype
+            for key in searchOrder {
+                if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
+                    datatypeViews.append(datatypeView)
+                    
+                    dump(datatypeView.name)
+                    dump(datatypeView.actionButton)
+                    
+                    if let S = datatypeView.rendererName { rendererNames.append(S) }
+                    if datatypeView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+                    }
+                }
+            }
+            
+            rendererName = rendererNames[rendererNames.count - 1]
+        }
+        // Otherwise default to what we know from the view from the session
+        else {
+            rendererName = viewFromSession.rendererName ?? ""
+        }
+        
+        // Find renderer views
+        if rendererName != "" {
+            // Determine query
+            let needle = "{renderer:\(rendererName)}"
+            
+            for key in searchOrder {
+                if let rendererView = getSessionView(self.defaultViews[key]![needle]) {
+                    renderViews.append(rendererView)
+                    
+                    if rendererView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(rendererView.cascadeOrder)
+                    }
+                }
+            }
+        }
+        else {
+            throw "Exception: Could not find which renderer to use. renderName not set in this view"
+        }
+
+        // Choose cascade order
+        let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
+            ? cascadeOrders["user"]
+            : cascadeOrders["defaults"]) ?? []
+        
+        var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
+        if (cascadeOrder.count == 0) {
+            cascadeOrder = List()
+            cascadeOrder.append(objectsIn: ["renderer", "datatype"])
+        }
+        
+        if (Set(preferredCascadeOrder).count > 1) {
+            print("Warn: Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
+        }
+        
+        // Cascade the different views
+        for key in cascadeOrder {
+            var views:[SessionView]
+            
+            if key == "renderer" { views = renderViews }
+            else if key == "datatype" { views = datatypeViews }
+            else {
+                throw ("Exception: Unknown cascadeOrder type specified: \(key)")
+            }
+            
+            for view in views {
+                computedView.merge(view)
+            }
+        }
+        
+        // Cascade the view from the session
+        // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
+        computedView.finalMerge(viewFromSession)
+        
+        do {
+            try computedView.validate()
+        }
+        catch {
+            throw "Exception: Invalid Computed View: \(error)"
+        }
+        
+        // turn off editMode when navigating
+        if main.sessions.currentSession.editMode == true {
+            try! realm.write {
+                main.sessions.currentSession.editMode = false
+            }
+        }
+        
+        // hide filterpanel if view doesnt have a button to open it
+        if main.sessions.currentSession.showFilterPanel {
+            if computedView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
+                try! realm.write {
+                    main.sessions.currentSession.showFilterPanel = false
+                }
+            }
+        }
+        
+        return computedView
+    }
+}
+
+
 public class SessionView: Object, ObservableObject, Codable {
     
     /**
@@ -366,68 +652,114 @@ public class ComputedView: ObservableObject {
     
 }
 
-public class DynamicView: ObservableObject {
+public class DynamicView: Object, ObservableObject, Codable {
     /**
      *
      */
-    var declaration:String
+    @objc dynamic var name:String = ""
     /**
      *
      */
-    var copyCurrentView:Bool = false
+    @objc dynamic var declaration:String = ""
     /**
      *
      */
-    var parsed: [String:Any] = [:]
+    @objc dynamic var fromTemplate:String? = nil
+    
+    public override static func primaryKey() -> String? {
+        return "name"
+    }
+    
+    public init(_ decl:String) {
+        declaration = decl
+    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.name = try decoder.decodeIfPresent("name") ?? self.name
+            self.declaration = try decoder.decodeIfPresent("declaration") ?? self.declaration
+            self.fromTemplate = try decoder.decodeIfPresent("copyFromView") ?? self.fromTemplate
+        }
+    }
+        
+    required init() {
+        super.init()
+    }
+    
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> DynamicView {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: jsonData)
+        return view
+    }
+    
+    public class func fromJSONString(_ json: String) throws -> DynamicView {
+        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: Data(json.utf8))
+        return view
+    }
+}
+
+public class CompiledView {
+    /**
+     *
+     */
+    var variables: [String:String] = [:]
+    /**
+     *
+     */
+    var parsed: [String:Any]? = nil
+    /**
+     *
+     */
+    var jsonString: String = ""
+    /**
+     *
+     */
+    var dynamicView:DynamicView
     
     private var main:Main
-    
-    init(_ decl:String, _ mn:Main) {
-        declaration = decl
+
+    init(_ view:DynamicView, _ mn:Main) throws {
         main = mn
-        
-        parsed = parse() ?? [:]
-        copyCurrentView = parsed["copyFrom"] as? Bool ?? false
+        dynamicView = view
     }
     
-    func parse() -> [String:Any]? {
-        let data = declaration.data(using: .utf8)!
+    /**
+     *
+     */
+    func parse() throws {
+        // Turn the declaration in json data
+        let data = dynamicView.declaration.data(using: .utf8)!
         
+        // Parse the declaration
         let json = try! JSONSerialization.jsonObject(with: data, options: [])
-        if let object = json as? [String: Any] {
-            return object
+        guard let object = json as? [String: Any] else {
+            throw "Exception: Invalid JSON while parsing view" // TODO better errors
         }
-//        else if let object = json as? [Any] {
-//            // json is an array
-//        }
-        else {
-            print("Warn: Invalid JSON while parsing view")
-        }
+            
+        // Store the parsed json in memory
+        parsed = object
         
-        return nil
-    }
-    
-    func generateView() -> SessionView {
-        var view:SessionView
+        // TODO this is the place to optimize compilation
+        // - Fetch all variables and put them in .variables
+        // - Fill variables and replace them in the json when doing generateView()
         
-        // Copy from an existing view if so desired
-        if copyCurrentView {
-            view = main.currentSession.currentView.copy()
-        }
-        else {
-            view = SessionView()
-        }
-        
-        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) {
+        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) throws {
             for (key, _) in parsed {
                 
-                // Skip copyCurrentView as this is only for ComputableView
-                if key == "copyCurrentView" { continue }
+                // Do not parse actionStateName as it is handled at runtime (when action is executed)
+                if key == "actionStateName" { continue }
                 
                 do {
+                    if object.objectSchema[key] == nil {
+                        throw "Exception: Invalid key while parsing view: \(key)"
+                    }
+                    
                     // If its an object continue the walk to find strings to update
-                    if let prop = object[key] as? Object {
-                        recursiveWalk(prop, parsed[key] as! [String:Any])
+                    if let _ = parsed[key] as? [String:Any] {
+                        print(key)
+                        try! recursiveWalk(object[key] as! Object, parsed[key] as! [String:Any])
                     }
                     // Update strings
                     else if let prop = parsed[key] as? String {
@@ -440,7 +772,64 @@ public class DynamicView: ObservableObject {
             }
         }
         
-        recursiveWalk(view, parsed)
+        try! recursiveWalk(view, parsed!)
+    }
+    
+    /**
+     *
+     */
+    func generateView() throws -> SessionView {
+        var view:SessionView
+        
+        // Parse at first use
+        if parsed == nil { try! parse() }
+        
+        // Copy from the current view
+        if ["{view}", "{sessionView}"].contains(dynamicView.fromTemplate)  {
+            
+            // TODO add feature that validates the current view and checks whether
+            //      the dynamic view can operate on it
+            
+            // Copy the current view
+            view = main.currentSession.currentView.copy()
+        }
+        // Copy from a named view
+        else if let copyFromView = dynamicView.fromTemplate {
+            view = main.views.getSessionView(copyFromView) ?? SessionView()
+        }
+        // Start from a new view
+        else {
+            view = SessionView()
+        }
+        
+        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) throws {
+            for (key, _) in parsed {
+                
+                // Do not parse actionStateName as it is handled at runtime (when action is executed)
+                if key == "actionStateName" { continue }
+                
+                do {
+                    if object.objectSchema[key] == nil {
+                        throw "Exception: Invalid key while parsing view: \(key)"
+                    }
+                    
+                    // If its an object continue the walk to find strings to update
+                    if let _ = parsed[key] as? [String:Any] {
+                        print(key)
+                        try! recursiveWalk(object[key] as! Object, parsed[key] as! [String:Any])
+                    }
+                    // Update strings
+                    else if let prop = parsed[key] as? String {
+                        object[key] = computeString(prop)
+                    }
+                }
+                catch { // Error can be thrown by illegal subscript access
+                    print("Warn: Could not find property: \(key)")
+                }
+            }
+        }
+        
+        try! recursiveWalk(view, parsed!)
         
         return view
     }
@@ -498,9 +887,6 @@ public class DynamicView: ObservableObject {
             // Return the value as a string
             return value as! String
         }
-        else {
-            return ""
-        }
         
         return ""
     }
@@ -534,6 +920,83 @@ public class DynamicView: ObservableObject {
         return nil
     }
     
+    public class func parseNamedViewList(_ data:Data) throws -> [DynamicView]? {
+        
+        // Parse JSON
+        let json = try! JSONSerialization.jsonObject(with: data, options: [])
+        if var parsedList = json as? [[String: Any]] {
+            
+            // Define result
+            var result:[DynamicView] = []
+            
+            // Loop over results from parsed json
+            for i in 0..<parsedList.count {
+                
+                // Create the dynamic view
+                let view = DynamicView()
+                
+                // Parse values out of json
+                view.name = parsedList[i].removeValue(forKey: "name") as! String
+                view.fromTemplate = parsedList[i].removeValue(forKey: "fromTemplate") as? String ?? nil
+                view.declaration = serialize(AnyCodable(parsedList[i]))
+                
+                // Add the dynamic view to the result
+                result.append(view)
+            }
+            
+            return result
+        }
+        else {
+            print("Warn: Invalid JSON while reading named view list")
+        }
+        
+        return nil
+    }
+    
+    public class func parseNamedViewDict(_ data:Data) throws -> ([String:[String:DynamicView]], [String:DynamicView]) {
+        
+        // Parse JSON
+        let json = try! JSONSerialization.jsonObject(with: data, options: [])
+        guard let parsedObject = json as? [String: [String: Any]] else {
+            throw "Exception: Invalid JSON while reading named view list"
+        }
+            
+        // Define result
+        var result:[String:[String:DynamicView]] = [:]
+        var named:[String:DynamicView] = [:]
+        
+        // Loop over results from parsed json
+        for (section, lut) in parsedObject {
+        
+            // Loop over lookup table with named views
+            for (key, object) in lut {
+                let object = object as! [String:Any]
+                    
+                // Create the dynamic view
+                let view = DynamicView()
+                
+                // Parse values out of json
+                view.name = section + ":" + key
+                view.fromTemplate = nil
+                view.declaration = serialize(AnyCodable(object))
+                
+                // Add the dynamic view to the result
+                if result[section] == nil { result[section] = [:] }
+                
+                // Store based on key
+                result[section]![key] = view
+                
+                // Store based on name if set
+                if object["name"] != nil {
+                    named[object["name"] as! String] = view
+                }
+            }
+        }
+        
+        // Done
+        return (result, named)
+    }
+    
     public class func parseExpression(_ expression:String, _ defObject:String) -> (object:String, prop:String) {
         // By default we update the named property on the view
         var objectToUpdate:String = defObject, propToUpdate:String = expression
@@ -558,5 +1021,4 @@ public class DynamicView: ObservableObject {
         
         return (objectToUpdate, propToUpdate)
     }
-
 }
