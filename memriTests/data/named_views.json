@@ -15,7 +15,7 @@
             {
                 "title": "Shopping Notes",
                 "queryOptions": {
-                    "query": "note AND title BEGINSWITH 'shopping'",
+                    "query": "note AND title BEGINSWITH[c] 'shopping'",
                     "sortProperty": "date-modified",
                     "sortAscending": 0
                 }

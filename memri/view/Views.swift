@@ -217,7 +217,7 @@ public class Views {
             // Find views based on datatype
             for key in searchOrder {
                 if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
-                    if datatypeView.name == viewFromSession.name {
+                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
                         continue
                     }
                     
