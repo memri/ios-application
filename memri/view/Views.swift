@@ -191,9 +191,6 @@ public class Views {
                 if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
                     datatypeViews.append(datatypeView)
                     
-                    dump(datatypeView.name)
-                    dump(datatypeView.actionButton)
-                    
                     if let S = datatypeView.rendererName { rendererNames.append(S) }
                     if datatypeView.cascadeOrder.count > 0 {
                         cascadeOrders[key]?.append(datatypeView.cascadeOrder)
@@ -390,41 +387,38 @@ public class SessionView: Object, ObservableObject, Codable {
         }
     }
     
-    public func copy() -> SessionView {
-        let view = SessionView()
+    public func merge(_ view:SessionView) {
         
-        view.queryOptions!.merge(self.queryOptions!)
         
-        view.name = self.name
-        view.rendererName = self.rendererName
-        view.backTitle = self.backTitle
-        view.icon = self.icon
-        view.browsingMode = self.browsingMode
+        self.queryOptions!.merge(view.queryOptions!)
         
-        view.title = self.title
-        view.subtitle = self.subtitle
-        view.filterText = self.filterText
-        view.emptyResultText = self.emptyResultText
+        self.name = view.name ?? self.name
+        self.rendererName = view.rendererName ?? self.rendererName
+        self.backTitle = view.backTitle ?? self.backTitle
+        self.icon = view.icon ?? self.icon
+        self.browsingMode = view.browsingMode ?? self.browsingMode
         
-        view.showLabels.value = self.showLabels.value
+        self.title = view.title ?? self.title
+        self.subtitle = view.subtitle ?? self.subtitle
+        self.filterText = view.filterText ?? self.filterText
+        self.emptyResultText = view.emptyResultText ?? self.emptyResultText
         
-        view.cascadeOrder.append(objectsIn: self.cascadeOrder)
-        view.selection.append(objectsIn: self.selection)
-        view.editButtons.append(objectsIn: self.editButtons)
-        view.filterButtons.append(objectsIn: self.filterButtons)
-        view.actionItems.append(objectsIn: self.actionItems)
-        view.navigateItems.append(objectsIn: self.navigateItems)
-        view.contextButtons.append(objectsIn: self.contextButtons)
-        view.activeStates.append(objectsIn: self.activeStates)
+        self.showLabels.value = view.showLabels.value ?? self.showLabels.value
         
-        if let renderConfigs = self.renderConfigs {
-            view.renderConfigs!.merge(renderConfigs)
+        self.cascadeOrder.append(objectsIn: view.cascadeOrder)
+        self.selection.append(objectsIn: view.selection)
+        self.editButtons.append(objectsIn: view.editButtons)
+        self.filterButtons.append(objectsIn: view.filterButtons)
+        self.actionItems.append(objectsIn: view.actionItems)
+        self.navigateItems.append(objectsIn: view.navigateItems)
+        self.contextButtons.append(objectsIn: view.contextButtons)
+        
+        if let renderConfigs = view.renderConfigs {
+            self.renderConfigs!.merge(renderConfigs)
         }
         
-        view.actionButton = self.actionButton
-        view.editActionButton = self.editActionButton
-        
-        return view
+        self.actionButton = view.actionButton ?? self.actionButton
+        self.editActionButton = view.editActionButton ?? self.editActionButton
     }
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
@@ -755,31 +749,28 @@ public class CompiledView {
             for (key, _) in parsed {
                 
                 // Do not parse actionStateName as it is handled at runtime (when action is executed)
-                if key == "actionStateName" { continue }
+                if key == "actionStateName" || key == "itemRenderer" { continue }
                 
-                do {
-                    // If its an object continue the walk to find strings to update
-                    var subParsed = parsed[key] as? [String:Any]
-                    if subParsed != nil {
-                        print(key)
-                        try! recursiveWalk(&subParsed!)
-                    }
-                    // Update strings
-                    else if let propValue = parsed[key] as? String {
-                        
-                        // Compile the property for easy lookup
-                        let newValue = compileProperty(propValue)
-                        
-                        // Updated the parsed object with the new value
-                        parsed.updateValue(newValue, forKey: key)
-                    }
+                // If its an object continue the walk to find strings to update
+                var subParsed = parsed[key] as? [String:Any]
+                if subParsed != nil {
+                    try! recursiveWalk(&subParsed!)
+                    parsed.updateValue(subParsed!, forKey: key)
                 }
-                catch { // Error can be thrown by illegal subscript access
-                    print("Warn: Could not find property: \(key)")
+                // Update strings
+                else if let propValue = parsed[key] as? String {
+                    
+                    // Compile the property for easy lookup
+                    let newValue = compileProperty(propValue)
+                    
+                    // Updated the parsed object with the new value
+                    parsed.updateValue(newValue, forKey: key)
                 }
+
             }
         }
         
+        // Start walking
         try! recursiveWalk(&parsed!)
         
         // Set the new session view json
@@ -811,12 +802,10 @@ public class CompiledView {
                     let query = String(expr[rangeQuery])
                     
                     // Add the query to the variable list
-                    variables[query] = ""
-                    
-                    print(variables.count)
+                    variables[query] = String(variables.count)
                     
                     // Add an easy to find reference to the string
-                    result += "{$(variables.count)}"
+                    result += "{$\(variables[query]!)}"
                 }
             }
         }
@@ -828,7 +817,6 @@ public class CompiledView {
      *
      */
     func generateView() throws -> SessionView {
-        var view:SessionView
         
         // Parse at first use
         if parsed == nil { try! parse() }
@@ -839,71 +827,51 @@ public class CompiledView {
         }
         
         // Copy from the current view
+        var view:SessionView? = nil
         if ["{view}", "{sessionView}"].contains(dynamicView.fromTemplate)  {
             
             // TODO add feature that validates the current view and checks whether
             //      the dynamic view can operate on it
             
             // Copy the current view
-            view = main.currentSession.currentView.copy()
+            view = SessionView()
+            view!.merge(main.currentSession.currentView)
         }
         // Copy from a named view
         else if let copyFromView = dynamicView.fromTemplate {
             view = main.views.getSessionView(copyFromView) ?? SessionView()
         }
-        // Start from a new view
-        else {
-            view = SessionView()
-        }
         
         var i = 0, template = jsonString
-        for (key, _) in variables {
+        for (key, index) in variables {
             // Compute the value of the variable
             let computedValue = queryObject(key)
             
             // Update the template with the variable
             // TODO make this more efficient. This could just be one regex search
-            template = String(template.replacingOccurrences(of: "\\{\\$" + String(i) + "\\}",
+            template = String(template.replacingOccurrences(of: "\\{\\$" + index + "\\}",
                 with: computedValue, options: .regularExpression))
+            
+            // Increment counter
+            i += 1
+        }
+        
+        // Generate session view from template
+        let sessionView = try! SessionView.fromJSONString(template)
+        
+        // Merge with the view that is copied, if any
+        if let view = view {
+            view.merge(sessionView)
+        }
+        else {
+            view = sessionView
         }
         
         // Cache session view object in case it isnt dynamic
-        lastSessionView = try! SessionView.fromJSONString(template)
+        lastSessionView = view
         
-        // Done
-        return lastSessionView!
+        return view!
     }
-    
-//    public func computeString(_ expr:String) -> String {
-//        // We'll use this regular expression to match the name of the object and property
-//        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+).([^\{]*)\})?)"#
-//        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-//
-//        var result:String = ""
-//
-//        // Weird complex way to execute a regex
-//        let nsrange = NSRange(expr.startIndex..<expr.endIndex, in: expr)
-//        regex.enumerateMatches(in: expr, options: [], range: nsrange) { (match, _, stop) in
-//            guard let match = match else { return }
-//
-//            // We should have 4 matches
-//            if match.numberOfRanges == 4 {
-//
-//                // Fetch the text portion of the match
-//                if let rangeText = Range(match.range(at: 1), in: expr) {
-//                    result += String(expr[rangeText])
-//                }
-//
-//                // compute the string result of the expression
-//                if let rangeObject = Range(match.range(at: 2), in: expr),
-//                  let rangeProp = Range(match.range(at: 3), in: expr) {
-//                    result += queryObject(String(expr[rangeObject]), String(expr[rangeProp]))
-//                }
-//            }
-//        }
-//
-//        return result
-//    }
     
     public func queryObject(_ expr:String) -> String{
 
@@ -911,7 +879,7 @@ public class CompiledView {
         let propParts = expr.split(separator: ".")
         
         // Get the first property of the object
-        var value:Any? = getProperty(propParts[0], String(propParts[1]))
+        var value:Any? = getProperty(String(propParts[0]), String(propParts[1]))
         
         // Check if the value is not nil
         if value != nil {
