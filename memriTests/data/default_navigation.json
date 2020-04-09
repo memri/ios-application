@@ -59,12 +59,12 @@
     {
         "type": "item",
         "title": "notes",
-        "view": "notes"
+        "view": "all-notes"
     },
     {
         "type": "item",
-        "title": "lists",
-        "view": "lists"
+        "title": "shopping notes",
+        "view": "shopping-notes"
     },
     {
         "type": "item",

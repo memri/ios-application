@@ -32,7 +32,7 @@
 
         "{[type:note]}": {
             "name": "all-notes",
-            "title": "Notes",
+            "title": "All Notes",
             "queryOptions": {
                 "query": "note",
                 "sortProperty": "date-modified",
@@ -63,8 +63,7 @@
         },
 
         "{type:note}": {
-            "name": "note",
-            "title": "Note",
+            "title": "{dataItem.title}",
             "rendererName": "richTextEditor",
             "renderConfigs": {
                 "richtexteditor": {

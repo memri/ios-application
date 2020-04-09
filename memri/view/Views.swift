@@ -84,6 +84,12 @@ public class Views {
      *
      */
     public func getCompiledView (_ viewName:String) -> CompiledView? {
+        // Find an already compiled view
+        if let compiledView = compiledViews[viewName] {
+            return compiledView
+        }
+        
+        // Otherwise generate it from a dynamic view
         if let dynamicView = getDynamicView(viewName) {
             return compileView(dynamicView)
         }
@@ -110,6 +116,26 @@ public class Views {
         }
         
         return nil
+    }
+    /**
+     *
+     */
+    public func getSessionOrView(_ viewName:String, wrapView:Bool=false) -> (Session?, SessionView?) {
+        if let compiledView = getCompiledView(viewName) {
+            
+            // Parse so we now if it includes a session
+            try! compiledView.parse()
+            
+            if compiledView.hasSession {
+                return (try! compiledView.generateSession(), nil)
+            }
+            else {
+                let view = try! compiledView.generateView()
+                return (wrapView ? Session(value: ["views": [view]]) : nil, view)
+            }
+        }
+        
+        return (nil, nil)
     }
     
     /**
@@ -177,7 +203,9 @@ public class Views {
         var rendererNames:[String] = []
         var cascadeOrders:[String:[RealmSwift.List<String>]] = ["defaults":[List()], "user":[]]
         let searchOrder = ["defaults", "user"]
-        var rendererName:String
+        
+        // Default to the rendererName we know from the view from the session
+        var rendererName:String = viewFromSession.rendererName ?? ""
         
         cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
         
@@ -189,6 +217,10 @@ public class Views {
             // Find views based on datatype
             for key in searchOrder {
                 if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
+                    if datatypeView.name == viewFromSession.name {
+                        continue
+                    }
+                    
                     datatypeViews.append(datatypeView)
                     
                     if let S = datatypeView.rendererName { rendererNames.append(S) }
@@ -198,11 +230,9 @@ public class Views {
                 }
             }
             
-            rendererName = rendererNames[rendererNames.count - 1]
-        }
-        // Otherwise default to what we know from the view from the session
-        else {
-            rendererName = viewFromSession.rendererName ?? ""
+            if rendererNames.count > 0 {
+                rendererName = rendererNames[rendererNames.count - 1]
+            }
         }
         
         // Find renderer views
@@ -703,6 +733,10 @@ public class CompiledView {
     /**
      *
      */
+    var name: String = ""
+    /**
+     *
+     */
     var variables: [String:String] = [:]
     /**
      *
@@ -720,6 +754,14 @@ public class CompiledView {
      *
      */
     var lastSessionView:SessionView? = nil
+    /**
+     *
+     */
+    var hasSession:Bool = false
+    /**
+     *
+     */
+    var views:[CompiledView] = []
     
     private var main:Main
 
@@ -743,6 +785,9 @@ public class CompiledView {
             
         // Store the parsed json in memory
         parsed = object
+        
+        // Detect whether this item has a session
+        hasSession = object["views"] != nil
         
         // Find all dynamic properties and compile them
         func recursiveWalk( _ parsed:inout [String:Any]) throws {
@@ -770,11 +815,49 @@ public class CompiledView {
             }
         }
         
-        // Start walking
-        try! recursiveWalk(&parsed!)
-        
-        // Set the new session view json
-        jsonString = serialize(AnyCodable(parsed))
+        // Generating a session of multiple compiled views
+        if hasSession, let list = object["views"] as? [Any] {
+            
+            // Loop through all view
+            for i in 0..<list.count {
+                
+                // If the view is a string look up its template
+                if let value = list[i] as? String {
+                    
+                    // Find the compiled view
+                    let compiledView = main.views.getCompiledView(value)
+                    
+                    // Append it to the list of views
+                    views.append(compiledView!) // TODO error handling
+                }
+                    
+                // Or if its a literal view parse it
+                else if var value = list[i] as? [String: Any] {
+                    
+                    // Start walking to parse values from this part of the subtree
+                    try! recursiveWalk(&value)
+                    
+                    // Create a dynamic view
+                    let dynamicView = DynamicView(value: [
+                        "declaration": serialize(AnyCodable(value))
+                    ])
+                    
+                    // Create the compiled view
+                    let compiledView = try! CompiledView(dynamicView, main)
+                    
+                    // Append it to the list of views
+                    views.append(compiledView)
+                }
+            }
+        }
+        // Generating a single view template
+        else {
+            // Start walking
+            try! recursiveWalk(&parsed!)
+            
+            // Set the new session view json
+            jsonString = serialize(AnyCodable(parsed))
+        }
     }
     
     public func compileProperty(_ expr:String) -> String {
@@ -817,12 +900,19 @@ public class CompiledView {
      *
      */
     func generateView() throws -> SessionView {
+        // Prevent views generated from a session template
+        if self.hasSession { throw "Exception: Cannot generate view from a session template" }
         
         // Parse at first use
         if parsed == nil { try! parse() }
         
         // Return last compiled session view if this is not a dynamic view
         if dynamicView.fromTemplate == nil && variables.count == 0 && lastSessionView != nil {
+            
+            // TODO this is useful for the views that are the base for computing a view
+            //      but probably not good for templates without computed properties that
+            //      are added to different sessions.
+            
             return lastSessionView!
         }
         
@@ -842,19 +932,8 @@ public class CompiledView {
             view = main.views.getSessionView(copyFromView) ?? SessionView()
         }
         
-        var i = 0, template = jsonString
-        for (key, index) in variables {
-            // Compute the value of the variable
-            let computedValue = queryObject(key)
-            
-            // Update the template with the variable
-            // TODO make this more efficient. This could just be one regex search
-            template = String(template.replacingOccurrences(of: "\\{\\$" + index + "\\}",
-                with: computedValue, options: .regularExpression))
-            
-            // Increment counter
-            i += 1
-        }
+        // Fill the template with variables
+        let template = insertVariables()
         
         // Generate session view from template
         let sessionView = try! SessionView.fromJSONString(template)
@@ -871,6 +950,62 @@ public class CompiledView {
         lastSessionView = view
         
         return view!
+    }
+    
+    func generateSession() throws -> Session {
+        // Prevent views generated from a session template
+        if !self.hasSession { throw "Exception: Cannot generate session from a view template" }
+        
+        // Parse at first use
+        if parsed == nil { try! parse() }
+        
+        // Create new session object
+        let session = Session(value: ["name": parsed!["name"] as! String])
+        
+//        var computedView:ComputedView
+        for i in 0..<views.count {
+            session.views.append(try! views[i].generateView())
+            
+            // TODO The code below is the beginning of allow dynamic views that refer the view
+            //      or computedView to get the right reference. A major problem is that the data
+            //      may not be loaded yet. This may be solved by loading from cache, or annotating
+            //      the session view description. More thought is needed, so I'm leaving that out
+            //      for now
+            
+//            overrides:[
+//                "view": { () -> Any in views[i - 1] ?? nil },
+//                "computedView": { () -> Any in
+//                    if let cv = computedView { return computedView }
+//                    else if i > 0 {
+//                        computedView = main.views.computeView(session.views[i - 1])
+//                        return computedView!
+//                    }
+//                }
+//            ])
+        }
+        
+        // set current session indicator to last element
+        session.currentViewIndex = session.views.count - 1
+        
+        return session
+    }
+    
+    public func insertVariables() -> String {
+        var i = 0, template = jsonString
+        for (key, index) in variables {
+            // Compute the value of the variable
+            let computedValue = queryObject(key)
+            
+            // Update the template with the variable
+            // TODO make this more efficient. This could just be one regex search
+            template = String(template.replacingOccurrences(of: "\\{\\$" + index + "\\}",
+                with: computedValue, options: .regularExpression))
+            
+            // Increment counter
+            i += 1
+        }
+        
+        return template
     }
     
     public func queryObject(_ expr:String) -> String{
@@ -943,8 +1078,14 @@ public class CompiledView {
                 let view = DynamicView()
                 
                 // Parse values out of json
-                view.name = parsedList[i].removeValue(forKey: "name") as! String
-                view.fromTemplate = parsedList[i].removeValue(forKey: "fromTemplate") as? String ?? nil
+                if parsedList[i]["views"] == nil {
+                    view.name = parsedList[i].removeValue(forKey: "name") as! String
+                    view.fromTemplate = parsedList[i].removeValue(forKey: "fromTemplate") as? String ?? nil
+                }
+                else {
+                    view.name = parsedList[i]["name"] as! String
+                }
+                
                 view.declaration = serialize(AnyCodable(parsedList[i]))
                 
                 // Add the dynamic view to the result

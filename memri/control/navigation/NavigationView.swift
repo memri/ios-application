@@ -18,6 +18,12 @@ struct Navigation: View {
         return -(1.0 - foreGroundPercentageWidth) * (UIScreen.main.bounds.width)
     }
     
+    public func hide(){
+        try! self.main.realm.write {
+            self.main.sessions.showNavigation = false
+        }
+    }
+    
     var body: some View {
 
         VStack{
@@ -27,7 +33,7 @@ struct Navigation: View {
             VStack{
                 ScrollView(.vertical) {
                     ForEach(self.main.navigation.items, id: \.self){ navigationItem in
-                        self.item(navigationItem: navigationItem)
+                        self.item(navigationItem)
                     }
                 }
             }
@@ -44,23 +50,21 @@ struct Navigation: View {
                self.dragOffset = value.translation
             }
             .onEnded{ value in
-                try! self.main.realm.write {
-                    self.main.sessions.showNavigation = false
-                }
+                self.hide()
             })
         .edgesIgnoringSafeArea(.vertical)
     }
 
-    func item(navigationItem: NavigationItem) -> AnyView{
+    func item(_ navigationItem: NavigationItem) -> AnyView{
         switch navigationItem.type{
         case "item":
-            return AnyView(NavigationItemView(item: navigationItem))
+            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
         case "heading":
             return AnyView(NavigationHeadingView(title: navigationItem.title))
         case "line":
             return AnyView(NavigationLineView())
         default:
-            return AnyView(NavigationItemView(item: navigationItem))
+            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
         }
     }
 }
@@ -69,6 +73,8 @@ struct NavigationItemView: View{
     @EnvironmentObject var main: Main
     
     var item: NavigationItem
+    
+    var hide: () -> Void
     
     var body: some View {
         HStack{
@@ -82,8 +88,10 @@ struct NavigationItemView: View{
             Spacer()
         }
         .onTapGesture {
-            if let item = self.item.view {
-                self.main.openView(item)
+            if let viewName = self.item.view {
+                self.main.openSession(viewName)
+                
+                self.hide()
             }
         }
     }
