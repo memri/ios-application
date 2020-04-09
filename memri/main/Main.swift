@@ -50,27 +50,24 @@ public class Main: ObservableObject {
      *
      */
     public var navigation: MainNavigation
-    
-    // TODO @koen these renderer objects seem slightly out of place here.
-    // Could there be some kind of .renderers object that sits on main?
-    var renderers: [String: AnyView] = [
-        "list": AnyView(ListRenderer()),
-        "richTextEditor": AnyView(RichTextRenderer()),
-        "thumbnail": AnyView(ThumbnailRenderer())
-    ]
-    
-    var renderObjects: [String: RendererObject] = [
-        "list": ListRendererObject(),
-        "richTextEditor": RichTextRendererObject(),
-        "thumbnail": ThumbnailRendererObject()
-    ]
-    
-    var renderObjectTuples: [(key: String, value: RendererObject)] {
-        return renderObjects.sorted{$0.key < $1.key}
+    /**
+     *
+     */
+    public var renderers: Renderers
+    /**
+     *
+     */
+    public var currentRendererView: AnyView{
+        self.renderers.allViews[self.computedView.rendererName]!
     }
     
-    var currentRenderer: AnyView {
-        self.renderers[self.computedView.rendererName, default: AnyView(ThumbnailRenderer())]
+    public var items: [DataItem]{
+        get{
+            self.computedView.resultSet.items
+        }
+        set{
+            self.computedView.resultSet.items = newValue
+        }
     }
     
     private var cancellable: AnyCancellable? = nil
@@ -86,6 +83,7 @@ public class Main: ObservableObject {
         sessions = Sessions(realm)
         computedView = ComputedView(cache)
         navigation = MainNavigation(realm)
+        renderers = Renderers()
         
         cache.scheduleUIUpdate = scheduleUIUpdate
     }

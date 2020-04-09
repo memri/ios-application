@@ -11,7 +11,7 @@ import Combine
 import SwiftUI
 
 
-struct ListRenderer: Renderer {
+struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
@@ -25,7 +25,7 @@ struct ListRenderer: Renderer {
     }
     
     var renderConfig: ListConfig {
-        return self.main.computedView.getRenderConfig(name) as! ListConfig
+        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
     var body: some View {
@@ -47,7 +47,7 @@ struct ListRenderer: Renderer {
                 NavigationView {
                     List{
                     
-                        ForEach(main.computedView.resultSet.items) { dataItem in
+                        ForEach(main.items) { dataItem in
                             VStack{
                                 Text(dataItem.getString("title"))
                                     .bold()
@@ -62,12 +62,12 @@ struct ListRenderer: Renderer {
                         }.onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet
-                            self.main.computedView.resultSet.items.remove(atOffsets: indexSet)
+                            self.main.items.remove(atOffsets: indexSet)
                             
                             // I'm sure there is a better way of doing this...
                             var items:[DataItem] = []
                             for i in indexSet {
-                                let item = self.main.computedView.resultSet.items[i]
+                                let item = self.main.items[i]
                                 items.append(item)
                             }
                             
@@ -85,8 +85,8 @@ struct ListRenderer: Renderer {
     }
 }
 
-struct ListRenderer_Previews: PreviewProvider {
+struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRenderer().environmentObject(Main(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }

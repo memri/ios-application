@@ -8,8 +8,6 @@ public class SessionView: Object, ObservableObject, Codable {
     /**
      *
      */
-    @objc dynamic var queryOptions: QueryOptions? = QueryOptions()
-    @objc dynamic var renderConfigs: RenderConfigs? = RenderConfigs()
     
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
@@ -31,6 +29,9 @@ public class SessionView: Object, ObservableObject, Codable {
     let navigateItems = RealmSwift.List<ActionDescription>()
     let contextButtons = RealmSwift.List<ActionDescription>()
     let activeStates = RealmSwift.List<String>()
+    
+    @objc dynamic var queryOptions: QueryOptions? = QueryOptions()
+    @objc dynamic var renderConfigs: RenderConfigs? = RenderConfigs()
     
     @objc dynamic var actionButton: ActionDescription? = nil
     @objc dynamic var editActionButton: ActionDescription? = nil
@@ -172,7 +173,7 @@ public class ComputedView: ObservableObject {
     var contextButtons: [ActionDescription] = []
     var activeStates: [String] = []
     
-    var renderer: RendererObject? = nil // TODO 
+    var renderer: Renderer? = nil // TODO 
     var rendererView: AnyView? = nil // TODO
     var sessionView: SessionView? = nil
     var renderConfigs: RenderConfigs = RenderConfigs()
@@ -266,30 +267,6 @@ public class ComputedView: ObservableObject {
     init(_ ch:Cache){
         cache = ch
         resultSet = ResultSet(cache)
-    }
-    
-    public func getRenderConfig(_ rendererName:String) -> RenderConfig {
-        if let config = self.renderConfigs[rendererName] {
-            return config as! RenderConfig
-        }
-        else {
-            try! cache.realm.write {
-                if self.sessionView!.renderConfigs == nil {
-                    self.sessionView!.renderConfigs = RenderConfigs()
-                }
-                
-                if rendererName == "list" {
-                    self.sessionView!.renderConfigs![rendererName] = ListConfig()
-                    self.renderConfigs[rendererName] = ListConfig()
-                }
-                else if rendererName == "thumbnail" {
-                    self.sessionView!.renderConfigs![rendererName] = ThumbnailConfig()
-                    self.renderConfigs[rendererName] = ThumbnailConfig()
-                }
-            }
-        }
-        
-        return self.renderConfigs[rendererName] as! RenderConfig
     }
     
     public func merge(_ view:SessionView) {
