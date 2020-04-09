@@ -427,10 +427,15 @@ public class SessionView: Object, ObservableObject, Codable {
         return view
     }
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> SessionView {
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
         let jsonData = try jsonDataFromFile(file, ext)
         let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
         return items
+    }
+    
+    public class func fromJSONString(_ json: String) throws -> SessionView {
+        let view:SessionView = try JSONDecoder().decode(SessionView.self, from: Data(json.utf8))
+        return view
     }
 }
 
@@ -717,6 +722,10 @@ public class CompiledView {
      *
      */
     var dynamicView:DynamicView
+    /**
+     *
+     */
+    var lastSessionView:SessionView? = nil
     
     private var main:Main
 
@@ -741,29 +750,28 @@ public class CompiledView {
         // Store the parsed json in memory
         parsed = object
         
-        // TODO this is the place to optimize compilation
-        // - Fetch all variables and put them in .variables
-        // - Fill variables and replace them in the json when doing generateView()
-        
-        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) throws {
+        // Find all dynamic properties and compile them
+        func recursiveWalk( _ parsed:inout [String:Any]) throws {
             for (key, _) in parsed {
                 
                 // Do not parse actionStateName as it is handled at runtime (when action is executed)
                 if key == "actionStateName" { continue }
                 
                 do {
-                    if object.objectSchema[key] == nil {
-                        throw "Exception: Invalid key while parsing view: \(key)"
-                    }
-                    
                     // If its an object continue the walk to find strings to update
-                    if let _ = parsed[key] as? [String:Any] {
+                    var subParsed = parsed[key] as? [String:Any]
+                    if subParsed != nil {
                         print(key)
-                        try! recursiveWalk(object[key] as! Object, parsed[key] as! [String:Any])
+                        try! recursiveWalk(&subParsed!)
                     }
                     // Update strings
-                    else if let prop = parsed[key] as? String {
-                        object[key] = computeString(prop)
+                    else if let propValue = parsed[key] as? String {
+                        
+                        // Compile the property for easy lookup
+                        let newValue = compileProperty(propValue)
+                        
+                        // Updated the parsed object with the new value
+                        parsed.updateValue(newValue, forKey: key)
                     }
                 }
                 catch { // Error can be thrown by illegal subscript access
@@ -772,7 +780,48 @@ public class CompiledView {
             }
         }
         
-        try! recursiveWalk(view, parsed!)
+        try! recursiveWalk(&parsed!)
+        
+        // Set the new session view json
+        jsonString = serialize(AnyCodable(parsed))
+    }
+    
+    public func compileProperty(_ expr:String) -> String {
+        // We'll use this regular expression to match the name of the object and property
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+.[^\}]*)\})?)"#
+        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+
+        var result:String = ""
+        
+        // Weird complex way to execute a regex
+        let nsrange = NSRange(expr.startIndex..<expr.endIndex, in: expr)
+        regex.enumerateMatches(in: expr, options: [], range: nsrange) { (match, _, stop) in
+            guard let match = match else { return }
+
+            // We should have 4 matches
+            if match.numberOfRanges == 3 {
+                
+                // Fetch the text portion of the match
+                if let rangeText = Range(match.range(at: 1), in: expr) {
+                    result += String(expr[rangeText])
+                }
+                
+                // compute the string result of the expression
+                if let rangeQuery = Range(match.range(at: 2), in: expr) {
+                    let query = String(expr[rangeQuery])
+                    
+                    // Add the query to the variable list
+                    variables[query] = ""
+                    
+                    print(variables.count)
+                    
+                    // Add an easy to find reference to the string
+                    result += "{$(variables.count)}"
+                }
+            }
+        }
+        
+        return result
     }
     
     /**
@@ -783,6 +832,11 @@ public class CompiledView {
         
         // Parse at first use
         if parsed == nil { try! parse() }
+        
+        // Return last compiled session view if this is not a dynamic view
+        if dynamicView.fromTemplate == nil && variables.count == 0 && lastSessionView != nil {
+            return lastSessionView!
+        }
         
         // Copy from the current view
         if ["{view}", "{sessionView}"].contains(dynamicView.fromTemplate)  {
@@ -802,84 +856,69 @@ public class CompiledView {
             view = SessionView()
         }
         
-        func recursiveWalk(_ object:Object, _ parsed:[String:Any]) throws {
-            for (key, _) in parsed {
-                
-                // Do not parse actionStateName as it is handled at runtime (when action is executed)
-                if key == "actionStateName" { continue }
-                
-                do {
-                    if object.objectSchema[key] == nil {
-                        throw "Exception: Invalid key while parsing view: \(key)"
-                    }
-                    
-                    // If its an object continue the walk to find strings to update
-                    if let _ = parsed[key] as? [String:Any] {
-                        print(key)
-                        try! recursiveWalk(object[key] as! Object, parsed[key] as! [String:Any])
-                    }
-                    // Update strings
-                    else if let prop = parsed[key] as? String {
-                        object[key] = computeString(prop)
-                    }
-                }
-                catch { // Error can be thrown by illegal subscript access
-                    print("Warn: Could not find property: \(key)")
-                }
-            }
+        var i = 0, template = jsonString
+        for (key, _) in variables {
+            // Compute the value of the variable
+            let computedValue = queryObject(key)
+            
+            // Update the template with the variable
+            // TODO make this more efficient. This could just be one regex search
+            template = String(template.replacingOccurrences(of: "\\{\\$" + String(i) + "\\}",
+                with: computedValue, options: .regularExpression))
         }
         
-        try! recursiveWalk(view, parsed!)
+        // Cache session view object in case it isnt dynamic
+        lastSessionView = try! SessionView.fromJSONString(template)
         
-        return view
+        // Done
+        return lastSessionView!
     }
     
-    public func computeString(_ expr:String) -> String {
-        // We'll use this regular expression to match the name of the object and property
-        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+).([^\{]*)\})?)"#
-        let regex = try! NSRegularExpression(pattern: pattern, options: [])
-
-        var result:String = ""
-        
-        // Weird complex way to execute a regex
-        let nsrange = NSRange(expr.startIndex..<expr.endIndex, in: expr)
-        regex.enumerateMatches(in: expr, options: [], range: nsrange) { (match, _, stop) in
-            guard let match = match else { return }
-
-            // We should have 4 matches
-            if match.numberOfRanges == 4 {
-                
-                // Fetch the text portion of the match
-                if let rangeText = Range(match.range(at: 1), in: expr) {
-                    result += String(expr[rangeText])
-                }
-                
-                // compute the string result of the expression
-                if let rangeObject = Range(match.range(at: 2), in: expr),
-                  let rangeProp = Range(match.range(at: 3), in: expr) {
-                    result += queryObject(String(expr[rangeObject]), String(expr[rangeProp]))
-                }
-            }
-        }
-        
-        return result
-    }
+//    public func computeString(_ expr:String) -> String {
+//        // We'll use this regular expression to match the name of the object and property
+//        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+).([^\{]*)\})?)"#
+//        let regex = try! NSRegularExpression(pattern: pattern, options: [])
+//
+//        var result:String = ""
+//
+//        // Weird complex way to execute a regex
+//        let nsrange = NSRange(expr.startIndex..<expr.endIndex, in: expr)
+//        regex.enumerateMatches(in: expr, options: [], range: nsrange) { (match, _, stop) in
+//            guard let match = match else { return }
+//
+//            // We should have 4 matches
+//            if match.numberOfRanges == 4 {
+//
+//                // Fetch the text portion of the match
+//                if let rangeText = Range(match.range(at: 1), in: expr) {
+//                    result += String(expr[rangeText])
+//                }
+//
+//                // compute the string result of the expression
+//                if let rangeObject = Range(match.range(at: 2), in: expr),
+//                  let rangeProp = Range(match.range(at: 3), in: expr) {
+//                    result += queryObject(String(expr[rangeObject]), String(expr[rangeProp]))
+//                }
+//            }
+//        }
+//
+//        return result
+//    }
     
-    public func queryObject(_ object:String, _ prop:String) -> String{
-        if object == "" || prop == "" { return "" } // TODO think about having a default object
-        
+    public func queryObject(_ expr:String) -> String{
+
         // Split the property by dots to look up each property separately
-        let propParts = prop.split(separator: ".")
+        let propParts = expr.split(separator: ".")
         
         // Get the first property of the object
-        var value:Any? = getProperty(object, String(propParts[0]))
+        var value:Any? = getProperty(propParts[0], String(propParts[1]))
         
         // Check if the value is not nil
         if value != nil {
             
             // Loop through the properties and fetch each
-            if propParts.count > 1 {
-                for i in 1...propParts.count - 1 {
+            if propParts.count > 2 {
+                for i in 2..<propParts.count {
                     value = (value as! Object)[String(propParts[i])]
                 }
             }
