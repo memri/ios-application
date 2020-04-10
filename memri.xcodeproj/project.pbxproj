@@ -456,7 +456,7 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
-				5D487F282440782800B50202 /* Item */,
+				5D487F282440782800B50202 /* ItemRenderer */,
 				5DD1E9B923FD81C5007BDF7B /* Renderers.swift */,
 				5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */,
 				86A5D842243CEBF400F8FAD8 /* list */,
@@ -474,14 +474,14 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		5D487F282440782800B50202 /* Item */ = {
+		5D487F282440782800B50202 /* ItemRenderer */ = {
 			isa = PBXGroup;
 			children = (
 				5D487F1F244073C100B50202 /* ItemRenderer.swift */,
 				5D487F21244073DF00B50202 /* ComponentClass.swift */,
 				5D487F1D244073A300B50202 /* ItemRendererComponent.swift */,
 			);
-			path = Item;
+			path = ItemRenderer;
 			sourceTree = "<group>";
 		};
 		5D493FDC23FC15D10034692B /* view */ = {
