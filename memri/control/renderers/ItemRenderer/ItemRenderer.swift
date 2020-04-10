@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ItemRenderer: View, Decodable {
-    var baseComponent: ComponentClass? = nil
+    var baseComponent: ItemRendererComponent? = nil
     
     @ObservedObject var item: DataItem = Note(value: ["content": "test",
                                                       "title": "test"])
@@ -27,7 +27,7 @@ struct ItemRenderer: View, Decodable {
         case parentView
     }
     
-    init(baseComponent: ComponentClass?=nil, item:DataItem?=nil){
+    init(baseComponent: ItemRendererComponent?=nil, item:DataItem?=nil){
         self.baseComponent = baseComponent ?? self.baseComponent
         self.item = item ?? self.item
         
@@ -36,14 +36,14 @@ struct ItemRenderer: View, Decodable {
     public init(from decoder: Decoder) throws {
         self.init()
         let container = try decoder.container(keyedBy: RendererConfigKeys.self)
-        baseComponent = try container.decode(ComponentClass.self, forKey: .parentView)
+        baseComponent = try container.decode(ItemRendererComponent.self, forKey: .parentView)
     }
 
 }
 
 struct ItemRenderer_Previews: PreviewProvider {
     static var previews: some View {
-        try! ItemRenderer(baseComponent: try! ComponentClass.fromJSONFile("list_item_component"),
+        try! ItemRenderer(baseComponent: try! ItemRendererComponent.fromJSONFile("list_item_component"),
                           item: Note(value: ["title": "Some note",
                                              "content": "- content\n -content \n- content"]))
     }

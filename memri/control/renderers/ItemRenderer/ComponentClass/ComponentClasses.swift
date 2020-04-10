@@ -9,10 +9,10 @@
 import Foundation
 import SwiftUI
 
-class VStackComponentClass: ComponentClass{
-    var children: [ComponentClass] = []
+class VStackComponent: ItemRendererComponent{
+    var children: [ItemRendererComponent] = []
     
-    convenience init(children: [ComponentClass]? = nil){
+    convenience init(children: [ItemRendererComponent]? = nil){
         self.init()
         self.children = children ?? self.children
     }
@@ -43,7 +43,7 @@ extension View {
 }
     
     
-class TextComponentClass: ComponentClass{
+class TextComponent: ItemRendererComponent{
     
     var property: String = ""
     var bold: Bool = false

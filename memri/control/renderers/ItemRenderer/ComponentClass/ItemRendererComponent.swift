@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-enum ComponentFamily: String, ClassFamily {
+enum ItemRendererComponentFamily: String, ClassFamily {
     case VStack = "VStack"
     case Text = "Text"
 
@@ -18,9 +18,9 @@ enum ComponentFamily: String, ClassFamily {
     func getType() -> AnyObject.Type {
         switch self {
         case .VStack:
-            return VStackComponentClass.self
+            return VStackComponent.self
         case .Text:
-            return TextComponentClass.self
+            return TextComponent.self
         }
     }
 }
@@ -47,10 +47,10 @@ class ItemRendererComponent: Decodable{
             
             switch try container.decode(String.self, forKey: .type) {
             case "vstack":
-                self.element = VStackComponentClass(children: try container.decode([ItemRendererComponent].self,
+                self.element = VStackComponent(children: try container.decode([ItemRendererComponent].self,
                                                                         forKey: .children))
             case "text":
-                self.element = try TextComponentClass(from: decoder)
+                self.element = try TextComponent(from: decoder)
             default: fatalError("Unknown type")
             }
         }

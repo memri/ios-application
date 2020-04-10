@@ -26,7 +26,7 @@ class RenderConfigTest: XCTestCase {
     }
     
     func testLoadItemComponent() throws {
-        var x = try! ItemRenderer(baseComponent: try! ComponentClass.fromJSONFile("list_item_component"))
+        var x = try! ItemRenderer(baseComponent: try! ItemRendererComponent.fromJSONFile("list_item_component"))
 //        var x = try! ItemRenderer.fromJSONFile("list_item_component")
 //        var listConfig = try! ViewComponent.fromJSONFile("listconfig")
     }

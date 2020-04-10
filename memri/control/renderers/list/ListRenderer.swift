@@ -30,7 +30,7 @@ class ListConfig: RenderConfig {
     @objc dynamic var press: ActionDescription? = nil
     
     // TODO: Persist
-    var renderDescription: ComponentClass? = nil
+    var renderDescription: ItemRendererComponent? = nil
     
     let slideLeftActions = List<ActionDescription>()
     let slideRightActions = List<ActionDescription>()
