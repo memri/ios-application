@@ -83,6 +83,8 @@ extension Main {
 
             // Toggle the right property on the right object
             switch objectToUpdate {
+            case "main":
+                self[propToUpdate] = !(self[propToUpdate] as! Bool)
             case "sessions":
                 self.sessions[propToUpdate] = !(self.sessions[propToUpdate] as! Bool)
             case "currentSession":
@@ -122,6 +124,8 @@ extension Main {
         
         // Toggle the right property on the right object
         switch objectToQuery {
+        case "main":
+            return self[propToQuery] as! Bool
         case "sessions":
             return self.sessions[propToQuery] as! Bool
         case "currentSession":

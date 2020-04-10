@@ -106,7 +106,7 @@ public enum ActionName: String, Codable {
         case .showContextPane:
             return "{currentSession.showContextPane}"
         case .showNavigation:
-            return "{sessions.showNavigation}"
+            return "{main.showNavigation}"
         default:
             return nil
         }

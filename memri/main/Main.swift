@@ -61,17 +61,80 @@ public class Main: ObservableObject {
     /**
      *
      */
-    public var currentRendererView: AnyView{
+    public var currentRendererView: AnyView {
         self.renderers.allViews[self.computedView.rendererName]!
     }
-    
-    public var items: [DataItem]{
-        get{
+    /**
+     *
+     */
+    public var items: [DataItem] {
+        get {
             self.computedView.resultSet.items
         }
-        set{
-            self.computedView.resultSet.items = newValue
+        set { 
+            // Do nothing
+            print("THIS SHOULD NEVER BE PRINTED2")
         }
+    }
+    /**
+     *
+     */
+    public var item: DataItem? {
+        get {
+            self.computedView.resultSet.item
+        }
+        set {
+            // Do nothing
+            print("THIS SHOULD NEVER BE PRINTED")
+        }
+    }
+    
+    struct Alias {
+        var key:String
+        var type:String
+    }
+    
+    let aliases:[String:Alias] = [
+        "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool"),
+        "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool")
+    ]
+    
+    subscript(propName:String) -> Any? {
+        get {
+            let alias = aliases[propName]!
+            
+            switch alias.type {
+            case "bool":
+                let value:Bool? = settings.get(alias.key)
+                return value ?? false
+            case "string":
+                let value:String? = settings.get(alias.key)
+                return value ?? ""
+            case "int":
+                let value:Int? = settings.get(alias.key)
+                return value ?? 0
+            case "double":
+                let value:Double? = settings.get(alias.key)
+                return value ?? 0
+            default:
+                return nil
+            }
+        }
+        set(newValue) {
+            settings.set(aliases[propName]!.key, AnyCodable(newValue))
+            
+            scheduleUIUpdate()
+        }
+    }
+    
+    public var showSessionSwitcher:Bool {
+        get { return self["showSessionSwitcher"] as! Bool }
+        set(value) { self["showSessionSwitcher"] = value }
+    }
+    
+    public var showNavigation:Bool {
+        get { return self["showNavigation"] as! Bool }
+        set(value) { self["showNavigation"] = value }
     }
     
     private var cancellable: AnyCancellable? = nil
@@ -217,5 +280,17 @@ public class Main: ObservableObject {
                 self.setComputedView()
             }
         }
+    }
+    
+    public func getPropertyValue(_ name:String) -> Any {
+        let type: Mirror = Mirror(reflecting:self)
+
+        for child in type.children {
+            if child.label! == name || child.label! == "_" + name {
+                return child.value
+            }
+        }
+        
+        return ""
     }
 }

@@ -1036,6 +1036,8 @@ public class CompiledView {
     public func getProperty(_ object:String, _ prop:String) -> Any? {
         // Fetch the value of the right property on the right object
         switch object {
+        case "main":
+            return main[prop]
         case "sessions":
             return main.sessions[prop]
         case "currentSession":
