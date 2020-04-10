@@ -27,10 +27,6 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @objc dynamic var showNavigation: Bool = false
-    /**
-     *
-     */
     let sessions = RealmSwift.List<Session>() // @Published
     /**
      *

@@ -20,7 +20,7 @@ struct Navigation: View {
     
     public func hide(){
         try! self.main.realm.write {
-            self.main.sessions.showNavigation = false
+            self.main.showNavigation = false
         }
     }
     
