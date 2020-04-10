@@ -9,7 +9,6 @@
 //
 
 import Foundation
-import RealmSwift
 
 /// To support a new class family, create an enum that conforms to this protocol and contains the different types.
 protocol ClassFamily: Decodable {

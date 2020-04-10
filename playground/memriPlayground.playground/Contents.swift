@@ -3,37 +3,53 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
+var collection: [String:Any] = [:]
 
-//let expression = "Hello {test.prop} alsdja ld {try.title}"
-let expression = "Hello {test.prop}{try.title} asldaldjs"
+//public func get3<T:Decodable>(_ path:String) -> T? {
+//    return get2(path) as! T?
+//}
 
-// We'll use this regular expression to match the name of the object and property
-let pattern = #"(?:([^\{]+)?(?:\{([^\.]+).([^\{]*)\})?)"#
-let regex = try! NSRegularExpression(pattern: pattern, options: [])
-
-// Weird complex way to execute a regex
-let nsrange = NSRange(expression.startIndex..<expression.endIndex, in: expression)
-regex.enumerateMatches(in: expression, options: [], range: nsrange) { (match, _, stop) in
-    guard let match = match else { return }
-    
-    print("found \(match.numberOfRanges - 1) matches")
-    
-    for i in 0...match.numberOfRanges - 2 {
-        if let rangeObject = Range(match.range(at: i + 1), in: expression) {
-            print("\(i+1): \(String(expression[rangeObject]))")
-        }
-    }
-//
-//    if match.numberOfRanges == 3,
-//      let rangeObject = Range(match.range(at: 1), in: expression),
-//      let rangeProp = Range(match.range(at: 2), in: expression)
-//    {
-//        objectToUpdate = String(expression[rangeObject])
-//        propToUpdate = String(expression[rangeProp])
-//    }
+public func get2<T:Decodable>(_ path:String) -> T {
+    return get1(path)! as T
+//    return x
 }
 
-//let (obje
+public func get1<T:Decodable>(_ path:String) -> T? {
+    return collection[path] as! T?
+}
+
+public func set(_ path:String, _ value:Any) -> Void {
+    collection[path] = value
+}
+
+set("test", true)
+var x:Bool = get1("test")!
+print(x)
+var y:Bool = get2("test")!
+print(y)
 
 
+// PROBLEM STATE
+//
+//public func get3<T:Decodable>(_ path:String) -> T? {
+//    return get2(path) as! T?
+//}
+//
+//public func get2<T:Decodable>(_ path:String) -> T? {
+//    return get1(path) as! T?
+//}
+//
+//public func get1<T:Decodable>(_ path:String) -> T? {
+//    return collection[path] as! T?
+//}
+//
+//public func set(_ path:String, _ value:Any) -> Void {
+//    collection[path] = value
+//}
+//
+//set("test", true)
+//var x:Bool = get1("test")!
+//print(x)
+//var y:Bool = get3("test")!
+//print(y)
 

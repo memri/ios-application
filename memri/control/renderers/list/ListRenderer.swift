@@ -35,7 +35,6 @@ class ListConfig: RenderConfig {
     let slideLeftActions = List<ActionDescription>()
     let slideRightActions = List<ActionDescription>()
 
-
     // TODO: Why do we need this contructor?
     init(name: String?=nil, icon: String?=nil, category: String?=nil,
          items: [ActionDescription]?=nil, options1: [ActionDescription]?=nil,

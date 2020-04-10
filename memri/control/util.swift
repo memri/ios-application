@@ -33,7 +33,7 @@ extension String: Error {
 func unserialize<T:Decodable>(_ s:String) -> T {
     let data = s.data(using: .utf8)!
     let output:T = try! JSONDecoder().decode(T.self, from: data)
-    return output
+    return output as T
 }
 
 func serialize(_ a:AnyCodable) -> String {

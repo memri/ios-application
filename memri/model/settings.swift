@@ -76,7 +76,14 @@ public class Settings {
      */
     public func get<T:Decodable>(_ path:String) -> T? {
         let (collection, query) = parse(path)
-        return collection!.get(query) ?? defaults.get(query)
+        
+        if let value:T = collection!.get(query) {
+            return value
+        }
+        else if let value:T = defaults.get(query) {
+            return value
+        }
+        return nil
     }
 
     public func getString(_ path:String) -> String {
@@ -132,7 +139,8 @@ class SettingCollection:Object {
         let needle = self.type + path
         let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
-            return unserialize(item.json)
+            let output:T = unserialize(item.json)
+            return output
         }
         else {
             return nil
@@ -148,13 +156,17 @@ class SettingCollection:Object {
      */
     public func set(_ path:String, _ value:AnyCodable) -> Void {
         let key = self.type + path
-        try! self.realm!.write {
+        
+        func saveState(){
             let s = Setting(value: ["key": key, "json": serialize(value)])
             self.realm!.add(s, update: .modified)
             if settings.index(of: s) == nil { settings.append(s) }
             
             syncState!.actionNeeded = "update"
         }
+        
+        if self.realm!.isInWriteTransaction { saveState() }
+        else { try! self.realm!.write { saveState() } }
     }
 }
 

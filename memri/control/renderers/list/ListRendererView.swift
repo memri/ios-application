@@ -16,7 +16,7 @@ struct ListRendererView: View {
     
     let name = "list"
     var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
-    
+
     func generatePreview(_ item:DataItem) -> String {
         let content = String(item.getString("content")
             .replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
@@ -46,6 +46,7 @@ struct ListRendererView: View {
             else {
                 NavigationView {
                     List{
+                    
                         ForEach(main.items) { dataItem in
                             VStack{
                                 ItemRenderer(baseComponent: self.renderConfig.renderDescription,

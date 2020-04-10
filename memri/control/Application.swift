@@ -27,7 +27,7 @@ struct Application: View {
             
             ContextPane()
 
-            if self.main.sessions.showNavigation {
+            if self.main.showNavigation {
                 Navigation()
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))

@@ -27,10 +27,6 @@ public class Sessions: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @objc dynamic var showNavigation: Bool = false
-    /**
-     *
-     */
     let sessions = RealmSwift.List<Session>() // @Published
     /**
      *
@@ -354,11 +350,14 @@ public class Session: Object, ObservableObject, Decodable {
         decorate(view)
     }
     
-    public class func from_json(_ file: String, ext: String = "json") throws -> Session {
-        let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-        let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-        let jsonData = jsonString.data(using: .utf8)!
-        let session: Session = try! JSONDecoder().decode(Session.self, from: jsonData)
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let session:Session = try JSONDecoder().decode(Session.self, from: jsonData)
+        return session
+    }
+    
+    public class func fromJSONString(_ json: String) throws -> Session {
+        let session:Session = try JSONDecoder().decode(Session.self, from: Data(json.utf8))
         return session
     }
 
