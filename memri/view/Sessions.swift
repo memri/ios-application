@@ -255,7 +255,7 @@ public class Session: Object, ObservableObject, Decodable {
     /**
      *
      */
-    @objc dynamic var lastScreenShot:File? = nil
+    @objc dynamic var screenShot:File? = nil
     
     /**
      *
@@ -358,12 +358,14 @@ public class Session: Object, ObservableObject, Decodable {
         let view = UIApplication.shared.windows[0].rootViewController?.view
         let uiImage = view!.takeScreenShot()
         
-        if self.lastScreenShot == nil {
-            self.lastScreenShot = File(value: ["uri": File.generateFilePath()])
+        if self.screenShot == nil {
+            try! realm!.write {
+                self.screenShot = File(value: ["uri": File.generateFilePath()])
+            }
         }
         
         do {
-            try self.lastScreenShot?.asUIImage = uiImage
+            try self.screenShot!.store(uiImage)
         }
         catch let error {
             print(error)

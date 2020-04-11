@@ -15,7 +15,7 @@ class File:DataItem {
     override var type:String { "file" }
     
     public override static func primaryKey() -> String? {
-        return "url"
+        return "uri"
     }
     
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
@@ -38,38 +38,26 @@ class File:DataItem {
         }
     }
     
-//    private var _cachedUIImage:UIImage? = nil
-//    public var asUIImage:UIImage? {
-//        if _cachedUIImage == nil, let data = readData() {
-//            _cachedUIImage = UIImage(data: data)
-//        }
-//        if let c = _cachedUIImage {
-//            return c
-//        }
-//
-//        print("Warn: Could not read \(self.uri) as UIImage")
-//        return nil
-//    }
-//
-//    private var _cachedString:String? = nil
-//    public var asString:String? {
-//        if _cachedString == nil, let data = readData() {
-//            _cachedString = String(data: data, encoding: .utf8)
-//        }
-//        if let c = _cachedString {
-//            return c
-//        }
-//
-//        print("Warn: Could not read \(self.uri) as UTF8 String")
-//        return nil
-//    }
+    public var asUIImage:UIImage? {
+        if let x:UIImage = read() {
+            return x
+        }
+        return nil
+    }
+
+    public var asString:String? {
+        if let x:String = read() {
+            return x
+        }
+        return nil
+    }
     
     public func read<T>() -> T? {
         if _cachedData == nil, let data = self.readData() {
             _cachedData = data
         }
         else {
-            print("Warn: Could not read \(self.uri) as UTF8 String")
+            print("Warn: Could not read data from \(self.uri)")
             return nil
         }
         
@@ -88,7 +76,7 @@ class File:DataItem {
         }
     }
     
-    public func store<T>(value: T) throws {
+    public func store<T>(_ value: T) throws {
         do {
             var data:Data?
             
@@ -112,7 +100,7 @@ class File:DataItem {
         }
         catch let error {
 
-            throw "Exception: Could not write \(self.uri): \(error)"
+            throw "\(error)"
         }
     }
     
@@ -162,29 +150,35 @@ class File:DataItem {
     
     private func writeData(_ data:Data)  throws {
         let path = getPath()
-        let file: FileHandle? = FileHandle(forWritingAtPath: path)
 
-        if file != nil {
-            file?.write(data)
-            
-            // Close the file
-            file?.closeFile()
-        }
-        else {
-            throw "Exception: Could not write to \(path)"
-        }
+        FileManager.default.createFile(atPath: path, contents: data, attributes: nil)
+//        }
+//        catch let error {
+//            throw "Exception: Could not write to \(path) with Error:\(error)"
+//        }
+        
+//        if let file = FileHandle(forWritingAtPath: path) {
+//            file.write(data)
+//
+//            // Close the file
+//            file.closeFile()
+//        }
+//        else {
+//
+//        }
     }
     
     private func readData() -> Data? {
         let path = getPath()
-        let file: FileHandle? = FileHandle(forReadingAtPath: path)
 
-        if file != nil {
+//        let databuffer = FileManager.default.contents(atPath: path)
+        
+        if let file = FileHandle(forReadingAtPath: path) {
             // Read all the data
-            let data = file?.readDataToEndOfFile()
+            let data = file.readDataToEndOfFile()
 
             // Close the file
-            file?.closeFile()
+            file.closeFile()
 
             // Return data
             return data
@@ -199,18 +193,19 @@ class File:DataItem {
     // TODO where to save these files properly?
     public class func generateFilePath() -> String {
         let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
-        let url = URL(fileURLWithPath: homeDir).appendingPathExtension(".memri.cache/File")
+        let url = URL(fileURLWithPath: homeDir)
+                    .appendingPathComponent(".memri.cache/File", isDirectory:true)
         
         do {
-            try FileManager.default.createDirectory(atPath: url.path, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: url.relativePath,
+                                                    withIntermediateDirectories: true,
+                                                    attributes: nil)
         }
         catch {
             print(error)
         }
         
         let fileName = UUID().uuidString
-        
-        return url.appendingPathExtension(fileName).absoluteString
-
+        return url.appendingPathComponent(fileName).relativePath
     }
 }

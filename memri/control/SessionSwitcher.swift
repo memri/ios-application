@@ -264,10 +264,12 @@ struct SessionSwitcher: View {
                     .edgesIgnoringSafeArea(.vertical)
                 
                 ForEach(self.main.sessions.sessions, id: \.self) { session in
-                    {
-                        session.lastScreenShot == nil
-                            ? Image("screenshot-example")
-                            : Image(uiImage: session.lastScreenShot!)
+                    { () -> Image in
+                        if let screenShot = session.screenShot,
+                           let uiImage = screenShot.asUIImage {
+                            return Image(uiImage: uiImage)
+                        }
+                        return Image("screenshot-example")
                     }()
                         .resizable()
                         .scaledToFit()
