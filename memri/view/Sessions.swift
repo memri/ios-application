@@ -365,7 +365,7 @@ public class Session: Object, ObservableObject, Decodable {
         }
         
         do {
-            try self.screenShot!.store(uiImage)
+            try self.screenShot!.write(uiImage)
         }
         catch let error {
             print(error)

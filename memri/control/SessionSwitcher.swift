@@ -104,10 +104,10 @@ struct SessionSwitcher: View {
 //            rotation = min(rotation, 0.2 *  Double(height))
 //        }
         
-        if i == 0 {
-            print(rotation)
-            print()
-        }
+//        if i == 0 {
+//            print(rotation)
+//            print()
+//        }
         
 //        if i == 0.0{
 //            distance = 0.0
@@ -257,51 +257,63 @@ struct SessionSwitcher: View {
 //    }
     
     var body: some View {
-        ZStack {
-            GeometryReader { (geometry) in
-                Image("session-switcher-tile")
-                    .resizable(resizingMode: .tile)
-                    .edgesIgnoringSafeArea(.vertical)
-                
-                ForEach(self.main.sessions.sessions, id: \.self) { session in
-                    { () -> Image in
-                        if let screenShot = session.screenShot,
-                           let uiImage = screenShot.asUIImage {
-                            return Image(uiImage: uiImage)
-                        }
-                        return Image("screenshot-example")
-                    }()
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: self.getWidth(0), height: nil, alignment: .center)
-                        .clipShape(RoundedRectangle(cornerRadius: 32))
-                        .offset(x: self.getOffsetX(0, geometry),
-                                y: self.getOffsetY(0, geometry))
-                        .shadow(color: .init(hex: "#222"), radius: 15, x: 10, y: 10)
-                        .rotation3DEffect(.degrees(self.getRotation(0, geometry)), axis: (x: 1, y: 0, z: 0), anchor: .top, anchorZ: 400, perspective: 0.4)
-                        .zIndex(Double(0))
-                }
-                
-                Text("\(self.globalOffset)").zIndex(20.0).padding(20).foregroundColor(.white)
-                Text("\(self.lastGlobalOffset)").zIndex(20.0).padding(40).foregroundColor(.white)
-
-
-                
+        VStack {
+            HStack(alignment: .top, spacing: 0) {
+                Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                    .fixedSize()
+                    .font(Font.system(size: 20, weight: .medium))
+                    .rotationEffect(.degrees(90))
+                    .padding(.vertical, 200)
+                    .background(Color.white)
+                    .border(Color.purple, width: 5)
+                    .frame(width: nil, height: 20, alignment: .trailing)
+                    .zIndex(1000)
             }
-        }
-        .edgesIgnoringSafeArea(.vertical)
-        .gesture(
-            DragGesture()
-                .onChanged { gesture in
-                    self.offset = gesture.translation
-                    self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
+            ZStack {
+                GeometryReader { (geometry) in
+                    Image("session-switcher-tile")
+                        .resizable(resizingMode: .tile)
+                        .edgesIgnoringSafeArea(.vertical)
+                    
+                    ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
+                        { () -> Image in
+                            let session = self.main.sessions.sessions[i]
+                            if let screenShot = session.screenShot,
+                               let uiImage = screenShot.asUIImage {
+                                return Image(uiImage: uiImage)
+                            }
+                            return Image("screenshot-example")
+                        }()
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: self.getWidth(CGFloat(i)), height: nil, alignment: .center)
+                            .clipShape(RoundedRectangle(cornerRadius: 32))
+                            .offset(x: self.getOffsetX(CGFloat(i), geometry),
+                                    y: self.getOffsetY(CGFloat(i), geometry))
+                            .shadow(color: .init(hex: "#222"), radius: 15, x: 10, y: 10)
+                            .rotation3DEffect(.degrees(self.getRotation(0, geometry)), axis: (x: 1, y: 0, z: 0), anchor: .top, anchorZ: 400, perspective: 0.4)
+                            .zIndex(Double(0))
+                    }
+                    
+                    Text("\(self.main.sessions.sessions.count)").zIndex(20.0).padding(20).foregroundColor(.white)
+                    Text("\(self.globalOffset)").zIndex(40.0).padding(40).foregroundColor(.white)
+                    Text("\(self.lastGlobalOffset)").zIndex(60.0).padding(60).foregroundColor(.white)
                 }
+            }
+            .edgesIgnoringSafeArea(.vertical)
+            .gesture(
+                DragGesture()
+                    .onChanged { gesture in
+                        self.offset = gesture.translation
+                        self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
+                    }
 
-                .onEnded { _ in
-                    self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
-                    self.lastGlobalOffset = self.globalOffset
-                }
-        )
+                    .onEnded { _ in
+                        self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
+                        self.lastGlobalOffset = self.globalOffset
+                    }
+            )
+        }
     }
 }
 

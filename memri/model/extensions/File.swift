@@ -20,8 +20,6 @@ class File:DataItem {
     
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
     
-    private var _cachedData:Data? = nil
-    
     required init () {
         super.init()
     }
@@ -54,30 +52,35 @@ class File:DataItem {
     }
     
     public func read<T>() -> T? {
-        if _cachedData == nil, let data = self.readData() {
-            _cachedData = data
+        var cachedData:T? = try! fileCache.read(self.uri)
+        if cachedData != nil { return cachedData }
+        
+        let data = self.readData()
+        if data != nil {
+            if T.self == UIImage.self {
+                cachedData = (UIImage(data: data!) as! T)
+            }
+            else if T.self == String.self {
+                cachedData = (String(data: data!, encoding: .utf8) as! T)
+            }
+            else if T.self == Data.self {
+                cachedData = (data! as! T)
+            }
+            else {
+                print("Warn: Could not parse \(self.uri)")
+                return nil
+            }
+            
+            try! fileCache.add(self.uri, cachedData!)
+            return cachedData
         }
         else {
             print("Warn: Could not read data from \(self.uri)")
             return nil
         }
-        
-        if T.self == UIImage.self {
-            return (UIImage(data: _cachedData!) as! T)
-        }
-        else if T.self == String.self {
-            return (String(data: _cachedData!, encoding: .utf8) as! T)
-        }
-        else if T.self == Data.self {
-            return (_cachedData! as! T)
-        }
-        else {
-            print("Warn: Could not parse \(self.uri)")
-            return nil
-        }
     }
     
-    public func store<T>(_ value: T) throws {
+    public func write<T>(_ value: T) throws {
         do {
             var data:Data?
             
@@ -97,7 +100,7 @@ class File:DataItem {
             }
             
             try self.writeData(data!)
-            _cachedData = data
+            try! fileCache.add(self.uri, data)
         }
         catch let error {
 
@@ -170,3 +173,41 @@ class File:DataItem {
         return url.appendingPathComponent(fileName).relativePath
     }
 }
+
+public class FileCache {
+    private var stringCache:[String:String] = [:]
+    private var uiImageCache:[String:UIImage] = [:]
+    private var dataCache:[String:Data] = [:]
+    
+    public func add<T>(_ key:String, _ value:T) throws {
+        if T.self == UIImage.self {
+            uiImageCache[key] = (value as! UIImage)
+        }
+        else if T.self == String.self {
+            stringCache[key] = (value as! String)
+        }
+        else if T.self == Data.self {
+            dataCache[key] = (value as! Data)
+        }
+        else {
+            throw "Exception: Could not parse the type to write to \(key)"
+        }
+    }
+    
+    public func read<T>(_ key:String) throws -> T? {
+        if T.self == UIImage.self {
+            return uiImageCache[key] as? T
+        }
+        else if T.self == String.self {
+            return stringCache[key] as? T
+        }
+        else if T.self == Data.self {
+            return dataCache[key] as? T
+        }
+        else {
+            throw "Exception: Could not parse the type to write to \(key)"
+        }
+    }
+}
+
+var fileCache = FileCache()
