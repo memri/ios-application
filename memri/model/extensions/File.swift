@@ -65,7 +65,7 @@ class File:DataItem {
 //    }
     
     public func read<T>() -> T? {
-        if _cachedData == nil, let data = readData() {
+        if _cachedData == nil, let data = self.readData() {
             _cachedData = data
         }
         else {
@@ -90,33 +90,24 @@ class File:DataItem {
     
     public func store<T>(value: T) throws {
         do {
-            var data:Data
+            var data:Data?
             
             if T.self == UIImage.self {
-                let v = value as! UIImage
-                data = v.pngData()!
-                
-                if data == nil {
-                    throw "Exception: Could not write \(self.uri) as PNG"
-                }
+                data = (value as! UIImage).pngData()
+                if data == nil { throw "Exception: Could not write \(self.uri) as PNG" }
             }
             else if T.self == String.self {
-                data = value.data(using: .utf8) {
-                    
-                if data == nil {
-                    throw "Exception: Could not write \(self.uri) as UTF8 String"
-                }
+                data = (value as! String).data(using: .utf8)
+                if data == nil { throw "Exception: Could not write \(self.uri) as UTF8 String" }
             }
             else if T.self == Data.self {
-                data = value
+                data = (value as! Data)
             }
             else {
                 throw "Exception: Could not parse the type to write to \(self.uri)"
-                return nil
             }
             
-            try self.writeData(data)
-
+            try self.writeData(data!)
             _cachedData = data
         }
         catch let error {
