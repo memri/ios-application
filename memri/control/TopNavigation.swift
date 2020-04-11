@@ -17,21 +17,31 @@ public struct TopNavigation: View {
             HStack{
                 Text(main.computedView.title).font(.headline)
             }
-            HStack(spacing: 20){
+            HStack(spacing: 10){
                 
-                Action(action: ActionDescription(icon: "line.horizontal.3", actionName: .showNavigation))
-                    .font(Font.system(size: 20, weight: .medium))
+                Action(action: ActionDescription(actionName: .showNavigation))
+                    .font(Font.system(size: 20, weight: .semibold))
                 
                 Action(action: main.currentSession.backButton)
+                    .font(Font.system(size: 19, weight: .semibold))
                 
                 Spacer()
                 
+                // TODO setting to not display edit action button in multi-item views
                 Action(action: main.computedView.editActionButton)
+                    .font(Font.system(size: 19, weight: .semibold))
                 
                 Action(action: main.computedView.actionButton)
-                Action(action: ActionDescription(icon: "ellipsis", actionName: .noop))
+                    .font(Font.system(size: 22, weight: .semibold))
+                
+                Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                    .font(Font.system(size: 20, weight: .medium))
+                    .rotationEffect(.degrees(90))
                     
-            }.padding(.all, 30)
+            }
+            .padding(.vertical, 30)
+            .padding(.leading, 15)
+            .padding(.trailing, 15)
         }
     }
 }

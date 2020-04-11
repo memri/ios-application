@@ -26,7 +26,8 @@ public enum ActionName: String, Codable {
     case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
         showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
-        delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView, noop
+        delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
+        showSessionSwitcher, noop
     
     var defaultIcon: String {
         switch self {
@@ -35,7 +36,7 @@ public enum ActionName: String, Codable {
         case .add:
             return "plus"
         case .toggleEditMode:
-            return "pencil"
+            return "square.and.pencil"
         case .toggleFilterPanel:
             return "rhombus.fill"
         case .showStarred, .star:
@@ -46,6 +47,8 @@ public enum ActionName: String, Codable {
             return "line.horizontal.3"
         case .schedule:
             return "alarm"
+        case .showSessionSwitcher:
+            return "ellipsis"
         default:
             // this icon looks like an error
             return "exclamationmark.bubble"
@@ -86,7 +89,8 @@ public enum ActionName: String, Codable {
     
     var defaultHasState: Bool {
         switch self {
-        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
+        case .star, .showStarred, .toggleEditMode, .toggleFilterPanel,
+             .showContextPane, .showNavigation, .showSessionSwitcher:
             return true
         default:
             return false
@@ -107,6 +111,8 @@ public enum ActionName: String, Codable {
             return "{currentSession.showContextPane}"
         case .showNavigation:
             return "{main.showNavigation}"
+        case .showSessionSwitcher:
+            return "{main.showSessionSwitcher}"
         default:
             return nil
         }
@@ -125,9 +131,11 @@ public enum ActionName: String, Codable {
     var defaultColor: UIColor {
         switch self{
         case .add:
-            return .systemGreen
+            return Color(hex: "#6aa84f").uiColor()
+        case .back:
+            return Color(hex: "#434343").uiColor()
         default:
-            return .systemGray
+            return Color(hex: "#999999").uiColor()
         }
     }
     
@@ -138,7 +146,7 @@ public enum ActionName: String, Codable {
     var defaultActiveColor: UIColor? {
         switch self {
         case .toggleEditMode, .toggleFilterPanel:
-            return .systemGreen
+            return Color(hex: "#6aa84f").uiColor()
         case .showStarred, .star:
             return .systemYellow
         default:
@@ -148,11 +156,13 @@ public enum ActionName: String, Codable {
     
     var defaultInactiveColor: UIColor? {
         switch self {
-        case .back, .add, .openView, .openViewByName, .toggleEditMode, .toggleFilterPanel, .star,
-             .showStarred, .showContextPane, .showOverlay, .share, .showNavigation,
+        case .add, .back, .toggleEditMode, .showNavigation, .showSessionSwitcher:
+            return Color(hex: "#434343").uiColor()
+        case .openView, .openViewByName, .toggleFilterPanel, .star,
+             .showStarred, .showContextPane, .showOverlay, .share,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
              .starredNotes, .allNotes, .delete, .select, .selectAll, .unselectAll, .exampleUnpack:
-            return .systemGray
+            return Color(hex: "#999999").uiColor()
         default:
             return nil
         }

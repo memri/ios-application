@@ -58,6 +58,8 @@ extension Main {
                     selection.forEach{ item in addFromTemplate(item) }
                 }
                 else if let item = item { addFromTemplate(item) }
+            case .showSessionSwitcher:
+                self.currentSession.takeScreenShot()
             case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
                 break // Do nothing
             case .exampleUnpack:
