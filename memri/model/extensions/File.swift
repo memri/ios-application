@@ -39,16 +39,17 @@ class File:DataItem {
     }
     
     public var asUIImage:UIImage? {
-        if let x:UIImage = read() {
-            return x
-        }
+        if let x:UIImage = read() { return x }
         return nil
     }
 
     public var asString:String? {
-        if let x:String = read() {
-            return x
-        }
+        if let x:String = read() { return x }
+        return nil
+    }
+    
+    public var asData:Data? {
+        if let x:Data = read() { return x }
         return nil
     }
     
@@ -103,46 +104,6 @@ class File:DataItem {
             throw "\(error)"
         }
     }
-    
-//    public func store(uiImage: UIImage) throws {
-//        do {
-//            if let data = uiImage.pngData() {
-//                try self.writeData(data)
-//
-//                _cachedData = data
-//            }
-//            else {
-//                throw "Exception: Could not write \(self.uri) as PNG"
-//            }
-//        }
-//        catch let error {
-//            print(error)
-//        }
-//    }
-//    public func store(str: String) throws {
-//        do {
-//            if let data = str.data(using: .utf8) {
-//                try self.writeData(data)
-//
-//                _cachedData = data
-//            }
-//            else {
-//                throw "Exception: Could not write \(self.uri) as UTF8 String"
-//            }
-//        }
-//        catch let error {
-//            print(error)
-//        }
-//    }
-//    public func store(data: Data) throws {
-//        do {
-//            try self.writeData(data)
-//            _cachedData = data
-//        }
-//        catch let error {
-//            print(error)
-//        }
-//    }
         
     private func getPath() -> String {
         return self.uri
