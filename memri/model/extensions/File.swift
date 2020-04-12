@@ -100,7 +100,7 @@ class File:DataItem {
             }
             
             try self.writeData(data!)
-            try! fileCache.add(self.uri, data!)
+            try! fileCache.add(self.uri, value)
         }
         catch let error {
 

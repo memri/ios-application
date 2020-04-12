@@ -22,8 +22,7 @@ struct SessionSwitcher: View {
     @State private var currentImage:CGFloat = 1
     @State private var lastpos:CGFloat = 0
     
-    var bounds: [CGFloat] = [0.0, 0.17, 0.2, 0.23, 0.245, 0.266, 0.5, 1.0]
-
+    let bounds: [CGFloat] = [0.0, 0.17, 0.2, 0.23, 0.245, 0.266, 0.5, 1.0]
     
     private func iterate() {
         self.globalOffset += 0.1
@@ -118,6 +117,10 @@ struct SessionSwitcher: View {
         return translatedRelativePosition / 2.0
     }
     
+    private func hide(){
+        self.main.showSessionSwitcher = false
+    }
+    
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
             HStack(alignment: .top, spacing: 0) {
@@ -161,6 +164,11 @@ struct SessionSwitcher: View {
                         .rotation3DEffect(.degrees(self.getRotation(CGFloat(i), geometry)), axis: (x: 1, y: 0, z: 0), anchor: .center, anchorZ: self.getAnchorZ(CGFloat(i), geometry), perspective: self.getPerspective(CGFloat(i), geometry))
                         .zIndex(Double(0))
 //                            .opacity(0.7)
+                        .onTapGesture {
+                            let session = self.main.sessions.sessions[i]
+                            self.main.openSession(session)
+                            self.hide()
+                        }
                 }
             }
         }

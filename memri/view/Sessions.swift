@@ -104,16 +104,18 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    public func addSession(_ session:Session) {
-        // TODO: If session == nil session = Session()
-        
+    public func setCurrentSession(_ session:Session) {
         try! realm!.write {
-        
-            // Add session to array
-            sessions.append(session)
-            
-            // Update the index pointer
-            currentSessionIndex = sessions.count - 1
+            if let index = sessions.firstIndex(of: session) {
+                currentSessionIndex = index
+            }
+            else {
+                // Add session to array
+                sessions.append(session)
+                
+                // Update the index pointer
+                currentSessionIndex = sessions.count - 1
+            }
         }
         
         decorate(session)
@@ -176,16 +178,6 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    /**
-     *
-     */
-    public func setCurrentSession(_ session:Session) throws -> Void {
-        let index = sessions.firstIndex(of: session) ?? -1
-        if (index > 0) { throw "Should never happen" } // Should never happen
-        
-        currentSessionIndex = index
-    }
-    
     public func merge(_ sessions:Sessions) throws {
         func doMerge() {
             let properties = self.objectSchema.properties
@@ -226,8 +218,10 @@ public class Sessions: Object, ObservableObject, Decodable {
 }
 
 public class Session: Object, ObservableObject, Decodable {
-    var id: String = UUID().uuidString
-    
+    /**
+     *
+     */
+    @objc dynamic var uid:String? = DataItem.generateUID()
     /**
      *
      */
@@ -273,6 +267,10 @@ public class Session: Object, ObservableObject, Decodable {
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
 
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
@@ -291,7 +289,7 @@ public class Session: Object, ObservableObject, Decodable {
         self.init()
         
         jsonErrorHandling(decoder) {
-            id = try decoder.decodeIfPresent("id") ?? id
+            uid = try decoder.decodeIfPresent("uid") ?? uid
             
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
             showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
@@ -384,7 +382,7 @@ public class Session: Object, ObservableObject, Decodable {
     }
 
     public static func == (lt: Session, rt: Session) -> Bool {
-        return lt.id == rt.id
+        return lt.uid == rt.uid
     }
 }
 
