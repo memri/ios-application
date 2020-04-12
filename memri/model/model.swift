@@ -55,7 +55,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      *
      */
     public func getString(_ name:String) -> String {
-        return self[name] as? String ?? ""
+        if self.objectSchema[name] == nil {
+            
+            // TODO how to do this in swift?
+            // #IFDEF DEBUG
+            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.type):\(self.uid ?? "")")
+            // #ENDIF
+            
+            return ""
+        }
+        else { return self[name] as? String ?? "" }
     }
     
     /**
@@ -221,12 +230,14 @@ public class ResultSet: ObservableObject {
      *
      */
     var determinedType: String? {
-        if (self.queryOptions.query != nil) {
-            return "note" // TODO implement (more) proper query language
+        // TODO implement (more) proper query language (and parser)
+        
+        if let query = self.queryOptions.query, query != "" {
+            if let typeName = query.split(separator: " ").first {
+                return String(typeName)
+            }
         }
-        else {
-            return nil
-        }
+        return nil
     }
     /**
      *

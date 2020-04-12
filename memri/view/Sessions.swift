@@ -175,22 +175,22 @@ public class Sessions: DataItem {
         }
     }
     
-//    public func merge(_ sessions:Sessions) throws {
-//        func doMerge() {
-//            let properties = self.objectSchema.properties
-//            for prop in properties {
-//                if prop.name == "sessions" {
-//                    self.sessions.append(objectsIn: sessions.sessions)
-//                }
-//                else {
-//                    self[prop.name] = sessions[prop.name]
-//                }
-//            }
-//        }
-//
-//        if let realm = realm { try! realm.write { doMerge() } }
-//        else { doMerge() }
-//    }
+    public func merge(_ sessions:Sessions) throws {
+        func doMerge() {
+            let properties = self.objectSchema.properties
+            for prop in properties {
+                if prop.name == "sessions" {
+                    self.sessions.append(objectsIn: sessions.sessions)
+                }
+                else {
+                    self[prop.name] = sessions[prop.name]
+                }
+            }
+        }
+
+        if let realm = realm { try! realm.write { doMerge() } }
+        else { doMerge() }
+    }
     
     /**
      * Find a session using text
@@ -249,8 +249,13 @@ public class Session: DataItem {
             else { return .inactive }
         }
         set (value) {
-            if value == .active { editMode = true }
-            else { editMode = false }
+            let doIt = {
+                if value == .active { self.editMode = true }
+                else { self.editMode = false }
+            }
+            
+            if self.realm!.isInWriteTransaction { doIt() }
+            else { try! self.realm!.write { doIt() } }
         }
     }
     

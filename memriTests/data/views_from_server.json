@@ -13,19 +13,11 @@
             "renderConfigs": {
                 "list": {
                     "slideLeftActions": [
-                        {
-                            "icon": "remove.ico",
-                            "title": "Remove",
-                            "actionName": "delete"
-                        }
+                        { "actionName": "delete" }
                     ],
-                    "press": {
-                        "actionName": "openView"
-                    },
-                    "longPress": {
-                        "actionName": "select"
-                    },
-                    "itemRenderer": "{.title}",
+                    "press": { "actionName": "openView" },
+                    "longPress": { "actionName": "select" },
+                    "itemRenderer": "{dataItem.title}",
                     "renderDescription": {
                         "type": "vstack",
                         "children": [
@@ -64,7 +56,6 @@
                     "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
                 }
             },
-            "browsingMode": "default",
             "actionButton": {
                 "actionName": "add",
                 "actionArgs": [{
@@ -150,8 +141,11 @@
                 },
                 {
                     "title": "Starred notes",
-                    "actionName": "showStarred",
-                    "actionArgs": []
+                    "actionName": "openDynamicView",
+                    "actionArgs": [{
+                        "name": "filter-starred",
+                        "fromTemplate": "all-notes"
+                    }]
                 },
                 {
                     "title": "All notes",
@@ -175,16 +169,34 @@
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
+                    "renderDescription": {
+                        "type": "vstack",
+                        "children": [
+                            {
+                                "type": "hstack",
+                                "children": [
+                                    {
+                                        "type": "text",
+                                        "property": "action",
+                                        "bold": true
+                                    },
+                                    {
+                                        "type": "text",
+                                        "property": "date",
+                                        "bold": true
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "text",
+                                "property": "contents",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            }
+                        ]
+                    }
                 }
-            },
-            "browsingMode": "default",
-            "actionButton": {
-                "actionName": "add",
-                "actionArgs": [{
-                    "type": "note",
-                    "title": "Untitled Note"
-                }]
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
@@ -199,12 +211,7 @@
             "renderConfigs": {
                 "list": {
                     "slideRightActions": [
-                        {
-                            "icon": "schedule.ico",
-                            "title": "Schedule",
-                            "actionName": "schedule",
-                            "actionArgs": []
-                        }
+                        { "actionName": "schedule" }
                     ]
                 }
             }

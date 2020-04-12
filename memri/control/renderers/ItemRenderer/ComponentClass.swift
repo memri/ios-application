@@ -25,11 +25,34 @@ class VStackComponent: ItemRendererComponent{
     override func asView(item: DataItem)-> AnyView {
         return AnyView(
                 VStack{
-                ForEach(0..<self.children.count ){ index in
-                    self.children[index].asView(item: item)
+                    ForEach(0..<self.children.count ){ index in
+                        self.children[index].asView(item: item)
+                    }
                 }
-            }
-        )
+            )
+    }
+}
+
+class HStackComponent: ItemRendererComponent{
+    var children: [ItemRendererComponent] = []
+    
+    convenience init(children: [ItemRendererComponent]? = nil){
+        self.init()
+        self.children = children ?? self.children
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case content
+    }
+    
+    override func asView(item: DataItem)-> AnyView {
+        return AnyView(
+                HStack{
+                    ForEach(0..<self.children.count ){ index in
+                        self.children[index].asView(item: item)
+                    }
+                }
+            )
     }
 }
 

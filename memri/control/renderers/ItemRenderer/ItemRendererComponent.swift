@@ -11,6 +11,7 @@ import SwiftUI
 
 enum ItemRendererComponentFamily: String, ClassFamily {
     case VStack = "VStack"
+    case HStack = "HStack"
     case Text = "Text"
 
     static var discriminator: Discriminator = .type
@@ -19,6 +20,8 @@ enum ItemRendererComponentFamily: String, ClassFamily {
         switch self {
         case .VStack:
             return VStackComponent.self
+        case .HStack:
+            return HStackComponent.self
         case .Text:
             return TextComponent.self
         }
@@ -47,8 +50,11 @@ class ItemRendererComponent: Decodable{
             
             switch try container.decode(String.self, forKey: .type) {
             case "vstack":
-                self.element = VStackComponent(children: try container.decode([ItemRendererComponent].self,
-                                                                        forKey: .children))
+                self.element = VStackComponent(children:
+                    try container.decode([ItemRendererComponent].self, forKey: .children))
+            case "hstack":
+                self.element = HStackComponent(children:
+                    try container.decode([ItemRendererComponent].self, forKey: .children))
             case "text":
                 self.element = try TextComponent(from: decoder)
             default: fatalError("Unknown type")
