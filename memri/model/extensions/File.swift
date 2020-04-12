@@ -100,7 +100,7 @@ class File:DataItem {
             }
             
             try self.writeData(data!)
-            try! fileCache.add(self.uri, data)
+            try! fileCache.add(self.uri, data!)
         }
         catch let error {
 
@@ -205,7 +205,7 @@ public class FileCache {
             return dataCache[key] as? T
         }
         else {
-            throw "Exception: Could not parse the type to write to \(key)"
+            throw "Exception: Could not parse the type to read from \(key)"
         }
     }
 }

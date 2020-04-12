@@ -9,11 +9,21 @@ import SwiftUI
 
 struct SessionSwitcher: View {
     @EnvironmentObject var main: Main
+    let items: [CGFloat] = [0,1,2,3,4,5,6,7,8,9]
+
     
     @State private var offset = CGSize.zero
     
     @State private var lastGlobalOffset:CGFloat = 0
     @State private var globalOffset:CGFloat = 0
+    
+    let height:CGFloat = 738
+    
+    @State private var currentImage:CGFloat = 1
+    @State private var lastpos:CGFloat = 0
+    
+    var bounds: [CGFloat] = [0.0, 0.17, 0.2, 0.23, 0.245, 0.266, 0.5, 1.0]
+
     
     private func iterate() {
         self.globalOffset += 0.1
@@ -27,293 +37,149 @@ struct SessionSwitcher: View {
     private func getWidth(_ i:CGFloat) -> CGFloat {
         return 360
     }
-  
-    private func getRotation(_ i:CGFloat, _ geometry: GeometryProxy) -> Double {
-//        let baseTop = (geometry.size.height - self.height) / 2
-//        var position = getRelativePosition(i, geometry)
+    
+//    let heightInPoints = image.size.height
+//    let heightInPixels = heightInPoints * image.scale
+//
+//    let widthInPoints = image.size.width
+//    let widthInPixels = widthInPoints * image.scale
+    
+    private func getAnchorZ(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
+        let speeds: [CGFloat] = [0,-2000,-4000,0,1000,0,0] //[0, -1000, -2000, 1000, 0, 0, 0]
         
-        
-//        var x:Double
-//        if i == 0 {
-//            x = -40
-//        }
-////        else if i == 1 {
-////            x = -30
-////        }
-//        else if i == 1 {
-//            x = 0
-//        }
-//        else if i == 2 {
-//            x = 5
-//        }
-//        else if i == 3 {
-//            x = 10
-//        }
-//        else if i == 4 {
-//            x = 12
-//        }
-//        else {
-//            x = 14
-//        }
-
-//        let baseTop = (geometry.size.height - self.height) / 2
-        let position = Double(getRelativePosition(i, geometry))
-        var rotation:Double = -40.0
-//        distance = CGFloat(position * self.height )
-//        print(i)
-//        print(position)
-//        print(position)
-//        print(self.height)
-//        print(distance)
-        
-        let beforeRotation = (40 / 0.23)
-        let afterRotation = (14 / (1 - 0.266))
-        
-        if position > 0.0 {
-            let d_in_seg = min(0.2, position)
-            rotation += d_in_seg * beforeRotation
+        let position = getRelativePosition(i, geometry)
+        var anchorZ: CGFloat = 300
+        for i in 0..<(bounds.count - 1){
+            let lower = bounds[i]
+            if position > lower{
+                let upper = bounds[i+1]
+                let d_in_seg = min(upper, position) - lower
+                anchorZ += d_in_seg  * speeds[i]
+            }
         }
-        
-        if position > 0.17 {
-            let d_in_seg = min(0.20, position) - 0.17
-            rotation += d_in_seg * beforeRotation
-        }
-        // 0.05 * 4 height = 0.2
-        if position > 0.20 {
-            let d_in_seg = min(0.23, position) - 0.20
-            rotation += d_in_seg * beforeRotation
-        }
-        // the cumulatiev distance here shouldnt be more than 0.2 * height
-        
-        
-        if position > 0.23 {
-//            let d_in_seg = min(0.266, position) - 0.23
-            rotation = 0
-        }
-        
-        if position > 0.266 {
-            let d_in_seg = min(0.5, position) - 0.266
-            rotation += d_in_seg * afterRotation
-        }
-        
-        if position > 0.5 {
-            let d_in_seg = min(1.0, position) - 0.5
-            rotation += d_in_seg * afterRotation
-        }
-//        if i == 0 {
-//            rotation = min(rotation, 0.2 *  Double(height))
-//        }
-        
-//        if i == 0 {
-//            print(rotation)
-//            print()
-//        }
-        
-//        if i == 0.0{
-//            distance = 0.0
-//        }
-        
-
-
-        return 12 //Double(rotation)
+        return anchorZ
     }
     
-    let height:CGFloat = 605
-    
-    @State private var currentImage:CGFloat = 1
-    @State private var lastpos:CGFloat = 0
-    
+    private func getPerspective(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
+        let speeds: [CGFloat] = [-2,0,0,0,0,0,0] //[-2, -20, 20, 0, 0, 0, 0]
+        
+        let position = getRelativePosition(i, geometry)
+        var perspective: CGFloat = 1
+        for i in 0..<(bounds.count - 1){
+            let lower = bounds[i]
+            if position > lower{
+                let upper = bounds[i+1]
+                let d_in_seg = min(upper, position) - lower
+                perspective += d_in_seg  * speeds[i]
+            }
+        }
+        return perspective
+    }
+        
+    private func getOffsetY(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
+        let speeds: [CGFloat] = [0.5,3,6,10,30,10,0] //[0.5, 10, 40, 100, 40, 0, 0]
+        
+        let position = getRelativePosition(i, geometry)
+        var distance:CGFloat = 0.0
+        for i in 0..<(bounds.count - 1){
+            let lower = bounds[i]
+            if position > lower{
+                let upper = bounds[i+1]
+                let d_in_seg = min(upper, position) - lower
+                distance += d_in_seg * self.height * speeds[i]
+            }
+        }
+        return distance - 120
+    }
+  
+    private func getRotation(_ i:CGFloat, _ geometry: GeometryProxy) -> Double {
+//        let speeds: [Double] = [0,100,-100,-100,0,0,0] //[0.0, 500, -1000, -500, 0, 500, 0]
+        let speeds: [Double] = [0,100,-100,0,-200,0,0] //[0.0, 500, -1000, -500, 0, 500, 0]
+//        let speeds: [Double] = [0,0,-200,200,200,0,0] //[0.0, 500, -1000, -500, 0, 500, 0]
+
+        let position = getRelativePosition(i, geometry)
+        var rotation: Double = 0.0
+        for i in 0..<(bounds.count - 1){
+            let lower = bounds[i]
+            if position > lower{
+                let upper = bounds[i+1]
+                let d_in_seg = min(upper, position) - lower
+                rotation += Double(d_in_seg)  * speeds[i]
+            }
+        }
+        return rotation
+    }
     
     private func getRelativePosition(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
-//        let baseTop = (geometry.size.height - self.height) / 2
-        
-        let count = self.main.sessions.sessions.count
-        
-        let normalizedPosition = i / CGFloat(count)
-        let maxGlobalOffset = CGFloat(count) * self.height
+        let normalizedPosition = i / CGFloat(self.main.sessions.sessions.count)
+        let maxGlobalOffset = CGFloat(self.main.sessions.sessions.count) * self.height
         let normalizedGlobalState = min(1, max(0, self.globalOffset / maxGlobalOffset))
         let translatedRelativePosition = normalizedGlobalState + (normalizedPosition / 2)
         return translatedRelativePosition / 2.0
     }
     
-    private func getOffsetY(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
-//        let baseTop = (geometry.size.height - self.height) / 2
-        let position = getRelativePosition(i, geometry)
-        var distance:CGFloat = 0.0
-//        distance = CGFloat(position * self.height )
-//        print(i)
-//        print(position)
-//        print(position)
-//        print(self.height)
-//        print(distance)
-        
-        
-        if position > 0.0 {
-            let d_in_seg = min(0.2, position)
-            distance += d_in_seg * self.height * 0.1
-        }
-        
-        if position > 0.17 {
-            let d_in_seg = min(0.20, position) - 0.17
-            distance += d_in_seg * self.height * 2
-        }
-        // 0.05 * 4 height = 0.2
-        if position > 0.20 {
-            let d_in_seg = min(0.23, position) - 0.20
-            distance += d_in_seg * self.height * 4
-        }
-        // the cumulatiev distance here shouldnt be more than 0.2 * height
-        
-        
-        if position > 0.23 {
-            let d_in_seg = min(0.266, position) - 0.23
-            distance += d_in_seg * self.height * 32
-        }
-        
-        if position > 0.266 {
-            let d_in_seg = min(0.5, position) - 0.266
-            distance += d_in_seg * self.height
-        }
-        
-        if position > 0.5 {
-            let d_in_seg = min(1.0, position) - 0.5
-            distance += d_in_seg * self.height * 0.05
-        }
-        if i == 0 {
-            distance = min(distance, 0.2 *  height)
-        }
-//
-//        print(distance)
-//        print()
-        
-//        if i == 0.0{
-//            distance = 0.0
-//        }
-        
-
-
-        return distance
-    }
-    
-//    private func getRotation(_ i:CGFloat) -> Double {
-//        var x:Double
-//        if i == 0 {
-//            x = -40
-//        }
-//        else if i == 1 {
-//            x = -30
-//        }
-//        else if i == 2 {
-//            x = 0
-//        }
-//        else if i == 3 {
-//            x = 5
-//        }
-//        else if i == 4 {
-//            x = 10
-//        }
-//        else if i == 5 {
-//            x = 12
-//        }
-//        else {
-//            x = 14
-//        }
-//
-//        return x
-//    }
-//
-//    let height:CGFloat = 605
-//    private func getOffsetY(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
-//        let baseTop = (geometry.size.height - self.height) / 2
-//
-////        let posWhileScrolling = self.globalOffset % 200
-//        var currentImage:CGFloat = 2
-//
-//        var distance:CGFloat
-//
-//        if i == currentImage - 2 {
-//            distance = baseTop + self.height + 700
-//        }
-//        else if i == currentImage - 1 {
-//            distance = baseTop + self.height + 400
-//        }
-//        else if i == currentImage {
-//            distance = baseTop + 25
-//        }
-//        else if i == currentImage + 1 {
-//            distance = 90
-//        }
-//        else if i == currentImage + 2 {
-//            distance = 40
-//        }
-//        else if i == currentImage + 3 {
-//            distance = 18
-//        }
-//        else {
-//            distance = -5 * (i - 6)
-//        }
-//
-//        return CGFloat(baseTop + distance) - 170
-//    }
-    
     var body: some View {
-        VStack {
+        ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
             HStack(alignment: .top, spacing: 0) {
                 Action(action: ActionDescription(actionName: .showSessionSwitcher))
                     .fixedSize()
                     .font(Font.system(size: 20, weight: .medium))
                     .rotationEffect(.degrees(90))
-                    .padding(.vertical, 200)
-                    .background(Color.white)
-                    .border(Color.purple, width: 5)
-                    .frame(width: nil, height: 20, alignment: .trailing)
+                    .padding(.vertical, 7)
+                    .padding(.horizontal, 4)
+                    .background(Color(hex: "#ddd"))
+                    .cornerRadius(25)
                     .zIndex(1000)
+                    .offset(x: -11, y: 68)
             }
-            ZStack {
-                GeometryReader { (geometry) in
-                    Image("session-switcher-tile")
-                        .resizable(resizingMode: .tile)
-                        .edgesIgnoringSafeArea(.vertical)
-                    
-                    ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
-                        { () -> Image in
-                            let session = self.main.sessions.sessions[i]
-                            if let screenShot = session.screenShot,
-                               let uiImage = screenShot.asUIImage {
-                                return Image(uiImage: uiImage)
-                            }
-                            return Image("screenshot-example")
-                        }()
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: self.getWidth(CGFloat(i)), height: nil, alignment: .center)
-                            .clipShape(RoundedRectangle(cornerRadius: 32))
-                            .offset(x: self.getOffsetX(CGFloat(i), geometry),
-                                    y: self.getOffsetY(CGFloat(i), geometry))
-                            .shadow(color: .init(hex: "#222"), radius: 15, x: 10, y: 10)
-                            .rotation3DEffect(.degrees(self.getRotation(0, geometry)), axis: (x: 1, y: 0, z: 0), anchor: .top, anchorZ: 400, perspective: 0.4)
-                            .zIndex(Double(0))
-                    }
-                    
-                    Text("\(self.main.sessions.sessions.count)").zIndex(20.0).padding(20).foregroundColor(.white)
-                    Text("\(self.globalOffset)").zIndex(40.0).padding(40).foregroundColor(.white)
-                    Text("\(self.lastGlobalOffset)").zIndex(60.0).padding(60).foregroundColor(.white)
+            .zIndex(100)
+            
+            GeometryReader { (geometry) in
+                Image("session-switcher-tile")
+                    .resizable(resizingMode: .tile)
+                    .edgesIgnoringSafeArea(.vertical)
+                
+                ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
+                    { () -> Image in
+                        let session = self.main.sessions.sessions[i]
+                        if let screenShot = session.screenShot,
+                           let uiImage = screenShot.asUIImage {
+                            return Image(uiImage: uiImage)
+                        }
+                        return Image("screenshot-example")
+                    }()
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: self.getWidth(CGFloat(i)), height: nil, alignment: .center)
+                        .clipShape(RoundedRectangle(cornerRadius: 32)
+                            .size(width: 360, height: self.height)
+                            .offset(x: 0, y: 40)
+                        )
+                        .offset(x: self.getOffsetX(CGFloat(i as! Int), geometry),
+                                y: self.getOffsetY(CGFloat(i as! Int), geometry))
+                        .shadow(color: .init(.sRGB, red: 0.13, green: 0.13, blue: 0.13, opacity: 0.5), radius: 15, x: 10, y: 10)
+                        .rotation3DEffect(.degrees(self.getRotation(CGFloat(i), geometry)), axis: (x: 1, y: 0, z: 0), anchor: .center, anchorZ: self.getAnchorZ(CGFloat(i), geometry), perspective: self.getPerspective(CGFloat(i), geometry))
+                        .zIndex(Double(0))
+//                            .opacity(0.7)
                 }
             }
-            .edgesIgnoringSafeArea(.vertical)
-            .gesture(
-                DragGesture()
-                    .onChanged { gesture in
-                        self.offset = gesture.translation
-                        self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
-                    }
-
-                    .onEnded { _ in
-                        self.globalOffset = max(0, self.lastGlobalOffset + self.offset.height)
-                        self.lastGlobalOffset = self.globalOffset
-                    }
-            )
         }
+        .edgesIgnoringSafeArea(.vertical)
+        .gesture(
+            DragGesture()
+                .onChanged { gesture in
+                    self.offset = gesture.translation
+                    let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
+                    self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
+                }
+
+                .onEnded { _ in
+                    print(CGFloat(self.items.count) * self.height)
+                    let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
+                    self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
+                    self.lastGlobalOffset = self.globalOffset
+                }
+        )
     }
 }
 

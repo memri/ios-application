@@ -132,7 +132,7 @@ public enum ActionName: String, Codable {
         switch self{
         case .add:
             return Color(hex: "#6aa84f").uiColor()
-        case .back:
+        case .back, .showSessionSwitcher:
             return Color(hex: "#434343").uiColor()
         default:
             return Color(hex: "#999999").uiColor()
