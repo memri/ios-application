@@ -11,15 +11,7 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-public class Sessions: Object, ObservableObject, Decodable {
-    /**
-     *
-     */
-    @objc dynamic var uid:String = ""
-    /**
-     *
-     */
-    @objc dynamic var syncState:SyncState? = SyncState()
+public class Sessions: DataItem {
     /**
      *
      */
@@ -52,10 +44,11 @@ public class Sessions: Object, ObservableObject, Decodable {
         self.init()
         
         jsonErrorHandling(decoder) {
-            uid = try decoder.decodeIfPresent("uid") ?? uid
             currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
             
             decodeIntoList(decoder, "sessions", self.sessions)
+            
+            try! super.superDecode(from:decoder)
         }
         
         self.postInit()
@@ -92,7 +85,7 @@ public class Sessions: Object, ObservableObject, Decodable {
     
     private func fetchUID(_ realm:Realm){
         // When the uid is not yet set
-        if self.uid == "" {
+        if self.uid == nil {
             
             // Fetch device name
             let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
@@ -106,6 +99,11 @@ public class Sessions: Object, ObservableObject, Decodable {
     
     public func setCurrentSession(_ session:Session) {
         try! realm!.write {
+            
+            if session.uid == nil {
+                session.uid = DataItem.generateUID()
+            }
+            
             if let index = sessions.firstIndex(of: session) {
                 sessions.remove(at: index)
             }
@@ -134,7 +132,7 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
         
         // Activate this session to make sure its stored in realm
-        if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid)'").first {
+        if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid!)'").first {
             // Sync with the cached version
             try! self.merge(fromCache)
             
@@ -164,7 +162,7 @@ public class Sessions: Object, ObservableObject, Decodable {
      */
     public func install(_ realm:Realm) {
         // Load default sessions from the package
-        let defaultSessions = try! Sessions.fromJSONFile("default_sessions")
+        let defaultSessions:Sessions = try! Sessions.fromJSONFile("default_sessions")
         
         fetchUID(realm)
         
@@ -177,22 +175,22 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    public func merge(_ sessions:Sessions) throws {
-        func doMerge() {
-            let properties = self.objectSchema.properties
-            for prop in properties {
-                if prop.name == "sessions" {
-                    self.sessions.append(objectsIn: sessions.sessions)
-                }
-                else {
-                    self[prop.name] = sessions[prop.name]
-                }
-            }
-        }
-        
-        if let realm = realm { try! realm.write { doMerge() } }
-        else { doMerge() }
-    }
+//    public func merge(_ sessions:Sessions) throws {
+//        func doMerge() {
+//            let properties = self.objectSchema.properties
+//            for prop in properties {
+//                if prop.name == "sessions" {
+//                    self.sessions.append(objectsIn: sessions.sessions)
+//                }
+//                else {
+//                    self[prop.name] = sessions[prop.name]
+//                }
+//            }
+//        }
+//
+//        if let realm = realm { try! realm.write { doMerge() } }
+//        else { doMerge() }
+//    }
     
     /**
      * Find a session using text
@@ -216,15 +214,7 @@ public class Sessions: Object, ObservableObject, Decodable {
     }
 }
 
-public class Session: Object, ObservableObject, Decodable {
-    /**
-     *
-     */
-    @objc dynamic var uid:String? = DataItem.generateUID()
-    /**
-     *
-     */
-    @objc dynamic var syncState:SyncState? = SyncState()
+public class Session: DataItem {
     /**
      *
      */
@@ -288,19 +278,22 @@ public class Session: Object, ObservableObject, Decodable {
         self.init()
         
         jsonErrorHandling(decoder) {
-            uid = try decoder.decodeIfPresent("uid") ?? uid
-            
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
             showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
             showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
             editMode = try decoder.decodeIfPresent("editMode") ?? editMode
             
             decodeIntoList(decoder, "views", self.views)
+            
+            try! super.superDecode(from: decoder)
+            
+            if uid == nil { uid = DataItem.generateUID() }
         }
     }
     
     required init() {
         super.init()
+        
         self.postInit()
     }
     

@@ -142,7 +142,39 @@
                     "actionArgs": ["all-notes"]
                 }
             ]
-        }
+        },
+        
+        "{[type:logitem]}": {
+            "name": "all-logitems",
+            "title": "All Log Entries",
+            "queryOptions": {
+                "query": "logitem",
+                "sortProperty": "date-modified",
+                "sortAscending": 0
+            },
+            "emptyResultText": "There are no log entries here yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "sortProperty": "date-created",
+                    "sortAscending": 0,
+                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
+                }
+            },
+            "browsingMode": "default",
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "title": "Untitled Note"
+                }]
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
     },
     
     "user": {
