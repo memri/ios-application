@@ -49,11 +49,8 @@ struct ListRendererView: View {
                     
                         ForEach(main.items) { dataItem in
                             VStack{
-                                Text(dataItem.getString("title"))
-                                    .bold()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Text(self.generatePreview(dataItem))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                ItemRenderer(baseComponent: self.renderConfig.renderDescription,
+                                             item: dataItem)
                             }.onTapGesture {
                                 if let press = self.renderConfig.press {
                                     self.main.executeAction(press, dataItem)
