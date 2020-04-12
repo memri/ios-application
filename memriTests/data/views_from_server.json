@@ -25,7 +25,24 @@
                     "longPress": {
                         "actionName": "select"
                     },
-                    "itemRenderer": "{.title}"
+                    "itemRenderer": "{.title}",
+                    "renderDescription": {
+                        "type": "vstack",
+                        "children": [
+                            {
+                                "type": "text",
+                                "property": "title",
+                                "bold": true
+                            },
+                            {
+                                "type": "text",
+                                "property": "content",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            }
+                        ]
+                    }
                 }
             }
         },

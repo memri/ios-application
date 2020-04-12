@@ -16,7 +16,7 @@ protocol ClassFamily: Decodable {
     static var discriminator: Discriminator { get }
 
     /// Returns the class type of the object coresponding to the value.
-    func getType() -> DataItem.Type
+    func getType() -> AnyObject.Type
 }
 
 /// Discriminator key enum used to retrieve discriminator fields in JSON payloads.

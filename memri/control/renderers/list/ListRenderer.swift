@@ -29,6 +29,9 @@ class ListConfig: RenderConfig {
     @objc dynamic var longPress: ActionDescription? = nil
     @objc dynamic var press: ActionDescription? = nil
     
+    // TODO: Persist
+    var renderDescription: ItemRendererComponent? = nil
+    
     let slideLeftActions = List<ActionDescription>()
     let slideRightActions = List<ActionDescription>()
 
@@ -61,6 +64,7 @@ class ListConfig: RenderConfig {
             self.itemRenderer = try decoder.decodeIfPresent("itemRenderer") ?? self.itemRenderer
             self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
             self.press = try decoder.decodeIfPresent("press") ?? self.press
+            self.renderDescription = try decoder.decodeIfPresent("renderDescription") ?? self.renderDescription
             
             decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
             decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
@@ -79,6 +83,7 @@ class ListConfig: RenderConfig {
         self.itemRenderer = listConfig.itemRenderer ?? self.itemRenderer
         self.longPress = listConfig.longPress ?? self.longPress
         self.press = listConfig.press ?? self.press
+        self.renderDescription = listConfig.renderDescription ?? self.renderDescription
         
         self.slideLeftActions.append(objectsIn: listConfig.slideLeftActions)
         self.slideRightActions.append(objectsIn: listConfig.slideRightActions)
