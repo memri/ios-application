@@ -144,7 +144,7 @@ class SettingCollection:Object {
      *
      */
     public func get<T:Decodable>(_ path:String) -> T? {
-        let needle = self.type + "/" + path
+        let needle = self.type + (path.first == "/" ? "" :"/") + path
         
         let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
@@ -164,7 +164,7 @@ class SettingCollection:Object {
      * Also responsible for saving the setting to the permanent storage
      */
     public func set(_ path:String, _ value:AnyCodable) -> Void {
-        let key = self.type + path
+        let key = self.type + (path.first == "/" ? "" :"/") + path
         
         func saveState(){
             let s = Setting(value: ["key": key, "json": serialize(value)])

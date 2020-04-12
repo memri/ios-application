@@ -62,78 +62,85 @@ public struct TopNavigation: View {
                     return createTitleActionSheet()
                 }
             }
-            HStack(spacing: 10){
-                
-                Action(action: ActionDescription(actionName: .showNavigation))
-                    .font(Font.system(size: 20, weight: .semibold))
-                
-//                Action(action: main.currentSession.backButton)
-                
+            VStack {
+                HStack(spacing: 10){
                     
-                if main.currentSession.backButton != nil{
-                    Button(action: {
-                        if !self.showingBackActions {
-                            self.main.executeAction(self.main.currentSession.backButton!)
+                    Action(action: ActionDescription(actionName: .showNavigation))
+                        .font(Font.system(size: 20, weight: .semibold))
+                    
+    //                Action(action: main.currentSession.backButton)
+                    
+                        
+                    if main.currentSession.backButton != nil{
+                        Button(action: {
+                            if !self.showingBackActions {
+                                self.main.executeAction(self.main.currentSession.backButton!)
+                            }
+                        }) {
+                            Image(systemName: main.currentSession.backButton!.icon)
+                                .fixedSize()
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 5)
+                                .foregroundColor(Color(main.currentSession.backButton!.computeColor(state: false)))
                         }
-                    }) {
-                        Image(systemName: main.currentSession.backButton!.icon)
-                            .fixedSize()
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 5)
-                            .foregroundColor(Color(main.currentSession.backButton!.computeColor(state: false)))
-                    }
-                    .font(Font.system(size: 19, weight: .semibold))
-                    .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
-                        (someBool) in
-                        if self.isPressing || someBool {
-                            self.isPressing = someBool
-                            
-                            if someBool {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    if self.isPressing {
-                                        self.showingBackActions = true
+                        .font(Font.system(size: 19, weight: .semibold))
+                        .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
+                            (someBool) in
+                            if self.isPressing || someBool {
+                                self.isPressing = someBool
+                                
+                                if someBool {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        if self.isPressing {
+                                            self.showingBackActions = true
+                                        }
                                     }
                                 }
                             }
+                        }, perform: {})
+                        .actionSheet(isPresented: $showingBackActions) {
+                            return createBackActionSheet()
                         }
-                    }, perform: {})
-                    .actionSheet(isPresented: $showingBackActions) {
-                        return createBackActionSheet()
                     }
-                }
-                else {
-                    Button(action: { self.showingBackActions = true }) {
-                        Image(systemName: "smallcircle.fill.circle")
-                            .fixedSize()
-                            .font(.system(size: 10, weight: .bold, design: .default))
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 5)
-                            .foregroundColor(Color(hex: "#434343"))
-                    }
-                    .font(Font.system(size: 19, weight: .semibold))
-                    .actionSheet(isPresented: $showingBackActions) {
-                        return createBackActionSheet()
-                    }
-                }
-                
-                Spacer()
-                
-                if self.main.settings.getBool("user/general/gui/showEditButton") != false {
-                    Action(action: main.computedView.editActionButton)
+                    else {
+                        Button(action: { self.showingBackActions = true }) {
+                            Image(systemName: "smallcircle.fill.circle")
+                                .fixedSize()
+                                .font(.system(size: 10, weight: .bold, design: .default))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 5)
+                                .foregroundColor(Color(hex: "#434343"))
+                        }
                         .font(Font.system(size: 19, weight: .semibold))
-                }
-                
-                Action(action: main.computedView.actionButton)
-                    .font(Font.system(size: 22, weight: .semibold))
-                
-                Action(action: ActionDescription(actionName: .showSessionSwitcher))
-                    .font(Font.system(size: 20, weight: .medium))
-                    .rotationEffect(.degrees(90))
+                        .actionSheet(isPresented: $showingBackActions) {
+                            return createBackActionSheet()
+                        }
+                    }
                     
+                    Spacer()
+                    
+                    // TODO this should not be a setting but a user defined view that works on all
+                    if self.main.settings.getBool("user/general/gui/showEditButton") != false {
+                        Action(action: main.computedView.editActionButton)
+                            .font(Font.system(size: 19, weight: .semibold))
+                    }
+                    
+                    Action(action: main.computedView.actionButton)
+                        .font(Font.system(size: 22, weight: .semibold))
+                    
+                    Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                        .font(Font.system(size: 20, weight: .medium))
+                        .rotationEffect(.degrees(90))
+                        
+                }
+                .padding(.top, 15)
+                .padding(.bottom, 5)
+                .padding(.leading, 15)
+                .padding(.trailing, 15)
+                
+                Divider().background(Color(hex: "#efefef"))
             }
-            .padding(.vertical, 30)
-            .padding(.leading, 15)
-            .padding(.trailing, 15)
+            .padding(.bottom, 0)
         }
     }
 }

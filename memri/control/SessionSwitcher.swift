@@ -154,9 +154,9 @@ struct SessionSwitcher: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: self.getWidth(CGFloat(i)), height: nil, alignment: .center)
-                        .clipShape(RoundedRectangle(cornerRadius: 32)
+                        .clipShape(RoundedRectangle(cornerRadius: 24)
                             .size(width: 360, height: self.height)
-                            .offset(x: 0, y: 40)
+                            .offset(x: 0, y: 35)
                         )
                         .offset(x: self.getOffsetX(CGFloat(i as! Int), geometry),
                                 y: self.getOffsetY(CGFloat(i as! Int), geometry))
