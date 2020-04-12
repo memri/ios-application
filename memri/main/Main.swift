@@ -92,12 +92,15 @@ public class Main: ObservableObject {
     struct Alias {
         var key:String
         var type:String
+        var on:() -> Void
     }
     
-    let aliases:[String:Alias] = [
-        "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool"),
-        "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool")
-    ]
+    var aliases:[String:Alias] = [:]
+    
+    private func takeScreenShot(){
+        // Make sure to record a screenshot prior to session switching
+        self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
+    }
     
     subscript(propName:String) -> Any? {
         get {
@@ -121,7 +124,10 @@ public class Main: ObservableObject {
             }
         }
         set(newValue) {
-            settings.set(aliases[propName]!.key, AnyCodable(newValue))
+            let alias = aliases[propName]!
+            settings.set(alias.key, AnyCodable(newValue))
+            
+            if let x = newValue as? Bool, x { alias.on() }
             
             scheduleUIUpdate()
         }
@@ -152,6 +158,11 @@ public class Main: ObservableObject {
         computedView = ComputedView(cache)
         navigation = MainNavigation(realm)
         renderers = Renderers()
+        
+        aliases = [
+           "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
+           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
+       ]
         
         cache.scheduleUIUpdate = scheduleUIUpdate
     }

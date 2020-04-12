@@ -107,15 +107,14 @@ public class Sessions: Object, ObservableObject, Decodable {
     public func setCurrentSession(_ session:Session) {
         try! realm!.write {
             if let index = sessions.firstIndex(of: session) {
-                currentSessionIndex = index
+                sessions.remove(at: index)
             }
-            else {
-                // Add session to array
-                sessions.append(session)
-                
-                // Update the index pointer
-                currentSessionIndex = sessions.count - 1
-            }
+            
+            // Add session to array
+            sessions.append(session)
+            
+            // Update the index pointer
+            currentSessionIndex = sessions.count - 1
         }
         
         decorate(session)
@@ -357,9 +356,10 @@ public class Session: Object, ObservableObject, Decodable {
         let uiImage = view!.takeScreenShot()
         
         if self.screenShot == nil {
-            try! realm!.write {
-                self.screenShot = File(value: ["uri": File.generateFilePath()])
-            }
+            let doIt = { self.screenShot = File(value: ["uri": File.generateFilePath()]) }
+            
+            if realm!.isInWriteTransaction { doIt() }
+            else { try! realm!.write { doIt() } }
         }
         
         do {

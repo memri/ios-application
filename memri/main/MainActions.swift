@@ -59,9 +59,7 @@ extension Main {
                 }
                 else if let item = item { addFromTemplate(item) }
             case .showSessionSwitcher:
-                if self.showSessionSwitcher {
-                    self.currentSession.takeScreenShot()
-                }
+                break
             case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
                 break // Do nothing
             case .exampleUnpack:

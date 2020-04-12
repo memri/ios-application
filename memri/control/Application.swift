@@ -30,8 +30,7 @@ struct Application: View {
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))
             }
-            
-            if self.main.showSessionSwitcher {
+            else if self.main.showSessionSwitcher {
                 SessionSwitcher()
             }
         }.fullHeight()
