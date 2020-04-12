@@ -64,8 +64,8 @@ struct ActionButton: View {
             }
             if action.title != nil && action.showTitle {
                 Text(action.title!)
-                 .font(.subheadline)
-                 .foregroundColor(.black)
+                    .font(.subheadline)
+                    .foregroundColor(.black)
              }
         }
     }
