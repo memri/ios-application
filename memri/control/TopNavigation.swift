@@ -118,9 +118,10 @@ public struct TopNavigation: View {
                 
                 Spacer()
                 
-                // TODO setting to not display edit action button in multi-item views
-                Action(action: main.computedView.editActionButton)
-                    .font(Font.system(size: 19, weight: .semibold))
+                if self.main.settings.getBool("user/general/gui/showEditButton") != false {
+                    Action(action: main.computedView.editActionButton)
+                        .font(Font.system(size: 19, weight: .semibold))
+                }
                 
                 Action(action: main.computedView.actionButton)
                     .font(Font.system(size: 22, weight: .semibold))
