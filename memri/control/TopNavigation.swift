@@ -12,6 +12,7 @@ public struct TopNavigation: View {
     @EnvironmentObject var main: Main
     
     @State private var showingBackActions = false
+    @State private var showingTitleActions = false
     
     @State private var isPressing = false // HACK because long-press isnt working why?
     
@@ -25,7 +26,19 @@ public struct TopNavigation: View {
         self.main.executeAction(ActionDescription(actionName:.backAsSession))
     }
     
-    private func createActionSheet() -> ActionSheet {
+    private func createTitleActionSheet() -> ActionSheet {
+        return ActionSheet(title: Text("Do something with the current view"),
+                buttons: [
+                    .default(Text("Save view")) { self.toFront() },
+//                    .default(Text("Update view")) { self.toFront() }, // Only when its a saved view
+                    .default(Text("Duplicate view")) { self.toFront() },
+//                    .default(Text("Reset to saved view")) { self.backAsSession() }, // Only when its a saved view
+                    .default(Text("Copy a link to this view")) { self.toFront() },
+                    .cancel()
+        ])
+    }
+    
+    private func createBackActionSheet() -> ActionSheet {
         return ActionSheet(title: Text("Navigate to a view in this session"),
                 buttons: [
                     .default(Text("Forward")) { self.forward() },
@@ -39,7 +52,14 @@ public struct TopNavigation: View {
         ZStack{
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack{
-                Text(main.computedView.title).font(.headline)
+                Button(action: { self.showingTitleActions = true }) {
+                    Text(main.computedView.title)
+                        .font(.headline)
+                        .foregroundColor(Color(hex: "#434343"))
+                }
+                .actionSheet(isPresented: $showingTitleActions) {
+                    return createTitleActionSheet()
+                }
             }
             HStack(spacing: 10){
                 
@@ -77,7 +97,7 @@ public struct TopNavigation: View {
                         }
                     }, perform: {})
                     .actionSheet(isPresented: $showingBackActions) {
-                        return createActionSheet()
+                        return createBackActionSheet()
                     }
                 }
                 else {
@@ -90,7 +110,7 @@ public struct TopNavigation: View {
                     }
                     .font(Font.system(size: 19, weight: .semibold))
                     .actionSheet(isPresented: $showingBackActions) {
-                        return createActionSheet()
+                        return createBackActionSheet()
                     }
                 }
                 
