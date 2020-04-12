@@ -29,6 +29,11 @@ extension Main {
                 openView(params[0].value as! String)
             case .showStarred:
                 showStarred(starButton: action)
+            case .back: back()
+            case .forward: forward()
+            case .forwardToFront: forwardToFront()
+            case .backAsSession: backAsSession()
+            case .add: addFromTemplate(params[0].value as! DataItem)
             default:
                 print("UNDEFINED ACTION \(action.actionName), NOT EXECUTING")
             }
@@ -42,8 +47,6 @@ extension Main {
             }
             
             switch action.actionName {
-            case .back: back()
-            case .add: addFromTemplate(params[0].value as! DataItem)
             case .delete:
                 if selection.count > 0 { cache.delete(selection) }
                 else if let item = item { cache.delete(item) }
@@ -252,6 +255,47 @@ extension Main {
             }
             
             scheduleComputeView()
+        }
+    }
+    
+    func forward() {
+        let session = currentSession
+        
+        if session.currentViewIndex == session.views.count - 1 {
+            print("Warn: Can't go forward. Already at last view in session")
+        }
+        else {
+            try! realm.write {
+                session.currentViewIndex += 1
+            }
+            
+            scheduleComputeView()
+        }
+    }
+    func forwardToFront() {
+        let session = currentSession
+        
+        try! realm.write {
+            session.currentViewIndex = session.views.count - 1
+        }
+        
+        scheduleComputeView()
+    }
+    
+    func backAsSession() {
+        let session = currentSession
+        
+        if session.currentViewIndex == 0 {
+            print("Warn: Can't go back. Already at earliest view in session")
+        }
+        else {
+            let duplicateSession = cache.duplicate(session as! DataItem) as! Session // This will work when merged with multiple-data-types branch
+            
+            try! realm.write {
+                duplicateSession.currentViewIndex -= 1
+            }
+            
+            openSession(duplicateSession)
         }
     }
     

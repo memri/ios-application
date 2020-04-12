@@ -10,6 +10,30 @@ import SwiftUI
 
 public struct TopNavigation: View {
     @EnvironmentObject var main: Main
+    
+    @State private var showingBackActions = false
+    
+    @State private var isPressing = false // HACK because long-press isnt working why?
+    
+    private func forward(){
+        self.main.executeAction(ActionDescription(actionName:.forward))
+    }
+    private func toFront(){
+        self.main.executeAction(ActionDescription(actionName:.forwardToFront))
+    }
+    private func backAsSession(){
+        self.main.executeAction(ActionDescription(actionName:.backAsSession))
+    }
+    
+    private func createActionSheet() -> ActionSheet {
+        return ActionSheet(title: Text("Navigate to a view in this session"),
+                buttons: [
+                    .default(Text("Forward")) { self.forward() },
+                    .default(Text("To the front")) { self.toFront() },
+                    .default(Text("Back as a new session")) { self.backAsSession() },
+                    .cancel()
+        ])
+    }
         
     public var body: some View {
         ZStack{
@@ -22,8 +46,53 @@ public struct TopNavigation: View {
                 Action(action: ActionDescription(actionName: .showNavigation))
                     .font(Font.system(size: 20, weight: .semibold))
                 
-                Action(action: main.currentSession.backButton)
+//                Action(action: main.currentSession.backButton)
+                
+                    
+                if main.currentSession.backButton != nil{
+                    Button(action: {
+                        if !self.showingBackActions {
+                            self.main.executeAction(self.main.currentSession.backButton!)
+                        }
+                    }) {
+                        Image(systemName: main.currentSession.backButton!.icon)
+                            .fixedSize()
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 5)
+                            .foregroundColor(Color(main.currentSession.backButton!.computeColor(state: false)))
+                    }
                     .font(Font.system(size: 19, weight: .semibold))
+                    .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
+                        (someBool) in
+                        if self.isPressing || someBool {
+                            self.isPressing = someBool
+                            
+                            if someBool {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    if self.isPressing {
+                                        self.showingBackActions = true
+                                    }
+                                }
+                            }
+                        }
+                    }, perform: {})
+                    .actionSheet(isPresented: $showingBackActions) {
+                        return createActionSheet()
+                    }
+                }
+                else {
+                    Button(action: { self.showingBackActions = true }) {
+                        Image(systemName: "smallcircle.fill.circle")
+                            .fixedSize()
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 5)
+                            .foregroundColor(Color(hex: "#434343"))
+                    }
+                    .font(Font.system(size: 19, weight: .semibold))
+                    .actionSheet(isPresented: $showingBackActions) {
+                        return createActionSheet()
+                    }
+                }
                 
                 Spacer()
                 

@@ -27,7 +27,7 @@ public enum ActionName: String, Codable {
         showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
-        showSessionSwitcher, noop
+        showSessionSwitcher, forward, forwardToFront, backAsSession, noop
     
     var defaultIcon: String {
         switch self {
@@ -120,7 +120,8 @@ public enum ActionName: String, Codable {
     
     var opensView: Bool {
         switch self {
-        case .showStarred, .openView, .openViewByName:
+        case .forward, .forwardToFront, .backAsSession, .back, .add, .showStarred,
+             .openView, .openViewByName:
             return true
         default:
             return false
