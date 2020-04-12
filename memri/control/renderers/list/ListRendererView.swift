@@ -58,8 +58,13 @@ struct ListRendererView: View {
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .foregroundColor(Color(hex: "#666"))
                                     .font(.system(size: 14, weight: .regular, design: .default))
-                                Divider()
-                                    .background(Color(hex: "#efefef"))
+                                Rectangle()
+                                    .size(width: 373, height: 1)
+                                    .foregroundColor(Color(hex: "#efefef"))
+                                    .padding(.top, -1)
+                                    .padding(.bottom, -9)
+//                                Divider()
+//                                    .background(Color(hex: "#efefef"))
                             }.onTapGesture {
                                 if let press = self.renderConfig.press {
                                     self.main.executeAction(press, dataItem)
