@@ -133,8 +133,10 @@ public enum ActionName: String, Codable {
         switch self{
         case .add:
             return Color(hex: "#6aa84f").uiColor()
-        case .back, .showSessionSwitcher:
+        case .back:
             return Color(hex: "#434343").uiColor()
+        case .showSessionSwitcher:
+            return Color(hex: "#CCC").uiColor()
         default:
             return Color(hex: "#999999").uiColor()
         }
@@ -157,7 +159,7 @@ public enum ActionName: String, Codable {
     
     var defaultInactiveColor: UIColor? {
         switch self {
-        case .add, .back, .toggleEditMode, .showNavigation, .showSessionSwitcher:
+        case .add, .back, .toggleEditMode, .showNavigation:
             return Color(hex: "#434343").uiColor()
         case .openView, .openViewByName, .toggleFilterPanel, .star,
              .showStarred, .showContextPane, .showOverlay, .share,

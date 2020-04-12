@@ -44,6 +44,7 @@ public struct TopNavigation: View {
                     .default(Text("Forward")) { self.forward() },
                     .default(Text("To the front")) { self.toFront() },
                     .default(Text("Back as a new session")) { self.backAsSession() },
+                    .default(Text("Show all views")) { /* TODO */ },
                     .cancel()
         ])
     }
@@ -104,6 +105,7 @@ public struct TopNavigation: View {
                     Button(action: { self.showingBackActions = true }) {
                         Image(systemName: "smallcircle.fill.circle")
                             .fixedSize()
+                            .font(.system(size: 10, weight: .bold, design: .default))
                             .padding(.horizontal, 5)
                             .padding(.vertical, 5)
                             .foregroundColor(Color(hex: "#434343"))
