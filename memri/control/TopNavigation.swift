@@ -62,8 +62,8 @@ public struct TopNavigation: View {
                     return createTitleActionSheet()
                 }
             }
-            VStack {
-                HStack(spacing: 10){
+            VStack (alignment: .leading, spacing: 0) {
+                HStack(alignment: .top, spacing: 10) {
                     
                     Action(action: ActionDescription(actionName: .showNavigation))
                         .font(Font.system(size: 20, weight: .semibold))
@@ -108,7 +108,7 @@ public struct TopNavigation: View {
                                 .fixedSize()
                                 .font(.system(size: 10, weight: .bold, design: .default))
                                 .padding(.horizontal, 5)
-                                .padding(.vertical, 5)
+                                .padding(.vertical, 8)
                                 .foregroundColor(Color(hex: "#434343"))
                         }
                         .font(Font.system(size: 19, weight: .semibold))
@@ -120,7 +120,7 @@ public struct TopNavigation: View {
                     Spacer()
                     
                     // TODO this should not be a setting but a user defined view that works on all
-                    if self.main.settings.getBool("user/general/gui/showEditButton") != false {
+                    if self.main.item != nil || self.main.settings.getBool("user/general/gui/showEditButton") != false {
                         Action(action: main.computedView.editActionButton)
                             .font(Font.system(size: 19, weight: .semibold))
                     }
@@ -134,11 +134,15 @@ public struct TopNavigation: View {
                         
                 }
                 .padding(.top, 15)
-                .padding(.bottom, 5)
+                .padding(.bottom, 10)
                 .padding(.leading, 15)
                 .padding(.trailing, 15)
+//                .fixedSize()
+                .frame(height: 50, alignment: .top)
                 
-                Divider().background(Color(hex: "#efefef"))
+                Divider()
+                    .background(Color(hex: "#efefef"))
+                    .padding(.top, 0)
             }
             .padding(.bottom, 0)
         }

@@ -123,7 +123,7 @@ struct SessionSwitcher: View {
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
-            HStack(alignment: .top, spacing: 0) {
+            HStack(alignment: .top, spacing: 10) {
                 Action(action: ActionDescription(actionName: .showSessionSwitcher))
                     .fixedSize()
                     .font(Font.system(size: 20, weight: .medium))
@@ -133,8 +133,13 @@ struct SessionSwitcher: View {
                     .background(Color(hex: "#ddd"))
                     .cornerRadius(25)
                     .zIndex(1000)
-                    .offset(x: -11, y: 68)
+                    .offset(x: 4, y: -7)
             }
+            .padding(.top, 15)
+            .padding(.bottom, 10)
+            .padding(.leading, 15)
+            .padding(.trailing, 15)
+            .frame(height: 50, alignment: .top)
             .zIndex(100)
             
             GeometryReader { (geometry) in
@@ -171,8 +176,8 @@ struct SessionSwitcher: View {
                         }
                 }
             }
+            .edgesIgnoringSafeArea(.vertical)
         }
-        .edgesIgnoringSafeArea(.vertical)
         .gesture(
             DragGesture()
                 .onChanged { gesture in
