@@ -19,9 +19,9 @@
                     "longPress": { "actionName": "select" },
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
-                            "Text", { "value": "title", "bold": true },
+                            "Text", { "text": "{.title}", "bold": true },
                             "Text", {
-                                "value": "content",
+                                "text": "{.content}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
@@ -48,14 +48,14 @@
                     "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
-                            "Text", { "value": "title", "bold": true },
+                            "Text", { "text": "{.title}", "bold": true },
                             "Text", {
-                                "value": "content",
+                                "text": "{.content}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
                             },
-                            "Text", { "value": "dateModified" }
+                            "Text", { "text": "dateModified" }
                         ]
                     ]
                 }
@@ -176,11 +176,11 @@
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
                             "HStack", [
-                                "Text", { "value": "action", "bold": true },
-                                "Text", { "value": "date" }
+                                "Text", { "text": "{.action}", "bold": true },
+                                "Text", { "text": "{.date}" }
                             ],
                             "Text", {
-                                "value": "contents",
+                                "text": "{.contents}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
@@ -213,12 +213,12 @@
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
                             "HStack", [
-                                "Text", { "value": "name", "bold": true },
+                                "Text", { "text": "{.name}", "bold": true },
                                 "Spacer",
                                 "RoundedRectangle", { "background": "{.color}" }
                             ],
                             "Text", {
-                                "value": "comment",
+                                "text": "{.comment}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100

@@ -10,6 +10,143 @@
 import Foundation
 import SwiftUI
 
+extension View {
+    func setProperties(_ properties:[String:AnyCodable]) -> some View {
+        self.frame(minWidth: 0,
+                   maxWidth: .infinity,
+                   minHeight: 0, maxHeight: .infinity,
+                   alignment: Alignment.topLeading)
+    }
+}
+
+public class GUIElementDescription: Decodable {
+    var type: String = ""
+    var properties: [String: AnyCodable] = [:]
+    var children: [GUIElementDescription] = []
+    
+    required convenience public init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            children = try decoder.decodeIfPresent("children") ?? children
+            properties = try decoder.decodeIfPresent("properties") ?? properties
+        }
+    }
+    
+    func processText(_ text: String) -> String{
+        var outText = text
+//        outText = removeWhiteSpace ? removeWhiteSpace(text: text) : text
+//        outText = maxChar != -1 ? String(outText.prefix(maxChar)) : outText
+        return outText
+    }
+    
+    public func has(_ propName:String) -> Bool {
+        return properties[propName] != nil
+    }
+    
+    public func get<T>(_ propName:String, _ item:DataItem) -> T? {
+        if let propValue = properties[propName] {
+            return (propValue.value as! T)
+        }
+        return nil
+    }
+    
+    public static func fromJSONFile(_ file: String, ext: String = "json") throws -> GUIElementDescription {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let comp: GUIElementDescription = try! JSONDecoder().decode(GUIElementDescription.self, from: jsonData)
+        return comp
+    }
+    
+//     .init(rawValue: get("alignment") ?? "left")
+}
+
+public struct GUIElementInstance: View {
+    @EnvironmentObject var main: Main
+    
+    var from:GUIElementDescription
+    var item:DataItem
+    
+    public init(_ gui:GUIElementDescription, _ dataItem:DataItem) {
+        from = gui
+        item = dataItem
+    }
+    
+    public func has(_ propName:String) -> Bool {
+        return from.has(propName)
+    }
+    
+    public func get<T>(_ propName:String) -> T? {
+        return from.get(propName, self.item)
+    }
+    
+    @ViewBuilder
+    public var body: some View {
+        if from.children.count > 0 {
+            if from.type == "vstack" {
+                VStack(alignment: .leading, spacing: get("spacing") ?? 0) { self.childrenAsView }
+                    .setProperties(from.properties)
+            }
+            else if from.type == "hstack" {
+                HStack(alignment: .top, spacing: get("spacing") ?? 0) { self.childrenAsView }
+                    .setProperties(from.properties)
+            }
+            else if from.type == "zstack" {
+                ZStack(alignment: .top) { self.childrenAsView }
+                    .setProperties(from.properties)
+            }
+            else if from.type == "button" {
+                Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
+                    self.childrenAsView
+                }
+                .setProperties(from.properties)
+            }
+        }
+        else {
+            if from.type == "text" {
+                Text(from.processText(get("text") ?? ""))
+                    .setProperties(from.properties)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            else if from.type == "textfield" {
+            }
+            else if from.type == "securefield" {
+            }
+            else if from.type == "action" {
+                Action(action: get("press"))
+//                    .font(Font.system(size: 19, weight: .semibold))
+            }
+            else if from.type == "image" {
+                if has("systemName") {
+                    Image(systemName: get("systemName") ?? "exclamationmark.bubble")
+                        .fixedSize()
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 5)
+                        .setProperties(from.properties)
+                }
+                else { // assuming image property
+                    Image(uiImage: get("image") ?? UIImage())
+                        .fixedSize()
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 5)
+                        .setProperties(from.properties)
+                }
+            }
+            else if from.type == "textfield" {
+            }
+        }
+    }
+    
+    @ViewBuilder
+    var childrenAsView: some View {
+        ForEach(0..<from.children.count){ index in
+            GUIElementInstance(self.from.children[index], self.item)
+        }
+    }
+    
+}
+
+
 class VStackComponent: ItemRendererComponent{
     var children: [ItemRendererComponent] = []
     
