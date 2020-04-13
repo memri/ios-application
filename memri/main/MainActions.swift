@@ -215,6 +215,12 @@ extension Main {
      *
      */
     public func openSession(_ name:String) {
+        
+        // TODO: This should not fetch the session from named sessions
+        //       but instead load a sessionview that loads the named sessions by
+        //       computing them (implement viewFromSession that is used in dynamic
+        //       view to sessionview
+        
         // Fetch a dynamic view based on its name
         let (session, _) = views.getSessionOrView(name, wrapView:true)
         if let session = session {

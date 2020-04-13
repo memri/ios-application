@@ -47,11 +47,13 @@
                     "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "Text", { "text": "{.title}", "bold": true },
+                        "VStack", { "padding": 5, "background": "#FF0000" }, [
+                            "Text", {
+                                "text": "{.title}",
+                                "font": [18, "semibold"]
+                            },
                             "Text", {
                                 "text": "{.content}",
-                                "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100,
                                 "shadow": ["#000", 0.5, 5.5, 5],
@@ -215,17 +217,29 @@
                     "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "HStack", [
+                        "HStack", {
+                            "alignment": "bottom",
+                            "padding": 5,
+                            "border": ["#FF0000", 1]
+                        }, [
+                            "VStack", {
+                                "alignment": "left",
+                                "spacing": 5,
+                                "border": ["#FF0000", 1]
+                            }, [
                                 "Text", { "text": "{.name}", "bold": true },
-                                "Spacer",
-                                "RoundedRectangle", { "background": "{.color}" }
+                                "Text", {
+                                    "text": "{.comment}",
+                                    "removeWhiteSpace": true,
+                                    "maxChar": 100
+                                }
                             ],
-                            "Text", {
-                                "text": "{.comment}",
-                                "bold": false,
-                                "removeWhiteSpace": true,
-                                "maxChar": 100
+                            "Spacer",
+                            "RoundedRectangle", {
+                                "color": "{.color}",
+                                "size": [25, 25],
+                                "v-align": "center",
+                                "border": ["#FF0000", 1]
                             }
                         ]
                     ]

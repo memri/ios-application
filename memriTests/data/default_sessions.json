@@ -2,8 +2,15 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentViewIndex": 0,
+            "currentViewIndex": 1,
             "views": [
+                {
+                    "queryOptions": {
+                        "query": "label",
+                        "sortProperty": "date-created",
+                        "sortAscending": 0
+                    }
+                },
                 {
                     "queryOptions": {
                         "query": "note",
