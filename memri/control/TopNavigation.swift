@@ -57,7 +57,7 @@ public struct TopNavigation: View {
                 Button(action: { self.showingTitleActions = true }) {
                     Text(main.computedView.title)
                         .font(.headline)
-                        .foregroundColor(Color(hex: "#434343"))
+                        .foregroundColor(Color(hex: "#333"))
                 }
                 .actionSheet(isPresented: $showingTitleActions) {
                     return createTitleActionSheet()
@@ -68,9 +68,6 @@ public struct TopNavigation: View {
                     
                     Action(action: ActionDescription(actionName: .showNavigation))
                         .font(Font.system(size: 20, weight: .semibold))
-                    
-    //                Action(action: main.currentSession.backButton)
-                    
                         
                     if main.currentSession.backButton != nil{
                         Button(action: {
@@ -138,7 +135,6 @@ public struct TopNavigation: View {
                 .padding(.bottom, 10)
                 .padding(.leading, 15)
                 .padding(.trailing, 15)
-//                .fixedSize()
                 .frame(height: 50, alignment: .top)
                 
                 Divider()
