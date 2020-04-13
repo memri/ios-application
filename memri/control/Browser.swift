@@ -14,11 +14,11 @@ struct Browser: View {
     
     var body: some View {
         ZStack {
-            VStack() {
+            VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
-                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
+//                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
                     self.main.currentRendererView.fullHeight()
-                }.fullHeight()
+//                }.fullHeight()
                 Search()
             }.fullHeight()
             

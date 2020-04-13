@@ -1,3 +1,4 @@
 {
-    "/general/saveSessions": true
+    "/general/saveSessions": true,
+    "/general/gui/showEditButton": false
 }

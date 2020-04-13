@@ -983,11 +983,12 @@ public class CompiledView {
         // Return last compiled session view if this is not a dynamic view
         if dynamicView.fromTemplate == nil && variables.count == 0 && lastSessionView != nil {
             
-            // TODO this is useful for the views that are the base for computing a view
-            //      but probably not good for templates without computed properties that
-            //      are added to different sessions.
+            // Return a copy of the session view
+            // TODO this can be optimized by signaling when views are used as a base in computing a view
+            let view = SessionView()
+            view.merge(lastSessionView!)
             
-            return lastSessionView!
+            return view
         }
         
         // Copy from the current view

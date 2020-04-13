@@ -21,6 +21,15 @@ struct ListRendererView: View {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
+    struct MyButtonStyle: ButtonStyle {
+
+      func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+          .background(configuration.isPressed ? Color.red : Color.blue)
+      }
+
+    }
+    
     var body: some View {
         return VStack{
             if main.computedView.resultSet.count == 0 {
@@ -67,6 +76,7 @@ struct ListRendererView: View {
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
+                    .padding(.top, 5)
                 }
             }
         }
