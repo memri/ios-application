@@ -412,23 +412,17 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "horizontalline" {
             HorizontalLine()
-                .if(from.has("size")){
-                    return $0.size(width: {let x:[CGFloat] = from.get("size")!; return x[0]}(), height: {let x:[CGFloat] = from.get("size")!; return x[1]}())
-                }
+                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "rectangle" {
             Rectangle()
-                .if(from.has("size")){
-                    return $0.size(width: {let x:[CGFloat] = from.get("size")!; return x[0]}(), height: {let x:[CGFloat] = from.get("size")!; return x[1]}())
-                }
+                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "roundedrectangle" {
             RoundedRectangle(cornerRadius: get("cornerRadius") ?? 5)
-                .if(from.has("size")){
-                    return setSize($0)
-                }
+                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "spacer" {
