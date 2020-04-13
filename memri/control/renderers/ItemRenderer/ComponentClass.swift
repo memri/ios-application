@@ -69,7 +69,7 @@ extension View {
     
 class TextComponent: ItemRendererComponent{
     
-    var property: String = ""
+    var value: String = ""
     var bold: Bool = false
     var removeWhiteSpace = false
     var maxChar = -1
@@ -80,7 +80,7 @@ class TextComponent: ItemRendererComponent{
 
     required convenience init(from decoder: Decoder) throws {
         self.init()
-        self.property = try decoder.decodeIfPresent("property") ?? self.property
+        self.value = try decoder.decodeIfPresent("value") ?? self.value
         self.bold = try decoder.decodeIfPresent("bold") ?? self.bold
         self.removeWhiteSpace = try decoder.decodeIfPresent("removeWhiteSpace") ?? self.removeWhiteSpace
     }
@@ -95,11 +95,14 @@ class TextComponent: ItemRendererComponent{
         outText = maxChar != -1 ? String(outText.prefix(maxChar)) : outText
         return outText
     }
-
     
-    override func asView(item: DataItem)-> AnyView {
+    func getValue(_ item: DataItem) -> String{
+        return item.getString(value) // TODO parse using the logic from compiledView
+    }
+    
+    override func asView(item: DataItem) -> AnyView {
         return AnyView(
-            Text(processText(text: item.getString(property)))
+            Text(processText(text: self.getValue(item)))
                 .if(bold){
                       $0.bold()
                 }

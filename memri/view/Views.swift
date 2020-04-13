@@ -790,28 +790,36 @@ public class CompiledView {
         hasSession = object["views"] != nil
         
         // Find all dynamic properties and compile them
-        func recursiveWalk( _ parsed:inout [String:Any]) throws {
+        func recursiveWalk(_ parsed:inout [String:Any]) throws {
             for (key, _) in parsed {
                 
                 // Do not parse actionStateName as it is handled at runtime (when action is executed)
-                if key == "actionStateName" || key == "itemRenderer" { continue }
+                if key == "actionStateName" { continue }
                 
-                // If its an object continue the walk to find strings to update
-                var subParsed = parsed[key] as? [String:Any]
-                if subParsed != nil {
-                    try! recursiveWalk(&subParsed!)
-                    parsed.updateValue(subParsed!, forKey: key)
+                // Turn renderDescription in a string for persistence in realm
+                else if key == "renderDescription" {
+                    parsed.updateValue(try! parseRenderDescription(parsed[key] as! [Any]), forKey: key)
                 }
-                // Update strings
-                else if let propValue = parsed[key] as? String {
                     
-                    // Compile the property for easy lookup
-                    let newValue = compileProperty(propValue)
+                // Parse rest of the json
+                else {
                     
-                    // Updated the parsed object with the new value
-                    parsed.updateValue(newValue, forKey: key)
+                    // If its an object continue the walk to find strings to update
+                    var subParsed = parsed[key] as? [String:Any]
+                    if subParsed != nil {
+                        try! recursiveWalk(&subParsed!)
+                        parsed.updateValue(subParsed!, forKey: key)
+                    }
+                    // Update strings
+                    else if let propValue = parsed[key] as? String {
+                        
+                        // Compile the property for easy lookup
+                        let newValue = compileProperty(propValue)
+                        
+                        // Updated the parsed object with the new value
+                        parsed.updateValue(newValue, forKey: key)
+                    }
                 }
-
             }
         }
         
@@ -858,6 +866,68 @@ public class CompiledView {
             // Set the new session view json
             jsonString = serialize(AnyCodable(parsed))
         }
+    }
+    
+
+// How users type it
+//    "renderDescription": [ "VStack", { "padding": 5 }, [
+//        "Text", "{.content}",
+//        "Button", { "press": {"actionName": "back"} }, ["Text", "Back"],
+//        "Button", { "press": {"actionName": "openView"} }, [
+//            "Image", {"systemName": "star.fill"}
+//        ],
+//        "Text", "{.content}"
+//    ]]
+    
+// How codable wants it
+//    "renderDescription": {
+//        "type": "vstack",
+//        "children": [
+//            {
+//                "type": "text",
+//                "property": "title",
+//                "bold": true
+//            },
+//            {
+//                "type": "text",
+//                "property": "content",
+//                "bold": false,
+//                "removeWhiteSpace": true,
+//                "maxChar": 100
+//            }
+//        ]
+//    }
+    
+    private func parseRenderDescription(_ parsed: [Any]) throws -> String {
+        var result:[Any] = []
+        
+        func walkParsed(_ parsed:[Any], _ result:inout [Any]) throws {
+            var currentItem:[String:Any] = [:]
+            
+            for item in parsed {
+                if let item = item as? String {
+                    if currentItem["type"] != nil { result.append(currentItem) }
+                    currentItem = ["type": item.lowercased()]
+                }
+                else if let item = item as? [String: Any] {
+                    currentItem.merge(item, uniquingKeysWith: { (x,y) -> Any in return x })
+                }
+                else if let item = item as? [Any] {
+                    var children:[Any] = []
+                    try! walkParsed(item, &children)
+                    currentItem["children"] = children
+                }
+                else {
+                    throw "Exception: Could not parse render description"
+                }
+            }
+            
+            if currentItem["type"] != nil { result.append(currentItem) }
+        }
+        
+        try! walkParsed(parsed, &result)
+        
+        return serialize(AnyCodable(result[0]))
     }
     
     public func compileProperty(_ expr:String) -> String {

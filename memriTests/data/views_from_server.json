@@ -17,24 +17,17 @@
                     ],
                     "press": { "actionName": "openView" },
                     "longPress": { "actionName": "select" },
-                    "itemRenderer": "{dataItem.title}",
-                    "renderDescription": {
-                        "type": "vstack",
-                        "children": [
-                            {
-                                "type": "text",
-                                "property": "title",
-                                "bold": true
-                            },
-                            {
-                                "type": "text",
-                                "property": "content",
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "Text", { "value": "title", "bold": true },
+                            "Text", {
+                                "value": "content",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
                             }
                         ]
-                    }
+                    ]
                 }
             }
         },

@@ -46,14 +46,6 @@ class Renderer: ActionDescription, ObservableObject{
     }
 }
 
-/*
-    TODO:
-    - fix search
-    - fix starring
-    - including back and restart behavior
-    - Clean up of sessionview, queryoptions, session, renderConfig, etc
-*/
-
 public class RenderConfigs: Object, Codable {
     /**
      *
@@ -117,10 +109,29 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
+    var renderDescription: ItemRendererComponent? {
+        if let itemRenderer = renderCache.get(self._renderDescription!) {
+            return itemRenderer
+        }
+        else if let description = self._renderDescription {
+            if let itemRenderer:ItemRendererComponent = unserialize(description) {
+                renderCache.set(description, itemRenderer)
+                return itemRenderer
+            }
+        }
+        
+        return nil
+    }
+    @objc dynamic var _renderDescription: String? = nil
+    
+    /**
+     *
+     */
     public func superMerge(_ renderConfig:RenderConfig) {
         self.name = renderConfig.name ?? self.name
         self.icon = renderConfig.icon ?? self.icon
         self.category = renderConfig.category ?? self.category
+        self._renderDescription = renderConfig._renderDescription ?? self._renderDescription
         
         self.items.append(objectsIn: renderConfig.items)
         self.options1.append(objectsIn: renderConfig.options1)
@@ -134,9 +145,23 @@ public class RenderConfig: Object, Codable {
         self.name = try decoder.decodeIfPresent("name") ?? self.name
         self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
         self.category = try decoder.decodeIfPresent("category") ?? self.category
+        self._renderDescription = try decoder.decodeIfPresent("renderDescription") ?? self._renderDescription
         
         decodeIntoList(decoder, "items", self.items)
         decodeIntoList(decoder, "options1", self.options1)
         decodeIntoList(decoder, "options2", self.options2)
     }
 }
+
+class RenderCache {
+    var cache:[String:ItemRendererComponent] = [:]
+    
+    public func get(_ key:String) -> ItemRendererComponent? {
+        return cache[key]
+    }
+    
+    public func set(_ key:String, _ itemRenderer: ItemRendererComponent) {
+        cache[key] = itemRenderer
+    }
+}
+let renderCache = RenderCache()
