@@ -11,32 +11,6 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-//                            VStack (alignment: .leading, spacing: 0){
-//                                Text(dataItem.getString("title"))
-//                                    .bold()
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                    .foregroundColor(Color(hex: "#333"))
-//                                    .padding(.bottom, 3)
-//                                Text(self.generatePreview(dataItem))
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                    .foregroundColor(Color(hex: "#666"))
-//                                    .font(.system(size: 14, weight: .regular, design: .default))
-//                                Rectangle()
-//                                    .size(width: 373, height: 1)
-//                                    .foregroundColor(Color(hex: "#efefef"))
-//                                    .padding(.top, 10)
-//                                    .padding(.bottom, -15)
-////                                Divider()
-////                                    .background(Color(hex: "#efefef"))
-////                                    .padding(.top, 10)
-////                                    .padding(.bottom, -5)
-//                            }
-//                            .padding(.top, 5)
-////                            .listRowBackground(Color.red)
-//                            .onTapGesture {
-//                                if let press = self.renderConfig.press {
-//                                    self.main.executeAction(press, dataItem)
-
 extension View {
     func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
         var view:AnyView = AnyView(self)
