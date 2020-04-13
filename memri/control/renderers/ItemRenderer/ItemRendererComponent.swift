@@ -47,13 +47,9 @@ class ItemRendererComponent: Decodable{
         jsonErrorHandling(decoder) {
             let container = try decoder.container(keyedBy: ComponentClassCodingKeys.self)
 
-            
             switch try container.decode(String.self, forKey: .type) {
-            case "vstack":
+            case "vstack", "hstack":
                 self.element = VStackComponent(children:
-                    try container.decode([ItemRendererComponent].self, forKey: .children))
-            case "hstack":
-                self.element = HStackComponent(children:
                     try container.decode([ItemRendererComponent].self, forKey: .children))
             case "text":
                 self.element = try TextComponent(from: decoder)

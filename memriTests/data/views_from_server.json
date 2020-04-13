@@ -46,7 +46,18 @@
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "Text", { "value": "title", "bold": true },
+                            "Text", {
+                                "value": "content",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            },
+                            "Text", { "value": "dateModified" }
+                        ]
+                    ]
                 }
             },
             "actionButton": {
@@ -162,33 +173,20 @@
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "renderDescription": {
-                        "type": "vstack",
-                        "children": [
-                            {
-                                "type": "hstack",
-                                "children": [
-                                    {
-                                        "type": "text",
-                                        "property": "action",
-                                        "bold": true
-                                    },
-                                    {
-                                        "type": "text",
-                                        "property": "date",
-                                        "bold": true
-                                    }
-                                ]
-                            },
-                            {
-                                "type": "text",
-                                "property": "contents",
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "HStack", [
+                                "Text", { "value": "action", "bold": true },
+                                "Text", { "value": "date" }
+                            ],
+                            "Text", {
+                                "value": "contents",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
                             }
                         ]
-                    }
+                    ]
                 }
             },
             "editActionButton": { "actionName": "toggleEditMode" },

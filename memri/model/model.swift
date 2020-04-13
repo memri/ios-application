@@ -20,7 +20,18 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      *
      */
     @objc dynamic var starred:Bool = false
-
+    /**
+     *
+     */
+    @objc dynamic var dateCreated:Date? = nil
+    /**
+     *
+     */
+    @objc dynamic var dateModified:Date? = nil
+    /**
+     *
+     */
+    @objc dynamic var dateAccessed:Date? = nil
     /**
      *
      */
