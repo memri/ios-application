@@ -28,6 +28,15 @@ struct ListRendererView: View {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
+    struct MyButtonStyle: ButtonStyle {
+
+      func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+          .background(configuration.isPressed ? Color.red : Color.blue)
+      }
+
+    }
+    
     var body: some View {
         return VStack{
             if main.computedView.resultSet.count == 0 {
@@ -48,7 +57,7 @@ struct ListRendererView: View {
                     List{
                     
                         ForEach(main.items) { dataItem in
-                            VStack{
+                            VStack (alignment: .leading, spacing: 0){
                                 Text(dataItem.getString("title"))
                                     .bold()
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -61,11 +70,16 @@ struct ListRendererView: View {
                                 Rectangle()
                                     .size(width: 373, height: 1)
                                     .foregroundColor(Color(hex: "#efefef"))
-                                    .padding(.top, -1)
-                                    .padding(.bottom, -9)
+                                    .padding(.top, 10)
+                                    .padding(.bottom, -15)
 //                                Divider()
 //                                    .background(Color(hex: "#efefef"))
-                            }.onTapGesture {
+//                                    .padding(.top, 10)
+//                                    .padding(.bottom, -5)
+                            }
+                            .padding(.top, 5)
+//                            .listRowBackground(Color.red)
+                            .onTapGesture {
                                 if let press = self.renderConfig.press {
                                     self.main.executeAction(press, dataItem)
                                 }
@@ -90,7 +104,7 @@ struct ListRendererView: View {
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
-                    .padding(.top, 10)
+                    .padding(.top, 5)
                 }
             }
         }

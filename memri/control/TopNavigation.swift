@@ -31,6 +31,7 @@ public struct TopNavigation: View {
                 buttons: [
                     .default(Text("Save view")) { self.toFront() },
 //                    .default(Text("Update view")) { self.toFront() }, // Only when its a saved view
+                    .default(Text("Add to Navigation")) { self.toFront() },
                     .default(Text("Duplicate view")) { self.toFront() },
 //                    .default(Text("Reset to saved view")) { self.backAsSession() }, // Only when its a saved view
                     .default(Text("Copy a link to this view")) { self.toFront() },
