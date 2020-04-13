@@ -46,7 +46,8 @@ struct ListRendererView: View {
                                         self.main.executeAction(press, dataItem)
                                     }
                                 }
-                        }.onDelete{ indexSet in
+                        }
+                        .onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet
                             self.main.items.remove(atOffsets: indexSet)

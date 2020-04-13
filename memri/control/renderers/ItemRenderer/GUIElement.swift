@@ -69,16 +69,28 @@ extension View {
                     return AnyView(self.border(Color(hex:color), width: value[1] as! CGFloat))
                 }
             }
+        case "rowinset":
+            if let value = value as? [CGFloat] {
+                return AnyView(self.listRowInsets(EdgeInsets(
+                    top: value[0],
+                    leading: value[3],
+                    bottom: value[2],
+                    trailing: value[1])))
+            }
+            else if let value = value as? CGFloat {
+                return AnyView(self.listRowInsets(EdgeInsets(top: value,
+                            leading: value, bottom: value, trailing: value)))
+            }
             
 //        case "offset":
 //            .frame(maxHeight: .infinity, alignment: .center)
         case "v-align":
             if let value = value as? Alignment {
-                return self.frame(maxHeight: .infinity, alignment: value) as! AnyView
+                return AnyView(self.frame(maxHeight: .greatestFiniteMagnitude, alignment: value))
             }
         case "h-align":
             if let value = value as? Alignment {
-                return AnyView(self.frame(maxWidth: .infinity, alignment: value))
+                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, alignment: value))
             }
             
         case "font":
@@ -139,17 +151,28 @@ public class GUIElementDescription: Decodable {
     }
     
     func parseProperty(_ key:String, _ value:Any) -> Any? {
-        if key == "alignment" || key == "v-align" || key == "h-align" {
+        if key == "alignment" {
             switch value as! String {
             case "left": return HorizontalAlignment.leading
             case "top": return VerticalAlignment.top
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
-            case "center": return key == "v-align"
-                ? VerticalAlignment.center
-                : HorizontalAlignment.center
             case "v-center": return VerticalAlignment.center
             case "h-center": return HorizontalAlignment.center
+            default: return nil
+            }
+        }
+        else if key == "v-align" || key == "h-align" {
+            switch value as! String {
+            case "left": return Alignment.leading
+            case "top": return Alignment.top
+            case "right": return Alignment.trailing
+            case "bottom": return Alignment.bottom
+            case "center": return Alignment.center
+            case "lefttop": return Alignment.topLeading
+            case "righttop": return Alignment.topTrailing
+            case "leftbottom": return Alignment.bottomLeading
+            case "rightbototm": return Alignment.bottomTrailing
             default: return nil
             }
         }
@@ -324,7 +347,8 @@ public struct GUIElementInstance: View {
         
         return view
             .size(width: x[0], height: x[1])
-            .frame(maxWidth: x[0], maxHeight: x[1]) as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
+            .frame(maxWidth: x[0], maxHeight: x[1])
+                as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
     }
     
     // TODO can this be optimized for performance??

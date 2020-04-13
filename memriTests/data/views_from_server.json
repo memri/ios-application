@@ -217,30 +217,32 @@
                     "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
-                        "HStack", {
-                            "alignment": "bottom",
-                            "padding": 5,
-                            "border": ["#FF0000", 1]
-                        }, [
-                            "VStack", {
-                                "alignment": "left",
-                                "spacing": 5,
-                                "border": ["#FF0000", 1]
+                        "VStack", { "rowinset": [0, 20, 0, 20] }, [
+                            "HStack", {
+                                "alignment": "bottom",
+                                "padding": 5
                             }, [
-                                "Text", { "text": "{.name}", "bold": true },
-                                "Text", {
-                                    "text": "{.comment}",
-                                    "removeWhiteSpace": true,
-                                    "maxChar": 100
+                                "VStack", {
+                                    "alignment": "left",
+                                    "spacing": 5
+                                }, [
+                                    "Text", { "text": "{.name}", "bold": true },
+                                    "Text", {
+                                        "text": "{.comment}",
+                                        "removeWhiteSpace": true,
+                                        "maxChar": 100
+                                    }
+                                ],
+                                "Spacer",
+                                "RoundedRectangle", {
+                                    "color": "{.color}",
+                                    "size": [25, 25],
+                                    "v-align": "center",
+                                    "padding": [0,10,0,0]
                                 }
                             ],
-                            "Spacer",
-                            "RoundedRectangle", {
-                                "color": "{.color}",
-                                "size": [25, 25],
-                                "v-align": "center",
-                                "border": ["#FF0000", 1]
-                            }
+                            "Divider", { "padding": [5, 0, 5, 0] }
+
                         ]
                     ]
                 }
