@@ -55,7 +55,7 @@
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
                             },
-                            "Text", { "text": "dateModified" }
+                            "Text", { "text": "{.dateModified}" }
                         ]
                     ]
                 }

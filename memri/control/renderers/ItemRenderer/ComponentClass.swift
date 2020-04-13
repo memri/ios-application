@@ -82,58 +82,54 @@ public struct GUIElementInstance: View {
     
     @ViewBuilder
     public var body: some View {
-        if from.children.count > 0 {
-            if from.type == "vstack" {
-                VStack(alignment: .leading, spacing: get("spacing") ?? 0) { self.childrenAsView }
-                    .setProperties(from.properties)
-            }
-            else if from.type == "hstack" {
-                HStack(alignment: .top, spacing: get("spacing") ?? 0) { self.childrenAsView }
-                    .setProperties(from.properties)
-            }
-            else if from.type == "zstack" {
-                ZStack(alignment: .top) { self.childrenAsView }
-                    .setProperties(from.properties)
-            }
-            else if from.type == "button" {
-                Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
-                    self.childrenAsView
-                }
+        if from.type == "vstack" {
+            VStack(alignment: .leading, spacing: get("spacing") ?? 0) { self.childrenAsView }
                 .setProperties(from.properties)
+        }
+        else if from.type == "hstack" {
+            HStack(alignment: .top, spacing: get("spacing") ?? 0) { self.childrenAsView }
+                .setProperties(from.properties)
+        }
+        else if from.type == "zstack" {
+            ZStack(alignment: .top) { self.childrenAsView }
+                .setProperties(from.properties)
+        }
+        else if from.type == "button" {
+            Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
+                self.childrenAsView
+            }
+            .setProperties(from.properties)
+        }
+        if from.type == "text" {
+            Text(from.processText(get("text") ?? ""))
+                .setProperties(from.properties)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        else if from.type == "textfield" {
+        }
+        else if from.type == "securefield" {
+        }
+        else if from.type == "action" {
+            Action(action: get("press"))
+//            .font(Font.system(size: 19, weight: .semibold))
+        }
+        else if from.type == "image" {
+            if has("systemName") {
+                Image(systemName: get("systemName") ?? "exclamationmark.bubble")
+                    .fixedSize()
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .setProperties(from.properties)
+            }
+            else { // assuming image property
+                Image(uiImage: get("image") ?? UIImage())
+                    .fixedSize()
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 5)
+                    .setProperties(from.properties)
             }
         }
-        else {
-            if from.type == "text" {
-                Text(from.processText(get("text") ?? ""))
-                    .setProperties(from.properties)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            else if from.type == "textfield" {
-            }
-            else if from.type == "securefield" {
-            }
-            else if from.type == "action" {
-                Action(action: get("press"))
-//                    .font(Font.system(size: 19, weight: .semibold))
-            }
-            else if from.type == "image" {
-                if has("systemName") {
-                    Image(systemName: get("systemName") ?? "exclamationmark.bubble")
-                        .fixedSize()
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 5)
-                        .setProperties(from.properties)
-                }
-                else { // assuming image property
-                    Image(uiImage: get("image") ?? UIImage())
-                        .fixedSize()
-                        .padding(.horizontal, 5)
-                        .padding(.vertical, 5)
-                        .setProperties(from.properties)
-                }
-            }
-            else if from.type == "textfield" {
-            }
+        else if from.type == "textfield" {
         }
     }
     
