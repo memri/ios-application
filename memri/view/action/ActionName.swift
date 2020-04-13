@@ -23,8 +23,8 @@ extension String {
 }
 
 public enum ActionName: String, Codable {
-    case back, add, openView, openViewByName, toggleEditMode, toggleFilterPanel, star, showStarred,
-        showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
+    case back, add, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
+        star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, noop
@@ -120,7 +120,7 @@ public enum ActionName: String, Codable {
     
     var opensView: Bool {
         switch self {
-        case .showStarred, .openView, .openViewByName:
+        case .showStarred, .openView, .openViewByName, .openDynamicView:
             return true
         default:
             return false
@@ -158,7 +158,7 @@ public enum ActionName: String, Codable {
         switch self {
         case .add, .back, .toggleEditMode, .showNavigation, .showSessionSwitcher:
             return Color(hex: "#434343").uiColor()
-        case .openView, .openViewByName, .toggleFilterPanel, .star,
+        case .openView, .openDynamicView, .openViewByName, .toggleFilterPanel, .star,
              .showStarred, .showContextPane, .showOverlay, .share,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
              .starredNotes, .allNotes, .delete, .select, .selectAll, .unselectAll, .exampleUnpack:

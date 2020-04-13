@@ -48,7 +48,7 @@ class HStackComponent: ItemRendererComponent{
     override func asView(item: DataItem)-> AnyView {
         return AnyView(
                 HStack{
-                    ForEach(0..<self.children.count ){ index in
+                    ForEach(0..<self.children.count){ index in
                         self.children[index].asView(item: item)
                     }
                 }
@@ -65,10 +65,8 @@ extension View {
         }
     }
 }
-    
-    
+        
 class TextComponent: ItemRendererComponent{
-    
     var value: String = ""
     var bold: Bool = false
     var removeWhiteSpace = false
@@ -107,9 +105,53 @@ class TextComponent: ItemRendererComponent{
                       $0.bold()
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-
         )
     }
+}
+
+class RoundedRectangleComponent: ItemRendererComponent{
+    var cornerRadius: CGFloat = 5
+    var background: Color = Color.white
     
+    private enum CodingKeys: String, CodingKey {
+        case cornerRadius, background
+    }
+
+    required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        self.cornerRadius = try decoder.decodeIfPresent("cornerRadius") ?? self.cornerRadius
+        
+        if let bg:String = try decoder.decodeIfPresent("background") {
+            self.background = Color(hex: bg)
+        }
+    }
+    
+    func removeWhiteSpace(text: String) -> String{
+        return text.replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
+    }
+    
+    func getValue(_ item: DataItem) -> String{
+        return ""
+    }
+    
+    override func asView(item: DataItem) -> AnyView {
+        return AnyView(
+            RoundedRectangle(cornerRadius: cornerRadius)
+                
+//                .frame(maxWidth: .infinity, alignment: .leading)
+        )
+    }
+}
+
+class SpacerComponent: ItemRendererComponent{
+    required convenience init(from decoder: Decoder) throws {
+        self.init()
+    }
+    
+    override func asView(item: DataItem) -> AnyView {
+        return AnyView(
+            Spacer()
+        )
+    }
 }

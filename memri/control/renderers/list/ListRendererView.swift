@@ -39,16 +39,13 @@ struct ListRendererView: View {
             else {
                 NavigationView {
                     List{
-                    
                         ForEach(main.items) { dataItem in
-                            VStack{
-                                ItemRenderer(baseComponent: self.renderConfig.renderDescription,
-                                             item: dataItem)
-                            }.onTapGesture {
-                                if let press = self.renderConfig.press {
-                                    self.main.executeAction(press, dataItem)
+                            self.renderConfig.render(dataItem)
+                                .onTapGesture {
+                                    if let press = self.renderConfig.press {
+                                        self.main.executeAction(press, dataItem)
+                                    }
                                 }
-                            }
                         }.onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet

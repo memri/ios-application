@@ -213,11 +213,12 @@
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
                             "HStack", [
-                                "Text", { "value": "action", "bold": true },
-                                "Text", { "value": "date" }
+                                "Text", { "value": "name", "bold": true },
+                                "Spacer",
+                                "RoundedRectangle", { "background": "{.color}" }
                             ],
                             "Text", {
-                                "value": "contents",
+                                "value": "comment",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100

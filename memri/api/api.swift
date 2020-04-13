@@ -157,14 +157,17 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
-        if query.query!.starts(with: "0xNEW") {
+        if query.query!.contains("0xNEW") {
             callback("nothing to do", nil)
             return
         }
-        if query.query!.starts(with: "0x") {
-            callback(nil, try! DataItem.fromJSONFile(query.query!))
+        
+        let matches = query.query!.match(#"^(\w+) AND uid = '(.*)'$"#)
+        if matches.count == 3 {
+            callback(nil, try! DataItem.fromJSONFile("\(matches[1]).\(matches[2])"))
             return
         }
+        
         if query.query!.prefix(4) == "note" {
             callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
             return

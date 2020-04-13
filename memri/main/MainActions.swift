@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 extension Main {
     
@@ -173,7 +174,8 @@ extension Main {
         let view = SessionView()
         
         // Set the query options to load the item
-        view.queryOptions!.query = item.getString("uid")
+        let primKey = DataItemFamily(rawValue: item.type)!.getPrimaryKey()
+        view.queryOptions!.query = "\(item.type) AND \(primKey) = '\(item.getString(primKey))'"
         
         // Open the view
         self.openView(view)

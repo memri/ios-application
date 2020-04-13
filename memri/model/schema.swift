@@ -15,8 +15,16 @@ enum DataItemFamily: String, ClassFamily {
     case note = "note"
     case logitem = "logitem"
     case label = "label"
+    case sessions = "sessions"
+    case session = "session"
+    case sessionview = "sessionview"
+    case dynamicview = "dynamicview"
 
     static var discriminator: Discriminator = .type
+    
+    func getPrimaryKey() -> String {
+        return self.getType().primaryKey() ?? ""
+    }
 
     func getType() -> AnyObject.Type {
         switch self {
@@ -26,6 +34,14 @@ enum DataItemFamily: String, ClassFamily {
             return LogItem.self
         case .label:
             return Label.self
+        case .sessions:
+            return Sessions.self
+        case .session:
+            return Session.self
+        case .sessionview:
+            return SessionView.self
+        case .dynamicview:
+            return DynamicView.self
         }
     }
 }

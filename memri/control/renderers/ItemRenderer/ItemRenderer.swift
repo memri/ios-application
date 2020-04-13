@@ -8,12 +8,12 @@
 
 import SwiftUI
 
-struct ItemRenderer: View, Decodable {
+public struct ItemRenderer: View, Decodable {
     var baseComponent: ItemRendererComponent? = nil
     
     @ObservedObject var item: DataItem = Note(value: ["content": "test",
                                                       "title": "test"])
-    var body: some View {
+    public var body: some View {
         Group{
             if baseComponent != nil {
                 baseComponent!.asView(item: item)

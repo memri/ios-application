@@ -28,6 +28,34 @@ extension String: Error {
         // Return the hash string 
         return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
+    
+    func test(_ pattern:String, _ options:String = "i") -> Bool {
+        return match(pattern, options).count > 0
+    }
+    
+    // let pattern = #"\{([^\.]+).(.*)\}"#
+    func match(_ pattern:String, _ options:String = "i") -> [String] {
+        var nsOptions:NSRegularExpression.Options = NSRegularExpression.Options()
+        for chr in options {
+            if chr == "i" { nsOptions.update(with: .caseInsensitive) }
+        }
+        
+        let regex = try! NSRegularExpression(pattern: pattern, options: nsOptions)
+        var matches:[String] = []
+        
+        // Weird complex way to execute a regex
+        let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
+        regex.enumerateMatches(in: self, options: [], range: nsrange) { (match, _, stop) in
+            guard let match = match else { return }
+
+            for i in 0..<match.numberOfRanges {
+                let rangeObject = Range(match.range(at: i), in: self)!
+                matches.append(String(self[rangeObject]))
+            }
+        }
+        
+        return matches
+    }
 }
 
 func unserialize<T:Decodable>(_ s:String) -> T {

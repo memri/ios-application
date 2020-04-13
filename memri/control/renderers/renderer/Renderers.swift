@@ -114,6 +114,8 @@ public class RenderConfig: Object, Codable {
             return itemRenderer
         }
         else if let description = self._renderDescription {
+//            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
+            
             if let itemRenderer:ItemRendererComponent = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
@@ -123,6 +125,18 @@ public class RenderConfig: Object, Codable {
         return nil
     }
     @objc dynamic var _renderDescription: String? = nil
+    
+    /**
+     *
+     */
+    public func render(_ dataItem:DataItem) -> ItemRenderer {
+        if _renderDescription == nil {
+            return ItemRenderer()
+        }
+        else {
+            return ItemRenderer(baseComponent: self.renderDescription, item: dataItem)
+        }
+    }
     
     /**
      *

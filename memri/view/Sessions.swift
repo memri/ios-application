@@ -132,7 +132,7 @@ public class Sessions: DataItem {
         }
         
         // Activate this session to make sure its stored in realm
-        if let fromCache = realm.objects(Sessions.self).filter("uid = '\(self.uid!)'").first {
+        if let fromCache = realm.object(ofType: Sessions.self, forPrimaryKey: self.uid) {
             // Sync with the cached version
             try! self.merge(fromCache)
             

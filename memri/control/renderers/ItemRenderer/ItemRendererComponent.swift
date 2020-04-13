@@ -13,6 +13,10 @@ enum ItemRendererComponentFamily: String, ClassFamily {
     case VStack = "VStack"
     case HStack = "HStack"
     case Text = "Text"
+//    case Spacer = "Spacer"
+//    case Circle = "Circle"
+//    case Rectangle = "Rectangle"
+//    case RoundedRectangle = "RoundedRectangle"
 
     static var discriminator: Discriminator = .type
 
@@ -24,6 +28,14 @@ enum ItemRendererComponentFamily: String, ClassFamily {
             return HStackComponent.self
         case .Text:
             return TextComponent.self
+//        case .Spacer:
+//            return SpacerComponent.self
+//        case .Circle:
+//            return CircleComponent.self
+//        case .Rectangle:
+//            return RectangleComponent.self
+//        case .RoundedRectangle:
+//            return RoundedRectangleComponent.self
         }
     }
 }
