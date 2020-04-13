@@ -81,9 +81,10 @@ extension View {
                 return AnyView(self.listRowInsets(EdgeInsets(top: value,
                             leading: value, bottom: value, trailing: value)))
             }
-            
-//        case "offset":
-//            .frame(maxHeight: .infinity, alignment: .center)
+        case "offset":
+            if let value = value as? [CGFloat] {
+                return AnyView(self.offset(x: value[0], y: value[1]))
+            }
         case "v-align":
             if let value = value as? Alignment {
                 return AnyView(self.frame(maxHeight: .greatestFiniteMagnitude, alignment: value))
