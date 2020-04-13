@@ -291,10 +291,12 @@ public class Cache {
     public func duplicate(_ item:DataItem) -> DataItem {
         let type = DataItemFamily(rawValue: item.type)!
         let T = DataItemFamily.getType(type) as! () -> DataItem.Type
-        var copy = T().init()
+        let cls = T()
+        var copy = cls.init()
         let properties = item.objectSchema.properties
+        let primaryKey = cls.primaryKey()
         for prop in properties {
-            if prop.name == "uid" { continue }
+            if prop.name == primaryKey { continue }
             copy[prop.name] = item[prop.name]
         }
         return copy

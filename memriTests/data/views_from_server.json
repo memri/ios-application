@@ -37,14 +37,14 @@
             "title": "All Notes",
             "queryOptions": {
                 "query": "note",
-                "sortProperty": "date-modified",
+                "sortProperty": "dateModified",
                 "sortAscending": 0
             },
             "emptyResultText": "There are no notes here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "date-created",
+                    "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
@@ -79,7 +79,7 @@
             "rendererName": "richTextEditor",
             "renderConfigs": {
                 "richtexteditor": {
-                    "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
+                    "editorRenderer": "{VBox(Textbox(.title), Label(.dateModified), RichTextbox(.content))}"
                 }
             },
             "editActionButton": { "actionName": "toggleEditMode" },
@@ -92,12 +92,12 @@
                         "rendererName": "timeline",
                         "renderConfigs": {
                             "timeline": {
-                                "timeProperty": "date-created"
+                                "timeProperty": "dateCreated"
                             }
                         },
                         "queryOptions": {
                             "query": "data:Log appliesTo:{.id}",
-                            "sortProperty": "date-created",
+                            "sortProperty": "dateCreated",
                             "sortAscending": 0
                         }
                     }]
@@ -133,12 +133,12 @@
                         "rendererName": "timeline",
                         "renderConfigs": {
                             "timeline": {
-                                "timeProperty": "date-created"
+                                "timeProperty": "dateCreated"
                             }
                         },
                         "queryOptions": {
                             "query": "type:logitem appliesTo:{.id}",
-                            "sortProperty": "date-created",
+                            "sortProperty": "dateCreated",
                             "sortAscending": 0
                         }
                     }]
@@ -164,14 +164,14 @@
             "title": "All Log Entries",
             "queryOptions": {
                 "query": "logitem",
-                "sortProperty": "date-modified",
+                "sortProperty": "dateModified",
                 "sortAscending": 0
             },
             "emptyResultText": "There are no log entries here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "date-created",
+                    "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
@@ -188,6 +188,50 @@
                         ]
                     ]
                 }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        
+        "{[type:label]}": {
+            "name": "all-labels",
+            "title": "All Labels",
+            "queryOptions": {
+                "query": "label",
+                "sortProperty": "dateAccessed",
+                "sortAscending": 0
+            },
+            "emptyResultText": "You have not added any labels yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "sortProperty": "dateCreated",
+                    "sortAscending": 0,
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "HStack", [
+                                "Text", { "value": "action", "bold": true },
+                                "Text", { "value": "date" }
+                            ],
+                            "Text", {
+                                "value": "contents",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            }
+                        ]
+                    ]
+                }
+            },
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "label",
+                    "name": "new label"
+                }]
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
