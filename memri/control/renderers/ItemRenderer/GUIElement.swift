@@ -435,7 +435,7 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "action" {
             Action(action: get("press"))
-//            .font(Font.system(size: 19, weight: .semibold))
+                .setProperties(from.properties, self.item)
         }
         else if from.type == "image" {
             if has("systemName") {
