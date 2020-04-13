@@ -53,7 +53,11 @@
                                 "text": "{.content}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
-                                "maxChar": 100
+                                "maxChar": 100,
+                                "shadow": ["#000", 0.5, 5.5, 5],
+                                "padding": [10, 5, 20, 5],
+                                "color": "#666",
+                                "font": [14, "regular"]
                             },
                             "Text", { "text": "{.dateModified}" }
                         ]
