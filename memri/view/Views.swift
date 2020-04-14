@@ -453,12 +453,12 @@ public class SessionView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
+        let items: SessionView = try! MemriJSONDecoder.decode(SessionView.self, from: jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> SessionView {
-        let view:SessionView = try JSONDecoder().decode(SessionView.self, from: Data(json.utf8))
+        let view:SessionView = try MemriJSONDecoder.decode(SessionView.self, from: Data(json.utf8))
         return view
     }
 }
@@ -719,12 +719,12 @@ public class DynamicView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> DynamicView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: jsonData)
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: jsonData)
         return view
     }
     
     public class func fromJSONString(_ json: String) throws -> DynamicView {
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: Data(json.utf8))
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: Data(json.utf8))
         return view
     }
 }

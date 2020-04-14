@@ -296,12 +296,32 @@ public class GUIElementDescription: Decodable {
         return nil
     }
     
+    private class func formatDate(_ date:Date) -> String{
+        let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
+        
+        // Compare against 36 hours ago
+        if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129600)) < 0 {
+            let dateFormatter = DateFormatter()
+            
+            dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+            dateFormatter.locale = Locale(identifier: "en_US")
+            dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+            
+            return dateFormatter.string(from: date)
+        }
+        else {
+            return date.timestampString ?? ""
+        }
+    }
+    
     private class func traverseProperties(_ item:DataItem, _ propParts:[String]) -> String {
         // Loop through the properties and fetch each
         var value:Any? = item
         for i in 0..<propParts.count {
             value = (value as! Object)[String(propParts[i])]
         }
+        
+        if let date = value as? Date { value = formatDate(date) }
         
         // Return the value as a string
         return value as? String ?? ""
@@ -316,7 +336,7 @@ public class GUIElementDescription: Decodable {
     
     public static func fromJSONFile(_ file: String, ext: String = "json") throws -> GUIElementDescription {
         let jsonData = try jsonDataFromFile(file, ext)
-        let comp: GUIElementDescription = try! JSONDecoder().decode(GUIElementDescription.self, from: jsonData)
+        let comp: GUIElementDescription = try! MemriJSONDecoder.decode(GUIElementDescription.self, from: jsonData)
         return comp
     }
 }

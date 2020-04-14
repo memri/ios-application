@@ -58,14 +58,39 @@ extension String: Error {
     }
 }
 
+extension Date {
+   var timestampString: String? {
+      let formatter = DateComponentsFormatter()
+      formatter.unitsStyle = .full
+      formatter.maximumUnitCount = 1
+      formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
+
+      guard let timeString = formatter.string(from: self, to: Date()) else {
+           return nil
+      }
+
+      let formatString = NSLocalizedString("%@ ago", comment: "")
+      return String(format: formatString, timeString)
+   }
+}
+
+let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder) in
+    var encoder = JSONEncoder()
+    encoder.dateEncodingStrategy = .iso8601
+    var decoder = JSONDecoder()
+    decoder.dateDecodingStrategy = .iso8601
+    
+    return (encoder, decoder)
+}()
+
 func unserialize<T:Decodable>(_ s:String) -> T {
     let data = s.data(using: .utf8)!
-    let output:T = try! JSONDecoder().decode(T.self, from: data)
+    let output:T = try! MemriJSONDecoder.decode(T.self, from: data)
     return output as T
 }
 
 func serialize(_ a:AnyCodable) -> String {
-    let data = try! JSONEncoder().encode(a)
+    let data = try! MemriJSONEncoder.encode(a)
     let string = String(data: data, encoding: .utf8)!
     return string
 }
@@ -146,7 +171,7 @@ func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
 }
 
 func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
-    let encoder = JSONEncoder()
+    let encoder = MemriJSONEncoder
     encoder.outputFormatting = .prettyPrinted // for debugging purpose
 
     var json:String? = nil

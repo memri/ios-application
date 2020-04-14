@@ -63,7 +63,7 @@ public class Settings {
         
         // Load default settings from disk
         let jsonData = try! jsonDataFromFile("default_settings")
-        let values = try! JSONDecoder().decode([String:AnyCodable].self, from: jsonData)
+        let values = try! MemriJSONDecoder.decode([String:AnyCodable].self, from: jsonData)
         for (key, value) in values {
             defaults.set(key, value)
         }
@@ -128,6 +128,15 @@ public class Settings {
         let (collection, query) = parse(path)
         collection!.set(query, value)
     }
+    
+    
+    public class func get<T:Decodable>(_ path:String) -> T? {
+        return globalSettings!.get(path)
+    }
+    
+    public class func set(_ path:String, _ value:AnyCodable) -> Void {
+        return globalSettings!.set(path, value)
+    }
 }
 
 class SettingCollection:Object {
@@ -187,3 +196,5 @@ class Setting:Object {
         return "key"
     }
 }
+
+var globalSettings:Settings? = nil

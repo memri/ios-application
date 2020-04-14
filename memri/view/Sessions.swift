@@ -204,12 +204,12 @@ public class Sessions: DataItem {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
         let jsonData = try jsonDataFromFile(file, ext)
-        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: jsonData)
+        let sessions:Sessions = try MemriJSONDecoder.decode(Sessions.self, from: jsonData)
         return sessions
     }
     
     public class func fromJSONString(_ json: String) throws -> Sessions {
-        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: Data(json.utf8))
+        let sessions:Sessions = try MemriJSONDecoder.decode(Sessions.self, from: Data(json.utf8))
         return sessions
     }
 }
@@ -370,12 +370,12 @@ public class Session: DataItem {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
         let jsonData = try jsonDataFromFile(file, ext)
-        let session:Session = try JSONDecoder().decode(Session.self, from: jsonData)
+        let session:Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)
         return session
     }
     
     public class func fromJSONString(_ json: String) throws -> Session {
-        let session:Session = try JSONDecoder().decode(Session.self, from: Data(json.utf8))
+        let session:Session = try MemriJSONDecoder.decode(Session.self, from: Data(json.utf8))
         return session
     }
 

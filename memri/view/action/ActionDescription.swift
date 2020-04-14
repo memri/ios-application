@@ -155,7 +155,7 @@ public class ActionDescription: Object, Codable, Identifiable {
         print("Decoding: \(path)")
         
         // Create encoder for serialization
-        let encoder = JSONEncoder()
+        let encoder = MemriJSONEncoder
         
         func addArgument<T:Encodable>(_ item:T){
             
@@ -220,7 +220,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     
     public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
         let jsonData = try jsonDataFromFile(file, ext)
-        let description: ActionDescription = try! JSONDecoder().decode(ActionDescription.self, from: jsonData)
+        let description: ActionDescription = try! MemriJSONDecoder.decode(ActionDescription.self, from: jsonData)
         return description
     }
     

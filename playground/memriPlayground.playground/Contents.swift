@@ -3,53 +3,20 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-var collection: [String:Any] = [:]
+let x = Date()
+let y = "\"2020-03-10T11:11:11Z\""
 
-//public func get3<T:Decodable>(_ path:String) -> T? {
-//    return get2(path) as! T?
-//}
+let decoder = JSONDecoder()
+decoder.dateDecodingStrategy = .iso8601
 
-public func get2<T:Decodable>(_ path:String) -> T {
-    return get1(path)! as T
-//    return x
-}
+let encoder = JSONEncoder()
+encoder.dateEncodingStrategy = .iso8601
 
-public func get1<T:Decodable>(_ path:String) -> T? {
-    return collection[path] as! T?
-}
+let data = try! encoder.encode(x)
+let string = String(data: data, encoding: .utf8)!
 
-public func set(_ path:String, _ value:Any) -> Void {
-    collection[path] = value
-}
+print(x.description)
+print(string)
 
-set("test", true)
-var x:Bool = get1("test")!
-print(x)
-var y:Bool = get2("test")!
-print(y)
-
-
-// PROBLEM STATE
-//
-//public func get3<T:Decodable>(_ path:String) -> T? {
-//    return get2(path) as! T?
-//}
-//
-//public func get2<T:Decodable>(_ path:String) -> T? {
-//    return get1(path) as! T?
-//}
-//
-//public func get1<T:Decodable>(_ path:String) -> T? {
-//    return collection[path] as! T?
-//}
-//
-//public func set(_ path:String, _ value:Any) -> Void {
-//    collection[path] = value
-//}
-//
-//set("test", true)
-//var x:Bool = get1("test")!
-//print(x)
-//var y:Bool = get3("test")!
-//print(y)
-
+let d:Date = try! decoder.decode(Date.self, from: y.data(using: .utf8)!)
+print(d.description)
