@@ -230,10 +230,10 @@
                     "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "rowInset": [0, 20, 0, 20] }, [
+                        "VStack", { "rowInset": [7, 20, -7, 20] }, [
                             "HStack", {
                                 "alignment": "bottom",
-                                "padding": 5
+                                "padding": [5, 0, 5, 0]
                             }, [
                                 "VStack", {
                                     "alignment": "left",

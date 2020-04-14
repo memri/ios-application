@@ -122,9 +122,8 @@ extension View {
         
         return AnyView(self)
     }
-
-//   // Example: .if(bold){ $0.bold() }
-   func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
+    
+    func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
         if conditional {
             return AnyView(content(self))
         } else {
@@ -133,6 +132,15 @@ extension View {
     }
 }
 
+extension Text {
+    func `if`(_ conditional: Bool, content: (Self) -> Text) -> Text {
+        if conditional {
+            return content(self)
+        } else {
+            return self
+        }
+    }
+}
 
 public class GUIElementDescription: Decodable {
     var type: String = ""
@@ -400,7 +408,10 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "text" {
             Text(from.processText(get("text") ?? "[nil]"))
-                .if(from.getBool("bold")){ $0.bold() }
+                .if(from.has("bold")){ $0.bold() }
+                .if(from.has("italic")){ $0.italic() }
+                .if(from.has("underline")){ $0.underline() }
+                .if(from.has("strikethrough")){ $0.strikethrough() }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "textfield" {
