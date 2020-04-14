@@ -264,7 +264,7 @@
                     "renderDescription": [
                         "VStack", { "rowInset": [7, 20, -7, 20] }, [
                             "HStack", {
-                                "alignment": "bottom",
+                                "alignment": "center",
                                 "padding": [5, 0, 5, 0]
                             }, [
                                 "VStack", {
@@ -304,6 +304,7 @@
                             }, [
                                 "HStack", {
                                     "color": "#FFF",
+                                    "cornerRadius": 5,
                                     "background": "{.color}"
                                 }, [
                                     "Spacer",
