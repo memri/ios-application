@@ -6,16 +6,12 @@
             "views": [
                 {
                     "queryOptions": {
-                        "query": "label",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                        "query": "label"
                     }
                 },
                 {
                     "queryOptions": {
-                        "query": "note",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                        "query": "note"
                     }
                 }
             ]

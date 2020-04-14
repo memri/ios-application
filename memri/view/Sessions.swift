@@ -15,6 +15,10 @@ public class Sessions: DataItem {
     /**
      *
      */
+    override var type:String { "sessions" }
+    /**
+     *
+     */
     @objc dynamic var currentSessionIndex: Int = 0
     /**
      *
@@ -35,10 +39,6 @@ public class Sessions: DataItem {
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
-    
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -69,12 +69,12 @@ public class Sessions: DataItem {
     private func postInit(){
         for session in sessions {
             decorate(session)
+            session.postInit()
         }
     }
     
     private func decorate(_ session:Session) {
         if realm != nil {
-        
             rlmTokens.append(session.observe({ (objectChange) in
                 if case .change = objectChange {
                     self.objectWillChange.send()
@@ -85,7 +85,7 @@ public class Sessions: DataItem {
     
     private func fetchUID(_ realm:Realm){
         // When the uid is not yet set
-        if self.uid == nil {
+        if self.uid.contains("0xNEW") {
             
             // Fetch device name
             let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
@@ -99,10 +99,6 @@ public class Sessions: DataItem {
     
     public func setCurrentSession(_ session:Session) {
         try! realm!.write {
-            
-            if session.uid == nil {
-                session.uid = DataItem.generateUID()
-            }
             
             if let index = sessions.firstIndex(of: session) {
                 sessions.remove(at: index)
@@ -218,6 +214,10 @@ public class Session: DataItem {
     /**
      *
      */
+    override var type:String { "session" }
+    /**
+     *
+     */
     @objc dynamic var currentViewIndex: Int = 0
     /**
      *
@@ -262,10 +262,6 @@ public class Session: DataItem {
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
     
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
-
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
             return ActionDescription(actionName: .back)
@@ -291,9 +287,9 @@ public class Session: DataItem {
             decodeIntoList(decoder, "views", self.views)
             
             try! super.superDecode(from: decoder)
-            
-            if uid == nil { uid = DataItem.generateUID() }
         }
+        
+//        self.postInit()
     }
     
     required init() {
@@ -303,11 +299,11 @@ public class Session: DataItem {
     }
     
     public func postInit(){
-        for view in views{
-            decorate(view)
-        }
-        
         if realm != nil {
+            for view in views{
+                decorate(view)
+            }
+            
             rlmTokens.append(self.observe({ (objectChange) in
                 if case .change = objectChange {
                     self.objectWillChange.send()
@@ -317,6 +313,15 @@ public class Session: DataItem {
     }
     
     private func decorate(_ view:SessionView) {
+        // Set the .session property on views for easy querying
+        if view.session == nil {
+            if let realm = realm, !realm.isInWriteTransaction {
+                try! realm.write { view.session = self }
+            }
+            else { view.session = self }
+        }
+        
+        // Observe and process changes for UI updates
         rlmTokens.append(view.observe({ (objectChange) in
             if case .change = objectChange {
                 self.objectWillChange.send()

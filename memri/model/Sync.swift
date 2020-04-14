@@ -84,7 +84,6 @@ class Sync {
         logitem.contents = String(data: data, encoding: .utf8) ?? ""
         logitem.action = "query"
         logitem.date = Date()
-        logitem.uid = DataItem.generateUID()
         
         // Set syncstate to "fetch" in order to get priority treatment for querying
         logitem.syncState?.actionNeeded = "fetch"

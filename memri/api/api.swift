@@ -14,11 +14,10 @@ public class QueryOptions: Object, Codable {
     @objc dynamic var sortProperty: String? = nil
     /**
      * Retrieves whether the sort direction
-     *   -1 no sorting is applied
-     *    0 sort descending
-     *    1 sort ascending
+     *    false sort descending
+     *    true sort ascending
      */
-    let sortAscending = RealmOptional<Int>()
+    let sortAscending = RealmOptional<Bool>()
     /**
      * Retrieves the number of items per page
      */
@@ -37,7 +36,7 @@ public class QueryOptions: Object, Codable {
         result.append((self.query ?? "").sha256())
         result.append(self.sortProperty ?? "")
         
-        let sortAsc = self.sortAscending.value ?? -1
+        let sortAsc = self.sortAscending.value ?? true
         result.append(String(sortAsc))
             
         return result.joined(separator: ":")
@@ -67,7 +66,7 @@ public class QueryOptions: Object, Codable {
     public func merge(_ queryOptions:QueryOptions) {
         self.query = queryOptions.query ?? self.query ?? nil
         self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? ""
-        self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? -1
+        self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? true
         self.pageCount.value = queryOptions.pageCount.value ?? self.pageCount.value ?? 0
         self.pageIndex.value = queryOptions.pageIndex.value ?? self.pageIndex.value ?? 0
     }

@@ -168,6 +168,9 @@ extension Main {
         // Add view to session
         session.addView(view)
         
+        // Set accessed date to now
+        try! realm.write { view.dateAccessed = Date() }
+        
         // Recompute view
         scheduleComputeView()
     }

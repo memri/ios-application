@@ -231,7 +231,7 @@ public class GUIElementDescription: Decodable {
     
     func compile(_ expr: String) -> Any {
         // We'll use this regular expression to match the name of the object and property
-        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*.[^\}]*)\})?)"#
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.[^\}]*)\})?)"#
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
         var result:[Any] = []
@@ -259,6 +259,12 @@ public class GUIElementDescription: Decodable {
                     
                     if searchPath[0] == "dataItem" {
                         searchPath.remove(at: 0)
+                    }
+                    
+                    // Detecting functions (could be more elegant) // TODO
+                    if let last = searchPath.last, last.last == ")" {
+                        searchPath[searchPath.count - 1] = "functions"
+                        searchPath.append(String(last.prefix(last.count - 2)))
                     }
                     
                     // Add to the result for future fast parsing
@@ -296,21 +302,26 @@ public class GUIElementDescription: Decodable {
         return nil
     }
     
-    private class func formatDate(_ date:Date) -> String{
+    private class func formatDate(_ date:Date?) -> String{
         let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
         
-        // Compare against 36 hours ago
-        if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129600)) < 0 {
-            let dateFormatter = DateFormatter()
-            
-            dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
-            dateFormatter.locale = Locale(identifier: "en_US")
-            dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
-            
-            return dateFormatter.string(from: date)
+        if let date = date {
+            // Compare against 36 hours ago
+            if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129600)) < 0 {
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.locale = Locale(identifier: "en_US")
+                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                
+                return dateFormatter.string(from: date)
+            }
+            else {
+                return date.timestampString ?? ""
+            }
         }
         else {
-            return date.timestampString ?? ""
+            return "never"
         }
     }
     
@@ -318,10 +329,22 @@ public class GUIElementDescription: Decodable {
         // Loop through the properties and fetch each
         var value:Any? = item
         for i in 0..<propParts.count {
-            value = (value as! Object)[String(propParts[i])]
+            let part = propParts[i]
+            
+            if part == "functions" {
+                value = (value as! DataItem).functions[propParts[i+1]];
+                break
+            }
+            else {
+                value = (value as! Object)[String(part)]
+            }
         }
         
-        if let date = value as? Date { value = formatDate(date) }
+        // Format a date
+        if let date = value as? Date? { value = formatDate(date) }
+            
+        // Execute a custom function
+        else if let f = value as? ([Any]?) -> String { value = f([]) }
         
         // Return the value as a string
         return value as? String ?? ""

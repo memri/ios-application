@@ -38,14 +38,12 @@
             "queryOptions": {
                 "query": "note",
                 "sortProperty": "dateModified",
-                "sortAscending": 0
+                "sortAscending": false
             },
             "emptyResultText": "There are no notes here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
                         "VStack", {
                             "alignment": "left",
@@ -117,7 +115,7 @@
                         "queryOptions": {
                             "query": "data:Log appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
+                            "sortAscending": true
                         }
                     }]
                 },
@@ -158,7 +156,7 @@
                         "queryOptions": {
                             "query": "type:logitem appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
+                            "sortAscending": true
                         }
                     }]
                 },
@@ -184,14 +182,12 @@
             "queryOptions": {
                 "query": "logitem",
                 "sortProperty": "dateModified",
-                "sortAscending": 0
+                "sortAscending": false
             },
             "emptyResultText": "There are no log entries here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
                             "HStack", [
@@ -220,15 +216,13 @@
             "title": "All Labels",
             "queryOptions": {
                 "query": "label",
-                "sortProperty": "dateAccessed",
-                "sortAscending": 0
+                "sortProperty": "dateCreated",
+                "sortAscending": true
             },
             "emptyResultText": "You have not added any labels yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "rowInset": [7, 20, -7, 20] }, [
                             "HStack", {
@@ -254,7 +248,11 @@
                                     "padding": [0,10,0,0]
                                 }
                             ],
-                            "Divider", { "padding": [5, 0, 5, 0] }
+                            "Rectangle", {
+                                "size": [0, 1],
+                                "color": "#efefef",
+                                "padding": [5, 0, 5, 0]
+                            }
                         ]
                     ]
                 }
@@ -265,6 +263,54 @@
                     "type": "label",
                     "name": "new label"
                 }]
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        
+        "{[type:sessionview]}": {
+            "name": "all-sessionviews",
+            "title": "All Session Views",
+            "queryOptions": {
+                "query": "sessionview",
+                "sortProperty": "dateAccessed",
+                "sortAscending": false
+            },
+            "emptyResultText": "No views in this session",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "HStack", { "alignment": "top" }, [
+                                "Text", {
+                                    "text": "{.computedDescription()}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                },
+                                "Spacer",
+                                "Text", {
+                                    "text": "{.dateAccessed}",
+                                    "font": [11, "regular"],
+                                    "color": "#888",
+                                    "padding": [8,0,5,0]
+                                }
+                            ],
+                            "Rectangle", {
+                                "size": [0, 1],
+                                "color": "#efefef",
+                                "padding": [7, 0, 12, 0]
+                            }
+                        ]
+                    ]
+                }
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [

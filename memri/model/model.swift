@@ -11,7 +11,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /**
      *
      */
-    @objc dynamic var uid:String? = nil
+    @objc dynamic var uid:String = DataItem.generateUID()
     /**
      *
      */
@@ -23,11 +23,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /**
      *
      */
-    @objc dynamic var dateCreated:Date? = nil
+    @objc dynamic var dateCreated:Date? = Date()
     /**
      *
      */
-    @objc dynamic var dateModified:Date? = nil
+    @objc dynamic var dateModified:Date? = Date()
     /**
      *
      */
@@ -44,6 +44,20 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      *
      */
     @objc dynamic var syncState:SyncState? = SyncState()
+    
+    /**
+     *
+     */
+    var functions:[String: (_ args:[Any]?) -> String] = [:]
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case uid, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
+             labels, syncState
+    }
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
