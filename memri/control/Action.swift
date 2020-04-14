@@ -60,7 +60,7 @@ struct ActionButton: View {
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
                     .foregroundColor(Color(action.computeColor(state: isActive)))
-                    .foregroundColor(Color(action.computeBackgroundColor(state: isActive)))
+//                    .background(Color(action.computeBackgroundColor(state: isActive)))
             }
             if action.title != nil && action.showTitle {
                 Text(action.title!)

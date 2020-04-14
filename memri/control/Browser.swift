@@ -21,6 +21,8 @@ struct Browser: View {
                 }.fullHeight()
                 Search()
             }.fullHeight()
+            
+            ContextPane()
         }
     }
 }

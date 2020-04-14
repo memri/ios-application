@@ -24,13 +24,14 @@ struct Application: View {
     var body: some View {
         ZStack() {
             Browser()
-            
-            ContextPane()
 
             if self.main.showNavigation {
                 Navigation()
                     .transition(.move(edge: .leading))
                     .animation(.easeOut(duration: 0.3))
+            }
+            else if self.main.showSessionSwitcher {
+                SessionSwitcher()
             }
         }.fullHeight()
     }

@@ -58,6 +58,8 @@ extension Main {
                     selection.forEach{ item in addFromTemplate(item) }
                 }
                 else if let item = item { addFromTemplate(item) }
+            case .showSessionSwitcher:
+                break
             case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:
                 break // Do nothing
             case .exampleUnpack:
@@ -202,7 +204,7 @@ extension Main {
         let sessions = self.sessions // TODO generalize
         
         // Add view to session and set it as current
-        sessions.addSession(session)
+        sessions.setCurrentSession(session)
         
         // Recompute view
         scheduleComputeView()
@@ -212,12 +214,10 @@ extension Main {
      */
     public func openSession(_ name:String) {
         // Fetch a dynamic view based on its name
-        let (session, view) = views.getSessionOrView(name, wrapView:true)
+        let (session, _) = views.getSessionOrView(name, wrapView:true)
         if let session = session {
             
             // Open the view
-            print(session.currentViewIndex)
-            print(session.views.count)
             openSession(session)
         }
         else {

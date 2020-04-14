@@ -104,11 +104,12 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    public func addSession(_ session:Session) {
-        // TODO: If session == nil session = Session()
-        
+    public func setCurrentSession(_ session:Session) {
         try! realm!.write {
-        
+            if let index = sessions.firstIndex(of: session) {
+                sessions.remove(at: index)
+            }
+            
             // Add session to array
             sessions.append(session)
             
@@ -176,16 +177,6 @@ public class Sessions: Object, ObservableObject, Decodable {
         }
     }
     
-    /**
-     *
-     */
-    public func setCurrentSession(_ session:Session) throws -> Void {
-        let index = sessions.firstIndex(of: session) ?? -1
-        if (index > 0) { throw "Should never happen" } // Should never happen
-        
-        currentSessionIndex = index
-    }
-    
     public func merge(_ sessions:Sessions) throws {
         func doMerge() {
             let properties = self.objectSchema.properties
@@ -226,8 +217,10 @@ public class Sessions: Object, ObservableObject, Decodable {
 }
 
 public class Session: Object, ObservableObject, Decodable {
-    var id: String = UUID().uuidString
-    
+    /**
+     *
+     */
+    @objc dynamic var uid:String? = DataItem.generateUID()
     /**
      *
      */
@@ -252,6 +245,10 @@ public class Session: Object, ObservableObject, Decodable {
      *
      */
     @objc dynamic var editMode:Bool = false
+    /**
+     *
+     */
+    @objc dynamic var screenShot:File? = nil
     
     /**
      *
@@ -269,10 +266,14 @@ public class Session: Object, ObservableObject, Decodable {
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
 
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
-            return ActionDescription(icon: "chevron.left", actionName: .back)
+            return ActionDescription(actionName: .back)
         }
         else {
             return nil
@@ -287,7 +288,7 @@ public class Session: Object, ObservableObject, Decodable {
         self.init()
         
         jsonErrorHandling(decoder) {
-            id = try decoder.decodeIfPresent("id") ?? id
+            uid = try decoder.decodeIfPresent("uid") ?? uid
             
             currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
             showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
@@ -350,6 +351,25 @@ public class Session: Object, ObservableObject, Decodable {
         decorate(view)
     }
     
+    public func takeScreenShot(){
+        let view = UIApplication.shared.windows[0].rootViewController?.view
+        let uiImage = view!.takeScreenShot()
+        
+        if self.screenShot == nil {
+            let doIt = { self.screenShot = File(value: ["uri": File.generateFilePath()]) }
+            
+            if realm!.isInWriteTransaction { doIt() }
+            else { try! realm!.write { doIt() } }
+        }
+        
+        do {
+            try self.screenShot!.write(uiImage)
+        }
+        catch let error {
+            print(error)
+        }
+    }
+    
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
         let jsonData = try jsonDataFromFile(file, ext)
         let session:Session = try JSONDecoder().decode(Session.self, from: jsonData)
@@ -362,6 +382,74 @@ public class Session: Object, ObservableObject, Decodable {
     }
 
     public static func == (lt: Session, rt: Session) -> Bool {
-        return lt.id == rt.id
+        return lt.uid == rt.uid
+    }
+}
+
+//extension UIView {
+//    var renderedImage: UIImage {
+//        // rect of capure
+//        let rect = self.bounds
+//        // create the context of bitmap
+//        UIGraphicsBeginImageContextWithOptions(rect.size, false, 0.0)
+//        let context: CGContext = UIGraphicsGetCurrentContext()!
+//        self.layer.render(in: context)
+//        // get a image from current context bitmap
+//        let capturedImage: UIImage = UIGraphicsGetImageFromCurrentImageContext()!
+//        UIGraphicsEndImageContext()
+//        return capturedImage
+//    }
+//}
+//
+//extension View {
+//    func takeScreenshot(origin: CGPoint, size: CGSize) -> UIImage {
+//        let window = UIWindow(frame: CGRect(origin: origin, size: size))
+//        let hosting = UIHostingController(rootView: self)
+//        hosting.view.frame = window.frame
+//        window.addSubview(hosting.view)
+//        window.makeKeyAndVisible()
+//        return hosting.view.renderedImage
+//    }
+//}
+
+//func image(with view: UIView) -> UIImage? {
+//
+//       UIGraphicsBeginImageContextWithOptions(view.bounds.size, view.isOpaque, 0.0)
+//
+//       defer { UIGraphicsEndImageContext() }
+//
+//       if let context = UIGraphicsGetCurrentContext() {
+//
+//           view.layer.render(in: context)
+//
+//           if let image = UIGraphicsGetImageFromCurrentImageContext() {
+//
+//
+//
+//               return image
+//
+//           }
+//
+//
+//
+//           return nil
+//
+//       }
+//
+//       return nil
+//
+//   }
+
+
+extension UIView {
+
+    func takeScreenShot() -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+
+        drawHierarchy(in: self.bounds, afterScreenUpdates: true)
+
+        let image = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return image
     }
 }

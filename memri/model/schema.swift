@@ -105,11 +105,11 @@ class Label:DataItem {
     @objc dynamic var color:String? = nil
     override var type:String { "label" }
     
+    let appliesTo = List<DataItem>() // TODO make two-way binding in realm
+    
     public override static func primaryKey() -> String? {
         return "name"
     }
-    
-    let appliesTo = List<DataItem>() // TODO make two-way binding in realm
     
     required init () {
         super.init()
