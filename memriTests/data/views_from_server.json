@@ -82,28 +82,35 @@
                         "VStack", {
                             "minWidth": 10,
                             "padding": [0, 0, 5, 0],
-                            "background": "#efefef",
                             "alignment": "center"
                         }, [
                             "Text", {
                                 "text": "{.content}",
                                 "removeWhiteSpace": true,
                                 "maxChar": 100,
-                                "color": "#555",
+                                "color": "#333",
                                 "background": "#fff",
-                                "border": ["#00ff00", 1],
-                                "padding": 4,
-                                "font": [8, "regular"],
-                                "minHeight": 100,
+                                "border": ["#efefef", 2],
+                                "cornerRadius": 10,
+                                "padding": 10,
+                                "font": [9, "regular"],
+                                "minHeight": 80,
                                 "align": "lefttop",
                             },
                             "Text", {
                                 "text": "{.title}",
                                 "removeWhiteSpace": true,
-                                "padding": [2, 0, 5, 0],
-                                "font": [10],
+                                "padding": [5, 0, 0, 0],
+                                "color": "#333",
+                                "font": [12, "semibold"],
                                 "maxChar": 100
-                            }
+                            },
+                            "Text", {
+                                "text": "{.dateModified}",
+                                "font": [9, "regular"],
+                                "color": "#888",
+                                "padding": [3, 0, 0, 0]
+                            },
                         ]
                     ]
                 }

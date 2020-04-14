@@ -12,22 +12,13 @@ import RealmSwift
 
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
-    "order": ["color", "font", "rowinset", "padding", "background", "rowbackground", "border", "shadow", "offset"]
+    "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
+              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset"]
 ]
 
 extension View {
     func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
         var view:AnyView = AnyView(self)
-        var setFrame = false
-        
-        for item in ViewConfig["frame"]! {
-            if properties[item] != nil {
-                setFrame = true
-                break
-            }
-        }
-        
-        if setFrame { view = view.setProperty("frame", properties) }
         
         for name in ViewConfig["order"]! {
             if var value = properties[name] {
@@ -101,15 +92,28 @@ extension View {
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
             }
+        case "cornerradius":
+            if let value = value as? CGFloat {
+                return AnyView(self.cornerRadius(value))
+            }
+        case "cornerborder":
+            if let value = value as? [Any] {
+                if let color = value[0] as? String {
+                    return AnyView(self.overlay(
+                        RoundedRectangle(cornerRadius: value[2] as! CGFloat)
+                            .stroke(Color(hex: color), lineWidth: value[1] as! CGFloat)
+                            .padding(1)
+                    ))
+                }
+            }
         case "frame":
-            if let value = value as? [String:Any] {
-                
+            if let value = value as? [Any] {
                 return AnyView(self.frame(
-                    minWidth: value["minwidth"] as? CGFloat ?? .none,
-                    maxWidth: value["maxwidth"] as? CGFloat ?? .greatestFiniteMagnitude,
-                    minHeight: value["minheight"] as? CGFloat ?? .none,
-                    maxHeight: value["maxheight"] as? CGFloat ?? .greatestFiniteMagnitude,
-                    alignment: value["align"] as? Alignment ?? .top))
+                    minWidth: value[0] as? CGFloat ?? .none,
+                    maxWidth: value[1] as? CGFloat ?? .greatestFiniteMagnitude,
+                    minHeight: value[2] as? CGFloat ?? .none,
+                    maxHeight: value[3] as? CGFloat ?? .greatestFiniteMagnitude,
+                    alignment: value[4] as? Alignment ?? .top))
             }
         case "font":
             if let value = value as? [Any] {
@@ -123,6 +127,10 @@ extension View {
                                    design: .default)
                 }
                 return AnyView(self.font(font))
+            }
+        case "textalign":
+            if let value = value as? TextAlignment {
+                return AnyView(self.multilineTextAlignment(value))
             }
         case "minwidth", "minheight", "align", "maxwidth", "maxheight", "spacing", "alignment", "text", "maxchar", "removewhitespace", "bold":
             break
@@ -174,6 +182,36 @@ public class GUIElementDescription: Decodable {
         for (key, value) in props {
             properties[key.lowercased()] = parseProperty(key, value.value)
         }
+        
+        for item in ViewConfig["frame"]! {
+            if properties[item] != nil {
+                
+                let values:[Any?] = [
+                    properties["minwidth"] as Any?,
+                    properties["maxwidth"] as Any?,
+                    properties["minheight"] as Any?,
+                    properties["maxheight"] as Any?,
+                    properties["align"] as Any?
+                ]
+                
+                properties["minwidth"] = nil
+                properties["maxwidth"] = nil
+                properties["minheight"] = nil
+                properties["maxheight"] = nil
+                properties["align"] = nil
+                
+                properties["frame"] = values
+                break
+            }
+        }
+        
+        if properties["cornerradius"] != nil && properties["border"] != nil {
+            var value = properties["border"] as! [Any]
+            value.append(properties["cornerradius"]!)
+            
+            properties["cornerborder"] = value as Any
+            properties["border"] = nil
+        }
     }
     
     func parseProperty(_ key:String, _ value:Any) -> Any? {
@@ -200,6 +238,14 @@ public class GUIElementDescription: Decodable {
             case "righttop", "topright": return Alignment.topTrailing
             case "leftbottom", "bottomleft": return Alignment.bottomLeading
             case "rightbottom", "bottomright": return Alignment.bottomTrailing
+            default: return nil
+            }
+        }
+        else if key == "textalign" {
+            switch value as! String {
+            case "left": return TextAlignment.leading
+            case "center": return TextAlignment.center
+            case "right": return TextAlignment.trailing
             default: return nil
             }
         }
@@ -471,7 +517,6 @@ public struct GUIElementInstance: View {
                 .if(from.has("italic")){ $0.italic() }
                 .if(from.has("underline")){ $0.underline() }
                 .if(from.has("strikethrough")){ $0.strikethrough() }
-                .multilineTextAlignment(.leading)
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "textfield" {

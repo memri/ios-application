@@ -47,7 +47,8 @@ struct ThumbnailRendererView: View {
                 Spacer()
             }
             else {
-                QGrid(main.items, columns: renderConfig.cols.value!) { dataItem in
+                // TODO: vPadding, hPadding, vSpacing, hSpacing, columnsInLandscape
+                QGrid(main.items, columns: renderConfig.cols.value!, vPadding: 20, hPadding: 20) { dataItem in
 //                    VStack (alignment: .center) {
 ////                        HStack {
 //                            Text(dataItem.getString("content"))
