@@ -170,8 +170,9 @@ public class PodAPI {
             return
         }
         
-        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")
-        callback(nil, items);
+        // TODO do nothing
+//        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")
+//        callback(nil, items);
     }
     /**
      *

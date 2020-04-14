@@ -13,36 +13,21 @@
             "renderConfigs": {
                 "list": {
                     "slideLeftActions": [
-                        {
-                            "icon": "remove.ico",
-                            "title": "Remove",
-                            "actionName": "delete"
-                        }
+                        { "actionName": "delete" }
                     ],
-                    "press": {
-                        "actionName": "openView"
-                    },
-                    "longPress": {
-                        "actionName": "select"
-                    },
-                    "itemRenderer": "{.title}",
-                    "renderDescription": {
-                        "type": "vstack",
-                        "children": [
-                            {
-                                "type": "text",
-                                "property": "title",
-                                "bold": true
-                            },
-                            {
-                                "type": "text",
-                                "property": "content",
+                    "press": { "actionName": "openView" },
+                    "longPress": { "actionName": "select" },
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "Text", { "value": "title", "bold": true },
+                            "Text", {
+                                "value": "content",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
                             }
                         ]
-                    }
+                    ]
                 }
             }
         },
@@ -61,10 +46,20 @@
                 "list": {
                     "sortProperty": "date-created",
                     "sortAscending": 0,
-                    "itemRenderer": "{.title} {preview(.contents)} {.date-modified}"
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "Text", { "value": "title", "bold": true },
+                            "Text", {
+                                "value": "content",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            },
+                            "Text", { "value": "dateModified" }
+                        ]
+                    ]
                 }
             },
-            "browsingMode": "default",
             "actionButton": {
                 "actionName": "add",
                 "actionArgs": [{
@@ -150,8 +145,11 @@
                 },
                 {
                     "title": "Starred notes",
-                    "actionName": "showStarred",
-                    "actionArgs": []
+                    "actionName": "openDynamicView",
+                    "actionArgs": [{
+                        "name": "filter-starred",
+                        "fromTemplate": "all-notes"
+                    }]
                 },
                 {
                     "title": "All notes",
@@ -159,7 +157,44 @@
                     "actionArgs": ["all-notes"]
                 }
             ]
-        }
+        },
+        
+        "{[type:logitem]}": {
+            "name": "all-logitems",
+            "title": "All Log Entries",
+            "queryOptions": {
+                "query": "logitem",
+                "sortProperty": "date-modified",
+                "sortAscending": 0
+            },
+            "emptyResultText": "There are no log entries here yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "sortProperty": "date-created",
+                    "sortAscending": 0,
+                    "renderDescription": [
+                        "VStack", { "padding": 5 }, [
+                            "HStack", [
+                                "Text", { "value": "action", "bold": true },
+                                "Text", { "value": "date" }
+                            ],
+                            "Text", {
+                                "value": "contents",
+                                "bold": false,
+                                "removeWhiteSpace": true,
+                                "maxChar": 100
+                            }
+                        ]
+                    ]
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
     },
     
     "user": {
@@ -167,12 +202,7 @@
             "renderConfigs": {
                 "list": {
                     "slideRightActions": [
-                        {
-                            "icon": "schedule.ico",
-                            "title": "Schedule",
-                            "actionName": "schedule",
-                            "actionArgs": []
-                        }
+                        { "actionName": "schedule" }
                     ]
                 }
             }

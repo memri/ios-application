@@ -52,6 +52,7 @@ public class MainNavigation {
         
             // Store default items in realm
             for item in items {
+                print(item.title)
                 realm.add(item)
             }
         }

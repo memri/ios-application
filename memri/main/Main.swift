@@ -97,11 +97,6 @@ public class Main: ObservableObject {
     
     var aliases:[String:Alias] = [:]
     
-    private func takeScreenShot(){
-        // Make sure to record a screenshot prior to session switching
-        self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
-    }
-    
     subscript(propName:String) -> Any? {
         get {
             let alias = aliases[propName]!
@@ -159,6 +154,11 @@ public class Main: ObservableObject {
         navigation = MainNavigation(realm)
         renderers = Renderers()
         
+        let takeScreenShot = {
+            // Make sure to record a screenshot prior to session switching
+            self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
+        }
+        
         aliases = [
            "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
            "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
@@ -208,8 +208,9 @@ public class Main: ObservableObject {
     }
     
     public func setComputedView(){
+        
         // Fetch the resultset associated with the current view
-        let resultSet = cache.getResultSet(self.currentSession.currentView.queryOptions!)
+        let resultSet = cache.getResultSet(self.sessions.currentSession.currentView.queryOptions!)
         
         // If we can guess the type of the result based on the query, let's compute the view
         if resultSet.determinedType != nil {

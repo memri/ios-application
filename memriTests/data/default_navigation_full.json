@@ -1,0 +1,92 @@
+[
+    {
+        "type": "heading",
+        "title": "inbox"
+    },
+    {
+        "type": "item",
+        "title": "All",
+        "view": "all-inbox"
+    },
+    {
+        "type": "item",
+        "title": "Email",
+        "view": "email"
+    },
+    {
+        "type": "item",
+        "title": "Messages",
+        "view": "messages"
+    },
+    {
+        "type": "item",
+        "title": "Social Media",
+        "view": "social-media"
+    },
+    {
+        "type": "item",
+        "title": "Reminders to read",
+        "view": "reminders-read"
+    },
+    {
+        "type": "item",
+        "title": "Reminders to watch",
+        "view": "reminders-watch"
+    },
+    {
+        "type": "item",
+        "title": "Reminders to buy",
+        "view": "reminders-buy"
+    },
+    {
+        "type": "heading",
+        "title": "vault"
+    },
+    {
+        "type": "item",
+        "title": "All",
+        "view": "all-vault"
+    },
+    {
+        "type": "item",
+        "title": "credits cards",
+        "view": "credit-cards"
+    },
+    {
+        "type": "heading",
+        "title": "browse"
+    },
+    {
+        "type": "item",
+        "title": "notes",
+        "view": "all-notes"
+    },
+    {
+        "type": "item",
+        "title": "shopping notes",
+        "view": "shopping-notes"
+    },
+    {
+        "type": "item",
+        "title": "web pages",
+        "view": "web-pages"
+    },
+    {
+        "type": "line"
+    },
+    {
+        "type": "item",
+        "title": "All people",
+        "view": "all-people"
+    },
+    {
+        "type": "item",
+        "title": "family",
+        "view": "family"
+    },
+    {
+        "type": "item",
+        "title": "friends",
+        "view": "friends"
+    }
+]

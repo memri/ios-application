@@ -16,13 +16,6 @@ struct ListRendererView: View {
     
     let name = "list"
     var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
-
-    func generatePreview(_ item:DataItem) -> String {
-        let content = String(item.getString("content")
-            .replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
-            .prefix(100))
-        return content
-    }
     
     var renderConfig: ListConfig {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()

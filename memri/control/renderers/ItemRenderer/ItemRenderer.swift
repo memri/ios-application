@@ -15,9 +15,10 @@ struct ItemRenderer: View, Decodable {
                                                       "title": "test"])
     var body: some View {
         Group{
-            if baseComponent != nil{
+            if baseComponent != nil {
                 baseComponent!.asView(item: item)
-            }else{
+            }
+            else {
                 EmptyView()
             }
         }
