@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 extension Main {
     
@@ -173,7 +174,8 @@ extension Main {
         let view = SessionView()
         
         // Set the query options to load the item
-        view.queryOptions!.query = item.getString("uid")
+        let primKey = DataItemFamily(rawValue: item.type)!.getPrimaryKey()
+        view.queryOptions!.query = "\(item.type) AND \(primKey) = '\(item.getString(primKey))'"
         
         // Open the view
         self.openView(view)
@@ -213,6 +215,12 @@ extension Main {
      *
      */
     public func openSession(_ name:String) {
+        
+        // TODO: This should not fetch the session from named sessions
+        //       but instead load a sessionview that loads the named sessions by
+        //       computing them (implement viewFromSession that is used in dynamic
+        //       view to sessionview
+        
         // Fetch a dynamic view based on its name
         let (session, _) = views.getSessionOrView(name, wrapView:true)
         if let session = session {

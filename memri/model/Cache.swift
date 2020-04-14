@@ -90,41 +90,35 @@ public class Cache {
             // Schedule the query to sync from the pod
             sync.syncQuery(queryOptions)
             
-            // Detect querying for a single item based on uid (hack!)
-            if (q.starts(with: "0x")) {
-                let result = realm.objects(Note.self).filter("uid = '\(q)'") // HACK
+            // Parse query
+            let (typeName, filter) = parseQuery(q)
+            
+            // Fetch the type of the data item
+            if let type = DataItemFamily(rawValue: typeName) {
+                // Get primary key of data item
+                // let primKey = type.getPrimaryKey()
                 
-                callback(nil, [result[0]])
+                // Query based on a simple format:
+                // Query format: <type><space><filter-text>
+                let queryType = DataItemFamily.getType(type)
+                let result = realm.objects(queryType() as! Object.Type)
+                    .filter("deleted = false " + (filter ?? ""))
+                
+                // Construct return array
+                var returnValue:[DataItem] = []
+                for item in result { returnValue.append(item as! DataItem) }
+                
+                // Done
+                callback(nil, returnValue)
             }
-            // Query based on a simple format:
-            // Query format: <type><space><filter-text>
             else {
-                // Parse query
-                let (typeName, filter) = parseQuery(q)
-                
-                // Look up type and filter results
-                let type = DataItemFamily(rawValue: typeName)
-                if let type = type {
-                    let queryType = DataItemFamily.getType(type)
-                    let result = realm.objects(queryType() as! Object.Type)
-                        .filter("deleted = false " + (filter ?? ""))
-                    
-                    // Construct return array
-                    var returnValue:[DataItem] = []
-                    for item in result { returnValue.append(item as! DataItem) }
-                    
-                    // Done
-                    callback(nil, returnValue)
-                }
-                else {
-                    // Done
-                    callback("Unknown type send by server: \(q)", nil)
-                }
+                // Done
+                callback("Unknown type send by server: \(q)", nil)
             }
         }
     }
     
-    private func parseQuery(_ query: String) -> (type:String, filter:String?) {
+    public func parseQuery(_ query: String) -> (type:String, filter:String?) {
         if let _ = query.firstIndex(of: " ") {
             let splits = query.split(separator: " ")
             let type = String(splits[0])
@@ -173,7 +167,7 @@ public class Cache {
         let type = DataItemFamily(rawValue: type)
         if let type = type {
             let item = DataItemFamily.getType(type)
-            return realm.objects(item() as! Object.Type).filter("uid = '\(uid)'").first as! T?
+            return realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as! T?
         }
         return nil
     }
@@ -290,11 +284,20 @@ public class Cache {
      */
     public func duplicate(_ item:DataItem) -> DataItem {
         let type = DataItemFamily(rawValue: item.type)!
-        let T = DataItemFamily.getType(type) as! () -> DataItem.Type
-        var copy = T().init()
+        let T = DataItemFamily.getType(type)
+        let cls = T() as! DataItem.Type
+        let copy = cls.init()
         let properties = item.objectSchema.properties
+        let primaryKey = cls.primaryKey()
         for prop in properties {
-            if prop.name == "uid" { continue }
+            if prop.name == primaryKey {
+                // TODO allow generation of uid based on number replaces {uid}
+//                if (item[prop.name] as! String).includes("{uid}") {
+//
+//                }
+                
+                continue
+            }
             copy[prop.name] = item[prop.name]
         }
         return copy

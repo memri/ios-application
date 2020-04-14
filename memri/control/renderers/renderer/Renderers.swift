@@ -109,12 +109,14 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    var renderDescription: ItemRendererComponent? {
+    var renderDescription: GUIElementDescription? {
         if let itemRenderer = renderCache.get(self._renderDescription!) {
             return itemRenderer
         }
         else if let description = self._renderDescription {
-            if let itemRenderer:ItemRendererComponent = unserialize(description) {
+//            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
+            
+            if let itemRenderer:GUIElementDescription = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
             }
@@ -123,6 +125,18 @@ public class RenderConfig: Object, Codable {
         return nil
     }
     @objc dynamic var _renderDescription: String? = nil
+    
+    /**
+     *
+     */
+    public func render(_ dataItem:DataItem) -> GUIElementInstance {
+        if _renderDescription == nil {
+            return GUIElementInstance(GUIElementDescription(), dataItem)
+        }
+        else {
+            return GUIElementInstance(self.renderDescription!, dataItem)
+        }
+    }
     
     /**
      *
@@ -154,13 +168,13 @@ public class RenderConfig: Object, Codable {
 }
 
 class RenderCache {
-    var cache:[String:ItemRendererComponent] = [:]
+    var cache:[String:GUIElementDescription] = [:]
     
-    public func get(_ key:String) -> ItemRendererComponent? {
+    public func get(_ key:String) -> GUIElementDescription? {
         return cache[key]
     }
     
-    public func set(_ key:String, _ itemRenderer: ItemRendererComponent) {
+    public func set(_ key:String, _ itemRenderer: GUIElementDescription) {
         cache[key] = itemRenderer
     }
 }

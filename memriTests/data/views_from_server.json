@@ -19,9 +19,9 @@
                     "longPress": { "actionName": "select" },
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
-                            "Text", { "value": "title", "bold": true },
+                            "Text", { "text": "{.title}", "bold": true },
                             "Text", {
-                                "value": "content",
+                                "text": "{.content}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
@@ -37,25 +37,31 @@
             "title": "All Notes",
             "queryOptions": {
                 "query": "note",
-                "sortProperty": "date-modified",
+                "sortProperty": "dateModified",
                 "sortAscending": 0
             },
             "emptyResultText": "There are no notes here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "date-created",
+                    "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "Text", { "value": "title", "bold": true },
+                        "VStack", { "padding": 5, "background": "#FF0000" }, [
                             "Text", {
-                                "value": "content",
-                                "bold": false,
-                                "removeWhiteSpace": true,
-                                "maxChar": 100
+                                "text": "{.title}",
+                                "font": [18, "semibold"]
                             },
-                            "Text", { "value": "dateModified" }
+                            "Text", {
+                                "text": "{.content}",
+                                "removeWhiteSpace": true,
+                                "maxChar": 100,
+                                "shadow": ["#000", 0.5, 5.5, 5],
+                                "padding": [10, 5, 20, 5],
+                                "color": "#666",
+                                "font": [14, "regular"]
+                            },
+                            "Text", { "text": "{.dateModified}" }
                         ]
                     ]
                 }
@@ -79,7 +85,7 @@
             "rendererName": "richTextEditor",
             "renderConfigs": {
                 "richtexteditor": {
-                    "editorRenderer": "{VBox(Textbox(.title), Label(.date-modified), RichTextbox(.content))}"
+                    "editorRenderer": "{VBox(Textbox(.title), Label(.dateModified), RichTextbox(.content))}"
                 }
             },
             "editActionButton": { "actionName": "toggleEditMode" },
@@ -92,12 +98,12 @@
                         "rendererName": "timeline",
                         "renderConfigs": {
                             "timeline": {
-                                "timeProperty": "date-created"
+                                "timeProperty": "dateCreated"
                             }
                         },
                         "queryOptions": {
                             "query": "data:Log appliesTo:{.id}",
-                            "sortProperty": "date-created",
+                            "sortProperty": "dateCreated",
                             "sortAscending": 0
                         }
                     }]
@@ -133,12 +139,12 @@
                         "rendererName": "timeline",
                         "renderConfigs": {
                             "timeline": {
-                                "timeProperty": "date-created"
+                                "timeProperty": "dateCreated"
                             }
                         },
                         "queryOptions": {
                             "query": "type:logitem appliesTo:{.id}",
-                            "sortProperty": "date-created",
+                            "sortProperty": "dateCreated",
                             "sortAscending": 0
                         }
                     }]
@@ -164,23 +170,23 @@
             "title": "All Log Entries",
             "queryOptions": {
                 "query": "logitem",
-                "sortProperty": "date-modified",
+                "sortProperty": "dateModified",
                 "sortAscending": 0
             },
             "emptyResultText": "There are no log entries here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "date-created",
+                    "sortProperty": "dateCreated",
                     "sortAscending": 0,
                     "renderDescription": [
                         "VStack", { "padding": 5 }, [
                             "HStack", [
-                                "Text", { "value": "action", "bold": true },
-                                "Text", { "value": "date" }
+                                "Text", { "text": "{.action}", "bold": true },
+                                "Text", { "text": "{.date}" }
                             ],
                             "Text", {
-                                "value": "contents",
+                                "text": "{.contents}",
                                 "bold": false,
                                 "removeWhiteSpace": true,
                                 "maxChar": 100
@@ -188,6 +194,65 @@
                         ]
                     ]
                 }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        
+        "{[type:label]}": {
+            "name": "all-labels",
+            "title": "All Labels",
+            "queryOptions": {
+                "query": "label",
+                "sortProperty": "dateAccessed",
+                "sortAscending": 0
+            },
+            "emptyResultText": "You have not added any labels yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "sortProperty": "dateCreated",
+                    "sortAscending": 0,
+                    "renderDescription": [
+                        "VStack", { "rowinset": [0, 20, 0, 20] }, [
+                            "HStack", {
+                                "alignment": "bottom",
+                                "padding": 5
+                            }, [
+                                "VStack", {
+                                    "alignment": "left",
+                                    "spacing": 5
+                                }, [
+                                    "Text", { "text": "{.name}", "bold": true },
+                                    "Text", {
+                                        "text": "{.comment}",
+                                        "removeWhiteSpace": true,
+                                        "maxChar": 100
+                                    }
+                                ],
+                                "Spacer",
+                                "RoundedRectangle", {
+                                    "color": "{.color}",
+                                    "size": [25, 25],
+                                    "v-align": "center",
+                                    "padding": [0,10,0,0]
+                                }
+                            ],
+                            "Divider", { "padding": [5, 0, 5, 0] }
+
+                        ]
+                    ]
+                }
+            },
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "label",
+                    "name": "new label"
+                }]
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [

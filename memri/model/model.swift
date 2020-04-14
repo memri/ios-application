@@ -255,7 +255,17 @@ public class ResultSet: ObservableObject {
      */
     var isList: Bool {
         // TODO change this to be a proper query parser
-        return !(self.queryOptions.query ?? "").starts(with: "0x")
+        
+        let (typeName, filter) = cache.parseQuery((self.queryOptions.query ?? ""))
+        
+        if let type = DataItemFamily(rawValue: typeName) {
+            let primKey = type.getPrimaryKey()
+            if (filter ?? "").match("^AND \(primKey) = '.*?'$").count > 0 {
+                return false
+            }
+        }
+        
+        return true
     }
     /**
      *

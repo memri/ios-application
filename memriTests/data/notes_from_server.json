@@ -6,8 +6,8 @@
         "content": "- potatoes\n- mayonaise",
         "starred": true,
         "labels": [
-            { "name": "Daily Log", "color": "#83ac06" },
-            { "name": "Polis", "color": "#ffd966" }
+            { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
         ],
         "syncState": {
             "isPartiallyLoaded": true,
@@ -20,8 +20,8 @@
         "title": "To read list",
         "content": "Age of surveillance capitalism",
         "labels": [
-            { "name": "Daily Log", "color": "#83ac06" },
-            { "name": "Polis", "color": "#ffd966" }
+            { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
         ],
         "syncState": {
             "version": 1

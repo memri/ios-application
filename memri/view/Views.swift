@@ -870,30 +870,34 @@ public class CompiledView {
     
 
 // How users type it
-//    "renderDescription": [ "VStack", { "padding": 5 }, [
-//        "Text", "{.content}",
+//    [ "VStack", { "padding": 5 }, [
+//        "Text", { "value": "{.content}" },
 //        "Button", { "press": {"actionName": "back"} }, ["Text", "Back"],
 //        "Button", { "press": {"actionName": "openView"} }, [
 //            "Image", {"systemName": "star.fill"}
 //        ],
-//        "Text", "{.content}"
+//        "Text", { "value": "{.content}" }
 //    ]]
     
 // How codable wants it
-//    "renderDescription": {
+//    {
 //        "type": "vstack",
 //        "children": [
 //            {
 //                "type": "text",
-//                "property": "title",
-//                "bold": true
+//                "properties": {
+//                    "value": "{.title}",
+//                    "bold": true
+//                }
 //            },
 //            {
 //                "type": "text",
-//                "property": "content",
-//                "bold": false,
-//                "removeWhiteSpace": true,
-//                "maxChar": 100
+//                "properties": {
+//                    "values": "{.content}",
+//                    "bold": false,
+//                    "removeWhiteSpace": true,
+//                    "maxChar": 100
+//                }
 //            }
 //        ]
 //    }
@@ -910,7 +914,7 @@ public class CompiledView {
                     currentItem = ["type": item.lowercased()]
                 }
                 else if let item = item as? [String: Any] {
-                    currentItem.merge(item, uniquingKeysWith: { (x,y) -> Any in return x })
+                    currentItem["properties"] = item
                 }
                 else if let item = item as? [Any] {
                     var children:[Any] = []
