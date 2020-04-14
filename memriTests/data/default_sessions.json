@@ -2,11 +2,16 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentViewIndex": 1,
+            "currentViewIndex": 2,
             "views": [
                 {
                     "queryOptions": {
                         "query": "label"
+                    }
+                },
+                {
+                    "queryOptions": {
+                        "query": "session"
                     }
                 },
                 {

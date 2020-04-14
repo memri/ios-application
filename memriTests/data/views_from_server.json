@@ -16,18 +16,11 @@
                         { "actionName": "delete" }
                     ],
                     "press": { "actionName": "openView" },
-                    "longPress": { "actionName": "select" },
-                    "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "Text", { "text": "{.title}", "bold": true },
-                            "Text", {
-                                "text": "{.content}",
-                                "bold": false,
-                                "removeWhiteSpace": true,
-                                "maxChar": 100
-                            }
-                        ]
-                    ]
+                    "longPress": { "actionName": "select" }
+                },
+                "thumbnail": {
+                    "press": { "actionName": "openView" },
+                    "longPress": { "actionName": "select" }
                 }
             }
         },
@@ -86,7 +79,6 @@
                         }, [
                             "Text", {
                                 "text": "{.content}",
-                                "removeWhiteSpace": true,
                                 "maxChar": 100,
                                 "color": "#333",
                                 "background": "#fff",
@@ -99,7 +91,6 @@
                             },
                             "Text", {
                                 "text": "{.title}",
-                                "removeWhiteSpace": true,
                                 "padding": [5, 0, 0, 0],
                                 "color": "#333",
                                 "font": [12, "semibold"],
@@ -381,6 +372,105 @@
                         ]
                     ]
                 }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        
+        "{[type:session]}": {
+            "name": "all-sessions",
+            "title": "All Sessions",
+            "queryOptions": {
+                "query": "session",
+                "sortProperty": "dateAccessed",
+                "sortAscending": false
+            },
+            "emptyResultText": "There are no sessions here yet",
+            "rendererName": "thumbnail",
+            "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "HStack", [
+                                "VStack", [
+                                    "Text", {
+                                        "text": "Name: {.name}",
+                                        "font": [18, "semibold"],
+                                        "color": "#333",
+                                        "padding": [5, 0, 0, 0]
+                                    },
+                                    "Text", {
+                                        "text": "Accessed: {.dateModified}",
+                                        "font": [11, "regular"],
+                                        "color": "#888",
+                                        "padding": [5,0,5,0]
+                                    }
+                                ],
+                                "Spacer",
+                                "Image", {
+                                    "image": "{.screenshot}",
+                                    "border": ["#ccc", 1],
+                                    "resizable": "fill",
+                                    "maxWidth": 150,
+                                    "maxHeight": 150,
+                                    "cornerRadius": 10,
+                                    "padding": [-5, 0, 0, 0]
+                                }
+                            ],
+                            "Rectangle", {
+                                "minHeight": 1,
+                                "maxHeight": 1,
+                                "color": "#efefef",
+                                "padding": [7, 0, 12, 0]
+                            }
+                        ]
+                    ]
+                },
+                "thumbnail": {
+                    "columns": 2,
+                    "hSpacing": 20,
+                    "renderDescription": [
+                        "VStack", {
+                            "minWidth": 10,
+                            "padding": [0, 0, 5, 0],
+                            "alignment": "center"
+                        }, [
+                            "Image", {
+                                "image": "{.screenshot}",
+                                "border": ["#ccc", 1],
+                                "resizable": "fill",
+                                "maxHeight": 180,
+                                "cornerRadius": 10
+                            },
+                            "Text", {
+                                "text": "{.name}",
+                                "padding": [5, 0, 0, 0],
+                                "color": "#333",
+                                "font": [12, "semibold"],
+                                "maxChar": 100
+                            },
+                            "Text", {
+                                "text": "{.dateModified}",
+                                "font": [9, "regular"],
+                                "color": "#888",
+                                "padding": [3, 0, 0, 0]
+                            },
+                        ]
+                    ]
+                }
+            },
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "title": "Untitled Note"
+                }]
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [

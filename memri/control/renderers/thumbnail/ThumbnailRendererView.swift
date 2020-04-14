@@ -48,26 +48,14 @@ struct ThumbnailRendererView: View {
             }
             else {
                 // TODO: vPadding, hPadding, vSpacing, hSpacing, columnsInLandscape
-                QGrid(main.items, columns: renderConfig.cols.value!, vPadding: 20, hPadding: 20) { dataItem in
-//                    VStack (alignment: .center) {
-////                        HStack {
-//                            Text(dataItem.getString("content"))
-//                                .frame(minWidth: 0, maxWidth: .greatestFiniteMagnitude, minHeight: 100, maxHeight: .greatestFiniteMagnitude, alignment: Alignment.topLeading)
-//                                .foregroundColor(Color(hex:"#555"))
-//                                .font(.system(size: 9, weight: .regular, design: .default))
-//                                .border(Color(hex: "#00ff00"), width: 1)
-////                        }
-//                        .padding(4)
-//
-//                        .border(Color(hex: "#ff0000"), width: 1)
-//                        .background(Color(hex:"#efefef"))
-//
-//                        Text (dataItem.getString("title"))
-//                            .padding(2) // [2, 0, 5, 0],
-//                            .font(.system(size: 10, weight: .regular, design: .default))
-//                    }
-//                    .padding(0) // = [0, 0, 5, 0],
-                    
+                QGrid(main.items,
+                      columns: renderConfig.columns.value ?? 3,
+                      columnsInLandscape: renderConfig.columnsInLandscape.value ?? 5,
+                      vSpacing: CGFloat(renderConfig.vSpacing.value ?? 10),
+                      hSpacing: CGFloat(renderConfig.hSpacing.value ?? 10),
+                      vPadding: CGFloat(renderConfig.vPadding.value ?? 20),
+                      hPadding: CGFloat(renderConfig.hPadding.value ?? 20)
+                ) { dataItem in
                     
                     self.renderConfig.render(dataItem)
                         .onTapGesture {

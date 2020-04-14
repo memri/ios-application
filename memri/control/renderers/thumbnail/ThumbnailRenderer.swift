@@ -27,7 +27,13 @@ class ThumbnailConfig: RenderConfig {
     @objc dynamic var browse: String? = ""
     @objc dynamic var longPress: ActionDescription? = nil
     @objc dynamic var press: ActionDescription? = nil
-    let cols = RealmOptional<Int>(3)
+    
+    let columns = RealmOptional<Int>()
+    let vPadding = RealmOptional<Int>()
+    let hPadding = RealmOptional<Int>()
+    let vSpacing = RealmOptional<Int>()
+    let hSpacing = RealmOptional<Int>()
+    let columnsInLandscape = RealmOptional<Int>()
     
     let slideLeftActions = List<ActionDescription>()
     let slideRightActions = List<ActionDescription>()
@@ -40,7 +46,13 @@ class ThumbnailConfig: RenderConfig {
             self.browse = try decoder.decodeIfPresent("browse") ?? self.browse
             self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
             self.press = try decoder.decodeIfPresent("press") ?? self.press
-            self.cols.value = try decoder.decodeIfPresent("cols") ?? 3
+            
+            self.columns.value = try decoder.decodeIfPresent("columns") ?? self.columns.value
+            self.vPadding.value = try decoder.decodeIfPresent("vPadding") ?? self.vPadding.value
+            self.hPadding.value = try decoder.decodeIfPresent("hPadding") ?? self.hPadding.value
+            self.vSpacing.value = try decoder.decodeIfPresent("vSpacing") ?? self.vSpacing.value
+            self.hSpacing.value = try decoder.decodeIfPresent("hSpacing") ?? self.hSpacing.value
+            self.columnsInLandscape.value = try decoder.decodeIfPresent("columnsInLandscape") ?? self.columnsInLandscape.value
             
             decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
             decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
@@ -58,7 +70,13 @@ class ThumbnailConfig: RenderConfig {
         self.browse = thumbnailConfig.browse ?? self.browse
         self.longPress = thumbnailConfig.longPress ?? self.longPress
         self.press = thumbnailConfig.press ?? self.press
-        self.cols.value = thumbnailConfig.cols.value ?? self.cols.value
+        
+        self.columns.value = thumbnailConfig.columns.value ?? self.columns.value
+        self.vPadding.value = thumbnailConfig.vPadding.value ?? self.vPadding.value
+        self.hPadding.value = thumbnailConfig.hPadding.value ?? self.hPadding.value
+        self.vSpacing.value = thumbnailConfig.vSpacing.value ?? self.vSpacing.value
+        self.hSpacing.value = thumbnailConfig.hSpacing.value ?? self.hSpacing.value
+        self.columnsInLandscape.value = thumbnailConfig.columnsInLandscape.value ?? self.columnsInLandscape.value
         
         self.slideLeftActions.append(objectsIn: thumbnailConfig.slideLeftActions)
         self.slideRightActions.append(objectsIn: thumbnailConfig.slideRightActions)

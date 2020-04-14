@@ -218,6 +218,10 @@ public class Session: DataItem {
     /**
      *
      */
+    @objc dynamic var name: String = ""
+    /**
+     *
+     */
     @objc dynamic var currentViewIndex: Int = 0
     /**
      *
@@ -238,7 +242,7 @@ public class Session: DataItem {
     /**
      *
      */
-    @objc dynamic var screenShot:File? = nil
+    @objc dynamic var screenshot:File? = nil
     
     /**
      *
@@ -363,15 +367,15 @@ public class Session: DataItem {
         let view = UIApplication.shared.windows[0].rootViewController?.view
         let uiImage = view!.takeScreenShot()
         
-        if self.screenShot == nil {
-            let doIt = { self.screenShot = File(value: ["uri": File.generateFilePath()]) }
+        if self.screenshot == nil {
+            let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
             
             if realm!.isInWriteTransaction { doIt() }
             else { try! realm!.write { doIt() } }
         }
         
         do {
-            try self.screenShot!.write(uiImage)
+            try self.screenshot!.write(uiImage)
         }
         catch let error {
             print(error)

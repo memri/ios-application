@@ -142,23 +142,24 @@ extension View {
     }
     
     func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
-        if conditional {
-            return AnyView(content(self))
-        } else {
-            return AnyView(self)
-        }
+        if conditional { return AnyView(content(self)) }
+        else { return AnyView(self) }
     }
 }
 
 extension Text {
     func `if`(_ conditional: Bool, content: (Self) -> Text) -> Text {
-        if conditional {
-            return content(self)
-        } else {
-            return self
-        }
+        if conditional { return content(self) }
+        else { return self }
     }
 }
+
+//extension Image {
+//    func `if`(_ conditional: Bool, content: (Self) -> Image) -> Image {
+//        if conditional { return content(self) }
+//        else { return self }
+//    }
+//}
 
 public class GUIElementDescription: Decodable {
     var type: String = ""
@@ -346,8 +347,12 @@ public class GUIElementDescription: Decodable {
         return properties[propName] != nil
     }
     
-    public func getBool(_ propName:String) -> Bool {
-        return get(propName) ?? false
+    public func getString(_ propName:String, _ item:DataItem? = nil) -> String {
+        return get(propName, item) ?? ""
+    }
+    
+    public func getBool(_ propName:String, _ item:DataItem? = nil) -> Bool {
+        return get(propName, item) ?? false
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil) -> T? {
@@ -403,7 +408,16 @@ public class GUIElementDescription: Decodable {
         }
         
         // Format a date
-        if let date = value as? Date? { value = formatDate(date) }
+        if let date = value as? Date { value = formatDate(date) }
+            
+        // Get the image uri from a file
+        else if let file = value as? File {
+            // Preload the image
+            let _ = file.asUIImage
+            
+            // Set the uri string as the value
+            value = file.uri
+        }
             
         // Execute a custom function
         else if let f = value as? ([Any]?) -> String { value = f([]) }
@@ -483,10 +497,20 @@ public struct GUIElementInstance: View {
 //            .frame(maxWidth: x[0], maxHeight: x[1])
 //                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
 //    }
+
+    private func resize(_ view:SwiftUI.Image) -> AnyView {
+        let resizable:String = from.get("resizable", self.item)!
+        let y = view.resizable()
+        
+        switch resizable {
+        case "fill": return AnyView(y.aspectRatio(contentMode: .fill))
+        case "fit": return AnyView(y.aspectRatio(contentMode: .fit))
+        case "stretch": fallthrough
+        default:
+            return AnyView(y)
+        }
+    }
     
-    // TODO can this be optimized for performance??
-    // What about setting .setProperties on result of another property access
-    // and make two different ones based on whether it has children
     @ViewBuilder
     public var body: some View {
         if from.type == "vstack" {
@@ -513,10 +537,10 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "text" {
             Text(from.processText(get("text") ?? "[nil]"))
-                .if(from.has("bold")){ $0.bold() }
-                .if(from.has("italic")){ $0.italic() }
-                .if(from.has("underline")){ $0.underline() }
-                .if(from.has("strikethrough")){ $0.strikethrough() }
+                .if(from.getBool("bold")){ $0.bold() }
+                .if(from.getBool("italic")){ $0.italic() }
+                .if(from.getBool("underline")){ $0.underline() }
+                .if(from.getBool("strikethrough")){ $0.strikethrough() }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "textfield" {
@@ -530,16 +554,12 @@ public struct GUIElementInstance: View {
         else if from.type == "image" {
             if has("systemName") {
                 Image(systemName: get("systemName") ?? "exclamationmark.bubble")
-                    .fixedSize()
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 5)
+                    .if(from.has("resizable")) { self.resize($0) }
                     .setProperties(from.properties, self.item)
             }
             else { // assuming image property
-                Image(uiImage: get("image") ?? UIImage())
-                    .fixedSize()
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 5)
+                Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+                    .if(from.has("resizable")) { self.resize($0) }
                     .setProperties(from.properties, self.item)
             }
         }
