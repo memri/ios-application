@@ -3,7 +3,6 @@
 //  ComponentClasses.swift
 //  memri
 //
-//  Created by Koen van der Veen on 09/04/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -11,18 +10,35 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+let ViewConfig:[String:[String]] = [
+    "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
+    "order": ["color", "font", "rowinset", "padding", "background", "rowbackground", "border", "shadow", "offset"]
+]
+
 extension View {
     func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
         var view:AnyView = AnyView(self)
-        for (name, _) in properties {
-            var value = properties[name]
-
-            // Compile string properties
-            if let compiled = value as? GUIElementDescription.CompiledProperty {
-                value = GUIElementDescription.computeProperty(compiled, item)
+        var setFrame = false
+        
+        for item in ViewConfig["frame"]! {
+            if properties[item] != nil {
+                setFrame = true
+                break
             }
-            
-            view = view.setProperty(name, value!)
+        }
+        
+        if setFrame { view = view.setProperty("frame", properties) }
+        
+        for name in ViewConfig["order"]! {
+            if var value = properties[name] {
+                
+                // Compile string properties
+                if let compiled = value as? GUIElementDescription.CompiledProperty {
+                    value = GUIElementDescription.computeProperty(compiled, item)
+                }
+                
+                view = view.setProperty(name, value)
+            }
         }
         
         return AnyView(view)
@@ -85,21 +101,15 @@ extension View {
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
             }
-        case "v-align":
-            if let value = value as? Alignment {
-                return AnyView(self.frame(maxHeight: .greatestFiniteMagnitude, alignment: value))
-            }
-        case "h-align":
-            if let value = value as? Alignment {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, alignment: value))
-            }
-        case "fullwidth":
-            if let value = value as? Bool, value {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
-            }
-        case "fullheight":
-            if let value = value as? Bool, value {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
+        case "frame":
+            if let value = value as? [String:Any] {
+                
+                return AnyView(self.frame(
+                    minWidth: value["minwidth"] as? CGFloat ?? .none,
+                    maxWidth: value["maxwidth"] as? CGFloat ?? .greatestFiniteMagnitude,
+                    minHeight: value["minheight"] as? CGFloat ?? .none,
+                    maxHeight: value["maxheight"] as? CGFloat ?? .greatestFiniteMagnitude,
+                    alignment: value["align"] as? Alignment ?? .top))
             }
         case "font":
             if let value = value as? [Any] {
@@ -114,7 +124,7 @@ extension View {
                 }
                 return AnyView(self.font(font))
             }
-        case "spacing", "alignment", "size", "text", "maxchar", "removewhitespace", "bold":
+        case "minwidth", "minheight", "align", "maxwidth", "maxheight", "spacing", "alignment", "text", "maxchar", "removewhitespace", "bold":
             break
         default:
             print("NOT IMPLEMENTED PROPERTY: \(name)")
@@ -173,22 +183,23 @@ public class GUIElementDescription: Decodable {
             case "top": return VerticalAlignment.top
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
-            case "v-center": return VerticalAlignment.center
-            case "h-center": return HorizontalAlignment.center
+            case "center": return self.type == "vstack"
+                ? HorizontalAlignment.center
+                : VerticalAlignment.center
             default: return nil
             }
         }
-        else if key == "v-align" || key == "h-align" {
+        else if key == "align" {
             switch value as! String {
             case "left": return Alignment.leading
             case "top": return Alignment.top
             case "right": return Alignment.trailing
             case "bottom": return Alignment.bottom
             case "center": return Alignment.center
-            case "lefttop": return Alignment.topLeading
-            case "righttop": return Alignment.topTrailing
-            case "leftbottom": return Alignment.bottomLeading
-            case "rightbototm": return Alignment.bottomTrailing
+            case "lefttop", "topleft": return Alignment.topLeading
+            case "righttop", "topright": return Alignment.topTrailing
+            case "leftbottom", "bottomleft": return Alignment.bottomLeading
+            case "rightbottom", "bottomright": return Alignment.bottomTrailing
             default: return nil
             }
         }
@@ -206,7 +217,10 @@ public class GUIElementDescription: Decodable {
                 value[i] = parseProperty("", value[i])!
             }
             
-            if key == "font", let weight = value[1] as? String {
+            if key == "font", let _ = value[0] as? CGFloat {
+                if value.count == 1 { value.append("regular") }
+                let weight = value[1] as! String
+                
                 switch weight {
                 case "regular": value[1] = Font.Weight.regular
                 case "bold": value[1] = Font.Weight.bold
@@ -229,6 +243,8 @@ public class GUIElementDescription: Decodable {
         var result: [Any]
     }
     
+    // Parsed (example): "Views element at {.dateAccessed} with title: {.title}"
+    // CompiledProperty becomes: ["Views element at ", ["dateAccessed"], " with title: ", ["title"]]
     func compile(_ expr: String) -> Any {
         // We'll use this regular expression to match the name of the object and property
         let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.[^\}]*)\})?)"#
@@ -411,16 +427,16 @@ public struct GUIElementInstance: View {
 //                as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
 //    }
     
-    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout> {
-        var x:[CGFloat] = from.get("size")!
-        
-        if x[0] == 0 { x[0] = .greatestFiniteMagnitude }
-        if x[1] == 0 { x[1] = .greatestFiniteMagnitude }
-        
-        return view
-            .frame(maxWidth: x[0], maxHeight: x[1])
-                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
-    }
+//    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout> {
+//        var x:[CGFloat] = from.get("size")!
+//
+//        if x[0] == 0 { x[0] = .greatestFiniteMagnitude }
+//        if x[1] == 0 { x[1] = .greatestFiniteMagnitude }
+//
+//        return view
+//            .frame(maxWidth: x[0], maxHeight: x[1])
+//                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
+//    }
     
     // TODO can this be optimized for performance??
     // What about setting .setProperties on result of another property access
@@ -455,6 +471,7 @@ public struct GUIElementInstance: View {
                 .if(from.has("italic")){ $0.italic() }
                 .if(from.has("underline")){ $0.underline() }
                 .if(from.has("strikethrough")){ $0.strikethrough() }
+                .multilineTextAlignment(.leading)
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "textfield" {
@@ -485,17 +502,14 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "horizontalline" {
             HorizontalLine()
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "rectangle" {
             Rectangle()
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "roundedrectangle" {
             RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "spacer" {

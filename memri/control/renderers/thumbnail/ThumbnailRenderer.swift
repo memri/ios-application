@@ -18,8 +18,7 @@ class ThumbnailRenderer: Renderer{
 
     }
     override func canDisplayResultSet(items: [DataItem]) -> Bool{
-        // checks if everything can be casted to note
-        return items.count == items.compactMap({$0 as? Note}).count
+        return true
     }
 }
 

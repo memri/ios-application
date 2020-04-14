@@ -24,6 +24,10 @@ struct ThumbnailRendererView: View {
     var name: String="thumbnail"
     
     var renderConfig: ThumbnailConfig {
+        if self.main.computedView.renderConfigs[name] == nil {
+            print ("Warning: Using default render config for thumbnail")
+        }
+        
         return self.main.computedView.renderConfigs[name] as? ThumbnailConfig ?? ThumbnailConfig()
     }
     
@@ -44,7 +48,27 @@ struct ThumbnailRendererView: View {
             }
             else {
                 QGrid(main.items, columns: renderConfig.cols.value!) { dataItem in
-                    Text(dataItem.getString("title")).asThumbnail()
+//                    VStack (alignment: .center) {
+////                        HStack {
+//                            Text(dataItem.getString("content"))
+//                                .frame(minWidth: 0, maxWidth: .greatestFiniteMagnitude, minHeight: 100, maxHeight: .greatestFiniteMagnitude, alignment: Alignment.topLeading)
+//                                .foregroundColor(Color(hex:"#555"))
+//                                .font(.system(size: 9, weight: .regular, design: .default))
+//                                .border(Color(hex: "#00ff00"), width: 1)
+////                        }
+//                        .padding(4)
+//
+//                        .border(Color(hex: "#ff0000"), width: 1)
+//                        .background(Color(hex:"#efefef"))
+//
+//                        Text (dataItem.getString("title"))
+//                            .padding(2) // [2, 0, 5, 0],
+//                            .font(.system(size: 10, weight: .regular, design: .default))
+//                    }
+//                    .padding(0) // = [0, 0, 5, 0],
+                    
+                    
+                    self.renderConfig.render(dataItem)
                         .onTapGesture {
                             if let press = self.renderConfig.press {
                                 self.main.executeAction(press, dataItem)
