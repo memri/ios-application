@@ -90,6 +90,14 @@ public class Settings {
         return get(path) ?? ""
     }
     
+    public func getBool(_ path:String) -> Bool? {
+        return get(path) ?? nil
+    }
+    
+    public func getInt(_ path:String) -> Int? {
+        return get(path) ?? nil
+    }
+    
     private func parse(_ path:String) -> (collection:SettingCollection?, rest:String) {
         let splits = path.split(separator: "/")
         let type = splits.first
@@ -136,7 +144,8 @@ class SettingCollection:Object {
      *
      */
     public func get<T:Decodable>(_ path:String) -> T? {
-        let needle = self.type + path
+        let needle = self.type + (path.first == "/" ? "" :"/") + path
+        
         let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
             let output:T = unserialize(item.json)
@@ -155,7 +164,7 @@ class SettingCollection:Object {
      * Also responsible for saving the setting to the permanent storage
      */
     public func set(_ path:String, _ value:AnyCodable) -> Void {
-        let key = self.type + path
+        let key = self.type + (path.first == "/" ? "" :"/") + path
         
         func saveState(){
             let s = Setting(value: ["key": key, "json": serialize(value)])

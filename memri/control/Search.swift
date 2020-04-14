@@ -30,6 +30,7 @@ struct Search: View {
 
     var body: some View {
         VStack{
+            Divider().background(Color(hex: "#efefef"))
             HStack{
                 TextField("type your search query here", text: $main.computedView.filterText)
                 
@@ -38,7 +39,8 @@ struct Search: View {
                         .font(Font.system(size: 20, weight: .medium))
                 }
             }
-            .padding(.horizontal , 15)
+            .padding(.horizontal, 15)
+            .padding(.top, 5)
             
             FilterPanel()
         }

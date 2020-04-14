@@ -27,7 +27,7 @@ public enum ActionName: String, Codable {
         star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
-        showSessionSwitcher, noop
+        showSessionSwitcher, forward, forwardToFront, backAsSession, noop
     
     var defaultIcon: String {
         switch self {
@@ -120,7 +120,8 @@ public enum ActionName: String, Codable {
     
     var opensView: Bool {
         switch self {
-        case .showStarred, .openView, .openViewByName, .openDynamicView:
+        case .forward, .forwardToFront, .backAsSession, .back, .add, .showStarred,
+             .openView, .openViewByName, .openDynamicView:
             return true
         default:
             return false
@@ -132,8 +133,10 @@ public enum ActionName: String, Codable {
         switch self{
         case .add:
             return Color(hex: "#6aa84f").uiColor()
-        case .back, .showSessionSwitcher:
+        case .back:
             return Color(hex: "#434343").uiColor()
+        case .showSessionSwitcher:
+            return Color(hex: "#CCC").uiColor()
         default:
             return Color(hex: "#999999").uiColor()
         }
@@ -156,7 +159,7 @@ public enum ActionName: String, Codable {
     
     var defaultInactiveColor: UIColor? {
         switch self {
-        case .add, .back, .toggleEditMode, .showNavigation, .showSessionSwitcher:
+        case .add, .back, .toggleEditMode, .showNavigation:
             return Color(hex: "#434343").uiColor()
         case .openView, .openDynamicView, .openViewByName, .toggleFilterPanel, .star,
              .showStarred, .showContextPane, .showOverlay, .share,

@@ -11,6 +11,32 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
+//                            VStack (alignment: .leading, spacing: 0){
+//                                Text(dataItem.getString("title"))
+//                                    .bold()
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                    .foregroundColor(Color(hex: "#333"))
+//                                    .padding(.bottom, 3)
+//                                Text(self.generatePreview(dataItem))
+//                                    .frame(maxWidth: .infinity, alignment: .leading)
+//                                    .foregroundColor(Color(hex: "#666"))
+//                                    .font(.system(size: 14, weight: .regular, design: .default))
+//                                Rectangle()
+//                                    .size(width: 373, height: 1)
+//                                    .foregroundColor(Color(hex: "#efefef"))
+//                                    .padding(.top, 10)
+//                                    .padding(.bottom, -15)
+////                                Divider()
+////                                    .background(Color(hex: "#efefef"))
+////                                    .padding(.top, 10)
+////                                    .padding(.bottom, -5)
+//                            }
+//                            .padding(.top, 5)
+////                            .listRowBackground(Color.red)
+//                            .onTapGesture {
+//                                if let press = self.renderConfig.press {
+//                                    self.main.executeAction(press, dataItem)
+
 extension View {
     func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
         var view:AnyView = AnyView(self)
@@ -27,11 +53,6 @@ extension View {
         
         return AnyView(view)
     }
-    
-    /*
-     IDEAS:
-        - .frame(maxWidth: .infinity, alignment: .leading)
-     */
     
     func setProperty(_ name:String, _ value:Any) -> AnyView {
         switch name {
@@ -61,6 +82,11 @@ extension View {
         case "background":
             if let value = value as? String {
                 return AnyView(self.background(value.first == "#"
+                    ? Color(hex: value) : Color(value))) //TODO named colors do not work
+            }
+        case "rowbackground":
+            if let value = value as? String {
+                return AnyView(self.listRowBackground(value.first == "#"
                     ? Color(hex: value) : Color(value))) //TODO named colors do not work
             }
         case "border":
@@ -93,7 +119,14 @@ extension View {
             if let value = value as? Alignment {
                 return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, alignment: value))
             }
-            
+        case "fullwidth":
+            if let value = value as? Bool, value {
+                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
+            }
+        case "fullheight":
+            if let value = value as? Bool, value {
+                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
+            }
         case "font":
             if let value = value as? [Any] {
                 var font:Font
@@ -107,7 +140,7 @@ extension View {
                 }
                 return AnyView(self.font(font))
             }
-        case "spacing", "alignment", "size", "text", "maxChar", "removeWhiteSpace", "bold":
+        case "spacing", "alignment", "size", "text", "maxchar", "removewhitespace", "bold":
             break
         default:
             print("NOT IMPLEMENTED PROPERTY: \(name)")
@@ -147,7 +180,7 @@ public class GUIElementDescription: Decodable {
     
     func parseProperties(_ props:[String:AnyCodable]){
         for (key, value) in props {
-            properties[key] = parseProperty(key, value.value)
+            properties[key.lowercased()] = parseProperty(key, value.value)
         }
     }
     
@@ -311,9 +344,9 @@ extension GUIElementDescription {
     
     func processText(_ text: String) -> String{
         var outText = text
-        let maxChar:CGFloat? = get("maxChar")
+        let maxChar:CGFloat? = get("maxchar")
         
-        outText = get("removeWhiteSpace") ?? false ? removeWhiteSpace(text: text) : text
+        outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
         outText = maxChar != nil ? String(outText.prefix(Int(maxChar!))) : outText
         
         return outText
@@ -343,13 +376,25 @@ public struct GUIElementInstance: View {
         return from.get(propName, self.item)
     }
     
-    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout> {
-        let x:[CGFloat] = from.get("size")!
+    // Keeping this around until sure that size setting is never needed
+//    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout> {
+//        let x:[CGFloat] = from.get("size")!
+//
+//        return view
+//            .size(width: x[0], height: x[1])
+//            .frame(maxWidth: x[0], maxHeight: x[1])
+//                as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
+//    }
+    
+    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout> {
+        var x:[CGFloat] = from.get("size")!
+        
+        if x[0] == 0 { x[0] = .greatestFiniteMagnitude }
+        if x[1] == 0 { x[1] = .greatestFiniteMagnitude }
         
         return view
-            .size(width: x[0], height: x[1])
             .frame(maxWidth: x[0], maxHeight: x[1])
-                as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
+                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
     }
     
     // TODO can this be optimized for performance??
@@ -421,7 +466,7 @@ public struct GUIElementInstance: View {
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "roundedrectangle" {
-            RoundedRectangle(cornerRadius: get("cornerRadius") ?? 5)
+            RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
                 .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
