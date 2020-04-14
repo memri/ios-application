@@ -2,7 +2,7 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentViewIndex": 2,
+            "currentViewIndex": 3,
             "views": [
                 {
                     "queryOptions": {
@@ -12,6 +12,11 @@
                 {
                     "queryOptions": {
                         "query": "session"
+                    }
+                },
+                {
+                    "queryOptions": {
+                        "query": "logitem"
                     }
                 },
                 {

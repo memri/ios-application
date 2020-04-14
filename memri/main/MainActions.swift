@@ -29,6 +29,11 @@ extension Main {
                 else if let item = item { openView(item) }
             case .openViewByName:
                 openView(params[0].value as! String)
+            case .openSession:
+                if (params.count > 0) { openSession(params[0].value as! Session) }
+                else if let item = item as? Session { openSession(item) }
+            case .openSessionByName:
+                openSession(params[0].value as! String)
             case .showStarred:
                 showStarred(starButton: action)
             case .back: back()

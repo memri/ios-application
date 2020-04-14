@@ -210,7 +210,7 @@
             "title": "All Log Entries",
             "queryOptions": {
                 "query": "logitem",
-                "sortProperty": "dateModified",
+                "sortProperty": "date",
                 "sortAscending": false
             },
             "emptyResultText": "There are no log entries here yet",
@@ -218,16 +218,31 @@
             "renderConfigs": {
                 "list": {
                     "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "HStack", [
-                                "Text", { "text": "{.action}", "bold": true },
-                                "Text", { "text": "{.date}" }
+                        "VStack", {
+                            "padding": 5,
+                            "spacing": 3,
+                            "rowInset": [0, 20, 0, 20]
+                        }, [
+                            "HStack", {"alignment": "center"}, [
+                                "Text", {
+                                    "text": "{.action}",
+                                    "font": [14, "semibold"],
+                                },
+                                "Spacer",
+                                "Text", {
+                                    "text": "{.date}",
+                                    "font": [11, "regular"],
+                                    "color": "#888"
+                                }
                             ],
                             "Text", {
                                 "text": "{.contents}",
-                                "bold": false,
+                                "font": [14, "light"],
                                 "removeWhiteSpace": true,
-                                "maxChar": 100
+                                "maxChar": 100,
+                                "cornerRadius": 5,
+                                "background": "#f3f3f3",
+                                "padding": 5
                             }
                         ]
                     ]
@@ -392,6 +407,7 @@
             "rendererName": "thumbnail",
             "renderConfigs": {
                 "list": {
+                    "press": { "actionName": "openSession" },
                     "renderDescription": [
                         "VStack", {
                             "alignment": "left",
@@ -435,6 +451,7 @@
                 "thumbnail": {
                     "columns": 2,
                     "hSpacing": 20,
+                    "press": { "actionName": "openSession" },
                     "renderDescription": [
                         "VStack", {
                             "minWidth": 10,
@@ -464,13 +481,6 @@
                         ]
                     ]
                 }
-            },
-            "actionButton": {
-                "actionName": "add",
-                "actionArgs": [{
-                    "type": "note",
-                    "title": "Untitled Note"
-                }]
             },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [

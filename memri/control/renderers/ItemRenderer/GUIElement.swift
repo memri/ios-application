@@ -274,7 +274,7 @@ public class GUIElementDescription: Decodable {
                 case "semibold": value[1] = Font.Weight.semibold
                 case "heavy": value[1] = Font.Weight.heavy
                 case "light": value[1] = Font.Weight.light
-                case "ultraLight": value[1] = Font.Weight.ultraLight
+                case "ultralight": value[1] = Font.Weight.ultraLight
                 case "black": value[1] = Font.Weight.black
                 default: value[1] = Font.Weight.medium
                 }
