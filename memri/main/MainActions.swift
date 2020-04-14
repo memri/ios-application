@@ -25,6 +25,7 @@ extension Main {
             case .openView:
                 if (params.count > 0) { openView(params[0].value as! SessionView) }
                 else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
+                else if let item = item as? SessionView { openView(item) }
                 else if let item = item { openView(item) }
             case .openViewByName:
                 openView(params[0].value as! String)
@@ -166,10 +167,10 @@ extension Main {
         let session = self.currentSession
         
         // Add view to session
-        session.addView(view)
+        session.setCurrentView(view)
         
         // Set accessed date to now
-        try! realm.write { view.dateAccessed = Date() }
+        view.access()
         
         // Recompute view
         scheduleComputeView()

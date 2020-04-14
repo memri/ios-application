@@ -65,7 +65,7 @@ public class QueryOptions: Object, Codable {
     
     public func merge(_ queryOptions:QueryOptions) {
         self.query = queryOptions.query ?? self.query ?? nil
-        self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? ""
+        self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? nil
         self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? true
         self.pageCount.value = queryOptions.pageCount.value ?? self.pageCount.value ?? 0
         self.pageIndex.value = queryOptions.pageIndex.value ?? self.pageIndex.value ?? 0

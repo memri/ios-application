@@ -104,7 +104,7 @@ public class Cache {
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
                 
-                if let sortProperty = queryOptions.sortProperty {
+                if let sortProperty = queryOptions.sortProperty, sortProperty != "" {
                     result = result.sorted(
                         byKeyPath: sortProperty,
                         ascending: queryOptions.sortAscending.value ?? true)

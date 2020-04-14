@@ -337,21 +337,26 @@ public class Session: DataItem {
 //        }
 //    }
     
-    public func addView(_ view:SessionView) {
-        // Write updates to realm
-        try! realm!.write {
-        
-            // Remove all items after the current index
-            views.removeSubrange((currentViewIndex + 1)...)
-            
-            // Add the view to the session
-            views.append(view)
-            
-            // Update the index pointer
-            currentViewIndex = views.count - 1
+    public func setCurrentView(_ view:SessionView) {
+        if let index = views.firstIndex(of: view) {
+            try! realm!.write {
+                currentViewIndex = index
+            }
         }
-        
-        decorate(view)
+        else {
+            try! realm!.write {
+                // Remove all items after the current index
+                views.removeSubrange((currentViewIndex + 1)...)
+                
+                // Add the view to the session
+                views.append(view)
+                
+                // Update the index pointer
+                currentViewIndex = views.count - 1
+            }
+            
+            decorate(view)
+        }
     }
     
     public func takeScreenShot(){

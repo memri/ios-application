@@ -209,6 +209,15 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    public func access() {
+        if let realm = realm, !realm.isInWriteTransaction {
+            try! realm.write { self.dateAccessed = Date() }
+        }
+        else {
+            self.dateAccessed = Date()
+        }
+    }
+    
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
     }

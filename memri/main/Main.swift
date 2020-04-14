@@ -192,6 +192,9 @@ public class Main: ObservableObject {
                                 self.scheduleUIUpdate()
                             }
                             
+                            self.currentSession.access()
+                            self.currentSession.currentView.access()
+                            
                             // Load current view
                             self.setComputedView()
                             
