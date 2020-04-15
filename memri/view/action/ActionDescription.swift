@@ -125,8 +125,6 @@ public class ActionDescription: Object, Codable, Identifiable {
         self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
         self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
         self.backgroundColor = self.actionName.defaultBackgroundColor
-        
-        print("create action description runtime: \(self.actionName)")
     }
     
     public required init() {

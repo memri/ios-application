@@ -9,22 +9,6 @@
 import SwiftUI
 import Combine
 
-struct SortButton: Identifiable {
-    var id = UUID()
-    var name: String
-    var selected: Bool
-    var color: Color {self.selected ? Color.green : Color.black}
-    var fontWeight: Font.Weight? {self.selected ? .bold : .none}
-}
-
-struct BrowseSetting: Identifiable {
-    var id = UUID()
-    var name: String
-    var selected: Bool
-    var color: Color {self.selected ? Color.green : Color.black}
-    var fontWeight: Font.Weight? {self.selected ? .bold : .none}
-}
-
 struct Search: View {
     @EnvironmentObject var main: Main
 
@@ -40,9 +24,11 @@ struct Search: View {
                 }
             }
             .padding(.horizontal, 15)
-            .padding(.top, 5)
+            .padding(.vertical, 5)
             
-            FilterPanel()
+            if self.main.currentSession.showFilterPanel {
+                FilterPanel()
+            }
         }
     }
 }
