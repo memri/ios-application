@@ -165,6 +165,9 @@ public class Main: ObservableObject {
        ]
         
         cache.scheduleUIUpdate = scheduleUIUpdate
+        
+        // Make settings global so it can be reached everywhere
+        globalSettings = settings
     }
     
     public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
@@ -188,6 +191,9 @@ public class Main: ObservableObject {
                             self.cancellable = self.sessions.objectWillChange.sink { (_) in
                                 self.scheduleUIUpdate()
                             }
+                            
+                            self.currentSession.access()
+                            self.currentSession.currentView.access()
                             
                             // Load current view
                             self.setComputedView()

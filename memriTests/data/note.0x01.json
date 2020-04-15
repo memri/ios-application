@@ -5,8 +5,8 @@
     "content": "- potatoes\n- mayonaise\n- avocados",
     "starred": true,
     "labels": [
-        { "name": "Daily Log", "color": "#83ac06" },
-        { "name": "Polis", "color": "#ffd966" }
+        { "uid":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+        { "uid":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
     ],
     "syncState": { "version": 1 }
 }]

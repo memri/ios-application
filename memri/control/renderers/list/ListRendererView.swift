@@ -56,6 +56,7 @@ struct ListRendererView: View {
                                     }
                                 }
                         }
+                    
                         .onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet

@@ -64,10 +64,6 @@ class Note:DataItem {
     let sharedWith = List<DataItem>()
     let comments = List<DataItem>()
     
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
-    
     required init () {
         super.init()
     }
@@ -85,16 +81,12 @@ class Note:DataItem {
 }
 
 class LogItem:DataItem {
-    @objc dynamic var date:Date? = nil
+    @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
     override var type:String { "logitem" }
     
     let appliesTo = List<DataItem>()
-    
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
     
     required init () {
         super.init()
@@ -122,10 +114,6 @@ class Label:DataItem {
     override var type:String { "label" }
     
     let appliesTo = List<DataItem>() // TODO make two-way binding in realm
-    
-    public override static func primaryKey() -> String? {
-        return "name"
-    }
     
     required init () {
         super.init()

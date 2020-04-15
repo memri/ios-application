@@ -29,6 +29,11 @@
         "view": "all-sessions"
     },
     {
+        "type": "item",
+        "title": "views",
+        "view": "all-sessionviews"
+    },
+    {
         "type": "heading",
         "title": "Macros"
     },

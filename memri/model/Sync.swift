@@ -80,11 +80,10 @@ class Sync {
         
         // Store query in a log item
         let logitem = LogItem()
-        let data = try! JSONEncoder().encode(queryOptions)
+        let data = try! MemriJSONEncoder.encode(queryOptions)
         logitem.contents = String(data: data, encoding: .utf8) ?? ""
         logitem.action = "query"
         logitem.date = Date()
-        logitem.uid = DataItem.generateUID()
         
         // Set syncstate to "fetch" in order to get priority treatment for querying
         logitem.syncState?.actionNeeded = "fetch"

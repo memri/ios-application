@@ -315,13 +315,14 @@ public class Views {
     }
 }
 
-
-public class SessionView: Object, ObservableObject, Codable {
-    
+public class SessionView: DataItem {
     /**
      *
      */
-    
+    override var type:String { "sessionview" }
+    /**
+     *
+     */
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
     @objc dynamic var rendererName: String? = nil
@@ -349,16 +350,28 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var actionButton: ActionDescription? = nil
     @objc dynamic var editActionButton: ActionDescription? = nil
     
-    /**
-     *
-     */
-    @objc dynamic var syncState:SyncState? = SyncState()
+    @objc dynamic var session: Session? = nil
     
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
             backTitle, editActionButton, icon, showLabels,
             browsingMode, cascadeOrder, activeStates, emptyResultText
+    }
+    
+    required init(){
+        super.init()
+        
+        self.functions["computedDescription"] = {_ in
+            if let value = self.name ?? self.title { return value }
+            else if let rendererName = self.rendererName {
+                return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+            }
+            else if let query = self.queryOptions?.query {
+                return "Showing: \(query)"
+            }
+            return "[No Name]"
+        }
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -390,6 +403,8 @@ public class SessionView: Object, ObservableObject, Codable {
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
             self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
+            
+            try! super.superDecode(from: decoder)
         }
     }
     
@@ -453,12 +468,12 @@ public class SessionView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
+        let items: SessionView = try! MemriJSONDecoder.decode(SessionView.self, from: jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> SessionView {
-        let view:SessionView = try JSONDecoder().decode(SessionView.self, from: Data(json.utf8))
+        let view:SessionView = try MemriJSONDecoder.decode(SessionView.self, from: Data(json.utf8))
         return view
     }
 }
@@ -719,12 +734,12 @@ public class DynamicView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> DynamicView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: jsonData)
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: jsonData)
         return view
     }
     
     public class func fromJSONString(_ json: String) throws -> DynamicView {
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: Data(json.utf8))
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: Data(json.utf8))
         return view
     }
 }
@@ -1011,7 +1026,7 @@ public class CompiledView {
         let template = insertVariables()
         
         // Generate session view from template
-        let sessionView = try! SessionView.fromJSONString(template)
+        let sessionView:SessionView = try! SessionView.fromJSONString(template)
         
         // Merge with the view that is copied, if any
         if let view = view {

@@ -15,6 +15,10 @@ public class Sessions: DataItem {
     /**
      *
      */
+    override var type:String { "sessions" }
+    /**
+     *
+     */
     @objc dynamic var currentSessionIndex: Int = 0
     /**
      *
@@ -35,10 +39,6 @@ public class Sessions: DataItem {
     
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
-    
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -69,12 +69,12 @@ public class Sessions: DataItem {
     private func postInit(){
         for session in sessions {
             decorate(session)
+            session.postInit()
         }
     }
     
     private func decorate(_ session:Session) {
         if realm != nil {
-        
             rlmTokens.append(session.observe({ (objectChange) in
                 if case .change = objectChange {
                     self.objectWillChange.send()
@@ -85,7 +85,7 @@ public class Sessions: DataItem {
     
     private func fetchUID(_ realm:Realm){
         // When the uid is not yet set
-        if self.uid == nil {
+        if self.uid.contains("0xNEW") {
             
             // Fetch device name
             let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
@@ -99,10 +99,6 @@ public class Sessions: DataItem {
     
     public func setCurrentSession(_ session:Session) {
         try! realm!.write {
-            
-            if session.uid == nil {
-                session.uid = DataItem.generateUID()
-            }
             
             if let index = sessions.firstIndex(of: session) {
                 sessions.remove(at: index)
@@ -204,17 +200,25 @@ public class Sessions: DataItem {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
         let jsonData = try jsonDataFromFile(file, ext)
-        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: jsonData)
+        let sessions:Sessions = try MemriJSONDecoder.decode(Sessions.self, from: jsonData)
         return sessions
     }
     
     public class func fromJSONString(_ json: String) throws -> Sessions {
-        let sessions:Sessions = try JSONDecoder().decode(Sessions.self, from: Data(json.utf8))
+        let sessions:Sessions = try MemriJSONDecoder.decode(Sessions.self, from: Data(json.utf8))
         return sessions
     }
 }
 
 public class Session: DataItem {
+    /**
+     *
+     */
+    override var type:String { "session" }
+    /**
+     *
+     */
+    @objc dynamic var name: String = ""
     /**
      *
      */
@@ -238,7 +242,7 @@ public class Session: DataItem {
     /**
      *
      */
-    @objc dynamic var screenShot:File? = nil
+    @objc dynamic var screenshot:File? = nil
     
     /**
      *
@@ -262,10 +266,6 @@ public class Session: DataItem {
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
     
-    public override static func primaryKey() -> String? {
-        return "uid"
-    }
-
     var backButton: ActionDescription? {
         if self.currentViewIndex > 0 {
             return ActionDescription(actionName: .back)
@@ -291,9 +291,9 @@ public class Session: DataItem {
             decodeIntoList(decoder, "views", self.views)
             
             try! super.superDecode(from: decoder)
-            
-            if uid == nil { uid = DataItem.generateUID() }
         }
+        
+//        self.postInit()
     }
     
     required init() {
@@ -303,11 +303,11 @@ public class Session: DataItem {
     }
     
     public func postInit(){
-        for view in views{
-            decorate(view)
-        }
-        
         if realm != nil {
+            for view in views{
+                decorate(view)
+            }
+            
             rlmTokens.append(self.observe({ (objectChange) in
                 if case .change = objectChange {
                     self.objectWillChange.send()
@@ -317,6 +317,15 @@ public class Session: DataItem {
     }
     
     private func decorate(_ view:SessionView) {
+        // Set the .session property on views for easy querying
+        if view.session == nil {
+            if let realm = realm, !realm.isInWriteTransaction {
+                try! realm.write { view.session = self }
+            }
+            else { view.session = self }
+        }
+        
+        // Observe and process changes for UI updates
         rlmTokens.append(view.observe({ (objectChange) in
             if case .change = objectChange {
                 self.objectWillChange.send()
@@ -332,36 +341,41 @@ public class Session: DataItem {
 //        }
 //    }
     
-    public func addView(_ view:SessionView) {
-        // Write updates to realm
-        try! realm!.write {
-        
-            // Remove all items after the current index
-            views.removeSubrange((currentViewIndex + 1)...)
-            
-            // Add the view to the session
-            views.append(view)
-            
-            // Update the index pointer
-            currentViewIndex = views.count - 1
+    public func setCurrentView(_ view:SessionView) {
+        if let index = views.firstIndex(of: view) {
+            try! realm!.write {
+                currentViewIndex = index
+            }
         }
-        
-        decorate(view)
+        else {
+            try! realm!.write {
+                // Remove all items after the current index
+                views.removeSubrange((currentViewIndex + 1)...)
+                
+                // Add the view to the session
+                views.append(view)
+                
+                // Update the index pointer
+                currentViewIndex = views.count - 1
+            }
+            
+            decorate(view)
+        }
     }
     
     public func takeScreenShot(){
         let view = UIApplication.shared.windows[0].rootViewController?.view
         let uiImage = view!.takeScreenShot()
         
-        if self.screenShot == nil {
-            let doIt = { self.screenShot = File(value: ["uri": File.generateFilePath()]) }
+        if self.screenshot == nil {
+            let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
             
             if realm!.isInWriteTransaction { doIt() }
             else { try! realm!.write { doIt() } }
         }
         
         do {
-            try self.screenShot!.write(uiImage)
+            try self.screenshot!.write(uiImage)
         }
         catch let error {
             print(error)
@@ -370,12 +384,12 @@ public class Session: DataItem {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
         let jsonData = try jsonDataFromFile(file, ext)
-        let session:Session = try JSONDecoder().decode(Session.self, from: jsonData)
+        let session:Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)
         return session
     }
     
     public class func fromJSONString(_ json: String) throws -> Session {
-        let session:Session = try JSONDecoder().decode(Session.self, from: Data(json.utf8))
+        let session:Session = try MemriJSONDecoder.decode(Session.self, from: Data(json.utf8))
         return session
     }
 

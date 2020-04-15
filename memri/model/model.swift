@@ -11,7 +11,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /**
      *
      */
-    @objc dynamic var uid:String? = nil
+    @objc dynamic var uid:String = DataItem.generateUID()
     /**
      *
      */
@@ -23,11 +23,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /**
      *
      */
-    @objc dynamic var dateCreated:Date? = nil
+    @objc dynamic var dateCreated:Date? = Date()
     /**
      *
      */
-    @objc dynamic var dateModified:Date? = nil
+    @objc dynamic var dateModified:Date? = Date()
     /**
      *
      */
@@ -44,6 +44,20 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      *
      */
     @objc dynamic var syncState:SyncState? = SyncState()
+    
+    /**
+     *
+     */
+    var functions:[String: (_ args:[Any]?) -> String] = [:]
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case uid, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
+             labels, syncState
+    }
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
@@ -57,6 +71,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         starred = try decoder.decodeIfPresent("starred") ?? starred
         deleted = try decoder.decodeIfPresent("deleted") ?? deleted
         syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+        
+        dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
+        dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
+        dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
         
         decodeIntoList(decoder, "changelog", self.changelog)
         decodeIntoList(decoder, "labels", self.labels)
@@ -191,6 +209,15 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    public func access() {
+        if let realm = realm, !realm.isInWriteTransaction {
+            try! realm.write { self.dateAccessed = Date() }
+        }
+        else {
+            self.dateAccessed = Date()
+        }
+    }
+    
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
     }
@@ -203,12 +230,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
         let jsonData = try jsonDataFromFile(file, ext)
         
-        let items:[DataItem] = try JSONDecoder().decode(family:DataItemFamily.self, from:jsonData)
+        let items:[DataItem] = try MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> [DataItem] {
-        let items:[DataItem] = try JSONDecoder()
+        let items:[DataItem] = try MemriJSONDecoder
             .decode(family:DataItemFamily.self, from:Data(json.utf8))
         return items
     }

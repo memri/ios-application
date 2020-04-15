@@ -25,9 +25,15 @@ extension Main {
             case .openView:
                 if (params.count > 0) { openView(params[0].value as! SessionView) }
                 else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
+                else if let item = item as? SessionView { openView(item) }
                 else if let item = item { openView(item) }
             case .openViewByName:
                 openView(params[0].value as! String)
+            case .openSession:
+                if (params.count > 0) { openSession(params[0].value as! Session) }
+                else if let item = item as? Session { openSession(item) }
+            case .openSessionByName:
+                openSession(params[0].value as! String)
             case .showStarred:
                 showStarred(starButton: action)
             case .back: back()
@@ -166,7 +172,10 @@ extension Main {
         let session = self.currentSession
         
         // Add view to session
-        session.addView(view)
+        session.setCurrentView(view)
+        
+        // Set accessed date to now
+        view.access()
         
         // Recompute view
         scheduleComputeView()

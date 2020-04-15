@@ -24,6 +24,10 @@ struct ThumbnailRendererView: View {
     var name: String="thumbnail"
     
     var renderConfig: ThumbnailConfig {
+        if self.main.computedView.renderConfigs[name] == nil {
+            print ("Warning: Using default render config for thumbnail")
+        }
+        
         return self.main.computedView.renderConfigs[name] as? ThumbnailConfig ?? ThumbnailConfig()
     }
     
@@ -43,8 +47,17 @@ struct ThumbnailRendererView: View {
                 Spacer()
             }
             else {
-                QGrid(main.items, columns: renderConfig.cols.value!) { dataItem in
-                    Text(dataItem.getString("title")).asThumbnail()
+                // TODO: vPadding, hPadding, vSpacing, hSpacing, columnsInLandscape
+                QGrid(main.items,
+                      columns: renderConfig.columns.value ?? 3,
+                      columnsInLandscape: renderConfig.columnsInLandscape.value ?? 5,
+                      vSpacing: CGFloat(renderConfig.vSpacing.value ?? 10),
+                      hSpacing: CGFloat(renderConfig.hSpacing.value ?? 10),
+                      vPadding: CGFloat(renderConfig.vPadding.value ?? 20),
+                      hPadding: CGFloat(renderConfig.hPadding.value ?? 20)
+                ) { dataItem in
+                    
+                    self.renderConfig.render(dataItem)
                         .onTapGesture {
                             if let press = self.renderConfig.press {
                                 self.main.executeAction(press, dataItem)

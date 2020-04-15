@@ -150,7 +150,7 @@ struct SessionSwitcher: View {
                 ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
                     { () -> Image in
                         let session = self.main.sessions.sessions[i]
-                        if let screenShot = session.screenShot,
+                        if let screenShot = session.screenshot,
                            let uiImage = screenShot.asUIImage {
                             return Image(uiImage: uiImage)
                         }

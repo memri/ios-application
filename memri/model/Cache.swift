@@ -101,8 +101,14 @@ public class Cache {
                 // Query based on a simple format:
                 // Query format: <type><space><filter-text>
                 let queryType = DataItemFamily.getType(type)
-                let result = realm.objects(queryType() as! Object.Type)
+                var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
+                
+                if let sortProperty = queryOptions.sortProperty, sortProperty != "" {
+                    result = result.sorted(
+                        byKeyPath: sortProperty,
+                        ascending: queryOptions.sortAscending.value ?? true)
+                }
                 
                 // Construct return array
                 var returnValue:[DataItem] = []
@@ -177,10 +183,13 @@ public class Cache {
      */
     public func addToCache(_ item:DataItem) throws -> DataItem {
         // Check if this is a new item or an existing one
-        if let uid = item.uid {
-            
+        if item.uid.contains("0xNEW") {
+            // Schedule to be created on the pod
+            try realm.write() { item.syncState!.actionNeeded = "create" }
+        }
+        else {
             // Fetch item from the cache to double check
-            if let cachedItem:DataItem = self.getItemById(item.type, uid) {
+            if let cachedItem:DataItem = self.getItemById(item.type, item.uid) {
                 
                 // Do nothing when the version is not higher then what we already have
                 if !cachedItem.syncState!.isPartiallyLoaded && item.syncState!.version <= cachedItem.syncState!.version {
@@ -194,7 +203,7 @@ public class Cache {
                     if !item.safeMerge(cachedItem) {
                         
                         // Merging failed
-                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid!)"
+                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
                     }
                 }
                 
@@ -205,13 +214,6 @@ public class Cache {
                     item.merge(cachedItem, true)
                 }
             }
-        }
-        else {
-            // Create a new ID
-            item.uid = DataItem.generateUID()
-            
-            // Schedule to be created on the pod
-            try realm.write() { item.syncState!.actionNeeded = "create" }
         }
         
         // Add item to realm

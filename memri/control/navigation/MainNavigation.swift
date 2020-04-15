@@ -46,7 +46,7 @@ public class MainNavigation {
     public func install() {
         // Load default navigation items from pacakge
         let jsonData = try! jsonDataFromFile("default_navigation")
-        items = try! JSONDecoder().decode([NavigationItem].self, from: jsonData)
+        items = try! MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
         
         try! realm.write {
         

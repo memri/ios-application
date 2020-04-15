@@ -114,8 +114,6 @@ public class RenderConfig: Object, Codable {
             return itemRenderer
         }
         else if let description = self._renderDescription {
-//            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
-            
             if let itemRenderer:GUIElementDescription = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer

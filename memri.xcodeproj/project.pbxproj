@@ -330,9 +330,7 @@
 			children = (
 				5DE95A6F241BD60B003ABA63 /* actions */,
 				5DC1692524093BD300367905 /* sessions_manually_expanded.json */,
-				865646322423A7D500D071B4 /* views_from_server.json */,
 				5D487F232440772100B50202 /* list_item_component.json */,
-				86A5D847243EC46700F8FAD8 /* named_views.json */,
 				8656461B24238BF400D071B4 /* note.0x01.json */,
 				8656461E24238C6300D071B4 /* note.0x02.json */,
 				8656461F24238C6300D071B4 /* note.0x03.json */,
@@ -341,13 +339,15 @@
 				5DC1692624093C3900367905 /* sessions_manually_single.json */,
 				5D1A3E6C2408099900A0583B /* empty_session.json */,
 				5D1A3E652408035A00A0583B /* empty_sessionview.json */,
-				5D78D06A242500A500F7BD3B /* default_navigation.json */,
-				862A934E24435372005E06A6 /* default_navigation_full.json */,
 				5DC1692B2409453200367905 /* empty_sessions.json */,
-				865646152422B68A00D071B4 /* default_sessions.json */,
 				861439F42435AF8C008D6B5B /* test_sessions.json */,
 				5D0A28B7240677EE00398B17 /* test_dataItems.json */,
+				86A5D847243EC46700F8FAD8 /* named_views.json */,
 				865646172422B6A700D071B4 /* notes_from_server.json */,
+				865646322423A7D500D071B4 /* views_from_server.json */,
+				5D78D06A242500A500F7BD3B /* default_navigation.json */,
+				862A934E24435372005E06A6 /* default_navigation_full.json */,
+				865646152422B68A00D071B4 /* default_sessions.json */,
 				86229DCB243508B00013750A /* default_settings.json */,
 			);
 			path = data;
