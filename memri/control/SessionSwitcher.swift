@@ -187,7 +187,6 @@ struct SessionSwitcher: View {
                 }
 
                 .onEnded { _ in
-                    print(CGFloat(self.items.count) * self.height)
                     let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
                     self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
                     self.lastGlobalOffset = self.globalOffset

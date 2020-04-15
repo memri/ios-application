@@ -39,6 +39,13 @@ class Renderer: ActionDescription, ObservableObject{
         self.actionName = .setRenderer
         self.activeBackgroundColor = Color(white: 0.95).uiColor()
         self.actionName = .setRenderer
+        
+        self.color = self.actionName.defaultColor
+        self.backgroundColor = self.actionName.defaultBackgroundColor
+        self.activeColor = self.actionName.defaultActiveColor
+        self.inactiveColor = self.actionName.defaultInactiveColor
+        self.activeBackgroundColor = self.actionName.defaultActiveBackgroundColor
+        self.inactiveBackgroundColor = self.actionName.defaultInactiveBackgroundColor
     }
     
     func canDisplayResultSet(items: [DataItem]) -> Bool{

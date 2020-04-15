@@ -149,7 +149,7 @@ public enum ActionName: String, Codable {
     
     var defaultActiveColor: UIColor? {
         switch self {
-        case .toggleEditMode, .toggleFilterPanel:
+        case .toggleEditMode, .toggleFilterPanel, .setRenderer:
             return Color(hex: "#6aa84f").uiColor()
         case .showStarred, .star:
             return .systemYellow
@@ -163,7 +163,7 @@ public enum ActionName: String, Codable {
         case .add, .back, .toggleEditMode, .showNavigation:
             return Color(hex: "#434343").uiColor()
         case .openView, .openDynamicView, .openViewByName, .toggleFilterPanel, .star,
-             .showStarred, .showContextPane, .showOverlay, .share,
+             .showStarred, .showContextPane, .showOverlay, .share, .setRenderer,
              .addToPanel, .duplicate, .schedule, .addToList, .duplicateNote, .noteTimeline,
              .starredNotes, .allNotes, .delete, .select, .selectAll, .unselectAll, .exampleUnpack:
             return Color(hex: "#999999").uiColor()
@@ -176,12 +176,20 @@ public enum ActionName: String, Codable {
         return false
     }
     
-    var defaultActiveBackGroundColor: UIColor{
-        return .white
+    var defaultActiveBackgroundColor: UIColor{
+        switch self {
+        case .setRenderer:
+            return Color(hex: "#eee").uiColor()
+        default:
+            return .white
+        }
     }
     
-    var defaultInactiveBackGroundColor: UIColor{
-        return .white
+    var defaultInactiveBackgroundColor: UIColor{
+        switch self {
+        default:
+            return .white
+        }
     }
     
     
