@@ -44,19 +44,35 @@ struct FilterPanel: View {
         UITableView.appearance().separatorColor = .clear
     }
     
+    private func isActive(_ renderer:Renderer) -> Bool {
+        return self.main.computedView.rendererName == renderer.name
+    }
+    
     var body: some View {
         HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
-                    ForEach(self.main.renderers.tuples.filter{(key, item) -> Bool in
-                        return item.canDisplayResultSet(items: self.main.items)
-                    }, id: \.0) { index, item in
-                        Action(action: item)
-                            .frame(width: 35, height: 35, alignment: .center)
+                    ForEach(self.main.renderers.tuples.filter{(key, renderer) -> Bool in
+                        return renderer.canDisplayResultSet(items: self.main.items)
+                    }, id: \.0) { (index, renderer:Renderer) in
+                        
+                        Button(action: {self.main.executeAction(renderer)} ) {
+                            Image(systemName: renderer.icon)
+                                .fixedSize()
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 5)
+                                .frame(width: 40, height: 40, alignment: .center)
+                                .foregroundColor(Color(self.isActive(renderer)
+                                    ? renderer.activeColor!
+                                    : renderer.inactiveColor!))
+                                .background(Color(self.isActive(renderer)
+                                    ? renderer.activeBackgroundColor!
+                                    : renderer.inactiveBackgroundColor!))
+                        }
                     }
                 }
                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 20)
+                .padding(.leading, 12)
                 .background(Color.white)
                 .padding(.top, 1)
 
@@ -82,7 +98,7 @@ struct FilterPanel: View {
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
             
             VStack(alignment: .leading){
-                Text("ORDER ON:")
+                Text("SORT ON:")
                     .font(.system(size: 14, weight: .semibold))
                     .padding(.top, 15)
                     .padding(.bottom, 6)
@@ -121,7 +137,7 @@ struct FilterPanel: View {
             .padding(.vertical, 1)
             .padding(.leading, 1)
         }
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight:0, maxHeight: 215, alignment: .topLeading)
+        .frame(minWidth: 0, maxWidth: .infinity, minHeight:0, maxHeight: 220, alignment: .topLeading)
         .background(Color(hex: "#eee"))
     }
 }
