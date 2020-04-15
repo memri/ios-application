@@ -2,7 +2,6 @@
 //  ListRenderer.swift
 //  memri
 //
-//  Created by Koen van der Veen on 10/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -19,6 +18,10 @@ struct ListRendererView: View {
     
     var renderConfig: ListConfig {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+    }
+    
+    init() {
+        UITableView.appearance().separatorColor = .clear
     }
     
     struct MyButtonStyle: ButtonStyle {
@@ -46,39 +49,37 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                NavigationView {
-                    List{
-                        ForEach(main.items) { dataItem in
-                            self.renderConfig.render(dataItem)
-                                .onTapGesture {
-                                    if let press = self.renderConfig.press {
-                                        self.main.executeAction(press, dataItem)
-                                    }
+                List{
+                    ForEach(main.items) { dataItem in
+                        self.renderConfig.render(dataItem)
+                            .onTapGesture {
+                                if let press = self.renderConfig.press {
+                                    self.main.executeAction(press, dataItem)
                                 }
-                        }
-                    
-                        .onDelete{ indexSet in
-                            
-                            // TODO this should happen automatically in ResultSet
-                            self.main.items.remove(atOffsets: indexSet)
-                            
-                            // I'm sure there is a better way of doing this...
-                            var items:[DataItem] = []
-                            for i in indexSet {
-                                let item = self.main.items[i]
-                                items.append(item)
                             }
-                            
-                            // Execute Action
-                            self.main.executeAction(self.deleteAction, nil, items)
-
-                        }
                     }
-                    .environment(\.editMode, $main.currentSession.isEditMode)
-                    .navigationBarTitle("")
-                    .navigationBarHidden(true)
-                    .padding(.top, 5)
+                
+                    .onDelete{ indexSet in
+                        
+                        // TODO this should happen automatically in ResultSet
+                        self.main.items.remove(atOffsets: indexSet)
+                        
+                        // I'm sure there is a better way of doing this...
+                        var items:[DataItem] = []
+                        for i in indexSet {
+                            let item = self.main.items[i]
+                            items.append(item)
+                        }
+                        
+                        // Execute Action
+                        self.main.executeAction(self.deleteAction, nil, items)
+
+                    }
                 }
+                .environment(\.editMode, $main.currentSession.isEditMode)
+                .navigationBarTitle("")
+                .navigationBarHidden(true)
+                .padding(.top, 5)
             }
         }
     }

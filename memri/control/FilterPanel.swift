@@ -29,20 +29,10 @@ struct FilterPanel: View {
     @State var showFilters = false
 
     
-    @State var sorters = [SortButton(name: "Date created", selected: true),
-                          SortButton(name: "Date modified", selected: false),
-                          SortButton(name: "Date accessed", selected: false),
-                          SortButton(name: "Select property...", selected: false)]
-
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
                                  BrowseSetting(name: "Browse by type", selected: false),
                                  BrowseSetting(name: "Browse by folder", selected: false),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
-    
-    init(){
-        // TODO: move to list
-        UITableView.appearance().separatorColor = .clear
-    }
     
     private func isActive(_ renderer:Renderer) -> Bool {
         return self.main.computedView.rendererName == renderer.name
@@ -96,43 +86,45 @@ struct FilterPanel: View {
                 .padding(.top, 1)
             }
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
-            
-            VStack(alignment: .leading){
-                Text("SORT ON:")
-                    .font(.system(size: 14, weight: .semibold))
-                    .padding(.top, 15)
-                    .padding(.bottom, 6)
-                    .foregroundColor(Color(hex: "#434343"))
-                
-                ForEach(self.sorters) { sorter in
-                    Group {
-                        if (sorter.selected) {
-                            HStack {
-                                Text(sorter.name)
-                                    .foregroundColor(sorter.color)
-                                    .fontWeight(sorter.fontWeight)
+            ScrollView {
+                VStack (alignment: .leading) {
+                    Text("SORT ON:")
+                        .font(.system(size: 14, weight: .semibold))
+                        .padding(.top, 15)
+                        .padding(.bottom, 6)
+                        .foregroundColor(Color(hex: "#434343"))
+                    
+                    ForEach(self.main.computedView.sortFields, id:\.self) { fieldName in
+                        Button(action:{}) {
+                            if (self.main.computedView.queryOptions.sortProperty == fieldName) {
+                                Text(fieldName)
+                                    .foregroundColor(Color(hex: "#6aa84f"))
+                                    .fontWeight(.semibold)
                                     .padding(.vertical, 10)
                                 
                                 // descending: "arrow.down"
-                                Image(systemName: "arrow.up")
-                                    .foregroundColor(Color(hex: "#6aa84f"))
-                            
+//                                Image(systemName: "arrow.up")
+//                                    .foregroundColor(Color(hex: "#6aa84f"))
+//                                    .padding(.vertical, 0)
                             }
-                            .padding(.vertical, -8)
+                            else {
+                                Text(fieldName)
+                                    .foregroundColor(Color(hex: "#434343"))
+                                    .fontWeight(.regular)
+                                    .padding(.vertical, 10)
+                            }
                         }
-                        else {
-                            Text(sorter.name)
-                                .foregroundColor(sorter.color)
-                                .fontWeight(sorter.fontWeight)
-                                .padding(.vertical, 10)
-                        }
+                        .border(Color.red, width: 1)
                     }
+                    Text("Select property...")
+                        .foregroundColor(Color(hex: "#434343"))
+                        .fontWeight(.regular)
+                        .padding(.vertical, 10)
                 }
-                
+                .padding(.trailing, 30)
+                .padding(.leading, 20)
             }
-            .padding(.trailing, 30)
-            .padding(.leading, 20)
-            .frame(minHeight: 0, maxHeight: .infinity, alignment: Alignment.top)
+            .frame(minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
             .background(Color.white)
             .padding(.vertical, 1)
             .padding(.leading, 1)

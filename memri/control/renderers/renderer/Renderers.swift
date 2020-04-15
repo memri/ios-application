@@ -116,12 +116,12 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    var renderDescription: GUIElementDescription? {
+    var renderDescription: [String:GUIElementDescription]? {
         if let itemRenderer = renderCache.get(self._renderDescription!) {
             return itemRenderer
         }
-        else if let description = self._renderDescription {
-            if let itemRenderer:GUIElementDescription = unserialize(description) {
+        else if var description = self._renderDescription {
+            if let itemRenderer:[String: GUIElementDescription] = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
             }
@@ -134,12 +134,12 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    public func render(_ dataItem:DataItem) -> GUIElementInstance {
+    public func render(_ dataItem:DataItem, _ part:String = "*") -> GUIElementInstance {
         if _renderDescription == nil {
             return GUIElementInstance(GUIElementDescription(), dataItem)
         }
         else {
-            return GUIElementInstance(self.renderDescription!, dataItem)
+            return GUIElementInstance(self.renderDescription![part]!, dataItem)
         }
     }
     
@@ -173,13 +173,13 @@ public class RenderConfig: Object, Codable {
 }
 
 class RenderCache {
-    var cache:[String:GUIElementDescription] = [:]
+    var cache:[String:[String:GUIElementDescription]] = [:]
     
-    public func get(_ key:String) -> GUIElementDescription? {
+    public func get(_ key:String) -> [String:GUIElementDescription]? {
         return cache[key]
     }
     
-    public func set(_ key:String, _ itemRenderer: GUIElementDescription) {
+    public func set(_ key:String, _ itemRenderer: [String:GUIElementDescription]) {
         cache[key] = itemRenderer
     }
 }

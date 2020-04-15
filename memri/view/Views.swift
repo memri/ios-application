@@ -212,20 +212,26 @@ public class Views {
         // If we know the type of data we are rendering use it to determine the view
         if type != "mixed" {
             // Determine query
-            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
+            let needles = [
+                isList ? "{[type:*]}" : "{type:*}",
+                isList ? "{[type:\(type)]}" : "{type:\(type)}", // TODO if this is not found it should get the default template
+            ]
             
             // Find views based on datatype
-            for key in searchOrder {
-                if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
-                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
-                        continue
-                    }
-                    
-                    datatypeViews.append(datatypeView)
-                    
-                    if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if datatypeView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+            for needle in needles {
+                print(needle)
+                for key in searchOrder {
+                    if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
+                        if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
+                            continue
+                        }
+                        
+                        datatypeViews.append(datatypeView)
+                        
+                        if let S = datatypeView.rendererName { rendererNames.append(S) }
+                        if datatypeView.cascadeOrder.count > 0 {
+                            cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+                        }
                     }
                 }
             }
@@ -233,6 +239,9 @@ public class Views {
             if rendererNames.count > 0 {
                 rendererName = rendererNames[rendererNames.count - 1]
             }
+        }
+        else {
+            print("Warn: mixed views are not supported yet")
         }
         
         // Find renderer views
@@ -336,6 +345,7 @@ public class SessionView: DataItem {
     let showLabels = RealmOptional<Bool>()
     
     let cascadeOrder = RealmSwift.List<String>()
+    let sortFields = RealmSwift.List<String>()
     let selection = RealmSwift.List<DataItem>()
     let editButtons = RealmSwift.List<ActionDescription>()
     let filterButtons = RealmSwift.List<ActionDescription>()
@@ -355,7 +365,7 @@ public class SessionView: DataItem {
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
-            backTitle, editActionButton, icon, showLabels,
+            backTitle, editActionButton, icon, showLabels, sortFields,
             browsingMode, cascadeOrder, activeStates, emptyResultText
     }
     
@@ -392,6 +402,7 @@ public class SessionView: DataItem {
             self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
             
             decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "sortFields", self.sortFields)
             decodeIntoList(decoder, "selection", self.selection)
             decodeIntoList(decoder, "editButtons", self.editButtons)
             decodeIntoList(decoder, "filterButtons", self.filterButtons)
@@ -434,7 +445,6 @@ public class SessionView: DataItem {
     
     public func merge(_ view:SessionView) {
         
-        
         self.queryOptions!.merge(view.queryOptions!)
         
         self.name = view.name ?? self.name
@@ -449,6 +459,11 @@ public class SessionView: DataItem {
         self.emptyResultText = view.emptyResultText ?? self.emptyResultText
         
         self.showLabels.value = view.showLabels.value ?? self.showLabels.value
+        
+        if view.sortFields.count > 0 {
+            self.sortFields.removeAll()
+            self.sortFields.append(objectsIn: view.sortFields)
+        }
         
         self.cascadeOrder.append(objectsIn: view.cascadeOrder)
         self.selection.append(objectsIn: view.selection)
@@ -495,6 +510,7 @@ public class ComputedView: ObservableObject {
     var showLabels: Bool = true
 
     var cascadeOrder: [String] = []
+    var sortFields: [String] = []
     var selection: [DataItem] = []
     var editButtons: [ActionDescription] = []
     var filterButtons: [ActionDescription] = []
@@ -616,6 +632,11 @@ public class ComputedView: ObservableObject {
         _emptyResultText = view.emptyResultText ?? _emptyResultText
         
         self.showLabels = view.showLabels.value ?? self.showLabels
+        
+        if view.sortFields.count > 0 {
+            self.sortFields.removeAll()
+            self.sortFields.append(contentsOf: view.sortFields)
+        }
         
         self.cascadeOrder.append(contentsOf: view.cascadeOrder)
         self.selection.append(contentsOf: view.selection)
@@ -813,7 +834,12 @@ public class CompiledView {
                 
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
-                    parsed.updateValue(try! parseRenderDescription(parsed[key] as! [Any]), forKey: key)
+                    
+                    var pDict:[String:Any]
+                    if let pList = parsed[key] as? [Any] { pDict = ["*": pList] }
+                    else { pDict = parsed }
+                    
+                    parsed.updateValue(try! parseRenderDescription(pDict), forKey: key)
                 }
                     
                 // Parse rest of the json
@@ -917,7 +943,17 @@ public class CompiledView {
 //        ]
 //    }
     
-    private func parseRenderDescription(_ parsed: [Any]) throws -> String {
+    private func parseRenderDescription(_ parsed: [String:Any]) throws -> String {
+        var result:[String:Any] = [:]
+        
+        for (key, value) in parsed {
+            result[key] = try! parseSingleRenderDescription(value as! [Any])
+        }
+        
+        return serialize(AnyCodable(result))
+    }
+    
+    private func parseSingleRenderDescription(_ parsed:[Any]) throws -> Any {
         var result:[Any] = []
         
         func walkParsed(_ parsed:[Any], _ result:inout [Any]) throws {
@@ -946,7 +982,7 @@ public class CompiledView {
         
         try! walkParsed(parsed, &result)
         
-        return serialize(AnyCodable(result[0]))
+        return result[0]
     }
     
     public func compileProperty(_ expr:String) -> String {
