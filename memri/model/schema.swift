@@ -13,6 +13,7 @@ import RealmSwift
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily {
     case note = "note"
+    case person = "person"
     case logitem = "logitem"
     case label = "label"
     case sessions = "sessions"
@@ -42,6 +43,8 @@ enum DataItemFamily: String, ClassFamily {
             return SessionView.self
         case .dynamicview:
             return DynamicView.self
+        case .person:
+            return Person.self
         }
     }
 }
@@ -59,6 +62,35 @@ class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
     override var type:String { "note" }
+    
+    let writtenBy = List<DataItem>()
+    let sharedWith = List<DataItem>()
+    let comments = List<DataItem>()
+    
+    public override static func primaryKey() -> String? {
+        return "uid"
+    }
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            content = try decoder.decodeIfPresent("content") ?? content
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+class Person:DataItem {
+    @objc dynamic var title:String? = nil
+    @objc dynamic var content:String? = nil
+    override var type:String { "person" }
     
     let writtenBy = List<DataItem>()
     let sharedWith = List<DataItem>()

@@ -75,7 +75,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             
             return ""
         }
-        else { return self[name] as? String ?? "" }
+        else {
+            let val = self[name]
+            if let str = val as? String{
+                return str
+            }else if val is Bool{
+                return String(val as! Bool)
+            }else{
+                return ""
+            }
+        }
     }
     
     /**
@@ -84,6 +93,14 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public func set(_ name:String, _ value:Any) {
         try! self.realm!.write() {
             self[name] = value
+        }
+    }
+    
+    public func toggle(_ name:String) {
+        if self[name] as! Bool == false{
+            self.set(name, true)
+        }else{
+            self.set(name, false)
         }
     }
     
@@ -271,8 +288,12 @@ public class ResultSet: ObservableObject {
      *
      */
     var item: DataItem? {
-        if !isList && count > 0 { return items[0] }
-        else { return nil }
+        get{
+            if !isList && count > 0 { return items[0] }
+            else { return nil }
+        } set (newValue){
+            
+        }
     }
     /**
      *

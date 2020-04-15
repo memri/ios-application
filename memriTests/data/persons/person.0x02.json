@@ -1,0 +1,12 @@
+[{
+    "uid": "0x02",
+    "type": "person",
+    "title": "Bob",
+    "content": "A story about Bob",
+    "starred": true,
+    "labels": [
+        { "name": "Daily Log", "color": "#83ac06" },
+        { "name": "Polis", "color": "#ffd966" }
+    ],
+    "syncState": { "version": 1 }
+}]

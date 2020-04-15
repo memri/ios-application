@@ -20,7 +20,8 @@ public class Renderers {
     var allViews: [String: AnyView] = [
         "list":             AnyView(ListRendererView()),
         "richTextEditor":   AnyView(RichTextRendererView()),
-        "thumbnail":        AnyView(ThumbnailRendererView())
+        "thumbnail":        AnyView(ThumbnailRendererView()),
+        "generalEditor":    AnyView(GeneralEditorView())
     ]
     
     var tuples: [(key: String, value: Renderer)] {

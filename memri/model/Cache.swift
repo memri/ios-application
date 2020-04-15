@@ -240,6 +240,7 @@ public class Cache {
                     if self.realm.isInWriteTransaction { doAction() }
                     else { try! self.realm.write { doAction() } }
                 }
+                self.scheduleUIUpdate!()
             }
         })
         

@@ -273,8 +273,147 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        "{[type:person]}": {
+            "name": "all-notestest",
+            "title": "All Notes test",
+            "queryOptions": {
+                "query": "person",
+                "sortProperty": "dateModified",
+                "sortAscending": 0
+            },
+            "emptyResultText": "There are no notes here yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "sortProperty": "dateCreated",
+                    "sortAscending": 0,
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "Text", {
+                                "text": "{.title}",
+                                "font": [18, "semibold"],
+                                "color": "#333",
+                                "padding": [0, 0, 3, 0]
+                            },
+                            "Text", {
+                                "text": "{.content}",
+                                "removeWhiteSpace": true,
+                                "maxChar": 100,
+                                "color": "#555",
+                                "font": [14, "regular"]
+                            },
+                            "Text", {
+                                "text": "Just now {.dateModified}",
+                                "font": [11, "regular"],
+                                "color": "#888",
+                                "padding": [8,0,5,0]
+                            },
+                            "Rectangle", {
+                                "size": [0, 1],
+                                "color": "#efefef",
+                                "padding": [7, 0, 12, 0]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "title": "Untitled Note"
+                }]
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        "{type:person}": {
+            "title": "{dataItem.title}",
+            "rendererName": "generalEditor",
+            "renderConfigs": {},
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                {
+                    "icon": "increase.indent",
+                    "title": "Show Timeline",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
+                                "timeProperty": "dateCreated"
+                            }
+                        },
+                        "queryOptions": {
+                            "query": "data:Log appliesTo:{.id}",
+                            "sortProperty": "dateCreated",
+                            "sortAscending": 0
+                        }
+                    }]
+                },
+                { "actionName": "showContextPane" }
+            ],
+            "contextButtons": [
+                { "actionName": "star" },
+                { "actionName": "schedule" }
+            ],
+            "actionItems": [
+                {
+                    "title": "Share with...",
+                    "actionName": "showOverlay",
+                    "actionArgs": ["shareWithPanel"]
+                },
+                {
+                    "title": "Add to list...",
+                    "actionName": "addToPanel",
+                    "actionArgs": []
+                },
+                {
+                    "title": "Duplicate Note",
+                    "actionName": "duplicate",
+                    "actionArgs": []
+                }
+            ],
+            "navigateItems": [
+                {
+                    "title": "Timeline of this note",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
+                                "timeProperty": "dateCreated"
+                            }
+                        },
+                        "queryOptions": {
+                            "query": "type:logitem appliesTo:{.id}",
+                            "sortProperty": "dateCreated",
+                            "sortAscending": 0
+                        }
+                    }]
+                },
+                {
+                    "title": "Starred notes",
+                    "actionName": "openDynamicView",
+                    "actionArgs": [{
+                        "name": "filter-starred",
+                        "fromTemplate": "all-notes"
+                    }]
+                },
+                {
+                    "title": "All notes",
+                    "actionName": "openViewByName",
+                    "actionArgs": ["all-notes"]
+                }
+            ]
+        },
     },
-    
     "user": {
         "{type:note}": {
             "renderConfigs": {

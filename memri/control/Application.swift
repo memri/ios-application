@@ -16,6 +16,10 @@ extension View {
                    minHeight: 0, maxHeight: .infinity,
                    alignment: Alignment.topLeading)
     }
+    
+    func fullWidth() -> some View{
+        return self.frame(minWidth: 0, maxWidth: .infinity,alignment: Alignment.topLeading)
+    }
 }
 
 struct Application: View {
