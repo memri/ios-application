@@ -29,7 +29,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      */
     @objc dynamic var dateModified:Date? = nil
     /**
-     *
+     * 
      */
     @objc dynamic var dateAccessed:Date? = nil
     /**

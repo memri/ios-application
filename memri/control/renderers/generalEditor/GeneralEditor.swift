@@ -19,3 +19,26 @@ class GeneralRenderer: Renderer{
         return items.count == 1
     }
 }
+
+
+class GeneralRendererConfig: RenderConfig{
+    
+    
+    
+    
+//    override var renderDescription: [String:GUIElementDescription]? {
+//        if let itemRenderer = renderCache.get(self._renderDescription!) {
+//            return itemRenderer
+//        }
+//        else if let description = self._renderDescription {
+////            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
+//            
+//            if let itemRenderer:[String:GUIElementDescription] = unserialize(description) {
+//                renderCache.set(description, itemRenderer)
+//                return itemRenderer
+//            }
+//        }
+//        
+//        return nil
+//    }
+}

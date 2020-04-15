@@ -14,7 +14,8 @@ public class Renderers {
     var all: [String: Renderer] = [
         "list":             ListRenderer(),
         "richTextEditor":   RichTextRenderer(),
-        "thumbnail":        ThumbnailRenderer()
+        "thumbnail":        ThumbnailRenderer(),
+        "generalEditor":    GeneralRenderer()
     ]
     
     var allViews: [String: AnyView] = [
