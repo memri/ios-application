@@ -1,8 +1,8 @@
 [{
     "uid": "0x02",
     "type": "person",
-    "title": "Bob",
-    "content": "A story about Bob",
+    "firstName": "Bob",
+    "lastName": "Brown",
     "starred": true,
     "labels": [
         { "name": "Daily Log", "color": "#83ac06" },

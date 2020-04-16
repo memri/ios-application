@@ -99,6 +99,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
                 return str
             }else if val is Bool{
                 return String(val as! Bool)
+            }
+            else if val is Date{
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm    dd/MM/yyyy"
+                return formatter.string(from: val as! Date)
             }else{
                 return ""
             }

@@ -84,13 +84,12 @@ class Note:DataItem {
 }
 
 class Person:DataItem {
-    @objc dynamic var title:String? = nil
-    @objc dynamic var content:String? = nil
+    @objc dynamic var firstName:String? = nil
+    @objc dynamic var lastName:String? = nil
     override var type:String { "person" }
     
-    let writtenBy = List<DataItem>()
-    let sharedWith = List<DataItem>()
-    let comments = List<DataItem>()
+    let relations = List<Person>()
+
     
     required init () {
         super.init()
@@ -100,8 +99,8 @@ class Person:DataItem {
         super.init()
         
         jsonErrorHandling(decoder) {
-            title = try decoder.decodeIfPresent("title") ?? title
-            content = try decoder.decodeIfPresent("content") ?? content
+            firstName = try decoder.decodeIfPresent("firstName") ?? firstName
+            lastName = try decoder.decodeIfPresent("lastName") ?? lastName
             
             try! self.superDecode(from: decoder)
         }

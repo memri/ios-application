@@ -2,8 +2,9 @@
     {
         "uid": "0x01",
         "type": "person",
-        "title": "Alice",
-        "content": "A story about alice",
+        "firstName": "Alice",
+        "lastName": "Awesome",
+        "dateCreated": "1996-12-20T00:39:57Z",
         "starred": true,
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
@@ -17,8 +18,8 @@
     {
         "uid": "0x02",
         "type": "person",
-        "title": "Bob",
-        "content": "A story about bob",
+        "firstName": "Bob",
+        "lastName": "Brown",
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
             { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
@@ -30,8 +31,8 @@
     {
         "uid": "0x03",
         "type": "person",
-        "title": "Eve",
-        "content": "A story about eve",
+        "firstName": "Eve",
+        "lastName": "Eagle",
         "starred": true,
         "syncState": {
             "version": 1

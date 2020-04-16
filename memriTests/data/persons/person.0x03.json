@@ -1,8 +1,8 @@
 [{
     "uid": "0x03",
     "type": "person",
-    "title": "Eve",
-    "content": "A story about Eve",
+    "firstName": "Eve",
+    "lastName": "Eagle",
     "starred": true,
     "labels": [
         { "name": "Daily Log", "color": "#83ac06" },

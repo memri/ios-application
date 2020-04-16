@@ -26,6 +26,9 @@ class GeneralEditorConfig: RenderConfig{
     @objc dynamic var type: String? = "generalEditor"
     @objc dynamic var _groups: String? = nil
     
+    let readOnly = List<String>()
+    let excluded = List<String>()
+    
     var groups: [String:[String]]? {
         if self._groups != nil{
             if let groups:[String:[String]] = renderCache.get(self._groups!) {
@@ -43,13 +46,23 @@ class GeneralEditorConfig: RenderConfig{
             return nil
         }
     }
+    
+    public func allGroupValues() -> [String]{
+        if let all_groups = self.groups{
+            return all_groups.values.flatMap{ Array($0)}
+        }else{
+            return []
+        }
+    }
 
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
         jsonErrorHandling(decoder) {
             self.type = try decoder.decodeIfPresent("type") ?? self.type
-            
+            decodeIntoList(decoder, "readOnly", self.readOnly)
+            decodeIntoList(decoder, "excluded", self.excluded)
+
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("groups") {
                 self._groups = String(
                     data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
@@ -65,8 +78,13 @@ class GeneralEditorConfig: RenderConfig{
     public func merge(_ generalEditorConfig:GeneralEditorConfig) {
         self.type = generalEditorConfig.type ?? self.type
         self._groups = generalEditorConfig._groups ?? self._groups
+        
+        self.excluded.append(objectsIn: generalEditorConfig.excluded)
+        self.readOnly.append(objectsIn: generalEditorConfig.readOnly)
 
         super.superMerge(generalEditorConfig)
+        
+        
     }
     
 }

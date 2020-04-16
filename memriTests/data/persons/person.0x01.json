@@ -1,8 +1,9 @@
 [{
     "uid": "0x01",
     "type": "person",
-    "title": "Alice",
-    "content": "A story about Alice",
+    "firstName": "Alice",
+    "lastName": "Awesome",
+    "dateCreated": "1996-12-20T00:39:57Z",
     "starred": true,
     "labels": [
         { "name": "Daily Log", "color": "#83ac06" },

@@ -35,7 +35,19 @@
                 }
             }
         },
-
+        
+        "{renderer:generalEditor}": {
+            "renderConfigs": {
+                "generalEditor": {
+                    "groups": {
+                        "dates": ["dateCreated", "dateAccessed", "dateModified"]
+                    },
+                    "excluded": ["deleted", "syncState", "uid", "changelog"],
+                    "readOnly": ["uid"]
+                }
+            }
+        },
+        
         "{[type:note]}": {
             "name": "all-notes",
             "title": "All Notes",
@@ -520,13 +532,13 @@
                             "rowInset": [12, 20, -12, 20]
                         }, [
                             "Text", {
-                                "text": "{.title}",
+                                "text": "{.firstName}",
                                 "font": [18, "semibold"],
                                 "color": "#333",
                                 "padding": [0, 0, 3, 0]
                             },
                             "Text", {
-                                "text": "{.content}",
+                                "text": "{.lastName}",
                                 "removeWhiteSpace": true,
                                 "maxChar": 100,
                                 "color": "#555",
@@ -561,13 +573,15 @@
             ]
         },
        "{type:person}": {
-            "title": "{dataItem.title}",
+            "title": "{dataItem.firstName}",
             "rendererName": "generalEditor",
             "renderConfigs": {
                 "generalEditor": {
                     "groups": {
-                        "dates": ["dateCreated", "dateAccessed", "dateModified"]
+                        "names": ["firstName", "lastName"],
                     },
+                    "excluded": [],
+                    "readOnly": [],
                     "renderDescription": {
                         "dates": [
                             "VStack", {

@@ -19,5 +19,16 @@
                 }
             }
         ]
+    },
+    {
+        "name": "all-people",
+        "views": [
+            {
+                "title": "All people",
+                "queryOptions": {
+                    "query": "person"
+                }
+            }
+        ]
     }
 ]
