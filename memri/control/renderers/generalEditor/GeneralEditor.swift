@@ -27,17 +27,21 @@ class GeneralEditorConfig: RenderConfig{
     @objc dynamic var _groups: String? = nil
     
     var groups: [String:[String]]? {
-        if let groups:[String:[String]] = renderCache.get(self._groups!) {
-            return groups
-        }
-        else if let description = self._groups {
-            if let groups:[String:[String]] = unserialize(description) {
-                renderCache.set(description, groups)
+        if self._groups != nil{
+            if let groups:[String:[String]] = renderCache.get(self._groups!) {
                 return groups
             }
+            else if let description = self._groups {
+                if let groups:[String:[String]] = unserialize(description) {
+                    renderCache.set(description, groups)
+                    return groups
+                }
+            }
+            return nil
         }
-        
-        return nil
+        else{
+            return nil
+        }
     }
 
     public convenience required init(from decoder: Decoder) throws {
@@ -50,7 +54,6 @@ class GeneralEditorConfig: RenderConfig{
                 self._groups = String(
                     data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
             }
-            
             try! self.superDecode(from: decoder)
         }
     }

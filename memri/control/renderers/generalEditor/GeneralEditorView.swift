@@ -19,6 +19,9 @@ struct _GeneralEditorView: View {
     let horizontalPadding = CGFloat(36)
     
 
+    var renderConfig: GeneralEditorConfig {
+        return self.main.computedView.renderConfigs[name] as? GeneralEditorConfig ?? GeneralEditorConfig()
+    }
 
     
     var body: some View {
@@ -32,6 +35,12 @@ struct _GeneralEditorView: View {
         return VStack{
             if self.item != nil{
                 ScrollView{
+                    if renderConfig.groups != nil{
+                        ForEach(Array(renderConfig.groups!.keys), id: \.self){key in
+                            Text("ABC")
+                        }
+                    }
+                    
                     ForEach(getProperties(), id: \.self){prop in
                         VStack(alignment: .leading){
                             
