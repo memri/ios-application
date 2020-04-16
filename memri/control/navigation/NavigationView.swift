@@ -2,7 +2,6 @@
 //  Navigation.swift
 //  memri
 //
-//  Created by Koen van der Veen on 20/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -10,7 +9,9 @@ import SwiftUI
 
 struct Navigation: View {
     @EnvironmentObject var main: Main
+    
     @State var dragOffset = CGSize.zero
+    @State var showSettings: Bool = false
     
     private let foreGroundPercentageWidth: CGFloat = 0.9
     
@@ -25,10 +26,28 @@ struct Navigation: View {
     }
     
     var body: some View {
-
         VStack{
             VStack{
-                EmptyView()
+                HStack {
+                    Button(action: {
+                        self.showSettings = true
+                    }) {
+                        Image(systemName: "gear")
+                            .foregroundColor(Color.white)
+                    }.sheet(isPresented: self.$showSettings) {
+                        SettingsPane().environmentObject(self.main)
+                    }
+                    TextField("", text: <#T##Binding<String>#>)
+                    Button(action: {}) {
+                        Image(systemName: "pencil")
+                            .foregroundColor(Color.white)
+                    }
+                    Button(action: {}) {
+                        Image(systemName: "plus")
+                            .foregroundColor(Color.white)
+                    }
+                }
+                .background(Color(hex:"#492f6c"))
             }
             VStack{
                 ScrollView(.vertical) {
