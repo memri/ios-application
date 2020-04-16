@@ -73,8 +73,7 @@ struct FilterPanel: View {
     }
     
     private func isActive(_ renderer:Renderer) -> Bool {
-        print("*****\(renderer.name)")
-        return self.main.computedView.rendererName == renderer.name.split(separator: ".").first!
+        return self.main.computedView.rendererName.split(separator: ".").first! == renderer.name
     }
     
     var body: some View {
