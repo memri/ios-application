@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SettingsPane: View {
     @EnvironmentObject var main: Main
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     private func getBinding<T:Decodable>(_ path:String) -> Binding<T> {
         return Binding<T>(
@@ -66,9 +67,12 @@ struct SettingsPane: View {
                 }) {
                     Text("Internationalization")
                 }
-                
-                
-            }.navigationBarTitle(Text("Settings"), displayMode: .inline)
+            }
+            .navigationBarItems(leading:
+                Button(action:{ self.presentationMode.wrappedValue.dismiss()}) {
+                    Text("close")
+                })
+            .navigationBarTitle(Text("Settings"), displayMode: .inline)
         }
     }
 }
