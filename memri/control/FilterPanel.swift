@@ -20,8 +20,6 @@ struct FilterPanel: View {
     @EnvironmentObject var main: Main
     
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
-                                 BrowseSetting(name: "Browse by type", selected: false),
-                                 BrowseSetting(name: "Browse by folder", selected: false),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
     
     private func allOtherFields() -> [String] {
@@ -51,11 +49,27 @@ struct FilterPanel: View {
         }
         self.main.scheduleComputeView()
     }
+    
     private func changeOrderProperty(_ fieldName:String) {
         try! self.main.realm.write {
             self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
         }
         self.main.scheduleComputeView()
+    }
+    
+    private func rendererCategories() -> [(String, Renderer)] {
+        return self.main.renderers.tuples.filter{(key, renderer) -> Bool in
+            return !key.contains(".") && renderer.canDisplayResultSet(items: self.main.items)
+        }
+    }
+    
+    private func renderersAvailable() -> [(String, Renderer)] {
+        if let currentCategory = self.main.computedView.rendererName.split(separator: ".").first {
+            return self.main.renderers.all.filter { (key, renderer) -> Bool in
+                return renderer.name.split(separator: ".").first == currentCategory
+            }.sorted(by: { $0.1.order < $1.1.order })
+        }
+        return []
     }
     
     private func isActive(_ renderer:Renderer) -> Bool {
@@ -66,9 +80,7 @@ struct FilterPanel: View {
         HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
-                    ForEach(self.main.renderers.tuples.filter{(key, renderer) -> Bool in
-                        return renderer.canDisplayResultSet(items: self.main.items)
-                    }, id: \.0) { (index, renderer:Renderer) in
+                    ForEach(rendererCategories(), id: \.0) { (key, renderer:Renderer) in
                         
                         Button(action: {self.main.executeAction(renderer)} ) {
                             Image(systemName: renderer.icon)
@@ -90,17 +102,30 @@ struct FilterPanel: View {
                 .background(Color.white)
                 .padding(.top, 1)
 
-                VStack(alignment: .leading, spacing: 0){
-                    ForEach(self.browseSettings) { browseSetting in
-                        Group {
-                            Text(browseSetting.name)
-                                .foregroundColor(browseSetting.color)
-                                .fontWeight(browseSetting.fontWeight)
-                                .font(.system(size: 16))
-                                .padding(.vertical, 12)
-                            Rectangle()
-                                .frame(minHeight: 1, maxHeight: 1)
-                                .foregroundColor(Color(hex: "#efefef"))
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0){
+                        ForEach(renderersAvailable(), id:\.0) { (key, renderer:Renderer) in
+                            Group {
+                                Button(action:{ self.main.executeAction(renderer) }) {
+                                    if self.main.computedView.rendererName == renderer.name {
+                                        Text(renderer.title!)
+                                            .foregroundColor(Color(hex: "#6aa84f"))
+                                            .fontWeight(.semibold)
+                                            .font(.system(size: 16))
+                                            .padding(.vertical, 12)
+                                    }
+                                    else {
+                                        Text(renderer.title!)
+                                            .foregroundColor(Color(hex: "#434343"))
+                                            .fontWeight(.regular)
+                                            .font(.system(size: 16))
+                                            .padding(.vertical, 12)
+                                    }
+                                }
+                                Rectangle()
+                                    .frame(minHeight: 1, maxHeight: 1)
+                                    .foregroundColor(Color(hex: "#efefef"))
+                            }
                         }
                     }
                 }
@@ -110,8 +135,10 @@ struct FilterPanel: View {
                 .padding(.top, 1)
             }
             .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
+            .padding(.bottom, 1)
+            
             ScrollView {
-                VStack (alignment: .leading) {
+                VStack (alignment: .leading, spacing: 7) {
                     Text("SORT ON:")
                         .font(.system(size: 14, weight: .semibold))
                         .padding(.top, 15)
@@ -122,41 +149,56 @@ struct FilterPanel: View {
                         Button(action:{ self.toggleAscending() }) {
                             Text(self.main.computedView.queryOptions.sortProperty!)
                                 .foregroundColor(Color(hex: "#6aa84f"))
-                                .fontWeight(.semibold)
-                                .padding(.vertical, 8)
+                                .font(.system(size: 16, weight: .semibold, design: .default))
+                                .padding(.vertical, 2)
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                                .padding(.top, -12)
-                                .padding(.bottom, -8)
                             
                             // descending: "arrow.down"
                             Image(systemName: self.main.computedView.queryOptions.sortAscending.value == false
                                 ? "arrow.down"
                                 : "arrow.up")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
                                 .foregroundColor(Color(hex: "#6aa84f"))
+                                .frame(minWidth: 10, maxWidth: 10)
                         }
+                        
+                        Rectangle()
+                            .frame(minHeight: 1, maxHeight: 1)
+                            .foregroundColor(Color(hex: "#efefef"))
                     }
                     
                     ForEach(self.main.computedView.sortFields.filter {
                         return self.main.computedView.queryOptions.sortProperty != $0
                     }, id:\.self) { fieldName in
-                        Button(action:{ self.changeOrderProperty(fieldName) }) {
-                            Text(fieldName)
-                                .foregroundColor(Color(hex: "#434343"))
-                                .fontWeight(.regular)
-                                .padding(.vertical, 8)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        Group {
+                            Button(action:{ self.changeOrderProperty(fieldName) }) {
+                                Text(fieldName)
+                                    .foregroundColor(Color(hex: "#434343"))
+                                    .font(.system(size: 16, weight: .regular, design: .default))
+                                    .padding(.vertical, 2)
+                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            Rectangle()
+                                .frame(minHeight: 1, maxHeight: 1)
+                                .foregroundColor(Color(hex: "#efefef"))
                         }
                     }
                     
-                    Divider()
-                    
                     ForEach(allOtherFields(), id:\.self) { fieldName in
-                        Button(action:{ self.changeOrderProperty(fieldName) }) {
-                            Text(fieldName)
-                                .foregroundColor(Color(hex: "#434343"))
-                                .fontWeight(.regular)
-                                .padding(.vertical, 8)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        Group {
+                            Button(action:{ self.changeOrderProperty(fieldName) }) {
+                                Text(fieldName)
+                                    .foregroundColor(Color(hex: "#434343"))
+                                    .font(.system(size: 16, weight: .regular, design: .default))
+                                    .padding(.vertical, 2)
+                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                            }
+                            
+                            Rectangle()
+                                .frame(minHeight: 1, maxHeight: 1)
+                                .foregroundColor(Color(hex: "#efefef"))
                         }
                     }
                 }

@@ -13,6 +13,7 @@ class ThumbnailRenderer: Renderer{
     required init(){
         super.init()
         self.name = "thumbnail"
+        self.title = "Default"
         self.icon = "square.grid.3x2.fill"
         self.renderConfig = ThumbnailConfig()
 

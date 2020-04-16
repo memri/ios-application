@@ -10,12 +10,27 @@ import Foundation
 import RealmSwift
 
 class ListRenderer: Renderer{
+    var mode:String = ""
+    
     required init(){
         super.init()
         self.name = "list"
+        self.title = "Default"
+        self.order = 0
         self.icon = "line.horizontal.3"
         self.renderConfig = ListConfig()
     }
+    
+    convenience required init(mode:String){
+        self.init()
+        
+        if (mode == "alphabet") {
+            self.name = "list.alphabet"
+            self.order = 1
+            self.title = "Alphabet"
+        }
+    }
+    
     override func canDisplayResultSet(items: [DataItem]) -> Bool{
         // checks if everything can be casted to data item
         return true

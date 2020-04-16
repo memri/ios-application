@@ -13,6 +13,7 @@ import SwiftUI
 public class Renderers {
     var all: [String: Renderer] = [
         "list":             ListRenderer(),
+        "list.alphabet":    ListRenderer(mode: "alphabet"),
         "richTextEditor":   RichTextRenderer(),
         "thumbnail":        ThumbnailRenderer()
     ]
@@ -28,8 +29,11 @@ public class Renderers {
     }
 }
 
+// TODO unsure about inheriting from ActionDescription as this is never a realm managed object
 class Renderer: ActionDescription, ObservableObject{
     @objc dynamic var name = ""
+    @objc dynamic var order = 0
+    @objc dynamic var lastActive = ""
     @objc dynamic var renderConfig: RenderConfig? = RenderConfig()
     
     required init(){
@@ -92,26 +96,6 @@ public class RenderConfig: Object, Codable {
      *
      */
     @objc dynamic var name: String? = nil
-    /**
-     *
-     */
-    @objc dynamic var icon: String? = nil
-    /**
-     *
-     */
-    @objc dynamic var category: String? = nil
-    /**
-     *
-     */
-    let items = RealmSwift.List<ActionDescription>()
-    /**
-     *
-     */
-    let options1 = RealmSwift.List<ActionDescription>()
-    /**
-     *
-     */
-    let options2 = RealmSwift.List<ActionDescription>()
     
     /**
      *
@@ -120,7 +104,7 @@ public class RenderConfig: Object, Codable {
         if let itemRenderer = renderCache.get(self._renderDescription!) {
             return itemRenderer
         }
-        else if var description = self._renderDescription {
+        else if let description = self._renderDescription {
             if let itemRenderer:[String: GUIElementDescription] = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
@@ -148,13 +132,7 @@ public class RenderConfig: Object, Codable {
      */
     public func superMerge(_ renderConfig:RenderConfig) {
         self.name = renderConfig.name ?? self.name
-        self.icon = renderConfig.icon ?? self.icon
-        self.category = renderConfig.category ?? self.category
         self._renderDescription = renderConfig._renderDescription ?? self._renderDescription
-        
-        self.items.append(objectsIn: renderConfig.items)
-        self.options1.append(objectsIn: renderConfig.options1)
-        self.options2.append(objectsIn: renderConfig.options2)
     }
     
     /**
@@ -162,13 +140,7 @@ public class RenderConfig: Object, Codable {
      */
     public func superDecode(from decoder: Decoder) throws {
         self.name = try decoder.decodeIfPresent("name") ?? self.name
-        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-        self.category = try decoder.decodeIfPresent("category") ?? self.category
         self._renderDescription = try decoder.decodeIfPresent("renderDescription") ?? self._renderDescription
-        
-        decodeIntoList(decoder, "items", self.items)
-        decodeIntoList(decoder, "options1", self.options1)
-        decodeIntoList(decoder, "options2", self.options2)
     }
 }
 
