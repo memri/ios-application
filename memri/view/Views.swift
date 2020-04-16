@@ -834,12 +834,7 @@ public class CompiledView {
                 
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
-                    
-                    var pDict:[String:Any]
-                    if let pList = parsed[key] as? [Any] { pDict = ["*": pList] }
-                    else { pDict = parsed }
-                    
-                    parsed.updateValue(try! parseRenderDescription(pDict), forKey: key)
+                    parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
                 }
                     
                 // Parse rest of the json
@@ -907,82 +902,6 @@ public class CompiledView {
             // Set the new session view json
             jsonString = serialize(AnyCodable(parsed))
         }
-    }
-    
-
-// How users type it
-//    [ "VStack", { "padding": 5 }, [
-//        "Text", { "value": "{.content}" },
-//        "Button", { "press": {"actionName": "back"} }, ["Text", "Back"],
-//        "Button", { "press": {"actionName": "openView"} }, [
-//            "Image", {"systemName": "star.fill"}
-//        ],
-//        "Text", { "value": "{.content}" }
-//    ]]
-    
-// How codable wants it
-//    {
-//        "type": "vstack",
-//        "children": [
-//            {
-//                "type": "text",
-//                "properties": {
-//                    "value": "{.title}",
-//                    "bold": true
-//                }
-//            },
-//            {
-//                "type": "text",
-//                "properties": {
-//                    "values": "{.content}",
-//                    "bold": false,
-//                    "removeWhiteSpace": true,
-//                    "maxChar": 100
-//                }
-//            }
-//        ]
-//    }
-    
-    private func parseRenderDescription(_ parsed: [String:Any]) throws -> String {
-        var result:[String:Any] = [:]
-        
-        for (key, value) in parsed {
-            result[key] = try! parseSingleRenderDescription(value as! [Any])
-        }
-        
-        return serialize(AnyCodable(result))
-    }
-    
-    private func parseSingleRenderDescription(_ parsed:[Any]) throws -> Any {
-        var result:[Any] = []
-        
-        func walkParsed(_ parsed:[Any], _ result:inout [Any]) throws {
-            var currentItem:[String:Any] = [:]
-            
-            for item in parsed {
-                if let item = item as? String {
-                    if currentItem["type"] != nil { result.append(currentItem) }
-                    currentItem = ["type": item.lowercased()]
-                }
-                else if let item = item as? [String: Any] {
-                    currentItem["properties"] = item
-                }
-                else if let item = item as? [Any] {
-                    var children:[Any] = []
-                    try! walkParsed(item, &children)
-                    currentItem["children"] = children
-                }
-                else {
-                    throw "Exception: Could not parse render description"
-                }
-            }
-            
-            if currentItem["type"] != nil { result.append(currentItem) }
-        }
-        
-        try! walkParsed(parsed, &result)
-        
-        return result[0]
     }
     
     public func compileProperty(_ expr:String) -> String {
