@@ -13,12 +13,14 @@ import SwiftUI
 public class Renderers {
     var all: [String: Renderer] = [
         "list":             ListRenderer(),
+        "list.alphabet":    ListRenderer(mode: "alphabet"),
         "richTextEditor":   RichTextRenderer(),
         "thumbnail":        ThumbnailRenderer()
     ]
     
     var allViews: [String: AnyView] = [
         "list":             AnyView(ListRendererView()),
+        "list.alphabet":    AnyView(ListRendererView()),
         "richTextEditor":   AnyView(RichTextRendererView()),
         "thumbnail":        AnyView(ThumbnailRendererView())
     ]
@@ -28,8 +30,11 @@ public class Renderers {
     }
 }
 
+// TODO unsure about inheriting from ActionDescription as this is never a realm managed object
 class Renderer: ActionDescription, ObservableObject{
     @objc dynamic var name = ""
+    @objc dynamic var order = 0
+    @objc dynamic var lastActive = ""
     @objc dynamic var renderConfig: RenderConfig? = RenderConfig()
     
     required init(){
@@ -92,36 +97,16 @@ public class RenderConfig: Object, Codable {
      *
      */
     @objc dynamic var name: String? = nil
-    /**
-     *
-     */
-    @objc dynamic var icon: String? = nil
-    /**
-     *
-     */
-    @objc dynamic var category: String? = nil
-    /**
-     *
-     */
-    let items = RealmSwift.List<ActionDescription>()
-    /**
-     *
-     */
-    let options1 = RealmSwift.List<ActionDescription>()
-    /**
-     *
-     */
-    let options2 = RealmSwift.List<ActionDescription>()
     
     /**
      *
      */
-    var renderDescription: GUIElementDescription? {
+    var renderDescription: [String:GUIElementDescription]? {
         if let itemRenderer = renderCache.get(self._renderDescription!) {
             return itemRenderer
         }
         else if let description = self._renderDescription {
-            if let itemRenderer:GUIElementDescription = unserialize(description) {
+            if let itemRenderer:[String: GUIElementDescription] = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
             }
@@ -134,12 +119,12 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    public func render(_ dataItem:DataItem) -> GUIElementInstance {
+    public func render(_ dataItem:DataItem, _ part:String = "*") -> GUIElementInstance {
         if _renderDescription == nil {
             return GUIElementInstance(GUIElementDescription(), dataItem)
         }
         else {
-            return GUIElementInstance(self.renderDescription!, dataItem)
+            return GUIElementInstance(self.renderDescription![part]!, dataItem)
         }
     }
     
@@ -148,13 +133,7 @@ public class RenderConfig: Object, Codable {
      */
     public func superMerge(_ renderConfig:RenderConfig) {
         self.name = renderConfig.name ?? self.name
-        self.icon = renderConfig.icon ?? self.icon
-        self.category = renderConfig.category ?? self.category
         self._renderDescription = renderConfig._renderDescription ?? self._renderDescription
-        
-        self.items.append(objectsIn: renderConfig.items)
-        self.options1.append(objectsIn: renderConfig.options1)
-        self.options2.append(objectsIn: renderConfig.options2)
     }
     
     /**
@@ -162,24 +141,18 @@ public class RenderConfig: Object, Codable {
      */
     public func superDecode(from decoder: Decoder) throws {
         self.name = try decoder.decodeIfPresent("name") ?? self.name
-        self.icon = try decoder.decodeIfPresent("icon") ?? self.icon
-        self.category = try decoder.decodeIfPresent("category") ?? self.category
         self._renderDescription = try decoder.decodeIfPresent("renderDescription") ?? self._renderDescription
-        
-        decodeIntoList(decoder, "items", self.items)
-        decodeIntoList(decoder, "options1", self.options1)
-        decodeIntoList(decoder, "options2", self.options2)
     }
 }
 
 class RenderCache {
-    var cache:[String:GUIElementDescription] = [:]
+    var cache:[String:[String:GUIElementDescription]] = [:]
     
-    public func get(_ key:String) -> GUIElementDescription? {
+    public func get(_ key:String) -> [String:GUIElementDescription]? {
         return cache[key]
     }
     
-    public func set(_ key:String, _ itemRenderer: GUIElementDescription) {
+    public func set(_ key:String, _ itemRenderer: [String:GUIElementDescription]) {
         cache[key] = itemRenderer
     }
 }

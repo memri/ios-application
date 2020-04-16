@@ -9,6 +9,12 @@
     },
     
     "defaults": {
+        "{[type:*]}": {
+            "sortFields": [
+                "dateCreated", "dateModified", "dateAccessed"
+            ]
+        },
+        
         "{renderer:list}": {
             "renderConfigs": {
                 "list": {
@@ -17,7 +23,12 @@
                     ],
                     "press": { "actionName": "openView" },
                     "longPress": { "actionName": "select" }
-                },
+                }
+            }
+        },
+        
+        "{renderer:thumbnail}": {
+            "renderConfigs": {
                 "thumbnail": {
                     "press": { "actionName": "openView" },
                     "longPress": { "actionName": "select" }
@@ -34,6 +45,9 @@
                 "sortAscending": false
             },
             "emptyResultText": "There are no notes here yet",
+            "sortFields": [
+                "title", "dateModified", "dateAccessed", "dateCreated"
+            ],
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
@@ -65,7 +79,7 @@
                                 "minHeight": 1,
                                 "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [7, 0, 12, 0]
+                                "padding": [7, -20, 12, 0]
                             }
                         ]
                     ]
@@ -214,6 +228,9 @@
                 "sortAscending": false
             },
             "emptyResultText": "There are no log entries here yet",
+            "sortFields": [
+                "date"
+            ],
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
@@ -296,7 +313,7 @@
                             "Rectangle", {
                                 "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [5, 0, 5, 0]
+                                "padding": [5, -20, 5, 0]
                             }
                         ]
                     ]
@@ -382,7 +399,7 @@
                             "Rectangle", {
                                 "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [7, 0, 12, 0]
+                                "padding": [7, -20, 12, 0]
                             }
                         ]
                     ]
@@ -443,7 +460,7 @@
                                 "minHeight": 1,
                                 "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [7, 0, 12, 0]
+                                "padding": [7, -20, 12, 0]
                             }
                         ]
                     ]
