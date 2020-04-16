@@ -8,14 +8,6 @@
 
 import SwiftUI
 
-struct SortButton: Identifiable {
-    var id = UUID()
-    var name: String
-    var selected: Bool
-    var color: Color {self.selected ? Color(hex: "#6aa84f") : Color(hex: "#434343")}
-    var fontWeight: Font.Weight? {self.selected ? .semibold : .regular}
-}
-
 struct BrowseSetting: Identifiable {
     var id = UUID()
     var name: String
@@ -26,13 +18,45 @@ struct BrowseSetting: Identifiable {
 
 struct FilterPanel: View {
     @EnvironmentObject var main: Main
-    @State var showFilters = false
-
     
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
                                  BrowseSetting(name: "Browse by type", selected: false),
                                  BrowseSetting(name: "Browse by folder", selected: false),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
+    
+    private func allOtherFields() -> [String] {
+        var list:[String] = []
+        
+        if let item = self.main.computedView.resultSet.items.first {
+            var excludeList = self.main.computedView.sortFields
+            excludeList.append(self.main.computedView.queryOptions.sortProperty ?? "")
+            excludeList.append("uid")
+            excludeList.append("deleted")
+            
+            let properties = item.objectSchema.properties
+            for prop in properties {
+                if !excludeList.contains(prop.name) && prop.type != .object && prop.type != .linkingObjects {
+                    list.append(prop.name)
+                }
+            }
+        }
+        
+        return list
+    }
+    
+    private func toggleAscending() {
+        try! self.main.realm.write {
+            self.main.currentSession.currentView.queryOptions?.sortAscending.value
+                = !(self.main.computedView.queryOptions.sortAscending.value ?? true)
+        }
+        self.main.scheduleComputeView()
+    }
+    private func changeOrderProperty(_ fieldName:String) {
+        try! self.main.realm.write {
+            self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
+        }
+        self.main.scheduleComputeView()
+    }
     
     private func isActive(_ renderer:Renderer) -> Bool {
         return self.main.computedView.rendererName == renderer.name
@@ -94,32 +118,47 @@ struct FilterPanel: View {
                         .padding(.bottom, 6)
                         .foregroundColor(Color(hex: "#434343"))
                     
-                    ForEach(self.main.computedView.sortFields, id:\.self) { fieldName in
-                        Button(action:{}) {
-                            if (self.main.computedView.queryOptions.sortProperty == fieldName) {
-                                Text(fieldName)
-                                    .foregroundColor(Color(hex: "#6aa84f"))
-                                    .fontWeight(.semibold)
-                                    .padding(.vertical, 10)
-                                
-                                // descending: "arrow.down"
-//                                Image(systemName: "arrow.up")
-//                                    .foregroundColor(Color(hex: "#6aa84f"))
-//                                    .padding(.vertical, 0)
-                            }
-                            else {
-                                Text(fieldName)
-                                    .foregroundColor(Color(hex: "#434343"))
-                                    .fontWeight(.regular)
-                                    .padding(.vertical, 10)
-                            }
+                    if (self.main.computedView.queryOptions.sortProperty != nil) {
+                        Button(action:{ self.toggleAscending() }) {
+                            Text(self.main.computedView.queryOptions.sortProperty!)
+                                .foregroundColor(Color(hex: "#6aa84f"))
+                                .fontWeight(.semibold)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                .padding(.top, -12)
+                                .padding(.bottom, -8)
+                            
+                            // descending: "arrow.down"
+                            Image(systemName: self.main.computedView.queryOptions.sortAscending.value == false
+                                ? "arrow.down"
+                                : "arrow.up")
+                                .foregroundColor(Color(hex: "#6aa84f"))
                         }
-                        .border(Color.red, width: 1)
                     }
-                    Text("Select property...")
-                        .foregroundColor(Color(hex: "#434343"))
-                        .fontWeight(.regular)
-                        .padding(.vertical, 10)
+                    
+                    ForEach(self.main.computedView.sortFields.filter {
+                        return self.main.computedView.queryOptions.sortProperty != $0
+                    }, id:\.self) { fieldName in
+                        Button(action:{ self.changeOrderProperty(fieldName) }) {
+                            Text(fieldName)
+                                .foregroundColor(Color(hex: "#434343"))
+                                .fontWeight(.regular)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                    
+                    Divider()
+                    
+                    ForEach(allOtherFields(), id:\.self) { fieldName in
+                        Button(action:{ self.changeOrderProperty(fieldName) }) {
+                            Text(fieldName)
+                                .foregroundColor(Color(hex: "#434343"))
+                                .fontWeight(.regular)
+                                .padding(.vertical, 8)
+                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
                 }
                 .padding(.trailing, 30)
                 .padding(.leading, 20)
@@ -133,7 +172,6 @@ struct FilterPanel: View {
         .background(Color(hex: "#eee"))
     }
 }
-
 
 struct FilterPanel_Previews: PreviewProvider {
     static var previews: some View {
