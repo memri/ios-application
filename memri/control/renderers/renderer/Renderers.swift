@@ -20,6 +20,7 @@ public class Renderers {
     
     var allViews: [String: AnyView] = [
         "list":             AnyView(ListRendererView()),
+        "list.alphabet":    AnyView(ListRendererView()),
         "richTextEditor":   AnyView(RichTextRendererView()),
         "thumbnail":        AnyView(ThumbnailRendererView())
     ]

@@ -73,7 +73,8 @@ struct FilterPanel: View {
     }
     
     private func isActive(_ renderer:Renderer) -> Bool {
-        return self.main.computedView.rendererName == renderer.name
+        print("*****\(renderer.name)")
+        return self.main.computedView.rendererName == renderer.name.split(separator: ".").first!
     }
     
     var body: some View {
@@ -108,14 +109,14 @@ struct FilterPanel: View {
                             Group {
                                 Button(action:{ self.main.executeAction(renderer) }) {
                                     if self.main.computedView.rendererName == renderer.name {
-                                        Text(renderer.title!)
+                                        Text(renderer.title ?? "Unnamed Renderer")
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
                                             .font(.system(size: 16))
                                             .padding(.vertical, 12)
                                     }
                                     else {
-                                        Text(renderer.title!)
+                                        Text(renderer.title ?? "Unnamed Renderer")
                                             .foregroundColor(Color(hex: "#434343"))
                                             .fontWeight(.regular)
                                             .font(.system(size: 16))
