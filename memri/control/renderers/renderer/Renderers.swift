@@ -79,6 +79,10 @@ public class RenderConfigs: Object, Codable {
             if self.thumbnail == nil { self.thumbnail = ThumbnailConfig() }
             self.thumbnail!.merge(config)
         }
+        if let config = renderConfigs.generalEditor {
+            if self.generalEditor == nil { self.generalEditor = generalEditor() }
+            self.generalEditor!.merge(config)
+        }
     }
     
     public convenience required init(from decoder: Decoder) throws {
