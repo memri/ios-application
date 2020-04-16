@@ -9,6 +9,12 @@
     },
     
     "defaults": {
+        "{[type:*]}": {
+            "sortFields": [
+                "dateCreated", "dateModified", "dateAccessed"
+            ]
+        },
+        
         "{renderer:list}": {
             "renderConfigs": {
                 "list": {
@@ -16,18 +22,16 @@
                         { "actionName": "delete" }
                     ],
                     "press": { "actionName": "openView" },
-                    "longPress": { "actionName": "select" },
-                    "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "Text", { "text": "{.title}", "bold": true },
-                            "Text", {
-                                "text": "{.content}",
-                                "bold": false,
-                                "removeWhiteSpace": true,
-                                "maxChar": 100
-                            }
-                        ]
-                    ]
+                    "longPress": { "actionName": "select" }
+                }
+            }
+        },
+        
+        "{renderer:thumbnail}": {
+            "renderConfigs": {
+                "thumbnail": {
+                    "press": { "actionName": "openView" },
+                    "longPress": { "actionName": "select" }
                 }
             }
         },
@@ -38,14 +42,15 @@
             "queryOptions": {
                 "query": "note",
                 "sortProperty": "dateModified",
-                "sortAscending": 0
+                "sortAscending": false
             },
             "emptyResultText": "There are no notes here yet",
+            "sortFields": [
+                "title", "dateModified", "dateAccessed", "dateCreated"
+            ],
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
                         "VStack", {
                             "alignment": "left",
@@ -65,16 +70,52 @@
                                 "font": [14, "regular"]
                             },
                             "Text", {
-                                "text": "Just now {.dateModified}",
+                                "text": "{.dateModified}",
                                 "font": [11, "regular"],
                                 "color": "#888",
                                 "padding": [8,0,5,0]
                             },
                             "Rectangle", {
-                                "size": [0, 1],
+                                "minHeight": 1,
+                                "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [7, 0, 12, 0]
+                                "padding": [7, -20, 12, 0]
                             }
+                        ]
+                    ]
+                },
+                "thumbnail": {
+                    "renderDescription": [
+                        "VStack", {
+                            "minWidth": 10,
+                            "padding": [0, 0, 5, 0],
+                            "alignment": "center"
+                        }, [
+                            "Text", {
+                                "text": "{.content}",
+                                "maxChar": 100,
+                                "color": "#333",
+                                "background": "#fff",
+                                "border": ["#efefef", 2],
+                                "cornerRadius": 10,
+                                "padding": 10,
+                                "font": [9, "regular"],
+                                "minHeight": 80,
+                                "align": "lefttop",
+                            },
+                            "Text", {
+                                "text": "{.title}",
+                                "padding": [5, 0, 0, 0],
+                                "color": "#333",
+                                "font": [12, "semibold"],
+                                "maxChar": 100
+                            },
+                            "Text", {
+                                "text": "{.dateModified}",
+                                "font": [9, "regular"],
+                                "color": "#888",
+                                "padding": [3, 0, 0, 0]
+                            },
                         ]
                     ]
                 }
@@ -117,7 +158,7 @@
                         "queryOptions": {
                             "query": "data:Log appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
+                            "sortAscending": true
                         }
                     }]
                 },
@@ -158,7 +199,7 @@
                         "queryOptions": {
                             "query": "type:logitem appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
+                            "sortAscending": true
                         }
                     }]
                 },
@@ -183,26 +224,42 @@
             "title": "All Log Entries",
             "queryOptions": {
                 "query": "logitem",
-                "sortProperty": "dateModified",
-                "sortAscending": 0
+                "sortProperty": "date",
+                "sortAscending": false
             },
             "emptyResultText": "There are no log entries here yet",
+            "sortFields": [
+                "date"
+            ],
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "padding": 5 }, [
-                            "HStack", [
-                                "Text", { "text": "{.action}", "bold": true },
-                                "Text", { "text": "{.date}" }
+                        "VStack", {
+                            "padding": 5,
+                            "spacing": 3,
+                            "rowInset": [0, 20, 0, 20]
+                        }, [
+                            "HStack", {"alignment": "center"}, [
+                                "Text", {
+                                    "text": "{.action}",
+                                    "font": [14, "semibold"],
+                                },
+                                "Spacer",
+                                "Text", {
+                                    "text": "{.date}",
+                                    "font": [11, "regular"],
+                                    "color": "#888"
+                                }
                             ],
                             "Text", {
                                 "text": "{.contents}",
-                                "bold": false,
+                                "font": [14, "light"],
                                 "removeWhiteSpace": true,
-                                "maxChar": 100
+                                "maxChar": 100,
+                                "cornerRadius": 5,
+                                "background": "#f3f3f3",
+                                "padding": 5
                             }
                         ]
                     ]
@@ -220,20 +277,18 @@
             "title": "All Labels",
             "queryOptions": {
                 "query": "label",
-                "sortProperty": "dateAccessed",
-                "sortAscending": 0
+                "sortProperty": "dateCreated",
+                "sortAscending": true
             },
             "emptyResultText": "You have not added any labels yet",
-            "rendererName": "list",
+            "rendererName": "thumbnail",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
-                        "VStack", { "rowInset": [0, 20, 0, 20] }, [
+                        "VStack", { "rowInset": [7, 20, -7, 20] }, [
                             "HStack", {
-                                "alignment": "bottom",
-                                "padding": 5
+                                "alignment": "center",
+                                "padding": [5, 0, 5, 0]
                             }, [
                                 "VStack", {
                                     "alignment": "left",
@@ -249,13 +304,48 @@
                                 "Spacer",
                                 "RoundedRectangle", {
                                     "color": "{.color}",
-                                    "size": [25, 25],
-                                    "v-align": "center",
-                                    "padding": [0,10,0,0]
+                                    "maxHeight": 25,
+                                    "maxWidth": 25,
+                                    "align": "center",
+                                    "padding": [0, 10, 0, 0]
                                 }
                             ],
-                            "Divider", { "padding": [5, 0, 5, 0] }
-
+                            "Rectangle", {
+                                "maxHeight": 1,
+                                "color": "#efefef",
+                                "padding": [5, -20, 5, 0]
+                            }
+                        ]
+                    ]
+                },
+                "thumbnail": {
+                    "renderDescription": [
+                        "VStack", [
+                            "VStack", {
+                                "padding": [5, 0, 5, 0],
+                                "alignment": "center"
+                            }, [
+                                "HStack", {
+                                    "color": "#FFF",
+                                    "cornerRadius": 5,
+                                    "background": "{.color}"
+                                }, [
+                                    "Spacer",
+                                    "Text", {
+                                        "text": "{.name}",
+                                        "bold": true,
+                                        "padding": [3, 0, 3, 0]
+                                    },
+                                    "Spacer"
+                                ],
+                                "Spacer",
+                                "Text", {
+                                    "text": "{.comment}",
+                                    "removeWhiteSpace": true,
+                                    "font": [10],
+                                    "maxChar": 100
+                                }
+                            ]
                         ]
                     ]
                 }
@@ -273,20 +363,157 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        "{[type:sessionview]}": {
+            "name": "all-sessionviews",
+            "title": "All Session Views",
+            "queryOptions": {
+                "query": "sessionview",
+                "sortProperty": "dateAccessed",
+                "sortAscending": false
+            },
+            "emptyResultText": "No views in this session",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "HStack", { "alignment": "top" }, [
+                                "Text", {
+                                    "text": "{.computedDescription()}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                },
+                                "Spacer",
+                                "Text", {
+                                    "text": "{.dateAccessed}",
+                                    "font": [11, "regular"],
+                                    "color": "#888",
+                                    "padding": [8,0,5,0]
+                                }
+                            ],
+                            "Rectangle", {
+                                "maxHeight": 1,
+                                "color": "#efefef",
+                                "padding": [7, -20, 12, 0]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+        "{[type:session]}": {
+            "name": "all-sessions",
+            "title": "All Sessions",
+            "queryOptions": {
+                "query": "session",
+                "sortProperty": "dateAccessed",
+                "sortAscending": false
+            },
+            "emptyResultText": "There are no sessions here yet",
+            "rendererName": "thumbnail",
+            "renderConfigs": {
+                "list": {
+                    "press": { "actionName": "openSession" },
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "HStack", [
+                                "VStack", [
+                                    "Text", {
+                                        "text": "Name: {.name}",
+                                        "font": [18, "semibold"],
+                                        "color": "#333",
+                                        "padding": [5, 0, 0, 0]
+                                    },
+                                    "Text", {
+                                        "text": "Accessed: {.dateModified}",
+                                        "font": [11, "regular"],
+                                        "color": "#888",
+                                        "padding": [5,0,5,0]
+                                    }
+                                ],
+                                "Spacer",
+                                "Image", {
+                                    "image": "{.screenshot}",
+                                    "border": ["#ccc", 1],
+                                    "resizable": "fill",
+                                    "maxWidth": 150,
+                                    "maxHeight": 150,
+                                    "cornerRadius": 10,
+                                    "padding": [-5, 0, 0, 0]
+                                }
+                            ],
+                            "Rectangle", {
+                                "minHeight": 1,
+                                "maxHeight": 1,
+                                "color": "#efefef",
+                                "padding": [7, -20, 12, 0]
+                            }
+                        ]
+                    ]
+                },
+                "thumbnail": {
+                    "columns": 2,
+                    "hSpacing": 20,
+                    "press": { "actionName": "openSession" },
+                    "renderDescription": [
+                        "VStack", {
+                            "minWidth": 10,
+                            "padding": [0, 0, 5, 0],
+                            "alignment": "center"
+                        }, [
+                            "Image", {
+                                "image": "{.screenshot}",
+                                "border": ["#ccc", 1],
+                                "resizable": "fill",
+                                "maxHeight": 180,
+                                "cornerRadius": 10
+                            },
+                            "Text", {
+                                "text": "{.name}",
+                                "padding": [5, 0, 0, 0],
+                                "color": "#333",
+                                "font": [12, "semibold"],
+                                "maxChar": 100
+                            },
+                            "Text", {
+                                "text": "{.dateModified}",
+                                "font": [9, "regular"],
+                                "color": "#888",
+                                "padding": [3, 0, 0, 0]
+                            },
+                        ]
+                    ]
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
         "{[type:person]}": {
             "name": "all-notestest",
             "title": "All Notes test",
             "queryOptions": {
                 "query": "person",
                 "sortProperty": "dateModified",
-                "sortAscending": 0
             },
             "emptyResultText": "There are no notes here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
-                    "sortProperty": "dateCreated",
-                    "sortAscending": 0,
                     "renderDescription": [
                         "VStack", {
                             "alignment": "left",
@@ -333,10 +560,31 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
-        "{type:person}": {
+       "{type:person}": {
             "title": "{dataItem.title}",
             "rendererName": "generalEditor",
-            "renderConfigs": {},
+            "renderConfigs": {
+                "generalEditor": {
+                    "groups": {
+                        "dates": ["dateCreated", "dateAccessed", "dateModified"]
+                    },
+                    "renderDescription": {
+                        "dates": [
+                            "VStack", {
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20]
+                            }, [
+                                "Text", {
+                                    "text": "{.dateCreated}",
+                                    "font": [22, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                }
+                            ]
+                        ]
+                    }
+                }
+            },
             "editActionButton": { "actionName": "toggleEditMode" },
             "filterButtons": [
                 {
@@ -353,7 +601,6 @@
                         "queryOptions": {
                             "query": "data:Log appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
                         }
                     }]
                 },
@@ -394,7 +641,6 @@
                         "queryOptions": {
                             "query": "type:logitem appliesTo:{.id}",
                             "sortProperty": "dateCreated",
-                            "sortAscending": 0
                         }
                     }]
                 },
@@ -411,7 +657,7 @@
                     "actionName": "openViewByName",
                     "actionArgs": ["all-notes"]
                 }
-            ]
+           ]
         },
     },
     "user": {

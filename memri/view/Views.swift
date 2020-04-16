@@ -212,20 +212,26 @@ public class Views {
         // If we know the type of data we are rendering use it to determine the view
         if type != "mixed" {
             // Determine query
-            let needle = isList ? "{[type:\(type)]}" : "{type:\(type)}"
+            let needles = [
+                isList ? "{[type:*]}" : "{type:*}",
+                isList ? "{[type:\(type)]}" : "{type:\(type)}", // TODO if this is not found it should get the default template
+            ]
             
             // Find views based on datatype
-            for key in searchOrder {
-                if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
-                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
-                        continue
-                    }
-                    
-                    datatypeViews.append(datatypeView)
-                    
-                    if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if datatypeView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+            for needle in needles {
+                print(needle)
+                for key in searchOrder {
+                    if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
+                        if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
+                            continue
+                        }
+                        
+                        datatypeViews.append(datatypeView)
+                        
+                        if let S = datatypeView.rendererName { rendererNames.append(S) }
+                        if datatypeView.cascadeOrder.count > 0 {
+                            cascadeOrders[key]?.append(datatypeView.cascadeOrder)
+                        }
                     }
                 }
             }
@@ -233,6 +239,9 @@ public class Views {
             if rendererNames.count > 0 {
                 rendererName = rendererNames[rendererNames.count - 1]
             }
+        }
+        else {
+            print("Warn: mixed views are not supported yet")
         }
         
         // Find renderer views
@@ -315,13 +324,14 @@ public class Views {
     }
 }
 
-
-public class SessionView: Object, ObservableObject, Codable {
-    
+public class SessionView: DataItem {
     /**
      *
      */
-    
+    override var type:String { "sessionview" }
+    /**
+     *
+     */
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
     @objc dynamic var rendererName: String? = nil
@@ -335,6 +345,7 @@ public class SessionView: Object, ObservableObject, Codable {
     let showLabels = RealmOptional<Bool>()
     
     let cascadeOrder = RealmSwift.List<String>()
+    let sortFields = RealmSwift.List<String>()
     let selection = RealmSwift.List<DataItem>()
     let editButtons = RealmSwift.List<ActionDescription>()
     let filterButtons = RealmSwift.List<ActionDescription>()
@@ -349,16 +360,28 @@ public class SessionView: Object, ObservableObject, Codable {
     @objc dynamic var actionButton: ActionDescription? = nil
     @objc dynamic var editActionButton: ActionDescription? = nil
     
-    /**
-     *
-     */
-    @objc dynamic var syncState:SyncState? = SyncState()
+    @objc dynamic var session: Session? = nil
     
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
-            backTitle, editActionButton, icon, showLabels,
+            backTitle, editActionButton, icon, showLabels, sortFields,
             browsingMode, cascadeOrder, activeStates, emptyResultText
+    }
+    
+    required init(){
+        super.init()
+        
+        self.functions["computedDescription"] = {_ in
+            if let value = self.name ?? self.title { return value }
+            else if let rendererName = self.rendererName {
+                return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+            }
+            else if let query = self.queryOptions?.query {
+                return "Showing: \(query)"
+            }
+            return "[No Name]"
+        }
     }
     
     public convenience required init(from decoder: Decoder) throws {
@@ -379,6 +402,7 @@ public class SessionView: Object, ObservableObject, Codable {
             self.showLabels.value = try decoder.decodeIfPresent("showLabels") ?? self.showLabels.value
             
             decodeIntoList(decoder, "cascadeOrder", self.cascadeOrder)
+            decodeIntoList(decoder, "sortFields", self.sortFields)
             decodeIntoList(decoder, "selection", self.selection)
             decodeIntoList(decoder, "editButtons", self.editButtons)
             decodeIntoList(decoder, "filterButtons", self.filterButtons)
@@ -390,6 +414,8 @@ public class SessionView: Object, ObservableObject, Codable {
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
             self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
+            
+            try! super.superDecode(from: decoder)
         }
     }
     
@@ -419,7 +445,6 @@ public class SessionView: Object, ObservableObject, Codable {
     
     public func merge(_ view:SessionView) {
         
-        
         self.queryOptions!.merge(view.queryOptions!)
         
         self.name = view.name ?? self.name
@@ -434,6 +459,11 @@ public class SessionView: Object, ObservableObject, Codable {
         self.emptyResultText = view.emptyResultText ?? self.emptyResultText
         
         self.showLabels.value = view.showLabels.value ?? self.showLabels.value
+        
+        if view.sortFields.count > 0 {
+            self.sortFields.removeAll()
+            self.sortFields.append(objectsIn: view.sortFields)
+        }
         
         self.cascadeOrder.append(objectsIn: view.cascadeOrder)
         self.selection.append(objectsIn: view.selection)
@@ -453,12 +483,12 @@ public class SessionView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let items: SessionView = try! JSONDecoder().decode(SessionView.self, from: jsonData)
+        let items: SessionView = try! MemriJSONDecoder.decode(SessionView.self, from: jsonData)
         return items
     }
     
     public class func fromJSONString(_ json: String) throws -> SessionView {
-        let view:SessionView = try JSONDecoder().decode(SessionView.self, from: Data(json.utf8))
+        let view:SessionView = try MemriJSONDecoder.decode(SessionView.self, from: Data(json.utf8))
         return view
     }
 }
@@ -480,6 +510,7 @@ public class ComputedView: ObservableObject {
     var showLabels: Bool = true
 
     var cascadeOrder: [String] = []
+    var sortFields: [String] = []
     var selection: [DataItem] = []
     var editButtons: [ActionDescription] = []
     var filterButtons: [ActionDescription] = []
@@ -602,6 +633,11 @@ public class ComputedView: ObservableObject {
         
         self.showLabels = view.showLabels.value ?? self.showLabels
         
+        if view.sortFields.count > 0 {
+            self.sortFields.removeAll()
+            self.sortFields.append(contentsOf: view.sortFields)
+        }
+        
         self.cascadeOrder.append(contentsOf: view.cascadeOrder)
         self.selection.append(contentsOf: view.selection)
         self.editButtons.append(contentsOf: view.editButtons)
@@ -719,12 +755,12 @@ public class DynamicView: Object, ObservableObject, Codable {
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> DynamicView {
         let jsonData = try jsonDataFromFile(file, ext)
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: jsonData)
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: jsonData)
         return view
     }
     
     public class func fromJSONString(_ json: String) throws -> DynamicView {
-        let view:DynamicView = try JSONDecoder().decode(DynamicView.self, from: Data(json.utf8))
+        let view:DynamicView = try MemriJSONDecoder.decode(DynamicView.self, from: Data(json.utf8))
         return view
     }
 }
@@ -798,7 +834,12 @@ public class CompiledView {
                 
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
-                    parsed.updateValue(try! parseRenderDescription(parsed[key] as! [Any]), forKey: key)
+                    
+                    var pDict:[String:Any]
+                    if let pList = parsed[key] as? [Any] { pDict = ["*": pList] }
+                    else { pDict = parsed }
+                    
+                    parsed.updateValue(try! parseRenderDescription(pDict), forKey: key)
                 }
                     
                 // Parse rest of the json
@@ -902,7 +943,17 @@ public class CompiledView {
 //        ]
 //    }
     
-    private func parseRenderDescription(_ parsed: [Any]) throws -> String {
+    private func parseRenderDescription(_ parsed: [String:Any]) throws -> String {
+        var result:[String:Any] = [:]
+        
+        for (key, value) in parsed {
+            result[key] = try! parseSingleRenderDescription(value as! [Any])
+        }
+        
+        return serialize(AnyCodable(result))
+    }
+    
+    private func parseSingleRenderDescription(_ parsed:[Any]) throws -> Any {
         var result:[Any] = []
         
         func walkParsed(_ parsed:[Any], _ result:inout [Any]) throws {
@@ -931,7 +982,7 @@ public class CompiledView {
         
         try! walkParsed(parsed, &result)
         
-        return serialize(AnyCodable(result[0]))
+        return result[0]
     }
     
     public func compileProperty(_ expr:String) -> String {
@@ -1011,7 +1062,7 @@ public class CompiledView {
         let template = insertVariables()
         
         // Generate session view from template
-        let sessionView = try! SessionView.fromJSONString(template)
+        let sessionView:SessionView = try! SessionView.fromJSONString(template)
         
         // Merge with the view that is copied, if any
         if let view = view {

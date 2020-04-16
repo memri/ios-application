@@ -9,10 +9,10 @@
 import Foundation
 import RealmSwift
 
-class GeneralRenderer: Renderer{
+class GeneralEditor: Renderer{
     required init(){
         super.init()
-        self.name = "generalRenderer"
+        self.name = "generalEditor"
         self.icon = "pencil.circle.fill"
     }
     override func canDisplayResultSet(items: [DataItem]) -> Bool{
@@ -21,24 +21,34 @@ class GeneralRenderer: Renderer{
 }
 
 
-class GeneralRendererConfig: RenderConfig{
+class GeneralEditorConfig: RenderConfig{
     
+    @objc dynamic var type: String? = "generalEditor"
+//    @objc dynamic var groups: [String:String]? = nil
+//    let groups = List<[String]>()
+
+
     
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+            self.groups = try decoder.decodeIfPresent("groups") ?? self.groups
+
+            try! self.superDecode(from: decoder)
+        }
+    }
     
+    required init() {
+        super.init()
+    }
     
-//    override var renderDescription: [String:GUIElementDescription]? {
-//        if let itemRenderer = renderCache.get(self._renderDescription!) {
-//            return itemRenderer
-//        }
-//        else if let description = self._renderDescription {
-////            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
-//            
-//            if let itemRenderer:[String:GUIElementDescription] = unserialize(description) {
-//                renderCache.set(description, itemRenderer)
-//                return itemRenderer
-//            }
-//        }
-//        
-//        return nil
-//    }
+    public func merge(_ generalEditorConfig:GeneralEditorConfig) {
+        self.type = generalEditorConfig.type ?? self.type
+        self.groups = generalEditorConfig.groups ?? self.groups
+
+        super.superMerge(generalEditorConfig)
+    }
+    
 }

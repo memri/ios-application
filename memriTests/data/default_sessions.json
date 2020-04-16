@@ -6,16 +6,27 @@
             "views": [
                 {
                     "queryOptions": {
-                        "query": "label",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                        "query": "label"
                     }
                 },
                 {
                     "queryOptions": {
-                        "query": "person",
-                        "sortProperty": "date-created",
-                        "sortAscending": 0
+                        "query": "person"
+                    }
+                },
+                {
+                    "queryOptions": {
+                        "query": "session"
+                    }
+                },
+                {
+                    "queryOptions": {
+                        "query": "logitem"
+                    }
+                },
+                {
+                    "queryOptions": {
+                        "query": "note"
                     }
                 }
             ]

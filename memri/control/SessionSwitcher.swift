@@ -150,7 +150,7 @@ struct SessionSwitcher: View {
                 ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
                     { () -> Image in
                         let session = self.main.sessions.sessions[i]
-                        if let screenShot = session.screenShot,
+                        if let screenShot = session.screenshot,
                            let uiImage = screenShot.asUIImage {
                             return Image(uiImage: uiImage)
                         }
@@ -187,7 +187,6 @@ struct SessionSwitcher: View {
                 }
 
                 .onEnded { _ in
-                    print(CGFloat(self.items.count) * self.height)
                     let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
                     self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
                     self.lastGlobalOffset = self.globalOffset

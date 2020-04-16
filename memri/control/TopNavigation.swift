@@ -25,18 +25,41 @@ public struct TopNavigation: View {
     private func backAsSession(){
         self.main.executeAction(ActionDescription(actionName:.backAsSession))
     }
+    private func openAllViewsOfSession(){
+        let uid = self.main.currentSession.uid
+        let view = """
+        {
+            "title": "Views in current session",
+            "queryOptions": {
+                "query": "sessionview AND session.uid = '\(uid)'",
+            }
+        }
+        """
+        
+        self.main.openView(view)
+    }
     
     private func createTitleActionSheet() -> ActionSheet {
-        return ActionSheet(title: Text("Do something with the current view"),
-                buttons: [
-                    .default(Text("Save view")) { self.toFront() },
-//                    .default(Text("Update view")) { self.toFront() }, // Only when its a saved view
-                    .default(Text("Add to Navigation")) { self.toFront() },
-                    .default(Text("Duplicate view")) { self.toFront() },
-//                    .default(Text("Reset to saved view")) { self.backAsSession() }, // Only when its a saved view
-                    .default(Text("Copy a link to this view")) { self.toFront() },
-                    .cancel()
-        ])
+        var buttons:[ActionSheet.Button] = []
+        let isNamed = self.main.currentSession.currentView.name != nil
+        
+        // TODO or copyFromView
+        buttons.append(isNamed
+            ? .default(Text("Update view")) { self.toFront() }
+            : .default(Text("Save view")) { self.toFront() }
+        )
+        
+        buttons.append(.default(Text("Add to Navigation")) { self.toFront() })
+        buttons.append(.default(Text("Duplicate view")) { self.toFront() })
+        
+        if isNamed {
+            buttons.append(.default(Text("Reset to saved view")) { self.backAsSession() })
+        }
+        
+        buttons.append(.default(Text("Copy a link to this view")) { self.toFront() })
+        buttons.append(.cancel())
+        
+        return ActionSheet(title: Text("Do something with the current view"), buttons: buttons)
     }
     
     private func createBackActionSheet() -> ActionSheet {
@@ -45,7 +68,7 @@ public struct TopNavigation: View {
                     .default(Text("Forward")) { self.forward() },
                     .default(Text("To the front")) { self.toFront() },
                     .default(Text("Back as a new session")) { self.backAsSession() },
-                    .default(Text("Show all views")) { /* TODO */ },
+                    .default(Text("Show all views")) { self.openAllViewsOfSession() },
                     .cancel()
         ])
     }

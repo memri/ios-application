@@ -15,7 +15,7 @@ public class Renderers {
         "list":             ListRenderer(),
         "richTextEditor":   RichTextRenderer(),
         "thumbnail":        ThumbnailRenderer(),
-        "generalEditor":    GeneralRenderer()
+        "generalEditor":    GeneralEditor()
     ]
     
     var allViews: [String: AnyView] = [
@@ -41,6 +41,13 @@ class Renderer: ActionDescription, ObservableObject{
         self.actionName = .setRenderer
         self.activeBackgroundColor = Color(white: 0.95).uiColor()
         self.actionName = .setRenderer
+        
+        self.color = self.actionName.defaultColor
+        self.backgroundColor = self.actionName.defaultBackgroundColor
+        self.activeColor = self.actionName.defaultActiveColor
+        self.inactiveColor = self.actionName.defaultInactiveColor
+        self.activeBackgroundColor = self.actionName.defaultActiveBackgroundColor
+        self.inactiveBackgroundColor = self.actionName.defaultInactiveBackgroundColor
     }
     
     func canDisplayResultSet(items: [DataItem]) -> Bool{
@@ -57,10 +64,12 @@ public class RenderConfigs: Object, Codable {
      *
      */
     @objc dynamic var thumbnail: ThumbnailConfig? = nil
-    
     /**
      *
      */
+    @objc dynamic var generalEditor: GeneralEditorConfig? = nil
+
+    
     public func merge(_ renderConfigs:RenderConfigs) {
         if let config = renderConfigs.list {
             if self.list == nil { self.list = ListConfig() }
@@ -78,6 +87,7 @@ public class RenderConfigs: Object, Codable {
         jsonErrorHandling(decoder) {
             self.list = try decoder.decodeIfPresent("list") ?? self.list
             self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
+            self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
         }
     }
 }
@@ -111,14 +121,18 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    var renderDescription: GUIElementDescription? {
+    @objc dynamic var _renderDescription: String? = nil
+    
+    
+    /**
+     *
+     */
+    var renderDescription: [String:GUIElementDescription]? {
         if let itemRenderer = renderCache.get(self._renderDescription!) {
             return itemRenderer
         }
-        else if let description = self._renderDescription {
-//            try JSONDecoder().decode(family: DataItemFamily.self, from: data)
-            
-            if let itemRenderer:GUIElementDescription = unserialize(description) {
+        else if var description = self._renderDescription {
+            if let itemRenderer:[String: GUIElementDescription] = unserialize(description) {
                 renderCache.set(description, itemRenderer)
                 return itemRenderer
             }
@@ -126,17 +140,16 @@ public class RenderConfig: Object, Codable {
         
         return nil
     }
-    @objc dynamic var _renderDescription: String? = nil
     
     /**
      *
      */
-    public func render(_ dataItem:DataItem) -> GUIElementInstance {
+    public func render(_ dataItem:DataItem, _ part:String = "*") -> GUIElementInstance {
         if _renderDescription == nil {
             return GUIElementInstance(GUIElementDescription(), dataItem)
         }
         else {
-            return GUIElementInstance(self.renderDescription!, dataItem)
+            return GUIElementInstance(self.renderDescription![part]!, dataItem)
         }
     }
     
@@ -170,13 +183,13 @@ public class RenderConfig: Object, Codable {
 }
 
 class RenderCache {
-    var cache:[String:GUIElementDescription] = [:]
+    var cache:[String:[String:GUIElementDescription]] = [:]
     
-    public func get(_ key:String) -> GUIElementDescription? {
+    public func get(_ key:String) -> [String:GUIElementDescription]? {
         return cache[key]
     }
     
-    public func set(_ key:String, _ itemRenderer: GUIElementDescription) {
+    public func set(_ key:String, _ itemRenderer: [String:GUIElementDescription]) {
         cache[key] = itemRenderer
     }
 }

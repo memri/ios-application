@@ -14,10 +14,6 @@ class File:DataItem {
     @objc dynamic var uri:String = ""
     override var type:String { "file" }
     
-    public override static func primaryKey() -> String? {
-        return "uri"
-    }
-    
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
     
     required init () {

@@ -28,7 +28,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     var activeColor: UIColor? = .systemGreen
     var inactiveColor: UIColor? = .systemGray
     var activeBackgroundColor: UIColor? = .white
-    var inactiveBackGroundColor: UIColor? = .white
+    var inactiveBackgroundColor: UIColor? = .white
         
     public func computeColor(state:Bool) -> UIColor{
         if self.hasState.value == true {
@@ -50,7 +50,7 @@ public class ActionDescription: Object, Codable, Identifiable {
                 return self.activeBackgroundColor!
             }
             else {
-                return self.inactiveBackGroundColor!
+                return self.inactiveBackgroundColor!
             }
         }
         else {
@@ -93,8 +93,8 @@ public class ActionDescription: Object, Codable, Identifiable {
             
             self.activeColor = self.actionName.defaultActiveColor
             self.inactiveColor = self.actionName.defaultInactiveColor
-            self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
-            self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+            self.inactiveBackgroundColor = self.actionName.defaultInactiveBackgroundColor
+            self.activeBackgroundColor = self.actionName.defaultActiveBackgroundColor
             self.backgroundColor = self.actionName.defaultBackgroundColor
             
             // Decode arguments
@@ -122,11 +122,9 @@ public class ActionDescription: Object, Codable, Identifiable {
         
         self.activeColor = self.actionName.defaultActiveColor
         self.inactiveColor = self.actionName.defaultInactiveColor
-        self.inactiveBackGroundColor = self.actionName.defaultInactiveBackGroundColor
-        self.activeBackgroundColor = self.actionName.defaultActiveBackGroundColor
+        self.inactiveBackgroundColor = self.actionName.defaultInactiveBackgroundColor
+        self.activeBackgroundColor = self.actionName.defaultActiveBackgroundColor
         self.backgroundColor = self.actionName.defaultBackgroundColor
-        
-        print("create action description runtime: \(self.actionName)")
     }
     
     public required init() {
@@ -155,7 +153,7 @@ public class ActionDescription: Object, Codable, Identifiable {
         print("Decoding: \(path)")
         
         // Create encoder for serialization
-        let encoder = JSONEncoder()
+        let encoder = MemriJSONEncoder
         
         func addArgument<T:Encodable>(_ item:T){
             
@@ -220,7 +218,7 @@ public class ActionDescription: Object, Codable, Identifiable {
     
     public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
         let jsonData = try jsonDataFromFile(file, ext)
-        let description: ActionDescription = try! JSONDecoder().decode(ActionDescription.self, from: jsonData)
+        let description: ActionDescription = try! MemriJSONDecoder.decode(ActionDescription.self, from: jsonData)
         return description
     }
     

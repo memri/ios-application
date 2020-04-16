@@ -3,7 +3,6 @@
 //  ComponentClasses.swift
 //  memri
 //
-//  Created by Koen van der Veen on 09/04/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -11,44 +10,26 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-//                            VStack (alignment: .leading, spacing: 0){
-//                                Text(dataItem.getString("title"))
-//                                    .bold()
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                    .foregroundColor(Color(hex: "#333"))
-//                                    .padding(.bottom, 3)
-//                                Text(self.generatePreview(dataItem))
-//                                    .frame(maxWidth: .infinity, alignment: .leading)
-//                                    .foregroundColor(Color(hex: "#666"))
-//                                    .font(.system(size: 14, weight: .regular, design: .default))
-//                                Rectangle()
-//                                    .size(width: 373, height: 1)
-//                                    .foregroundColor(Color(hex: "#efefef"))
-//                                    .padding(.top, 10)
-//                                    .padding(.bottom, -15)
-////                                Divider()
-////                                    .background(Color(hex: "#efefef"))
-////                                    .padding(.top, 10)
-////                                    .padding(.bottom, -5)
-//                            }
-//                            .padding(.top, 5)
-////                            .listRowBackground(Color.red)
-//                            .onTapGesture {
-//                                if let press = self.renderConfig.press {
-//                                    self.main.executeAction(press, dataItem)
+let ViewConfig:[String:[String]] = [
+    "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
+    "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
+              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset"]
+]
 
 extension View {
     func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
         var view:AnyView = AnyView(self)
-        for (name, _) in properties {
-            var value = properties[name]
-
-            // Compile string properties
-            if let compiled = value as? GUIElementDescription.CompiledProperty {
-                value = GUIElementDescription.computeProperty(compiled, item)
+        
+        for name in ViewConfig["order"]! {
+            if var value = properties[name] {
+                
+                // Compile string properties
+                if let compiled = value as? GUIElementDescription.CompiledProperty {
+                    value = GUIElementDescription.computeProperty(compiled, item)
+                }
+                
+                view = view.setProperty(name, value)
             }
-            
-            view = view.setProperty(name, value!)
         }
         
         return AnyView(view)
@@ -111,21 +92,28 @@ extension View {
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
             }
-        case "v-align":
-            if let value = value as? Alignment {
-                return AnyView(self.frame(maxHeight: .greatestFiniteMagnitude, alignment: value))
+        case "cornerradius":
+            if let value = value as? CGFloat {
+                return AnyView(self.cornerRadius(value))
             }
-        case "h-align":
-            if let value = value as? Alignment {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, alignment: value))
+        case "cornerborder":
+            if let value = value as? [Any] {
+                if let color = value[0] as? String {
+                    return AnyView(self.overlay(
+                        RoundedRectangle(cornerRadius: value[2] as! CGFloat)
+                            .stroke(Color(hex: color), lineWidth: value[1] as! CGFloat)
+                            .padding(1)
+                    ))
+                }
             }
-        case "fullwidth":
-            if let value = value as? Bool, value {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
-            }
-        case "fullheight":
-            if let value = value as? Bool, value {
-                return AnyView(self.frame(maxWidth: .greatestFiniteMagnitude, maxHeight: 1, alignment: .leading))
+        case "frame":
+            if let value = value as? [Any] {
+                return AnyView(self.frame(
+                    minWidth: value[0] as? CGFloat ?? .none,
+                    maxWidth: value[1] as? CGFloat ?? .greatestFiniteMagnitude,
+                    minHeight: value[2] as? CGFloat ?? .none,
+                    maxHeight: value[3] as? CGFloat ?? .greatestFiniteMagnitude,
+                    alignment: value[4] as? Alignment ?? .top))
             }
         case "font":
             if let value = value as? [Any] {
@@ -140,7 +128,11 @@ extension View {
                 }
                 return AnyView(self.font(font))
             }
-        case "spacing", "alignment", "size", "text", "maxchar", "removewhitespace", "bold":
+        case "textalign":
+            if let value = value as? TextAlignment {
+                return AnyView(self.multilineTextAlignment(value))
+            }
+        case "minwidth", "minheight", "align", "maxwidth", "maxheight", "spacing", "alignment", "text", "maxchar", "removewhitespace", "bold":
             break
         default:
             print("NOT IMPLEMENTED PROPERTY: \(name)")
@@ -148,17 +140,26 @@ extension View {
         
         return AnyView(self)
     }
-
-//   // Example: .if(bold){ $0.bold() }
-   func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
-        if conditional {
-            return AnyView(content(self))
-        } else {
-            return AnyView(self)
-        }
+    
+    func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
+        if conditional { return AnyView(content(self)) }
+        else { return AnyView(self) }
     }
 }
 
+extension Text {
+    func `if`(_ conditional: Bool, content: (Self) -> Text) -> Text {
+        if conditional { return content(self) }
+        else { return self }
+    }
+}
+
+//extension Image {
+//    func `if`(_ conditional: Bool, content: (Self) -> Image) -> Image {
+//        if conditional { return content(self) }
+//        else { return self }
+//    }
+//}
 
 public class GUIElementDescription: Decodable {
     var type: String = ""
@@ -182,6 +183,36 @@ public class GUIElementDescription: Decodable {
         for (key, value) in props {
             properties[key.lowercased()] = parseProperty(key, value.value)
         }
+        
+        for item in ViewConfig["frame"]! {
+            if properties[item] != nil {
+                
+                let values:[Any?] = [
+                    properties["minwidth"] as Any?,
+                    properties["maxwidth"] as Any?,
+                    properties["minheight"] as Any?,
+                    properties["maxheight"] as Any?,
+                    properties["align"] as Any?
+                ]
+                
+                properties["minwidth"] = nil
+                properties["maxwidth"] = nil
+                properties["minheight"] = nil
+                properties["maxheight"] = nil
+                properties["align"] = nil
+                
+                properties["frame"] = values
+                break
+            }
+        }
+        
+        if properties["cornerradius"] != nil && properties["border"] != nil {
+            var value = properties["border"] as! [Any]
+            value.append(properties["cornerradius"]!)
+            
+            properties["cornerborder"] = value as Any
+            properties["border"] = nil
+        }
     }
     
     func parseProperty(_ key:String, _ value:Any) -> Any? {
@@ -191,22 +222,31 @@ public class GUIElementDescription: Decodable {
             case "top": return VerticalAlignment.top
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
-            case "v-center": return VerticalAlignment.center
-            case "h-center": return HorizontalAlignment.center
+            case "center": return self.type == "vstack"
+                ? HorizontalAlignment.center
+                : VerticalAlignment.center
             default: return nil
             }
         }
-        else if key == "v-align" || key == "h-align" {
+        else if key == "align" {
             switch value as! String {
             case "left": return Alignment.leading
             case "top": return Alignment.top
             case "right": return Alignment.trailing
             case "bottom": return Alignment.bottom
             case "center": return Alignment.center
-            case "lefttop": return Alignment.topLeading
-            case "righttop": return Alignment.topTrailing
-            case "leftbottom": return Alignment.bottomLeading
-            case "rightbototm": return Alignment.bottomTrailing
+            case "lefttop", "topleft": return Alignment.topLeading
+            case "righttop", "topright": return Alignment.topTrailing
+            case "leftbottom", "bottomleft": return Alignment.bottomLeading
+            case "rightbottom", "bottomright": return Alignment.bottomTrailing
+            default: return nil
+            }
+        }
+        else if key == "textalign" {
+            switch value as! String {
+            case "left": return TextAlignment.leading
+            case "center": return TextAlignment.center
+            case "right": return TextAlignment.trailing
             default: return nil
             }
         }
@@ -224,14 +264,17 @@ public class GUIElementDescription: Decodable {
                 value[i] = parseProperty("", value[i])!
             }
             
-            if key == "font", let weight = value[1] as? String {
+            if key == "font", let _ = value[0] as? CGFloat {
+                if value.count == 1 { value.append("regular") }
+                let weight = value[1] as! String
+                
                 switch weight {
                 case "regular": value[1] = Font.Weight.regular
                 case "bold": value[1] = Font.Weight.bold
                 case "semibold": value[1] = Font.Weight.semibold
                 case "heavy": value[1] = Font.Weight.heavy
                 case "light": value[1] = Font.Weight.light
-                case "ultraLight": value[1] = Font.Weight.ultraLight
+                case "ultralight": value[1] = Font.Weight.ultraLight
                 case "black": value[1] = Font.Weight.black
                 default: value[1] = Font.Weight.medium
                 }
@@ -247,9 +290,11 @@ public class GUIElementDescription: Decodable {
         var result: [Any]
     }
     
+    // Parsed (example): "Views element at {.dateAccessed} with title: {.title}"
+    // CompiledProperty becomes: ["Views element at ", ["dateAccessed"], " with title: ", ["title"]]
     func compile(_ expr: String) -> Any {
         // We'll use this regular expression to match the name of the object and property
-        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*.[^\}]*)\})?)"#
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.[^\}]*)\})?)"#
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
         var result:[Any] = []
@@ -279,6 +324,12 @@ public class GUIElementDescription: Decodable {
                         searchPath.remove(at: 0)
                     }
                     
+                    // Detecting functions (could be more elegant) // TODO
+                    if let last = searchPath.last, last.last == ")" {
+                        searchPath[searchPath.count - 1] = "functions"
+                        searchPath.append(String(last.prefix(last.count - 2)))
+                    }
+                    
                     // Add to the result for future fast parsing
                     result.append(searchPath)
                     
@@ -296,8 +347,12 @@ public class GUIElementDescription: Decodable {
         return properties[propName] != nil
     }
     
-    public func getBool(_ propName:String) -> Bool {
-        return get(propName) ?? false
+    public func getString(_ propName:String, _ item:DataItem? = nil) -> String {
+        return get(propName, item) ?? ""
+    }
+    
+    public func getBool(_ propName:String, _ item:DataItem? = nil) -> Bool {
+        return get(propName, item) ?? false
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil) -> T? {
@@ -314,12 +369,58 @@ public class GUIElementDescription: Decodable {
         return nil
     }
     
+    private class func formatDate(_ date:Date?) -> String{
+        let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
+        
+        if let date = date {
+            // Compare against 36 hours ago
+            if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129600)) < 0 {
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.locale = Locale(identifier: "en_US")
+                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                
+                return dateFormatter.string(from: date)
+            }
+            else {
+                return date.timestampString ?? ""
+            }
+        }
+        else {
+            return "never"
+        }
+    }
+    
     private class func traverseProperties(_ item:DataItem, _ propParts:[String]) -> String {
         // Loop through the properties and fetch each
         var value:Any? = item
         for i in 0..<propParts.count {
-            value = (value as! Object)[String(propParts[i])]
+            let part = propParts[i]
+            
+            if part == "functions" {
+                value = (value as! DataItem).functions[propParts[i+1]];
+                break
+            }
+            else {
+                value = (value as! Object)[String(part)]
+            }
         }
+        
+        // Format a date
+        if let date = value as? Date { value = formatDate(date) }
+            
+        // Get the image uri from a file
+        else if let file = value as? File {
+            // Preload the image
+            let _ = file.asUIImage
+            
+            // Set the uri string as the value
+            value = file.uri
+        }
+            
+        // Execute a custom function
+        else if let f = value as? ([Any]?) -> String { value = f([]) }
         
         // Return the value as a string
         return value as? String ?? ""
@@ -334,7 +435,7 @@ public class GUIElementDescription: Decodable {
     
     public static func fromJSONFile(_ file: String, ext: String = "json") throws -> GUIElementDescription {
         let jsonData = try jsonDataFromFile(file, ext)
-        let comp: GUIElementDescription = try! JSONDecoder().decode(GUIElementDescription.self, from: jsonData)
+        let comp: GUIElementDescription = try! MemriJSONDecoder.decode(GUIElementDescription.self, from: jsonData)
         return comp
     }
 }
@@ -386,20 +487,30 @@ public struct GUIElementInstance: View {
 //                as! SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout>
 //    }
     
-    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout> {
-        var x:[CGFloat] = from.get("size")!
+//    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout> {
+//        var x:[CGFloat] = from.get("size")!
+//
+//        if x[0] == 0 { x[0] = .greatestFiniteMagnitude }
+//        if x[1] == 0 { x[1] = .greatestFiniteMagnitude }
+//
+//        return view
+//            .frame(maxWidth: x[0], maxHeight: x[1])
+//                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
+//    }
+
+    private func resize(_ view:SwiftUI.Image) -> AnyView {
+        let resizable:String = from.get("resizable", self.item)!
+        let y = view.resizable()
         
-        if x[0] == 0 { x[0] = .greatestFiniteMagnitude }
-        if x[1] == 0 { x[1] = .greatestFiniteMagnitude }
-        
-        return view
-            .frame(maxWidth: x[0], maxHeight: x[1])
-                as! SwiftUI.ModifiedContent<T, SwiftUI._FlexFrameLayout>
+        switch resizable {
+        case "fill": return AnyView(y.aspectRatio(contentMode: .fill))
+        case "fit": return AnyView(y.aspectRatio(contentMode: .fit))
+        case "stretch": fallthrough
+        default:
+            return AnyView(y)
+        }
     }
     
-    // TODO can this be optimized for performance??
-    // What about setting .setProperties on result of another property access
-    // and make two different ones based on whether it has children
     @ViewBuilder
     public var body: some View {
         if from.type == "vstack" {
@@ -427,6 +538,9 @@ public struct GUIElementInstance: View {
         else if from.type == "text" {
             Text(from.processText(get("text") ?? "[nil]"))
                 .if(from.getBool("bold")){ $0.bold() }
+                .if(from.getBool("italic")){ $0.italic() }
+                .if(from.getBool("underline")){ $0.underline() }
+                .if(from.getBool("strikethrough")){ $0.strikethrough() }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "textfield" {
@@ -435,21 +549,17 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "action" {
             Action(action: get("press"))
-//            .font(Font.system(size: 19, weight: .semibold))
+                .setProperties(from.properties, self.item)
         }
         else if from.type == "image" {
             if has("systemName") {
                 Image(systemName: get("systemName") ?? "exclamationmark.bubble")
-                    .fixedSize()
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 5)
+                    .if(from.has("resizable")) { self.resize($0) }
                     .setProperties(from.properties, self.item)
             }
             else { // assuming image property
-                Image(uiImage: get("image") ?? UIImage())
-                    .fixedSize()
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 5)
+                Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+                    .if(from.has("resizable")) { self.resize($0) }
                     .setProperties(from.properties, self.item)
             }
         }
@@ -457,17 +567,14 @@ public struct GUIElementInstance: View {
         }
         else if from.type == "horizontalline" {
             HorizontalLine()
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "rectangle" {
             Rectangle()
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "roundedrectangle" {
             RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                .if (from.has("size")){ return setSize($0) }
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "spacer" {
