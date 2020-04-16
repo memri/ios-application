@@ -80,7 +80,7 @@ public class RenderConfigs: Object, Codable {
             self.thumbnail!.merge(config)
         }
         if let config = renderConfigs.generalEditor {
-            if self.generalEditor == nil { self.generalEditor = generalEditor() }
+            if self.generalEditor == nil { self.generalEditor = GeneralEditorConfig() }
             self.generalEditor!.merge(config)
         }
     }
