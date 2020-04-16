@@ -60,6 +60,7 @@ class GeneralEditorConfig: RenderConfig{
         
         jsonErrorHandling(decoder) {
             self.type = try decoder.decodeIfPresent("type") ?? self.type
+            
             decodeIntoList(decoder, "readOnly", self.readOnly)
             decodeIntoList(decoder, "excluded", self.excluded)
 
@@ -67,6 +68,7 @@ class GeneralEditorConfig: RenderConfig{
                 self._groups = String(
                     data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
             }
+            
             try! self.superDecode(from: decoder)
         }
     }
@@ -77,14 +79,20 @@ class GeneralEditorConfig: RenderConfig{
     
     public func merge(_ generalEditorConfig:GeneralEditorConfig) {
         self.type = generalEditorConfig.type ?? self.type
-        self._groups = generalEditorConfig._groups ?? self._groups
+        
+        if let otherGroups = generalEditorConfig.groups, otherGroups.count > 0 {
+            var groups = self.groups ?? [:]
+            for (key, value) in otherGroups {
+                groups[key] = value
+            }
+            
+            self._groups = serialize(AnyCodable(groups))
+        }
         
         self.excluded.append(objectsIn: generalEditorConfig.excluded)
         self.readOnly.append(objectsIn: generalEditorConfig.readOnly)
 
         super.superMerge(generalEditorConfig)
-        
-        
     }
     
 }
