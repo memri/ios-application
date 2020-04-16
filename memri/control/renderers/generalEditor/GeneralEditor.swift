@@ -24,18 +24,33 @@ class GeneralEditor: Renderer{
 class GeneralEditorConfig: RenderConfig{
     
     @objc dynamic var type: String? = "generalEditor"
-//    @objc dynamic var groups: [String:String]? = nil
-//    let groups = List<[String]>()
-
-
+    @objc dynamic var _groups: String? = nil
     
+    var groups: [String:[String]]? {
+        if let groups:[String:[String]] = renderCache.get(self._groups!) {
+            return groups
+        }
+        else if let description = self._groups {
+            if let groups:[String:[String]] = unserialize(description) {
+                renderCache.set(description, groups)
+                return groups
+            }
+        }
+        
+        return nil
+    }
+
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
         jsonErrorHandling(decoder) {
             self.type = try decoder.decodeIfPresent("type") ?? self.type
-            self.groups = try decoder.decodeIfPresent("groups") ?? self.groups
-
+            
+            if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("groups") {
+                self._groups = String(
+                    data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
+            }
+            
             try! self.superDecode(from: decoder)
         }
     }
@@ -46,7 +61,7 @@ class GeneralEditorConfig: RenderConfig{
     
     public func merge(_ generalEditorConfig:GeneralEditorConfig) {
         self.type = generalEditorConfig.type ?? self.type
-        self.groups = generalEditorConfig.groups ?? self.groups
+        self._groups = generalEditorConfig._groups ?? self._groups
 
         super.superMerge(generalEditorConfig)
     }

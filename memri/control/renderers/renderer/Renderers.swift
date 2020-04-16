@@ -128,13 +128,14 @@ public class RenderConfig: Object, Codable {
      *
      */
     var renderDescription: [String:GUIElementDescription]? {
-        if let itemRenderer = renderCache.get(self._renderDescription!) {
-            return itemRenderer
+        if let renderDescription:[String: GUIElementDescription]
+          = renderCache.get(self._renderDescription!) {
+            return renderDescription
         }
         else if let description = self._renderDescription {
-            if let itemRenderer:[String: GUIElementDescription] = unserialize(description) {
-                renderCache.set(description, itemRenderer)
-                return itemRenderer
+            if let renderDescription:[String: GUIElementDescription] = unserialize(description) {
+                renderCache.set(description, renderDescription)
+                return renderDescription
             }
         }
         
@@ -176,7 +177,10 @@ public class RenderConfig: Object, Codable {
         self.category = try decoder.decodeIfPresent("category") ?? self.category
         
         // Receiving a string from the preprocessed view description for storage in realm
-        self._renderDescription = try decoder.decodeIfPresent("renderDescription") ?? self._renderDescription
+        if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("renderDescription") {
+            self._renderDescription = String(
+                data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
+        }
         
         decodeIntoList(decoder, "items", self.items)
         decodeIntoList(decoder, "options1", self.options1)
@@ -240,7 +244,7 @@ public class RenderConfig: Object, Codable {
     //    }
     
     // This is called from CompiledView when pre-processing the view
-    public class func parseRenderDescription(_ parsed: Any) -> String {
+    public class func parseRenderDescription(_ parsed: Any) -> Any {
         var pDict:[String:Any]
         var result:[String:Any] = [:]
         
@@ -253,7 +257,7 @@ public class RenderConfig: Object, Codable {
         }
         
         // Returning a string to optimize savin as a string in realm
-        return serialize(AnyCodable(result))
+        return result
     }
     
     private class func parseSingleRenderDescription(_ parsed:[Any]) throws -> Any {
@@ -291,6 +295,15 @@ public class RenderConfig: Object, Codable {
 
 class RenderCache {
     var cache:[String:[String:GUIElementDescription]] = [:]
+    var dictCache:[String:[String:[String]]] = [:]
+    
+    public func get(_ key:String) -> [String:[String]]? {
+        return dictCache[key]
+    }
+    
+    public func set(_ key:String, _ dict: [String:[String]]) {
+        dictCache[key] = dict
+    }
     
     public func get(_ key:String) -> [String:GUIElementDescription]? {
         return cache[key]
