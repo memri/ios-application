@@ -355,8 +355,10 @@ public class GUIElementDescription: Decodable {
         return get(propName, item) ?? false
     }
     
-    public func get<T>(_ propName:String, _ item:DataItem? = nil) -> T? {
-        if let prop = properties[propName] {
+    public func get<T>(_ propName:String, _ item:DataItem? = nil,
+                       _ options:[String:Any]=[:]) -> T? {
+        
+        if let prop = properties[propName] ?? options[propName] {
             let propValue = prop
             
             // Compile string properties
@@ -463,18 +465,25 @@ public struct GUIElementInstance: View {
     
     var from:GUIElementDescription
     var item:DataItem
+    var options:[String:Any]
     
-    public init(_ gui:GUIElementDescription, _ dataItem:DataItem) {
+    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:Any]=[:]) {
         from = gui
         item = dataItem
+        options = opts
     }
     
     public func has(_ propName:String) -> Bool {
-        return from.has(propName)
+        return options[propName] != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
-        return from.get(propName, self.item)
+        if propName.first == "$" {
+            return options[propName] as! T?
+        }
+        else {
+            return from.get(propName, self.item, options)
+        }
     }
     
     public func getList<T:RealmCollectionValue>(_ propName:String) -> [T] {
@@ -522,6 +531,12 @@ public struct GUIElementInstance: View {
         }
     }
     
+    /*
+        TODO: Think about whether using from.get* is a good ideas, as get() locally
+              is used for variable access and overloaded properties, though the latter
+              focussed on the root element only
+     */
+    
     @ViewBuilder
     public var body: some View {
         if from.type == "vstack" {
@@ -543,14 +558,19 @@ public struct GUIElementInstance: View {
                 .animation(nil)
                 .setProperties(from.properties, self.item)
         }
-        if from.type == "section" {
-            if self.has("title"){
-                Section(header: Text(self.get("title") ?? "")){
+        if from.type == "editorsection" {
+            if self.has("title") {
+                Section(header: Text(LocalizedStringKey(
+                    (self.get("title") ?? "").uppercased()
+                )).generalEditorHeader()){
+                    Divider()
                     self.childrenAsView
+                    Divider()
                 }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
-            }else{
+            }
+            else {
                 VStack(spacing: 0){
                     self.childrenAsView
                 }
@@ -561,10 +581,10 @@ public struct GUIElementInstance: View {
         if from.type == "editorrow" {
             VStack (spacing: 0) {
                 VStack(alignment: .leading, spacing: 4){
-                    Text(self.get("title") ?? ""
+                    Text(LocalizedStringKey(self.get("title") ?? ""
                         .camelCaseToWords()
                         .lowercased()
-                        .capitalizingFirstLetter()
+                        .capitalizingFirstLetter())
                     )
                     .generalEditorLabel()
                     

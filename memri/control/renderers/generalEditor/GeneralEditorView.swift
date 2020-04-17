@@ -31,13 +31,32 @@ struct GeneralEditorView: View {
         dump(self.renderConfig.renderDescription)
         
         return ScrollView {
-            VStack(alignment: .leading, spacing:0){
-                if renderConfig.groups != nil{
+            VStack (alignment: .leading, spacing:0) {
+                if renderConfig.groups != nil {
                     ForEach(Array(renderConfig.groups!.keys), id: \.self){key in
-                        Group{
-                            if self.renderConfig.renderDescription![key] != nil{
-                                self.renderConfig.render(DataItem(), key)
-                            }else{
+                        Group {
+                            if self.renderConfig.renderDescription![key] != nil {
+                                if self.renderConfig.renderDescription![key]?.type == "section" {
+                                    ForEach(self.renderConfig.groups![key]) {
+                                        self.renderConfig.render(item, key, [
+                                            "readonly": !self.main.currentSession.editMode,
+                                            "title": key.camelCaseToWords().uppercased()
+                                        ])
+                                    }
+                                }
+                                else {
+                                    Section(header:Text(key.camelCaseToWords().uppercased()).generalEditorHeader()) {
+                                        Divider()
+                                        ForEach(self.renderConfig.groups![key]) {
+                                            self.renderConfig.render(item, key, [
+                                                "readonly": !self.main.currentSession.editMode
+                                            ])
+                                        }
+                                        Divider()
+                                    }
+                                }
+                            }
+                            else {
                                 self.drawSection(
                                     header: "\(key)".uppercased(),
                                     item: item,
@@ -232,7 +251,7 @@ struct GeneralEditorRow: View {
     }
 }
 
-private extension View {
+public extension View {
     func generalEditorLabel() -> some View { self.modifier(GeneralEditorLabel()) }
     func generalEditorCaption() -> some View { self.modifier(GeneralEditorCaption()) }
     func generalEditorHeader() -> some View { self.modifier(GeneralEditorHeader()) }

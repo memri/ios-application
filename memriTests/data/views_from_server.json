@@ -594,18 +594,14 @@
                             ]
                         ],
                         "dates": [
-                            "Section",
-                            {
-                                "notitle": true,
-                                "title": "Core Dates"
-                            }, [
+                            "EditorSection", { "title": "Dates" }, [
                                 "VStack", {
                                     "alignment": "left",
                                     "rowInset": [12, 20, -12, 20],
                                     "condition": "{readOnly}"
                                 }, [
                                     "Text", {
-                                        "text": "{.dateCreated}",
+                                        "text": "{.}",
                                         "font": [22, "semibold"],
                                         "color": "#333",
                                         "padding": [0, 0, 3, 0],
@@ -617,7 +613,7 @@
                                     "condition": "{!readOnly}"
                                 }, [
                                     "Text", {
-                                        "text": "{.dateCreated}",
+                                        "text": "{.}",
                                         "font": [22, "semibold"],
                                         "color": "#333",
                                         "padding": [0, 0, 3, 0],
