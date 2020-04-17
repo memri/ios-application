@@ -56,6 +56,22 @@ extension String: Error {
         
         return matches
     }
+    
+    func substr(_ startIndex:Int, _ length:Int? = nil) -> String {
+        let start = startIndex < 0
+            ? self.index(self.endIndex, offsetBy: startIndex)
+            : self.index(self.startIndex, offsetBy: startIndex)
+        
+        let end = length == nil
+            ? self.endIndex
+            : length! < 0
+                ? self.index(self.startIndex, offsetBy: startIndex + length!)
+                : self.index(self.endIndex, offsetBy: length!)
+        
+        let range = start..<end
+
+        return String(self[range])
+    }
 }
 
 extension Date {

@@ -151,6 +151,7 @@ public class RenderConfig: Object, Codable {
      */
     public func render(_ dataItem:DataItem, _ part:String = "*",
                        _ options:[String:Any] = [:]) -> GUIElementInstance {
+        
         if _renderDescription == nil {
             return GUIElementInstance(GUIElementDescription(), dataItem, options)
         }

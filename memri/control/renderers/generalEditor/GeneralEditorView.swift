@@ -13,7 +13,6 @@ import RealmSwift
  TODO:
      - Generalize List<>
         - Move label renderer to view
-     - Allow for custom renderers
      - Implement File/Image viewer/editor
  */
 
@@ -41,7 +40,7 @@ struct GeneralEditorView: View {
                                             self.renderConfig.render(item, groupKey, [
                                                 "readonly": !self.main.currentSession.editMode,
                                                 "title": groupKey.camelCaseToWords().uppercased(),
-                                                "displayName": name.camelCaseToWords()
+                                                "displayname": name.camelCaseToWords()
                                                                    .capitalizingFirstLetter(),
                                                 "name": name,
                                                 ".": item[name] as Any
@@ -57,8 +56,9 @@ struct GeneralEditorView: View {
                                         Divider()
                                         ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
                                             self.renderConfig.render(item, groupKey, [
+                                                "data": Date().description,
                                                 "readonly": !self.main.currentSession.editMode,
-                                                "displayName": name.camelCaseToWords()
+                                                "displayname": name.camelCaseToWords()
                                                                    .capitalizingFirstLetter(),
                                                 "name": name,
                                                 ".": item[name] as Any
@@ -109,7 +109,6 @@ struct GeneralEditorView: View {
     }
     
 }
-
 
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main

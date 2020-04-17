@@ -600,7 +600,7 @@
                                 "rowInset": [12, 20, -12, 20],
                             }, [
                                 "EditorRow", {
-                                    "title": "{name}"
+                                    "title": "{displayName}"
                                 }, [
                                     "Text", {
                                         "text": "{.} readonly",

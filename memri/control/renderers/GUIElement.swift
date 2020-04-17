@@ -413,11 +413,9 @@ public class GUIElementDescription: Decodable {
          */
         
         let isNegationTest = propParts.first?.first == "!"
-        var firstItem = propParts[0]
-        if isNegationTest {
-            let index = firstItem.index(firstItem.startIndex, offsetBy: 1)
-            firstItem = String(firstItem[index...])
-        }
+        let firstItem = isNegationTest
+            ? propParts[0].substr(1)
+            : propParts[0]
         
         if firstItem == "dataItem" {
             value = item
@@ -505,9 +503,9 @@ extension GUIElementDescription {
 public struct GUIElementInstance: View {
     @EnvironmentObject var main: Main
     
-    var from:GUIElementDescription
-    var item:DataItem
-    var options:[String:Any]
+    let from:GUIElementDescription
+    let item:DataItem
+    let options:[String:Any]
     
     public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:Any]=[:]) {
         from = gui
@@ -521,7 +519,9 @@ public struct GUIElementInstance: View {
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
-            return options[propName] as! T?
+            dump(options)
+            print(options[propName.substr(1)] as! Bool)
+            return (options[propName.substr(1)] as! T)
         }
         else {
             return from.get(propName, self.item, options)
@@ -573,14 +573,9 @@ public struct GUIElementInstance: View {
         }
     }
     
-    /*
-        TODO: Think about whether using from.get* is a good ideas, as get() locally
-              is used for variable access and overloaded properties, though the latter
-              focussed on the root element only
-     */
-    
-    @ViewBuilder
+//    @ViewBuilder
     public var body: some View {
+        VStack {
         if (!has("condition") || get("condition") == true) {
             if from.type == "vstack" {
                 VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
@@ -632,11 +627,14 @@ public struct GUIElementInstance: View {
                         .generalEditorLabel()
                         
                         self.childrenAsView
+                            .generalEditorCaption()
                     }
                     .fullWidth()
                     .padding(.bottom, 10)
                     .padding(.horizontal, 36)
-                    .background(self.get("$readonly") ?? false ? Color(hex:"#f9f9f9") : Color(hex:"#f7fcf5"))
+                    .background(self.get("$readonly") ?? false
+                        ? Color(hex:"#f9f9f9")
+                        : Color(hex:"#f7fcf5"))
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                     
@@ -709,6 +707,7 @@ public struct GUIElementInstance: View {
                 Divider()
                     .setProperties(from.properties, self.item)
             }
+        }
         }
     }
     
