@@ -594,35 +594,25 @@
                             ]
                         ],
                         "dates": [
-                            "Section",
-                            {
-                                "notitle": true,
-                                "title": "Core Dates"
+                            "VStack", {
+                                "title": "Dates",
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20],
                             }, [
-                                "VStack", {
-                                    "alignment": "left",
-                                    "rowInset": [12, 20, -12, 20],
+                                "Text", {
+                                    "text": "{.} readonly",
+                                    "font": [22, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0],
                                     "condition": "{readOnly}"
-                                }, [
-                                    "Text", {
-                                        "text": "{.dateCreated}",
-                                        "font": [22, "semibold"],
-                                        "color": "#333",
-                                        "padding": [0, 0, 3, 0],
-                                    }
-                                ],
-                                "VStack", {
-                                    "alignment": "left",
-                                    "rowInset": [12, 20, -12, 20],
+                                },
+                                "Text", {
+                                    "text": "{.} !readonly",
+                                    "font": [22, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0],
                                     "condition": "{!readOnly}"
-                                }, [
-                                    "Text", {
-                                        "text": "{.dateCreated}",
-                                        "font": [22, "semibold"],
-                                        "color": "#333",
-                                        "padding": [0, 0, 3, 0],
-                                    }
-                                ]
+                                }
                             ]
                         ],
                         "labels": [

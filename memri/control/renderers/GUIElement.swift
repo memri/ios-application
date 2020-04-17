@@ -25,7 +25,7 @@ extension View {
                 
                 // Compile string properties
                 if let compiled = value as? GUIElementDescription.CompiledProperty {
-                    value = GUIElementDescription.computeProperty(compiled, item)
+                    value = GUIElementDescription.computeProperty(compiled, item) ?? ""
                 }
                 
                 view = view.setProperty(name, value)
@@ -294,9 +294,14 @@ public class GUIElementDescription: Decodable {
     // CompiledProperty becomes: ["Views element at ", ["dateAccessed"], " with title: ", ["title"]]
     func compile(_ expr: String) -> Any {
         // We'll use this regular expression to match the name of the object and property
-        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.[^\}]*)\})?)"#
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.?[^\}]*)\})?)"#
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
+        if expr == "{!readOnly}" || expr == "{readOnly}" {
+            1+1
+        }
+        
+        
         var result:[Any] = []
         var isCompiled = false
         
@@ -316,12 +321,20 @@ public class GUIElementDescription: Decodable {
                 // compute the string result of the expression
                 if let rangeQuery = Range(match.range(at: 2), in: expr) {
                     
-                    var searchPath:[String] = expr[rangeQuery]
-                        .split(separator: ".")
-                        .map{ String($0) }
-                    
-                    if searchPath[0] == "dataItem" {
-                        searchPath.remove(at: 0)
+                    var searchPath:[String]
+//                    let str = String(expr[rangeQuery])
+//                    if str.test("^[^\\.]$") {
+                    if expr[rangeQuery] == "." {
+                        searchPath = ["."]
+                    }
+                    else {
+                        searchPath = expr[rangeQuery]
+                            .split(separator: ".", omittingEmptySubsequences: false)
+                            .map{ String($0) }
+                        
+                        if searchPath.first == "" {
+                            searchPath[0] = "dataItem"
+                        }
                     }
                     
                     // Detecting functions (could be more elegant) // TODO
@@ -355,13 +368,20 @@ public class GUIElementDescription: Decodable {
         return get(propName, item) ?? false
     }
     
-    public func get<T>(_ propName:String, _ item:DataItem? = nil) -> T? {
+    public func get<T>(_ propName:String, _ item:DataItem? = nil,
+                       _ options:[String:Any]=[:]) -> T? {
+        
+        if propName == "condition" {
+            1+1
+        }
+        
         if let prop = properties[propName] {
             let propValue = prop
             
             // Compile string properties
             if let compiled = propValue as? CompiledProperty {
-                return (GUIElementDescription.computeProperty(compiled, item) as! T)
+                let x:T? = GUIElementDescription.computeProperty(compiled, item, options)
+                return x
             }
             
             return (propValue as! T)
@@ -392,10 +412,29 @@ public class GUIElementDescription: Decodable {
         }
     }
     
-    private class func traverseProperties(_ item:DataItem, _ propParts:[String]) -> String {
+    private class func traverseProperties<T>(_ item:DataItem, _ propParts:[String],
+                                             _ options:[String:Any]=[:]) -> T? {
         // Loop through the properties and fetch each
-        var value:Any? = item
-        for i in 0..<propParts.count {
+        var value:Any? = nil
+        /*
+            NOTE: If there is ever a desire to query other objects such as currentSession
+                  or computedView, then this is the place to add that.
+         */
+        
+        let isNegationTest = propParts.first?.first == "!"
+        let index = propParts[0].index(propParts[0].startIndex, offsetBy: 1)
+        let firstItem = String(propParts[0][index...])
+        
+        if firstItem == "dataItem" {
+            value = item
+        }
+        else {
+            value = isNegationTest
+                ? !(options[firstItem.lowercased()] as! Bool)
+                : options[firstItem.lowercased()]
+        }
+            
+        for i in 1..<propParts.count {
             let part = propParts[i]
             
             if part == "functions" {
@@ -423,14 +462,25 @@ public class GUIElementDescription: Decodable {
         else if let f = value as? ([Any]?) -> String { value = f([]) }
         
         // Return the value as a string
-        return value as? String ?? ""
+        return value as? T
     }
     
-    public class func computeProperty(_ compiled:CompiledProperty, _ item:DataItem?) -> String {
-        return compiled.result.map {
-            if let s = $0 as? [String] { return traverseProperties(item!, s) }
-            return $0 as! String
-        }.joined()
+    public class func computeProperty<T>(_ compiled:CompiledProperty, _ item:DataItem?,
+                                         _ options:[String:Any]=[:]) -> T? {
+        
+        // If this is a single lookup e.g. {.myBoolean} then lets return the actual
+        // type rather than a string
+        if compiled.result.count == 1 && (compiled.result.first as! [Any]).count == 1 {
+            // TODO Error Handling
+            let x:T? = traverseProperties(item!, compiled.result.first as! [String], options)
+            return x
+        }
+        else {
+            return (compiled.result.map {
+                if let s = $0 as? [String] { return traverseProperties(item!, s, options) ?? ""}
+                return $0 as! String
+            }.joined() as! T)
+        }
     }
     
     public static func fromJSONFile(_ file: String, ext: String = "json") throws -> GUIElementDescription {
@@ -463,18 +513,25 @@ public struct GUIElementInstance: View {
     
     var from:GUIElementDescription
     var item:DataItem
+    var options:[String:Any]
     
-    public init(_ gui:GUIElementDescription, _ dataItem:DataItem) {
+    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:Any]=[:]) {
         from = gui
         item = dataItem
+        options = opts
     }
     
     public func has(_ propName:String) -> Bool {
-        return from.has(propName)
+        return options[propName] != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
-        return from.get(propName, self.item)
+        if propName.first == "$" {
+            return options[propName] as! T?
+        }
+        else {
+            return from.get(propName, self.item, options)
+        }
     }
     
     public func getList<T:RealmCollectionValue>(_ propName:String) -> [T] {
@@ -522,8 +579,18 @@ public struct GUIElementInstance: View {
         }
     }
     
+    /*
+        TODO: Think about whether using from.get* is a good ideas, as get() locally
+              is used for variable access and overloaded properties, though the latter
+              focussed on the root element only
+     */
+    
     @ViewBuilder
     public var body: some View {
+        if (has("condition") && get("condition") == false) {
+            return
+        }
+        
         if from.type == "vstack" {
             VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                 self.childrenAsView
@@ -543,14 +610,19 @@ public struct GUIElementInstance: View {
                 .animation(nil)
                 .setProperties(from.properties, self.item)
         }
-        if from.type == "section" {
-            if self.has("title"){
-                Section(header: Text(self.get("title") ?? "")){
+        if from.type == "editorsection" {
+            if self.has("title") {
+                Section(header: Text(LocalizedStringKey(
+                    (self.get("title") ?? "").uppercased()
+                )).generalEditorHeader()){
+                    Divider()
                     self.childrenAsView
+                    Divider()
                 }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
-            }else{
+            }
+            else {
                 VStack(spacing: 0){
                     self.childrenAsView
                 }
@@ -561,10 +633,10 @@ public struct GUIElementInstance: View {
         if from.type == "editorrow" {
             VStack (spacing: 0) {
                 VStack(alignment: .leading, spacing: 4){
-                    Text(self.get("title") ?? ""
+                    Text(LocalizedStringKey(self.get("title") ?? ""
                         .camelCaseToWords()
                         .lowercased()
-                        .capitalizingFirstLetter()
+                        .capitalizingFirstLetter())
                     )
                     .generalEditorLabel()
                     
@@ -652,7 +724,7 @@ public struct GUIElementInstance: View {
     @ViewBuilder
     var childrenAsView: some View {
         ForEach(0..<from.children.count){ index in
-            GUIElementInstance(self.from.children[index], self.item)
+            GUIElementInstance(self.from.children[index], self.item, self.options)
         }
     }
     

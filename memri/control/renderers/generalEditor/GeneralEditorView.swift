@@ -28,20 +28,47 @@ struct GeneralEditorView: View {
     
     var body: some View {
         let item = main.computedView.resultSet.item!
-        dump(self.renderConfig.renderDescription)
         
         return ScrollView {
-            VStack(alignment: .leading, spacing:0){
-                if renderConfig.groups != nil{
-                    ForEach(Array(renderConfig.groups!.keys), id: \.self){key in
-                        Group{
-                            if self.renderConfig.renderDescription![key] != nil{
-                                self.renderConfig.render(DataItem(), key)
-                            }else{
+            VStack (alignment: .leading, spacing:0) {
+                if renderConfig.groups != nil {
+                    ForEach(Array(renderConfig.groups!.keys), id: \.self) { groupKey in
+                        Group {
+                            if self.renderConfig.renderDescription![groupKey] != nil {
+                                if (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String) == "" {
+                                    VStack (spacing: 0) {
+                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
+                                            self.renderConfig.render(item, groupKey, [
+                                                "readonly": !self.main.currentSession.editMode,
+                                                "title": groupKey.camelCaseToWords().uppercased(),
+                                                "name": name,
+                                                ".": item[name] as Any
+                                            ])
+                                        }
+                                    }
+                                }
+                                else {
+                                    Section(header:Text(
+                                        (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String ?? groupKey)
+                                            .camelCaseToWords().uppercased()).generalEditorHeader()) {
+
+                                        Divider()
+                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
+                                            self.renderConfig.render(item, groupKey, [
+                                                "readonly": !self.main.currentSession.editMode,
+                                                "name": name,
+                                                ".": item[name] as Any
+                                            ])
+                                        }
+                                        Divider()
+                                    }
+                                }
+                            }
+                            else {
                                 self.drawSection(
-                                    header: "\(key)".uppercased(),
+                                    header: "\(groupKey)".uppercased(),
                                     item: item,
-                                    properties: self.renderConfig.groups![key]!)
+                                    properties: self.renderConfig.groups![groupKey]!)
                             }
                         }
                     }
@@ -137,9 +164,7 @@ struct GeneralEditorRow: View {
         let binding = Binding<String>(
             get: { self.item!.getString(self.prop) },
             set: {
-                if self.main.currentSession.isEditMode == .active {
-                    self.item!.set(self.prop, $0)
-                }
+                self.item!.set(self.prop, $0)
             }
         )
         
@@ -151,10 +176,8 @@ struct GeneralEditorRow: View {
         let binding = Binding<Bool>(
             get: { self.item![self.prop] as? Bool ?? false },
             set: { _ in
-                if self.main.currentSession.isEditMode == .active {
-                    self.item!.toggle(self.prop)
-                    self.main.objectWillChange.send()
-                }
+                self.item!.toggle(self.prop)
+                self.main.objectWillChange.send()
             }
         )
         
@@ -172,10 +195,8 @@ struct GeneralEditorRow: View {
         let binding = Binding<Int>(
             get: { self.item![self.prop] as? Int ?? 0 },
             set: {
-                if self.main.currentSession.isEditMode == .active {
-                    self.item!.set(self.prop, $0)
-                    self.main.objectWillChange.send()
-                }
+                self.item!.set(self.prop, $0)
+                self.main.objectWillChange.send()
             }
         )
         
@@ -188,10 +209,8 @@ struct GeneralEditorRow: View {
         let binding = Binding<Double>(
             get: { self.item![self.prop] as? Double ?? 0 },
             set: {
-                if self.main.currentSession.isEditMode == .active {
-                    self.item!.set(self.prop, $0)
-                    self.main.objectWillChange.send()
-                }
+                self.item!.set(self.prop, $0)
+                self.main.objectWillChange.send()
             }
         )
         
@@ -204,10 +223,8 @@ struct GeneralEditorRow: View {
         let binding = Binding<Date>(
             get: { self.item![self.prop] as? Date ?? Date() },
             set: {
-                if self.main.currentSession.isEditMode == .active {
-                    self.item!.set(self.prop, $0)
-                    self.main.objectWillChange.send()
-                }
+                self.item!.set(self.prop, $0)
+                self.main.objectWillChange.send()
             }
         )
         return DatePicker("", selection: binding, displayedComponents: .date)
@@ -219,7 +236,8 @@ struct GeneralEditorRow: View {
     
     func listLabelRow() -> some View {
         let className = self.item!.objectSchema[self.prop]?.objectClassName
-        let collection = DataItemFamily(rawValue: className!.lowercased())!.getCollection(self.item![self.prop])
+        let collection = DataItemFamily(rawValue: className!.lowercased())!
+            .getCollection(self.item![self.prop] as Any)
         
         return ForEach(collection, id: \.self) { item in
             self.defaultRow((item).computeTitle)
@@ -232,7 +250,7 @@ struct GeneralEditorRow: View {
     }
 }
 
-private extension View {
+public extension View {
     func generalEditorLabel() -> some View { self.modifier(GeneralEditorLabel()) }
     func generalEditorCaption() -> some View { self.modifier(GeneralEditorCaption()) }
     func generalEditorHeader() -> some View { self.modifier(GeneralEditorHeader()) }
