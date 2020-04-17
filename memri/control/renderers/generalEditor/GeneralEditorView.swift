@@ -12,8 +12,11 @@ import RealmSwift
 /*
  TODO:
      - Generalize List<>
-        - Move label renderer to view
+        - Have a basic way to render them
+        - Give them a section by default (below the specified ones)
      - Implement File/Image viewer/editor
+     - in ReadOnly mode hide the fields that are nil or empty sets unless they are in groups
+    - Add editor elements to GUIElement such as datepicker, textfield, etc
  */
 
 struct GeneralEditorView: View {
@@ -25,43 +28,51 @@ struct GeneralEditorView: View {
         return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
     
+    func getOptions(_ groupKey:String, _ name:String, _ item:DataItem) -> [String:() -> Any] {
+        return [
+            "readonly": { !self.main.currentSession.editMode },
+            "title": { groupKey.camelCaseToWords().uppercased() },
+            "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
+            "name": { name },
+            ".": { item[name] as Any }
+        ]
+    }
+    
+    func getTitle(_ groupKey:String) -> String? {
+        renderConfig.renderDescription?[groupKey]?.properties["title"] as? String
+    }
+    
     var body: some View {
         let item = main.computedView.resultSet.item!
+        let renderConfig = self.renderConfig
+        let groups = renderConfig.groups
+        let renderDescription = renderConfig.renderDescription!
         
         return ScrollView {
-            VStack (alignment: .leading, spacing:0) {
-                if renderConfig.groups != nil {
-                    ForEach(Array(renderConfig.groups!.keys), id: \.self) { groupKey in
+            VStack (alignment: .leading, spacing: 0) {
+                if groups != nil {
+                    ForEach(Array(groups!.keys), id: \.self) { groupKey in
                         Group {
-                            if self.renderConfig.renderDescription![groupKey] != nil {
-                                if (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String) == "" {
+                            if renderDescription[groupKey] != nil {
+                                if self.getTitle(groupKey) == "" {
                                     VStack (spacing: 0) {
-                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
-                                            self.renderConfig.render(item, groupKey, [
-                                                "readonly": { !self.main.currentSession.editMode },
-                                                "title": { groupKey.camelCaseToWords().uppercased() },
-                                                "displayname": { name.camelCaseToWords()
-                                                    .capitalizingFirstLetter() },
-                                                "name": { name },
-                                                ".": { item[name] as Any }
-                                            ])
+                                        ForEach(groups![groupKey]!, id:\.self) { name in
+                                            renderConfig.render(item, groupKey,
+                                                self.getOptions(groupKey, name, item))
                                         }
                                     }
                                 }
                                 else {
-                                    Section(header:Text(
-                                        (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String ?? groupKey)
-                                            .camelCaseToWords().uppercased()).generalEditorHeader()) {
+                                    Section(header:
+                                        Text((self.getTitle(groupKey) ?? groupKey)
+                                          .camelCaseToWords()
+                                          .uppercased())
+                                            .generalEditorHeader()) {
 
                                         Divider()
-                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
-                                            self.renderConfig.render(item, groupKey, [
-                                                "readonly": { !self.main.currentSession.editMode },
-                                                "displayname": { name.camelCaseToWords()
-                                                    .capitalizingFirstLetter() },
-                                                "name": { name },
-                                                ".": { item[name] as Any }
-                                            ])
+                                        ForEach(groups![groupKey]!, id:\.self) { name in
+                                            renderConfig.render(item, groupKey,
+                                                self.getOptions(groupKey, name, item))
                                         }
                                         Divider()
                                     }
@@ -87,17 +98,25 @@ struct GeneralEditorView: View {
     }
     
     func drawSection(header: String, item: DataItem, properties: [String]) -> some View {
-        Section(header:Text(header).generalEditorHeader()) {
+        let editMode = self.main.currentSession.editMode
+        
+        return Section(header:Text(header).generalEditorHeader()) {
             Divider()
             ForEach(properties, id: \.self){ prop in
-                GeneralEditorRow(item: item, prop: prop,
-                    readOnly: (!self.main.currentSession.editMode || self.renderConfig.readOnly.contains(prop)),
-                    isLast: properties.last == prop)
+                Group {
+                    if self.renderConfig.renderDescription![prop] != nil {
+                        self.renderConfig.render(item, prop, self.getOptions("", prop, item))
+                    }
+                    else {
+                        GeneralEditorRow(item: item, prop: prop,
+                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                            isLast: properties.last == prop)
+                    }
+                }
             }
             Divider()
         }
     }
-    
     func getProperties(_ item:DataItem) -> [String]{
         return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
@@ -106,6 +125,50 @@ struct GeneralEditorView: View {
     }
     
 }
+
+//public struct EditorGroup<Content: View> : View {
+//
+//    let groupKey:String
+//    let content: (_ item:Data.Element) -> Content
+//
+//    init(_ key:String, @ViewBuilder content: @escaping (_ item:Data.Element) -> Content) {
+//        self.groupKey = key
+//        self.content = content
+//    }
+//
+//    @ViewBuilder
+//    public var body: some View {
+//        if renderDescription[groupKey] != nil {
+//            if (renderDescription[groupKey]?.properties["title"] as? String) == "" {
+//                VStack (spacing: 0) {
+//                    ForEach(groups![groupKey]!, id:\.self) { name in
+//                        renderConfig.render(item, groupKey,
+//                            self.getOptions(groupKey, name, item))
+//                    }
+//                }
+//            }
+//            else {
+//                Section(header:
+//                    Text((renderDescription[groupKey]?.properties["title"] as? String ?? groupKey)
+//                        .camelCaseToWords().uppercased()).generalEditorHeader()) {
+//
+//                    Divider()
+//                    ForEach(groups![groupKey]!, id:\.self) { name in
+//                        renderConfig.render(item, groupKey,
+//                            self.getOptions(groupKey, name, item))
+//                    }
+//                    Divider()
+//                }
+//            }
+//        }
+//        else {
+//            self.drawSection(
+//                header: "\(groupKey)".uppercased(),
+//                item: item,
+//                properties: self.renderConfig.groups![groupKey]!)
+//        }
+//    }
+//}
 
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main

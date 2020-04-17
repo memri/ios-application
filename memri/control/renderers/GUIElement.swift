@@ -364,7 +364,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
-                       _ options:[String:()->Any]=[:]) -> T? {
+                       _ options:[String: () -> Any] = [:]) -> T? {
         
         if let prop = properties[propName] {
             let propValue = prop
@@ -424,21 +424,33 @@ public class GUIElementDescription: Decodable {
             value = options[firstItem.lowercased()]!()
             if isNegationTest { value = !(value as! Bool) }
         }
-            
+        
+        var lastPart:String? = nil
+        var lastObject:Object? = nil
         for i in 1..<propParts.count {
             let part = propParts[i]
             
             if part == "functions" {
                 value = (value as! DataItem).functions[propParts[i+1]];
+                lastPart = nil
                 break
             }
             else {
-                value = (value as! Object)[String(part)]
+                lastPart = String(part)
+                lastObject = (value as! Object)
+                value = lastObject![lastPart!]
             }
         }
         
+        if let lastPart = lastPart,
+           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
+            
+            // Convert Realm List into Array
+            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
+        }
+        
         // Format a date
-        if let date = value as? Date { value = formatDate(date) }
+        else if let date = value as? Date { value = formatDate(date) }
             
         // Get the image uri from a file
         else if let file = value as? File {
@@ -461,9 +473,9 @@ public class GUIElementDescription: Decodable {
         
         // If this is a single lookup e.g. {.myBoolean} then lets return the actual
         // type rather than a string
-        if compiled.result.count == 1 && (compiled.result.first as! [Any]).count == 1 {
+        if compiled.result.count == 1, let result = compiled.result.first as? [String] {
             // TODO Error Handling
-            let x:T? = traverseProperties(item!, compiled.result.first as! [String], options)
+            let x:T? = traverseProperties(item!, result, options)
             return x
         }
         else {
@@ -526,15 +538,9 @@ public struct GUIElementInstance: View {
         }
     }
     
-    public func getList<T:RealmCollectionValue>(_ propName:String) -> [T] {
-        let x:RealmSwift.List<T> = get("list")!
-        var result:[T] = []
-    
-        for n in x {
-            result.append(n)
-        }
-        
-        return result
+    public func getList(_ propName:String) -> [DataItem] {
+        let x:[DataItem]? = get("list")
+        return x ?? []
     }
     
     // Keeping this around until sure that size setting is never needed
