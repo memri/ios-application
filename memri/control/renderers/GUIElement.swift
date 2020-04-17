@@ -364,7 +364,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
-                       _ options:[String:Any]=[:]) -> T? {
+                       _ options:[String:()->Any]=[:]) -> T? {
         
         if let prop = properties[propName] {
             let propValue = prop
@@ -404,7 +404,7 @@ public class GUIElementDescription: Decodable {
     }
     
     private class func traverseProperties<T>(_ item:DataItem, _ propParts:[String],
-                                             _ options:[String:Any]=[:]) -> T? {
+                                             _ options:[String:()->Any]=[:]) -> T? {
         // Loop through the properties and fetch each
         var value:Any? = nil
         /*
@@ -421,9 +421,8 @@ public class GUIElementDescription: Decodable {
             value = item
         }
         else {
-            value = isNegationTest
-                ? !(options[firstItem.lowercased()] as! Bool)
-                : options[firstItem.lowercased()]
+            value = options[firstItem.lowercased()]!()
+            if isNegationTest { value = !(value as! Bool) }
         }
             
         for i in 1..<propParts.count {
@@ -458,7 +457,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public class func computeProperty<T>(_ compiled:CompiledProperty, _ item:DataItem?,
-                                         _ options:[String:Any]=[:]) -> T? {
+                                         _ options:[String:()->Any]=[:]) -> T? {
         
         // If this is a single lookup e.g. {.myBoolean} then lets return the actual
         // type rather than a string
@@ -505,9 +504,9 @@ public struct GUIElementInstance: View {
     
     let from:GUIElementDescription
     let item:DataItem
-    let options:[String:Any]
+    let options:[String:()->Any]
     
-    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:Any]=[:]) {
+    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:()->Any]=[:]) {
         from = gui
         item = dataItem
         options = opts
@@ -519,9 +518,8 @@ public struct GUIElementInstance: View {
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
-            dump(options)
-            print(options[propName.substr(1)] as! Bool)
-            return (options[propName.substr(1)] as! T)
+            // TODO Error Handling
+            return (options[propName.substr(1)]!() as! T)
         }
         else {
             return from.get(propName, self.item, options)
@@ -573,26 +571,25 @@ public struct GUIElementInstance: View {
         }
     }
     
-//    @ViewBuilder
+    @ViewBuilder
     public var body: some View {
-        VStack {
         if (!has("condition") || get("condition") == true) {
             if from.type == "vstack" {
                 VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
             else if from.type == "hstack" {
                 HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
             else if from.type == "zstack" {
-                ZStack(alignment: get("alignment") ?? .top) { self.childrenAsView }
+                ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                     .animation(nil)
                     .setProperties(from.properties, self.item)
             }
@@ -602,7 +599,7 @@ public struct GUIElementInstance: View {
                         (self.get("title") ?? "").uppercased()
                     )).generalEditorHeader()){
                         Divider()
-                        self.childrenAsView
+                        self.renderChildren
                         Divider()
                     }
                     .animation(nil)
@@ -610,7 +607,7 @@ public struct GUIElementInstance: View {
                 }
                 else {
                     VStack(spacing: 0){
-                        self.childrenAsView
+                        self.renderChildren
                     }
                     .animation(nil)
                     .setProperties(from.properties, self.item)
@@ -626,7 +623,7 @@ public struct GUIElementInstance: View {
                         )
                         .generalEditorLabel()
                         
-                        self.childrenAsView
+                        self.renderChildren
                             .generalEditorCaption()
                     }
                     .fullWidth()
@@ -644,7 +641,7 @@ public struct GUIElementInstance: View {
             }
             else if from.type == "button" {
                 Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
                 .setProperties(from.properties, self.item)
             }
@@ -708,11 +705,10 @@ public struct GUIElementInstance: View {
                     .setProperties(from.properties, self.item)
             }
         }
-        }
     }
     
     @ViewBuilder
-    var childrenAsView: some View {
+    var renderChildren: some View {
         ForEach(0..<from.children.count){ index in
             GUIElementInstance(self.from.children[index], self.item, self.options)
         }

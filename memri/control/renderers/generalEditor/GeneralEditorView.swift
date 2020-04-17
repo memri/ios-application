@@ -38,12 +38,12 @@ struct GeneralEditorView: View {
                                     VStack (spacing: 0) {
                                         ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
                                             self.renderConfig.render(item, groupKey, [
-                                                "readonly": !self.main.currentSession.editMode,
-                                                "title": groupKey.camelCaseToWords().uppercased(),
-                                                "displayname": name.camelCaseToWords()
-                                                                   .capitalizingFirstLetter(),
-                                                "name": name,
-                                                ".": item[name] as Any
+                                                "readonly": { !self.main.currentSession.editMode },
+                                                "title": { groupKey.camelCaseToWords().uppercased() },
+                                                "displayname": { name.camelCaseToWords()
+                                                    .capitalizingFirstLetter() },
+                                                "name": { name },
+                                                ".": { item[name] as Any }
                                             ])
                                         }
                                     }
@@ -56,12 +56,11 @@ struct GeneralEditorView: View {
                                         Divider()
                                         ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
                                             self.renderConfig.render(item, groupKey, [
-                                                "data": Date().description,
-                                                "readonly": !self.main.currentSession.editMode,
-                                                "displayname": name.camelCaseToWords()
-                                                                   .capitalizingFirstLetter(),
-                                                "name": name,
-                                                ".": item[name] as Any
+                                                "readonly": { !self.main.currentSession.editMode },
+                                                "displayname": { name.camelCaseToWords()
+                                                    .capitalizingFirstLetter() },
+                                                "name": { name },
+                                                ".": { item[name] as Any }
                                             ])
                                         }
                                         Divider()
@@ -91,11 +90,9 @@ struct GeneralEditorView: View {
         Section(header:Text(header).generalEditorHeader()) {
             Divider()
             ForEach(properties, id: \.self){ prop in
-                GeneralEditorRow(item: item,
-                                 prop: prop,
-                                 readOnly: (!self.main.currentSession.editMode
-                                    || self.renderConfig.readOnly.contains(prop)),
-                                 isLast: properties.last == prop)
+                GeneralEditorRow(item: item, prop: prop,
+                    readOnly: (!self.main.currentSession.editMode || self.renderConfig.readOnly.contains(prop)),
+                    isLast: properties.last == prop)
             }
             Divider()
         }
