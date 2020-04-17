@@ -88,11 +88,13 @@ struct GeneralEditorRow: View {
                 .generalEditorLabel()
                 
                 if self.readOnly {
-                    if propType == PropertyType.string { defaultRow(self.item!.getString(self.prop)) }
-                    else if propType == PropertyType.bool { defaultRow(self.item!.getString(self.prop)) }
-                    else if propType == PropertyType.date { defaultRow(self.item!.getString(self.prop)) }
-                    else if propType == PropertyType.int { defaultRow(self.item!.getString(self.prop)) }
-                    else if propType == PropertyType.double { defaultRow(self.item!.getString(self.prop)) }
+                    if propType == PropertyType.string
+                      || propType == PropertyType.bool
+                      || propType == PropertyType.date
+                      || propType == PropertyType.int
+                      || propType == PropertyType.double {
+                        defaultRow(self.item!.getString(self.prop))
+                    }
                     else if propType == PropertyType.object { listLabelRow }
                     else { defaultRow() }
                 }
@@ -102,7 +104,7 @@ struct GeneralEditorRow: View {
                     else if propType == PropertyType.date { dateRow }
                     else if propType == PropertyType.int { intRow() }
                     else if propType == PropertyType.double { doubleRow() }
-                    else if propType == PropertyType.object { listLabelRow }
+                    else if prop == "labels" && propType == PropertyType.object { listLabelRow }
                     else { defaultRow() }
                 }
             }
@@ -131,7 +133,6 @@ struct GeneralEditorRow: View {
             .generalEditorCaption()
     }
     
-//    func boolRow(_ item: DataItem, _ prop:String) -> some View {
     func boolRow() -> some View {
         let binding = Binding<Bool>(
             get: { self.item![self.prop] as? Bool ?? false },
@@ -196,21 +197,17 @@ struct GeneralEditorRow: View {
     }
     
     var listLabelRow: some View {
-        Text("Hello")
-        
-//        WrappingHStack(self.item![prop] as! RealmSwift.List<Label>){ label in
-//           VStack {
-//               Text(label.name)
-//                   .font(.system(size: 14, weight: .semibold))
-//                   .foregroundColor(Color.white) // TODO color calculation
-//                   .padding(5)
-//                   .padding(.horizontal, 8)
-//                   .frame(minWidth: 0, minHeight: 20, alignment: .center)
-//           }
-//           .background(Color(hex:label.color ?? "##fff"))
-//           .cornerRadius(5)
-//       }
-//       .frame(minHeight: 72) // Huge hack
+        return WrappingHStack(self.item![prop] as! RealmSwift.List<Label>){ label in
+           VStack {
+               Text(label.name)
+                   .font(.system(size: 16, weight: .semibold))
+                   .foregroundColor(Color.white) // TODO color calculation
+                   .padding(5)
+                   .padding(.horizontal, 8)
+           }
+           .background(Color(hex:label.color ?? "##fff"))
+           .cornerRadius(5)
+       }
     }
 }
 
@@ -227,31 +224,29 @@ struct WrappingHStack<Content: View>:View { // , T: RandomAccessCollection , ID:
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            self.generateContent(in: geometry)
-        }
-    }
-
-    private func generateContent(in g: GeometryProxy) -> some View {
         var width = CGFloat.zero
         var height = CGFloat.zero
 
+        // TODO I cant get Geometry reader to work without collapsing the row
+//                    GeometryReader { geometry in
         return ZStack(alignment: .topLeading) {
             ForEach(self.data, id: \.id) { item in
                 self.content(item)
-                    .padding([.horizontal, .vertical], 4)
+                    .padding([.trailing, .bottom], 5)
                     .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > g.size.width)
-                        {
+                        if (abs(width - d.width) > 360) {
                             width = 0
                             height -= d.height
                         }
+                        
                         let result = width
                         if item == self.data.last! {
                             width = 0 //last item
-                        } else {
+                        }
+                        else {
                             width -= d.width
                         }
+                        
                         return result
                     })
                     .alignmentGuide(.top, computeValue: {d in
