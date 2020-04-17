@@ -61,6 +61,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "uid"
     }
     
+    public func cast() -> Self{
+        return self
+    }
+    
     private enum CodingKeys: String, CodingKey {
         case uid, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
              labels, syncState
