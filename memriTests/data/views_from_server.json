@@ -599,20 +599,18 @@
                                 "alignment": "left",
                                 "rowInset": [12, 20, -12, 20],
                             }, [
-                                "Text", {
-                                    "text": "{.} readonly",
-                                    "font": [22, "semibold"],
-                                    "color": "#333",
-                                    "padding": [0, 0, 3, 0],
-                                    "condition": "{readOnly}"
-                                },
-                                "Text", {
-                                    "text": "{.} !readonly",
-                                    "font": [22, "semibold"],
-                                    "color": "#333",
-                                    "padding": [0, 0, 3, 0],
-                                    "condition": "{!readOnly}"
-                                }
+                                "EditorRow", {
+                                    "title": "{name}"
+                                }, [
+                                    "Text", {
+                                        "text": "{.} readonly",
+                                        "condition": "{readOnly}"
+                                    },
+                                    "Text", {
+                                        "text": "{.} !readonly",
+                                        "condition": "{!readOnly}"
+                                    }
+                                ]
                             ]
                         ],
                         "labels": [

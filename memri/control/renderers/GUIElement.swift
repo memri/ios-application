@@ -297,11 +297,6 @@ public class GUIElementDescription: Decodable {
         let pattern = #"(?:([^\{]+)?(?:\{([^\.]*\.?[^\}]*)\})?)"#
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
-        if expr == "{!readOnly}" || expr == "{readOnly}" {
-            1+1
-        }
-        
-        
         var result:[Any] = []
         var isCompiled = false
         
@@ -371,10 +366,6 @@ public class GUIElementDescription: Decodable {
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
                        _ options:[String:Any]=[:]) -> T? {
         
-        if propName == "condition" {
-            1+1
-        }
-        
         if let prop = properties[propName] {
             let propValue = prop
             
@@ -422,8 +413,11 @@ public class GUIElementDescription: Decodable {
          */
         
         let isNegationTest = propParts.first?.first == "!"
-        let index = propParts[0].index(propParts[0].startIndex, offsetBy: 1)
-        let firstItem = String(propParts[0][index...])
+        var firstItem = propParts[0]
+        if isNegationTest {
+            let index = firstItem.index(firstItem.startIndex, offsetBy: 1)
+            firstItem = String(firstItem[index...])
+        }
         
         if firstItem == "dataItem" {
             value = item
@@ -587,138 +581,135 @@ public struct GUIElementInstance: View {
     
     @ViewBuilder
     public var body: some View {
-        if (has("condition") && get("condition") == false) {
-            return
-        }
-        
-        if from.type == "vstack" {
-            VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
-                self.childrenAsView
-            }
-            .animation(nil)
-            .setProperties(from.properties, self.item)
-        }
-        else if from.type == "hstack" {
-            HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
-                self.childrenAsView
-            }
-            .animation(nil)
-            .setProperties(from.properties, self.item)
-        }
-        else if from.type == "zstack" {
-            ZStack(alignment: get("alignment") ?? .top) { self.childrenAsView }
-                .animation(nil)
-                .setProperties(from.properties, self.item)
-        }
-        if from.type == "editorsection" {
-            if self.has("title") {
-                Section(header: Text(LocalizedStringKey(
-                    (self.get("title") ?? "").uppercased()
-                )).generalEditorHeader()){
-                    Divider()
-                    self.childrenAsView
-                    Divider()
-                }
-                .animation(nil)
-                .setProperties(from.properties, self.item)
-            }
-            else {
-                VStack(spacing: 0){
+        if (!has("condition") || get("condition") == true) {
+            if from.type == "vstack" {
+                VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                     self.childrenAsView
                 }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
-        }
-        if from.type == "editorrow" {
-            VStack (spacing: 0) {
-                VStack(alignment: .leading, spacing: 4){
-                    Text(LocalizedStringKey(self.get("title") ?? ""
-                        .camelCaseToWords()
-                        .lowercased()
-                        .capitalizingFirstLetter())
-                    )
-                    .generalEditorLabel()
+            else if from.type == "hstack" {
+                HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
+                    self.childrenAsView
+                }
+                .animation(nil)
+                .setProperties(from.properties, self.item)
+            }
+            else if from.type == "zstack" {
+                ZStack(alignment: get("alignment") ?? .top) { self.childrenAsView }
+                    .animation(nil)
+                    .setProperties(from.properties, self.item)
+            }
+            if from.type == "editorsection" {
+                if self.has("title") {
+                    Section(header: Text(LocalizedStringKey(
+                        (self.get("title") ?? "").uppercased()
+                    )).generalEditorHeader()){
+                        Divider()
+                        self.childrenAsView
+                        Divider()
+                    }
+                    .animation(nil)
+                    .setProperties(from.properties, self.item)
+                }
+                else {
+                    VStack(spacing: 0){
+                        self.childrenAsView
+                    }
+                    .animation(nil)
+                    .setProperties(from.properties, self.item)
+                }
+            }
+            if from.type == "editorrow" {
+                VStack (spacing: 0) {
+                    VStack(alignment: .leading, spacing: 4){
+                        Text(LocalizedStringKey(self.get("title") ?? ""
+                            .camelCaseToWords()
+                            .lowercased()
+                            .capitalizingFirstLetter())
+                        )
+                        .generalEditorLabel()
+                        
+                        self.childrenAsView
+                    }
+                    .fullWidth()
+                    .padding(.bottom, 10)
+                    .padding(.horizontal, 36)
+                    .background(self.get("$readonly") ?? false ? Color(hex:"#f9f9f9") : Color(hex:"#f7fcf5"))
+                    .animation(nil)
+                    .setProperties(from.properties, self.item)
                     
+                    Divider().padding(.leading, 35)
+                }
+
+            }
+            else if from.type == "button" {
+                Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
                     self.childrenAsView
                 }
-                .fullWidth()
-                .padding(.bottom, 10)
-                .padding(.horizontal, 36)
-                .background(self.get("$readonly") ?? false ? Color(hex:"#f9f9f9") : Color(hex:"#f7fcf5"))
+                .setProperties(from.properties, self.item)
+            }
+            else if from.type == "wrapstack" {
+                WrapStack(getList("list")) { listItem in
+                    ForEach(0..<self.from.children.count){ index in
+                        GUIElementInstance(self.from.children[index], listItem)
+                    }
+                }
                 .animation(nil)
                 .setProperties(from.properties, self.item)
-                
-                Divider().padding(.leading, 35)
             }
-
-        }
-        else if from.type == "button" {
-            Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
-                self.childrenAsView
+            else if from.type == "text" {
+                Text(from.processText(get("text") ?? "[nil]"))
+                    .if(from.getBool("bold")){ $0.bold() }
+                    .if(from.getBool("italic")){ $0.italic() }
+                    .if(from.getBool("underline")){ $0.underline() }
+                    .if(from.getBool("strikethrough")){ $0.strikethrough() }
+                    .setProperties(from.properties, self.item)
             }
-            .setProperties(from.properties, self.item)
-        }
-        else if from.type == "wrapstack" {
-            WrapStack(getList("list")) { listItem in
-                ForEach(0..<self.from.children.count){ index in
-                    GUIElementInstance(self.from.children[index], listItem)
+            else if from.type == "textfield" {
+            }
+            else if from.type == "securefield" {
+            }
+            else if from.type == "action" {
+                Action(action: get("press"))
+                    .setProperties(from.properties, self.item)
+            }
+            else if from.type == "image" {
+                if has("systemname") {
+                    Image(systemName: get("systemname") ?? "exclamationmark.bubble")
+                        .if(from.has("resizable")) { self.resize($0) }
+                        .setProperties(from.properties, self.item)
+                }
+                else { // assuming image property
+                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+                        .if(from.has("resizable")) { self.resize($0) }
+                        .setProperties(from.properties, self.item)
                 }
             }
-            .animation(nil)
-            .setProperties(from.properties, self.item)
-        }
-        else if from.type == "text" {
-            Text(from.processText(get("text") ?? "[nil]"))
-                .if(from.getBool("bold")){ $0.bold() }
-                .if(from.getBool("italic")){ $0.italic() }
-                .if(from.getBool("underline")){ $0.underline() }
-                .if(from.getBool("strikethrough")){ $0.strikethrough() }
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "textfield" {
-        }
-        else if from.type == "securefield" {
-        }
-        else if from.type == "action" {
-            Action(action: get("press"))
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "image" {
-            if has("systemname") {
-                Image(systemName: get("systemname") ?? "exclamationmark.bubble")
-                    .if(from.has("resizable")) { self.resize($0) }
+            else if from.type == "circle" {
+            }
+            else if from.type == "horizontalline" {
+                HorizontalLine()
                     .setProperties(from.properties, self.item)
             }
-            else { // assuming image property
-                Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
-                    .if(from.has("resizable")) { self.resize($0) }
+            else if from.type == "rectangle" {
+                Rectangle()
+                    .setProperties(from.properties, self.item)
+            }
+            else if from.type == "roundedrectangle" {
+                RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
+                    .setProperties(from.properties, self.item)
+            }
+            else if from.type == "spacer" {
+                Spacer()
+                    .setProperties(from.properties, self.item)
+            }
+            else if from.type == "divider" {
+                Divider()
                     .setProperties(from.properties, self.item)
             }
         }
-        else if from.type == "circle" {
-        }
-        else if from.type == "horizontalline" {
-            HorizontalLine()
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "rectangle" {
-            Rectangle()
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "roundedrectangle" {
-            RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "spacer" {
-            Spacer()
-                .setProperties(from.properties, self.item)
-        }
-        else if from.type == "divider" {
-            Divider()
-                .setProperties(from.properties, self.item)
-        }
-//        .frame(maxWidth: .infinity, alignment: .leading)
     }
     
     @ViewBuilder

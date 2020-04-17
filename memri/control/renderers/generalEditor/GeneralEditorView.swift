@@ -44,6 +44,8 @@ struct GeneralEditorView: View {
                                             self.renderConfig.render(item, groupKey, [
                                                 "readonly": !self.main.currentSession.editMode,
                                                 "title": groupKey.camelCaseToWords().uppercased(),
+                                                "displayName": name.camelCaseToWords()
+                                                                   .capitalizingFirstLetter(),
                                                 "name": name,
                                                 ".": item[name] as Any
                                             ])
@@ -59,6 +61,8 @@ struct GeneralEditorView: View {
                                         ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
                                             self.renderConfig.render(item, groupKey, [
                                                 "readonly": !self.main.currentSession.editMode,
+                                                "displayName": name.camelCaseToWords()
+                                                                   .capitalizingFirstLetter(),
                                                 "name": name,
                                                 ".": item[name] as Any
                                             ])
