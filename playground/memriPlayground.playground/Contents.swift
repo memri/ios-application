@@ -3,4 +3,8 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-print(["a", "b"].contains("a"))
+var expr = ". is atest"
+
+print (expr
+    .split(separator: ".", omittingEmptySubsequences: false) )
+//    .map{ String($0) })

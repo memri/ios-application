@@ -118,6 +118,7 @@ class Person:DataItem {
     @objc dynamic var lastName:String? = nil
     let age = RealmOptional<Double>()
     override var type:String { "person" }
+    @objc dynamic var profilePicture:File? = nil
     
     let relations = List<Person>()
     
@@ -136,6 +137,7 @@ class Person:DataItem {
             firstName = try decoder.decodeIfPresent("firstName") ?? firstName
             lastName = try decoder.decodeIfPresent("lastName") ?? lastName
             age.value = try decoder.decodeIfPresent("age") ?? age.value
+            profilePicture = try decoder.decodeIfPresent("profilePicture") ?? profilePicture
             
             try! self.superDecode(from: decoder)
         }
