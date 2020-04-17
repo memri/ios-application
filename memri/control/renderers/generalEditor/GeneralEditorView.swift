@@ -57,7 +57,7 @@ struct GeneralEditorView: View {
             ForEach(properties, id: \.self){ prop in
                 GeneralEditorRow(item: item,
                                  prop: prop,
-                                 readOnly: false && (!self.main.currentSession.editMode
+                                 readOnly: (!self.main.currentSession.editMode
                                     || self.renderConfig.readOnly.contains(prop)),
                                  isLast: properties.last == prop)
             }
@@ -204,11 +204,11 @@ struct GeneralEditorRow: View {
                 }
             }
         )
-        
         return DatePicker("", selection: binding, displayedComponents: .date)
-            .datePickerStyle(WheelDatePickerStyle())
-//        Text(self.item!.getString(prop))
-//            .generalEditorCaption()
+            .frame(width: 300, height: 80, alignment: .center)
+            .clipped()
+            .padding(8)
+        
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {
