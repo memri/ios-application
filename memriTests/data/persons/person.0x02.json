@@ -4,6 +4,7 @@
     "firstName": "Bob",
     "lastName": "Brown",
     "starred": true,
+    "age": 37,
     "labels": [
         { "name": "Daily Log", "color": "#83ac06" },
         { "name": "Polis", "color": "#ffd966" }

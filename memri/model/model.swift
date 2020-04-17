@@ -88,23 +88,32 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             
             // TODO how to do this in swift?
             // #IFDEF DEBUG
-            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.type):\(self.uid ?? "")")
+            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.type):\(self.uid)")
             // #ENDIF
             
             return ""
         }
         else {
             let val = self[name]
-            if let str = val as? String{
+            
+            if let str = val as? String {
                 return str
-            }else if val is Bool{
+            }
+            else if val is Bool {
                 return String(val as! Bool)
             }
-            else if val is Date{
+            else if val is Int {
+                return String(val as! Int)
+            }
+            else if val is Double {
+                return String(val as! Double)
+            }
+            else if val is Date {
                 let formatter = DateFormatter()
-                formatter.dateFormat = "HH:mm    dd/MM/yyyy"
+                formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
                 return formatter.string(from: val as! Date)
-            }else{
+            }
+            else {
                 return ""
             }
         }
@@ -120,9 +129,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
     
     public func toggle(_ name:String) {
-        if self[name] as! Bool == false{
+        if self[name] as! Bool == false {
             self.set(name, true)
-        }else{
+        }
+        else {
             self.set(name, false)
         }
     }

@@ -4,6 +4,7 @@
         "type": "person",
         "firstName": "Alice",
         "lastName": "Awesome",
+        "age": 21,
         "dateCreated": "1996-12-20T00:39:57Z",
         "starred": true,
         "labels": [
@@ -20,6 +21,7 @@
         "type": "person",
         "firstName": "Bob",
         "lastName": "Brown",
+        "age": 37,
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
             { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
@@ -33,6 +35,7 @@
         "type": "person",
         "firstName": "Eve",
         "lastName": "Eagle",
+        "age": 97,
         "starred": true,
         "syncState": {
             "version": 1

@@ -86,6 +86,7 @@ class Note:DataItem {
 class Person:DataItem {
     @objc dynamic var firstName:String? = nil
     @objc dynamic var lastName:String? = nil
+    let age = RealmOptional<Double>()
     override var type:String { "person" }
     
     let relations = List<Person>()
@@ -101,6 +102,7 @@ class Person:DataItem {
         jsonErrorHandling(decoder) {
             firstName = try decoder.decodeIfPresent("firstName") ?? firstName
             lastName = try decoder.decodeIfPresent("lastName") ?? lastName
+            age.value = try decoder.decodeIfPresent("age") ?? age.value
             
             try! self.superDecode(from: decoder)
         }

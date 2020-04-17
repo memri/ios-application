@@ -4,6 +4,7 @@
     "firstName": "Alice",
     "lastName": "Awesome",
     "dateCreated": "1996-12-20T00:39:57Z",
+    "age": 21,
     "starred": true,
     "labels": [
         { "name": "Daily Log", "color": "#83ac06" },
