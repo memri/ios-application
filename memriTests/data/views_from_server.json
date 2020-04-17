@@ -595,6 +595,21 @@
                                     "padding": [0, 0, 3, 0]
                                 }
                             ]
+                        ],
+                        "labels": [
+                            "WrapStack", {"list": "{.labels}"}, [
+                                "VStack", {
+                                    "background": "{.color}",
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                        "font": [16, "semibold"],
+                                        "foregroundColor": "#fff",
+                                        "padding": [5, 8, 5, 8]
+                                    }
+                                ]
+                            ]
                         ]
                     }
                 }

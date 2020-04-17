@@ -67,6 +67,10 @@ class Note:DataItem {
     let sharedWith = List<DataItem>()
     let comments = List<DataItem>()
     
+    override var computeTitle:String {
+        return "\(title ?? "")"
+    }
+    
     required init () {
         super.init()
     }
@@ -90,7 +94,10 @@ class Person:DataItem {
     override var type:String { "person" }
     
     let relations = List<Person>()
-
+    
+    override var computeTitle:String {
+        return "\(firstName ?? "") \(lastName ?? "")"
+    }
     
     required init () {
         super.init()
@@ -114,6 +121,10 @@ class LogItem:DataItem {
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
     override var type:String { "logitem" }
+    
+    override var computeTitle:String {
+        return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
+    }
     
     let appliesTo = List<DataItem>()
     
@@ -141,6 +152,10 @@ class Label:DataItem {
     @objc dynamic var comment:String? = nil
     @objc dynamic var color:String? = nil
     override var type:String { "label" }
+    
+    override var computeTitle:String {
+        return name
+    }
     
     let appliesTo = List<DataItem>() // TODO make two-way binding in realm
     

@@ -20,7 +20,6 @@ class GeneralEditor: Renderer{
     }
 }
 
-
 class GeneralEditorConfig: RenderConfig{
     
     @objc dynamic var type: String? = "generalEditor"

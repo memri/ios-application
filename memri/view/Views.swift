@@ -362,6 +362,17 @@ public class SessionView: DataItem {
     
     @objc dynamic var session: Session? = nil
     
+    override var computeTitle:String {
+        if let value = self.name ?? self.title { return value }
+        else if let rendererName = self.rendererName {
+            return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+        }
+        else if let query = self.queryOptions?.query {
+            return "Showing: \(query)"
+        }
+        return "[No Name]"
+    }
+    
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
@@ -373,14 +384,8 @@ public class SessionView: DataItem {
         super.init()
         
         self.functions["computedDescription"] = {_ in
-            if let value = self.name ?? self.title { return value }
-            else if let rendererName = self.rendererName {
-                return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
-            }
-            else if let query = self.queryOptions?.query {
-                return "Showing: \(query)"
-            }
-            return "[No Name]"
+            print("MAKE THIS DISSAPEAR")
+            return self.computeTitle
         }
     }
     

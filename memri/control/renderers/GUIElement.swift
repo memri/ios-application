@@ -528,16 +528,19 @@ public struct GUIElementInstance: View {
             VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                 self.childrenAsView
             }
+            .animation(nil)
             .setProperties(from.properties, self.item)
         }
         else if from.type == "hstack" {
             HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
                 self.childrenAsView
             }
+            .animation(nil)
             .setProperties(from.properties, self.item)
         }
         else if from.type == "zstack" {
             ZStack(alignment: get("alignment") ?? .top) { self.childrenAsView }
+                .animation(nil)
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "button" {
@@ -552,6 +555,7 @@ public struct GUIElementInstance: View {
                     GUIElementInstance(self.from.children[index], listItem)
                 }
             }
+            .animation(nil)
             .setProperties(from.properties, self.item)
         }
         else if from.type == "text" {

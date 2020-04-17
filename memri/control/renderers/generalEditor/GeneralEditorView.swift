@@ -11,10 +11,8 @@ import RealmSwift
 
 /*
  TODO:
-     - Implement date editor
      - Generalize List<>
         - Move label renderer to view
-        - Add WRappableHStack to GUIElement
      - Allow for custom renderers
      - Implement File/Image viewer/editor
  */
@@ -82,6 +80,19 @@ struct GeneralEditorRow: View {
     var readOnly: Bool = false
     var isLast: Bool = false
     
+//    where ID == Data.Element.ID, Content : View, Data.Element : Identifiable, Data.Element : Equatable {
+    
+    public func getList<T:Object>(_ propName:String) -> [T] {
+        let x:RealmSwift.List<T> = item![propName]! as! RealmSwift.List<T>
+        var result:[T] = []
+        
+        for n in x {
+            result.append(n)
+        }
+        
+        return result
+    }
+    
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
         let propType = item!.objectSchema[prop]?.type
@@ -103,7 +114,7 @@ struct GeneralEditorRow: View {
                       || propType == .double {
                         defaultRow(self.item!.getString(self.prop))
                     }
-                    else if prop == "labels" && propType == PropertyType.object { listLabelRow }
+                    else if propType == .object { listLabelRow() }
                     else { defaultRow() }
                 }
                 else {
@@ -112,7 +123,7 @@ struct GeneralEditorRow: View {
                     else if propType == .date { dateRow() }
                     else if propType == .int { intRow() }
                     else if propType == .double { doubleRow() }
-                    else if prop == "labels" && propType == PropertyType.object { listLabelRow }
+                    else if propType == .object { listLabelRow() }
                     else { defaultRow() }
                 }
             }
@@ -211,24 +222,26 @@ struct GeneralEditorRow: View {
         
     }
     
+    func listLabelRow() -> some View {
+//        let x:[Object] = self.getList(self.prop)
+        
+        print(self.item!.objectSchema[self.prop]?.objectClassName)
+//        let prop = self.item!.objectSchema[self.prop]?.objectClassName
+        
+        let y = List.self
+        
+        let x = self.item[self.prop] as RealmSwift.List.
+        
+//        let x = self.item![self.prop]
+        
+        return ForEach(["AsdaD"], id: \.self) { item in
+            self.defaultRow((item as! DataItem).computeTitle)
+        }
+    }
+    
     func defaultRow(_ caption:String? = nil) -> some View {
         Text(caption ?? (prop.camelCaseToWords().lowercased().capitalizingFirstLetter()))
               .generalEditorCaption()
-    }
-    
-    var listLabelRow: some View {
-        return WrapStack(self.item![prop] as! RealmSwift.List<Label>){ label in
-           VStack {
-               Text(label.name)
-                   .font(.system(size: 16, weight: .semibold))
-                   .foregroundColor(Color.white) // TODO color calculation
-                   .padding(5)
-                   .padding(.horizontal, 8)
-           }
-           .background(Color(hex:label.color ?? "##fff"))
-           .cornerRadius(5)
-           .animation(nil)
-       }
     }
 }
 

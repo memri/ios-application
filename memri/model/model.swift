@@ -11,6 +11,13 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /**
      *
      */
+    var computeTitle:String {
+        return "\(type) [\(uid)]"
+    }
+    
+    /**
+     *
+     */
     @objc dynamic var uid:String = DataItem.generateUID()
     /**
      *
