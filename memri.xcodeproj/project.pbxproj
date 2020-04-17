@@ -127,6 +127,8 @@
 		8665ADD7241A8120005B3FA5 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD6241A8120005B3FA5 /* Main.swift */; };
 		8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD8241A8387005B3FA5 /* Cache.swift */; };
 		86677DEB242A6751007A4782 /* CacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86677DEA242A6751007A4782 /* CacheTest.swift */; };
+		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
+		86865D38244996AA0010271A /* WrapStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* WrapStack.swift */; };
 		869789EA24344A530003756B /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789E924344A530003756B /* schema.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
@@ -275,6 +277,8 @@
 		8665ADD6241A8120005B3FA5 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		8665ADD8241A8387005B3FA5 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		86677DEA242A6751007A4782 /* CacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTest.swift; sourceTree = "<group>"; };
+		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
+		86865D37244996AA0010271A /* WrapStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapStack.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -486,9 +490,9 @@
 			isa = PBXGroup;
 			children = (
 				5D4C71EB2445E42700DF09E8 /* generalEditor */,
-				5D487F282440782800B50202 /* ItemRenderer */,
 				5DD1E9B923FD81C5007BDF7B /* Renderers.swift */,
 				5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */,
+				5D487F21244073DF00B50202 /* GUIElement.swift */,
 				86A5D842243CEBF400F8FAD8 /* list */,
 				86A5D843243CEC0300F8FAD8 /* thumbnail */,
 				86A5D844243CEC2B00F8FAD8 /* richTextEditor */,
@@ -502,14 +506,6 @@
 				5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */,
 			);
 			name = "Recovered References";
-			sourceTree = "<group>";
-		};
-		5D487F282440782800B50202 /* ItemRenderer */ = {
-			isa = PBXGroup;
-			children = (
-				5D487F21244073DF00B50202 /* GUIElement.swift */,
-			);
-			path = ItemRenderer;
 			sourceTree = "<group>";
 		};
 		5D493FDC23FC15D10034692B /* view */ = {
@@ -679,6 +675,7 @@
 		5DFB0CB824179DFC002FBDE7 /* control */ = {
 			isa = PBXGroup;
 			children = (
+				86865D342449965B0010271A /* common */,
 				5D414AD6242B4E4700A3DDFA /* contextpane */,
 				5D78D0702425319400F7BD3B /* navigation */,
 				5D41E2A52417A20E001D4482 /* renderers */,
@@ -711,6 +708,15 @@
 				863CDB702441E69F000D7AC0 /* File.swift */,
 			);
 			path = extensions;
+			sourceTree = "<group>";
+		};
+		86865D342449965B0010271A /* common */ = {
+			isa = PBXGroup;
+			children = (
+				86865D35244996900010271A /* styles.swift */,
+				86865D37244996AA0010271A /* WrapStack.swift */,
+			);
+			path = common;
 			sourceTree = "<group>";
 		};
 		86A5D83D243CEAB600F8FAD8 /* Installer */ = {
@@ -1116,6 +1122,7 @@
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
 				5DD1E9B823FD814E007BDF7B /* Note.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
+				86865D38244996AA0010271A /* WrapStack.swift in Sources */,
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
@@ -1130,6 +1137,7 @@
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */,
 				5DD1E9BA23FD81C5007BDF7B /* Renderers.swift in Sources */,
+				86865D36244996900010271A /* styles.swift in Sources */,
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,
 				5D0EBA272404036600D9D842 /* Renderer_v1.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,

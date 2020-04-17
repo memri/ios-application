@@ -477,6 +477,17 @@ public struct GUIElementInstance: View {
         return from.get(propName, self.item)
     }
     
+    public func getList<T:RealmCollectionValue>(_ propName:String) -> [T] {
+        let x:RealmSwift.List<T> = get("list")!
+        var result:[T] = []
+    
+        for n in x {
+            result.append(n)
+        }
+        
+        return result
+    }
+    
     // Keeping this around until sure that size setting is never needed
 //    private func setSize<T:Shape>(_ view:T) -> SwiftUI.ModifiedContent<SwiftUI._SizedShape<T>, SwiftUI._FlexFrameLayout> {
 //        let x:[CGFloat] = from.get("size")!
@@ -532,6 +543,14 @@ public struct GUIElementInstance: View {
         else if from.type == "button" {
             Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
                 self.childrenAsView
+            }
+            .setProperties(from.properties, self.item)
+        }
+        else if from.type == "wrapstack" {
+            WrapStack(getList("list")) { listItem in
+                ForEach(0..<self.from.children.count){ index in
+                    GUIElementInstance(self.from.children[index], listItem)
+                }
             }
             .setProperties(from.properties, self.item)
         }

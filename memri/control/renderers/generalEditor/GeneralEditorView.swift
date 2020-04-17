@@ -158,7 +158,7 @@ struct GeneralEditorRow: View {
                 .lowercased()
                 .capitalizingFirstLetter())
         }
-        .toggleStyle(GeneralEditorToggleStyle())
+        .toggleStyle(MemriToggleStyle())
         .generalEditorCaption()
     }
     
@@ -217,7 +217,7 @@ struct GeneralEditorRow: View {
     }
     
     var listLabelRow: some View {
-        return WrappingHStack(self.item![prop] as! RealmSwift.List<Label>){ label in
+        return WrapStack(self.item![prop] as! RealmSwift.List<Label>){ label in
            VStack {
                Text(label.name)
                    .font(.system(size: 16, weight: .semibold))
@@ -229,54 +229,6 @@ struct GeneralEditorRow: View {
            .cornerRadius(5)
            .animation(nil)
        }
-    }
-}
-
-public struct WrappingHStack<Data:RandomAccessCollection, ID, Content> : View
-  where ID == Data.Element.ID, Content : View, Data.Element : Identifiable, Data.Element : Equatable {
-    
-    let data: Data
-    let content: (_ item:Data.Element) -> Content
-    
-    init(_ data:Data, @ViewBuilder content: @escaping (_ item:Data.Element) -> Content) {
-        self.data = data
-        self.content = content
-    }
-    
-    public var body: some View {
-        var width = CGFloat.zero
-        var height = CGFloat.zero
-
-        // TODO I cant get Geometry reader to work without collapsing the row
-//                    GeometryReader { geometry in
-        return ZStack(alignment: .topLeading) {
-            ForEach(self.data, id: \.id) { item in
-                self.content(item)
-                    .padding([.trailing, .bottom], 5)
-                    .alignmentGuide(.leading, computeValue: { d in
-                        if (abs(width - d.width) > 360) {
-                            width = 0
-                            height -= d.height
-                        }
-                        
-                        let result = width
-                        if item == self.data.last! {
-                            width = 0 //last item
-                        }
-                        else {
-                            width -= d.width
-                        }
-                        return result
-                    })
-                    .alignmentGuide(.top, computeValue: {d in
-                        let result = height
-                        if item == self.data.last! {
-                            height = 0 // last item
-                        }
-                        return result
-                    })
-            }
-        }
     }
 }
 
@@ -312,35 +264,6 @@ private struct GeneralEditorHeader: ViewModifier {
             .padding(.top, 24)
             .padding(.horizontal, 36)
             .foregroundColor(Color(hex: "#333"))
-    }
-}
-
-private struct GeneralEditorToggleStyle: ToggleStyle {
-    let width: CGFloat = 60
-
-    func makeBody(configuration: Self.Configuration) -> some View {
-        HStack {
-            configuration.label
-            
-            Spacer()
-            
-            ZStack(alignment: configuration.isOn ? .trailing : .leading) {
-                RoundedRectangle(cornerRadius: 20)
-                    .frame(width: width, height: width / 2)
-                    .foregroundColor(configuration.isOn ? Color(hex:"#499827") : Color.gray)
-                
-                RoundedRectangle(cornerRadius: 20)
-                    .frame(width: (width / 2) - 4, height: width / 2 - 6)
-                    .padding(4)
-                    .foregroundColor(.white)
-                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.2), radius: 2, x: -2, y: 2  )
-                }
-            }
-            .onTapGesture {
-                withAnimation {
-                    configuration.$isOn.wrappedValue.toggle()
-                }
-        }
     }
 }
 
