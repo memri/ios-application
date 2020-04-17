@@ -9,6 +9,16 @@
 import SwiftUI
 import RealmSwift
 
+/*
+ TODO:
+     - Implement date editor
+     - Generalize List<>
+        - Move label renderer to view
+        - Add WRappableHStack to GUIElement
+     - Allow for custom renderers
+     - Implement File/Image viewer/editor
+ */
+
 struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
@@ -41,14 +51,14 @@ struct GeneralEditorView: View {
         }
     }
     
-    func drawSection(header: String, item:DataItem, properties: [String]) -> some View {
+    func drawSection(header: String, item: DataItem, properties: [String]) -> some View {
         Section(header:Text(header).generalEditorHeader()) {
             Divider()
             ForEach(properties, id: \.self){ prop in
                 GeneralEditorRow(item: item,
                                  prop: prop,
-                                 readOnly: !self.main.currentSession.editMode
-                                    || self.renderConfig.readOnly.contains(prop),
+                                 readOnly: false && (!self.main.currentSession.editMode
+                                    || self.renderConfig.readOnly.contains(prop)),
                                  isLast: properties.last == prop)
             }
             Divider()
@@ -86,22 +96,22 @@ struct GeneralEditorRow: View {
                 .generalEditorLabel()
                 
                 if self.readOnly {
-                    if propType == PropertyType.string
-                      || propType == PropertyType.bool
-                      || propType == PropertyType.date
-                      || propType == PropertyType.int
-                      || propType == PropertyType.double {
+                    if propType == .string
+                      || propType == .bool
+                      || propType == .date
+                      || propType == .int
+                      || propType == .double {
                         defaultRow(self.item!.getString(self.prop))
                     }
                     else if prop == "labels" && propType == PropertyType.object { listLabelRow }
                     else { defaultRow() }
                 }
                 else {
-                    if propType == PropertyType.string { stringRow() }
-                    else if propType == PropertyType.bool { boolRow() }
-                    else if propType == PropertyType.date { dateRow }
-                    else if propType == PropertyType.int { intRow() }
-                    else if propType == PropertyType.double { doubleRow() }
+                    if propType == .string { stringRow() }
+                    else if propType == .bool { boolRow() }
+                    else if propType == .date { dateRow() }
+                    else if propType == .int { intRow() }
+                    else if propType == .double { doubleRow() }
                     else if prop == "labels" && propType == PropertyType.object { listLabelRow }
                     else { defaultRow() }
                 }
@@ -184,9 +194,21 @@ struct GeneralEditorRow: View {
             .generalEditorCaption()
     }
     
-    var dateRow: some View {
-        Text(self.item!.getString(prop))
-            .generalEditorCaption()
+    func dateRow() -> some View {
+        let binding = Binding<Date>(
+            get: { self.item![self.prop] as? Date ?? Date() },
+            set: {
+                if self.main.currentSession.isEditMode == .active {
+                    self.item!.set(self.prop, $0)
+                    self.main.objectWillChange.send()
+                }
+            }
+        )
+        
+        return DatePicker("", selection: binding, displayedComponents: .date)
+            .datePickerStyle(WheelDatePickerStyle())
+//        Text(self.item!.getString(prop))
+//            .generalEditorCaption()
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {
@@ -205,6 +227,7 @@ struct GeneralEditorRow: View {
            }
            .background(Color(hex:label.color ?? "##fff"))
            .cornerRadius(5)
+           .animation(nil)
        }
     }
 }
@@ -304,24 +327,25 @@ private struct GeneralEditorToggleStyle: ToggleStyle {
             ZStack(alignment: configuration.isOn ? .trailing : .leading) {
                 RoundedRectangle(cornerRadius: 20)
                     .frame(width: width, height: width / 2)
-                    .foregroundColor(configuration.isOn ? Color(hex:"#38761d") : Color.gray)
+                    .foregroundColor(configuration.isOn ? Color(hex:"#499827") : Color.gray)
                 
                 RoundedRectangle(cornerRadius: 20)
                     .frame(width: (width / 2) - 4, height: width / 2 - 6)
                     .padding(4)
                     .foregroundColor(.white)
-                    .onTapGesture {
-                        withAnimation {
-                            configuration.$isOn.wrappedValue.toggle()
-                        }
+                    .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.2), radius: 2, x: -2, y: 2  )
                 }
             }
+            .onTapGesture {
+                withAnimation {
+                    configuration.$isOn.wrappedValue.toggle()
+                }
         }
     }
 }
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        GeneralEditorView().environmentObject(Main(name: "", key: "").mockBoot())
+        return GeneralEditorView().environmentObject(Main(name: "", key: "").mockBoot())
     }
 }
