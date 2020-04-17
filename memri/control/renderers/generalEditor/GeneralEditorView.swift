@@ -13,7 +13,6 @@ struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
     var name: String = "generalEditor"
-    var item: DataItem? = nil
     
     var renderConfig: GeneralEditorConfig {
         return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
@@ -72,8 +71,6 @@ struct GeneralEditorRow: View {
     var readOnly: Bool = false
     var isLast: Bool = false
     
-    @State var testing: Bool = false
-
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
         let propType = item!.objectSchema[prop]?.type
@@ -211,19 +208,18 @@ struct GeneralEditorRow: View {
     }
 }
 
-//ForEach<Data, ID, Content> where Data : RandomAccessCollection, ID : Hashable {
-//ForEach<Data, ID, Content> where Data : RandomAccessCollection, ID : Hashable
-struct WrappingHStack<Content: View>:View { // , T: RandomAccessCollection , ID: Hashable
+public struct WrappingHStack<Data:RandomAccessCollection, ID, Content> : View
+  where ID == Data.Element.ID, Content : View, Data.Element : Identifiable, Data.Element : Equatable {
     
-    let data: RealmSwift.List<Label>
-    let content: (_ item:RealmSwift.List<Label>.Element) -> Content
+    let data: Data
+    let content: (_ item:Data.Element) -> Content
     
-    init(_ data:RealmSwift.List<Label>, @ViewBuilder content: @escaping (_ item:RealmSwift.List<Label>.Element) -> Content) {
+    init(_ data:Data, @ViewBuilder content: @escaping (_ item:Data.Element) -> Content) {
         self.data = data
         self.content = content
     }
     
-    var body: some View {
+    public var body: some View {
         var width = CGFloat.zero
         var height = CGFloat.zero
 
@@ -246,7 +242,6 @@ struct WrappingHStack<Content: View>:View { // , T: RandomAccessCollection , ID:
                         else {
                             width -= d.width
                         }
-                        
                         return result
                     })
                     .alignmentGuide(.top, computeValue: {d in
