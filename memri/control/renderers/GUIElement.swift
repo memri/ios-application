@@ -543,6 +543,44 @@ public struct GUIElementInstance: View {
                 .animation(nil)
                 .setProperties(from.properties, self.item)
         }
+        if from.type == "section" {
+            if self.has("title"){
+                Section(header: Text(self.get("title") ?? "")){
+                    self.childrenAsView
+                }
+                .animation(nil)
+                .setProperties(from.properties, self.item)
+            }else{
+                VStack(spacing: 0){
+                    self.childrenAsView
+                }
+                .animation(nil)
+                .setProperties(from.properties, self.item)
+            }
+        }
+        if from.type == "editorrow" {
+            VStack (spacing: 0) {
+                VStack(alignment: .leading, spacing: 4){
+                    Text(self.get("title") ?? ""
+                        .camelCaseToWords()
+                        .lowercased()
+                        .capitalizingFirstLetter()
+                    )
+                    .generalEditorLabel()
+                    
+                    self.childrenAsView
+                }
+                .fullWidth()
+                .padding(.bottom, 10)
+                .padding(.horizontal, 36)
+                .background(self.get("$readonly") ?? false ? Color(hex:"#f9f9f9") : Color(hex:"#f7fcf5"))
+                .animation(nil)
+                .setProperties(from.properties, self.item)
+                
+                Divider().padding(.leading, 35)
+            }
+
+        }
         else if from.type == "button" {
             Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
                 self.childrenAsView
@@ -575,8 +613,8 @@ public struct GUIElementInstance: View {
                 .setProperties(from.properties, self.item)
         }
         else if from.type == "image" {
-            if has("systemName") {
-                Image(systemName: get("systemName") ?? "exclamationmark.bubble")
+            if has("systemname") {
+                Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                     .if(from.has("resizable")) { self.resize($0) }
                     .setProperties(from.properties, self.item)
             }

@@ -586,8 +586,10 @@
                     "renderDescription": {
                         "profilePicture": [
                             "VStack", {}, [
-                                "ZStack", {}, [
-                                    "Image", {}
+                                "VStack", {}, [
+                                    "Image", {
+                                        "systemName": "person.fill"
+                                    }
                                 ]
                             ]
                         ],
@@ -596,30 +598,31 @@
                             {
                                 "notitle": true,
                                 "title": "Core Dates"
-                            },
-                            "VStack", {
-                                "alignment": "left",
-                                "rowInset": [12, 20, -12, 20],
-                                "condition": "{readOnly}"
                             }, [
-                                "Text", {
-                                    "text": "{.dateCreated}",
-                                    "font": [22, "semibold"],
-                                    "color": "#333",
-                                    "padding": [0, 0, 3, 0],
-                                }
-                            ],
-                            "VStack", {
-                                "alignment": "left",
-                                "rowInset": [12, 20, -12, 20],
-                                "condition": "{!readOnly}"
-                            }, [
-                                "Text", {
-                                    "text": "{.dateCreated}",
-                                    "font": [22, "semibold"],
-                                    "color": "#333",
-                                    "padding": [0, 0, 3, 0],
-                                }
+                                "VStack", {
+                                    "alignment": "left",
+                                    "rowInset": [12, 20, -12, 20],
+                                    "condition": "{readOnly}"
+                                }, [
+                                    "Text", {
+                                        "text": "{.dateCreated}",
+                                        "font": [22, "semibold"],
+                                        "color": "#333",
+                                        "padding": [0, 0, 3, 0],
+                                    }
+                                ],
+                                "VStack", {
+                                    "alignment": "left",
+                                    "rowInset": [12, 20, -12, 20],
+                                    "condition": "{!readOnly}"
+                                }, [
+                                    "Text", {
+                                        "text": "{.dateCreated}",
+                                        "font": [22, "semibold"],
+                                        "color": "#333",
+                                        "padding": [0, 0, 3, 0],
+                                    }
+                                ]
                             ]
                         ],
                         "labels": [

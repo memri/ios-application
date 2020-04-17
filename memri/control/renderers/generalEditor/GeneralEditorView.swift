@@ -28,15 +28,22 @@ struct GeneralEditorView: View {
     
     var body: some View {
         let item = main.computedView.resultSet.item!
+        dump(self.renderConfig.renderDescription)
         
         return ScrollView {
             VStack(alignment: .leading, spacing:0){
                 if renderConfig.groups != nil{
                     ForEach(Array(renderConfig.groups!.keys), id: \.self){key in
-                        self.drawSection(
-                            header: "\(key)".uppercased(),
-                            item: item,
-                            properties: self.renderConfig.groups![key]!)
+                        Group{
+                            if self.renderConfig.renderDescription![key] != nil{
+                                self.renderConfig.render(DataItem(), key)
+                            }else{
+                                self.drawSection(
+                                    header: "\(key)".uppercased(),
+                                    item: item,
+                                    properties: self.renderConfig.groups![key]!)
+                            }
+                        }
                     }
                 }
 
