@@ -47,7 +47,8 @@ struct GeneralEditorView: View {
             ForEach(properties, id: \.self){ prop in
                 GeneralEditorRow(item: item,
                                  prop: prop,
-                                 readOnly: self.renderConfig.readOnly.contains(prop),
+                                 readOnly: !self.main.currentSession.editMode
+                                    || self.renderConfig.readOnly.contains(prop),
                                  isLast: properties.last == prop)
             }
             Divider()
@@ -92,7 +93,7 @@ struct GeneralEditorRow: View {
                       || propType == PropertyType.double {
                         defaultRow(self.item!.getString(self.prop))
                     }
-                    else if propType == PropertyType.object { listLabelRow }
+                    else if prop == "labels" && propType == PropertyType.object { listLabelRow }
                     else { defaultRow() }
                 }
                 else {
