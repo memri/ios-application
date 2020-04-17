@@ -236,7 +236,8 @@ struct GeneralEditorRow: View {
     
     func listLabelRow() -> some View {
         let className = self.item!.objectSchema[self.prop]?.objectClassName
-        let collection = DataItemFamily(rawValue: className!.lowercased())!.getCollection(self.item![self.prop])
+        let collection = DataItemFamily(rawValue: className!.lowercased())!
+            .getCollection(self.item![self.prop] as Any)
         
         return ForEach(collection, id: \.self) { item in
             self.defaultRow((item).computeTitle)
