@@ -9,127 +9,60 @@
 import SwiftUI
 import RealmSwift
 
-private extension View {
-    func generalEditorLabel() -> some View { self.modifier(GeneralEditorLabel()) }
-    func generalEditorCaption() -> some View { self.modifier(GeneralEditorCaption()) }
-    func generalEditorHeader() -> some View { self.modifier(GeneralEditorHeader()) }
-}
-
-private struct GeneralEditorLabel: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .foregroundColor(Color(hex: "#38761d"))
-            .font(.system(size: 14, weight: .regular))
-            .padding(.top, 10)
-    }
-}
-
-private struct GeneralEditorCaption: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: 18, weight: .regular))
-            .foregroundColor(Color(hex: "#223322"))
-    }
-}
-
-private struct GeneralEditorHeader: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(Font.system(size: 15, weight: .regular))
-            .foregroundColor(Color(hex:"#434343"))
-            .padding(.bottom, 5)
-            .padding(.top, 24)
-            .padding(.horizontal, 36)
-            .foregroundColor(Color(hex: "#333"))
-    }
-}
-
-struct _GeneralEditorView: View {
+struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
-    var name: String="generalEditor"
+    
+    var name: String = "generalEditor"
     var item: DataItem? = nil
     
     var renderConfig: GeneralEditorConfig {
-        return self.main.computedView.renderConfigs[name] as? GeneralEditorConfig ?? GeneralEditorConfig()
+        return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
-
+    
     var body: some View {
-        ScrollView {
+        let item = main.computedView.resultSet.item!
+        
+        return ScrollView {
             VStack(alignment: .leading, spacing:0){
                 if renderConfig.groups != nil{
                     ForEach(Array(renderConfig.groups!.keys), id: \.self){key in
                         self.drawSection(
                             header: "\(key)".uppercased(),
+                            item: item,
                             properties: self.renderConfig.groups![key]!)
                     }
                 }
 
                 drawSection(
                     header: "OTHER",
-                    properties: getProperties())
+                    item: item,
+                    properties: getProperties(item))
             }
             .frame(maxWidth:.infinity, maxHeight: .infinity)
         }
     }
     
-    func drawSection(header caption: String, properties list: [String]) -> some View {
-        Section(header:Text(caption).generalEditorHeader()) {
+    func drawSection(header: String, item:DataItem, properties: [String]) -> some View {
+        Section(header:Text(header).generalEditorHeader()) {
             Divider()
-            ForEach(list, id: \.self){ prop in
-                GeneralEditorRow(item: self.item!,
+            ForEach(properties, id: \.self){ prop in
+                GeneralEditorRow(item: item,
                                  prop: prop,
                                  readOnly: self.renderConfig.readOnly.contains(prop),
-                                 isLast: list.last == prop)
+                                 isLast: properties.last == prop)
             }
             Divider()
         }
     }
     
-//    extension View {
-//        func myButtonStyle() -> some View {
-//            Modified(content: self, modifier: MyButtonStyle())
-//        }
-//    }
-    
-//    @ViewBuilder
-//    public var EditorRow: some View {
-//
-//    }
-    
-//    func item(for text: String) -> some View {
-//        Text(text)
-//            .padding(.all, 5)
-//            .font(.body)
-//            .background(Color.blue)
-//            .foregroundColor(Color.white)
-//            .cornerRadius(5)
-//    }
-    
-//    Text("Text 1")
-//    .modifier(StandardTitle())
-    
-    init(item: DataItem){
-        self.item = item        
-    }
-
-    func getProperties() -> [String]{
-        return item!.objectSchema.properties.filter {
+    func getProperties(_ item:DataItem) -> [String]{
+        return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
                 && !self.renderConfig.allGroupValues().contains($0.name)
         }.map({$0.name})
     }
     
 }
-
-//protocol OptionalProtocol {
-//    func wrappedType() -> Any.Type
-//}
-//
-//extension Optional : OptionalProtocol {
-//    func wrappedType() -> Any.Type {
-//        return Wrapped.self
-//    }
-//}
 
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main
@@ -333,6 +266,41 @@ struct WrappingHStack<Content: View>:View { // , T: RandomAccessCollection , ID:
     }
 }
 
+private extension View {
+    func generalEditorLabel() -> some View { self.modifier(GeneralEditorLabel()) }
+    func generalEditorCaption() -> some View { self.modifier(GeneralEditorCaption()) }
+    func generalEditorHeader() -> some View { self.modifier(GeneralEditorHeader()) }
+}
+
+private struct GeneralEditorLabel: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(Color(hex: "#38761d"))
+            .font(.system(size: 14, weight: .regular))
+            .padding(.top, 10)
+    }
+}
+
+private struct GeneralEditorCaption: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 18, weight: .regular))
+            .foregroundColor(Color(hex: "#223322"))
+    }
+}
+
+private struct GeneralEditorHeader: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(Font.system(size: 15, weight: .regular))
+            .foregroundColor(Color(hex:"#434343"))
+            .padding(.bottom, 5)
+            .padding(.top, 24)
+            .padding(.horizontal, 36)
+            .foregroundColor(Color(hex: "#333"))
+    }
+}
+
 private struct GeneralEditorToggleStyle: ToggleStyle {
     let width: CGFloat = 60
 
@@ -358,13 +326,6 @@ private struct GeneralEditorToggleStyle: ToggleStyle {
                 }
             }
         }
-    }
-}
-
-struct GeneralEditorView: View {
-    @EnvironmentObject var main: Main
-    var body: some View {
-        _GeneralEditorView(item: main.computedView.resultSet.item!)
     }
 }
 
