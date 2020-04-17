@@ -72,6 +72,7 @@ struct GeneralEditorView: View {
     
 }
 
+
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main
     
@@ -79,19 +80,6 @@ struct GeneralEditorRow: View {
     var prop: String = ""
     var readOnly: Bool = false
     var isLast: Bool = false
-    
-//    where ID == Data.Element.ID, Content : View, Data.Element : Identifiable, Data.Element : Equatable {
-    
-    public func getList<T:Object>(_ propName:String) -> [T] {
-        let x:RealmSwift.List<T> = item![propName]! as! RealmSwift.List<T>
-        var result:[T] = []
-        
-        for n in x {
-            result.append(n)
-        }
-        
-        return result
-    }
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
@@ -223,19 +211,11 @@ struct GeneralEditorRow: View {
     }
     
     func listLabelRow() -> some View {
-//        let x:[Object] = self.getList(self.prop)
+        let className = self.item!.objectSchema[self.prop]?.objectClassName
+        let collection = DataItemFamily(rawValue: className!.lowercased())!.getCollection(self.item![self.prop])
         
-        print(self.item!.objectSchema[self.prop]?.objectClassName)
-//        let prop = self.item!.objectSchema[self.prop]?.objectClassName
-        
-        let y = List.self
-        
-        let x = self.item[self.prop] as RealmSwift.List.
-        
-//        let x = self.item![self.prop]
-        
-        return ForEach(["AsdaD"], id: \.self) { item in
-            self.defaultRow((item as! DataItem).computeTitle)
+        return ForEach(collection, id: \.self) { item in
+            self.defaultRow((item).computeTitle)
         }
     }
     

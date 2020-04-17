@@ -13,9 +13,9 @@ import RealmSwift
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily {
     case note = "note"
+    case label = "label"
     case person = "person"
     case logitem = "logitem"
-    case label = "label"
     case sessions = "sessions"
     case session = "session"
     case sessionview = "sessionview"
@@ -27,6 +27,32 @@ enum DataItemFamily: String, ClassFamily {
         return self.getType().primaryKey() ?? ""
     }
 
+    func getCollection(_ object:Any) -> [DataItem] {
+        var collection:[DataItem] = []
+        
+        switch self {
+        case .note:
+            (object as! RealmSwift.List<Note>).forEach{ collection.append($0) }
+        case .logitem:
+            (object as! RealmSwift.List<LogItem>).forEach{ collection.append($0) }
+        case .label:
+            (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
+        case .sessions:
+            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
+        case .session:
+            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
+        case .sessionview:
+            (object as! RealmSwift.List<SessionView>).forEach{ collection.append($0) }
+        case .dynamicview:
+            break
+            //(object as! RealmSwift.List<DynamicView>).forEach{ collection.append($0) }
+        case .person:
+            (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
+        }
+        
+        return collection
+    }
+    
     func getType() -> AnyObject.Type {
         switch self {
         case .note:
