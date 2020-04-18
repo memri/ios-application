@@ -9,6 +9,27 @@
     },
     
     {
+        "name": "choose-item-by-query",
+        "editMode": true,
+        "ephemeral": true,
+        "queryOptions": {
+            "query": "{query}"
+        },
+        "editActionButton": null,
+        "actionButton": {
+            "title": "{title}",
+            "actionName": "{actionName}",
+            "actionArgs": "{actionArgs}"
+        }
+        "renderConfig": {
+            "*": {
+                "press": { "actionName": "noop" }
+            }
+        }
+        "title": "Choose a {type}"
+    },
+    
+    {
         "name": "shopping-notes",
         "views": [
             "all-notes",
@@ -20,6 +41,7 @@
             }
         ]
     },
+    
     {
         "name": "all-people",
         "views": [

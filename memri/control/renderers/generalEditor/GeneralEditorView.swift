@@ -21,6 +21,7 @@ import RealmSwift
     - Implement Color picker
     - Implement the buttons as a non-property section
     - Implement social profile section for person
+    - Add customer renderer for starred and labels for person
  */
 
 struct GeneralEditorView: View {
@@ -119,18 +120,15 @@ struct GeneralEditorSection: View {
     func getType(_ groupKey:String) -> String {
         renderConfig.renderDescription?[groupKey]?.type ?? ""
     }
-
+    
     var body: some View {
         let renderDescription = renderConfig.renderDescription!
         let editMode = self.main.currentSession.editMode
+        let isArray = item.objectSchema[groupKey]? .isArray ?? false
         
-        let header = groupKey == "other"
-            ? groups.count > 0 ? "other" : "all"
-            : groupKey
         let properties = groupKey == "other"
             ? self.getProperties(item)
             : self.groups[self.groupKey]!
-        let isArray = item.objectSchema[groupKey]?.isArray ?? false
         
         return Group {
             if renderDescription[groupKey] != nil {
@@ -146,10 +144,19 @@ struct GeneralEditorSection: View {
                     Section(
                         header: self.sectionHeader(
                             title: self.getTitle(groupKey) ?? groupKey,
-                            action: (item.objectSchema[groupKey]?.isArray ?? false)
-                                ? ActionDescription(actionName: .noop)
-//                                                    actionName: .addToList,
-//                                                    actionArgs: [item, groupKey])
+                            action: isArray
+                                ? ActionDescription(
+                                    actionName: .openViewByName,
+                                    actionArgs: [
+                                        "choose-item-by-query",
+                                        [
+                                            "query": self.item.objectSchema[groupKey]!.objectClassName!,
+                                            "type": self.item.objectSchema[groupKey]!.objectClassName!,
+                                            "actionName": "addSelectionToList",
+                                            "actionArgs": [self.item, groupKey],
+                                            "title": "Add Selected"
+                                        ]
+                                    ])
                                 : nil
                         )
                     ) {
@@ -178,7 +185,9 @@ struct GeneralEditorSection: View {
             }
             else {
                 Section(header: sectionHeader(
-                    title: header,
+                    title: groupKey == "other"
+                        ? groups.count > 0 ? "other" : "all"
+                        : groupKey,
                     action: isArray
                         ? ActionDescription(actionName: .noop)
                         : nil
@@ -208,7 +217,7 @@ struct GeneralEditorSection: View {
             
             if action != nil {
                 Spacer()
-                Button(action:{}) {
+                Button(action:{ self.main.executeAction(action!) }) {
                     Image(systemName: "plus")
                         .foregroundColor(Color(hex:"#777"))
                         .font(.system(size: 18, weight: .semibold))

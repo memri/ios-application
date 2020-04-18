@@ -23,10 +23,44 @@ extension Main {
         if action.actionName.opensView {
             switch action.actionName {
             case .openView:
-                if (params.count > 0) { openView(params[0].value as! SessionView) }
-                else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
-                else if let item = item as? SessionView { openView(item) }
-                else if let item = item { openView(item) }
+                let options = params[0].value as? [String:Any]
+                
+                /*
+                    TODO: pass options to openView and eventually to where computeView is called
+                          add options to computedView before it is assigned to main
+                          add variable support to compiledView parser and variable lookup
+                 
+                          also include openSession below, this requires variables to be on session
+                          and sessionview as well for persistence.
+                 
+                          In fact by setting the variables on session and allowing action
+                          descriptions and renderers to set those variables, a whole set of views
+                          can keep state across the session allowing for a slew of new
+                          functionalities. For instance the added value or values from a list can
+                          be stored in the session, thereby giving the previous session the ability
+                          to highlight the additions.
+                 
+                          In order for session choose-item-by-query to be able to add the selection
+                          and then go back, ActionDescription needs to support a set of actions. e.g.
+                 
+                                ActionDescription(
+                                    actionName: [.addSelectionToList, .back],
+                                    .actionArgs: [[{dataItem}, {propertyName}], []]
+                                )
+                 
+                          That is still acceptable and in line with SwiftUIs APIs.
+                 
+                          We also need to add editMode to SessionView. It means that when the view
+                          is shown, it starts in editMode when it is loaded, including from back.
+                          Usually, I suspect this functionality is only used for ephemeral views.
+                 
+                          Ephemeral views are removed from session when one navigates away from them.
+                 */
+                
+                if (params.count > 0) { openView(params[0].value as! SessionView, options) }
+                else if selection.count > 0 { openView(selection, options) } // TODO does this mean anything?
+                else if let item = item as? SessionView { openView(item, options) }
+                else if let item = item { openView(item, options) }
             case .openViewByName:
                 openView(params[0].value as! String)
             case .openSession:
