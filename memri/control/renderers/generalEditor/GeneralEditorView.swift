@@ -32,6 +32,63 @@ struct GeneralEditorView: View {
         return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
     
+    func getGroups(_ item:DataItem) -> [String:[String]]? {
+        let groups = self.renderConfig.groups ?? [:]
+        var filteredGroups: [String:[String]] = [:]
+        let objectSchema = item.objectSchema
+        
+        (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
+            return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil)
+                && !self.renderConfig.excluded.contains($0)
+        }.forEach({
+            filteredGroups[$0] = groups[$0] ?? [$0]
+        })
+        
+        return filteredGroups.count > 0 ? filteredGroups : nil
+    }
+    
+    var body: some View {
+        let item = main.computedView.resultSet.item!
+        let renderConfig = self.renderConfig
+        let groups = getGroups(item) ?? [:]
+        
+        return ScrollView {
+            VStack (alignment: .leading, spacing: 0) {
+                if groups.count > 0 {
+                    ForEach(Array(groups.keys), id: \.self) { groupKey in
+                        GeneralEditorSection(
+                            item: item,
+                            renderConfig: renderConfig,
+                            groupKey: groupKey,
+                            groups: groups)
+                    }
+                }
+
+                GeneralEditorSection(
+                    item: item,
+                    renderConfig: renderConfig,
+                    groupKey: "other",
+                    groups: groups)
+            }
+            .frame(maxWidth:.infinity, maxHeight: .infinity)
+        }
+    }
+}
+
+struct GeneralEditorSection: View {
+    @EnvironmentObject var main: Main
+
+    var item: DataItem
+    var renderConfig: GeneralEditorConfig
+    var groupKey: String
+    var groups:[String:[String]]
+    
+    func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+        let className = item.objectSchema[prop]?.objectClassName
+        let family = DataItemFamily(rawValue: className!.lowercased())!
+        return family.getCollection(item[prop] as Any)
+    }
+    
     func getProperties(_ item:DataItem) -> [String]{
         return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
@@ -40,7 +97,8 @@ struct GeneralEditorView: View {
         }.map({$0.name})
     }
     
-    func getOptions(_ groupKey:String, _ name:String, _ value:Any?, _ item:DataItem) -> [String:() -> Any] {
+    func getOptions(_ groupKey:String, _ name:String, _ value:Any?,
+                    _ item:DataItem) -> [String:() -> Any] {
         return [
             "readonly": { !self.main.currentSession.editMode },
             "title": { groupKey.camelCaseToWords().uppercased() },
@@ -48,26 +106,6 @@ struct GeneralEditorView: View {
             "name": { name },
             ".": { value ?? item[name] as Any }
         ]
-    }
-    
-    func getGroups(_ item:DataItem) -> [String:[String]]? {
-        let groups = self.renderConfig.groups ?? [:]
-        var filteredGroups: [String:[String]] = [:]
-        let objectSchema = item.objectSchema
-        
-        (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
-            return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil) && !self.renderConfig.excluded.contains($0)
-        }.forEach({
-            filteredGroups[$0] = groups[$0] ?? [$0]
-        })
-        
-        return filteredGroups.count > 0 ? filteredGroups : nil
-    }
-    
-    func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
-        let className = item.objectSchema[prop]?.objectClassName
-        let family = DataItemFamily(rawValue: className!.lowercased())!
-        return family.getCollection(item[prop] as Any)
     }
     
     func getTitle(_ groupKey:String) -> String? {
@@ -81,94 +119,103 @@ struct GeneralEditorView: View {
     func getType(_ groupKey:String) -> String {
         renderConfig.renderDescription?[groupKey]?.type ?? ""
     }
-    
-    var body: some View {
-        let item = main.computedView.resultSet.item!
-        let renderConfig = self.renderConfig
-        let groups = getGroups(item)
-        let renderDescription = renderConfig.renderDescription!
-        
-        return ScrollView {
-            VStack (alignment: .leading, spacing: 0) {
-                if groups != nil {
-                    ForEach(Array(groups!.keys), id: \.self) { groupKey in
-                        Group {
-                            if renderDescription[groupKey] != nil {
-                                if self.getTitle(groupKey) == "" {
-                                    VStack (spacing: 0) {
-                                        ForEach(groups![groupKey]!, id:\.self) { name in
-                                            renderConfig.render(item, groupKey,
-                                                self.getOptions(groupKey, name, nil, item))
-                                        }
-                                    }
-                                }
-                                else {
-                                    Section(header:
-                                        Text((self.getTitle(groupKey) ?? groupKey)
-                                          .camelCaseToWords()
-                                          .uppercased())
-                                            .generalEditorHeader()) {
 
-                                        Divider()
-                                        if item.objectSchema[groupKey]?.isArray ?? false {
-                                            if self.renderForGroup(groupKey) {
-                                                renderConfig.render(item, groupKey,
-                                                    self.getOptions(groupKey, groupKey, nil, item))
-                                            }
-                                            else {
-                                                ForEach(self.getArray(item, groupKey), id:\.id) {
-                                                    renderConfig.render(item, groupKey,
-                                                        self.getOptions(groupKey, "", $0, item))
-                                                }
-                                            }
-                                        }
-                                        else {
-                                            ForEach(groups![groupKey]!, id:\.self) { name in
-                                                renderConfig.render(item, groupKey,
-                                                    self.getOptions(groupKey, name, nil, item))
-                                            }
-                                        }
-                                        Divider()
-                                    }
-                                }
-                            }
-                            else {
-                                self.drawSection(
-                                    header: "\(groupKey)".uppercased(),
-                                    item: item,
-                                    properties: groups![groupKey]!)
-                            }
+    var body: some View {
+        let renderDescription = renderConfig.renderDescription!
+        let editMode = self.main.currentSession.editMode
+        
+        let header = groupKey == "other"
+            ? groups.count > 0 ? "other" : "all"
+            : groupKey
+        let properties = groupKey == "other"
+            ? self.getProperties(item)
+            : self.groups[self.groupKey]!
+        let isArray = item.objectSchema[groupKey]?.isArray ?? false
+        
+        return Group {
+            if renderDescription[groupKey] != nil {
+                if self.getTitle(groupKey) == "" {
+                    Section (header: EmptyView()) {
+                        ForEach(groups[groupKey]!, id:\.self) { name in
+                            self.renderConfig.render(self.item, self.groupKey,
+                                self.getOptions(self.groupKey, name, nil, self.item))
                         }
                     }
                 }
-
-                drawSection(
-                    header: groups != nil ? "OTHER" : "ALL",
-                    item: item,
-                    properties: getProperties(item))
+                else {
+                    Section(
+                        header: self.sectionHeader(
+                            title: self.getTitle(groupKey) ?? groupKey,
+                            action: (item.objectSchema[groupKey]?.isArray ?? false)
+                                ? ActionDescription(actionName: .noop)
+//                                                    actionName: .addToList,
+//                                                    actionArgs: [item, groupKey])
+                                : nil
+                        )
+                    ) {
+                        Divider()
+                        if isArray {
+                            if self.renderForGroup(groupKey) {
+                                renderConfig.render(item, groupKey,
+                                    self.getOptions(groupKey, groupKey, nil, item))
+                            }
+                            else {
+                                ForEach(self.getArray(item, groupKey), id:\.id) {
+                                    self.renderConfig.render(self.item, self.groupKey,
+                                        self.getOptions(self.groupKey, "", $0, self.item))
+                                }
+                            }
+                        }
+                        else {
+                            ForEach(groups[groupKey]!, id:\.self) { name in
+                                self.renderConfig.render(self.item, self.groupKey,
+                                    self.getOptions(self.groupKey, name, nil, self.item))
+                            }
+                        }
+                        Divider()
+                    }
+                }
             }
-            .frame(maxWidth:.infinity, maxHeight: .infinity)
+            else {
+                Section(header: sectionHeader(
+                    title: header,
+                    action: isArray
+                        ? ActionDescription(actionName: .noop)
+                        : nil
+                )) {
+                    Divider()
+                    ForEach(properties, id: \.self){ prop in
+                        GeneralEditorRow(
+                            main: self._main,
+                            item: self.item,
+                            prop: prop,
+                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                            isLast: properties.last == prop,
+                            renderConfig: self.renderConfig,
+                            options: self.getOptions("", prop, nil, self.item)
+                        )
+                    }
+                    Divider()
+                }
+            }
         }
     }
     
-    func drawSection(header: String, item: DataItem, properties: [String]) -> some View {
-        let editMode = self.main.currentSession.editMode
-        
-        return Section(header:Text(header).generalEditorHeader()) {
-            Divider()
-            ForEach(properties, id: \.self){ prop in
-                GeneralEditorRow(
-                    main: self._main,
-                    item: item,
-                    prop: prop,
-                    readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
-                    isLast: properties.last == prop,
-                    renderConfig: self.renderConfig,
-                    options: self.getOptions("", prop, nil, item)
-                )
+    func sectionHeader(title:String, action:ActionDescription? = nil) -> some View {
+        HStack (alignment: .bottom) {
+            Text(title.camelCaseToWords().uppercased())
+                .generalEditorHeader()
+            
+            if action != nil {
+                Spacer()
+                Button(action:{}) {
+                    Image(systemName: "plus")
+                        .foregroundColor(Color(hex:"#777"))
+                        .font(.system(size: 18, weight: .semibold))
+                }
+                .padding(.bottom, 10)
             }
-            Divider()
-        }
+        }.padding(.trailing, 20)
     }
 }
 
@@ -322,24 +369,33 @@ struct GeneralEditorRow: View {
             VStack (alignment: .leading, spacing: 5) {
                 ForEach(collection, id: \.self) { collectionItem in
                     HStack (spacing:0) {
-                        Text(className!.camelCaseToWords().capitalizingFirstLetter())
-                            .padding(.trailing, 5)
-                            .padding(.leading, 6)
-                            .padding(.vertical, 3)
-                            .foregroundColor(Color.white)
-                            .font(.system(size: 14, weight: .bold))
-                            
-                        Text(collectionItem.computeTitle)
-                            .padding(.leading, 6)
-                            .padding(.trailing, 9)
-                            .padding(.vertical, 3)
-                            .background(Color.gray)
-                            .foregroundColor(Color.white)
-                            .font(.system(size: 14, weight: .bold))
-                        .zIndex(10)
+                        HStack (spacing:0) {
+                            Text(className!.camelCaseToWords().capitalizingFirstLetter())
+                                .padding(.trailing, 5)
+                                .padding(.leading, 6)
+                                .padding(.vertical, 3)
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 14, weight: .bold))
+                                
+                            Text(collectionItem.computeTitle)
+                                .padding(.leading, 6)
+                                .padding(.trailing, 9)
+                                .padding(.vertical, 3)
+                                .background(Color.gray)
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 14, weight: .bold))
+                            .zIndex(10)
+                        }
+                        .background(Color.purple)
+                        .cornerRadius(20)
+                        
+                        Spacer()
+                        
+                        Button (action: {}) {
+                            Image(systemName: "trash")
+                                .foregroundColor(Color(hex:"#777"))
+                        }
                     }
-                    .background(Color.purple)
-                    .cornerRadius(20)
                 }
             }
             .padding(.top, 10)
