@@ -13,7 +13,8 @@ import RealmSwift
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
     "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
-              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset"]
+              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset",
+              "blur", "opacity", "zindex"]
 ]
 
 extension View {
@@ -55,6 +56,14 @@ extension View {
             else if let value = value as? CGFloat {
                 return AnyView(self.padding(value))
             }
+        case "blur":
+            if let value = value as? CGFloat {
+                return AnyView(self.blur(radius: value))
+            }
+        case "opacity":
+            if let value = value as? CGFloat {
+                return AnyView(self.opacity(Double(value)))
+            }
         case "color":
             if let value = value as? String {
                 return AnyView(self.foregroundColor(value.first == "#"
@@ -91,6 +100,10 @@ extension View {
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
+            }
+        case "zindex":
+            if let value = value as? CGFloat {
+                return AnyView(self.zIndex(Double(value)))
             }
         case "cornerradius":
             if let value = value as? CGFloat {
@@ -222,9 +235,11 @@ public class GUIElementDescription: Decodable {
             case "top": return VerticalAlignment.top
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
-            case "center": return self.type == "vstack"
-                ? HorizontalAlignment.center
-                : VerticalAlignment.center
+            case "center":
+                if self.type == "zstack" { return Alignment.center }
+                return self.type == "vstack"
+                    ? HorizontalAlignment.center
+                    : VerticalAlignment.center
             default: return nil
             }
         }
@@ -454,11 +469,10 @@ public class GUIElementDescription: Decodable {
             
         // Get the image uri from a file
         else if let file = value as? File {
-            // Preload the image
-            let _ = file.asUIImage
-            
-            // Set the uri string as the value
-            value = file.uri
+            if T.self == String.self {
+                // Set the uri string as the value
+                value = file.uri
+            }
         }
             
         // Execute a custom function
@@ -534,8 +548,16 @@ public struct GUIElementInstance: View {
             return (options[propName.substr(1)]!() as! T)
         }
         else {
-            return from.get(propName, self.item, options)
+            return from.get(propName, item, options)
         }
+    }
+    
+    public func getImage(_ propName:String) -> UIImage {
+        if let file:File? = get(propName) {
+            return file?.asUIImage ?? UIImage()
+        }
+        
+        return UIImage()
     }
     
     public func getList(_ propName:String) -> [DataItem] {
@@ -584,6 +606,7 @@ public struct GUIElementInstance: View {
                 VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                     self.renderChildren
                 }
+                .clipped()
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
@@ -591,11 +614,13 @@ public struct GUIElementInstance: View {
                 HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
                     self.renderChildren
                 }
+                .clipped()
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
             else if from.type == "zstack" {
                 ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
             }
@@ -608,6 +633,7 @@ public struct GUIElementInstance: View {
                         self.renderChildren
                         Divider()
                     }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                 }
@@ -615,6 +641,7 @@ public struct GUIElementInstance: View {
                     VStack(spacing: 0){
                         self.renderChildren
                     }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                 }
@@ -638,6 +665,7 @@ public struct GUIElementInstance: View {
                     .background(self.get("$readonly") ?? false
                         ? Color(hex:"#f9f9f9")
                         : Color(hex:"#f7fcf5"))
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                     
@@ -683,7 +711,8 @@ public struct GUIElementInstance: View {
                         .setProperties(from.properties, self.item)
                 }
                 else { // assuming image property
-                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+//                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+                    Image(uiImage: getImage("image"))
                         .if(from.has("resizable")) { self.resize($0) }
                         .setProperties(from.properties, self.item)
                 }
