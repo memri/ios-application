@@ -47,9 +47,10 @@ class GeneralEditorConfig: RenderConfig{
     }
     
     public func allGroupValues() -> [String]{
-        if let all_groups = self.groups{
+        if let all_groups = self.groups {
             return all_groups.values.flatMap{ Array($0)}
-        }else{
+        }
+        else {
             return []
         }
     }

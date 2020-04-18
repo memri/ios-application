@@ -14,6 +14,7 @@ import RealmSwift
 enum DataItemFamily: String, ClassFamily {
     case note = "note"
     case label = "label"
+    case file = "file"
     case person = "person"
     case logitem = "logitem"
     case sessions = "sessions"
@@ -33,10 +34,14 @@ enum DataItemFamily: String, ClassFamily {
         switch self {
         case .note:
             (object as! RealmSwift.List<Note>).forEach{ collection.append($0) }
-        case .logitem:
-            (object as! RealmSwift.List<LogItem>).forEach{ collection.append($0) }
         case .label:
             (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
+        case .file:
+            (object as! RealmSwift.List<File>).forEach{ collection.append($0) }
+        case .person:
+            (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
+        case .logitem:
+            (object as! RealmSwift.List<LogItem>).forEach{ collection.append($0) }
         case .sessions:
             (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
         case .session:
@@ -46,8 +51,6 @@ enum DataItemFamily: String, ClassFamily {
         case .dynamicview:
             break
             //(object as! RealmSwift.List<DynamicView>).forEach{ collection.append($0) }
-        case .person:
-            (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
         }
         
         return collection
@@ -61,6 +64,10 @@ enum DataItemFamily: String, ClassFamily {
             return LogItem.self
         case .label:
             return Label.self
+        case .file:
+            return File.self
+        case .person:
+            return Person.self
         case .sessions:
             return Sessions.self
         case .session:
@@ -69,8 +76,6 @@ enum DataItemFamily: String, ClassFamily {
             return SessionView.self
         case .dynamicview:
             return DynamicView.self
-        case .person:
-            return Person.self
         }
     }
 }

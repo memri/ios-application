@@ -15,7 +15,7 @@ import RealmSwift
         - Have a basic way to render them
         - Give them a section by default (below the specified ones)
      - Implement File/Image viewer/editor
-     - in ReadOnly mode hide the fields that are nil or empty sets unless they are in groups
+     - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
     - Add editor elements to GUIElement such as datepicker, textfield, etc
  */
 
@@ -28,24 +28,58 @@ struct GeneralEditorView: View {
         return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
     
-    func getOptions(_ groupKey:String, _ name:String, _ item:DataItem) -> [String:() -> Any] {
+    func getProperties(_ item:DataItem) -> [String]{
+        return item.objectSchema.properties.filter {
+            return !self.renderConfig.excluded.contains($0.name)
+                && !self.renderConfig.allGroupValues().contains($0.name)
+                && $0.objectClassName == nil
+        }.map({$0.name})
+    }
+    
+    func getOptions(_ groupKey:String, _ name:String, _ value:Any?, _ item:DataItem) -> [String:() -> Any] {
         return [
             "readonly": { !self.main.currentSession.editMode },
             "title": { groupKey.camelCaseToWords().uppercased() },
             "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
             "name": { name },
-            ".": { item[name] as Any }
+            ".": { value ?? item[name] as Any }
         ]
+    }
+    
+    func getGroups(_ item:DataItem) -> [String:[String]]? {
+        var groups = self.renderConfig.groups ?? [:]
+        
+        item.objectSchema.properties.filter {
+            return $0.objectClassName != nil && !self.renderConfig.excluded.contains($0.name)
+        }.forEach({
+            groups[$0.name] = [$0.name]
+        })
+        
+        return groups.count > 0 ? groups : nil
+    }
+    
+    func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+        let className = item.objectSchema[prop]?.objectClassName
+        let family = DataItemFamily(rawValue: className!.lowercased())!
+        return family.getCollection(item[prop] as Any)
     }
     
     func getTitle(_ groupKey:String) -> String? {
         renderConfig.renderDescription?[groupKey]?.properties["title"] as? String
     }
     
+    func renderForGroup(_ groupKey:String) -> Bool {
+        renderConfig.renderDescription?[groupKey]?.properties["for"] as? String == "group"
+    }
+    
+    func getType(_ groupKey:String) -> String {
+        renderConfig.renderDescription?[groupKey]?.type ?? ""
+    }
+    
     var body: some View {
         let item = main.computedView.resultSet.item!
         let renderConfig = self.renderConfig
-        let groups = renderConfig.groups
+        let groups = getGroups(item)
         let renderDescription = renderConfig.renderDescription!
         
         return ScrollView {
@@ -58,7 +92,7 @@ struct GeneralEditorView: View {
                                     VStack (spacing: 0) {
                                         ForEach(groups![groupKey]!, id:\.self) { name in
                                             renderConfig.render(item, groupKey,
-                                                self.getOptions(groupKey, name, item))
+                                                self.getOptions(groupKey, name, nil, item))
                                         }
                                     }
                                 }
@@ -70,9 +104,23 @@ struct GeneralEditorView: View {
                                             .generalEditorHeader()) {
 
                                         Divider()
-                                        ForEach(groups![groupKey]!, id:\.self) { name in
-                                            renderConfig.render(item, groupKey,
-                                                self.getOptions(groupKey, name, item))
+                                        if item.objectSchema[groupKey]?.isArray ?? false {
+                                            if self.renderForGroup(groupKey) {
+                                                renderConfig.render(item, groupKey,
+                                                    self.getOptions(groupKey, groupKey, nil, item))
+                                            }
+                                            else {
+                                                ForEach(self.getArray(item, groupKey), id:\.id) {
+                                                    renderConfig.render(item, groupKey,
+                                                        self.getOptions(groupKey, "", $0, item))
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            ForEach(groups![groupKey]!, id:\.self) { name in
+                                                renderConfig.render(item, groupKey,
+                                                    self.getOptions(groupKey, name, nil, item))
+                                            }
                                         }
                                         Divider()
                                     }
@@ -82,14 +130,14 @@ struct GeneralEditorView: View {
                                 self.drawSection(
                                     header: "\(groupKey)".uppercased(),
                                     item: item,
-                                    properties: self.renderConfig.groups![groupKey]!)
+                                    properties: groups![groupKey]!)
                             }
                         }
                     }
                 }
 
                 drawSection(
-                    header: "OTHER",
+                    header: groups != nil ? "OTHER" : "ALL",
                     item: item,
                     properties: getProperties(item))
             }
@@ -103,84 +151,34 @@ struct GeneralEditorView: View {
         return Section(header:Text(header).generalEditorHeader()) {
             Divider()
             ForEach(properties, id: \.self){ prop in
-                Group {
-                    if self.renderConfig.renderDescription![prop] != nil {
-                        self.renderConfig.render(item, prop, self.getOptions("", prop, item))
-                    }
-                    else {
-                        GeneralEditorRow(item: item, prop: prop,
-                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
-                            isLast: properties.last == prop)
-                    }
-                }
+                GeneralEditorRow(
+                    item: item,
+                    prop: prop,
+                    readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                    isLast: properties.last == prop,
+                    renderConfig: self.renderConfig,
+                    options: self.getOptions("", prop, nil, item)
+                )
             }
             Divider()
         }
     }
-    func getProperties(_ item:DataItem) -> [String]{
-        return item.objectSchema.properties.filter {
-            return !self.renderConfig.excluded.contains($0.name)
-                && !self.renderConfig.allGroupValues().contains($0.name)
-        }.map({$0.name})
-    }
-    
 }
-
-//public struct EditorGroup<Content: View> : View {
-//
-//    let groupKey:String
-//    let content: (_ item:Data.Element) -> Content
-//
-//    init(_ key:String, @ViewBuilder content: @escaping (_ item:Data.Element) -> Content) {
-//        self.groupKey = key
-//        self.content = content
-//    }
-//
-//    @ViewBuilder
-//    public var body: some View {
-//        if renderDescription[groupKey] != nil {
-//            if (renderDescription[groupKey]?.properties["title"] as? String) == "" {
-//                VStack (spacing: 0) {
-//                    ForEach(groups![groupKey]!, id:\.self) { name in
-//                        renderConfig.render(item, groupKey,
-//                            self.getOptions(groupKey, name, item))
-//                    }
-//                }
-//            }
-//            else {
-//                Section(header:
-//                    Text((renderDescription[groupKey]?.properties["title"] as? String ?? groupKey)
-//                        .camelCaseToWords().uppercased()).generalEditorHeader()) {
-//
-//                    Divider()
-//                    ForEach(groups![groupKey]!, id:\.self) { name in
-//                        renderConfig.render(item, groupKey,
-//                            self.getOptions(groupKey, name, item))
-//                    }
-//                    Divider()
-//                }
-//            }
-//        }
-//        else {
-//            self.drawSection(
-//                header: "\(groupKey)".uppercased(),
-//                item: item,
-//                properties: self.renderConfig.groups![groupKey]!)
-//        }
-//    }
-//}
 
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main
     
-    var item: DataItem? = nil
-    var prop: String = ""
-    var readOnly: Bool = false
-    var isLast: Bool = false
+    var item: DataItem
+    var prop: String
+    var readOnly: Bool
+    var isLast: Bool
+    var renderConfig: GeneralEditorConfig
+    var options: [String:() -> Any]
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
-        let propType = item!.objectSchema[prop]?.type
+        let propType = item.objectSchema[prop]?.type
+        let isArray = item.objectSchema[prop]?.isArray ?? false
 
         return VStack (spacing: 0) {
             VStack(alignment: .leading, spacing: 4){
@@ -191,15 +189,21 @@ struct GeneralEditorRow: View {
                 )
                 .generalEditorLabel()
                 
-                if self.readOnly {
+                if renderConfig.renderDescription![prop] != nil {
+                    renderConfig.render(item, prop, options)
+                }
+                else if readOnly {
                     if propType == .string
                       || propType == .bool
                       || propType == .date
                       || propType == .int
                       || propType == .double {
-                        defaultRow(self.item!.getString(self.prop))
+                        defaultRow(self.item.getString(self.prop))
                     }
-                    else if propType == .object { listLabelRow() }
+                    else if propType == .object {
+                        if isArray { listLabelRow() }
+                        else { defaultRow() }
+                    }
                     else { defaultRow() }
                 }
                 else {
@@ -208,7 +212,10 @@ struct GeneralEditorRow: View {
                     else if propType == .date { dateRow() }
                     else if propType == .int { intRow() }
                     else if propType == .double { doubleRow() }
-                    else if propType == .object { listLabelRow() }
+                    else if propType == .object {
+                        if isArray { listLabelRow() }
+                        else { defaultRow() }
+                    }
                     else { defaultRow() }
                 }
             }
@@ -225,9 +232,9 @@ struct GeneralEditorRow: View {
     
     func stringRow() -> some View {
         let binding = Binding<String>(
-            get: { self.item!.getString(self.prop) },
+            get: { self.item.getString(self.prop) },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
             }
         )
         
@@ -237,9 +244,9 @@ struct GeneralEditorRow: View {
     
     func boolRow() -> some View {
         let binding = Binding<Bool>(
-            get: { self.item![self.prop] as? Bool ?? false },
+            get: { self.item[self.prop] as? Bool ?? false },
             set: { _ in
-                self.item!.toggle(self.prop)
+                self.item.toggle(self.prop)
                 self.main.objectWillChange.send()
             }
         )
@@ -256,9 +263,9 @@ struct GeneralEditorRow: View {
     
     func intRow() -> some View {
         let binding = Binding<Int>(
-            get: { self.item![self.prop] as? Int ?? 0 },
+            get: { self.item[self.prop] as? Int ?? 0 },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -270,9 +277,9 @@ struct GeneralEditorRow: View {
     
     func doubleRow() -> some View {
         let binding = Binding<Double>(
-            get: { self.item![self.prop] as? Double ?? 0 },
+            get: { self.item[self.prop] as? Double ?? 0 },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -284,9 +291,9 @@ struct GeneralEditorRow: View {
     
     func dateRow() -> some View {
         let binding = Binding<Date>(
-            get: { self.item![self.prop] as? Date ?? Date() },
+            get: { self.item[self.prop] as? Date ?? Date() },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -298,9 +305,9 @@ struct GeneralEditorRow: View {
     }
     
     func listLabelRow() -> some View {
-        let className = self.item!.objectSchema[self.prop]?.objectClassName
+        let className = self.item.objectSchema[self.prop]?.objectClassName
         let collection = DataItemFamily(rawValue: className!.lowercased())!
-            .getCollection(self.item![self.prop] as Any)
+            .getCollection(self.item[self.prop] as Any)
         
         return ForEach(collection, id: \.self) { item in
             self.defaultRow((item).computeTitle)
