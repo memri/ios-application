@@ -241,16 +241,23 @@ extension Text {
                             "Text", {"text": "{.computedTitle}"},
                             "SubView", {
                                 "view": "{.}", // or "viewName": "someView" for other use cases
-                                "dataItem": "{.}",
+                                "dataItem": "{.}", // this could be left out in this case
                                 "options": {
                                     "toolbar": false,
                                     "readonly": true
                                 }
                             }
-                        ],
+                        ]
                     ]
                 }
             }
+ 
+          In order for the hyper network to work openView needs to be extended to be able to open
+          views from URIs (file, http, elsewhere), and to download any additional data from sources
+          other than the pod, for usage in memri. We can even imagine a limited web renderer of views
+          that people can embed on their website, where they also link to the view for download in
+          memri. By allowing views to refer to each other a network of knowledge can appear. But the
+          exact shape of that is still beyond the horizon of my imagination.
  */
              
  
