@@ -174,6 +174,86 @@ extension Text {
 //    }
 //}
 
+/*
+    TODO: In order to support mixed content we will need to add an element that renders a dataitem
+          based on the way it is rendered by default for that (multi-item) renderer. This should be
+          overwritable with a renderDescription for that renderer that is for a specific view-type.
+          i.e. for the view-type "inbox". The default render description can always be specified
+          using *. Here's an example:
+ 
+            renderConfigs: {
+                list: {
+                    renderDescription: {
+                        "*": ["VStack", ["Text", {"text": "Hello"}]],
+                        "inbox": ["VStack", ["Image", {"systemName": "email"}]],
+                    }
+                }
+            }
+        
+          For this purpose we need to introduce a new element called "ItemCell", this will render
+          the data item as if it was rendered inside the renderer of that type when it would be
+          only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
+          look like this:
+ 
+            ItemCell(dataItem, [rendererName] [, viewType, viewOverride])
+ 
+          with viewOverride being the name of a view that should be the template instead of the
+          default. rendererName is an array of rendererNames so that it can search for multiple,
+          for instance if the data item doesnt have definitions for one renderer, but it does for
+          another.
+ 
+          The inbox renderer can overlay other elements in its rendering, like this:
+ 
+            // this is the inbox render config
+            renderConfigs: {
+                list: {
+                    renderDescription: [
+                        "ZStack", [
+                            "VStack", ["Text", {"text": "Type: {.type}"}],
+                            "ItemCell", {
+                                "dataItem": "{.}",
+                                "rendererNames: ["list", "thumbnail", "map"],
+                                "viewType": "inbox"
+                            }
+                        ],
+                    ]
+                }
+            }
+ 
+          In addition and to complete the abilities of the view hyper network is the introduction of
+          the subview element that can display views inline. An immediate use case is to view a list
+          of views (in fact they are sessions, but its easier to perceive them as views), and
+          instead of seeing a screenshot of the last state they are the actual life instantiation of
+          that view. This can be used for showing a list of charts that are easy to scroll through
+          and thus easy to check daily without having to go to many views (N.B. this can somewhat be
+          achieved with a session that has a history of each chart you want. you can then navigate
+          with the back button and via the list of views in the session. However this is not as
+          easy as scrolling). This is the signature of the element
+ 
+            SubView(viewName or viewInstance, dataItem, options)
+ 
+          And the renderConfig of the session view for the charts could look like this:
+          
+            renderConfigs: {
+                list: {
+                    renderDescription: [
+                        "VStack", [
+                            "Text", {"text": "{.computedTitle}"},
+                            "SubView", {
+                                "view": "{.}", // or "viewName": "someView" for other use cases
+                                "dataItem": "{.}",
+                                "options": {
+                                    "toolbar": false,
+                                    "readonly": true
+                                }
+                            }
+                        ],
+                    ]
+                }
+            }
+ */
+             
+ 
 public class GUIElementDescription: Decodable {
     var type: String = ""
     var properties: [String: Any] = [:]
