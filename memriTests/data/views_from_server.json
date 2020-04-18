@@ -581,7 +581,7 @@
                         "profilePicture": ["profilePicture"],
                         "names": ["firstName", "lastName"],
                     },
-                    "excluded": [],
+                    "excluded": ["profilePicture", "names"],
                     "readOnly": [],
                     "renderDescription": {
                         "profilePicture": [

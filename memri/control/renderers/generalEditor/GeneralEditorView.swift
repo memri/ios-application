@@ -11,12 +11,16 @@ import RealmSwift
 
 /*
  TODO:
-     - Generalize List<>
-        - Have a basic way to render them
-        - Give them a section by default (below the specified ones)
-     - Implement File/Image viewer/editor
-     - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
+    - Add + button behavior near grouped sections
+    - Fix sequence of the group sections
+    - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
     - Add editor elements to GUIElement such as datepicker, textfield, etc
+ 
+    LATER:
+    - Implement Image picker
+    - Implement Color picker
+    - Implement the buttons as a non-property section
+    - Implement social profile section for person
  */
 
 struct GeneralEditorView: View {
@@ -47,15 +51,17 @@ struct GeneralEditorView: View {
     }
     
     func getGroups(_ item:DataItem) -> [String:[String]]? {
-        var groups = self.renderConfig.groups ?? [:]
+        let groups = self.renderConfig.groups ?? [:]
+        var filteredGroups: [String:[String]] = [:]
+        let objectSchema = item.objectSchema
         
-        item.objectSchema.properties.filter {
-            return $0.objectClassName != nil && !self.renderConfig.excluded.contains($0.name)
+        (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
+            return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil) && !self.renderConfig.excluded.contains($0)
         }.forEach({
-            groups[$0.name] = [$0.name]
+            filteredGroups[$0] = groups[$0] ?? [$0]
         })
         
-        return groups.count > 0 ? groups : nil
+        return filteredGroups.count > 0 ? filteredGroups : nil
     }
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
@@ -152,6 +158,7 @@ struct GeneralEditorView: View {
             Divider()
             ForEach(properties, id: \.self){ prop in
                 GeneralEditorRow(
+                    main: self._main,
                     item: item,
                     prop: prop,
                     readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
@@ -182,12 +189,14 @@ struct GeneralEditorRow: View {
 
         return VStack (spacing: 0) {
             VStack(alignment: .leading, spacing: 4){
-                Text(prop
-                    .camelCaseToWords()
-                    .lowercased()
-                    .capitalizingFirstLetter()
-                )
-                .generalEditorLabel()
+                if !isArray {
+                    Text(prop
+                        .camelCaseToWords()
+                        .lowercased()
+                        .capitalizingFirstLetter()
+                    )
+                    .generalEditorLabel()
+                }
                 
                 if renderConfig.renderDescription![prop] != nil {
                     renderConfig.render(item, prop, options)
@@ -201,8 +210,8 @@ struct GeneralEditorRow: View {
                         defaultRow(self.item.getString(self.prop))
                     }
                     else if propType == .object {
-                        if isArray { listLabelRow() }
-                        else { defaultRow() }
+                        if isArray { listRow() }
+                        else { defaultRow(self.item.computeTitle) }
                     }
                     else { defaultRow() }
                 }
@@ -213,7 +222,7 @@ struct GeneralEditorRow: View {
                     else if propType == .int { intRow() }
                     else if propType == .double { doubleRow() }
                     else if propType == .object {
-                        if isArray { listLabelRow() }
+                        if isArray { listRow() }
                         else { defaultRow() }
                     }
                     else { defaultRow() }
@@ -304,14 +313,38 @@ struct GeneralEditorRow: View {
         
     }
     
-    func listLabelRow() -> some View {
+    func listRow() -> some View {
         let className = self.item.objectSchema[self.prop]?.objectClassName
         let collection = DataItemFamily(rawValue: className!.lowercased())!
             .getCollection(self.item[self.prop] as Any)
         
-        return ForEach(collection, id: \.self) { item in
-            self.defaultRow((item).computeTitle)
+        return ScrollView {
+            VStack (alignment: .leading, spacing: 5) {
+                ForEach(collection, id: \.self) { collectionItem in
+                    HStack (spacing:0) {
+                        Text(className!.camelCaseToWords().capitalizingFirstLetter())
+                            .padding(.trailing, 5)
+                            .padding(.leading, 6)
+                            .padding(.vertical, 3)
+                            .foregroundColor(Color.white)
+                            .font(.system(size: 14, weight: .bold))
+                            
+                        Text(collectionItem.computeTitle)
+                            .padding(.leading, 6)
+                            .padding(.trailing, 9)
+                            .padding(.vertical, 3)
+                            .background(Color.gray)
+                            .foregroundColor(Color.white)
+                            .font(.system(size: 14, weight: .bold))
+                        .zIndex(10)
+                    }
+                    .background(Color.purple)
+                    .cornerRadius(20)
+                }
+            }
+            .padding(.top, 10)
         }
+        .frame(maxHeight: 300)
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {

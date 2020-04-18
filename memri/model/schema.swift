@@ -144,6 +144,8 @@ class Person:DataItem {
             age.value = try decoder.decodeIfPresent("age") ?? age.value
             profilePicture = try decoder.decodeIfPresent("profilePicture") ?? profilePicture
             
+            decodeIntoList(decoder, "relations", self.relations)
+            
             try! self.superDecode(from: decoder)
         }
     }
