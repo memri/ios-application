@@ -195,10 +195,10 @@ extension Text {
           only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
           look like this:
  
-            ItemCell(dataItem, [rendererName] [, viewType, viewOverride])
+            ItemCell(dataItem, rendererNames [, viewType, viewOverride])
  
           with viewOverride being the name of a view that should be the template instead of the
-          default. rendererName is an array of rendererNames so that it can search for multiple,
+          default. rendererNames is an array of rendererName so that it can search for multiple,
           for instance if the data item doesnt have definitions for one renderer, but it does for
           another.
  

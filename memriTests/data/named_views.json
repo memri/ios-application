@@ -15,12 +15,17 @@
         "queryOptions": {
             "query": "{query}"
         },
-        "editActionButton": null,
-        "actionButton": {
+        "editActionButton": {
             "title": "{title}",
             "actionName": "{actionName}",
             "actionArgs": "{actionArgs}"
-        }
+        },
+        "actionButton": {
+            "actionName": "add",
+            "actionArgs": [{
+                "type": "{type}"
+            }]
+        },
         "renderConfig": {
             "*": {
                 "press": { "actionName": "noop" }

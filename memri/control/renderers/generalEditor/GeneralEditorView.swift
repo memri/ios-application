@@ -125,6 +125,8 @@ struct GeneralEditorSection: View {
         let renderDescription = renderConfig.renderDescription!
         let editMode = self.main.currentSession.editMode
         let isArray = item.objectSchema[groupKey]? .isArray ?? false
+        let className = self.item.objectSchema[groupKey]!.objectClassName!
+        let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let properties = groupKey == "other"
             ? self.getProperties(item)
@@ -144,14 +146,14 @@ struct GeneralEditorSection: View {
                     Section(
                         header: self.sectionHeader(
                             title: self.getTitle(groupKey) ?? groupKey,
-                            action: isArray
+                            action: isArray && editMode && !readOnly
                                 ? ActionDescription(
                                     actionName: .openViewByName,
                                     actionArgs: [
                                         "choose-item-by-query",
                                         [
-                                            "query": self.item.objectSchema[groupKey]!.objectClassName!,
-                                            "type": self.item.objectSchema[groupKey]!.objectClassName!,
+                                            "query": className,
+                                            "type": className,
                                             "actionName": "addSelectionToList",
                                             "actionArgs": [self.item, groupKey],
                                             "title": "Add Selected"
@@ -188,7 +190,7 @@ struct GeneralEditorSection: View {
                     title: groupKey == "other"
                         ? groups.count > 0 ? "other" : "all"
                         : groupKey,
-                    action: isArray
+                    action: isArray && editMode && !readOnly
                         ? ActionDescription(actionName: .noop)
                         : nil
                 )) {
@@ -400,9 +402,11 @@ struct GeneralEditorRow: View {
                         
                         Spacer()
                         
-                        Button (action: {}) {
-                            Image(systemName: "trash")
-                                .foregroundColor(Color(hex:"#777"))
+                        if !self.readOnly {
+                            Button (action: {}) {
+                                Image(systemName: "trash")
+                                    .foregroundColor(Color(hex:"#777"))
+                            }
                         }
                     }
                 }
