@@ -18,8 +18,6 @@ import RealmSwift
  */
 
 
-
-
 struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
@@ -243,26 +241,13 @@ struct GeneralEditorRow: View {
     
     func listLabelRow() -> some View {
         let className = self.item!.objectSchema[self.prop]?.objectClassName
+        let collection = DataItemFamily(rawValue: className!.lowercased())!
+            .getCollection(self.item![self.prop] as Any)
         
-        // List<DataItem>
-        
-        // -> Any    List<DataItem>
-//        RealmSwift.Object
-        let collection = self.item![self.prop] as? RealmSwift.List<DataItem>
-        
-        
-//        DataItem
-//        RealmSwift.List
-//        let collection = DataItemFamily(rawValue: className!.lowercased())!
-//            .getCollection(self.item![self.prop] as Any)
-//        if let col =  collection{
-        return ForEach(collection!, id: \.self) { item in
-            self.defaultRow((item).computeTitle)
-        }
-//        }
-//        else{
-//            return EmptyView()
-//        }
+        return ForEach(collection, id: \.self) { item in
+                self.defaultRow((item).computeTitle)
+            }
+
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {
