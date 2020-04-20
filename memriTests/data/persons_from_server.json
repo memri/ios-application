@@ -6,6 +6,9 @@
         "lastName": "Awesome",
         "age": 21,
         "dateCreated": "1996-12-20T00:39:57Z",
+        "profilePicture": {
+            "uri": "/Users/rubendaniels/Downloads/nikolai.jpeg"
+        },
         "starred": true,
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
@@ -22,6 +25,7 @@
         "firstName": "Bob",
         "lastName": "Brown",
         "age": 37,
+        "relations": [{"uid":"0x01"}],
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
             { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
@@ -35,6 +39,7 @@
         "type": "person",
         "firstName": "Eve",
         "lastName": "Eagle",
+        "relations": [{"uid":"0x01"},{"uid":"0x02"}],
         "age": 97,
         "starred": true,
         "syncState": {

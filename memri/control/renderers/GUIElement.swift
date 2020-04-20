@@ -13,7 +13,8 @@ import RealmSwift
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
     "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
-              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset"]
+              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset",
+              "blur", "opacity", "zindex"]
 ]
 
 extension View {
@@ -55,6 +56,14 @@ extension View {
             else if let value = value as? CGFloat {
                 return AnyView(self.padding(value))
             }
+        case "blur":
+            if let value = value as? CGFloat {
+                return AnyView(self.blur(radius: value))
+            }
+        case "opacity":
+            if let value = value as? CGFloat {
+                return AnyView(self.opacity(Double(value)))
+            }
         case "color":
             if let value = value as? String {
                 return AnyView(self.foregroundColor(value.first == "#"
@@ -91,6 +100,10 @@ extension View {
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
+            }
+        case "zindex":
+            if let value = value as? CGFloat {
+                return AnyView(self.zIndex(Double(value)))
             }
         case "cornerradius":
             if let value = value as? CGFloat {
@@ -222,9 +235,11 @@ public class GUIElementDescription: Decodable {
             case "top": return VerticalAlignment.top
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
-            case "center": return self.type == "vstack"
-                ? HorizontalAlignment.center
-                : VerticalAlignment.center
+            case "center":
+                if self.type == "zstack" { return Alignment.center }
+                return self.type == "vstack"
+                    ? HorizontalAlignment.center
+                    : VerticalAlignment.center
             default: return nil
             }
         }
@@ -364,7 +379,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
-                       _ options:[String:Any]=[:]) -> T? {
+                       _ options:[String: () -> Any] = [:]) -> T? {
         
         if let prop = properties[propName] {
             let propValue = prop
@@ -404,7 +419,7 @@ public class GUIElementDescription: Decodable {
     }
     
     private class func traverseProperties<T>(_ item:DataItem, _ propParts:[String],
-                                             _ options:[String:Any]=[:]) -> T? {
+                                             _ options:[String:()->Any]=[:]) -> T? {
         // Loop through the properties and fetch each
         var value:Any? = nil
         /*
@@ -413,43 +428,51 @@ public class GUIElementDescription: Decodable {
          */
         
         let isNegationTest = propParts.first?.first == "!"
-        var firstItem = propParts[0]
-        if isNegationTest {
-            let index = firstItem.index(firstItem.startIndex, offsetBy: 1)
-            firstItem = String(firstItem[index...])
-        }
+        let firstItem = isNegationTest
+            ? propParts[0].substr(1)
+            : propParts[0]
         
         if firstItem == "dataItem" {
             value = item
         }
         else {
-            value = isNegationTest
-                ? !(options[firstItem.lowercased()] as! Bool)
-                : options[firstItem.lowercased()]
+            value = options[firstItem.lowercased()]!()
+            if isNegationTest { value = !(value as! Bool) }
         }
-            
+        
+        var lastPart:String? = nil
+        var lastObject:Object? = nil
         for i in 1..<propParts.count {
             let part = propParts[i]
             
             if part == "functions" {
                 value = (value as! DataItem).functions[propParts[i+1]];
+                lastPart = nil
                 break
             }
             else {
-                value = (value as! Object)[String(part)]
+                lastPart = String(part)
+                lastObject = (value as! Object)
+                value = lastObject![lastPart!]
             }
         }
         
+        if let lastPart = lastPart,
+           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
+            
+            // Convert Realm List into Array
+            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
+        }
+        
         // Format a date
-        if let date = value as? Date { value = formatDate(date) }
+        else if let date = value as? Date { value = formatDate(date) }
             
         // Get the image uri from a file
         else if let file = value as? File {
-            // Preload the image
-            let _ = file.asUIImage
-            
-            // Set the uri string as the value
-            value = file.uri
+            if T.self == String.self {
+                // Set the uri string as the value
+                value = file.uri
+            }
         }
             
         // Execute a custom function
@@ -460,13 +483,13 @@ public class GUIElementDescription: Decodable {
     }
     
     public class func computeProperty<T>(_ compiled:CompiledProperty, _ item:DataItem?,
-                                         _ options:[String:Any]=[:]) -> T? {
+                                         _ options:[String:()->Any]=[:]) -> T? {
         
         // If this is a single lookup e.g. {.myBoolean} then lets return the actual
         // type rather than a string
-        if compiled.result.count == 1 && (compiled.result.first as! [Any]).count == 1 {
+        if compiled.result.count == 1, let result = compiled.result.first as? [String] {
             // TODO Error Handling
-            let x:T? = traverseProperties(item!, compiled.result.first as! [String], options)
+            let x:T? = traverseProperties(item!, result, options)
             return x
         }
         else {
@@ -505,11 +528,11 @@ extension GUIElementDescription {
 public struct GUIElementInstance: View {
     @EnvironmentObject var main: Main
     
-    var from:GUIElementDescription
-    var item:DataItem
-    var options:[String:Any]
+    let from:GUIElementDescription
+    let item:DataItem
+    let options:[String:()->Any]
     
-    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:Any]=[:]) {
+    public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:()->Any]=[:]) {
         from = gui
         item = dataItem
         options = opts
@@ -521,22 +544,25 @@ public struct GUIElementInstance: View {
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
-            return options[propName] as! T?
+            // TODO Error Handling
+            return (options[propName.substr(1)]!() as! T)
         }
         else {
-            return from.get(propName, self.item, options)
+            return from.get(propName, item, options)
         }
     }
     
-    public func getList<T:RealmCollectionValue>(_ propName:String) -> [T] {
-        let x:RealmSwift.List<T> = get("list")!
-        var result:[T] = []
-    
-        for n in x {
-            result.append(n)
+    public func getImage(_ propName:String) -> UIImage {
+        if let file:File? = get(propName) {
+            return file?.asUIImage ?? UIImage()
         }
         
-        return result
+        return UIImage()
+    }
+    
+    public func getList(_ propName:String) -> [DataItem] {
+        let x:[DataItem]? = get("list")
+        return x ?? []
     }
     
     // Keeping this around until sure that size setting is never needed
@@ -573,31 +599,28 @@ public struct GUIElementInstance: View {
         }
     }
     
-    /*
-        TODO: Think about whether using from.get* is a good ideas, as get() locally
-              is used for variable access and overloaded properties, though the latter
-              focussed on the root element only
-     */
-    
     @ViewBuilder
     public var body: some View {
         if (!has("condition") || get("condition") == true) {
             if from.type == "vstack" {
                 VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
+                .clipped()
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
             else if from.type == "hstack" {
                 HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
+                .clipped()
                 .animation(nil)
                 .setProperties(from.properties, self.item)
             }
             else if from.type == "zstack" {
-                ZStack(alignment: get("alignment") ?? .top) { self.childrenAsView }
+                ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
             }
@@ -607,16 +630,18 @@ public struct GUIElementInstance: View {
                         (self.get("title") ?? "").uppercased()
                     )).generalEditorHeader()){
                         Divider()
-                        self.childrenAsView
+                        self.renderChildren
                         Divider()
                     }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                 }
                 else {
                     VStack(spacing: 0){
-                        self.childrenAsView
+                        self.renderChildren
                     }
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                 }
@@ -631,12 +656,16 @@ public struct GUIElementInstance: View {
                         )
                         .generalEditorLabel()
                         
-                        self.childrenAsView
+                        self.renderChildren
+                            .generalEditorCaption()
                     }
                     .fullWidth()
                     .padding(.bottom, 10)
                     .padding(.horizontal, 36)
-                    .background(self.get("$readonly") ?? false ? Color(hex:"#f9f9f9") : Color(hex:"#f7fcf5"))
+                    .background(self.get("$readonly") ?? false
+                        ? Color(hex:"#f9f9f9")
+                        : Color(hex:"#f7fcf5"))
+                    .clipped()
                     .animation(nil)
                     .setProperties(from.properties, self.item)
                     
@@ -646,7 +675,7 @@ public struct GUIElementInstance: View {
             }
             else if from.type == "button" {
                 Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
-                    self.childrenAsView
+                    self.renderChildren
                 }
                 .setProperties(from.properties, self.item)
             }
@@ -682,7 +711,8 @@ public struct GUIElementInstance: View {
                         .setProperties(from.properties, self.item)
                 }
                 else { // assuming image property
-                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+//                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
+                    Image(uiImage: getImage("image"))
                         .if(from.has("resizable")) { self.resize($0) }
                         .setProperties(from.properties, self.item)
                 }
@@ -713,7 +743,7 @@ public struct GUIElementInstance: View {
     }
     
     @ViewBuilder
-    var childrenAsView: some View {
+    var renderChildren: some View {
         ForEach(0..<from.children.count){ index in
             GUIElementInstance(self.from.children[index], self.item, self.options)
         }

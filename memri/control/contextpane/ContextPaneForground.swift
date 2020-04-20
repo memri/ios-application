@@ -19,7 +19,7 @@ struct ContextPaneForground: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack (alignment: .leading) {
-                Text(main.computedView.resultSet.item?.getString("title") ?? "") // TODO make this generic
+                Text(main.computedView.title) // TODO make this generic
                     .font(.system(size: 23, weight: .regular, design: .default))
                     .fontWeight(.bold)
                     .opacity(0.75)

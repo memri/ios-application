@@ -11,10 +11,16 @@ import RealmSwift
 
 /*
  TODO:
-     - Generalize List<>
-        - Move label renderer to view
-     - Allow for custom renderers
-     - Implement File/Image viewer/editor
+    - Add + button behavior near grouped sections
+    - Fix sequence of the group sections
+    - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
+    - Add editor elements to GUIElement such as datepicker, textfield, etc
+ 
+    LATER:
+    - Implement Image picker
+    - Implement Color picker
+    - Implement the buttons as a non-property section
+    - Implement social profile section for person
  */
 
 
@@ -27,121 +33,234 @@ struct GeneralEditorView: View {
         return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
     
+    func getGroups(_ item:DataItem) -> [String:[String]]? {
+        let groups = self.renderConfig.groups ?? [:]
+        var filteredGroups: [String:[String]] = [:]
+        let objectSchema = item.objectSchema
+        
+        (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
+            return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil)
+                && !self.renderConfig.excluded.contains($0)
+        }.forEach({
+            filteredGroups[$0] = groups[$0] ?? [$0]
+        })
+        
+        return filteredGroups.count > 0 ? filteredGroups : nil
+    }
+    
     var body: some View {
         let item = main.computedView.resultSet.item!
+        let renderConfig = self.renderConfig
+        let groups = getGroups(item) ?? [:]
         
         return ScrollView {
-            VStack (alignment: .leading, spacing:0) {
-                if renderConfig.groups != nil {
-                    ForEach(Array(renderConfig.groups!.keys), id: \.self) { groupKey in
-                        Group {
-                            if self.renderConfig.renderDescription![groupKey] != nil {
-                                if (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String) == "" {
-                                    VStack (spacing: 0) {
-                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
-                                            self.renderConfig.render(item, groupKey, [
-                                                "readonly": !self.main.currentSession.editMode,
-                                                "title": groupKey.camelCaseToWords().uppercased(),
-                                                "displayName": name.camelCaseToWords()
-                                                                   .capitalizingFirstLetter(),
-                                                "name": name,
-                                                ".": item[name] as Any
-                                            ])
-                                        }
-                                    }
-                                }
-                                else {
-                                    Section(header:Text(
-                                        (self.renderConfig.renderDescription![groupKey]?.properties["title"] as? String ?? groupKey)
-                                            .camelCaseToWords().uppercased()).generalEditorHeader()) {
-
-                                        Divider()
-                                        ForEach(self.renderConfig.groups![groupKey]!, id:\.self) { name in
-                                            self.renderConfig.render(item, groupKey, [
-                                                "readonly": !self.main.currentSession.editMode,
-                                                "displayName": name.camelCaseToWords()
-                                                                   .capitalizingFirstLetter(),
-                                                "name": name,
-                                                ".": item[name] as Any
-                                            ])
-                                        }
-                                        Divider()
-                                    }
-                                }
-                            }
-                            else {
-                                self.drawSection(
-                                    header: "\(groupKey)".uppercased(),
-                                    item: item,
-                                    properties: self.renderConfig.groups![groupKey]!)
-                            }
-                        }
+            VStack (alignment: .leading, spacing: 0) {
+                if groups.count > 0 {
+                    ForEach(Array(groups.keys), id: \.self) { groupKey in
+                        GeneralEditorSection(
+                            item: item,
+                            renderConfig: renderConfig,
+                            groupKey: groupKey,
+                            groups: groups)
                     }
                 }
 
-                drawSection(
-                    header: "OTHER",
+                GeneralEditorSection(
                     item: item,
-                    properties: getProperties(item))
+                    renderConfig: renderConfig,
+                    groupKey: "other",
+                    groups: groups)
             }
             .frame(maxWidth:.infinity, maxHeight: .infinity)
         }
     }
+}
+
+struct GeneralEditorSection: View {
+    @EnvironmentObject var main: Main
+
+    var item: DataItem
+    var renderConfig: GeneralEditorConfig
+    var groupKey: String
+    var groups:[String:[String]]
     
-    func drawSection(header: String, item: DataItem, properties: [String]) -> some View {
-        Section(header:Text(header).generalEditorHeader()) {
-            Divider()
-            ForEach(properties, id: \.self){ prop in
-                GeneralEditorRow(item: item,
-                                 prop: prop,
-                                 readOnly: (!self.main.currentSession.editMode
-                                    || self.renderConfig.readOnly.contains(prop)),
-                                 isLast: properties.last == prop)
-            }
-            Divider()
-        }
+    func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+        let className = item.objectSchema[prop]?.objectClassName
+        let family = DataItemFamily(rawValue: className!.lowercased())!
+        return family.getCollection(item[prop] as Any)
     }
     
     func getProperties(_ item:DataItem) -> [String]{
         return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
                 && !self.renderConfig.allGroupValues().contains($0.name)
+                && $0.objectClassName == nil
         }.map({$0.name})
     }
     
-}
+    func getOptions(_ groupKey:String, _ name:String, _ value:Any?,
+                    _ item:DataItem) -> [String:() -> Any] {
+        return [
+            "readonly": { !self.main.currentSession.editMode },
+            "title": { groupKey.camelCaseToWords().uppercased() },
+            "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
+            "name": { name },
+            ".": { value ?? item[name] as Any }
+        ]
+    }
+    
+    func getTitle(_ groupKey:String) -> String? {
+        renderConfig.renderDescription?[groupKey]?.properties["title"] as? String
+    }
+    
+    func renderForGroup(_ groupKey:String) -> Bool {
+        renderConfig.renderDescription?[groupKey]?.properties["for"] as? String == "group"
+    }
+    
+    func getType(_ groupKey:String) -> String {
+        renderConfig.renderDescription?[groupKey]?.type ?? ""
+    }
 
+    var body: some View {
+        let renderDescription = renderConfig.renderDescription!
+        let editMode = self.main.currentSession.editMode
+        
+        let header = groupKey == "other"
+            ? groups.count > 0 ? "other" : "all"
+            : groupKey
+        let properties = groupKey == "other"
+            ? self.getProperties(item)
+            : self.groups[self.groupKey]!
+        let isArray = item.objectSchema[groupKey]?.isArray ?? false
+        
+        return Group {
+            if renderDescription[groupKey] != nil {
+                if self.getTitle(groupKey) == "" {
+                    Section (header: EmptyView()) {
+                        ForEach(groups[groupKey]!, id:\.self) { name in
+                            self.renderConfig.render(self.item, self.groupKey,
+                                self.getOptions(self.groupKey, name, nil, self.item))
+                        }
+                    }
+                }
+                else {
+                    Section(
+                        header: self.sectionHeader(
+                            title: self.getTitle(groupKey) ?? groupKey,
+                            action: (item.objectSchema[groupKey]?.isArray ?? false)
+                                ? ActionDescription(actionName: .noop)
+//                                                    actionName: .addToList,
+//                                                    actionArgs: [item, groupKey])
+                                : nil
+                        )
+                    ) {
+                        Divider()
+                        if isArray {
+                            if self.renderForGroup(groupKey) {
+                                renderConfig.render(item, groupKey,
+                                    self.getOptions(groupKey, groupKey, nil, item))
+                            }
+                            else {
+                                ForEach(self.getArray(item, groupKey), id:\.id) {
+                                    self.renderConfig.render(self.item, self.groupKey,
+                                        self.getOptions(self.groupKey, "", $0, self.item))
+                                }
+                            }
+                        }
+                        else {
+                            ForEach(groups[groupKey]!, id:\.self) { name in
+                                self.renderConfig.render(self.item, self.groupKey,
+                                    self.getOptions(self.groupKey, name, nil, self.item))
+                            }
+                        }
+                        Divider()
+                    }
+                }
+            }
+            else {
+                Section(header: sectionHeader(
+                    title: header,
+                    action: isArray
+                        ? ActionDescription(actionName: .noop)
+                        : nil
+                )) {
+                    Divider()
+                    ForEach(properties, id: \.self){ prop in
+                        GeneralEditorRow(
+                            main: self._main,
+                            item: self.item,
+                            prop: prop,
+                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                            isLast: properties.last == prop,
+                            renderConfig: self.renderConfig,
+                            options: self.getOptions("", prop, nil, self.item)
+                        )
+                    }
+                    Divider()
+                }
+            }
+        }
+    }
+    
+    func sectionHeader(title:String, action:ActionDescription? = nil) -> some View {
+        HStack (alignment: .bottom) {
+            Text(title.camelCaseToWords().uppercased())
+                .generalEditorHeader()
+            
+            if action != nil {
+                Spacer()
+                Button(action:{}) {
+                    Image(systemName: "plus")
+                        .foregroundColor(Color(hex:"#777"))
+                        .font(.system(size: 18, weight: .semibold))
+                }
+                .padding(.bottom, 10)
+            }
+        }.padding(.trailing, 20)
+    }
+}
 
 struct GeneralEditorRow: View {
     @EnvironmentObject var main: Main
     
-    var item: DataItem? = nil
-    var prop: String = ""
-    var readOnly: Bool = false
-    var isLast: Bool = false
+    var item: DataItem
+    var prop: String
+    var readOnly: Bool
+    var isLast: Bool
+    var renderConfig: GeneralEditorConfig
+    var options: [String:() -> Any]
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
-        let propType = item!.objectSchema[prop]?.type
+        let propType = item.objectSchema[prop]?.type
+        let isArray = item.objectSchema[prop]?.isArray ?? false
 
         return VStack (spacing: 0) {
             VStack(alignment: .leading, spacing: 4){
-                Text(prop
-                    .camelCaseToWords()
-                    .lowercased()
-                    .capitalizingFirstLetter()
-                )
-                .generalEditorLabel()
+                if !isArray {
+                    Text(prop
+                        .camelCaseToWords()
+                        .lowercased()
+                        .capitalizingFirstLetter()
+                    )
+                    .generalEditorLabel()
+                }
                 
-                if self.readOnly {
+                if renderConfig.renderDescription![prop] != nil {
+                    renderConfig.render(item, prop, options)
+                }
+                else if readOnly {
                     if propType == .string
                       || propType == .bool
                       || propType == .date
                       || propType == .int
                       || propType == .double {
-                        defaultRow(self.item!.getString(self.prop))
+                        defaultRow(self.item.getString(self.prop))
                     }
-                    else if propType == .object { listLabelRow() }
+                    else if propType == .object {
+                        if isArray { listRow() }
+                        else { defaultRow(self.item.computeTitle) }
+                    }
                     else { defaultRow() }
                 }
                 else {
@@ -150,7 +269,10 @@ struct GeneralEditorRow: View {
                     else if propType == .date { dateRow() }
                     else if propType == .int { intRow() }
                     else if propType == .double { doubleRow() }
-                    else if propType == .object { listLabelRow() }
+                    else if propType == .object {
+                        if isArray { listRow() }
+                        else { defaultRow() }
+                    }
                     else { defaultRow() }
                 }
             }
@@ -167,9 +289,9 @@ struct GeneralEditorRow: View {
     
     func stringRow() -> some View {
         let binding = Binding<String>(
-            get: { self.item!.getString(self.prop) },
+            get: { self.item.getString(self.prop) },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
             }
         )
         
@@ -179,9 +301,9 @@ struct GeneralEditorRow: View {
     
     func boolRow() -> some View {
         let binding = Binding<Bool>(
-            get: { self.item![self.prop] as? Bool ?? false },
+            get: { self.item[self.prop] as? Bool ?? false },
             set: { _ in
-                self.item!.toggle(self.prop)
+                self.item.toggle(self.prop)
                 self.main.objectWillChange.send()
             }
         )
@@ -198,9 +320,9 @@ struct GeneralEditorRow: View {
     
     func intRow() -> some View {
         let binding = Binding<Int>(
-            get: { self.item![self.prop] as? Int ?? 0 },
+            get: { self.item[self.prop] as? Int ?? 0 },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -212,9 +334,9 @@ struct GeneralEditorRow: View {
     
     func doubleRow() -> some View {
         let binding = Binding<Double>(
-            get: { self.item![self.prop] as? Double ?? 0 },
+            get: { self.item[self.prop] as? Double ?? 0 },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -226,9 +348,9 @@ struct GeneralEditorRow: View {
     
     func dateRow() -> some View {
         let binding = Binding<Date>(
-            get: { self.item![self.prop] as? Date ?? Date() },
+            get: { self.item[self.prop] as? Date ?? Date() },
             set: {
-                self.item!.set(self.prop, $0)
+                self.item.set(self.prop, $0)
                 self.main.objectWillChange.send()
             }
         )
@@ -239,15 +361,47 @@ struct GeneralEditorRow: View {
         
     }
     
-    func listLabelRow() -> some View {
-        let className = self.item!.objectSchema[self.prop]?.objectClassName
+    func listRow() -> some View {
+        let className = self.item.objectSchema[self.prop]?.objectClassName
         let collection = DataItemFamily(rawValue: className!.lowercased())!
-            .getCollection(self.item![self.prop] as Any)
+            .getCollection(self.item[self.prop] as Any)
         
-        return ForEach(collection, id: \.self) { item in
-                self.defaultRow((item).computeTitle)
+        return ScrollView {
+            VStack (alignment: .leading, spacing: 5) {
+                ForEach(collection, id: \.self) { collectionItem in
+                    HStack (spacing:0) {
+                        HStack (spacing:0) {
+                            Text(className!.camelCaseToWords().capitalizingFirstLetter())
+                                .padding(.trailing, 5)
+                                .padding(.leading, 6)
+                                .padding(.vertical, 3)
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 14, weight: .bold))
+                                
+                            Text(collectionItem.computeTitle)
+                                .padding(.leading, 6)
+                                .padding(.trailing, 9)
+                                .padding(.vertical, 3)
+                                .background(Color.gray)
+                                .foregroundColor(Color.white)
+                                .font(.system(size: 14, weight: .bold))
+                            .zIndex(10)
+                        }
+                        .background(Color.purple)
+                        .cornerRadius(20)
+                        
+                        Spacer()
+                        
+                        Button (action: {}) {
+                            Image(systemName: "trash")
+                                .foregroundColor(Color(hex:"#777"))
+                        }
+                    }
+                }
             }
-
+            .padding(.top, 10)
+        }
+        .frame(maxHeight: 300)
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {

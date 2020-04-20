@@ -581,15 +581,54 @@
                         "profilePicture": ["profilePicture"],
                         "names": ["firstName", "lastName"],
                     },
-                    "excluded": [],
+                    "excluded": ["profilePicture", "names"],
                     "readOnly": [],
                     "renderDescription": {
                         "profilePicture": [
-                            "VStack", {}, [
-                                "VStack", {}, [
+                            "ZStack", {
+                                "title": "",
+                                "alignment": "center"
+                            }, [
+                                "Image", {
+                                    "image": "{.}",
+                                    "border": ["#ccc", 1],
+                                    "resizable": "fill",
+                                    "maxHeight": 250,
+                                    "opacity": 0.6
+                                },
+                                
+                                "ZStack", {
+                                    "border": ["#fff", 27],
+                                    "padding": 12,
+                                    "maxWidth": 140,
+                                    "maxHeight": 140,
+                                    "cornerRadius": 100,
+                                    "align": "center"
+                                }, [
                                     "Image", {
-                                        "systemName": "person.fill"
-                                    }
+                                        "image": "{.}",
+                                        "resizable": "fill"
+                                    },
+                                    
+                                    "HSTack", {
+                                        "align": "center",
+                                        "maxWidth": 140,
+                                        "maxHeight": 140,
+                                        "condition": "{!readOnly}"
+                                    }, [
+                                        "Button", {
+                                            "press": { "actionName": "add" },
+                                            "cornerRadius": 25,
+                                            "maxWidth": 50,
+                                            "maxHeight": 50,
+                                            "background": "#eee",
+                                            "color": "#434343",
+                                            "align": "center",
+                                            "font": [14, "regular"]
+                                        }, [
+                                            "Text", { "text": "Edit" }
+                                        ]
+                                    ]
                                 ]
                             ]
                         ],
@@ -600,7 +639,7 @@
                                 "rowInset": [12, 20, -12, 20],
                             }, [
                                 "EditorRow", {
-                                    "title": "{name}"
+                                    "title": "{displayName}"
                                 }, [
                                     "Text", {
                                         "text": "{.} readonly",
@@ -614,17 +653,24 @@
                             ]
                         ],
                         "labels": [
-                            "WrapStack", {"list": "{.labels}"}, [
-                                "VStack", {
-                                    "background": "{.color}",
-                                    "cornerRadius": 5
+                            "EditorRow", {
+                                "for": "group",
+                                "title": "{displayName}"
+                            }, [
+                                "WrapStack", {
+                                    "list": "{.labels}"
                                 }, [
-                                    "Text", {
-                                        "text": "{.name}",
-                                        "font": [16, "semibold"],
-                                        "foregroundColor": "#fff",
-                                        "padding": [5, 8, 5, 8]
-                                    }
+                                    "VStack", {
+                                        "background": "{.color}",
+                                        "cornerRadius": 5
+                                    }, [
+                                        "Text", {
+                                            "text": "{.name}",
+                                            "font": [16, "semibold"],
+                                            "color": "#fff",
+                                            "padding": [5, 8, 5, 8]
+                                        }
+                                    ]
                                 ]
                             ]
                         ]
