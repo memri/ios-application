@@ -581,7 +581,8 @@
                         "profilePicture": ["profilePicture"],
                         "names": ["firstName", "lastName"],
                     },
-                    "excluded": ["profilePicture", "names"],
+                    "sequence": ["profilePicture", "labels", "*", "other", "dates"],
+                    "excluded": [],
                     "readOnly": [],
                     "renderDescription": {
                         "profilePicture": [
@@ -593,8 +594,10 @@
                                     "image": "{.}",
                                     "border": ["#ccc", 1],
                                     "resizable": "fill",
+                                    "minHeight": 250,
                                     "maxHeight": 250,
-                                    "opacity": 0.6
+                                    "opacity": 0.6,
+                                    "align": "center"
                                 },
                                 
                                 "ZStack", {

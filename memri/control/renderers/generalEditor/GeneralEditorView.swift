@@ -102,7 +102,7 @@ struct GeneralEditorSection: View {
                     _ item:DataItem) -> [String:() -> Any] {
         return [
             "readonly": { !self.main.currentSession.editMode },
-            "title": { groupKey.camelCaseToWords().uppercased() },
+            "title": { groupKey },
             "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
             "name": { name },
             ".": { value ?? item[name] as Any }
@@ -404,7 +404,7 @@ struct GeneralEditorRow: View {
                         
                         if !self.readOnly {
                             Button (action: {}) {
-                                Image(systemName: "trash")
+                                Image(systemName: "archivebox")
                                     .foregroundColor(Color(hex:"#777"))
                             }
                         }

@@ -26,6 +26,9 @@
         "lastName": "Brown",
         "age": 37,
         "relations": [{"uid":"0x01"}],
+        "profilePicture": {
+            "uri": "/Users/rubendaniels/Downloads/ruben.jpeg"
+        },
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
             { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
