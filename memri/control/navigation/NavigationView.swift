@@ -2,7 +2,6 @@
 //  Navigation.swift
 //  memri
 //
-//  Created by Koen van der Veen on 20/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -10,7 +9,9 @@ import SwiftUI
 
 struct Navigation: View {
     @EnvironmentObject var main: Main
+    
     @State var dragOffset = CGSize.zero
+    @State var showSettings: Bool = false
     
     private let foreGroundPercentageWidth: CGFloat = 0.9
     
@@ -25,25 +26,58 @@ struct Navigation: View {
     }
     
     var body: some View {
-
         VStack{
-            VStack{
-                EmptyView()
+            HStack (spacing: 20) {
+                Button(action: {
+                    self.showSettings = true
+                }) {
+                    Image(systemName: "gear")
+                        .font(Font.system(size: 22, weight: .semibold))
+                        .foregroundColor(Color(hex:"#d9d2e9"))
+                }.sheet(isPresented: self.$showSettings) {
+                    SettingsPane().environmentObject(self.main)
+                }
+                
+                TextField("Jump to...", text: $main.navigation.filterText)
+                    .padding(5)
+                    .padding(.horizontal, 5)
+                    .foregroundColor(Color(hex:"#8a66bc"))
+                    .background(Color(hex:"#341e51"))
+                    .cornerRadius(5)
+                
+                Button(action: {}) {
+                    Image(systemName: "pencil")
+                        .font(Font.system(size: 22, weight: .semibold))
+                        .foregroundColor(Color(hex:"#d9d2e9"))
+                }
+                
+                Button(action: {}) {
+                    Image(systemName: "plus")
+                        .font(Font.system(size: 22, weight: .semibold))
+                        .foregroundColor(Color(hex:"#d9d2e9"))
+                }
             }
-            VStack{
-                ScrollView(.vertical) {
-                    ForEach(self.main.navigation.items, id: \.self){ navigationItem in
-                        self.item(navigationItem)
+            .padding(.top, 40)
+            .padding(.leading, -offsetLeft + 20)
+            .padding(.trailing, 20)
+            .frame(minHeight: 95)
+            .background(Color(hex:"#492f6c"))
+            
+            ScrollView(.vertical) {
+                VStack (spacing:0) {
+                    ForEach(self.main.navigation.getItems(), id: \.self){
+                        self.item($0)
                     }
                 }
             }
-            .offset(x: -offsetLeft, y: 15)
+            .padding(.top, 10)
+            .padding(.leading, -offsetLeft)
         }
-        .frame(width: UIScreen.main.bounds.width * 0.9,
+        .edgesIgnoringSafeArea(.vertical)
+        .frame(width: UIScreen.main.bounds.width * 0.95,
                height: UIScreen.main.bounds.height)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red: 0.22, green: 0.15, blue: 0.35))
-        .offset(x:  offsetLeft  + min(self.dragOffset.width, 0) )
+        .background(Color(hex: "543184"))
+        .padding(.leading, offsetLeft + min(self.dragOffset.width, 0) )
 
         .gesture(DragGesture()
             .onChanged{ value in
@@ -52,7 +86,6 @@ struct Navigation: View {
             .onEnded{ value in
                 self.hide()
             })
-        .edgesIgnoringSafeArea(.vertical)
     }
 
     func item(_ navigationItem: NavigationItem) -> AnyView{
@@ -79,12 +112,10 @@ struct NavigationItemView: View{
     var body: some View {
         HStack{
             Text(item.title.firstUppercased)
-                .font(.body)
-                .padding(.vertical, 15)
-                .padding(.horizontal, 50)
-                .foregroundColor(Color(red: 0.85,
-                                       green: 0.85,
-                                       blue: 0.85))
+                .font(.system(size: 18, weight: .regular))
+                .padding(.vertical, 10)
+                .padding(.horizontal, 35)
+                .foregroundColor(Color(hex: "#d9d2e9"))
             Spacer()
         }
         .onTapGesture {
@@ -102,12 +133,11 @@ struct NavigationHeadingView: View{
 
     var body: some View {
         HStack{
-            Text(title != nil ? title!.uppercased() : "")
-                .font(.title)
-                .fontWeight(.bold)
-                .padding(.horizontal, 25)
+            Text((title ?? "").uppercased())
+                .font(.system(size: 18, weight: .bold))
+                .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .foregroundColor(Color(red: 0.55, green: 0.5, blue: 0.7))
+                .foregroundColor(Color(hex:"#8c73af"))
             Spacer()
         }
     }
