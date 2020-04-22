@@ -395,7 +395,7 @@ public class GUIElementDescription: Decodable {
         return nil
     }
     
-    private class func formatDate(_ date:Date?) -> String{
+    public class func formatDate(_ date:Date?) -> String{
         let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
         
         if let date = date {
@@ -412,6 +412,15 @@ public class GUIElementDescription: Decodable {
             else {
                 return date.timestampString ?? ""
             }
+        }
+        else {
+            return "never"
+        }
+    }
+    
+    public class func formatDateSinceCreated(_ date:Date?) -> String{
+        if let date = date {
+            return date.timeDelta ?? ""
         }
         else {
             return "never"
@@ -452,8 +461,19 @@ public class GUIElementDescription: Decodable {
             }
             else {
                 lastPart = String(part)
-                lastObject = (value as! Object)
-                value = lastObject![lastPart!]
+                if value is Object{
+                    lastObject = value as! Object
+                    value = lastObject![lastPart!]
+
+                }
+                else{
+                    lastObject = nil
+                    let x = Array(arrayLiteral: value)
+                    value = Array(arrayLiteral: value).count
+
+                }
+//                lastObject = (value as! Object)
+//                value = lastObject![lastPart!]
             }
         }
         
@@ -649,12 +669,14 @@ public struct GUIElementInstance: View {
             if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
-                        Text(LocalizedStringKey(self.get("title") ?? ""
-                            .camelCaseToWords()
-                            .lowercased()
-                            .capitalizingFirstLetter())
-                        )
-                        .generalEditorLabel()
+                        if self.has("title"){
+                            Text(LocalizedStringKey(self.get("title") ?? ""
+                                .camelCaseToWords()
+                                .lowercased()
+                                .capitalizingFirstLetter())
+                            )
+                            .generalEditorLabel()
+                        }
                         
                         self.renderChildren
                             .generalEditorCaption()
@@ -694,6 +716,7 @@ public struct GUIElementInstance: View {
                     .if(from.getBool("italic")){ $0.italic() }
                     .if(from.getBool("underline")){ $0.underline() }
                     .if(from.getBool("strikethrough")){ $0.strikethrough() }
+                    .fixedSize(horizontal: false, vertical: true)
                     .setProperties(from.properties, self.item)
             }
             else if from.type == "textfield" {

@@ -27,6 +27,8 @@ class GeneralEditorConfig: RenderConfig{
     
     let readOnly = List<String>()
     let excluded = List<String>()
+    let sequence = List<String>()
+
     
     var groups: [String:[String]]? {
         if self._groups != nil{
@@ -63,6 +65,7 @@ class GeneralEditorConfig: RenderConfig{
             
             decodeIntoList(decoder, "readOnly", self.readOnly)
             decodeIntoList(decoder, "excluded", self.excluded)
+            decodeIntoList(decoder, "sequence", self.sequence)
 
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("groups") {
                 self._groups = String(
@@ -91,6 +94,8 @@ class GeneralEditorConfig: RenderConfig{
         
         self.excluded.append(objectsIn: generalEditorConfig.excluded)
         self.readOnly.append(objectsIn: generalEditorConfig.readOnly)
+        
+        self["sequence"] = generalEditorConfig.sequence
 
         super.superMerge(generalEditorConfig)
     }

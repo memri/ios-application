@@ -44,19 +44,37 @@ struct GeneralEditorView: View {
         }.forEach({
             filteredGroups[$0] = groups[$0] ?? [$0]
         })
-        
         return filteredGroups.count > 0 ? filteredGroups : nil
+    }
+    
+    func getSortedKeys(_ groups: [String:[String]]) -> [String]{
+        
+        var keys = Array(self.renderConfig.sequence)
+        for k in groups.keys{
+            if !keys.contains(k) {
+                keys.append(k)
+            }
+        }
+        
+        keys = keys.filter{ !self.renderConfig.excluded.contains($0) }
+        
+        if !keys.contains("other"){
+            keys.append("other")
+        }
+        
+        return keys
     }
     
     var body: some View {
         let item = main.computedView.resultSet.item!
         let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
-        
+        let sortedKeys = getSortedKeys(groups)
+        print(sortedKeys)
         return ScrollView {
             VStack (alignment: .leading, spacing: 0) {
                 if groups.count > 0 {
-                    ForEach(Array(groups.keys), id: \.self) { groupKey in
+                    ForEach(sortedKeys, id: \.self) { groupKey in
                         GeneralEditorSection(
                             item: item,
                             renderConfig: renderConfig,
@@ -64,12 +82,6 @@ struct GeneralEditorView: View {
                             groups: groups)
                     }
                 }
-
-                GeneralEditorSection(
-                    item: item,
-                    renderConfig: renderConfig,
-                    groupKey: "other",
-                    groups: groups)
             }
             .frame(maxWidth:.infinity, maxHeight: .infinity)
         }
@@ -99,110 +111,49 @@ struct GeneralEditorSection: View {
     }
     
     func getOptions(_ groupKey:String, _ name:String, _ value:Any?,
-                    _ item:DataItem) -> [String:() -> Any] {
+                    _ item:DataItem)-> [String:() -> Any] {
+        
         return [
             "readonly": { !self.main.currentSession.editMode },
-            "title": { groupKey.camelCaseToWords().uppercased() },
+            "sectiontitle": { groupKey.camelCaseToWords().uppercased() },
             "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
             "name": { name },
             ".": { value ?? item[name] as Any }
         ]
     }
     
-    func getTitle(_ groupKey:String) -> String? {
-        renderConfig.renderDescription?[groupKey]?.properties["title"] as? String
+    func getSectionTitle(_ groupKey:String) -> String? {
+        renderConfig.renderDescription?[groupKey]?.properties["sectiontitle"] as? String
     }
     
-    func renderForGroup(_ groupKey:String) -> Bool {
+    func isDescriptionForGroup(_ groupKey:String) -> Bool {
         renderConfig.renderDescription?[groupKey]?.properties["for"] as? String == "group"
     }
     
     func getType(_ groupKey:String) -> String {
         renderConfig.renderDescription?[groupKey]?.type ?? ""
     }
-
-    var body: some View {
-        let renderDescription = renderConfig.renderDescription!
-        let editMode = self.main.currentSession.editMode
-        
-        let header = groupKey == "other"
-            ? groups.count > 0 ? "other" : "all"
-            : groupKey
-        let properties = groupKey == "other"
-            ? self.getProperties(item)
-            : self.groups[self.groupKey]!
-        let isArray = item.objectSchema[groupKey]?.isArray ?? false
-        
-        return Group {
+    
+    func getHeader(_ renderDescription: [String:GUIElementDescription], _ isArray: Bool) -> some View{
+        return Group{
             if renderDescription[groupKey] != nil {
-                if self.getTitle(groupKey) == "" {
-                    Section (header: EmptyView()) {
-                        ForEach(groups[groupKey]!, id:\.self) { name in
-                            self.renderConfig.render(self.item, self.groupKey,
-                                self.getOptions(self.groupKey, name, nil, self.item))
-                        }
-                    }
+                if self.getSectionTitle(groupKey) == "" {
+                    EmptyView()
+                }else{
+                    self.constructSectionHeader(title: self.getSectionTitle(groupKey) ?? groupKey,
+                                       action: (item.objectSchema[groupKey]?.isArray ?? false)
+                                                ? ActionDescription(actionName: .noop)
+                                                : nil)
                 }
-                else {
-                    Section(
-                        header: self.sectionHeader(
-                            title: self.getTitle(groupKey) ?? groupKey,
-                            action: (item.objectSchema[groupKey]?.isArray ?? false)
-                                ? ActionDescription(actionName: .noop)
-//                                                    actionName: .addToList,
-//                                                    actionArgs: [item, groupKey])
-                                : nil
-                        )
-                    ) {
-                        Divider()
-                        if isArray {
-                            if self.renderForGroup(groupKey) {
-                                renderConfig.render(item, groupKey,
-                                    self.getOptions(groupKey, groupKey, nil, item))
-                            }
-                            else {
-                                ForEach(self.getArray(item, groupKey), id:\.id) {
-                                    self.renderConfig.render(self.item, self.groupKey,
-                                        self.getOptions(self.groupKey, "", $0, self.item))
-                                }
-                            }
-                        }
-                        else {
-                            ForEach(groups[groupKey]!, id:\.self) { name in
-                                self.renderConfig.render(self.item, self.groupKey,
-                                    self.getOptions(self.groupKey, name, nil, self.item))
-                            }
-                        }
-                        Divider()
-                    }
-                }
-            }
-            else {
-                Section(header: sectionHeader(
-                    title: header,
-                    action: isArray
-                        ? ActionDescription(actionName: .noop)
-                        : nil
-                )) {
-                    Divider()
-                    ForEach(properties, id: \.self){ prop in
-                        GeneralEditorRow(
-                            main: self._main,
-                            item: self.item,
-                            prop: prop,
-                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
-                            isLast: properties.last == prop,
-                            renderConfig: self.renderConfig,
-                            options: self.getOptions("", prop, nil, self.item)
-                        )
-                    }
-                    Divider()
-                }
+            }else{
+                self.constructSectionHeader(title: (groupKey == "other" && groups.count == 0) ? "all": groupKey,
+                                   action: isArray ? ActionDescription(actionName: .noop): nil
+                )
             }
         }
     }
     
-    func sectionHeader(title:String, action:ActionDescription? = nil) -> some View {
+    func constructSectionHeader(title:String, action:ActionDescription? = nil) -> some View {
         HStack (alignment: .bottom) {
             Text(title.camelCaseToWords().uppercased())
                 .generalEditorHeader()
@@ -218,9 +169,91 @@ struct GeneralEditorSection: View {
             }
         }.padding(.trailing, 20)
     }
+
+    var body: some View {
+        let renderDescription = renderConfig.renderDescription!
+        let editMode = self.main.currentSession.editMode
+        
+        let properties = groupKey == "other"
+            ? self.getProperties(item)
+            : self.groups[self.groupKey]!
+        let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
+        
+        return Group {
+            
+//            func getOptions(_ name:String, _ value:Any?,
+//                            _ item:DataItem)-> [String:() -> Any] {
+//                return [
+//                    "readonly": { !self.main.currentSession.editMode },
+//                    "title": { self.groupKey.camelCaseToWords().uppercased() },
+//                    "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
+//                    "name": { name },
+//                    ".": { value ?? item[name] as Any }
+//                ]
+//            }
+            
+//            self.getOptions(self.groupKey, groupElement, nil, self.item))
+//            self.getOptions(self.groupKey, groupKey, nil, self.item))
+//            self.getOptions(self.groupKey, "", $0, $0))
+//            self.getOptions(self.groupKey, groupElement, nil, self.item))
+//            self.getOptions("", prop, nil, self.item)
+
+
+            
+            Section (header: self.getHeader(renderDescription, groupContainsNodes)){
+                if renderDescription[groupKey] != nil {
+                    // TODO: not sure if the !groupIsEdge condition is necessary
+                    if self.getSectionTitle(groupKey) == "" || !groupContainsNodes {
+                        ForEach(groups[groupKey]!, id:\.self) { groupElement in
+                            self.renderConfig.render(self.item, self.groupKey,
+                                                     self.getOptions(self.groupKey, groupElement,
+                                                                     nil, self.item))
+                        }
+                    }else{
+                    // if title is not empty
+                        Divider()
+                        if groupContainsNodes {
+                            // when you render one GUIElement for the whole group (potentially unwrapped by using wrapStack
+                            if self.isDescriptionForGroup(groupKey) {
+                                renderConfig.render(item, groupKey,
+                                                    self.getOptions(self.groupKey, groupKey, nil,
+                                                                    self.item))
+                            }
+                            else {
+                                // The normal case for edges: loop over
+                                ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
+                                    self.renderConfig.render(otherItem, self.groupKey,
+                                                             self.getOptions(self.groupKey, "", otherItem,
+                                                                             otherItem))
+                                }
+                            }
+                        }
+                        Divider()
+                        
+                    }
+                }else{
+                    Divider()
+                    ForEach(properties, id: \.self){ prop in
+                        DefaultGenralEditorRow(
+                            main: self._main,
+                            item: self.item,
+                            prop: prop,
+                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                            isLast: properties.last == prop,
+                            renderConfig: self.renderConfig,
+                            options: self.getOptions("", prop, nil, self.item)
+                        )
+                    }
+                    Divider()
+                    
+                }
+            }
+        }
+    }
+    
 }
 
-struct GeneralEditorRow: View {
+struct DefaultGenralEditorRow: View {
     @EnvironmentObject var main: Main
     
     var item: DataItem
@@ -250,11 +283,7 @@ struct GeneralEditorRow: View {
                     renderConfig.render(item, prop, options)
                 }
                 else if readOnly {
-                    if propType == .string
-                      || propType == .bool
-                      || propType == .date
-                      || propType == .int
-                      || propType == .double {
+                    if [.string, .bool, .date, .int, .double].contains(propType){
                         defaultRow(self.item.getString(self.prop))
                     }
                     else if propType == .object {

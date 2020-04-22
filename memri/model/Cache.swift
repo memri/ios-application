@@ -189,7 +189,7 @@ public class Cache {
         }
         else {
             // Fetch item from the cache to double check
-            if let cachedItem:DataItem = self.getItemById(item.type, item.uid) {
+            if let cachedItem:DataItem = self.getItemById(item.genericType, item.uid) {
                 
                 // Do nothing when the version is not higher then what we already have
                 if !cachedItem.syncState!.isPartiallyLoaded && item.syncState!.version <= cachedItem.syncState!.version {
@@ -286,7 +286,7 @@ public class Cache {
      * Does not copy the id property
      */
     public func duplicate(_ item:DataItem) -> DataItem {
-        let type = DataItemFamily(rawValue: item.type)!
+        let type = DataItemFamily(rawValue: item.genericType)!
         let T = DataItemFamily.getType(type)
         let cls = T() as! DataItem.Type
         let copy = cls.init()

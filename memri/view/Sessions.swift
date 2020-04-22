@@ -15,7 +15,7 @@ public class Sessions: DataItem {
     /**
      *
      */
-    override var type:String { "sessions" }
+    override var genericType:String { "sessions" }
     /**
      *
      */
@@ -214,7 +214,7 @@ public class Session: DataItem {
     /**
      *
      */
-    override var type:String { "session" }
+    override var genericType:String { "session" }
     /**
      *
      */
