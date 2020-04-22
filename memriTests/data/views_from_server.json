@@ -637,11 +637,13 @@
                         ],
                         "dates": [
                             "Text", {
-                                "title": "",
+                                "sectionTitle": "",
                                 "alignment": "center",
                                 "textalign": "center",
                                 "text": "{.describeChangelog()}",
-                                "padding": [30, 40, 10, 40],
+                                "padding": [30, 40, 40, 40],
+                                "color": "#999",
+                                "font": [13],
                                 "maxChar": 300
                             }
                         ],
