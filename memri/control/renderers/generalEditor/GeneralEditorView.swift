@@ -138,6 +138,11 @@ struct GeneralEditorSection: View {
     func getHeader(_ renderDescription: [String:GUIElementDescription],
                    _ isArray: Bool) -> some View{
         
+        let editMode = self.main.currentSession.editMode
+        let isArray = item.objectSchema[groupKey]?.isArray ?? false
+        let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
+        let readOnly = self.renderConfig.readOnly.contains(groupKey)
+        
         return Group{
             if renderDescription[groupKey] != nil {
                 if self.getSectionTitle(groupKey) == "" {
@@ -146,8 +151,19 @@ struct GeneralEditorSection: View {
                 else{
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
-                        action: (item.objectSchema[groupKey]?.isArray ?? false)
-                            ? ActionDescription(actionName: .noop)
+                        action: isArray && editMode && !readOnly
+                            ? ActionDescription(
+                                actionName: .openViewByName,
+                                actionArgs: [
+                                    "choose-item-by-query",
+                                    [
+                                        "query": className,
+                                        "type": className,
+                                        "actionName": "addSelectionToList",
+                                        "actionArgs": [self.item, groupKey],
+                                        "title": "Add Selected"
+                                    ]
+                                ])
                             : nil
                     )
                 }
@@ -155,7 +171,20 @@ struct GeneralEditorSection: View {
             else {
                 self.constructSectionHeader(
                     title: (groupKey == "other" && groups.count == 0) ? "all" : groupKey,
-                    action: isArray ? ActionDescription(actionName: .noop): nil
+                    action: isArray && editMode && !readOnly
+                        ? ActionDescription(
+                            actionName: .openViewByName,
+                            actionArgs: [
+                                "choose-item-by-query",
+                                [
+                                    "query": className,
+                                    "type": className,
+                                    "actionName": "addSelectionToList",
+                                    "actionArgs": [self.item, groupKey],
+                                    "title": "Add Selected"
+                                ]
+                            ])
+                        : nil
                 )
             }
         }
@@ -181,9 +210,6 @@ struct GeneralEditorSection: View {
     var body: some View {
         let renderDescription = renderConfig.renderDescription!
         let editMode = self.main.currentSession.editMode
-        let isArray = item.objectSchema[groupKey]?.isArray ?? false
-        let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
-        let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let properties = groupKey == "other"
             ? self.getProperties(item)
