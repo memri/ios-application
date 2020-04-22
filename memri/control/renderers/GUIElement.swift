@@ -464,14 +464,14 @@ public class GUIElementDescription: Decodable {
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
-                       _ options:[String: () -> Any] = [:]) -> T? {
+                       _ variables:[String: () -> Any] = [:]) -> T? {
         
         if let prop = properties[propName] {
             let propValue = prop
             
             // Compile string properties
             if let compiled = propValue as? CompiledProperty {
-                let x:T? = GUIElementDescription.computeProperty(compiled, item, options)
+                let x:T? = GUIElementDescription.computeProperty(compiled, item, variables)
                 return x
             }
             
@@ -504,7 +504,7 @@ public class GUIElementDescription: Decodable {
     }
     
     private class func traverseProperties<T>(_ item:DataItem, _ propParts:[String],
-                                             _ options:[String:()->Any]=[:]) -> T? {
+                                             _ variables:[String:()->Any]=[:]) -> T? {
         // Loop through the properties and fetch each
         var value:Any? = nil
         /*
@@ -521,8 +521,7 @@ public class GUIElementDescription: Decodable {
             value = item
         }
         else {
-            value = options[firstItem.lowercased()]!()
-            if isNegationTest { value = !(value as! Bool) }
+            value = variables[firstItem.lowercased()]!()
         }
         
         var lastPart:String? = nil
@@ -563,23 +562,29 @@ public class GUIElementDescription: Decodable {
         // Execute a custom function
         else if let f = value as? ([Any]?) -> String { value = f([]) }
         
+        // Support boolean operations on multiple types
+        else if T.self == Bool.self {
+            if isNegationTest { value = negateAny(value ?? true) }
+            else { value = !negateAny(value ?? false) }
+        }
+        
         // Return the value as a string
         return value as? T
     }
     
     public class func computeProperty<T>(_ compiled:CompiledProperty, _ item:DataItem?,
-                                         _ options:[String:()->Any]=[:]) -> T? {
+                                         _ variables:[String:()->Any]=[:]) -> T? {
         
         // If this is a single lookup e.g. {.myBoolean} then lets return the actual
         // type rather than a string
         if compiled.result.count == 1, let result = compiled.result.first as? [String] {
             // TODO Error Handling
-            let x:T? = traverseProperties(item!, result, options)
+            let x:T? = traverseProperties(item!, result, variables)
             return x
         }
         else {
             return (compiled.result.map {
-                if let s = $0 as? [String] { return traverseProperties(item!, s, options) ?? ""}
+                if let s = $0 as? [String] { return traverseProperties(item!, s, variables) ?? ""}
                 return $0 as! String
             }.joined() as! T)
         }
@@ -615,25 +620,25 @@ public struct GUIElementInstance: View {
     
     let from:GUIElementDescription
     let item:DataItem
-    let options:[String:()->Any]
+    let variables:[String:()->Any]
     
     public init(_ gui:GUIElementDescription, _ dataItem:DataItem, _ opts:[String:()->Any]=[:]) {
         from = gui
         item = dataItem
-        options = opts
+        variables = opts
     }
     
     public func has(_ propName:String) -> Bool {
-        return options[propName] != nil || from.has(propName)
+        return variables[propName] != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
             // TODO Error Handling
-            return (options[propName.substr(1)]!() as! T)
+            return (variables[propName.substr(1)]!() as! T)
         }
         else {
-            return from.get(propName, item, options)
+            return from.get(propName, item, variables)
         }
     }
     
@@ -830,7 +835,7 @@ public struct GUIElementInstance: View {
     @ViewBuilder
     var renderChildren: some View {
         ForEach(0..<from.children.count){ index in
-            GUIElementInstance(self.from.children[index], self.item, self.options)
+            GUIElementInstance(self.from.children[index], self.item, self.variables)
         }
     }
     

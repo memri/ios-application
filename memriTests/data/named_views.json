@@ -26,11 +26,12 @@
                 "type": "{type}"
             }]
         },
+        "rendererName": "list",
         "renderConfig": {
-            "*": {
+            "list": {
                 "press": { "actionName": "noop" }
             }
-        }
+        },
         "title": "Choose a {type}"
     },
     

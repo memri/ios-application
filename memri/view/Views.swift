@@ -1030,7 +1030,7 @@ public class CompiledView {
         }
         
         var extraVars = varValues ?? [:]
-        if let vars = view!.variables {
+        if let view = view, let vars = view.variables {
             for (key, value) in vars {
                 extraVars[key] = value
             }
@@ -1056,7 +1056,7 @@ public class CompiledView {
         return view!
     }
     
-    func generateSession() throws -> Session {
+    func generateSession(_ variables:[String:Any]? = nil) throws -> Session {
         // Prevent views generated from a session template
         if !self.hasSession { throw "Exception: Cannot generate session from a view template" }
         
@@ -1068,7 +1068,7 @@ public class CompiledView {
         
 //        var computedView:ComputedView
         for i in 0..<views.count {
-            session.views.append(try! views[i].generateView())
+            session.views.append(try! views[i].generateView(variables))
             
             // TODO The code below is the beginning of allow dynamic views that refer the view
             //      or computedView to get the right reference. A major problem is that the data
@@ -1114,6 +1114,11 @@ public class CompiledView {
     
     public func queryObject(_ expr:String, _ extraVars:[String:Any]) -> String{
 
+//        let isNegationTest = expression.first == "!"
+//        let expr = isNegationTest
+//            ? expression.substr(1)
+//            : expression
+        
         // Split the property by dots to look up each property separately
         let propParts = expr == "."
             ? ["."]
@@ -1123,6 +1128,8 @@ public class CompiledView {
         
         // Get the first property of the object
         var value:Any? = getProperty(propParts[0], propParts[1], extraVars)
+        
+//        if isNegationTest { value = negateAny(value) }
         
         // Check if the value is not nil
         if value != nil {

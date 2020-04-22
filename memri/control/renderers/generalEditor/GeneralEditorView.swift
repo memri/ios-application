@@ -99,7 +99,7 @@ struct GeneralEditorSection: View {
         }.map({$0.name})
     }
     
-    func getOptions(_ groupKey:String, _ name:String, _ value:Any?,
+    func getVariablesDict(_ groupKey:String, _ name:String, _ value:Any?,
                     _ item:DataItem) -> [String:() -> Any] {
         return [
             "readonly": { !self.main.currentSession.editMode },
@@ -125,8 +125,8 @@ struct GeneralEditorSection: View {
     var body: some View {
         let renderDescription = renderConfig.renderDescription!
         let editMode = self.main.currentSession.editMode
-        let isArray = item.objectSchema[groupKey]? .isArray ?? false
-        let className = self.item.objectSchema[groupKey]!.objectClassName!
+        let isArray = item.objectSchema[groupKey]?.isArray ?? false
+        let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let properties = groupKey == "other"
@@ -139,7 +139,7 @@ struct GeneralEditorSection: View {
                     Section (header: EmptyView()) {
                         ForEach(groups[groupKey]!, id:\.self) { name in
                             self.renderConfig.render(self.item, self.groupKey,
-                                self.getOptions(self.groupKey, name, nil, self.item))
+                                self.getVariablesDict(self.groupKey, name, nil, self.item))
                         }
                     }
                 }
@@ -169,19 +169,19 @@ struct GeneralEditorSection: View {
                         if isArray {
                             if self.renderForGroup(groupKey) {
                                 renderConfig.render(item, groupKey,
-                                    self.getOptions(groupKey, groupKey, nil, item))
+                                    self.getVariablesDict(groupKey, groupKey, nil, item))
                             }
                             else {
                                 ForEach(self.getArray(item, groupKey), id:\.id) {
                                     self.renderConfig.render(self.item, self.groupKey,
-                                        self.getOptions(self.groupKey, "", $0, self.item))
+                                        self.getVariablesDict(self.groupKey, "", $0, self.item))
                                 }
                             }
                         }
                         else {
                             ForEach(groups[groupKey]!, id:\.self) { name in
                                 self.renderConfig.render(self.item, self.groupKey,
-                                    self.getOptions(self.groupKey, name, nil, self.item))
+                                    self.getVariablesDict(self.groupKey, name, nil, self.item))
                             }
                         }
                         Divider()
@@ -206,7 +206,7 @@ struct GeneralEditorSection: View {
                             readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
                             isLast: properties.last == prop,
                             renderConfig: self.renderConfig,
-                            options: self.getOptions("", prop, nil, self.item)
+                            options: self.getVariablesDict("", prop, nil, self.item)
                         )
                     }
                     Divider()

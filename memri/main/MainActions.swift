@@ -23,8 +23,6 @@ extension Main {
         if action.actionName.opensView {
             switch action.actionName {
             case .openView:
-                let variables = params[0].value as? [String:Any]
-                
                 /*
                     TODO: pass options to openView and eventually to where computeView is called
                           add options to computedView before it is assigned to main
@@ -57,26 +55,31 @@ extension Main {
                           Ephemeral views are removed from session when one navigates away from them.
                  */
                 
-                if (params.count > 0) { openView(params[0].value as! SessionView, variables) }
-                else if selection.count > 0 { openView(selection, variables) } // TODO does this mean anything?
-                else if let item = item as? SessionView { openView(item, variables) }
-                else if let item = item { openView(item, variables) }
+                if (params.count > 0) {
+                    let view = params[0].value as! SessionView
+                    let variables = params[safe: 1]?.value as? [String:Any]
+                    
+                    openView(view, variables)
+                }
+                else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
+                else if let item = item as? SessionView { openView(item) }
+                else if let item = item { openView(item) }
             case .openViewByName:
                 let name = params[0].value as! String
-                let variables = params[0].value as? [String:Any]
+                let variables = params[safe: 1]?.value as? [String:Any]
                 
                 openView(name, variables)
             case .openSession:
                 if (params.count > 0) {
                     let name = params[0].value as! String
-                    let variables = params[0].value as? [String:Any]
+                    let variables = params[safe: 1]?.value as? [String:Any]
                     
                     openSession(name, variables)
                 }
                 else if let item = item as? Session { openSession(item) }
             case .openSessionByName:
                 let name = params[0].value as! String
-                let variables = params[0].value as? [String:Any]
+                let variables = params[safe: 1]?.value as? [String:Any]
                 
                 openSession(name, variables)
             case .showStarred:

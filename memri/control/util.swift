@@ -74,6 +74,14 @@ extension String: Error {
     }
 }
 
+extension Collection {
+
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
+
 extension Date {
    var timestampString: String? {
       let formatter = DateComponentsFormatter()
@@ -209,4 +217,13 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
             list.append(item)
         }
     }
+}
+
+func negateAny(_ value:Any) -> Bool {
+    if let value = value as? Bool { return !value}
+    if let value = value as? Int { return value == 0 }
+    if let value = value as? Double { return value == 0 }
+    if let value = value as? String { return value == "" }
+    
+    return false
 }
