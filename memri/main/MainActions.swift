@@ -23,7 +23,7 @@ extension Main {
         if action.actionName.opensView {
             switch action.actionName {
             case .openView:
-                let options = params[0].value as? [String:Any]
+                let variables = params[0].value as? [String:Any]
                 
                 /*
                     TODO: pass options to openView and eventually to where computeView is called
@@ -57,17 +57,28 @@ extension Main {
                           Ephemeral views are removed from session when one navigates away from them.
                  */
                 
-                if (params.count > 0) { openView(params[0].value as! SessionView, options) }
-                else if selection.count > 0 { openView(selection, options) } // TODO does this mean anything?
-                else if let item = item as? SessionView { openView(item, options) }
-                else if let item = item { openView(item, options) }
+                if (params.count > 0) { openView(params[0].value as! SessionView, variables) }
+                else if selection.count > 0 { openView(selection, variables) } // TODO does this mean anything?
+                else if let item = item as? SessionView { openView(item, variables) }
+                else if let item = item { openView(item, variables) }
             case .openViewByName:
-                openView(params[0].value as! String)
+                let name = params[0].value as! String
+                let variables = params[0].value as? [String:Any]
+                
+                openView(name, variables)
             case .openSession:
-                if (params.count > 0) { openSession(params[0].value as! Session) }
+                if (params.count > 0) {
+                    let name = params[0].value as! String
+                    let variables = params[0].value as? [String:Any]
+                    
+                    openSession(name, variables)
+                }
                 else if let item = item as? Session { openSession(item) }
             case .openSessionByName:
-                openSession(params[0].value as! String)
+                let name = params[0].value as! String
+                let variables = params[0].value as? [String:Any]
+                
+                openSession(name, variables)
             case .showStarred:
                 showStarred(starButton: action)
             case .back: back()
@@ -202,11 +213,19 @@ extension Main {
      * Adds a view to the history of the currentSession and displays it.
      * If the view was already part of the currentSession.views it reorders it on top
      */
-    func openView(_ view:SessionView) {
+    func openView(_ view:SessionView, _ variables:[String:Any]? = nil) {
         let session = self.currentSession
+        
+        // Toggle the state to true
+        if let stateName = variables?["stateName"] as? String { view.toggleState(stateName) }
         
         // Add view to session
         session.setCurrentView(view)
+        
+        // Register variables
+        try! realm.write {
+            view.variables = variables
+        }
         
         // Set accessed date to now
         view.access()
@@ -215,7 +234,7 @@ extension Main {
         scheduleComputeView()
     }
     
-    func openView(_ item:DataItem){
+    func openView(_ item:DataItem, _ variables:[String:Any]? = nil){
         // Create a new view
         let view = SessionView()
         
@@ -224,25 +243,22 @@ extension Main {
         view.queryOptions!.query = "\(item.type) AND \(primKey) = '\(item.getString(primKey))'"
         
         // Open the view
-        self.openView(view)
+        openView(view, variables)
     }
     
-    public func openView(_ viewName: String, _ stateName:String?=nil) {
+    public func openView(_ viewName: String, _ variables:[String:Any]? = nil) {
         
         // Fetch a dynamic view based on its name
-        if let view:SessionView = views.getSessionView(viewName) {
-            
-            // Toggle the state to true
-            if let stateName = stateName { view.toggleState(stateName) }
+        if let view:SessionView = views.getSessionView(viewName, variables) {
             
             // Open the view
-            openView(view)
+            openView(view, variables)
         }
         else {
             print("Warn: Could not find view: '\(viewName)")
         }
     }
-    public func openView(_ items: [DataItem]) {}
+    public func openView(_ items: [DataItem], _ variables:[String:Any]? = nil) {}
 
     /**
      * Adds a view to the history of the currentSession and displays it.
@@ -260,7 +276,7 @@ extension Main {
     /**
      *
      */
-    public func openSession(_ name:String) {
+    public func openSession(_ name:String, _ variables:[String:Any]? = nil) {
         
         // TODO: This should not fetch the session from named sessions
         //       but instead load a sessionview that loads the named sessions by
@@ -268,7 +284,7 @@ extension Main {
         //       view to sessionview
         
         // Fetch a dynamic view based on its name
-        let (session, _) = views.getSessionOrView(name, wrapView:true)
+        let (session, _) = views.getSessionOrView(name, wrapView:true, variables)
         if let session = session {
             
             // Open the view
@@ -384,7 +400,7 @@ extension Main {
         if !self.computedView.hasState(starButton.actionStateName!) {
         
             // Open named view 'showStarred'
-            openView("filter-starred", starButton.actionStateName)
+            openView("filter-starred", ["stateName": starButton.actionStateName])
         }
         else {
             // Go back to the previous view

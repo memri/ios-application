@@ -155,7 +155,9 @@ struct GeneralEditorSection: View {
                                             "query": className,
                                             "type": className,
                                             "actionName": "addSelectionToList",
-                                            "actionArgs": [self.item, groupKey],
+                                            "actionArgs": [], // TODO below
+//                                            "actionArgs": [self.item, groupKey],
+//                                            "actionArgs": "[{previousSession.resultSet.item}, \"\(groupKey)\"]",
                                             "title": "Add Selected"
                                         ]
                                     ])

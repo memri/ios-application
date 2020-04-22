@@ -419,8 +419,6 @@ public class GUIElementDescription: Decodable {
                 if let rangeQuery = Range(match.range(at: 2), in: expr) {
                     
                     var searchPath:[String]
-//                    let str = String(expr[rangeQuery])
-//                    if str.test("^[^\\.]$") {
                     if expr[rangeQuery] == "." {
                         searchPath = ["."]
                     }
