@@ -12,11 +12,22 @@ import RealmSwift
 /*
  TODO:
     - Add + button behavior near grouped sections
-    - Fix sequence of the group sections
+        - Open the subview in a popup: .openViewAsPopup()
+        - requires implementing subview (which is good to prepare for the refactor)
+        - also requires a version of Main only for the subview
+    - Allow for group to only have the values of the default root element
+        - e.g. "phoneNumbers": { "title": "{.type"}, "text": "{.number}" }
+            - add text and button property to editorRow
+        - make sure that fully custom rows have an archive button (for person broken heart)
+            - requires separate views for editMode and view mode
+        - add .each to the title of a group to execute it for each element
+            - e.g. "phoneNumbers.each": {}
     - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
     - Add editor elements to GUIElement such as datepicker, textfield, etc
+    - Implement ForEach in GuiElement
  
     LATER:
+    - Create a nice scrolling version of ProfilePicture in a reusable element
     - Implement Image picker
     - Implement Color picker
     - Implement the buttons as a non-property section
@@ -140,7 +151,7 @@ struct GeneralEditorSection: View {
         
         let editMode = self.main.currentSession.editMode
         let isArray = item.objectSchema[groupKey]?.isArray ?? false
-        let genericType = self.item.genericType
+        let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         return Group{
@@ -157,8 +168,8 @@ struct GeneralEditorSection: View {
                                 actionArgs: [
                                     "choose-item-by-query",
                                     [
-                                        "query": genericType,
-                                        "type": genericType,
+                                        "query": className,
+                                        "type": className,
                                         "actionName": "addSelectionToList",
                                         "actionArgs": "", // [self.item, groupKey],
                                         "title": "Add Selected"
@@ -177,8 +188,8 @@ struct GeneralEditorSection: View {
                             actionArgs: [
                                 "choose-item-by-query",
                                 [
-                                    "query": genericType,
-                                    "type": genericType,
+                                    "query": className,
+                                    "type": className,
                                     "actionName": "addSelectionToList",
                                     "actionArgs": "", // [self.item, groupKey],
                                     "title": "Add Selected"
