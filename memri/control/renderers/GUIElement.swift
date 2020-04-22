@@ -480,7 +480,7 @@ public class GUIElementDescription: Decodable {
         return nil
     }
     
-    private class func formatDate(_ date:Date?) -> String{
+    public class func formatDate(_ date:Date?) -> String{
         let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
         
         if let date = date {
@@ -503,6 +503,15 @@ public class GUIElementDescription: Decodable {
         }
     }
     
+    public class func formatDateSinceCreated(_ date:Date?) -> String{
+        if let date = date {
+            return date.timeDelta ?? ""
+        }
+        else {
+            return "never"
+        }
+    }
+    
     private class func traverseProperties<T>(_ item:DataItem, _ propParts:[String],
                                              _ variables:[String:()->Any]=[:]) -> T? {
         // Loop through the properties and fetch each
@@ -513,9 +522,10 @@ public class GUIElementDescription: Decodable {
          */
         
         let isNegationTest = propParts.first?.first == "!"
-        let firstItem = isNegationTest
+        var firstItem = isNegationTest
             ? propParts[0].substr(1)
             : propParts[0]
+        if isNegationTest && firstItem == "" { firstItem = "dataItem" }
         
         if firstItem == "dataItem" {
             value = item
@@ -534,10 +544,25 @@ public class GUIElementDescription: Decodable {
                 lastPart = nil
                 break
             }
+            else if part == "count" { // TODO support other collections
+                value = (value as! RealmSwift.ListBase).count
+                lastPart = nil
+                break
+            }
             else {
                 lastPart = String(part)
-                lastObject = (value as! Object)
-                value = lastObject![lastPart!]
+                if value is Object{
+                    lastObject = (value as! Object)
+                    value = lastObject![lastPart!]
+
+                }
+                else{
+                    lastObject = nil
+                    print("THIS SHOULD NEVER HAPPEN 987239487234")
+                    value = Array(arrayLiteral: value).count
+                }
+//                lastObject = (value as! Object)
+//                value = lastObject![lastPart!]
             }
         }
         
@@ -564,8 +589,14 @@ public class GUIElementDescription: Decodable {
         
         // Support boolean operations on multiple types
         else if T.self == Bool.self {
-            if isNegationTest { value = negateAny(value ?? true) }
-            else { value = !negateAny(value ?? false) }
+            if isNegationTest {
+                value = negateAny(value ?? true)
+                
+            }
+            else {
+                value = !negateAny(value ?? false)
+                
+            }
         }
         
         // Return the value as a string
@@ -739,12 +770,14 @@ public struct GUIElementInstance: View {
             if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
-                        Text(LocalizedStringKey(self.get("title") ?? ""
-                            .camelCaseToWords()
-                            .lowercased()
-                            .capitalizingFirstLetter())
-                        )
-                        .generalEditorLabel()
+                        if self.has("title"){
+                            Text(LocalizedStringKey(self.get("title") ?? ""
+                                .camelCaseToWords()
+                                .lowercased()
+                                .capitalizingFirstLetter())
+                            )
+                            .generalEditorLabel()
+                        }
                         
                         self.renderChildren
                             .generalEditorCaption()
@@ -784,6 +817,7 @@ public struct GUIElementInstance: View {
                     .if(from.getBool("italic")){ $0.italic() }
                     .if(from.getBool("underline")){ $0.underline() }
                     .if(from.getBool("strikethrough")){ $0.strikethrough() }
+                    .fixedSize(horizontal: false, vertical: true)
                     .setProperties(from.properties, self.item)
             }
             else if from.type == "textfield" {

@@ -3,16 +3,17 @@ import Combine
 import RealmSwift
 
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
+    
     /**
      *
      */
-    var type:String { "unknown" }
+    var genericType:String { "unknown" }
     
     /**
      *
      */
     var computeTitle:String {
-        return "\(type) [\(uid)]"
+        return "\(genericType) [\(uid)]"
     }
     
     /**
@@ -74,6 +75,18 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         case cannotMergeItemWithDifferentId
     }
     
+    required init(){
+        super.init()
+
+        self.functions["describeChangelog"] = {_ in
+            let dateCreated = GUIElementDescription.formatDate(self.dateCreated)
+            let views =  self.changelog.filter{ $0.action == "read" }.count
+            let edits = self.changelog.filter{ $0.action == "update" }.count
+            let timeSinceCreated = GUIElementDescription.formatDateSinceCreated(self.dateCreated)
+            return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
+        }
+    }
+    
     /**
      * @private
      */
@@ -99,7 +112,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             
             // TODO how to do this in swift?
             // #IFDEF DEBUG
-            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.type):\(self.uid)")
+            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.genericType):\(self.uid)")
             // #ENDIF
             
             return ""

@@ -40,9 +40,9 @@
             "renderConfigs": {
                 "generalEditor": {
                     "groups": {
-                        "dates": ["dateCreated", "dateAccessed", "dateModified"]
+                        "dates": ["dates"]
                     },
-                    "excluded": ["deleted", "syncState", "uid", "changelog"],
+                    "excluded": ["deleted", "syncState", "uid", "changelog", "dateCreated", "dateModified", "dateAccessed"],
                     "readOnly": ["uid"]
                 }
             }
@@ -579,10 +579,10 @@
                 "generalEditor": {
                     "groups": {
                         "profilePicture": ["profilePicture"],
-                        "names": ["firstName", "lastName"],
+                        "names": ["firstName", "lastName"]
                     },
-                    "sequence": ["profilePicture", "labels", "*", "other", "dates"],
-                    "excluded": [],
+                    "sequence": ["profilePicture", "names", "phoneNumbers", "labels", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
+                    "excluded": ["profilePicture"],
                     "readOnly": [],
                     "renderDescription": {
                         "profilePicture": [
@@ -636,21 +636,105 @@
                             ]
                         ],
                         "dates": [
-                            "VStack", {
-                                "title": "Dates",
-                                "alignment": "left",
-                                "rowInset": [12, 20, -12, 20],
+                            "Text", {
+                                "title": "",
+                                "alignment": "center",
+                                "textalign": "center",
+                                "text": "{.describeChangelog()}",
+                                "padding": [30, 40, 10, 40],
+                                "maxChar": 300
+                            }
+                        ],
+                        "phoneNumbers":[
+                            "EditorRow", {
+                                "title": "{.type}"
                             }, [
-                                "EditorRow", {
-                                    "title": "{displayName}"
+                                "Text", {
+                                    "text": "{.number}",
+                                }
+                            ]
+                        ],
+                        "addresses":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
                                 }, [
                                     "Text", {
-                                        "text": "{.} readonly",
-                                        "condition": "{readOnly}"
+                                        "text": "{.street}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "publicKeys":[
+                            "EditorRow", {
+                                "title": "{.name}"
+                            }, [
+                                "Text", {
+                                    "text": "{.key}",
+                                }
+                            ]
+                        ],
+                        "onlineProfiles":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.handle}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "websites":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.url}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "medicalConditions":[
+                            "EditorRow", {}, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "companies":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "diets":[
+                            "EditorRow", {
+                            }, [
+                                "HStack", {}, [
+                                    "Text", {
+                                        "text": "{.name}",
                                     },
                                     "Text", {
-                                        "text": "{.} !readonly",
-                                        "condition": "{!readOnly}"
+                                        "text": "{.additions}",
                                     }
                                 ]
                             ]
@@ -660,6 +744,10 @@
                                 "for": "group",
                                 "title": "{displayName}"
                             }, [
+                                "Text", {
+                                    "condition": "{!.labels.count}",
+                                    "text": "no labels yet"
+                                },
                                 "WrapStack", {
                                     "list": "{.labels}"
                                 }, [

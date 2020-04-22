@@ -76,6 +76,7 @@
 		5D78D072242531BE00F7BD3B /* MainNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78D071242531BE00F7BD3B /* MainNavigation.swift */; };
 		5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D81A07D243343CF006E1FA9 /* ActionName.swift */; };
 		5D90464F243616B000632492 /* color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D90464E243616B000632492 /* color.swift */; };
+		5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* OrderedDictionary */; };
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
 		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
@@ -307,6 +308,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */,
 				5DA7BAFB241A72640087B81D /* QGrid in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
 				39FDADE8F88621C2AA70F24A /* Pods_memri.framework in Frameworks */,
@@ -799,6 +801,7 @@
 			packageProductDependencies = (
 				5DD17B60241293010018A8F1 /* AnyCodable */,
 				5DA7BAFA241A72640087B81D /* QGrid */,
+				5D9637B8244DBC400053EB84 /* OrderedDictionary */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -882,6 +885,7 @@
 			packageReferences = (
 				5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */,
+				5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1524,6 +1528,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lukaskubanek/OrderedDictionary.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
 		5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Q-Mobile/QGrid";
@@ -1543,6 +1555,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5D9637B8244DBC400053EB84 /* OrderedDictionary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */;
+			productName = OrderedDictionary;
+		};
 		5DA7BAFA241A72640087B81D /* QGrid */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */;

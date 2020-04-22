@@ -331,7 +331,7 @@ public class SessionView: DataItem {
     /**
      *
      */
-    override var type:String { "sessionview" }
+    override var genericType:String { "sessionview" }
     /**
      *
      */

@@ -12,7 +12,7 @@ import RealmSwift
 
 class File:DataItem {
     @objc dynamic var uri:String = ""
-    override var type:String { "file" }
+    override var genericType:String { "file" }
     
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
     

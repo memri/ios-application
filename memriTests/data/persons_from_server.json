@@ -42,9 +42,85 @@
         "type": "person",
         "firstName": "Eve",
         "lastName": "Eagle",
-        "relations": [{"uid":"0x01"},{"uid":"0x02"}],
         "age": 97,
         "starred": true,
+        "height": 185,
+        "shoulderWidth": 42,
+        "armLength": 73,
+        "relations": [{"uid":"0x01"},{"uid":"0x02"}],
+        "labels": [
+            { "name": "Soccer team", "color": "#83ac06" },
+            { "name": "Friends from University", "color": "#ffd966" }
+        ],
+        "phoneNumbers": [
+            {
+                "type": "mobile",
+                "number": "0654271340"
+            }
+        ],
+        "websites": [
+            {
+                "type": "blog",
+                "url": "www.revolutionairyblog.com"
+            },
+            {
+                "type": "website",
+                "url": "www.eagleve.com"
+            }
+        ],
+        "companies": [
+            {
+                "type": "freelance",
+                "name": "eagle solutions"
+            }
+        ],
+        "publicKeys":[
+            {
+                "name": "PGP Email",
+                "key": "****************"
+            }
+        ],
+        "onlineProfiles":[
+            {
+                "type": "twitter",
+                "handle": "@eagleve91"
+            },
+            {
+                "type": "facebook",
+                "handle": "@eagleve2393"
+            }
+        ],
+        "diets":[
+            {
+                "name": "Vegan",
+                "additions": ["egg"]
+            },{
+                "name": "Gluten Free",
+                "additions": ["sourdough"]
+            }
+        ],
+        "medicalConditions":[
+            {
+                "name": "Psoriasis"
+            }
+        ],
+        "addresses":  [
+            {
+                "type": "home",
+                "country": "USA",
+                "town": "EastBorrow",
+                "street": "Somestreet",
+                "StreetNr": 45,
+                "postalCode": "9021DX"
+            },{
+                "type": "Holiday home in France",
+                "country": "France",
+                "town": "Paris",
+                "street": "Rue de la plage",
+                "StreetNr": 45,
+                "postalCode": "EL29"
+            }
+        ],
         "syncState": {
             "version": 1
         }

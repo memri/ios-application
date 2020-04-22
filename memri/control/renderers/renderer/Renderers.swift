@@ -9,6 +9,7 @@
 import Combine
 import RealmSwift
 import SwiftUI
+import OrderedDictionary
 
 public class Renderers {
     var all: [String: Renderer] = [
@@ -149,14 +150,14 @@ public class RenderConfig: Object, Codable {
     /**
      *
      */
-    public func render(_ dataItem:DataItem, _ part:String = "*",
-                       _ variables:[String:()->Any] = [:]) -> GUIElementInstance {
+    public func render(item:DataItem, part:String = "*",
+                       variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
         if _renderDescription == nil {
-            return GUIElementInstance(GUIElementDescription(), dataItem, variables)
+            return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {
-            return GUIElementInstance(self.renderDescription![part]!, dataItem, variables)
+            return GUIElementInstance(self.renderDescription![part]!, item, variables)
         }
     }
     
@@ -302,13 +303,22 @@ public class RenderConfig: Object, Codable {
 class RenderCache {
     var cache:[String:[String:GUIElementDescription]] = [:]
     var dictCache:[String:[String:[String]]] = [:]
+    var orderedDictCache:[String: OrderedDictionary<String,[String]>] = [:]
     
     public func get(_ key:String) -> [String:[String]]? {
         return dictCache[key]
     }
     
+    public func get(_ key:String) -> OrderedDictionary<String,[String]>?{
+        return orderedDictCache[key]
+    }
+    
     public func set(_ key:String, _ dict: [String:[String]]) {
         dictCache[key] = dict
+    }
+    
+    public func set(_ key:String, _ dict: OrderedDictionary<String,[String]>) {
+        orderedDictCache[key] = dict
     }
     
     public func get(_ key:String) -> [String:GUIElementDescription]? {
