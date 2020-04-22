@@ -880,10 +880,12 @@ public class CompiledView {
         // Find all dynamic properties and compile them
         func recursiveWalk(_ parsed:inout [String:Any]) throws {
             for (key, _) in parsed {
-                
+
                 // Do not parse actionStateName as it is handled at runtime (when action is executed)
                 if key == "actionStateName" { continue }
                 
+                // TODO make actionArgs runtime parsed
+                    
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
                     parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
@@ -892,21 +894,34 @@ public class CompiledView {
                 // Parse rest of the json
                 else {
                     
-                    // If its an object continue the walk to find strings to update
-                    var subParsed = parsed[key] as? [String:Any]
-                    if subParsed != nil {
-                        try! recursiveWalk(&subParsed!)
-                        parsed.updateValue(subParsed!, forKey: key)
-                    }
-                    // Update strings
-                    else if let propValue = parsed[key] as? String {
+                    func innerWalk(_ pItem:Any) -> Any {
+                        // If its an object continue the walk to find strings to update
+                        var subParsed = pItem as? [String:Any]
+                        if subParsed != nil {
+                            try! recursiveWalk(&subParsed!)
+                            return subParsed!
+                        }
+                        // Update arrays
+                        else if var arr = pItem as? [Any] {
+                            for i in 0..<arr.count {
+                                arr[i] = innerWalk(arr[i])
+                            }
+                            return arr
+                        }
+                        // Update strings
+                        else if let propValue = pItem as? String {
+                            
+                            // Compile the property for easy lookup
+                            let newValue = compileProperty(propValue)
+                            
+                            // Updated the parsed object with the new value
+                            return newValue
+                        }
                         
-                        // Compile the property for easy lookup
-                        let newValue = compileProperty(propValue)
-                        
-                        // Updated the parsed object with the new value
-                        parsed.updateValue(newValue, forKey: key)
+                        return pItem
                     }
+                    
+                    parsed.updateValue(innerWalk(parsed[key] as Any), forKey: key)
                 }
             }
         }
@@ -981,7 +996,9 @@ public class CompiledView {
                     let query = String(expr[rangeQuery])
                     
                     // Add the query to the variable list
-                    variables[query] = String(variables.count)
+                    if variables[query] == nil {
+                        variables[query] = String(variables.count)
+                    }
                     
                     // Add an easy to find reference to the string
                     result += "{$\(variables[query]!)}"
@@ -1102,8 +1119,7 @@ public class CompiledView {
             
             // Update the template with the variable
             // TODO make this more efficient. This could just be one regex search
-            template = String(template.replacingOccurrences(of: "\\{\\$" + index + "\\}",
-                with: computedValue, options: .regularExpression))
+            template = template.replace("\\{\\$" + index + "\\}", computedValue)
             
             // Increment counter
             i += 1
@@ -1127,7 +1143,7 @@ public class CompiledView {
                 .map{ String($0) }
         
         // Get the first property of the object
-        var value:Any? = getProperty(propParts[0], propParts[1], extraVars)
+        var value:Any? = getProperty(propParts[0], propParts[safe: 1] ?? "", extraVars)
         
 //        if isNegationTest { value = negateAny(value) }
         

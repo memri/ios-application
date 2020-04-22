@@ -140,7 +140,7 @@ struct GeneralEditorSection: View {
         
         let editMode = self.main.currentSession.editMode
         let isArray = item.objectSchema[groupKey]?.isArray ?? false
-        let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
+        let genericType = self.item.genericType
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         return Group{
@@ -157,10 +157,10 @@ struct GeneralEditorSection: View {
                                 actionArgs: [
                                     "choose-item-by-query",
                                     [
-                                        "query": className,
-                                        "type": className,
+                                        "query": genericType,
+                                        "type": genericType,
                                         "actionName": "addSelectionToList",
-                                        "actionArgs": [self.item, groupKey],
+                                        "actionArgs": "", // [self.item, groupKey],
                                         "title": "Add Selected"
                                     ]
                                 ])
@@ -177,10 +177,10 @@ struct GeneralEditorSection: View {
                             actionArgs: [
                                 "choose-item-by-query",
                                 [
-                                    "query": className,
-                                    "type": className,
+                                    "query": genericType,
+                                    "type": genericType,
                                     "actionName": "addSelectionToList",
-                                    "actionArgs": [self.item, groupKey],
+                                    "actionArgs": "", // [self.item, groupKey],
                                     "title": "Add Selected"
                                 ]
                             ])
@@ -197,7 +197,7 @@ struct GeneralEditorSection: View {
             
             if action != nil {
                 Spacer()
-                Button(action:{}) {
+                Button(action:{ self.main.executeAction(action!)}) {
                     Image(systemName: "plus")
                         .foregroundColor(Color(hex:"#777"))
                         .font(.system(size: 18, weight: .semibold))

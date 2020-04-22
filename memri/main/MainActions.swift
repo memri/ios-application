@@ -14,7 +14,8 @@ extension Main {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ itm:DataItem? = nil, _ itms:[DataItem]? = nil) {
+    public func executeAction(_ action:ActionDescription, _ itm:DataItem? = nil,
+                              _ itms:[DataItem]? = nil) {
         
         let params = action.actionArgs
         let item = itm ?? computedView.resultSet.item

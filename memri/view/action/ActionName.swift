@@ -35,7 +35,7 @@ public enum ActionName: String, Codable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        noop
+        addSelectionToList, noop
     
     var defaultIcon: String {
         switch self {
@@ -87,9 +87,15 @@ public enum ActionName: String, Codable {
         case .add:
             return [DataItemFamily.self]
         case .openView:
-            return [SessionView.self]
+            return [SessionView.self, [String:Any]?.self]
         case .openViewByName:
-            return [String.self]
+            return [String.self, [String:Any]?.self]
+        case .openSession:
+            return [Session.self, [String:Any]?.self]
+        case .openSessionByName:
+            return [String.self, [String:Any]?.self]
+        case .addSelectionToList:
+            return [DataItemFamily.self, String.self]
         default:
             return []
         }

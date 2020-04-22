@@ -18,11 +18,11 @@
         "editActionButton": {
             "title": "{title}",
             "actionName": "{actionName}",
-            "actionArgs": "{actionArgs}"
+            "_actionArgs": "{actionArgs}"
         },
         "actionButton": {
             "actionName": "add",
-            "actionArgs": [{
+            "_actionArgs": [{
                 "type": "{type}"
             }]
         },

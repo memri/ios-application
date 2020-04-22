@@ -72,6 +72,11 @@ extension String: Error {
 
         return String(self[range])
     }
+    
+    func replace(_ target: String, _ withString: String) -> String
+    {
+        return self.replacingOccurrences(of: target, with: withString, options: NSString.CompareOptions.regularExpression, range: nil)
+    }
 }
 
 extension Collection {
