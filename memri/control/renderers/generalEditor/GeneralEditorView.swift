@@ -24,6 +24,7 @@ import RealmSwift
     - Add customer renderer for starred and labels for person
  */
 
+
 struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
