@@ -753,16 +753,28 @@
                                 "WrapStack", {
                                     "list": "{.labels}"
                                 }, [
-                                    "VStack", {
-                                        "background": "{.color}",
-                                        "cornerRadius": 5
-                                    }, [
-                                        "Text", {
-                                            "text": "{.name}",
-                                            "font": [16, "semibold"],
-                                            "color": "#fff",
-                                            "padding": [5, 8, 5, 8]
+                                    "button", {
+                                        "press": {
+                                            "actionName": "openViewByName",
+                                            "actionArgs": ["all-items-with-label",
+                                            {
+                                                "name": "{.name}",
+                                                "uid": "{.uid}"
+                                            }
+                                            ]
                                         }
+                                    }, [
+                                        "VStack", {
+                                            "background": "{.color}",
+                                            "cornerRadius": 5
+                                        }, [
+                                            "Text", {
+                                                "text": "{.name}",
+                                                "font": [16, "semibold"],
+                                                "color": "#fff",
+                                                "padding": [5, 8, 5, 8]
+                                            }
+                                        ]
                                     ]
                                 ]
                             ]

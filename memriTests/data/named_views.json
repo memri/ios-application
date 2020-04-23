@@ -57,5 +57,17 @@
                 }
             }
         ]
+    },
+    
+    {
+        "name": "all-items-with-label",
+        "views": [
+            {
+                "title": "Items with label {name}",
+                "queryOptions": {
+                    "query": "* AND labels.uid = {uid}"
+                }
+            }
+        ]
     }
 ]
