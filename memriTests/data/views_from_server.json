@@ -756,11 +756,11 @@
                                     "button", {
                                         "press": {
                                             "actionName": "openViewByName",
-                                            "actionArgs": ["all-items-with-label",
-                                            {
-                                                "name": "{.name}",
-                                                "uid": "{.uid}"
-                                            }
+                                            "actionArgs": [ "all-items-with-label",
+                                                {
+                                                    "name": "{.name}",
+                                                    "uid": "{.uid}"
+                                                }
                                             ]
                                         }
                                     }, [

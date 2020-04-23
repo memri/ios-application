@@ -61,13 +61,10 @@
     
     {
         "name": "all-items-with-label",
-        "views": [
-            {
-                "title": "Items with label {name}",
-                "queryOptions": {
-                    "query": "* AND labels.uid = {uid}"
-                }
-            }
-        ]
+        "title": "Items with label {name}",
+        "rendererName": "list",
+        "queryOptions": {
+            "query": "* AND labels.uid = {uid}"
+        }
     }
 ]

@@ -214,37 +214,38 @@ public class Views {
         cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
         
         // If we know the type of data we are rendering use it to determine the view
+        var needles:[String]
         if type != "mixed" {
             // Determine query
-            let needles = [
+            needles = [
                 isList ? "{[type:*]}" : "{type:*}",
                 isList ? "{[type:\(type)]}" : "{type:\(type)}", // TODO if this is not found it should get the default template
             ]
-            
-            // Find views based on datatype
-            for needle in needles {
-                for key in searchOrder {
-                    if let datatypeView = getSessionView(self.defaultViews[key]![needle], variables) {
-                        if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
-                            continue
-                        }
-                        
-                        datatypeViews.append(datatypeView)
-                        
-                        if let S = datatypeView.rendererName { rendererNames.append(S) }
-                        if datatypeView.cascadeOrder.count > 0 {
-                            cascadeOrders[key]?.append(datatypeView.cascadeOrder)
-                        }
+        }
+        else {
+            needles = [isList ? "{[type:*]}" : "{type:*}"]
+        }
+        
+        // Find views based on datatype
+        for needle in needles {
+            for key in searchOrder {
+                if let datatypeView = getSessionView(self.defaultViews[key]![needle], variables) {
+                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
+                        continue
+                    }
+                    
+                    datatypeViews.append(datatypeView)
+                    
+                    if let S = datatypeView.rendererName { rendererNames.append(S) }
+                    if datatypeView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
                     }
                 }
             }
-            
-            if rendererNames.count > 0 {
-                rendererName = rendererNames[rendererNames.count - 1]
-            }
         }
-        else {
-            print("Warn: mixed views are not supported yet")
+        
+        if rendererNames.count > 0 {
+            rendererName = rendererNames[rendererNames.count - 1]
         }
         
         // Find renderer views
@@ -735,7 +736,7 @@ public class ComputedView: ObservableObject {
         
         if self.queryOptions.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
-            throw("Missing action button in this view")
+            print("Warn: Missing action button in this view")
         }
     }
     

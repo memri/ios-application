@@ -365,11 +365,12 @@ public class GUIElementDescription: Decodable {
         else if key == "press"{
             let valDict = value as! [String: Any]
                         
-            let x = ActionDescription(icon: valDict["icon"] as? String ?? nil,
-                                      title: valDict["title"] as? String ?? nil,
-                                      actionName: ActionName(rawValue: valDict["actionName"] as? String ?? "nil"),
-                                      actionArgs: (valDict["actionArgs"] as? [Any] ?? [] ).map { AnyCodable($0) },
-                                      actionType: ActionType(rawValue: valDict["actionType"] as? String ?? "nil")
+            let x = ActionDescription(
+                icon: valDict["icon"] as? String ?? nil,
+                title: valDict["title"] as? String ?? nil,
+                actionName: ActionName(rawValue: valDict["actionName"] as? String ?? "nil"),
+                actionArgs: (valDict["actionArgs"] as? [Any] ?? [] ).map { AnyCodable($0) },
+                actionType: ActionType(rawValue: valDict["actionType"] as? String ?? "nil")
             )
             
             return x
