@@ -205,7 +205,7 @@ extension Text {
           only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
           look like this:
  
-            ItemCell(dataItem, rendererNames [, viewType, viewOverride])
+            ItemCell(dataItem, rendererNames [, viewOverride])
  
           with viewOverride being the name of a view that should be the template instead of the
           default. rendererNames is an array of rendererName so that it can search for multiple,
@@ -222,8 +222,7 @@ extension Text {
                             "VStack", ["Text", {"text": "Type: {.type}"}],
                             "ItemCell", {
                                 "dataItem": "{.}",
-                                "rendererNames: ["list", "thumbnail", "map"],
-                                "viewType": "inbox"
+                                "rendererNames: ["inbox", "list", "thumbnail", "map"]
                             }
                         ],
                     ]

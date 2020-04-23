@@ -140,6 +140,7 @@
 		86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */; };
 		86A5D848243EC46700F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
+		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -288,6 +289,7 @@
 		86A5D840243CEB8000F8FAD8 /* ThumbnailRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailRenderer.swift; sourceTree = "<group>"; };
 		86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRenderer.swift; sourceTree = "<group>"; };
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
+		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -714,6 +716,7 @@
 			children = (
 				86865D35244996900010271A /* styles.swift */,
 				86865D37244996AA0010271A /* WrapStack.swift */,
+				86C3A73424518763006D4F55 /* ItemCell.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -1096,6 +1099,7 @@
 				5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */,
 				86A5D841243CEB8000F8FAD8 /* ThumbnailRenderer.swift in Sources */,
 				5D4C71EF2445E4F200DF09E8 /* GeneralEditor.swift in Sources */,
+				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
