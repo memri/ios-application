@@ -551,18 +551,9 @@ public class GUIElementDescription: Decodable {
             }
             else {
                 lastPart = String(part)
-                if value is Object{
-                    lastObject = (value as! Object)
-                    value = lastObject![lastPart!]
+                lastObject = (value as! Object)
+                value = lastObject![lastPart!]
 
-                }
-                else{
-                    lastObject = nil
-                    print("THIS SHOULD NEVER HAPPEN 987239487234")
-                    value = Array(arrayLiteral: value).count
-                }
-//                lastObject = (value as! Object)
-//                value = lastObject![lastPart!]
             }
         }
         
