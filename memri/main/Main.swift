@@ -165,6 +165,7 @@ public class Main: ObservableObject {
        ]
         
         cache.scheduleUIUpdate = scheduleUIUpdate
+        navigation.scheduleUIUpdate = scheduleUIUpdate
         
         // Make settings global so it can be reached everywhere
         globalSettings = settings

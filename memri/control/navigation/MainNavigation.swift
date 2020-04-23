@@ -14,16 +14,45 @@ extension StringProtocol {
     var firstCapitalized: String { prefix(1).capitalized + dropFirst() }
 }
 
-public class MainNavigation {
+public class MainNavigation:ObservableObject {
     /**
      *
      */
     var items: [NavigationItem] = []
+    /**
+     *
+     */
+    var filterText: String {
+        get {
+            return Settings.get("device/navigation/filterText") ?? ""
+        }
+        set (newFilter) {
+            Settings.set("device/navigation/filterText", newFilter)
+            
+            scheduleUIUpdate!()
+        }
+    }
+    
+    /**
+     * @private
+     */
+    public var scheduleUIUpdate: (() -> Void)? = nil
     
     private var realm:Realm
     
     required init(_ rlm:Realm) {
         realm = rlm
+    }
+    
+    /**
+     *
+     */
+    public func getItems() -> [NavigationItem] {
+        let needle = self.filterText.lowercased()
+        
+        return self.items.filter {
+            return needle == "" || $0.type == "item" && $0.title.lowercased().contains(needle)
+        }
     }
     
     /**

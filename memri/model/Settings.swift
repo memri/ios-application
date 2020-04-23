@@ -124,9 +124,15 @@ public class Settings {
     /**
      * Also responsible for saving the setting to the permanent storage
      */
-    public func set(_ path:String, _ value:AnyCodable) -> Void {
+    public func set(_ path:String, _ value:Any) -> Void {
         let (collection, query) = parse(path)
-        collection!.set(query, value)
+        
+        var codableValue = value as? AnyCodable
+        if codableValue == nil {
+            codableValue = AnyCodable(value)
+        }
+        
+        collection!.set(query, codableValue!)
     }
     
     
@@ -134,7 +140,7 @@ public class Settings {
         return globalSettings!.get(path)
     }
     
-    public class func set(_ path:String, _ value:AnyCodable) -> Void {
+    public class func set(_ path:String, _ value:Any) -> Void {
         return globalSettings!.set(path, value)
     }
 }
