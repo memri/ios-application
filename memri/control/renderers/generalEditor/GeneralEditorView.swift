@@ -15,16 +15,55 @@ import RealmSwift
         - Open the subview in a popup: .openViewAsPopup()
         - requires implementing subview (which is good to prepare for the refactor)
         - also requires a version of Main only for the subview
-    - Allow for group to only have the values of the default root element
-        - e.g. "phoneNumbers": { "title": "{.type"}, "text": "{.number}" }
-            - add text and button property to editorRow
+    - Permutations of groups:
+        - Custom group (each field is a row renderer based on its type)
+            - if it is an object type, then a virtual renderer definition is sought
+                - otherwise it is rendered as a memri button,
+                    - clicking on that button allows to change
+                    - when empty a button to choose one is presented
+        - Custom group (group is customly rendered - doesnt have to render any fields)
+        - List group (group is customly rendered - e.g. labels)
+        - List group (each item is customly rendered based on an inline definition)
+        - List group (each item is rendered based on virtual renderer definition)
+            - in readonly mode rendering is fully custom (but could be as simple as an editor row)
+            - in readwrite mode:
+                - there's the ability to change the type of relationship as well as setting a name
+                    - this needs to be loaded from the type hierarchy
+                - either:
+                    - choose an item from a list (and display as a memri button)
+                      (e.g. diets, labels, medicalConditions)
+                    - enter the fields immediately in the editor
+                      (e.g. addresses, phoneNr, measurements, publicKeys, websites, companies, etc)
+                        - with the option to choose from a list
+    - Interaction:
+        - Clicking on a memri button in readonly mode goes to either:
+            - the item in the default editor
+            - or a list of all items that also have a link to that item
+              (e.g. everyone on a diet, or with that label)
+        - Clicking on a memri button in readwrite mode allows to change it into something else.
+          Though in most cases in readwrite mode it doesnt show the memri button
+    - Evolve EditorRow
+        - e.g. "phoneNumbers": ["EditorRow", {
+            "title": "{.type}",
+            "type-hierarchy": "phoneNumber",
+            "field": "{.number}",
+            "formatter": "{.format()}"
+        }]
+         - e.g. "addresses": ["EditorRow", {
+             "title": "{.name or .type}",
+             "type-hierarchy": "address"
+         }, [ ... ]]
         - make sure that fully custom rows have an archive button (for person broken heart)
             - requires separate views for editMode and view mode
         - add .each to the title of a group to execute it for each element
             - e.g. "phoneNumbers.each": {}
+    - By default use ItemCell to render each item of a list. Search for generalEditor virtual
+      renderer. Implement a type:* virtual renderer that renders using the buttons. Implement the
+      buttons using subview.
     - in ReadOnly mode hide the fields that are nil or empty sets (add a way to force display)
     - Add editor elements to GUIElement such as datepicker, textfield, etc
     - Implement ForEach in GuiElement
+    - Change Measurements to a list of type Measurement that includes a unit
  
     LATER:
     - Create a nice scrolling version of ProfilePicture in a reusable element
@@ -154,6 +193,21 @@ struct GeneralEditorSection: View {
         let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
+        let actionDescription = isArray && editMode && !readOnly
+            ? ActionDescription(
+                actionName: .openViewByName,
+                actionArgs: [
+                    "choose-item-by-query",
+                    [
+                        "query": className,
+                        "type": className,
+                        "actionName": "addSelectionToList",
+                        "actionArgs": "", // [self.item, groupKey],
+                        "title": "Add Selected"
+                    ]
+                ])
+            : nil
+        
         return Group{
             if renderDescription[groupKey] != nil {
                 if self.getSectionTitle(groupKey) == "" {
@@ -162,40 +216,14 @@ struct GeneralEditorSection: View {
                 else{
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
-                        action: isArray && editMode && !readOnly
-                            ? ActionDescription(
-                                actionName: .openViewByName,
-                                actionArgs: [
-                                    "choose-item-by-query",
-                                    [
-                                        "query": className,
-                                        "type": className,
-                                        "actionName": "addSelectionToList",
-                                        "actionArgs": "", // [self.item, groupKey],
-                                        "title": "Add Selected"
-                                    ]
-                                ])
-                            : nil
+                        action: actionDescription
                     )
                 }
             }
             else {
                 self.constructSectionHeader(
                     title: (groupKey == "other" && groups.count == 0) ? "all" : groupKey,
-                    action: isArray && editMode && !readOnly
-                        ? ActionDescription(
-                            actionName: .openViewByName,
-                            actionArgs: [
-                                "choose-item-by-query",
-                                [
-                                    "query": className,
-                                    "type": className,
-                                    "actionName": "addSelectionToList",
-                                    "actionArgs": "", // [self.item, groupKey],
-                                    "title": "Add Selected"
-                                ]
-                            ])
-                        : nil
+                    action: actionDescription
                 )
             }
         }
@@ -449,12 +477,18 @@ struct DefaultGeneralEditorRow: View {
         let collection = DataItemFamily(rawValue: className!.lowercased())!
             .getCollection(self.item[self.prop] as Any)
         
+        func getType(_ item:DataItem) -> String {
+            var type = item.objectSchema["type"] == nil ? className : item.getString("type")
+            if type == "" { type = className }
+            return type ?? ""
+        }
+        
         return ScrollView {
             VStack (alignment: .leading, spacing: 5) {
                 ForEach(collection, id: \.self) { collectionItem in
                     HStack (spacing:0) {
                         HStack (spacing:0) {
-                            Text(className!.camelCaseToWords().capitalizingFirstLetter())
+                            Text(getType(collectionItem).camelCaseToWords().capitalizingFirstLetter())
                                 .padding(.trailing, 5)
                                 .padding(.leading, 6)
                                 .padding(.vertical, 3)
@@ -487,6 +521,7 @@ struct DefaultGeneralEditorRow: View {
             .padding(.top, 10)
         }
         .frame(maxHeight: 300)
+        .fixedSize(horizontal: false, vertical: true)
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {

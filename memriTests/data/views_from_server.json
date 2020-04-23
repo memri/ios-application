@@ -647,7 +647,7 @@
                                 "maxChar": 300
                             }
                         ],
-                        "phoneNumbers":[
+                        "phoneNumbers2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -691,7 +691,7 @@
                                 ]
                             ]
                         ],
-                        "websites":[
+                        "websites2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -704,7 +704,7 @@
                                 ]
                             ]
                         ],
-                        "medicalConditions":[
+                        "medicalConditions2":[
                             "EditorRow", {}, [
                                 "VStack", {
                                     "cornerRadius": 5
@@ -715,7 +715,7 @@
                                 ]
                             ]
                         ],
-                        "companies":[
+                        "companies2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -728,7 +728,7 @@
                                 ]
                             ]
                         ],
-                        "diets":[
+                        "diets2":[
                             "EditorRow", {
                             }, [
                                 "HStack", {}, [
