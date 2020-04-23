@@ -164,6 +164,10 @@ class PhoneNumber:DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var number:String? = nil
     
+    override var computeTitle:String {
+        return number ?? ""
+    }
+    
     required init () {
         super.init()
     }
@@ -185,6 +189,10 @@ class Website:DataItem{
     // blog portifolio website
     @objc dynamic var type:String? = nil
     @objc dynamic var url:String? = nil
+    
+    override var computeTitle:String {
+        return url ?? ""
+    }
     
     required init () {
         super.init()
@@ -237,6 +245,10 @@ class Company: DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
+    override var computeTitle:String {
+        return name ?? ""
+    }
+    
     required init () {
         super.init()
     }
@@ -281,6 +293,10 @@ class OnlineProfile: DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var handle:String? = nil
     
+    override var computeTitle:String {
+        return handle ?? ""
+    }
+    
     required init () {
         super.init()
     }
@@ -303,6 +319,10 @@ class Diet: DataItem{
     @objc dynamic var name:String? = nil
     let additions = List<String>()
 
+    override var computeTitle:String {
+        return name ?? ""
+    }
+    
     required init () {
         super.init()
     }
@@ -325,6 +345,10 @@ class MedicalCondition: DataItem{
     override var genericType:String { "medicalcondition" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
+    
+    override var computeTitle:String {
+        return name ?? ""
+    }
     
     required init () {
         super.init()

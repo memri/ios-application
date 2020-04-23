@@ -11,18 +11,17 @@
     {
         "name": "choose-item-by-query",
         "editMode": true,
-        "ephemeral": true,
         "queryOptions": {
             "query": "{query}"
         },
         "editActionButton": {
             "title": "{title}",
-            "actionName": "{actionName}",
-            "actionArgs": "{actionArgs}"
+            "actionName": ["{actionName}", "back"],
+            "_actionArgs": ["{actionArgs}"]
         },
         "actionButton": {
             "actionName": "add",
-            "actionArgs": [{
+            "_actionArgs": [{
                 "type": "{type}"
             }]
         },

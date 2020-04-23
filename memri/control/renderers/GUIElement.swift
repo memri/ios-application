@@ -181,15 +181,25 @@ extension Text {
           i.e. for the view-type "inbox". The default render description can always be specified
           using *. Here's an example:
  
-            renderConfigs: {
-                list: {
-                    renderDescription: {
-                        "*": ["VStack", ["Text", {"text": "Hello"}]],
-                        "inbox": ["VStack", ["Image", {"systemName": "email"}]],
-                    }
+            "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", ["Text", {"text": "Hello"}]
+                    ]
+                },
+                "inbox": {
+                    "renderDescription": [
+                        "VStack", ["Image", {"systemName": "email"}]
+                    ]
                 }
             }
         
+          Inbox in the above example is a virtual renderer that is added to a dict on the
+          renderConfigs object. Virtual renderers are useful for composability in the hands of
+          users. For instance the memri button rendering can be implemented using a virtual
+          renderer that simply renders the button in a SubView (see below) and can be customized
+          for each type, without the need of actually implementing a renderer.
+ 
           For this purpose we need to introduce a new element called "ItemCell", this will render
           the data item as if it was rendered inside the renderer of that type when it would be
           only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
@@ -220,7 +230,7 @@ extension Text {
                 }
             }
  
-          In addition and to complete the abilities of the view hyper network is the introduction of
+          In addition and to facilitate the abilities of the view hyper network is the introduction of
           the subview element that can display views inline. An immediate use case is to view a list
           of views (in fact they are sessions, but its easier to perceive them as views), and
           instead of seeing a screenshot of the last state they are the actual life instantiation of

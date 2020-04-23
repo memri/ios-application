@@ -637,15 +637,17 @@
                         ],
                         "dates": [
                             "Text", {
-                                "title": "",
+                                "sectionTitle": "",
                                 "alignment": "center",
                                 "textalign": "center",
                                 "text": "{.describeChangelog()}",
-                                "padding": [30, 40, 10, 40],
+                                "padding": [30, 40, 40, 40],
+                                "color": "#999",
+                                "font": [13],
                                 "maxChar": 300
                             }
                         ],
-                        "phoneNumbers":[
+                        "phoneNumbers2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -689,7 +691,7 @@
                                 ]
                             ]
                         ],
-                        "websites":[
+                        "websites2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -702,7 +704,7 @@
                                 ]
                             ]
                         ],
-                        "medicalConditions":[
+                        "medicalConditions2":[
                             "EditorRow", {}, [
                                 "VStack", {
                                     "cornerRadius": 5
@@ -713,7 +715,7 @@
                                 ]
                             ]
                         ],
-                        "companies":[
+                        "companies2":[
                             "EditorRow", {
                                 "title": "{.type}"
                             }, [
@@ -726,7 +728,7 @@
                                 ]
                             ]
                         ],
-                        "diets":[
+                        "diets2":[
                             "EditorRow", {
                             }, [
                                 "HStack", {}, [
