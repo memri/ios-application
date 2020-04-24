@@ -283,6 +283,10 @@ class Country:DataItem {
     @objc dynamic var flag:File? = nil // or Image ??
     @objc dynamic var location:Location? = nil
     
+    override var computeTitle:String {
+        return "\(name ?? "")"
+    }
+    
     required init () {
         super.init()
     }

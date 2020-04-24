@@ -312,7 +312,7 @@ struct GeneralEditorSection: View {
                         }
 //                        .padding(.top, 10)
                     }
-                    .frame(maxHeight: 300)
+                    .frame(maxHeight: 1000)
                     .fixedSize(horizontal: false, vertical: true)
                     
                     Divider()
@@ -481,6 +481,18 @@ public extension View {
     func generalEditorLabel() -> some View { self.modifier(GeneralEditorLabel()) }
     func generalEditorCaption() -> some View { self.modifier(GeneralEditorCaption()) }
     func generalEditorHeader() -> some View { self.modifier(GeneralEditorHeader()) }
+    func generalEditorInput() -> some View { self.modifier(GeneralEditorInput()) }
+}
+
+private struct GeneralEditorInput: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .fullHeight()
+            .font(.system(size:16, weight: .regular))
+            .padding(10)
+            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+            .generalEditorCaption()
+    }
 }
 
 private struct GeneralEditorLabel: ViewModifier {

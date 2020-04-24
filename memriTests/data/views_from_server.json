@@ -928,7 +928,10 @@
                                         "empty": "Country",
                                         "value": "{.country}",
                                         "default": "{me.address[primary = true].country}",
-                                        "optionsFromQuery": "country"
+                                        "queryOptions": {
+                                            "query": "country",
+                                            "sortProperty": "name"
+                                        }
                                     }
                                 ]
                             ]

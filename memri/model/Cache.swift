@@ -167,6 +167,21 @@ public class Cache {
         }
     }
     
+    // TODO Refactor: don't use async syntax when nothing is async
+    public func query(_ queryOptions:QueryOptions) throws -> [DataItem] {
+        var error:Error?
+        var items:[DataItem]?
+        
+        query(queryOptions) {
+            error = $0
+            items = $1
+        }
+        
+        if let error = error { throw error }
+        
+        return items!
+    }
+    
     /**
      *
      */

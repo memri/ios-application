@@ -676,7 +676,7 @@ public class GUIElementDescription: Codable {
             }
         }
         
-        if let lastPart = lastPart,
+        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
            let className = lastObject?.objectSchema[lastPart]?.objectClassName {
             
             // Convert Realm List into Array
@@ -969,6 +969,9 @@ public struct GUIElementInstance: View {
             else if from.type == "textfield" {
                 self.renderTextfield()
             }
+            else if from.type == "picker" {
+                self.renderPicker()
+            }
             else if from.type == "securefield" {
             }
             else if from.type == "action" {
@@ -1028,21 +1031,36 @@ public struct GUIElementInstance: View {
                     set: { self.item.set(propName, $0) }
                 ), formatter: type == .date ? DateFormatter() : NumberFormatter()) // TODO Refactor: expand to properly support all types
                 .keyboardType(.decimalPad)
-                .generalEditorCaption()
+                .generalEditorInput()
             }
             else {
                 TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(
                     get: { self.item.getString(propName) },
                     set: { self.item.set(propName, $0) }
                 ))
-                .fullHeight()
-                .font(.system(size:16, weight: .regular))
-                .padding(10)
-                .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
-//                .border(Color.red, width: 1)
-                .generalEditorCaption()
+                .generalEditorInput()
             }
         }
+    }
+    
+    func renderPicker() -> some View {
+        let dataItem:DataItem? = self.get("value")
+        let (_, propName) = from.getType("value", self.item)
+        let queryOptions:[String:Any] = self.get("queryoptions")! // TODO refactor error handling
+        let emptyValue = self.get("empty") ?? "Pick a value"
+        
+        return Picker(
+            item: self.item,
+            selected: dataItem ?? self.get("default"),
+            title: dataItem?.computeTitle ?? emptyValue,
+            emptyValue: emptyValue,
+            propName: propName,
+            queryOptions: QueryOptions(value: [
+                "query": queryOptions["query"],
+                "sortProperty": queryOptions["sortProperty"],
+                "sortAscending": queryOptions["sortAscending"]
+            ])
+        )
     }
     
     @ViewBuilder
