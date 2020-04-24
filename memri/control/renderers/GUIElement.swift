@@ -269,7 +269,7 @@ extension Text {
           exact shape of that is still beyond the horizon of my imagination.
  */
              
- 
+// Refactor: make this confirm to Codable in order for RenderConfig.merge to be more efficient
 public class GUIElementDescription: Decodable {
     var type: String = ""
     var properties: [String: Any] = [:]

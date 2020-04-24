@@ -10,13 +10,14 @@ import Foundation
 import SwiftUI
 
 public struct ItemCell: View {
+    @EnvironmentObject var main: Main
+    
     let item: DataItem
     let rendererNames: [String]
     let viewOverride: String? = nil
+    let variables: [String: () -> Any]? = nil
     
     public var body: some View {
-        // If there is a view override, find it, otherwise
-            // Find the first cascaded renderer for the type
-        // Use it to render the item here
+        try! main.views.renderItemCell(item, rendererNames, viewOverride, variables)
     }
 }

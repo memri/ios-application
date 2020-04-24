@@ -40,10 +40,54 @@
             "renderConfigs": {
                 "generalEditor": {
                     "groups": {
-                        "dates": ["dates"]
+                        "dates": ["dateCreated", "dateModified", "dateAccessed", "changelog"]
                     },
-                    "excluded": ["deleted", "syncState", "uid", "changelog", "dateCreated", "dateModified", "dateAccessed"],
-                    "readOnly": ["uid"]
+                    "sequence": ["labels", "starred", "other", "dates"],
+                    "excluded": ["deleted", "syncState", "uid"],
+                    "readOnly": ["uid"],
+                    "renderDescription": {
+                        "starred": [
+                            "Action", { "press": { "actionName": "star" } }
+                        ],
+                        "labels": [
+                            "EditorRow", {
+                                "for": "group",
+                                "title": "{displayName}"
+                            }, [
+                                "Text", {
+                                    "condition": "{!.labels.count}",
+                                    "text": "no labels yet"
+                                },
+                                "WrapStack", {
+                                    "list": "{.labels}"
+                                }, [
+                                    "VStack", {
+                                        "background": "{.color}",
+                                        "cornerRadius": 5
+                                    }, [
+                                        "Text", {
+                                            "text": "{.name}",
+                                            "font": [16, "semibold"],
+                                            "color": "#fff",
+                                            "padding": [5, 8, 5, 8]
+                                        }
+                                    ]
+                                ]
+                            ]
+                        ],
+                        "dates": [
+                            "Text", {
+                                "sectionTitle": "",
+                                "alignment": "center",
+                                "textalign": "center",
+                                "text": "{.describeChangelog()}",
+                                "padding": [30, 40, 40, 40],
+                                "color": "#999",
+                                "font": [13],
+                                "maxChar": 300
+                            }
+                        ]
+                    }
                 }
             }
         },
@@ -209,7 +253,7 @@
                             }
                         },
                         "queryOptions": {
-                            "query": "type:logitem appliesTo:{.id}",
+                            "query": "logitem appliesTo:{.uid}",
                             "sortProperty": "dateCreated",
                             "sortAscending": true
                         }
@@ -217,9 +261,8 @@
                 },
                 {
                     "title": "Starred notes",
-                    "actionName": "openDynamicView",
-                    "actionArgs": [{
-                        "name": "filter-starred",
+                    "actionName": "openViewByName",
+                    "actionArgs": ["filter-starred", {
                         "fromTemplate": "all-notes"
                     }]
                 },
@@ -572,7 +615,7 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
-       "{type:person}": {
+        "{type:person}": {
             "title": "{dataItem.firstName}",
             "rendererName": "generalEditor",
             "renderConfigs": {
@@ -634,18 +677,6 @@
                                     ]
                                 ]
                             ]
-                        ],
-                        "dates": [
-                            "Text", {
-                                "sectionTitle": "",
-                                "alignment": "center",
-                                "textalign": "center",
-                                "text": "{.describeChangelog()}",
-                                "padding": [30, 40, 40, 40],
-                                "color": "#999",
-                                "font": [13],
-                                "maxChar": 300
-                            }
                         ],
                         "phoneNumbers2":[
                             "EditorRow", {
@@ -740,32 +771,6 @@
                                     }
                                 ]
                             ]
-                        ],
-                        "labels": [
-                            "EditorRow", {
-                                "for": "group",
-                                "title": "{displayName}"
-                            }, [
-                                "Text", {
-                                    "condition": "{!.labels.count}",
-                                    "text": "no labels yet"
-                                },
-                                "WrapStack", {
-                                    "list": "{.labels}"
-                                }, [
-                                    "VStack", {
-                                        "background": "{.color}",
-                                        "cornerRadius": 5
-                                    }, [
-                                        "Text", {
-                                            "text": "{.name}",
-                                            "font": [16, "semibold"],
-                                            "color": "#fff",
-                                            "padding": [5, 8, 5, 8]
-                                        }
-                                    ]
-                                ]
-                            ]
                         ]
                     }
                 }
@@ -843,6 +848,83 @@
                     "actionArgs": ["all-notes"]
                 }
            ]
+       },
+        "{[type:country]}": {
+            "renderConfigs": {
+                "virtual": {
+                    "generalEditor": [
+                        "EditorRow", {
+                            "title": "{title}"
+                        }, [
+                            "Text", {
+                                "text": "{.name}",
+                                "condition": "{readOnly}"
+                            },
+                            "Picker", {
+                                "empty": "Country",
+                                "value": "{.}",
+                                "default": "{me.address[primary = true].country}",
+                                "optionsFromQuery": "country",
+                                "condition": "{!readOnly}"
+                            }
+                        ]
+                    ]
+                }
+            }
+        },
+        "{[type:address]}": {
+            "renderConfigs": {
+                "virtual": {
+                    "generalEditor": [
+                        "EditorRow", {
+                            "title": "{title}",
+                        }, [
+                            "HStack", {"condition": "{readOnly}"}, [
+                                "Text", {
+                                    "text": "{.format()}"
+                                },
+                                "Map", { "address": "{.}", "padding": 10 }
+                            ],
+                            "HStack", {"condition": "{!readOnly}"}, [
+                                "EditorLabel", {
+                                    "edge": "{edge}",
+                                    "hierarchy": "address"
+                                },
+                                "VStack", [
+                                    "Textfield", { "hint": "Street", "text": "{.street}", "rows": 2 },
+                                    "Textfield", { "hint": "City", "text": "{.city}" },
+                                    "HStack", [
+                                        "Textfield", { "hint": "State", "text": "{.state}" },
+                                        "Textfield", { "hint": "Zip", "text": "{.zip}" }
+                                    ],
+                                    "Picker", {
+                                        "empty": "Country",
+                                        "value": "{.country}",
+                                        "default": "{me.address[primary = true].country}",
+                                        "options": "country"
+                                    }
+                                ]
+                            ]
+                        ]
+                    ]
+                }
+            }
+        },
+        "{type:address}": {
+            "title": "{dataItem.computedTitle}",
+            "rendererName": "generalEditor",
+            "renderConfigs": {
+                "generalEditor": {
+                    "renderDescription": {
+                        
+                    }
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "contextButtons": [
+                { "actionName": "star" },
+                { "actionName": "schedule" }
+            ]
         },
     },
     "user": {

@@ -325,6 +325,48 @@ public class Views {
         
         return computedView
     }
+    
+    // TODO: Refactor: Consider caching computedView based on the type of the item
+    public func renderItemCell(_ item:DataItem, _ rendererNames: [String],
+                               _ viewOverride: String? = nil,
+                               _ variables: [String: () -> Any]? = nil) throws -> GUIElementInstance {
+        
+        guard let main = self.main else {
+            throw "Exception: Main is not defined in views"
+        }
+
+        // TODO: If there is a view override, find it, otherwise
+        if viewOverride != nil { throw "View Override Not Implemented" }
+
+        // Create a new view
+        let computedView = ComputedView(main.cache)
+
+        let searchOrder = ["defaults", "user"]
+        let needles = ["{[type:*]}", "{[type:\(item.genericType)]}"]
+
+        // Find views based on datatype
+        for needle in needles {
+            for key in searchOrder {
+                if let view = getSessionView(self.defaultViews[key]![needle]) {
+                    computedView.merge(view)
+                }
+            }
+        }
+
+        // Find the first cascaded renderer for the type and render the item
+        for name in rendererNames {
+            if let _ = computedView.renderConfigs.objectSchema[name] {
+                return (computedView.renderConfigs[name] as! RenderConfig).render(
+                    item: item,
+                    variables: variables ?? [:]) // Refactor: look at how variables is passed
+            }
+            else if let renderConfig = computedView.renderConfigs.virtual?[name] as? RenderConfig {
+                return renderConfig.render(item: item, variables: variables ?? [:])
+            }
+        }
+        
+        return GUIElementInstance(GUIElementDescription(), item, variables ?? [:])
+    }
 }
 
 public class SessionView: DataItem {
@@ -521,8 +563,6 @@ public class SessionView: DataItem {
             }
             self._variables = serialize(AnyCodable(myVars))
         }
-        
-        self._variables = view._variables ?? self._variables
     }
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
@@ -888,6 +928,10 @@ public class CompiledView {
                     
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
+                    parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
+                }
+                // Same for virtual renderDescriptions
+                else if key == "virtual" {
                     parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
                 }
                     
