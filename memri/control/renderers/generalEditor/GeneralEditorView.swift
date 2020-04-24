@@ -88,18 +88,24 @@ struct GeneralEditorView: View {
         let groups = self.renderConfig.groups ?? [:]
         var filteredGroups: [String:[String]] = [:]
         let objectSchema = item.objectSchema
+        var alreadyUsed:[String] = []
+
+        for (key, value) in groups {
+            if value.first != key { alreadyUsed = alreadyUsed + value }
+        }
         
         (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
             return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil)
                 && !self.renderConfig.excluded.contains($0)
+                && !alreadyUsed.contains($0)
         }.forEach({
             filteredGroups[$0] = groups[$0] ?? [$0]
         })
+        
         return filteredGroups.count > 0 ? filteredGroups : nil
     }
     
-    func getSortedKeys(_ groups: [String:[String]]) -> [String]{
-        
+    func getSortedKeys(_ groups: [String:[String]]) -> [String] {
         var keys = Array(self.renderConfig.sequence)
         for k in groups.keys{
             if !keys.contains(k) {
@@ -121,7 +127,7 @@ struct GeneralEditorView: View {
         let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)
-        print(sortedKeys)
+        
         return ScrollView {
             VStack (alignment: .leading, spacing: 0) {
                 if groups.count > 0 {
@@ -174,11 +180,11 @@ struct GeneralEditorSection: View {
     }
     
     func getSectionTitle(_ groupKey:String) -> String? {
-        renderConfig.renderDescription?[groupKey]?.properties["sectiontitle"] as? String
+        renderConfig.renderDescription?[groupKey]?._properties["sectiontitle"] as? String
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
-        renderConfig.renderDescription?[groupKey]?.properties["for"] as? String == "group"
+        return renderConfig.renderDescription?[groupKey]?._properties["for"] as? String == "group"
     }
     
     func getType(_ groupKey:String) -> String {
@@ -255,6 +261,10 @@ struct GeneralEditorSection: View {
             : self.groups[self.groupKey]!
         let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
         
+        if groupKey == "dates" {
+            
+        }
+        
         return Group {
             
 //            func getVars(_ name:String, _ value:Any?,
@@ -278,40 +288,41 @@ struct GeneralEditorSection: View {
             
             Section (header: self.getHeader(renderDescription, groupContainsNodes)){
                 if renderDescription[groupKey] != nil {
-                    // TODO: not sure if the !groupIsEdge condition is necessary
-                    if self.getSectionTitle(groupKey) == "" || !groupContainsNodes {
-                        ForEach(groups[groupKey]!, id:\.self) { groupElement in
-                            self.renderConfig.render(
-                                item: self.item,
-                                part: self.groupKey,
-                                variables: self.getVars(self.groupKey, groupElement, nil, self.item)
-                            )
-                        }
+                    if self.getSectionTitle(groupKey) != "" {
+                        Divider()
+                    }
+                    
+                    // when you render one GUIElement for the whole group (potentially unwrapped by using wrapStack
+                    if self.isDescriptionForGroup(groupKey) {
+                        renderConfig.render(
+                            item: item,
+                            part: groupKey,
+                            variables: self.getVars(self.groupKey, groupKey, nil, self.item)
+                        )
                     }
                     else {
-                    // if title is not empty
-                        Divider()
                         if groupContainsNodes {
-                            // when you render one GUIElement for the whole group (potentially unwrapped by using wrapStack
-                            if self.isDescriptionForGroup(groupKey) {
-                                renderConfig.render(
-                                    item: item,
-                                    part: groupKey,
-                                    variables: self.getVars(self.groupKey, groupKey, nil, self.item)
-                                )
-                            }
-                            else {
-                                // The normal case for edges: loop over
-                                ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
-                                    self.renderConfig.render(
-                                        item: otherItem,
-                                        part: self.groupKey,
-                                        variables: self.getVars(self.groupKey, "", otherItem, otherItem))
-                                }
+                            // The normal case for edges: loop over
+                            ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
+                                self.renderConfig.render(
+                                    item: otherItem,
+                                    part: self.groupKey,
+                                    variables: self.getVars(self.groupKey, "", otherItem, otherItem))
                             }
                         }
+                        else {
+                            ForEach(groups[groupKey]!, id:\.self) { groupElement in
+                                self.renderConfig.render(
+                                    item: self.item,
+                                    part: self.groupKey,
+                                    variables: self.getVars(self.groupKey, groupElement, nil, self.item)
+                                )
+                            }
+                        }
+                    }
+                    
+                    if self.getSectionTitle(groupKey) != "" {
                         Divider()
-                        
                     }
                 }
                 else {

@@ -269,11 +269,15 @@ extension Text {
           exact shape of that is still beyond the horizon of my imagination.
  */
              
-// Refactor: make this confirm to Codable in order for RenderConfig.merge to be more efficient
-public class GUIElementDescription: Decodable {
+public class GUIElementDescription: Codable {
     var type: String = ""
-    var properties: [String: Any] = [:]
+    var properties: [String: AnyCodable] = [:]
     var children: [GUIElementDescription] = []
+    var _properties: [String:Any] = [:]
+    
+    private enum CodingKeys: String, CodingKey {
+        case type, properties, children
+    }
     
     required convenience public init(from decoder: Decoder) throws {
         self.init()
@@ -281,46 +285,45 @@ public class GUIElementDescription: Decodable {
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             children = try decoder.decodeIfPresent("children") ?? children
+            properties = try decoder.decodeIfPresent("properties") ?? properties
             
-            if let props:[String:AnyCodable] = try decoder.decodeIfPresent("properties") {
-                parseProperties(props)
-            }
+            parseProperties(properties)
         }
     }
     
     func parseProperties(_ props:[String:AnyCodable]){
         for (key, value) in props {
-            properties[key.lowercased()] = parseProperty(key, value.value)
+            _properties[key.lowercased()] = parseProperty(key, value.value)
         }
         
         for item in ViewConfig["frame"]! {
-            if properties[item] != nil {
+            if _properties[item] != nil {
                 
                 let values:[Any?] = [
-                    properties["minwidth"] as Any?,
-                    properties["maxwidth"] as Any?,
-                    properties["minheight"] as Any?,
-                    properties["maxheight"] as Any?,
-                    properties["align"] as Any?
+                    _properties["minwidth"] as Any?,
+                    _properties["maxwidth"] as Any?,
+                    _properties["minheight"] as Any?,
+                    _properties["maxheight"] as Any?,
+                    _properties["align"] as Any?
                 ]
                 
-                properties["minwidth"] = nil
-                properties["maxwidth"] = nil
-                properties["minheight"] = nil
-                properties["maxheight"] = nil
-                properties["align"] = nil
+                _properties["minwidth"] = nil
+                _properties["maxwidth"] = nil
+                _properties["minheight"] = nil
+                _properties["maxheight"] = nil
+                _properties["align"] = nil
                 
-                properties["frame"] = values
+                _properties["frame"] = values
                 break
             }
         }
         
-        if properties["cornerradius"] != nil && properties["border"] != nil {
-            var value = properties["border"] as! [Any]
-            value.append(properties["cornerradius"]!)
+        if _properties["cornerradius"] != nil && _properties["border"] != nil {
+            var value = _properties["border"] as! [Any]
+            value.append(_properties["cornerradius"]!)
             
-            properties["cornerborder"] = value as Any
-            properties["border"] = nil
+            _properties["cornerborder"] = value as Any
+            _properties["border"] = nil
         }
     }
     
@@ -393,6 +396,17 @@ public class GUIElementDescription: Decodable {
             
             return value
         }
+        else if let value = value as? [String:Any] {
+            if value["actionName"] != nil {
+                return ActionDescription(
+                    icon: value["icon"] as? String ?? nil,
+                    title: value["title"] as? String ?? nil,
+                    actionName: ActionName(rawValue: value["actionName"] as? String ?? "nil"),
+                    actionArgs: (value["actionArgs"] as? [Any] ?? [] ).map { AnyCodable($0) },
+                    actionType: ActionType(rawValue: value["actionType"] as? String ?? "nil")
+                )
+            }
+        }
         
         return value
     }
@@ -461,7 +475,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public func has(_ propName:String) -> Bool {
-        return properties[propName] != nil
+        return _properties[propName] != nil
     }
     
     public func getString(_ propName:String, _ item:DataItem? = nil) -> String {
@@ -475,7 +489,7 @@ public class GUIElementDescription: Decodable {
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
                        _ variables:[String: () -> Any] = [:]) -> T? {
         
-        if let prop = properties[propName] {
+        if let prop = _properties[propName] {
             let propValue = prop
             
             // Compile string properties
@@ -738,7 +752,7 @@ public struct GUIElementInstance: View {
                 }
                 .clipped()
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "hstack" {
                 HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
@@ -746,13 +760,13 @@ public struct GUIElementInstance: View {
                 }
                 .clipped()
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "zstack" {
                 ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             if from.type == "editorsection" {
                 if self.has("title") {
@@ -765,7 +779,7 @@ public struct GUIElementInstance: View {
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
                 }
                 else {
                     VStack(spacing: 0){
@@ -773,7 +787,7 @@ public struct GUIElementInstance: View {
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
                 }
             }
             if from.type == "editorrow" {
@@ -799,7 +813,7 @@ public struct GUIElementInstance: View {
                         : Color(hex:"#f7fcf5"))
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
                     
                     Divider().padding(.leading, 35)
                 }
@@ -809,7 +823,7 @@ public struct GUIElementInstance: View {
                 Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
                     self.renderChildren
                 }
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "wrapstack" {
                 WrapStack(getList("list")) { listItem in
@@ -818,7 +832,7 @@ public struct GUIElementInstance: View {
                     }
                 }
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "text" {
                 Text(from.processText(get("text") ?? "[nil]"))
@@ -827,7 +841,7 @@ public struct GUIElementInstance: View {
                     .if(from.getBool("underline")){ $0.underline() }
                     .if(from.getBool("strikethrough")){ $0.strikethrough() }
                     .fixedSize(horizontal: false, vertical: true)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "textfield" {
             }
@@ -835,42 +849,42 @@ public struct GUIElementInstance: View {
             }
             else if from.type == "action" {
                 Action(action: get("press"))
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "image" {
                 if has("systemname") {
                     Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                         .if(from.has("resizable")) { self.resize($0) }
-                        .setProperties(from.properties, self.item)
+                        .setProperties(from._properties, self.item)
                 }
                 else { // assuming image property
 //                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
                     Image(uiImage: getImage("image"))
                         .if(from.has("resizable")) { self.resize($0) }
-                        .setProperties(from.properties, self.item)
+                        .setProperties(from._properties, self.item)
                 }
             }
             else if from.type == "circle" {
             }
             else if from.type == "horizontalline" {
                 HorizontalLine()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "rectangle" {
                 Rectangle()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "roundedrectangle" {
                 RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "spacer" {
                 Spacer()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "divider" {
                 Divider()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
         }
     }

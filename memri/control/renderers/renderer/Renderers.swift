@@ -178,7 +178,9 @@ public class RenderConfig: Object, Codable {
             for (key, value) in renderDescription {
                 myRD[key] = value
             }
-            self._renderDescription = serialize(AnyCodable(myRD))
+            
+            let data = try! MemriJSONEncoder.encode(myRD)
+            self._renderDescription = String(data: data, encoding: .utf8)!
         }
     }
     
