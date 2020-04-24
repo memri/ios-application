@@ -158,6 +158,30 @@ extension View {
         if conditional { return AnyView(content(self)) }
         else { return AnyView(self) }
     }
+    
+    // TODO Refactor: use only one path to draw this (is that possible?)
+    func border(width: [CGFloat], color: Color) -> some View {
+        var x:AnyView = AnyView(self)
+        if width[0] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[0], edge: .leading).foregroundColor(color)))
+        }
+        if width[1] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[1], edge: .top).foregroundColor(color)))
+        }
+        if width[2] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[2], edge: .trailing).foregroundColor(color)))
+        }
+        if width[3] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[3], edge: .bottom).foregroundColor(color)))
+        }
+        
+        return x
+    }
+    func border(width: CGFloat, edge: Edge, color: Color) -> some View {
+        self.overlay(
+            EdgeBorder(width: width, edge: edge).foregroundColor(color)
+        )
+    }
 }
 
 extension Text {
@@ -173,6 +197,44 @@ extension Text {
 //        else { return self }
 //    }
 //}
+
+struct EdgeBorder: Shape {
+
+    var width: CGFloat
+    var edge: Edge
+
+    func path(in rect: CGRect) -> Path {
+        var x: CGFloat {
+            switch edge {
+            case .top, .bottom, .leading: return rect.minX
+            case .trailing: return rect.maxX - width
+            }
+        }
+
+        var y: CGFloat {
+            switch edge {
+            case .top, .leading, .trailing: return rect.minY
+            case .bottom: return rect.maxY - width
+            }
+        }
+
+        var w: CGFloat {
+            switch edge {
+            case .top, .bottom: return rect.width
+            case .leading, .trailing: return self.width
+            }
+        }
+
+        var h: CGFloat {
+            switch edge {
+            case .top, .bottom: return self.width
+            case .leading, .trailing: return rect.height
+            }
+        }
+
+        return Path( CGRect(x: x, y: y, width: w, height: h) )
+    }
+}
 
 /*
     TODO: In order to support mixed content we will need to add an element that renders a dataitem
@@ -503,6 +565,25 @@ public class GUIElementDescription: Codable {
         return nil
     }
     
+    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, String) {
+        // TODO REfactor: Error Handling
+        if let prop = _properties[propName] {
+            let propValue = prop
+            
+            // Compile string properties
+            // TODO: Refactor: the following wouldn't work: dataItem.address[0].street
+            if let compiled = propValue as? CompiledProperty {
+                if let dataItemPropName = (compiled.result.first as? [String])?.last {
+                    let type = item.objectSchema[dataItemPropName]?.type
+                    return (type ?? .any, dataItemPropName)
+                }
+            }
+        }
+        
+        // TODO Refactor: Error Handling
+        return (.any, "")
+    }
+    
     public class func formatDate(_ date:Date?) -> String{
         let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
         
@@ -694,7 +775,7 @@ public struct GUIElementInstance: View {
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
-            // TODO Error Handling
+            // TODO Refactor Error Handling
             if let f = variables[propName.substr(1)] {
                 return (f() as! T)
             }
@@ -805,7 +886,7 @@ public struct GUIElementInstance: View {
             else if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
-                        if self.has("title") {
+                        if self.has("title") && self.get("nopadding") != true {
                             Text(LocalizedStringKey(self.get("title") ?? ""
                                 .camelCaseToWords()
                                 .lowercased()
@@ -818,20 +899,48 @@ public struct GUIElementInstance: View {
                             .generalEditorCaption()
                     }
                     .fullWidth()
-                    .padding(.bottom, 10)
-                    .padding(.horizontal, 36)
+//                    .padding(.bottom, 10)
+                    .padding(.leading, self.get("nopadding") != true ? 36 : 0)
+                    .padding(.trailing, self.get("nopadding") != true ? 36 : 0)
+                    .clipped()
+                    .animation(nil)
                     .setProperties(from._properties, self.item)
                     .background(self.get("$readonly") ?? false
                         ? Color(hex:"#f9f9f9")
                         : Color(hex:"#f7fcf5"))
-                    .clipped()
-                    .animation(nil)
                     
                     if self.has("title") {
                         Divider().padding(.leading, 35)
                     }
                 }
 
+            }
+            else if from.type == "editorlabel" {
+                HStack (alignment: .center, spacing:15) {
+                    Button (action:{}) {
+                        Image (systemName: "minus.circle.fill")
+                            .foregroundColor(Color.red)
+                            .font(.system(size: 22))
+                    }
+                    
+                    if self.has("title") {
+                        Button (action:{}) {
+                            HStack {
+                                Text (LocalizedStringKey(self.get("title") ?? ""))
+                                    .foregroundColor(Color.blue)
+                                    .font(.system(size: 15))
+                                    .lineLimit(1)
+                                Spacer()
+                                Image (systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(Color.gray)
+                            }
+                        }
+                    }
+                }
+                .frame(minWidth: 130, maxWidth: 130, maxHeight: .infinity, alignment: .leading)
+                .padding(10)
+                .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
             }
             else if from.type == "button" {
                 Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
@@ -858,6 +967,7 @@ public struct GUIElementInstance: View {
                     .setProperties(from._properties, self.item)
             }
             else if from.type == "textfield" {
+                self.renderTextfield()
             }
             else if from.type == "securefield" {
             }
@@ -902,6 +1012,35 @@ public struct GUIElementInstance: View {
             else if from.type == "divider" {
                 Divider()
                     .setProperties(from._properties, self.item)
+            }
+        }
+    }
+    
+//    @ViewBuilder // This crashes the build when Group is gone
+    // TODO add this for multiline editing: https://github.com/kenmueller/TextView
+    func renderTextfield() -> some View {
+        let (type, propName) = from.getType("value", self.item)
+        
+        return Group {
+            if type != PropertyType.string {
+                TextField(LocalizedStringKey(self.get("hint") ?? ""), value: Binding<Any>(
+                    get: { self.item[propName] as Any},
+                    set: { self.item.set(propName, $0) }
+                ), formatter: type == .date ? DateFormatter() : NumberFormatter()) // TODO Refactor: expand to properly support all types
+                .keyboardType(.decimalPad)
+                .generalEditorCaption()
+            }
+            else {
+                TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(
+                    get: { self.item.getString(propName) },
+                    set: { self.item.set(propName, $0) }
+                ))
+                .fullHeight()
+                .font(.system(size:16, weight: .regular))
+                .padding(10)
+                .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+//                .border(Color.red, width: 1)
+                .generalEditorCaption()
             }
         }
     }

@@ -463,6 +463,7 @@ struct DefaultGeneralEditorRow: View {
                 self.main.objectWillChange.send()
             }
         )
+        
         return DatePicker("", selection: binding, displayedComponents: .date)
             .frame(width: 300, height: 80, alignment: .center)
             .clipped()
@@ -513,6 +514,16 @@ private struct GeneralEditorHeader: ViewModifier {
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        return GeneralEditorView().environmentObject(Main(name: "", key: "").mockBoot())
+        let main = Main(name: "", key: "").mockBoot()
+        
+        return ZStack {
+            VStack(alignment: .center, spacing: 0) {
+                TopNavigation()
+                GeneralEditorView()
+                Search()
+            }.fullHeight()
+            
+            ContextPane()
+        }.environmentObject(main)
     }
 }

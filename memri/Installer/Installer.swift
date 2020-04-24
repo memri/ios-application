@@ -16,6 +16,10 @@ public class Installer {
         realm = rlm
     }
     
+    public func install(_ main:Main) {
+        
+    }
+    
     public func installIfNeeded(_ main:Main, _ callback: () -> Void) {
         
         let installLogs = realm.objects(LogItem.self).filter("action = 'install'")
@@ -27,6 +31,7 @@ public class Installer {
             main.navigation.install()
             
             // Load default objects in database
+            main.cache.install()
             
             // Load default settings in database
             main.settings.install()

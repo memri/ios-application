@@ -155,6 +155,21 @@ public class Cache {
     /**
      *
      */
+    public func install() {
+        // Load default database from disk
+        let jsonData = try! jsonDataFromFile("default_database")
+        let items:[DataItem] = try! MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
+        
+        try! realm.write {
+            for item in items {
+                realm.add(item, update: .modified)
+            }
+        }
+    }
+    
+    /**
+     *
+     */
     public func query(_ queryOptions:QueryOptions,
                       _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
 

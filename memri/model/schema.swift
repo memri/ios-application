@@ -24,6 +24,8 @@ enum DataItemFamily: String, ClassFamily {
     case phonenumber = "phonenumber"
     case website = "website"
     case location = "location"
+    case address = "address"
+    case country = "country"
     case company = "company"
     case publickey = "publickey"
     case onlineprofile = "onlineprofile"
@@ -46,6 +48,8 @@ enum DataItemFamily: String, ClassFamily {
         case .phonenumber: return Color(hex: "#eccf23")
         case .website: return Color(hex: "#3d57e2")
         case .location: return Color(hex: "#93c47d")
+        case .address: return Color(hex: "#93c47d")
+        case .country: return Color(hex: "#93c47d")
         case .company: return Color(hex: "#93c47d")
         case .publickey: return Color(hex: "#93c47d")
         case .onlineprofile: return Color(hex: "#93c47d")
@@ -59,23 +63,8 @@ enum DataItemFamily: String, ClassFamily {
     
     var foregroundColor: Color {
         switch self{
-        case .note: return Color(hex: "#fff")
-        case .label: return Color(hex: "#fff")
-        case .file: return Color(hex: "#fff")
-        case .person: return Color(hex: "#fff")
-        case .logitem: return Color(hex: "#fff")
-        case .sessions: return Color(hex: "#fff")
-        case .phonenumber: return Color(hex: "#fff")
-        case .website: return Color(hex: "#fff")
-        case .location: return Color(hex: "#fff")
-        case .company: return Color(hex: "#fff")
-        case .publickey: return Color(hex: "#fff")
-        case .onlineprofile: return Color(hex: "#fff")
-        case .diet: return Color(hex: "#fff")
-        case .medicalcondition: return Color(hex: "#fff")
-        case .session: return Color(hex: "#fff")
-        case .sessionview: return Color(hex: "#fff")
-        case .dynamicview: return Color(hex: "#fff")
+        default:
+            return Color(hex: "#fff")
         }
     }
     
@@ -103,6 +92,10 @@ enum DataItemFamily: String, ClassFamily {
             (object as! RealmSwift.List<Website>).forEach{ collection.append($0) }
         case .location:
             (object as! RealmSwift.List<Location>).forEach{ collection.append($0) }
+        case .address:
+            (object as! RealmSwift.List<Address>).forEach{ collection.append($0) }
+        case .country:
+            (object as! RealmSwift.List<Country>).forEach{ collection.append($0) }
         case .company:
             (object as! RealmSwift.List<Company>).forEach{ collection.append($0) }
         case .publickey:
@@ -145,6 +138,10 @@ enum DataItemFamily: String, ClassFamily {
             return Website.self
         case .location:
             return Location.self
+        case .address:
+            return Address.self
+        case .country:
+            return Country.self
         case .company:
             return Company.self
         case .publickey:
@@ -259,12 +256,58 @@ class Website:DataItem{
 
 class Location:DataItem{
     override var genericType:String { "location" }
-    // country/adress/etc.
+    
+    let latitude = RealmOptional<Double>()
+    let longitude = RealmOptional<Double>()
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
+            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
+
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+class Country:DataItem {
+    override var genericType:String { "country" }
+    
+    @objc dynamic var name:String? = nil
+    @objc dynamic var flag:File? = nil // or Image ??
+    @objc dynamic var location:Location? = nil
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            flag = try decoder.decodeIfPresent("flag") ?? flag
+            location = try decoder.decodeIfPresent("location") ?? location
+
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+class Address:DataItem {
+    override var genericType:String { "address" }
+    
     @objc dynamic var type:String? = nil
-    @objc dynamic var country:String? = nil
-    @objc dynamic var town:String? = nil
+    @objc dynamic var country:Country? = nil
+    @objc dynamic var city:String? = nil
     @objc dynamic var street:String? = nil
-    let streetNr = RealmOptional<Int>()
+    @objc dynamic var state:String? = nil
     @objc dynamic var postalCode:String? = nil
     
     required init () {
@@ -277,9 +320,9 @@ class Location:DataItem{
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             country = try decoder.decodeIfPresent("country") ?? country
-            town = try decoder.decodeIfPresent("town") ?? town
+            city = try decoder.decodeIfPresent("city") ?? city
+            state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
-            streetNr.value = try decoder.decodeIfPresent("streetNr") ?? streetNr.value
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
 
             try! self.superDecode(from: decoder)
@@ -433,12 +476,11 @@ class Person:DataItem {
     //TODO
 //    let placeOfBirth = List<Location>()
     let companies = List<Company>()
-    let addresses = List<Location>()
+    let addresses = List<Address>()
     let publicKeys = List<PublicKey>()
     let onlineProfiles = List<OnlineProfile>()
     let diets = List<Diet>()
     let medicalConditions = List<MedicalCondition>()
-
     
     override var computeTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
