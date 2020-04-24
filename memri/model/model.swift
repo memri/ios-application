@@ -3,10 +3,18 @@ import Combine
 import RealmSwift
 
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
+    
     /**
      *
      */
-    var type:String { "unknown" }
+    var genericType:String { "unknown" }
+    
+    /**
+     *
+     */
+    var computeTitle:String {
+        return "\(genericType) [\(uid)]"
+    }
     
     /**
      *
@@ -29,7 +37,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
      */
     @objc dynamic var dateModified:Date? = Date()
     /**
-     *
+     * 
      */
     @objc dynamic var dateAccessed:Date? = nil
     /**
@@ -54,6 +62,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "uid"
     }
     
+    public func cast() -> Self{
+        return self
+    }
+    
     private enum CodingKeys: String, CodingKey {
         case uid, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
              labels, syncState
@@ -61,6 +73,18 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         
     enum DataItemError: Error {
         case cannotMergeItemWithDifferentId
+    }
+    
+    required init(){
+        super.init()
+
+        self.functions["describeChangelog"] = {_ in
+            let dateCreated = GUIElementDescription.formatDate(self.dateCreated)
+            let views =  self.changelog.filter{ $0.action == "read" }.count
+            let edits = self.changelog.filter{ $0.action == "update" }.count
+            let timeSinceCreated = GUIElementDescription.formatDateSinceCreated(self.dateCreated)
+            return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
+        }
     }
     
     /**
@@ -88,12 +112,35 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             
             // TODO how to do this in swift?
             // #IFDEF DEBUG
-            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.type):\(self.uid ?? "")")
+            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.genericType):\(self.uid)")
             // #ENDIF
             
             return ""
         }
-        else { return self[name] as? String ?? "" }
+        else {
+            let val = self[name]
+            
+            if let str = val as? String {
+                return str
+            }
+            else if val is Bool {
+                return String(val as! Bool)
+            }
+            else if val is Int {
+                return String(val as! Int)
+            }
+            else if val is Double {
+                return String(val as! Double)
+            }
+            else if val is Date {
+                let formatter = DateFormatter()
+                formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
+                return formatter.string(from: val as! Date)
+            }
+            else {
+                return ""
+            }
+        }
     }
     
     /**
@@ -102,6 +149,15 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public func set(_ name:String, _ value:Any) {
         try! self.realm!.write() {
             self[name] = value
+        }
+    }
+    
+    public func toggle(_ name:String) {
+        if self[name] as! Bool == false {
+            self.set(name, true)
+        }
+        else {
+            self.set(name, false)
         }
     }
     
@@ -272,7 +328,7 @@ public class ResultSet: ObservableObject {
         
         if let query = self.queryOptions.query, query != "" {
             if let typeName = query.split(separator: " ").first {
-                return String(typeName)
+                return String(typeName == "*" ? "mixed" : typeName)
             }
         }
         return nil
@@ -298,8 +354,12 @@ public class ResultSet: ObservableObject {
      *
      */
     var item: DataItem? {
-        if !isList && count > 0 { return items[0] }
-        else { return nil }
+        get{
+            if !isList && count > 0 { return items[0] }
+            else { return nil }
+        } set (newValue){
+            
+        }
     }
     /**
      *

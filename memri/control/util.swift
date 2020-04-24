@@ -56,22 +56,59 @@ extension String: Error {
         
         return matches
     }
+    
+    func substr(_ startIndex:Int, _ length:Int? = nil) -> String {
+        let start = startIndex < 0
+            ? self.index(self.endIndex, offsetBy: startIndex)
+            : self.index(self.startIndex, offsetBy: startIndex)
+        
+        let end = length == nil
+            ? self.endIndex
+            : length! < 0
+                ? self.index(self.startIndex, offsetBy: startIndex + length!)
+                : self.index(self.endIndex, offsetBy: length!)
+        
+        let range = start..<end
+
+        return String(self[range])
+    }
+    
+    func replace(_ target: String, _ withString: String) -> String
+    {
+        return self.replacingOccurrences(of: target, with: withString, options: NSString.CompareOptions.regularExpression, range: nil)
+    }
+}
+
+extension Collection {
+
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
 }
 
 extension Date {
+    
+    
+    var timeDelta: String? {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .full
+        formatter.maximumUnitCount = 1
+        formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
+
+        guard let deltaString = formatter.string(from: self, to: Date()) else {
+             return nil
+        }
+        return deltaString
+    }
+    
    var timestampString: String? {
-      let formatter = DateComponentsFormatter()
-      formatter.unitsStyle = .full
-      formatter.maximumUnitCount = 1
-      formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
-
-      guard let timeString = formatter.string(from: self, to: Date()) else {
-           return nil
-      }
-
-      let formatString = NSLocalizedString("%@ ago", comment: "")
-      return String(format: formatString, timeString)
-   }
+        guard let timeString = timeDelta else {
+             return nil
+        }
+            let formatString = NSLocalizedString("%@ ago", comment: "")
+            return String(format: formatString, timeString)
+       }
 }
 
 let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder) in
@@ -193,4 +230,13 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
             list.append(item)
         }
     }
+}
+
+func negateAny(_ value:Any) -> Bool {
+    if let value = value as? Bool { return !value}
+    if let value = value as? Int { return value == 0 }
+    if let value = value as? Double { return value == 0 }
+    if let value = value as? String { return value == "" }
+    
+    return false
 }

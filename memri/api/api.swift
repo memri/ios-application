@@ -167,10 +167,17 @@ public class PodAPI {
             return
         }
         
+        if query.query!.prefix(6) == "person" {
+            callback(nil, try! DataItem.fromJSONFile("persons_from_server"))
+            return
+        }
+        
         if query.query!.prefix(4) == "note" {
             callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
             return
         }
+        
+
         
         // TODO do nothing
 //        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")

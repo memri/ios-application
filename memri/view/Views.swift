@@ -100,9 +100,10 @@ public class Views {
     /**
      *
      */
-    public func getSessionView (_ viewName:String) -> SessionView? {
+    public func getSessionView (_ viewName:String,
+                                _ variables:[String:Any]? = nil) -> SessionView? {
         if let compiledView = getCompiledView(viewName) {
-            return try! compiledView.generateView()
+            return try! compiledView.generateView(variables)
         }
         
         return nil
@@ -110,9 +111,10 @@ public class Views {
     /**
      *
      */
-    public func getSessionView (_ view:DynamicView?) -> SessionView? {
+    public func getSessionView (_ view:DynamicView?,
+                                _ variables:[String:Any]? = nil) -> SessionView? {
         if let dynamicView = view {
-            return try! compileView(dynamicView).generateView()
+            return try! compileView(dynamicView).generateView(variables)
         }
         
         return nil
@@ -120,17 +122,18 @@ public class Views {
     /**
      *
      */
-    public func getSessionOrView(_ viewName:String, wrapView:Bool=false) -> (Session?, SessionView?) {
+    public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
+                                 _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
         if let compiledView = getCompiledView(viewName) {
             
             // Parse so we now if it includes a session
             try! compiledView.parse()
             
             if compiledView.hasSession {
-                return (try! compiledView.generateSession(), nil)
+                return (try! compiledView.generateSession(variables), nil)
             }
             else {
-                let view = try! compiledView.generateView()
+                let view = try! compiledView.generateView(variables)
                 return (wrapView ? Session(value: ["views": [view]]) : nil, view)
             }
         }
@@ -173,8 +176,9 @@ public class Views {
         // Create a new view
         let computedView = ComputedView(main.cache)
         
-        var isList:Bool = true
-        var type:String = ""
+        var variables = viewFromSession.variables
+        var isList = true
+        var type = ""
         
         // Fetch query from the view from session
         if let queryOptions = viewFromSession.queryOptions {
@@ -205,42 +209,43 @@ public class Views {
         let searchOrder = ["defaults", "user"]
         
         // Default to the rendererName we know from the view from the session
-        var rendererName:String = viewFromSession.rendererName ?? ""
+        var rendererName = viewFromSession.rendererName ?? ""
         
         cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
         
         // If we know the type of data we are rendering use it to determine the view
+        var needles:[String]
         if type != "mixed" {
             // Determine query
-            let needles = [
+            needles = [
                 isList ? "{[type:*]}" : "{type:*}",
                 isList ? "{[type:\(type)]}" : "{type:\(type)}", // TODO if this is not found it should get the default template
             ]
-            
-            // Find views based on datatype
-            for needle in needles {
-                for key in searchOrder {
-                    if let datatypeView = getSessionView(self.defaultViews[key]![needle]) {
-                        if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
-                            continue
-                        }
-                        
-                        datatypeViews.append(datatypeView)
-                        
-                        if let S = datatypeView.rendererName { rendererNames.append(S) }
-                        if datatypeView.cascadeOrder.count > 0 {
-                            cascadeOrders[key]?.append(datatypeView.cascadeOrder)
-                        }
+        }
+        else {
+            needles = [isList ? "{[type:*]}" : "{type:*}"]
+        }
+        
+        // Find views based on datatype
+        for needle in needles {
+            for key in searchOrder {
+                if let datatypeView = getSessionView(self.defaultViews[key]![needle], variables) {
+                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
+                        continue
+                    }
+                    
+                    datatypeViews.append(datatypeView)
+                    
+                    if let S = datatypeView.rendererName { rendererNames.append(S) }
+                    if datatypeView.cascadeOrder.count > 0 {
+                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
                     }
                 }
             }
-            
-            if rendererNames.count > 0 {
-                rendererName = rendererNames[rendererNames.count - 1]
-            }
         }
-        else {
-            print("Warn: mixed views are not supported yet")
+                
+        if rendererNames.count > 0 {
+            rendererName = rendererNames[rendererNames.count - 1]
         }
         
         // Find renderer views
@@ -249,7 +254,7 @@ public class Views {
             let needle = "{renderer:\(rendererName)}"
             
             for key in searchOrder {
-                if let rendererView = getSessionView(self.defaultViews[key]![needle]) {
+                if let rendererView = getSessionView(self.defaultViews[key]![needle], variables) {
                     renderViews.append(rendererView)
                     
                     if rendererView.cascadeOrder.count > 0 {
@@ -327,7 +332,7 @@ public class SessionView: DataItem {
     /**
      *
      */
-    override var type:String { "sessionview" }
+    override var genericType:String { "sessionview" }
     /**
      *
      */
@@ -361,6 +366,37 @@ public class SessionView: DataItem {
     
     @objc dynamic var session: Session? = nil
     
+    @objc dynamic var _variables: String? = nil
+    
+    /**
+     *
+     */
+    var variables: [String:Any]? {
+        get {
+            if let strVars = self._variables {
+                if let variables:[String:AnyCodable] = unserialize(strVars) {
+                    return variables
+                }
+            }
+            
+            return nil
+        }
+        set (vars) {
+            self._variables = serialize(AnyCodable(vars))
+        }
+    }
+    
+    override var computeTitle:String {
+        if let value = self.name ?? self.title { return value }
+        else if let rendererName = self.rendererName {
+            return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+        }
+        else if let query = self.queryOptions?.query {
+            return "Showing: \(query)"
+        }
+        return "[No Name]"
+    }
+    
     private enum CodingKeys: String, CodingKey {
         case queryOptions, title, rendererName, name, subtitle, selection, renderConfigs,
             editButtons, filterButtons, actionItems, navigateItems, contextButtons, actionButton,
@@ -372,14 +408,8 @@ public class SessionView: DataItem {
         super.init()
         
         self.functions["computedDescription"] = {_ in
-            if let value = self.name ?? self.title { return value }
-            else if let rendererName = self.rendererName {
-                return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
-            }
-            else if let query = self.queryOptions?.query {
-                return "Showing: \(query)"
-            }
-            return "[No Name]"
+            print("MAKE THIS DISSAPEAR")
+            return self.computeTitle
         }
     }
     
@@ -413,6 +443,11 @@ public class SessionView: DataItem {
             self.renderConfigs = try decoder.decodeIfPresent("renderConfigs") ?? self.renderConfigs
             self.actionButton = try decoder.decodeIfPresent("actionButton") ?? self.actionButton
             self.editActionButton = try decoder.decodeIfPresent("editActionButton") ?? self.editActionButton
+            
+            if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("variables") {
+                self._variables = String(
+                    data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
+            }
             
             try! super.superDecode(from: decoder)
         }
@@ -478,6 +513,17 @@ public class SessionView: DataItem {
         
         self.actionButton = view.actionButton ?? self.actionButton
         self.editActionButton = view.editActionButton ?? self.editActionButton
+        
+        if let variables = view.variables {
+            var myVars = self.variables ?? [:]
+            
+            for (key, value) in variables {
+                myVars[key] = value
+            }
+            self._variables = serialize(AnyCodable(myVars))
+        }
+        
+        self._variables = view._variables ?? self._variables
     }
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> SessionView {
@@ -524,6 +570,8 @@ public class ComputedView: ObservableObject {
     var renderConfigs: RenderConfigs = RenderConfigs()
     var actionButton: ActionDescription? = nil
     var editActionButton: ActionDescription? = nil
+    
+    var variables: [String:Any] = [:]
     
     private var _emptyResultText: String = "No items found"
     private var _emptyResultTextTemp: String? = nil
@@ -652,6 +700,12 @@ public class ComputedView: ObservableObject {
         
         self.actionButton = view.actionButton ?? self.actionButton
         self.editActionButton = view.editActionButton ?? self.editActionButton
+        
+        if let variables = view.variables {
+            for (key, value) in variables {
+                self.variables[key] = value
+            }
+        }
     }
     
     public func finalMerge(_ view:SessionView) {
@@ -682,7 +736,7 @@ public class ComputedView: ObservableObject {
         
         if self.queryOptions.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
-            throw("Missing action button in this view")
+            print("Warn: Missing action button in this view")
         }
     }
     
@@ -827,38 +881,48 @@ public class CompiledView {
         // Find all dynamic properties and compile them
         func recursiveWalk(_ parsed:inout [String:Any]) throws {
             for (key, _) in parsed {
-                
+
                 // Do not parse actionStateName as it is handled at runtime (when action is executed)
                 if key == "actionStateName" { continue }
                 
+                // TODO make actionArgs runtime parsed
+                    
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
-                    
-                    var pDict:[String:Any]
-                    if let pList = parsed[key] as? [Any] { pDict = ["*": pList] }
-                    else { pDict = parsed }
-                    
-                    parsed.updateValue(try! parseRenderDescription(pDict), forKey: key)
+                    parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
                 }
                     
                 // Parse rest of the json
                 else {
                     
-                    // If its an object continue the walk to find strings to update
-                    var subParsed = parsed[key] as? [String:Any]
-                    if subParsed != nil {
-                        try! recursiveWalk(&subParsed!)
-                        parsed.updateValue(subParsed!, forKey: key)
-                    }
-                    // Update strings
-                    else if let propValue = parsed[key] as? String {
+                    func innerWalk(_ pItem:Any) -> Any {
+                        // If its an object continue the walk to find strings to update
+                        var subParsed = pItem as? [String:Any]
+                        if subParsed != nil {
+                            try! recursiveWalk(&subParsed!)
+                            return subParsed!
+                        }
+                        // Update arrays
+                        else if var arr = pItem as? [Any] {
+                            for i in 0..<arr.count {
+                                arr[i] = innerWalk(arr[i])
+                            }
+                            return arr
+                        }
+                        // Update strings
+                        else if let propValue = pItem as? String {
+                            
+                            // Compile the property for easy lookup
+                            let newValue = compileProperty(propValue)
+                            
+                            // Updated the parsed object with the new value
+                            return newValue
+                        }
                         
-                        // Compile the property for easy lookup
-                        let newValue = compileProperty(propValue)
-                        
-                        // Updated the parsed object with the new value
-                        parsed.updateValue(newValue, forKey: key)
+                        return pItem
                     }
+                    
+                    parsed.updateValue(innerWalk(parsed[key] as Any), forKey: key)
                 }
             }
         }
@@ -908,85 +972,9 @@ public class CompiledView {
         }
     }
     
-
-// How users type it
-//    [ "VStack", { "padding": 5 }, [
-//        "Text", { "value": "{.content}" },
-//        "Button", { "press": {"actionName": "back"} }, ["Text", "Back"],
-//        "Button", { "press": {"actionName": "openView"} }, [
-//            "Image", {"systemName": "star.fill"}
-//        ],
-//        "Text", { "value": "{.content}" }
-//    ]]
-    
-// How codable wants it
-//    {
-//        "type": "vstack",
-//        "children": [
-//            {
-//                "type": "text",
-//                "properties": {
-//                    "value": "{.title}",
-//                    "bold": true
-//                }
-//            },
-//            {
-//                "type": "text",
-//                "properties": {
-//                    "values": "{.content}",
-//                    "bold": false,
-//                    "removeWhiteSpace": true,
-//                    "maxChar": 100
-//                }
-//            }
-//        ]
-//    }
-    
-    private func parseRenderDescription(_ parsed: [String:Any]) throws -> String {
-        var result:[String:Any] = [:]
-        
-        for (key, value) in parsed {
-            result[key] = try! parseSingleRenderDescription(value as! [Any])
-        }
-        
-        return serialize(AnyCodable(result))
-    }
-    
-    private func parseSingleRenderDescription(_ parsed:[Any]) throws -> Any {
-        var result:[Any] = []
-        
-        func walkParsed(_ parsed:[Any], _ result:inout [Any]) throws {
-            var currentItem:[String:Any] = [:]
-            
-            for item in parsed {
-                if let item = item as? String {
-                    if currentItem["type"] != nil { result.append(currentItem) }
-                    currentItem = ["type": item.lowercased()]
-                }
-                else if let item = item as? [String: Any] {
-                    currentItem["properties"] = item
-                }
-                else if let item = item as? [Any] {
-                    var children:[Any] = []
-                    try! walkParsed(item, &children)
-                    currentItem["children"] = children
-                }
-                else {
-                    throw "Exception: Could not parse render description"
-                }
-            }
-            
-            if currentItem["type"] != nil { result.append(currentItem) }
-        }
-        
-        try! walkParsed(parsed, &result)
-        
-        return result[0]
-    }
-    
     public func compileProperty(_ expr:String) -> String {
         // We'll use this regular expression to match the name of the object and property
-        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+.[^\}]*)\})?)"#
+        let pattern = #"(?:([^\{]+)?(?:\{([^\.]+\.?[^\}]*)\})?)"#
         let regex = try! NSRegularExpression(pattern: pattern, options: [])
 
         var result:String = ""
@@ -1009,7 +997,9 @@ public class CompiledView {
                     let query = String(expr[rangeQuery])
                     
                     // Add the query to the variable list
-                    variables[query] = String(variables.count)
+                    if variables[query] == nil {
+                        variables[query] = String(variables.count)
+                    }
                     
                     // Add an easy to find reference to the string
                     result += "{$\(variables[query]!)}"
@@ -1023,7 +1013,7 @@ public class CompiledView {
     /**
      *
      */
-    func generateView() throws -> SessionView {
+    func generateView(_ varValues:[String:Any]? = nil) throws -> SessionView {
         // Prevent views generated from a session template
         if self.hasSession { throw "Exception: Cannot generate view from a session template" }
         
@@ -1053,12 +1043,19 @@ public class CompiledView {
             view!.merge(main.currentSession.currentView)
         }
         // Copy from a named view
-        else if let copyFromView = dynamicView.fromTemplate {
-            view = main.views.getSessionView(copyFromView) ?? SessionView()
+        else if let templateName = dynamicView.fromTemplate {
+            view = main.views.getSessionView(templateName) ?? SessionView()
+        }
+        
+        var extraVars = varValues ?? [:]
+        if let view = view, let vars = view.variables {
+            for (key, value) in vars {
+                extraVars[key] = value
+            }
         }
         
         // Fill the template with variables
-        let template = insertVariables()
+        let template = insertVariables(extraVars)
         
         // Generate session view from template
         let sessionView:SessionView = try! SessionView.fromJSONString(template)
@@ -1077,7 +1074,7 @@ public class CompiledView {
         return view!
     }
     
-    func generateSession() throws -> Session {
+    func generateSession(_ variables:[String:Any]? = nil) throws -> Session {
         // Prevent views generated from a session template
         if !self.hasSession { throw "Exception: Cannot generate session from a view template" }
         
@@ -1089,7 +1086,7 @@ public class CompiledView {
         
 //        var computedView:ComputedView
         for i in 0..<views.count {
-            session.views.append(try! views[i].generateView())
+            session.views.append(try! views[i].generateView(variables))
             
             // TODO The code below is the beginning of allow dynamic views that refer the view
             //      or computedView to get the right reference. A major problem is that the data
@@ -1115,16 +1112,15 @@ public class CompiledView {
         return session
     }
     
-    public func insertVariables() -> String {
+    public func insertVariables(_ extraVars:[String:Any]) -> String {
         var i = 0, template = jsonString
         for (key, index) in variables {
             // Compute the value of the variable
-            let computedValue = queryObject(key)
+            let computedValue = queryObject(key, extraVars)
             
             // Update the template with the variable
             // TODO make this more efficient. This could just be one regex search
-            template = String(template.replacingOccurrences(of: "\\{\\$" + index + "\\}",
-                with: computedValue, options: .regularExpression))
+            template = template.replace("\\{\\$" + index + "\\}", computedValue)
             
             // Increment counter
             i += 1
@@ -1133,13 +1129,24 @@ public class CompiledView {
         return template
     }
     
-    public func queryObject(_ expr:String) -> String{
+    public func queryObject(_ expr:String, _ extraVars:[String:Any]) -> String{
 
+//        let isNegationTest = expression.first == "!"
+//        let expr = isNegationTest
+//            ? expression.substr(1)
+//            : expression
+        
         // Split the property by dots to look up each property separately
-        let propParts = expr.split(separator: ".")
+        let propParts = expr == "."
+            ? ["."]
+            : expr
+                .split(separator: ".", omittingEmptySubsequences: false)
+                .map{ String($0) }
         
         // Get the first property of the object
-        var value:Any? = getProperty(String(propParts[0]), String(propParts[1]))
+        var value:Any? = getProperty(propParts[0], propParts[safe: 1] ?? "", extraVars)
+        
+//        if isNegationTest { value = negateAny(value) }
         
         // Check if the value is not nil
         if value != nil {
@@ -1147,7 +1154,7 @@ public class CompiledView {
             // Loop through the properties and fetch each
             if propParts.count > 2 {
                 for i in 2..<propParts.count {
-                    value = (value as! Object)[String(propParts[i])]
+                    value = (value as! Object)[propParts[i]]
                 }
             }
             
@@ -1158,7 +1165,7 @@ public class CompiledView {
         return ""
     }
     
-    public func getProperty(_ object:String, _ prop:String) -> Any? {
+    public func getProperty(_ object:String, _ prop:String, _ extraVars:[String:Any]) -> Any? {
         // Fetch the value of the right property on the right object
         switch object {
         case "main":
@@ -1183,6 +1190,11 @@ public class CompiledView {
                 print("Warning: No item found to get the property off")
             }
         default:
+            if let value = extraVars[object == "" ? "." : object] {
+                if prop == "" { return value }
+                else { return (value as? Object)?[prop] } // TODO error handling
+            }
+            
             print("Warning: Unknown object to get the property off: \(object) \(prop)")
         }
         

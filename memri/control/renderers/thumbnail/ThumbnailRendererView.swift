@@ -57,7 +57,7 @@ struct ThumbnailRendererView: View {
                       hPadding: CGFloat(renderConfig.hPadding.value ?? 20)
                 ) { dataItem in
                     
-                    self.renderConfig.render(dataItem)
+                    self.renderConfig.render(item: dataItem)
                         .onTapGesture {
                             if let press = self.renderConfig.press {
                                 self.main.executeAction(press, dataItem)

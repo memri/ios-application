@@ -9,6 +9,32 @@
     },
     
     {
+        "name": "choose-item-by-query",
+        "editMode": true,
+        "queryOptions": {
+            "query": "{query}"
+        },
+        "editActionButton": {
+            "title": "{title}",
+            "actionName": ["{actionName}", "back"],
+            "_actionArgs": ["{actionArgs}"]
+        },
+        "actionButton": {
+            "actionName": "add",
+            "_actionArgs": [{
+                "type": "{type}"
+            }]
+        },
+        "rendererName": "list",
+        "renderConfig": {
+            "list": {
+                "press": { "actionName": "noop" }
+            }
+        },
+        "title": "Choose a {type}"
+    },
+    
+    {
         "name": "shopping-notes",
         "views": [
             "all-notes",
@@ -19,5 +45,26 @@
                 }
             }
         ]
+    },
+    
+    {
+        "name": "all-people",
+        "views": [
+            {
+                "title": "All people",
+                "queryOptions": {
+                    "query": "person"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-items-with-label",
+        "title": "Items with label {name}",
+        "rendererName": "list",
+        "queryOptions": {
+            "query": "* AND ANY labels.uid = '{uid}'"
+        }
     }
 ]

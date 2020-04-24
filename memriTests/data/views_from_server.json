@@ -22,7 +22,35 @@
                         { "actionName": "delete" }
                     ],
                     "press": { "actionName": "openView" },
-                    "longPress": { "actionName": "select" }
+                    "longPress": { "actionName": "select" },
+                    "renderDescription": {
+                        "note": [
+                            "VStack", {
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20]
+                            }, [
+                                "Text", {
+                                    "text": "{.title}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                }
+                            ]
+                        ],
+                        "person": [
+                            "VStack", {
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20]
+                            }, [
+                                "Text", {
+                                    "text": "{.firstName} {.lastName}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                }
+                            ]
+                        ]
+                    }
                 }
             }
         },
@@ -35,7 +63,19 @@
                 }
             }
         },
-
+        
+        "{renderer:generalEditor}": {
+            "renderConfigs": {
+                "generalEditor": {
+                    "groups": {
+                        "dates": ["dates"]
+                    },
+                    "excluded": ["deleted", "syncState", "uid", "changelog", "dateCreated", "dateModified", "dateAccessed"],
+                    "readOnly": ["uid"]
+                }
+            }
+        },
+        
         "{[type:note]}": {
             "name": "all-notes",
             "title": "All Notes",
@@ -363,7 +403,6 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
-        
         "{[type:sessionview]}": {
             "name": "all-sessionviews",
             "title": "All Session Views",
@@ -411,7 +450,6 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
-        
         "{[type:session]}": {
             "name": "all-sessions",
             "title": "All Sessions",
@@ -505,8 +543,348 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        "{[type:person]}": {
+            "name": "all-notestest",
+            "title": "All Notes test",
+            "queryOptions": {
+                "query": "person",
+                "sortProperty": "dateModified",
+            },
+            "emptyResultText": "There are no notes here yet",
+            "rendererName": "list",
+            "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [12, 20, -12, 20]
+                        }, [
+                            "Text", {
+                                "text": "{.firstName}",
+                                "font": [18, "semibold"],
+                                "color": "#333",
+                                "padding": [0, 0, 3, 0]
+                            },
+                            "Text", {
+                                "text": "{.lastName}",
+                                "removeWhiteSpace": true,
+                                "maxChar": 100,
+                                "color": "#555",
+                                "font": [14, "regular"]
+                            },
+                            "Text", {
+                                "text": "Just now {.dateModified}",
+                                "font": [11, "regular"],
+                                "color": "#888",
+                                "padding": [8,0,5,0]
+                            },
+                            "Rectangle", {
+                                "size": [0, 1],
+                                "color": "#efefef",
+                                "padding": [7, 0, 12, 0]
+                            }
+                        ]
+                    ]
+                }
+            },
+            "actionButton": {
+                "actionName": "add",
+                "actionArgs": [{
+                    "type": "note",
+                    "title": "Untitled Note"
+                }]
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
+        },
+       "{type:person}": {
+            "title": "{dataItem.firstName}",
+            "rendererName": "generalEditor",
+            "renderConfigs": {
+                "generalEditor": {
+                    "groups": {
+                        "profilePicture": ["profilePicture"],
+                        "names": ["firstName", "lastName"]
+                    },
+                    "sequence": ["profilePicture", "names", "phoneNumbers", "labels", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
+                    "excluded": ["profilePicture"],
+                    "readOnly": [],
+                    "renderDescription": {
+                        "profilePicture": [
+                            "ZStack", {
+                                "title": "",
+                                "alignment": "center"
+                            }, [
+                                "Image", {
+                                    "image": "{.}",
+                                    "border": ["#ccc", 1],
+                                    "resizable": "fill",
+                                    "minHeight": 250,
+                                    "maxHeight": 250,
+                                    "opacity": 0.6,
+                                    "align": "center"
+                                },
+                                
+                                "ZStack", {
+                                    "border": ["#fff", 27],
+                                    "padding": 12,
+                                    "maxWidth": 140,
+                                    "maxHeight": 140,
+                                    "cornerRadius": 100,
+                                    "align": "center"
+                                }, [
+                                    "Image", {
+                                        "image": "{.}",
+                                        "resizable": "fill"
+                                    },
+                                    
+                                    "HSTack", {
+                                        "align": "center",
+                                        "maxWidth": 140,
+                                        "maxHeight": 140,
+                                        "condition": "{!readOnly}"
+                                    }, [
+                                        "Button", {
+                                            "press": { "actionName": "add" },
+                                            "cornerRadius": 25,
+                                            "maxWidth": 50,
+                                            "maxHeight": 50,
+                                            "background": "#eee",
+                                            "color": "#434343",
+                                            "align": "center",
+                                            "font": [14, "regular"]
+                                        }, [
+                                            "Text", { "text": "Edit" }
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        "dates": [
+                            "Text", {
+                                "sectionTitle": "",
+                                "alignment": "center",
+                                "textalign": "center",
+                                "text": "{.describeChangelog()}",
+                                "padding": [30, 40, 40, 40],
+                                "color": "#999",
+                                "font": [13],
+                                "maxChar": 300
+                            }
+                        ],
+                        "phoneNumbers2":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "Text", {
+                                    "text": "{.number}",
+                                }
+                            ]
+                        ],
+                        "addresses":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.street}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "publicKeys":[
+                            "EditorRow", {
+                                "title": "{.name}"
+                            }, [
+                                "Text", {
+                                    "text": "{.key}",
+                                }
+                            ]
+                        ],
+                        "onlineProfiles":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.handle}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "websites2":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.url}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "medicalConditions2":[
+                            "EditorRow", {}, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "companies2":[
+                            "EditorRow", {
+                                "title": "{.type}"
+                            }, [
+                                "VStack", {
+                                    "cornerRadius": 5
+                                }, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "diets2":[
+                            "EditorRow", {
+                            }, [
+                                "HStack", {}, [
+                                    "Text", {
+                                        "text": "{.name}",
+                                    },
+                                    "Text", {
+                                        "text": "{.additions}",
+                                    }
+                                ]
+                            ]
+                        ],
+                        "labels": [
+                            "EditorRow", {
+                                "for": "group",
+                                "title": "{displayName}"
+                            }, [
+                                "Text", {
+                                    "condition": "{!.labels.count}",
+                                    "text": "no labels yet"
+                                },
+                                "WrapStack", {
+                                    "list": "{.labels}"
+                                }, [
+                                    "button", {
+                                        "press": {
+                                            "actionName": "openViewByName",
+                                            "actionArgs": [ "all-items-with-label",
+                                                {
+                                                    "name": "Soccer team",
+                                                    "uid": "0x0124"
+                                                }
+                                            ]
+                                        }
+                                    }, [
+                                        "VStack", {
+                                            "background": "{.color}",
+                                            "cornerRadius": 5
+                                        }, [
+                                            "Text", {
+                                                "text": "{.name}",
+                                                "font": [16, "semibold"],
+                                                "color": "#fff",
+                                                "padding": [5, 8, 5, 8]
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ]
+                    }
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                {
+                    "icon": "increase.indent",
+                    "title": "Show Timeline",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
+                                "timeProperty": "dateCreated"
+                            }
+                        },
+                        "queryOptions": {
+                            "query": "data:Log appliesTo:{.id}",
+                            "sortProperty": "dateCreated",
+                        }
+                    }]
+                },
+                { "actionName": "showContextPane" }
+            ],
+            "contextButtons": [
+                { "actionName": "star" },
+                { "actionName": "schedule" }
+            ],
+            "actionItems": [
+                {
+                    "title": "Share with...",
+                    "actionName": "showOverlay",
+                    "actionArgs": ["shareWithPanel"]
+                },
+                {
+                    "title": "Add to list...",
+                    "actionName": "addToPanel",
+                    "actionArgs": []
+                },
+                {
+                    "title": "Duplicate Note",
+                    "actionName": "duplicate",
+                    "actionArgs": []
+                }
+            ],
+            "navigateItems": [
+                {
+                    "title": "Timeline of this note",
+                    "actionName": "openView",
+                    "actionArgs": [{
+                        "rendererName": "timeline",
+                        "renderConfigs": {
+                            "timeline": {
+                                "timeProperty": "dateCreated"
+                            }
+                        },
+                        "queryOptions": {
+                            "query": "type:logitem appliesTo:{.id}",
+                            "sortProperty": "dateCreated",
+                        }
+                    }]
+                },
+                {
+                    "title": "Starred notes",
+                    "actionName": "openDynamicView",
+                    "actionArgs": [{
+                        "name": "filter-starred",
+                        "fromTemplate": "all-notes"
+                    }]
+                },
+                {
+                    "title": "All notes",
+                    "actionName": "openViewByName",
+                    "actionArgs": ["all-notes"]
+                }
+           ]
+        },
     },
-    
     "user": {
         "{type:note}": {
             "renderConfigs": {
