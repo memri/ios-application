@@ -27,15 +27,35 @@ struct Application: View {
     
     var body: some View {
         ZStack() {
-            Browser()
-
-            if self.main.showNavigation {
-                Navigation()
-                    .transition(.move(edge: .leading))
-                    .animation(.easeOut(duration: 0.3))
-            }
-            else if self.main.showSessionSwitcher {
+            if self.main.showSessionSwitcher {
                 SessionSwitcher()
+            }
+            else {
+                HStack(spacing:0) {
+                    if self.main.showNavigation {
+                        Navigation()
+                            .transition(.move(edge: .leading))
+                            .animation(.easeOut(duration: 0.3))
+                    }
+                    
+                    ZStack {
+                        Browser()
+                            .frame(minWidth: UIScreen.main.bounds.width)
+                        
+                        if self.main.showNavigation {
+                            Color.black
+                                .opacity(0.40)
+                                .edgesIgnoringSafeArea(.vertical)
+                                .transition(.opacity)
+                                .gesture(TapGesture()
+                                    .onEnded{ value in
+                                        try! self.main.realm.write {
+                                            self.main.showNavigation.toggle()
+                                        }
+                                    })
+                        }
+                    }
+                }
             }
         }.fullHeight()
     }
