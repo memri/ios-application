@@ -313,6 +313,16 @@ class Address:DataItem {
     @objc dynamic var street:String? = nil
     @objc dynamic var state:String? = nil
     @objc dynamic var postalCode:String? = nil
+    @objc dynamic var location:Location? = nil
+    
+    override var computeTitle:String {
+        return """
+        \(street ?? "")
+        \(city ?? "")
+        \(postalCode ?? ""), \(state ?? "")
+        \(country?.computeTitle ?? "")
+        """
+    }
     
     required init () {
         super.init()
@@ -328,6 +338,7 @@ class Address:DataItem {
             state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
+            location = try decoder.decodeIfPresent("location") ?? location
 
             try! self.superDecode(from: decoder)
         }

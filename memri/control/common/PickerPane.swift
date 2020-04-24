@@ -60,6 +60,7 @@ struct PickerPane: View {
     var body: some View {
         let dataItems = try! self.main.cache.query(queryOptions) // TODO refactor: error handlings
         
+        // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
         return NavigationView {
             SwiftUI.List{
                 ForEach(dataItems, id:\.id) { dataItem in

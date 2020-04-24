@@ -13,7 +13,7 @@ import RealmSwift
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
     "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
-              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset",
+              "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow", "offset",
               "blur", "opacity", "zindex"]
 ]
 
@@ -45,6 +45,8 @@ extension View {
                             x: value[2] as! CGFloat,
                             y: value[3] as! CGFloat))
             }
+        case "margin":
+            fallthrough
         case "padding":
             if let value = value as? [CGFloat] {
                 return AnyView(self
@@ -968,9 +970,15 @@ public struct GUIElementInstance: View {
             }
             else if from.type == "textfield" {
                 self.renderTextfield()
+                    .setProperties(from._properties, self.item)
+            }
+            else if from.type == "map" {
+                MapView(address: get("address"))
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "picker" {
                 self.renderPicker()
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "securefield" {
             }
