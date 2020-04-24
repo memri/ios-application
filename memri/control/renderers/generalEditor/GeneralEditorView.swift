@@ -301,7 +301,7 @@ struct GeneralEditorSection: View {
                 else if groupContainsNodes {
                     Divider()
                     ScrollView {
-                        VStack (alignment: .leading, spacing: 5) {
+                        VStack (alignment: .leading, spacing: 0) {
                             ForEach(getArray(item, groupKey), id:\.id) { item in
                                 ItemCell(
                                     item: item,

@@ -805,7 +805,7 @@ public struct GUIElementInstance: View {
             else if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
-                        if self.has("title"){
+                        if self.has("title") {
                             Text(LocalizedStringKey(self.get("title") ?? ""
                                 .camelCaseToWords()
                                 .lowercased()
@@ -820,14 +820,16 @@ public struct GUIElementInstance: View {
                     .fullWidth()
                     .padding(.bottom, 10)
                     .padding(.horizontal, 36)
+                    .setProperties(from._properties, self.item)
                     .background(self.get("$readonly") ?? false
                         ? Color(hex:"#f9f9f9")
                         : Color(hex:"#f7fcf5"))
                     .clipped()
                     .animation(nil)
-                    .setProperties(from._properties, self.item)
                     
-                    Divider().padding(.leading, 35)
+                    if self.has("title") {
+                        Divider().padding(.leading, 35)
+                    }
                 }
 
             }

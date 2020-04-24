@@ -49,7 +49,7 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                List{
+                SwiftUI.List{
                     ForEach(main.items) { dataItem in
                         self.renderConfig.render(item: dataItem)
                             .onTapGesture {

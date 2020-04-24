@@ -15,6 +15,7 @@ public struct memriButton : View {
     let item: DataItem
     
     public var body: some View {
+        let family = DataItemFamily(rawValue: item.genericType)!
         var type = item.objectSchema["type"] == nil ? item.genericType : item.getString("type")
         if type == "" { type = item.genericType }
         
@@ -23,9 +24,9 @@ public struct memriButton : View {
                 .padding(.trailing, 8)
                 .padding(.leading, 8)
                 .padding(.vertical, 3)
-                .background(Color(hex: "#d9d9d9"))
-                .foregroundColor(Color(hex: "#666"))
-                .font(.system(size: 14, weight: .regular))
+                .background(Color(hex: "#afafaf"))
+                .foregroundColor(Color(hex: "#fff"))
+                .font(.system(size: 14, weight: .semibold))
                 .cornerRadius(20)
                 .compositingGroup()
                 
@@ -33,12 +34,13 @@ public struct memriButton : View {
                 .padding(.leading, 5)
                 .padding(.trailing, 9)
                 .padding(.vertical, 3)
-                .foregroundColor(Color.white)
+                .foregroundColor(family.foregroundColor)
                 .font(.system(size: 14, weight: .semibold))
                 .zIndex(10)
         }
-        .background(Color(hex: "#93c47d"))
+        .background(family.backgroundColor)
         .cornerRadius(20)
+        .compositingGroup()
 //        .fixedSize(horizontal: false, vertical: true)
     }
 }

@@ -59,7 +59,7 @@ struct Loading_Previews: PreviewProvider {
     static var previews: some View {
         Loading(isShowing: .constant(true)) {
             NavigationView {
-                List(["1", "2", "3", "4", "5"], id: \.self) { row in
+                SwiftUI.List(["1", "2", "3", "4", "5"], id: \.self) { row in
                     Text(row)
                 }.navigationBarTitle(Text("A List"), displayMode: .large)
             }

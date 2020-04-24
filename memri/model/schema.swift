@@ -8,7 +8,10 @@
 
 import Foundation
 import Combine
+import SwiftUI
 import RealmSwift
+
+typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily {
@@ -31,6 +34,50 @@ enum DataItemFamily: String, ClassFamily {
     case dynamicview = "dynamicview"
 
     static var discriminator: Discriminator = .type
+    
+    var backgroundColor: Color {
+        switch self{
+        case .note: return Color(hex: "#93c47d")
+        case .label: return Color(hex: "#93c47d")
+        case .file: return Color(hex: "#93c47d")
+        case .person: return Color(hex: "#3a5eb2")
+        case .logitem: return Color(hex: "#93c47d")
+        case .sessions: return Color(hex: "#93c47d")
+        case .phonenumber: return Color(hex: "#eccf23")
+        case .website: return Color(hex: "#3d57e2")
+        case .location: return Color(hex: "#93c47d")
+        case .company: return Color(hex: "#93c47d")
+        case .publickey: return Color(hex: "#93c47d")
+        case .onlineprofile: return Color(hex: "#93c47d")
+        case .diet: return Color(hex: "#37af1c")
+        case .medicalcondition: return Color(hex: "#3dc8e2")
+        case .session: return Color(hex: "#93c47d")
+        case .sessionview: return Color(hex: "#93c47d")
+        case .dynamicview: return Color(hex: "#93c47d")
+        }
+    }
+    
+    var foregroundColor: Color {
+        switch self{
+        case .note: return Color(hex: "#fff")
+        case .label: return Color(hex: "#fff")
+        case .file: return Color(hex: "#fff")
+        case .person: return Color(hex: "#fff")
+        case .logitem: return Color(hex: "#fff")
+        case .sessions: return Color(hex: "#fff")
+        case .phonenumber: return Color(hex: "#fff")
+        case .website: return Color(hex: "#fff")
+        case .location: return Color(hex: "#fff")
+        case .company: return Color(hex: "#fff")
+        case .publickey: return Color(hex: "#fff")
+        case .onlineprofile: return Color(hex: "#fff")
+        case .diet: return Color(hex: "#fff")
+        case .medicalcondition: return Color(hex: "#fff")
+        case .session: return Color(hex: "#fff")
+        case .sessionview: return Color(hex: "#fff")
+        case .dynamicview: return Color(hex: "#fff")
+        }
+    }
     
     func getPrimaryKey() -> String {
         return self.getType().primaryKey() ?? ""
