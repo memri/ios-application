@@ -554,7 +554,13 @@ public class GUIElementDescription: Codable {
             value = item
         }
         else {
-            value = variables[firstItem.lowercased()]!()
+            if let f = variables[firstItem.lowercased()] {
+                value = f()
+            }
+            else { // TODO Refactor: integrate in larger error handling effort
+                print("Warn: fetching undefined variable: \(firstItem)")
+                value = nil
+            }
         }
         
         var lastPart:String? = nil
@@ -689,7 +695,13 @@ public struct GUIElementInstance: View {
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
             // TODO Error Handling
-            return (variables[propName.substr(1)]!() as! T)
+            if let f = variables[propName.substr(1)] {
+                return (f() as! T)
+            }
+            else { // TODO Refactor: integrate in larger error handling effort
+                print("Warn: fetching undefined variable: \(propName.substr(1))")
+                return nil
+            }
         }
         else {
             return from.get(propName, item, variables)
@@ -768,7 +780,7 @@ public struct GUIElementInstance: View {
                     .animation(nil)
                     .setProperties(from._properties, self.item)
             }
-            if from.type == "editorsection" {
+            else if from.type == "editorsection" {
                 if self.has("title") {
                     Section(header: Text(LocalizedStringKey(
                         (self.get("title") ?? "").uppercased()
@@ -790,7 +802,7 @@ public struct GUIElementInstance: View {
                     .setProperties(from._properties, self.item)
                 }
             }
-            if from.type == "editorrow" {
+            else if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
                         if self.has("title"){
@@ -851,6 +863,10 @@ public struct GUIElementInstance: View {
                 Action(action: get("press"))
                     .setProperties(from._properties, self.item)
             }
+            else if from.type == "memributton" {
+                memriButton(item: self.item)
+                    .setProperties(from._properties, self.item)
+            }
             else if from.type == "image" {
                 if has("systemname") {
                     Image(systemName: get("systemname") ?? "exclamationmark.bubble")
@@ -858,7 +874,6 @@ public struct GUIElementInstance: View {
                         .setProperties(from._properties, self.item)
                 }
                 else { // assuming image property
-//                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
                     Image(uiImage: getImage("image"))
                         .if(from.has("resizable")) { self.resize($0) }
                         .setProperties(from._properties, self.item)

@@ -12,7 +12,25 @@
         "{[type:*]}": {
             "sortFields": [
                 "dateCreated", "dateModified", "dateAccessed"
-            ]
+            ],
+            "renderConfigs": {
+                "virtual": {
+                    "generalEditor": [
+                        "EditorRow", [
+                            "HStack", [
+                                "MemriButton",
+                                "Spacer",
+                                "Button", {
+                                    "press": { "actionName": "archive" },
+                                    "condition": "{!readOnly}"
+                                }, [
+                                    "Image", { "systemName": "archivebox", "color": "#477" }
+                                ]
+                            ]
+                        ]
+                    ]
+                }
+            }
         },
         
         "{renderer:list}": {
@@ -419,6 +437,7 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        
         "{[type:sessionview]}": {
             "name": "all-sessionviews",
             "title": "All Session Views",
@@ -466,6 +485,7 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        
         "{[type:session]}": {
             "name": "all-sessions",
             "title": "All Sessions",
@@ -559,6 +579,7 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        
         "{[type:person]}": {
             "name": "all-notestest",
             "title": "All Notes test",
@@ -616,6 +637,7 @@
                 { "actionName": "toggleFilterPanel" }
             ]
         },
+        
         "{type:person}": {
             "title": "{dataItem.firstName}",
             "rendererName": "generalEditor",
@@ -850,6 +872,7 @@
                 }
            ]
        },
+        
         "{[type:country]}": {
             "renderConfigs": {
                 "virtual": {
@@ -873,6 +896,7 @@
                 }
             }
         },
+        
         "{[type:address]}": {
             "renderConfigs": {
                 "virtual": {
@@ -902,7 +926,7 @@
                                         "empty": "Country",
                                         "value": "{.country}",
                                         "default": "{me.address[primary = true].country}",
-                                        "options": "country"
+                                        "optionsFromQuery": "country"
                                     }
                                 ]
                             ]

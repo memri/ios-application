@@ -355,13 +355,14 @@ public class Views {
 
         // Find the first cascaded renderer for the type and render the item
         for name in rendererNames {
-            if let _ = computedView.renderConfigs.objectSchema[name] {
-                return (computedView.renderConfigs[name] as! RenderConfig).render(
-                    item: item,
-                    variables: variables ?? [:]) // Refactor: look at how variables is passed
+            if let _ = computedView.renderConfigs.objectSchema[name],
+               let renderConfig = computedView.renderConfigs[name] as? RenderConfig {
+                return renderConfig.render(item: item, part: name, variables: variables ?? [:])
+                                                    // Refactor: look at how variables is passed
             }
-            else if let renderConfig = computedView.renderConfigs.virtual?[name] as? RenderConfig {
-                return renderConfig.render(item: item, variables: variables ?? [:])
+            else if let _ = computedView.renderConfigs.virtual?.renderDescription?[name] {
+                return computedView.renderConfigs.virtual!
+                    .render(item: item, part: name, variables: variables ?? [:])
             }
         }
         

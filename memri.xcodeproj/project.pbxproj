@@ -127,9 +127,9 @@
 		8665ADD7241A8120005B3FA5 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD6241A8120005B3FA5 /* Main.swift */; };
 		8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8665ADD8241A8387005B3FA5 /* Cache.swift */; };
 		86677DEB242A6751007A4782 /* CacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86677DEA242A6751007A4782 /* CacheTest.swift */; };
+		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
 		86865D38244996AA0010271A /* WrapStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* WrapStack.swift */; };
-		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		869789EA24344A530003756B /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789E924344A530003756B /* schema.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
@@ -142,6 +142,7 @@
 		86A5D848243EC46700F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
+		86C3A7372452BF66006D4F55 /* memriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* memriButton.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -278,9 +279,9 @@
 		8665ADD6241A8120005B3FA5 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		8665ADD8241A8387005B3FA5 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		86677DEA242A6751007A4782 /* CacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTest.swift; sourceTree = "<group>"; };
+		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* WrapStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapStack.swift; sourceTree = "<group>"; };
-		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -292,6 +293,7 @@
 		86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRenderer.swift; sourceTree = "<group>"; };
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
 		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
+		86C3A7362452BF65006D4F55 /* memriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memriButton.swift; sourceTree = "<group>"; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -719,6 +721,7 @@
 			children = (
 				86865D35244996900010271A /* styles.swift */,
 				86865D37244996AA0010271A /* WrapStack.swift */,
+				86C3A7362452BF65006D4F55 /* memriButton.swift */,
 				86C3A73424518763006D4F55 /* ItemCell.swift */,
 			);
 			path = common;
@@ -1126,6 +1129,7 @@
 				5D38DE152405776300FF9B70 /* control.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
+				86C3A7372452BF66006D4F55 /* memriButton.swift in Sources */,
 				5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */,
 				5D41618B23FFE2730017EC4A /* TestView.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,

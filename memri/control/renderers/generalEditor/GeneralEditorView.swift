@@ -260,39 +260,14 @@ struct GeneralEditorSection: View {
             ? self.getProperties(item)
             : self.groups[self.groupKey]!
         let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
-        
-        if groupKey == "dates" {
-            
-        }
+        let showDividers = self.getSectionTitle(groupKey) != ""
         
         return Group {
-            
-//            func getVars(_ name:String, _ value:Any?,
-//                            _ item:DataItem)-> [String:() -> Any] {
-//                return [
-//                    "readonly": { !self.main.currentSession.editMode },
-//                    "title": { self.groupKey.camelCaseToWords().uppercased() },
-//                    "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
-//                    "name": { name },
-//                    ".": { value ?? item[name] as Any }
-//                ]
-//            }
-            
-//            self.getVars(self.groupKey, groupElement, nil, self.item))
-//            self.getVars(self.groupKey, groupKey, nil, self.item))
-//            self.getVars(self.groupKey, "", $0, $0))
-//            self.getVars(self.groupKey, groupElement, nil, self.item))
-//            self.getVars("", prop, nil, self.item)
-
-
-            
             Section (header: self.getHeader(renderDescription, groupContainsNodes)){
+                // Render using a view specified renderer
                 if renderDescription[groupKey] != nil {
-                    if self.getSectionTitle(groupKey) != "" {
-                        Divider()
-                    }
+                    if showDividers { Divider() }
                     
-                    // when you render one GUIElement for the whole group (potentially unwrapped by using wrapStack
                     if self.isDescriptionForGroup(groupKey) {
                         renderConfig.render(
                             item: item,
@@ -302,7 +277,6 @@ struct GeneralEditorSection: View {
                     }
                     else {
                         if groupContainsNodes {
-                            // The normal case for edges: loop over
                             ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
                                 self.renderConfig.render(
                                     item: otherItem,
@@ -321,13 +295,35 @@ struct GeneralEditorSection: View {
                         }
                     }
                     
-                    if self.getSectionTitle(groupKey) != "" {
-                        Divider()
-                    }
+                    if showDividers { Divider() }
                 }
+                // Render lists with their default renderer
+                else if groupContainsNodes {
+                    Divider()
+                    ScrollView {
+                        VStack (alignment: .leading, spacing: 5) {
+                            ForEach(getArray(item, groupKey), id:\.id) { item in
+                                ItemCell(
+                                    item: item,
+                                    rendererNames: ["generalEditor"],
+                                    variables: self.getVars(self.groupKey, self.groupKey, item, self.item)
+                                )
+                            }
+                        }
+//                        .padding(.top, 10)
+                    }
+                    .frame(maxHeight: 300)
+                    .fixedSize(horizontal: false, vertical: true)
+                    
+                    Divider()
+                }
+                // Render groups with the default render row
                 else {
                     Divider()
                     ForEach(properties, id: \.self){ prop in
+                        
+                        // TODO: Refactor: rows that are single links to an item
+                        
                         DefaultGeneralEditorRow(
                             main: self._main,
                             item: self.item,
@@ -359,18 +355,15 @@ struct DefaultGeneralEditorRow: View {
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
         let propType = item.objectSchema[prop]?.type
-        let isArray = item.objectSchema[prop]?.isArray ?? false
 
         return VStack (spacing: 0) {
             VStack(alignment: .leading, spacing: 4){
-                if !isArray {
-                    Text(prop
-                        .camelCaseToWords()
-                        .lowercased()
-                        .capitalizingFirstLetter()
-                    )
-                    .generalEditorLabel()
-                }
+                Text(prop
+                    .camelCaseToWords()
+                    .lowercased()
+                    .capitalizingFirstLetter()
+                )
+                .generalEditorLabel()
                 
                 if renderConfig.renderDescription![prop] != nil {
                     renderConfig.render(item: item, part: prop, variables: variables)
@@ -379,10 +372,7 @@ struct DefaultGeneralEditorRow: View {
                     if [.string, .bool, .date, .int, .double].contains(propType){
                         defaultRow(self.item.getString(self.prop))
                     }
-                    else if propType == .object {
-                        if isArray { listRow() }
-                        else { defaultRow(self.item.computeTitle) }
-                    }
+                    else if propType == .object { defaultRow(self.item.computeTitle) }
                     else { defaultRow() }
                 }
                 else {
@@ -391,10 +381,7 @@ struct DefaultGeneralEditorRow: View {
                     else if propType == .date { dateRow() }
                     else if propType == .int { intRow() }
                     else if propType == .double { doubleRow() }
-                    else if propType == .object {
-                        if isArray { listRow() }
-                        else { defaultRow() }
-                    }
+                    else if propType == .object { defaultRow() }
                     else { defaultRow() }
                 }
             }
@@ -481,58 +468,6 @@ struct DefaultGeneralEditorRow: View {
             .clipped()
             .padding(8)
         
-    }
-    
-    func listRow() -> some View {
-        let className = self.item.objectSchema[self.prop]?.objectClassName
-        let collection = DataItemFamily(rawValue: className!.lowercased())!
-            .getCollection(self.item[self.prop] as Any)
-        
-        func getType(_ item:DataItem) -> String {
-            var type = item.objectSchema["type"] == nil ? className : item.getString("type")
-            if type == "" { type = className }
-            return type ?? ""
-        }
-        
-        return ScrollView {
-            VStack (alignment: .leading, spacing: 5) {
-                ForEach(collection, id: \.self) { collectionItem in
-                    HStack (spacing:0) {
-                        HStack (spacing:0) {
-                            Text(getType(collectionItem).camelCaseToWords().capitalizingFirstLetter())
-                                .padding(.trailing, 5)
-                                .padding(.leading, 6)
-                                .padding(.vertical, 3)
-                                .foregroundColor(Color.white)
-                                .font(.system(size: 14, weight: .bold))
-                                
-                            Text(collectionItem.computeTitle)
-                                .padding(.leading, 6)
-                                .padding(.trailing, 9)
-                                .padding(.vertical, 3)
-                                .background(Color.gray)
-                                .foregroundColor(Color.white)
-                                .font(.system(size: 14, weight: .bold))
-                            .zIndex(10)
-                        }
-                        .background(Color.purple)
-                        .cornerRadius(20)
-                        
-                        Spacer()
-                        
-                        if !self.readOnly {
-                            Button (action: {}) {
-                                Image(systemName: "archivebox")
-                                    .foregroundColor(Color(hex:"#777"))
-                            }
-                        }
-                    }
-                }
-            }
-            .padding(.top, 10)
-        }
-        .frame(maxHeight: 300)
-        .fixedSize(horizontal: false, vertical: true)
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {
