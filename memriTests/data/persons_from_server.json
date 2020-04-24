@@ -1,6 +1,6 @@
 [
     {
-        "uid": "0x01",
+        "uid": "0x011",
         "type": "person",
         "firstName": "Alice",
         "lastName": "Awesome",
@@ -20,7 +20,7 @@
         }
     },
     {
-        "uid": "0x02",
+        "uid": "0x012",
         "type": "person",
         "firstName": "Bob",
         "lastName": "Brown",
@@ -30,13 +30,19 @@
             "uri": "/Users/rubendaniels/Downloads/ruben.jpeg"
         },
         "labels": [
+            {
+                "name": "Soccer team",
+                "color": "#83ac06",
+                "uid": "0x0124"
+            },
+            { "name": "Friends from University", "color": "#ffd966" }
         ],
         "syncState": {
             "version": 1
         }
     },
     {
-        "uid": "0x03",
+        "uid": "0x013",
         "type": "person",
         "firstName": "Eve",
         "lastName": "Eagle",
@@ -45,9 +51,13 @@
         "height": 185,
         "shoulderWidth": 42,
         "armLength": 73,
-        "relations": [{"uid":"0x01"},{"uid":"0x02"}],
+        "relations": [{"uid":"0x011"},{"uid":"0x012"}],
         "labels": [
-            { "name": "Soccer team", "color": "#83ac06" },
+            {
+                "name": "Soccer team",
+                "color": "#83ac06",
+                "uid": "0x0124"
+            },
             { "name": "Friends from University", "color": "#ffd966" }
         ],
         "phoneNumbers": [

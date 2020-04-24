@@ -64,7 +64,7 @@
         "title": "Items with label {name}",
         "rendererName": "list",
         "queryOptions": {
-            "query": "* AND labels.uid = {uid}"
+            "query": "* AND ANY labels.uid = '{uid}'"
         }
     }
 ]

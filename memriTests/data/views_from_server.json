@@ -22,7 +22,35 @@
                         { "actionName": "delete" }
                     ],
                     "press": { "actionName": "openView" },
-                    "longPress": { "actionName": "select" }
+                    "longPress": { "actionName": "select" },
+                    "renderDescription": {
+                        "note": [
+                            "VStack", {
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20]
+                            }, [
+                                "Text", {
+                                    "text": "{.title}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                }
+                            ]
+                        ],
+                        "person": [
+                            "VStack", {
+                                "alignment": "left",
+                                "rowInset": [12, 20, -12, 20]
+                            }, [
+                                "Text", {
+                                    "text": "{.firstName} {.lastName}",
+                                    "font": [18, "semibold"],
+                                    "color": "#333",
+                                    "padding": [0, 0, 3, 0]
+                                }
+                            ]
+                        ]
+                    }
                 }
             }
         },
@@ -758,8 +786,8 @@
                                             "actionName": "openViewByName",
                                             "actionArgs": [ "all-items-with-label",
                                                 {
-                                                    "name": "{.name}",
-                                                    "uid": "{.uid}"
+                                                    "name": "Soccer team",
+                                                    "uid": "0x0124"
                                                 }
                                             ]
                                         }

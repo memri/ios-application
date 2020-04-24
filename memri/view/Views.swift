@@ -243,7 +243,7 @@ public class Views {
                 }
             }
         }
-        
+                
         if rendererNames.count > 0 {
             rendererName = rendererNames[rendererNames.count - 1]
         }
@@ -1056,9 +1056,6 @@ public class CompiledView {
         
         // Fill the template with variables
         let template = insertVariables(extraVars)
-        print(jsonString)
-        print(template)
-        print(dynamicView.declaration)
         
         // Generate session view from template
         let sessionView:SessionView = try! SessionView.fromJSONString(template)

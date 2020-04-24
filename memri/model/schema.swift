@@ -11,7 +11,7 @@ import Combine
 import RealmSwift
 
 // The family of all data item classes
-enum DataItemFamily: String, ClassFamily {
+enum DataItemFamily: String, ClassFamily, CaseIterable {
     case note = "note"
     case label = "label"
     case file = "file"
@@ -28,7 +28,7 @@ enum DataItemFamily: String, ClassFamily {
     case medicalcondition = "medicalcondition"
     case session = "session"
     case sessionview = "sessionview"
-    case dynamicview = "dynamicview"
+//    case dynamicview = "dynamicview"
 
     static var discriminator: Discriminator = .type
     
@@ -72,8 +72,8 @@ enum DataItemFamily: String, ClassFamily {
             (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
         case .sessionview:
             (object as! RealmSwift.List<SessionView>).forEach{ collection.append($0) }
-        case .dynamicview:
-            break
+//        case .dynamicview:
+//            break
             //(object as! RealmSwift.List<DynamicView>).forEach{ collection.append($0) }
         }
         
@@ -114,8 +114,8 @@ enum DataItemFamily: String, ClassFamily {
             return Session.self
         case .sessionview:
             return SessionView.self
-        case .dynamicview:
-            return DynamicView.self
+//        case .dynamicview:
+//            return DynamicView.self
         }
     }
 }

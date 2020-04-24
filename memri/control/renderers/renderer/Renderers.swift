@@ -133,14 +133,15 @@ public class RenderConfig: Object, Codable {
      *
      */
     var renderDescription: [String:GUIElementDescription]? {
-        if let renderDescription:[String: GUIElementDescription]
-          = renderCache.get(self._renderDescription!) {
-            return renderDescription
-        }
-        else if let description = self._renderDescription {
-            if let renderDescription:[String: GUIElementDescription] = unserialize(description) {
-                renderCache.set(description, renderDescription)
+        if let _description = self._renderDescription{
+            if let renderDescription:[String: GUIElementDescription] = renderCache.get(_description) {
                 return renderDescription
+            }
+            else if let description = self._renderDescription {
+                if let renderDescription:[String: GUIElementDescription] = unserialize(description) {
+                    renderCache.set(description, renderDescription)
+                    return renderDescription
+                }
             }
         }
         
@@ -154,10 +155,15 @@ public class RenderConfig: Object, Codable {
                        variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
         if _renderDescription == nil {
+            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item)")
             return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {
-            return GUIElementInstance(self.renderDescription![part]!, item, variables)
+            if self.renderDescription![part] != nil{
+                return GUIElementInstance(self.renderDescription![part]!, item, variables)
+            } else{
+                return GUIElementInstance(self.renderDescription!["*"]!, item, variables)
+            }
         }
     }
     
