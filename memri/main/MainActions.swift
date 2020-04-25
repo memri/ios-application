@@ -186,13 +186,13 @@ extension Main {
         // Toggle the right property on the right object
         switch objectToQuery {
         case "main":
-            return self[propToQuery] as! Bool
+            return self[propToQuery] as? Bool ?? false // TODO REfactor: Error handling
         case "sessions":
-            return self.sessions[propToQuery] as! Bool
+            return self.sessions[propToQuery] as? Bool ?? false // TODO REfactor: Error handling
         case "currentSession":
             fallthrough
         case "session":
-            return self.currentSession[propToQuery] as! Bool
+            return self.currentSession[propToQuery] as? Bool ?? false // TODO REfactor: Error handling
         case "computedView":
             return self.computedView.hasState(propToQuery)
         case "sessionView":
@@ -201,7 +201,7 @@ extension Main {
             return self.computedView.hasState(propToQuery)
         case "dataItem":
             if let item = item {
-                return item[propToQuery] as! Bool
+                return item[propToQuery] as? Bool ?? false  // TODO REfactor: Error handling
             }
             else {
                 print("Warning: No item found to query")

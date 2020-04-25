@@ -195,24 +195,26 @@ public class Main: ObservableObject {
     
     subscript(propName:String) -> Any? {
         get {
-            let alias = aliases[propName]!
-            
-            switch alias.type {
-            case "bool":
-                let value:Bool? = settings.get(alias.key)
-                return value ?? false
-            case "string":
-                let value:String? = settings.get(alias.key)
-                return value ?? ""
-            case "int":
-                let value:Int? = settings.get(alias.key)
-                return value ?? 0
-            case "double":
-                let value:Double? = settings.get(alias.key)
-                return value ?? 0
-            default:
-                return nil
+            if let alias = aliases[propName] {
+                switch alias.type {
+                case "bool":
+                    let value:Bool? = settings.get(alias.key)
+                    return value ?? false
+                case "string":
+                    let value:String? = settings.get(alias.key)
+                    return value ?? ""
+                case "int":
+                    let value:Int? = settings.get(alias.key)
+                    return value ?? 0
+                case "double":
+                    let value:Double? = settings.get(alias.key)
+                    return value ?? 0
+                default:
+                    return nil
+                }
             }
+            
+            return nil
         }
         set(newValue) {
             let alias = aliases[propName]!

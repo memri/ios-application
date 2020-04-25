@@ -562,6 +562,11 @@ public class GUIElementDescription: Codable {
                 return x
             }
             
+            // TODO REfactor: Properly generalize. It's weird to do this here. What other edge cases are there?
+            if T.self == SessionView.self {
+                return (SessionView(value: propValue) as! T)
+            }
+            
             return (propValue as! T)
         }
         return nil
@@ -703,13 +708,13 @@ public class GUIElementDescription: Codable {
         else if T.self == Bool.self {
             if isNegationTest {
                 value = negateAny(value ?? true)
-                
             }
             else {
                 value = !negateAny(value ?? false)
-                
             }
         }
+        
+        // TODO: Refactor: Many things, but generalize and make sure all types are supported
         
         // Return the value as a string
         return value as? T
@@ -971,6 +976,38 @@ public struct GUIElementInstance: View {
             else if from.type == "textfield" {
                 self.renderTextfield()
                     .setProperties(from._properties, self.item)
+            }
+            else if from.type == "itemcell" {
+                // TODO Refactor fix this
+//                ItemCell(
+//                    item: self.item,
+//                    rendererNames: get("rendererNames") as [String],
+//                    variables: [] // get("variables") // TODO Refactor fix this
+//                )
+//                .environmentObject(self.main)
+//                .setProperties(from._properties, self.item)
+            }
+            else if from.type == "subview" {
+                if has("viewName") {
+                    SubView(
+                        main: self.main,
+                        viewName: from.getString("viewName"),
+                        toolbar: get("toolbar") ?? false,
+                        searchbar: get("searchbar") ?? false,
+                        variables: get("variables") ?? [:] // TODO Refactor: Error Handling
+                    )
+                    .setProperties(from._properties, self.item)
+                }
+                else {
+                    SubView(
+                        main: self.main,
+                        view: { let x:SessionView = get("view")!; return x }(),
+                        toolbar: get("toolbar") ?? false,
+                        searchbar: get("searchbar") ?? false,
+                        variables: get("variables") ?? [:]
+                    )
+                    .setProperties(from._properties, self.item)
+                }
             }
             else if from.type == "map" {
                 MapView(address: get("address"))

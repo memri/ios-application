@@ -645,12 +645,22 @@
                 "generalEditor": {
                     "groups": {
                         "profilePicture": ["profilePicture"],
-                        "names": ["firstName", "lastName"]
+                        "names": ["firstName", "lastName"],
+                        "picturesOfPerson": []
                     },
-                    "sequence": ["profilePicture", "names", "phoneNumbers", "labels", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
+                    "sequence": ["profilePicture", "picturesOfPerson", "names", "phoneNumbers", "labels", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
                     "excluded": ["profilePicture"],
                     "readOnly": [],
                     "renderDescription": {
+                        "picturesOfPerson": [
+                            "SubView", {
+                                "for": "group",
+                                "minHeight": 200,
+                                "view": {
+                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x03'" }
+                                }
+                            }
+                        ],
                         "profilePicture": [
                             "ZStack", {
                                 "title": "",
