@@ -132,6 +132,8 @@
 		866F87C4245354B5000E5FAB /* PickerPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C2245354B5000E5FAB /* PickerPane.swift */; };
 		866F87C624536626000E5FAB /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C524536626000E5FAB /* MapView.swift */; };
 		866F87C724536626000E5FAB /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C524536626000E5FAB /* MapView.swift */; };
+		866F87C9245434A1000E5FAB /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C8245434A1000E5FAB /* SubView.swift */; };
+		866F87CA245434A1000E5FAB /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C8245434A1000E5FAB /* SubView.swift */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
 		86865D38244996AA0010271A /* WrapStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* WrapStack.swift */; };
@@ -147,7 +149,7 @@
 		86A5D848243EC46700F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
-		86C3A7372452BF66006D4F55 /* memriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* memriButton.swift */; };
+		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
 		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
@@ -287,6 +289,7 @@
 		866F87BB24530F3A000E5FAB /* person.0x02.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x02.json; sourceTree = "<group>"; };
 		866F87C2245354B5000E5FAB /* PickerPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPane.swift; sourceTree = "<group>"; };
 		866F87C524536626000E5FAB /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		866F87C8245434A1000E5FAB /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; };
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* WrapStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapStack.swift; sourceTree = "<group>"; };
@@ -301,7 +304,7 @@
 		86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRenderer.swift; sourceTree = "<group>"; };
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
 		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
-		86C3A7362452BF65006D4F55 /* memriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memriButton.swift; sourceTree = "<group>"; };
+		86C3A7362452BF65006D4F55 /* MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriButton.swift; sourceTree = "<group>"; };
 		86C3A7382452FFD4006D4F55 /* default_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_database.json; sourceTree = "<group>"; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -731,8 +734,9 @@
 			children = (
 				86865D35244996900010271A /* styles.swift */,
 				86865D37244996AA0010271A /* WrapStack.swift */,
-				86C3A7362452BF65006D4F55 /* memriButton.swift */,
+				86C3A7362452BF65006D4F55 /* MemriButton.swift */,
 				86C3A73424518763006D4F55 /* ItemCell.swift */,
+				866F87C8245434A1000E5FAB /* SubView.swift */,
 				866F87C2245354B5000E5FAB /* PickerPane.swift */,
 				866F87C524536626000E5FAB /* MapView.swift */,
 			);
@@ -1117,6 +1121,7 @@
 				5D78D0692424D4D900F7BD3B /* NavigationView.swift in Sources */,
 				5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */,
 				86A5D841243CEB8000F8FAD8 /* ThumbnailRenderer.swift in Sources */,
+				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
 				5D4C71EF2445E4F200DF09E8 /* GeneralEditor.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
@@ -1144,7 +1149,7 @@
 				5D38DE152405776300FF9B70 /* control.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
-				86C3A7372452BF66006D4F55 /* memriButton.swift in Sources */,
+				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
 				5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */,
 				5D41618B23FFE2730017EC4A /* TestView.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
@@ -1189,6 +1194,7 @@
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,
+				866F87CA245434A1000E5FAB /* SubView.swift in Sources */,
 				862A934F24435372005E06A6 /* default_navigation_full.json in Sources */,
 				5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */,
 				866F87C4245354B5000E5FAB /* PickerPane.swift in Sources */,

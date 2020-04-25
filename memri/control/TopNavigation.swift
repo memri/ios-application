@@ -171,6 +171,6 @@ public struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }

@@ -875,6 +875,23 @@
         
         "{[type:country]}": {
             "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "VStack", {
+                            "alignment": "left",
+                            "rowInset": [0, 0, 0, 20]
+                        }, [
+                            "Text", { "text": "{.computeTitle()}" },
+                            "Rectangle", {
+                                "minHeight": 1,
+                                "maxHeight": 1,
+                                "color": "#efefef",
+                                "padding": [0, 0, 0, 20],
+                                "offset": [0, 2]
+                            }
+                        ]
+                    ]
+                },
                 "virtual": {
                     "generalEditor": [
                         "EditorRow", {
@@ -965,6 +982,36 @@
             "contextButtons": [
                 { "actionName": "star" },
                 { "actionName": "schedule" }
+            ]
+        },
+        "{[type:photo]}": {
+            "name": "all-photos",
+            "title": "All Photos",
+            "queryOptions": {
+                "query": "photo",
+                "sortProperty": "dateModified",
+                "sortAscending": false
+            },
+            "emptyResultText": "There are no photos here yet",
+            "rendererName": "thumbnail",
+            "renderConfigs": {
+                "thumbnail": {
+                    "vSpacing": 2,
+                    "hSpacing": 2,
+                    "vPadding": 0,
+                    "hPadding": 0,
+                    "renderDescription": [
+                        "Image", {
+                            "image": "{.file}",
+                            "resizable": "fill"
+                        }
+                    ]
+                }
+            },
+            "editActionButton": { "actionName": "toggleEditMode" },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
             ]
         },
     },

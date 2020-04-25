@@ -1,5 +1,299 @@
 [
     {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0001.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0002.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0004.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0005.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0006.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0007.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0008.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0009.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0010.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0011.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0012.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0013.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0014.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0015.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0016.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0017.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0018.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0019.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0020.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0021.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0022.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0023.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0024.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0025.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0026.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0027.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0028.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0029.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0030.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0031.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0032.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0033.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0034.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0035.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0036.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0037.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0038.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0039.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0040.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0041.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
+        "type": "photo",
+        "width": 250,
+        "height": 250,
+        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0042.jpg"},
+        "includes": [{"uid": "0x03"}]
+    },
+    {
         "uid": "0x03",
         "type": "person",
         "firstName": "Eve",

@@ -119,7 +119,7 @@ func getRealmPath() -> String{
 }
 
 public class Cache {
-    var podApi: PodAPI
+    var podAPI: PodAPI
     var sync: Sync
     var realm: Realm
     
@@ -145,10 +145,10 @@ public class Cache {
         
         print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
-        podApi = api
+        podAPI = api
         
         // Create scheduler objects
-        sync = Sync(podApi, realm)
+        sync = Sync(podAPI, realm)
         sync.cache = self
     }
     

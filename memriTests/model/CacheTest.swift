@@ -21,8 +21,8 @@ class CacheTest: XCTestCase {
     }
 
     func testCachInit() {
-        let podApi = PodAPI("test")
-        let _ = Cache(podApi)
+        let podAPI = PodAPI("test")
+        let _ = Cache(podAPI)
     }
 
     func testPerformanceExample() {

@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-public struct memriButton : View {
+public struct MemriButton : View {
     @EnvironmentObject var main: Main
     
     let item: DataItem
@@ -47,6 +47,6 @@ public struct memriButton : View {
 
 struct memriButton_Previews: PreviewProvider {
     static var previews: some View {
-        memriButton(item: Note(value: ["title": "Untitled Note"]))
+        MemriButton(item: Note(value: ["title": "Untitled Note"]))
     }
 }

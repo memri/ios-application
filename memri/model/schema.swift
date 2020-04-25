@@ -17,6 +17,9 @@ typealias List = RealmSwift.List
 enum DataItemFamily: String, ClassFamily {
     case note = "note"
     case label = "label"
+    case photo = "photo"
+    case video = "video"
+    case audio = "audio"
     case file = "file"
     case person = "person"
     case logitem = "logitem"
@@ -42,6 +45,9 @@ enum DataItemFamily: String, ClassFamily {
         case .note: return Color(hex: "#93c47d")
         case .label: return Color(hex: "#93c47d")
         case .file: return Color(hex: "#93c47d")
+        case .photo: return Color(hex: "#93c47d")
+        case .video: return Color(hex: "#93c47d")
+        case .audio: return Color(hex: "#93c47d")
         case .person: return Color(hex: "#3a5eb2")
         case .logitem: return Color(hex: "#93c47d")
         case .sessions: return Color(hex: "#93c47d")
@@ -82,6 +88,12 @@ enum DataItemFamily: String, ClassFamily {
             (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
         case .file:
             (object as! RealmSwift.List<File>).forEach{ collection.append($0) }
+        case .photo:
+            (object as! RealmSwift.List<Photo>).forEach{ collection.append($0) }
+        case .video:
+            (object as! RealmSwift.List<Video>).forEach{ collection.append($0) }
+        case .audio:
+            (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
         case .person:
             (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
         case .logitem:
@@ -130,6 +142,12 @@ enum DataItemFamily: String, ClassFamily {
             return Label.self
         case .file:
             return File.self
+        case .photo:
+            return Photo.self
+        case .video:
+            return Video.self
+        case .audio:
+            return Audio.self
         case .person:
             return Person.self
         case .phonenumber:
@@ -594,6 +612,110 @@ class Label:DataItem {
             color = try decoder.decodeIfPresent("color") ?? color
             
             decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Photo:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let width = RealmOptional<Int>()
+    let height = RealmOptional<Int>()
+    override var genericType:String { "photo" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<Person>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Video:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let width = RealmOptional<Int>()
+    let height = RealmOptional<Int>()
+    let duration = RealmOptional<Int>()
+    override var genericType:String { "video" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Audio:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let bitrate = RealmOptional<Int>()
+    let duration = RealmOptional<Int>()
+    override var genericType:String { "video" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
             
             try! self.superDecode(from: decoder)
         }

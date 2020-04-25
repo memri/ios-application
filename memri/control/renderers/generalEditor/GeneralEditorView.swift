@@ -526,7 +526,7 @@ private struct GeneralEditorHeader: ViewModifier {
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        let main = Main(name: "", key: "").mockBoot()
+        let main = RootMain(name: "", key: "").mockBoot()
         
         return ZStack {
             VStack(alignment: .center, spacing: 0) {

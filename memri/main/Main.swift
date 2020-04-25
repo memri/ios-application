@@ -3,17 +3,11 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-/**
- * Represents the entire application user interface.
- * One can imagine in the future there being multiple applications,
- * each aimed at a different way to represent the data. For instance
- * an application that is focussed on voice-first instead of gui-first.
- */
 public class Main: ObservableObject {
     /**
      *
      */
-    public let name: String = "GUI"
+    public var name: String = ""
     /**
      * The current session that is active in the application
      */
@@ -41,7 +35,7 @@ public class Main: ObservableObject {
     /**
      *
      */
-    public var podApi: PodAPI
+    public var podAPI: PodAPI
     /**
      *
      */
@@ -71,7 +65,7 @@ public class Main: ObservableObject {
         get {
             self.computedView.resultSet.items
         }
-        set { 
+        set {
             // Do nothing
             print("THIS SHOULD NEVER BE PRINTED2")
         }
@@ -89,129 +83,45 @@ public class Main: ObservableObject {
         }
     }
     
-    struct Alias {
-        var key:String
-        var type:String
-        var on:() -> Void
-    }
-    
-    var aliases:[String:Alias] = [:]
-    
-    subscript(propName:String) -> Any? {
-        get {
-            let alias = aliases[propName]!
-            
-            switch alias.type {
-            case "bool":
-                let value:Bool? = settings.get(alias.key)
-                return value ?? false
-            case "string":
-                let value:String? = settings.get(alias.key)
-                return value ?? ""
-            case "int":
-                let value:Int? = settings.get(alias.key)
-                return value ?? 0
-            case "double":
-                let value:Double? = settings.get(alias.key)
-                return value ?? 0
-            default:
-                return nil
-            }
-        }
-        set(newValue) {
-            let alias = aliases[propName]!
-            settings.set(alias.key, AnyCodable(newValue))
-            
-            if let x = newValue as? Bool, x { alias.on() }
-            
-            scheduleUIUpdate()
-        }
-    }
-    
-    public var showSessionSwitcher:Bool {
-        get { return self["showSessionSwitcher"] as! Bool }
-        set(value) { self["showSessionSwitcher"] = value }
-    }
-    
-    public var showNavigation:Bool {
-        get { return self["showNavigation"] as! Bool }
-        set(value) { self["showNavigation"] = value }
-    }
-    
-    private var cancellable: AnyCancellable? = nil
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
-    init(name:String, key:String) {
-        podApi = PodAPI(key)
-        cache = Cache(podApi)
-        realm = cache.realm
-        settings = Settings(realm)
-        installer = Installer(realm)
-        sessions = Sessions(realm)
-        views = Views(realm)
-        computedView = ComputedView(cache)
-        navigation = MainNavigation(realm)
-        renderers = Renderers()
-        
-        let takeScreenShot = {
-            // Make sure to record a screenshot prior to session switching
-            self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
-        }
-        
-        aliases = [
-           "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
-           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
-       ]
-        
-        cache.scheduleUIUpdate = scheduleUIUpdate
-        navigation.scheduleUIUpdate = scheduleUIUpdate
-        
-        // Make settings global so it can be reached everywhere
-        globalSettings = settings
-    }
-    
-    public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
-        
-        // Make sure memri is installed properly
-        self.installer.installIfNeeded(self) {
-
-            // Load settings
-            self.settings.load() {
+    func scheduleUIUpdate(){
+        // Don't schedule when we are already scheduled
+        if !scheduled {
+            
+            // Prevent multiple calls to the dispatch queue
+            scheduled = true
+            
+            // Schedule update
+            DispatchQueue.main.async {
                 
-                // Load NavigationCache (from cache and/or api)
-                self.navigation.load() {
+                // Reset scheduled
+                self.scheduled = false
                 
-                    // Load views configuration
-                    try! self.views.load(self) {
-                    
-                        // Load sessions configuration
-                        try! self.sessions.load(realm, cache) {
-                            
-                            // Update view when sessions changes
-                            self.cancellable = self.sessions.objectWillChange.sink { (_) in
-                                self.scheduleUIUpdate()
-                            }
-                            
-                            self.currentSession.access()
-                            self.currentSession.currentView.access()
-                            
-                            // Load current view
-                            self.setComputedView()
-                            
-                            // Done
-                            callback(nil, true)
-                        }
-                    }
-                }
+                // Update UI
+                self.objectWillChange.send()
             }
         }
-        
-        return self
     }
     
-    public func mockBoot() -> Main {
-        return self.boot({_,_ in })
+    func scheduleComputeView(){
+        // Don't schedule when we are already scheduled
+        if !scheduledComputeView {
+            
+            // Prevent multiple calls to the dispatch queue
+            scheduledComputeView = true
+            
+            // Schedule update
+            DispatchQueue.main.async {
+                
+                // Reset scheduled
+                self.scheduledComputeView = false
+                
+                // Update UI
+                self.setComputedView()
+            }
+        }
     }
     
     public func setComputedView(){
@@ -263,44 +173,6 @@ public class Main: ObservableObject {
         }
     }
     
-    func scheduleUIUpdate(){
-        // Don't schedule when we are already scheduled
-        if !scheduled {
-            
-            // Prevent multiple calls to the dispatch queue
-            scheduled = true
-            
-            // Schedule update
-            DispatchQueue.main.async {
-                
-                // Reset scheduled
-                self.scheduled = false
-                
-                // Update UI
-                self.objectWillChange.send()
-            }
-        }
-    }
-    
-    func scheduleComputeView(){
-        // Don't schedule when we are already scheduled
-        if !scheduledComputeView {
-            
-            // Prevent multiple calls to the dispatch queue
-            scheduledComputeView = true
-            
-            // Schedule update
-            DispatchQueue.main.async {
-                
-                // Reset scheduled
-                self.scheduledComputeView = false
-                
-                // Update UI
-                self.setComputedView()
-            }
-        }
-    }
-    
     public func getPropertyValue(_ name:String) -> Any {
         let type: Mirror = Mirror(reflecting:self)
 
@@ -311,5 +183,196 @@ public class Main: ObservableObject {
         }
         
         return ""
+    }
+    
+    struct Alias {
+        var key:String
+        var type:String
+        var on:() -> Void
+    }
+    
+    var aliases:[String:Alias] = [:]
+    
+    subscript(propName:String) -> Any? {
+        get {
+            let alias = aliases[propName]!
+            
+            switch alias.type {
+            case "bool":
+                let value:Bool? = settings.get(alias.key)
+                return value ?? false
+            case "string":
+                let value:String? = settings.get(alias.key)
+                return value ?? ""
+            case "int":
+                let value:Int? = settings.get(alias.key)
+                return value ?? 0
+            case "double":
+                let value:Double? = settings.get(alias.key)
+                return value ?? 0
+            default:
+                return nil
+            }
+        }
+        set(newValue) {
+            let alias = aliases[propName]!
+            settings.set(alias.key, AnyCodable(newValue))
+            
+            if let x = newValue as? Bool, x { alias.on() }
+            
+            scheduleUIUpdate()
+        }
+    }
+    
+    public var showSessionSwitcher:Bool {
+        get { return self["showSessionSwitcher"] as! Bool }
+        set(value) { self["showSessionSwitcher"] = value }
+    }
+    
+    public var showNavigation:Bool {
+        get { return self["showNavigation"] as! Bool }
+        set(value) { self["showNavigation"] = value }
+    }
+    
+    init(
+        name: String,
+        podAPI: PodAPI,
+        cache: Cache,
+        realm: Realm,
+        settings: Settings,
+        installer: Installer,
+        sessions: Sessions,
+        views: Views,
+        computedView: ComputedView,
+        navigation: MainNavigation,
+        renderers: Renderers
+    ) {
+        self.name = name
+        self.podAPI = podAPI
+        self.cache = cache
+        self.realm = realm
+        self.settings = settings
+        self.installer = installer
+        self.sessions = sessions
+        self.views = views
+        self.computedView = computedView
+        self.navigation = navigation
+        self.renderers = renderers
+    }
+}
+
+public class ProxyMain: Main {
+    
+    init(name:String, _ main:Main, _ session:Session) {
+        super.init(
+            name: name,
+            podAPI: main.podAPI,
+            cache: main.cache,
+            realm: main.realm,
+            settings: main.settings,
+            installer: main.installer,
+            sessions: Sessions(main.realm),
+            views: main.views,
+            computedView: main.computedView,
+            navigation: main.navigation,
+            renderers: main.renderers
+        )
+        
+        // For now sessions is unmanaged. TODO: Refactor: we may want to change this.
+        sessions.sessions.append(session)
+        sessions.currentSessionIndex = 0
+    }
+}
+
+/**
+ * Represents the entire application user interface.
+ * One can imagine in the future there being multiple applications,
+ * each aimed at a different way to represent the data. For instance
+ * an application that is focussed on voice-first instead of gui-first.
+ */
+public class RootMain: Main {
+    private var cancellable: AnyCancellable? = nil
+    
+    init (name: String, key: String) {
+        let podAPI = PodAPI(key)
+        let cache = Cache(podAPI)
+        let realm = cache.realm
+        
+        super.init(
+            name: name,
+            podAPI: podAPI,
+            cache: cache,
+            realm: realm,
+            settings: Settings(realm),
+            installer: Installer(realm),
+            sessions: Sessions(realm),
+            views: Views(realm),
+            computedView: ComputedView(cache),
+            navigation: MainNavigation(realm),
+            renderers: Renderers()
+        )
+        
+        let takeScreenShot = {
+            // Make sure to record a screenshot prior to session switching
+            self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
+        }
+        
+        aliases = [
+           "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
+           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
+       ]
+        
+        cache.scheduleUIUpdate = scheduleUIUpdate
+        navigation.scheduleUIUpdate = scheduleUIUpdate
+        
+        // Make settings global so it can be reached everywhere
+        globalSettings = settings
+    }
+    
+    public func createProxy(_ session:Session) -> Main {
+        return ProxyMain(name: "Proxy", self, session)
+    }
+    
+    public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
+        
+        // Make sure memri is installed properly
+        self.installer.installIfNeeded(self) {
+
+            // Load settings
+            self.settings.load() {
+                
+                // Load NavigationCache (from cache and/or api)
+                self.navigation.load() {
+                
+                    // Load views configuration
+                    try! self.views.load(self) {
+                    
+                        // Load sessions configuration
+                        try! self.sessions.load(realm, cache) {
+                            
+                            // Update view when sessions changes
+                            self.cancellable = self.sessions.objectWillChange.sink { (_) in
+                                self.scheduleUIUpdate()
+                            }
+                            
+                            self.currentSession.access()
+                            self.currentSession.currentView.access()
+                            
+                            // Load current view
+                            self.setComputedView()
+                            
+                            // Done
+                            callback(nil, true)
+                        }
+                    }
+                }
+            }
+        }
+        
+        return self
+    }
+    
+    public func mockBoot() -> Main {
+        return self.boot({_,_ in })
     }
 }

@@ -2,7 +2,6 @@
 //  SceneDelegate.swift
 //  memri
 //
-//  Created by Koen van der Veen on 11/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -21,8 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create the SwiftUI view that provides the window contents.
         
-        let main = Main(name: "Memri GUI", key: "ABCDEF")
-        let application = Application().environmentObject(main)
+        let main = RootMain(name: "Memri GUI", key: "ABCDEF")
+        let application = Application().environmentObject(main as Main)
 
 //        var application: Application = Application(, browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
 //            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))

@@ -296,14 +296,14 @@ struct EdgeBorder: Shape {
           In addition and to facilitate the abilities of the view hyper network is the introduction of
           the subview element that can display views inline. An immediate use case is to view a list
           of views (in fact they are sessions, but its easier to perceive them as views), and
-          instead of seeing a screenshot of the last state they are the actual life instantiation of
+          instead of seeing a screenshot of the last state they are the actual live instantiation of
           that view. This can be used for showing a list of charts that are easy to scroll through
           and thus easy to check daily without having to go to many views (N.B. this can somewhat be
           achieved with a session that has a history of each chart you want. you can then navigate
           with the back button and via the list of views in the session. However this is not as
           easy as scrolling). This is the signature of the element
  
-            SubView(viewName or viewInstance, dataItem, options)
+            SubView(viewName or viewInstance, dataItem, variables)
  
           And the renderConfig of the session view for the charts could look like this:
           
@@ -315,7 +315,7 @@ struct EdgeBorder: Shape {
                             "SubView", {
                                 "view": "{.}", // or "viewName": "someView" for other use cases
                                 "dataItem": "{.}", // this could be left out in this case
-                                "options": {
+                                "variables": {
                                     "toolbar": false,
                                     "readonly": true
                                 }
@@ -987,7 +987,7 @@ public struct GUIElementInstance: View {
                     .setProperties(from._properties, self.item)
             }
             else if from.type == "memributton" {
-                memriButton(item: self.item)
+                MemriButton(item: self.item)
                     .setProperties(from._properties, self.item)
             }
             else if from.type == "image" {

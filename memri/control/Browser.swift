@@ -2,7 +2,6 @@
 //  ContentView.swift
 //  memri
 //
-//  Created by Koen van der Veen on 11/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -29,6 +28,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(Main(name: "", key: "").mockBoot())
+        Browser().environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }

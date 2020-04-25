@@ -217,6 +217,6 @@ struct FilterPanel: View {
 
 struct FilterPanel_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanel().environmentObject(Main(name: "", key: "").mockBoot())
+        FilterPanel().environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }

@@ -51,9 +51,21 @@
         "name": "all-people",
         "views": [
             {
-                "title": "All people",
+                "title": "All People",
                 "queryOptions": {
                     "query": "person"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-photos",
+        "views": [
+            {
+                "title": "All Photos",
+                "queryOptions": {
+                    "query": "photo"
                 }
             }
         ]

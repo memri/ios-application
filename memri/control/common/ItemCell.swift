@@ -1,8 +1,7 @@
 //
-//  wrappingHStack.swift
+//  ItemCell.swift
 //  memri
 //
-//  Created by Ruben Daniels on 4/17/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 

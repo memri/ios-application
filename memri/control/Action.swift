@@ -38,7 +38,7 @@ struct Action: View {
 struct Action_Previews: PreviewProvider {
     static var previews: some View {
         Action(action: ActionDescription(icon: "chevron.left", title: "back", actionType: .button))
-            .environmentObject(Main(name: "", key: "").mockBoot())
+            .environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }
 

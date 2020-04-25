@@ -23,7 +23,7 @@ public class Sessions: DataItem {
     /**
      *
      */
-    let sessions = RealmSwift.List<Session>() // @Published
+    let sessions = RealmSwift.List<Session>()
     /**
      *
      */
