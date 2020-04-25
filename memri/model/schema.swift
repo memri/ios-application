@@ -326,6 +326,8 @@ class Address:DataItem {
     
     required init () {
         super.init()
+        
+        // TODO:Refactor when any of the fields change, location should be reset
     }
     
     public required init(from decoder: Decoder) throws {

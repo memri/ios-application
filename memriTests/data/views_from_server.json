@@ -17,14 +17,14 @@
                 "virtual": {
                     "generalEditor": [
                         "EditorRow", { "spacing": 5, "padding": [10,0,10,0] }, [
-                            "HStack", [
+                            "HStack", { "alignment": "center" }, [
                                 "MemriButton",
                                 "Spacer",
                                 "Button", {
                                     "press": { "actionName": "archive" },
                                     "condition": "{!readOnly}"
                                 }, [
-                                    "Image", { "systemName": "archivebox", "color": "#477" }
+                                    "Image", { "systemName": "bolt.horizontal.circle.fill", "color": "#ff0000" }
                                 ]
                             ]
                         ]
