@@ -179,8 +179,12 @@ struct GeneralEditorSection: View {
         ]
     }
     
+    func hasSectionTitle(_ groupKey:String) -> Bool {
+        return !(renderConfig.renderDescription?[groupKey]?._properties["sectiontitle"] as? String == "")
+    }
+    
     func getSectionTitle(_ groupKey:String) -> String? {
-        renderConfig.renderDescription?[groupKey]?._properties["sectiontitle"] as? String
+        renderConfig.renderDescription?[groupKey]?.getString("sectiontitle", self.item)
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
@@ -216,10 +220,10 @@ struct GeneralEditorSection: View {
         
         return Group{
             if renderDescription[groupKey] != nil {
-                if self.getSectionTitle(groupKey) == "" {
+                if !self.hasSectionTitle(groupKey) {
                     EmptyView()
                 }
-                else{
+                else {
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
                         action: actionDescription

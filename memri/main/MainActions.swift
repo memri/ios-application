@@ -106,7 +106,7 @@ extension Main {
             case .delete:
                 if selection.count > 0 { cache.delete(selection) }
                 else if let item = item { cache.delete(item) }
-                scheduleUIUpdate()
+                scheduleUIUpdate{_ in true}
             case .star:
                 if selection.count > 0, let item = item { star(selection, item.starred) }
             case .share: showSharePanel()
@@ -165,7 +165,7 @@ extension Main {
                     item[propToUpdate] = !(item[propToUpdate] as! Bool)
                     
                     // TODO currently there are no listeners on data??
-                    scheduleUIUpdate()
+                    scheduleUIUpdate{_ in true}
                 }
                 else {
                     print("Warning: No item found to update")

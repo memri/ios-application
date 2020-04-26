@@ -69,7 +69,7 @@ struct PickerPane: View {
                             try! self.main.realm.write {
                                 self.item[self.propName] = dataItem
                             }
-                            self.main.scheduleUIUpdate()
+                            self.main.scheduleUIUpdate{_ in true}
                             self.presentationMode.wrappedValue.dismiss()
                         }) {
                             HStack {

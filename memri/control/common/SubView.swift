@@ -18,12 +18,12 @@ public struct SubView: View {
     
     /*
         TODO: There are several problems
-                (1) the main reference is in at least .views which means that CompiledView refers
+                (1) [done] the main reference is in at least .views which means that CompiledView refers
                     to the wrong version main when it is compiling and finding the data item
-                (2) the data item that needs to be used to query the properties to dynamically
+                (2) [done] the data item that needs to be used to query the properties to dynamically
                     create the view is gotton from currentView.resultSet.item. This is wrong. It
                     must be the dataItem that is passed to SubView.
-                (3) I removed dataItem from being passed to SubView as I forgot why this was needed.
+                (3) [done] I removed dataItem from being passed to SubView as I forgot why this was needed.
                     Can this be inferred from the context? It feels strange to pass it from within
                     the json.
                 (4) There is a strange recursion where the SubView gets called again, although the
@@ -35,9 +35,9 @@ public struct SubView: View {
     // There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
-    public init (main:Main, viewName: String, toolbar: Bool, searchbar: Bool, variables:[String: Any]){
-        self.toolbar = toolbar
-        self.searchbar = searchbar
+    public init (main:Main, viewName: String, context: DataItem, variables:[String: Any]){
+        self.toolbar = variables["toolbar"] as? Bool ?? toolbar
+        self.searchbar = variables["searchbar"] as? Bool ?? searchbar
         
         // TODO Refactor: maybe prevent the lower sessions from being created??
         var (sess, view) = main.views.getSessionOrView(viewName, wrapView:false, variables)
@@ -48,6 +48,7 @@ public struct SubView: View {
         // TODO: Refactor: This can be optimized by not querying for othe dataItem
 //        view!.queryOptions = QueryOptions(query: "\(item.genericType) AND uid = '\(item.uid)'")
         view!.variables = variables
+        view!.variables!["."] = context
         
         let session = Session()
         session.views.append(view!)
@@ -57,15 +58,14 @@ public struct SubView: View {
         self.proxyMain!.setComputedView()
     }
     
-    public init (main:Main, view: SessionView, toolbar: Bool, searchbar: Bool, variables:[String: Any]){
-        self.toolbar = toolbar
-        self.searchbar = searchbar
+    public init (main:Main, view: SessionView, context: DataItem, variables:[String: Any]){
+        self.toolbar = variables["toolbar"] as? Bool ?? toolbar
+        self.searchbar = variables["searchbar"] as? Bool ?? searchbar
         
         // TODO: Refactor: This can be optimized by not querying for othe dataItem
 //        view.queryOptions = QueryOptions(query: "\(item.genericType) AND uid = '\(item.uid)'")
         view.variables = variables
-        
-        print (view.queryOptions!.query)
+        view.variables!["."] = context
         
         let session = Session()
         session.views.append(view)
@@ -78,9 +78,15 @@ public struct SubView: View {
     public var body: some View {
 //        ZStack {
             VStack(alignment: .center, spacing: 0) {
-                TopNavigation()
+                if self.toolbar {
+                    TopNavigation()
+                }
+                
                 self.proxyMain!.currentRendererView.fullHeight()
-                Search()
+                
+                if self.searchbar {
+                    Search()
+                }
             }
             .fullHeight()
             .environmentObject(self.proxyMain!)

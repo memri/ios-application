@@ -86,9 +86,9 @@ public class Main: ObservableObject {
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
-    func scheduleUIUpdate(){
+    func scheduleUIUpdate(_ check:(_ main:Main) -> Bool){
         // Don't schedule when we are already scheduled
-        if !scheduled {
+        if !scheduled && check(self) {
             
             // Prevent multiple calls to the dispatch queue
             scheduled = true
@@ -148,12 +148,12 @@ public class Main: ObservableObject {
                 }
                 else {
                     // Update the UI
-                    scheduleUIUpdate()
+                    scheduleUIUpdate{_ in true}
                 }
             }
             
             // Update the UI
-            scheduleUIUpdate()
+            scheduleUIUpdate{_ in true}
         }
         // Otherwise let's execute the query first
         else {
@@ -167,7 +167,7 @@ public class Main: ObservableObject {
                 }
                 else {
                     // Update the current view based on the new info
-                    scheduleUIUpdate() // TODO shouldn't this be setCurrentView??
+                    scheduleUIUpdate{_ in true} // TODO shouldn't this be setCurrentView??
                 }
             }
         }
@@ -222,7 +222,7 @@ public class Main: ObservableObject {
             
             if let x = newValue as? Bool, x { alias.on() }
             
-            scheduleUIUpdate()
+            scheduleUIUpdate{_ in true}
         }
     }
     
@@ -266,6 +266,8 @@ public class Main: ObservableObject {
 public class ProxyMain: Main {
     
     init(name:String, _ main:Main, _ session:Session) {
+        let views = Views(main.realm)
+        
         super.init(
             name: name,
             podAPI: main.podAPI,
@@ -274,11 +276,14 @@ public class ProxyMain: Main {
             settings: main.settings,
             installer: main.installer,
             sessions: Sessions(main.realm),
-            views: main.views,
+            views: views,
             computedView: main.computedView,
             navigation: main.navigation,
             renderers: main.renderers
         )
+        
+        views.main = self
+        views.defaultViews = main.views.defaultViews
         
         // For now sessions is unmanaged. TODO: Refactor: we may want to change this.
         sessions.sessions.append(session)
@@ -294,6 +299,8 @@ public class ProxyMain: Main {
  */
 public class RootMain: Main {
     private var cancellable: AnyCancellable? = nil
+    
+    // TODO Refactor: Should installer be moved to rootmain?
     
     init (name: String, key: String) {
         let podAPI = PodAPI(key)
@@ -354,7 +361,7 @@ public class RootMain: Main {
                             
                             // Update view when sessions changes
                             self.cancellable = self.sessions.objectWillChange.sink { (_) in
-                                self.scheduleUIUpdate()
+                                self.scheduleUIUpdate{_ in true}
                             }
                             
                             self.currentSession.access()

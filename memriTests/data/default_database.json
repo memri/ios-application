@@ -304,6 +304,9 @@
         "shoulderWidth": 42,
         "armLength": 73,
         "relations": [{"uid":"0x01"},{"uid":"0x02"}],
+        "profilePicture": {
+            "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"
+        },
         "labels": [
             { "name": "Soccer team", "color": "#83ac06" },
             { "name": "Friends from University", "color": "#ffd966" }
@@ -391,7 +394,7 @@
         "age": 37,
         "relations": [{"uid":"0x01"}],
         "profilePicture": {
-            "uri": "/Users/rubendaniels/Downloads/ruben.jpeg"
+            "uri": "/tmp/lfw/Michael_Douglas/Michael_Douglas_0005.jpg"
         },
         "labels": [
             { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
@@ -409,7 +412,7 @@
         "age": 21,
         "dateCreated": "1996-12-20T00:39:57Z",
         "profilePicture": {
-            "uri": "/Users/rubendaniels/Downloads/nikolai.jpeg"
+            "uri": "/tmp/lfw/Norah_Jones/Norah_Jones_0007.jpg"
         },
         "starred": true,
         "labels": [

@@ -319,18 +319,22 @@ public class Session: DataItem {
     private func decorate(_ view:SessionView) {
         // Set the .session property on views for easy querying
         if view.session == nil {
-            if let realm = realm, !realm.isInWriteTransaction {
-                try! realm.write { view.session = self }
-            }
-            else { view.session = self }
+            realmWriteIfAvailable(realm) { view.session = self }
         }
         
         // Observe and process changes for UI updates
-        rlmTokens.append(view.observe({ (objectChange) in
-            if case .change = objectChange {
-                self.objectWillChange.send()
-            }
-        }))
+        if realm != nil {
+            // TODO Refactor: What is the impact of this not happening in subviews
+            //                The impact is that for instance clicking on the showFilterPanel button
+            //                is not working. The UI won't update. Perhaps we need to implement
+            //                our own pub/sub structure. More thought is needed.
+            
+            rlmTokens.append(view.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
     }
     
 //    deinit {
@@ -343,12 +347,12 @@ public class Session: DataItem {
     
     public func setCurrentView(_ view:SessionView) {
         if let index = views.firstIndex(of: view) {
-            try! realm!.write {
+            realmWriteIfAvailable(realm) {
                 currentViewIndex = index
             }
         }
         else {
-            try! realm!.write {
+            realmWriteIfAvailable(realm) {
                 // Remove all items after the current index
                 views.removeSubrange((currentViewIndex + 1)...)
                 

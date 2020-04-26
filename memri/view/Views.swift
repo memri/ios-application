@@ -15,7 +15,7 @@ public class Views {
     var defaultViews: [String:[String:DynamicView]] = [:]
     
     private var realm:Realm
-    private var main:Main? = nil
+    var main:Main? = nil
 
     init(_ rlm:Realm) {
         realm = rlm
@@ -34,6 +34,9 @@ public class Views {
         
         // Set the parsed views to the defaultViews property for later use in computeView
         self.defaultViews = parsed
+        
+        // TODO Refactor: I think we want to stop getting named views from the defaults and create
+        //                references to them instead
         
         // Add the named views to the compiled views
         for (name, view) in named {
@@ -370,6 +373,11 @@ public class Views {
     }
 }
 
+public struct DataItemReference {
+    let type: DataItemFamily
+    let uid: String
+}
+
 public class SessionView: DataItem {
     /**
      *
@@ -413,10 +421,28 @@ public class SessionView: DataItem {
     /**
      *
      */
+    // TODO Refactor: Holy Guacamole this seems inefficient
+    // Variables should probably be a more intelligent class that does conversion to codable
     var variables: [String:Any]? {
         get {
             if let strVars = self._variables {
-                if let variables:[String:AnyCodable] = unserialize(strVars) {
+                // TODO REfactor: error handling
+                let data = strVars.data(using: .utf8)!
+                let json = try! JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                
+                if var variables = json as? [String: Any] {
+                    for (key, value) in variables {
+                        if let value = value as? [String:Any] {
+                            // TODO Refactor: find a stronger assumption when generalizing this
+                            if let uid = value["uid"], let type = value["type"] {
+                                let type = DataItemFamily(rawValue: type as! String)
+                                if let type = type {
+                                    variables[key] = DataItemReference(type: type, uid: uid as! String)
+                                }
+                            }
+                        }
+                    }
+                    
                     return variables
                 }
             }
@@ -424,7 +450,25 @@ public class SessionView: DataItem {
             return nil
         }
         set (vars) {
-            self._variables = serialize(AnyCodable(vars))
+            if let vars = vars {
+                var result = [String:Any]()
+                for (key, value) in vars {
+                    if let value = value as? DataItemReference {
+                        result[key] = ["type": value.type.rawValue, "uid": value.uid]
+                    }
+                    else if let value = value as? DataItem {
+                        result[key] = ["type": value.genericType, "uid": value.uid]
+                    }
+                    else {
+                        result[key] = value
+                    }
+                }
+                
+                self._variables = serialize(AnyCodable(result))
+            }
+            else {
+                self._variables = serialize(nil)
+            }
         }
     }
     
@@ -556,13 +600,14 @@ public class SessionView: DataItem {
         self.actionButton = view.actionButton ?? self.actionButton
         self.editActionButton = view.editActionButton ?? self.editActionButton
         
+        // TODO Refactor move to an arguments class
         if let variables = view.variables {
             var myVars = self.variables ?? [:]
             
             for (key, value) in variables {
                 myVars[key] = value
             }
-            self._variables = serialize(AnyCodable(myVars))
+            self.variables = myVars
         }
     }
     
@@ -1227,7 +1272,13 @@ public class CompiledView {
         case "view":
             return main.computedView.getPropertyValue(prop)
         case "dataItem":
-            if let item = main.computedView.resultSet.item {
+            // TODO Refactor into a variables/arguments object
+            if let itemRef = extraVars["."] as? DataItemReference {
+                let type = DataItemFamily.getType(itemRef.type)
+                let item = main.realm.object(ofType: type() as! Object.Type, forPrimaryKey: itemRef.uid)
+                return item?[prop]
+            }
+            else if let item = extraVars["."] as? DataItem ?? main.computedView.resultSet.item {
                 return item[prop]
             }
             else {
@@ -1235,8 +1286,18 @@ public class CompiledView {
             }
         default:
             if let value = extraVars[object == "" ? "." : object] {
-                if prop == "" { return value }
-                else { return (value as? Object)?[prop] } // TODO error handling
+                // TODO Refactor into a variables/arguments object
+                if let itemRef = value as? DataItemReference {
+                    let type = DataItemFamily.getType(itemRef.type)
+                    let item = main.realm.object(ofType: type() as! Object.Type, forPrimaryKey: itemRef.uid)
+                    
+                    if prop == "" { return item }
+                    else { return item?[prop] } // TODO error handling
+                }
+                else {
+                    if prop == "" { return value }
+                    else { return (value as? Object)?[prop] } // TODO error handling
+                }
             }
             
             print("Warning: Unknown object to get the property off: \(object) \(prop)")

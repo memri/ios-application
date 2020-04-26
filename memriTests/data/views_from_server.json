@@ -648,22 +648,33 @@
                         "names": ["firstName", "lastName"],
                         "picturesOfPerson": []
                     },
-                    "sequence": ["profilePicture", "picturesOfPerson", "names", "phoneNumbers", "labels", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
-                    "excluded": ["profilePicture"],
+                    "sequence": ["profilePicture", "labels", "names", "picturesOfPerson", "phoneNumbers", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
+                    "excluded": [],
                     "readOnly": [],
                     "renderDescription": {
                         "picturesOfPerson": [
                             "SubView", {
                                 "for": "group",
-                                "minHeight": 200,
+                                "sectionTitle": "Photos of {.computeTitle()}",
+                                "minHeight": 165,
                                 "view": {
-                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x03'" }
+                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x03'" },
+                                    "renderConfigs": {
+                                        "thumbnail": {
+                                            "columns": 5
+                                        }
+                                    }
+                                },
+                                "variables": {
+                                    "toolbar": false,
+                                    "searchbar": false,
+                                    "readonly": true
                                 }
                             }
                         ],
                         "profilePicture": [
                             "ZStack", {
-                                "title": "",
+                                "sectionTitle": "",
                                 "alignment": "center"
                             }, [
                                 "Image", {
@@ -707,6 +718,34 @@
                                         }, [
                                             "Text", { "text": "Edit" }
                                         ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        "labels": [
+                            "VSTack", {
+                                "for": "group",
+                                "sectionTitle": "",
+                                "padding": [10, 36, 5, 36]
+                            }, [
+                                
+                                "Text", {
+                                    "condition": "{!.labels.count}",
+                                    "text": "no labels yet"
+                                },
+                                "WrapStack", {
+                                    "list": "{.labels}"
+                                }, [
+                                    "VStack", {
+                                        "background": "{.color}",
+                                        "cornerRadius": 5
+                                    }, [
+                                        "Text", {
+                                            "text": "{.name}",
+                                            "font": [16, "semibold"],
+                                            "color": "#fff",
+                                            "padding": [5, 8, 5, 8]
+                                        }
                                     ]
                                 ]
                             ]

@@ -130,7 +130,8 @@ public class Cache {
     /**
      * @private
      */
-    public var scheduleUIUpdate: (() -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
+    
     
     public init(_ api: PodAPI){
                 
@@ -264,7 +265,9 @@ public class Cache {
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
-                self.scheduleUIUpdate!()
+                self.scheduleUIUpdate!() { main in
+                    return main.computedView.resultSet.queryOptions == resultSet.queryOptions
+                }
             })
             
             return resultSet
@@ -282,7 +285,7 @@ public class Cache {
         }
         return nil
     }
-
+    
     /**
      *
      */
@@ -348,7 +351,7 @@ public class Cache {
                     if self.realm.isInWriteTransaction { doAction() }
                     else { try! self.realm.write { doAction() } }
                 }
-                self.scheduleUIUpdate!()
+                self.scheduleUIUpdate!{_ in true}
             }
         })
         

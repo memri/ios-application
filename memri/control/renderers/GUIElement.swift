@@ -992,8 +992,7 @@ public struct GUIElementInstance: View {
                     SubView(
                         main: self.main,
                         viewName: from.getString("viewName"),
-                        toolbar: get("toolbar") ?? false,
-                        searchbar: get("searchbar") ?? false,
+                        context: self.item,
                         variables: get("variables") ?? [:] // TODO Refactor: Error Handling
                     )
                     .setProperties(from._properties, self.item)
@@ -1002,8 +1001,7 @@ public struct GUIElementInstance: View {
                     SubView(
                         main: self.main,
                         view: { let x:SessionView = get("view")!; return x }(),
-                        toolbar: get("toolbar") ?? false,
-                        searchbar: get("searchbar") ?? false,
+                        context: self.item,
                         variables: get("variables") ?? [:]
                     )
                     .setProperties(from._properties, self.item)
