@@ -871,7 +871,8 @@
     {
         "name": "Germany",
         "type": "country",
-        "uid": "Germany"
+        "uid": "Germany",
+        "starred": true
     },
     {
         "name": "Ghana",
@@ -1251,7 +1252,8 @@
     {
         "name": "Netherlands",
         "type": "country",
-        "uid": "Netherlands"
+        "uid": "Netherlands",
+        "starred": true
     },
     {
         "name": "Netherlands Antilles",
@@ -1641,7 +1643,8 @@
     {
         "name": "United States",
         "type": "country",
-        "uid": "United States"
+        "uid": "United States",
+        "starred": true
     },
     {
         "name": "Uruguay",

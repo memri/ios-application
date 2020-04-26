@@ -49,16 +49,18 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                SwiftUI.List{
+                // TODO REfactor: why are there 2px between each list row?
+                SwiftUI.List {
                     ForEach(main.items) { dataItem in
-                        self.renderConfig.render(item: dataItem)
-                            .onTapGesture {
-                                if let press = self.renderConfig.press {
-                                    self.main.executeAction(press, dataItem)
-                                }
+                        Button (action:{
+                            if let press = self.renderConfig.press {
+                                self.main.executeAction(press, dataItem)
                             }
+                        }) {
+                            self.renderConfig.render(item: dataItem)
+                        }
+                        .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                     }
-                
                     .onDelete{ indexSet in
                         
                         // TODO this should happen automatically in ResultSet
@@ -79,7 +81,7 @@ struct ListRendererView: View {
                 .environment(\.editMode, $main.currentSession.isEditMode)
                 .navigationBarTitle("")
                 .navigationBarHidden(true)
-                .padding(.top, 5)
+//                .padding(.top, 5)
             }
         }
     }

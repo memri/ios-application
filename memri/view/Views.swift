@@ -179,7 +179,7 @@ public class Views {
         // Create a new view
         let computedView = ComputedView(main.cache)
         
-        var variables = viewFromSession.variables
+        let variables = viewFromSession.variables
         var isList = true
         var type = ""
         
@@ -266,7 +266,7 @@ public class Views {
             }
         }
         else {
-            throw "Exception: Could not find which renderer to use. renderName not set in this view"
+            throw "Exception: Could not find which renderer to use. rendererName not set in this view"
         }
 
         // Choose cascade order
@@ -376,6 +376,16 @@ public class Views {
 public struct DataItemReference {
     let type: DataItemFamily
     let uid: String
+    
+    init(type:DataItemFamily, uid:String) {
+        self.type = type
+        self.uid = uid
+    }
+    
+    init(dataItem:DataItem) {
+        type = DataItemFamily(rawValue: dataItem.genericType)! // TODO refactor: error handling
+        uid = dataItem.uid
+    }
 }
 
 public class SessionView: DataItem {
@@ -821,7 +831,7 @@ public class ComputedView: ObservableObject {
         
         if self.queryOptions.query == "" { throw("No query is defined for this view") }
         if self.actionButton == nil && self.editActionButton == nil {
-            throw("Missing action button in this view")
+            print("Warn: Missing action button in this view")
         }
     }
     

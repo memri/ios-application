@@ -35,7 +35,7 @@ public enum ActionName: String, Codable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        addSelectionToList, noop
+        addSelectionToList, closePopup, noop
     
     var defaultIcon: String {
         switch self {
@@ -69,6 +69,8 @@ public enum ActionName: String, Codable {
             return "back"
         case .showAddLabel:
             return "Add Label"
+        case .closePopup:
+            return "Close"
         default:
             return self.rawValue.camelCaseToWords().lowercased()
         }

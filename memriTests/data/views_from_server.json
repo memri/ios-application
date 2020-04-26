@@ -649,7 +649,7 @@
                         "picturesOfPerson": []
                     },
                     "sequence": ["profilePicture", "labels", "names", "picturesOfPerson", "phoneNumbers", "relations", "addresses", "websites", "companies", "diets", "medicalConditions", "publicKeys", "onlineProfiles", "other", "dates"],
-                    "excluded": [],
+                    "excluded": ["profilePicture", "labels", "names", "picturesOfPerson", "phoneNumbers", ],
                     "readOnly": [],
                     "renderDescription": {
                         "picturesOfPerson": [
@@ -728,7 +728,6 @@
                                 "sectionTitle": "",
                                 "padding": [10, 36, 5, 36]
                             }, [
-                                
                                 "Text", {
                                     "condition": "{!.labels.count}",
                                     "text": "no labels yet"
@@ -923,20 +922,24 @@
        },
         
         "{[type:country]}": {
+            "name": "all-countries",
+            "rendererName": "list",
             "renderConfigs": {
                 "list": {
                     "renderDescription": [
                         "VStack", {
                             "alignment": "left",
-                            "rowInset": [0, 0, 0, 20]
+                            "padding": [0, 20, 0, 20]
                         }, [
-                            "Text", { "text": "{.computeTitle()}" },
+                            "Text", {
+                                "text": "{.computeTitle()}",
+                                "padding": [10, 0, 10, 0]
+                            },
                             "Rectangle", {
                                 "minHeight": 1,
                                 "maxHeight": 1,
                                 "color": "#efefef",
-                                "padding": [0, 0, 0, 20],
-                                "offset": [0, 2]
+                                "padding": [0, 0, 0, 0]
                             }
                         ]
                     ]
@@ -953,6 +956,7 @@
                             "Picker", {
                                 "empty": "Country",
                                 "value": "{.}",
+                                "title": "Select a country",
                                 "default": "{me.address[primary = true].country}",
                                 "optionsFromQuery": "country",
                                 "condition": "{!readOnly}"
@@ -960,7 +964,11 @@
                         ]
                     ]
                 }
-            }
+            },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
         },
         
         "{[type:address]}": {

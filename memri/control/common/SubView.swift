@@ -15,23 +15,8 @@ public struct SubView: View {
     var proxyMain: Main? = nil
     var toolbar: Bool = true
     var searchbar: Bool = true
+    var showCloseButton: Bool = false
     
-    /*
-        TODO: There are several problems
-                (1) [done] the main reference is in at least .views which means that CompiledView refers
-                    to the wrong version main when it is compiling and finding the data item
-                (2) [done] the data item that needs to be used to query the properties to dynamically
-                    create the view is gotton from currentView.resultSet.item. This is wrong. It
-                    must be the dataItem that is passed to SubView.
-                (3) [done] I removed dataItem from being passed to SubView as I forgot why this was needed.
-                    Can this be inferred from the context? It feels strange to pass it from within
-                    the json.
-                (4) There is a strange recursion where the SubView gets called again, although the
-                    query clearly points to photo, not person. It must somehow not use the proxyMain
-                    to render the content. Perhaps Main is references somewhere else as well. I
-                    probably want to create any object that has a reference to Main.
-     */
-
     // There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
@@ -45,8 +30,7 @@ public struct SubView: View {
         // TODO Refactor: error handling
         if view == nil { view = sess!.views.last! }
         
-        // TODO: Refactor: This can be optimized by not querying for othe dataItem
-//        view!.queryOptions = QueryOptions(query: "\(item.genericType) AND uid = '\(item.uid)'")
+        // TODO Refactor: this serializes variables to json twice:
         view!.variables = variables
         view!.variables!["."] = context
         
@@ -61,9 +45,9 @@ public struct SubView: View {
     public init (main:Main, view: SessionView, context: DataItem, variables:[String: Any]){
         self.toolbar = variables["toolbar"] as? Bool ?? toolbar
         self.searchbar = variables["searchbar"] as? Bool ?? searchbar
+        self.showCloseButton = variables["showCloseButton"] as? Bool ?? showCloseButton
         
-        // TODO: Refactor: This can be optimized by not querying for othe dataItem
-//        view.queryOptions = QueryOptions(query: "\(item.genericType) AND uid = '\(item.uid)'")
+        // TODO Refactor: this serializes variables to json twice:
         view.variables = variables
         view.variables!["."] = context
         
@@ -79,7 +63,7 @@ public struct SubView: View {
 //        ZStack {
             VStack(alignment: .center, spacing: 0) {
                 if self.toolbar {
-                    TopNavigation()
+                    TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
                 
                 self.proxyMain!.currentRendererView.fullHeight()

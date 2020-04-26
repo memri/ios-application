@@ -12,7 +12,7 @@ import RealmSwift
 
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
-    "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
+    "order": ["frame", "color", "font", /*"rowinset",*/ "padding", "background", "textalign",
               "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow", "offset",
               "blur", "opacity", "zindex"]
 ]
@@ -87,18 +87,18 @@ extension View {
                     return AnyView(self.border(Color(hex:color), width: value[1] as! CGFloat))
                 }
             }
-        case "rowinset":
-            if let value = value as? [CGFloat] {
-                return AnyView(self.listRowInsets(EdgeInsets(
-                    top: value[0],
-                    leading: value[3],
-                    bottom: value[2],
-                    trailing: value[1])))
-            }
-            else if let value = value as? CGFloat {
-                return AnyView(self.listRowInsets(EdgeInsets(top: value,
-                            leading: value, bottom: value, trailing: value)))
-            }
+//        case "rowinset":
+//            if let value = value as? [CGFloat] {
+//                return AnyView(self.listRowInsets(EdgeInsets(
+//                    top: value[0],
+//                    leading: value[3],
+//                    bottom: value[2],
+//                    trailing: value[1])))
+//            }
+//            else if let value = value as? CGFloat {
+//                return AnyView(self.listRowInsets(EdgeInsets(top: value,
+//                            leading: value, bottom: value, trailing: value)))
+//            }
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
@@ -1095,7 +1095,7 @@ public struct GUIElementInstance: View {
         return Picker(
             item: self.item,
             selected: dataItem ?? self.get("default"),
-            title: dataItem?.computeTitle ?? emptyValue,
+            title: "Select a \(emptyValue)",
             emptyValue: emptyValue,
             propName: propName,
             queryOptions: QueryOptions(value: [

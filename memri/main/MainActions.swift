@@ -117,6 +117,10 @@ extension Main {
                     selection.forEach{ item in addFromTemplate(item) }
                 }
                 else if let item = item { addFromTemplate(item) }
+//            case .custom:
+//                (params[0].value as! () -> Void)()
+            case .closePopup:
+                (self.closeStack.removeLast())()
             case .showSessionSwitcher:
                 break
             case .toggleEditMode, .toggleFilterPanel, .showContextPane, .showNavigation:

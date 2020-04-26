@@ -83,6 +83,8 @@ public class Main: ObservableObject {
         }
     }
     
+    public var closeStack = [() -> Void]() // A stack of close actions of global popups
+    
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
@@ -281,6 +283,8 @@ public class ProxyMain: Main {
             navigation: main.navigation,
             renderers: main.renderers
         )
+        
+        self.closeStack = main.closeStack
         
         views.main = self
         views.defaultViews = main.views.defaultViews
