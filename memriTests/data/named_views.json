@@ -16,7 +16,8 @@
         },
         "editActionButton": {
             "title": "{title}",
-            "actionName": ["{actionName}", "back"],
+            "actionName": "closePopup",
+            "_actionName": ["{actionName}", "closePopup"],
             "_actionArgs": ["{actionArgs}"]
         },
         "actionButton": {

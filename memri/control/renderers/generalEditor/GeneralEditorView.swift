@@ -205,6 +205,7 @@ struct GeneralEditorSection: View {
         
         let actionDescription = isArray && editMode && !readOnly
             ? ActionDescription(
+                icon: "plus",
                 actionName: .openViewByName,
                 actionArgs: [
                     "choose-item-by-query",
@@ -213,9 +214,11 @@ struct GeneralEditorSection: View {
                         "type": className,
                         "actionName": "addSelectionToList",
                         "actionArgs": "", // [self.item, groupKey],
-                        "title": "Add Selected"
+                        "title": "Add Selected",
+                        ".": item
                     ]
-                ])
+                ],
+                actionType: .popup)
             : nil
         
         return Group{
@@ -246,12 +249,10 @@ struct GeneralEditorSection: View {
             
             if action != nil {
                 Spacer()
-                Button(action:{ self.main.executeAction(action!)}) {
-                    Image(systemName: "plus")
-                        .foregroundColor(Color(hex:"#777"))
-                        .font(.system(size: 18, weight: .semibold))
-                }
-                .padding(.bottom, 10)
+                Action(action: action!)
+                    .foregroundColor(Color(hex:"#777"))
+                    .font(.system(size: 18, weight: .semibold))
+                    .padding(.bottom, 10)
             }
         }.padding(.trailing, 20)
     }

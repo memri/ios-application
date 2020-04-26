@@ -14,7 +14,7 @@ struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
-    var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
+    let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: ListConfig {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
@@ -34,6 +34,13 @@ struct ListRendererView: View {
     }
     
     var body: some View {
+        let guiEl = renderConfig.renderDescription?["*"]
+        if guiEl != nil {
+            if guiEl!._properties["padding"] == nil {
+                guiEl!._properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
+            }
+        }
+        
         return VStack{
             if main.computedView.resultSet.count == 0 {
                 HStack (alignment: .top)  {

@@ -206,10 +206,8 @@ public enum ActionName: String, Codable {
             return .white
         }
     }
-    
-    
 }
 
 public enum ActionType: String, Codable{
-    case button, emptytype
+    case popup, button, emptytype
 }
