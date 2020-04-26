@@ -1033,6 +1033,7 @@ public struct GUIElementInstance: View {
                 }
                 else { // assuming image property
                     Image(uiImage: getImage("image"))
+                        .renderingMode(.original)
                         .if(from.has("resizable")) { self.resize($0) }
                         .setProperties(from._properties, self.item)
                 }

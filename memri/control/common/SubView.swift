@@ -23,6 +23,7 @@ public struct SubView: View {
     public init (main:Main, viewName: String, context: DataItem, variables:[String: Any]){
         self.toolbar = variables["toolbar"] as? Bool ?? toolbar
         self.searchbar = variables["searchbar"] as? Bool ?? searchbar
+        self.showCloseButton = variables["showCloseButton"] as? Bool ?? showCloseButton
         
         // TODO Refactor: maybe prevent the lower sessions from being created??
         var (sess, view) = main.views.getSessionOrView(viewName, wrapView:false, variables)
