@@ -2,7 +2,6 @@
 //  TumbnailRenderer.swift
 //  memri
 //
-//  Created by Koen van der Veen on 10/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 

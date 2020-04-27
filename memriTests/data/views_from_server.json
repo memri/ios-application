@@ -1100,6 +1100,16 @@
                             "resizable": "fill"
                         }
                     ]
+                },
+                "thumbnail.grid": {
+                    "itemInset": 1,
+                    "edgeInset": [0,0,0,0],
+                    "renderDescription": [
+                        "Image", {
+                            "image": "{.file}",
+                            "resizable": "fill"
+                        }
+                    ]
                 }
             },
             "editActionButton": { "actionName": "toggleEditMode" },

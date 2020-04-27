@@ -17,6 +17,7 @@ public class Renderers {
         "list.alphabet":    ListRenderer(mode: "alphabet"),
         "richTextEditor":   RichTextRenderer(),
         "thumbnail":        ThumbnailRenderer(),
+        "thumbnail.grid":   ThumbGridRenderer(),
         "generalEditor":    GeneralEditor()
     ]
     
@@ -25,6 +26,7 @@ public class Renderers {
         "list.alphabet":    AnyView(ListRendererView()),
         "richTextEditor":   AnyView(RichTextRendererView()),
         "thumbnail":        AnyView(ThumbnailRendererView()),
+        "thumbnail.grid":   AnyView(ThumbGridRendererView()),
         "generalEditor":    AnyView(GeneralEditorView())
     ]
     
@@ -73,6 +75,10 @@ public class RenderConfigs: Object, Codable {
     /**
      *
      */
+    @objc dynamic var thumbnail_grid: ThumbGridConfig? = nil
+    /**
+     *
+     */
     @objc dynamic var generalEditor: GeneralEditorConfig? = nil
     /**
      *
@@ -87,6 +93,10 @@ public class RenderConfigs: Object, Codable {
         if let config = renderConfigs.thumbnail {
             if self.thumbnail == nil { self.thumbnail = ThumbnailConfig() }
             self.thumbnail!.merge(config)
+        }
+        if let config = renderConfigs.thumbnail_grid {
+            if self.thumbnail_grid == nil { self.thumbnail_grid = ThumbGridConfig() }
+            self.thumbnail_grid!.merge(config)
         }
         if let config = renderConfigs.generalEditor {
             if self.generalEditor == nil { self.generalEditor = GeneralEditorConfig() }
@@ -105,6 +115,7 @@ public class RenderConfigs: Object, Codable {
         jsonErrorHandling(decoder) {
             self.list = try decoder.decodeIfPresent("list") ?? self.list
             self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
+            self.thumbnail_grid = try decoder.decodeIfPresent("thumbnail.grid") ?? self.thumbnail_grid
             self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
             
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("virtual") {
@@ -159,7 +170,7 @@ public class RenderConfig: Object, Codable {
                        variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
         if _renderDescription == nil {
-            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item)")
+            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item.genericType) : \(item.uid)")
             return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {

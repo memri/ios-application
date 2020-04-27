@@ -17,8 +17,6 @@ struct ListRendererView: View {
     let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: ListConfig {
-        print(self.main.computedView.renderConfigs["list"])
-        
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
