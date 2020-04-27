@@ -76,7 +76,7 @@
                                     "condition": "{!.labels.count}",
                                     "text": "no labels yet"
                                 },
-                                "WrapStack", {
+                                "FlowStack", {
                                     "list": "{.labels}"
                                 }, [
                                     "button", {
@@ -758,7 +758,7 @@
                                     "condition": "{!.labels.count}",
                                     "text": "no labels yet"
                                 },
-                                "WrapStack", {
+                                "FlowStack", {
                                     "list": "{.labels}"
                                 }, [
                                     "button", {

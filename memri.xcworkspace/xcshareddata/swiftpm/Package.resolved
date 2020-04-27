@@ -11,6 +11,15 @@
         }
       },
       {
+        "package": "ASCollectionView",
+        "repositoryURL": "https://github.com/apptekstudios/ASCollectionView",
+        "state": {
+          "branch": "master",
+          "revision": "91d85a3aec1bdc88fb285b3908ba036ba9d1dd09",
+          "version": null
+        }
+      },
+      {
         "package": "OrderedDictionary",
         "repositoryURL": "https://github.com/lukaskubanek/OrderedDictionary.git",
         "state": {

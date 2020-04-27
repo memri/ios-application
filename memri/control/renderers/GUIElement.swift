@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import RealmSwift
+import TextView
 
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
@@ -948,8 +949,8 @@ public struct GUIElementInstance: View {
                 }
                 .setProperties(from._properties, self.item)
             }
-            else if from.type == "wrapstack" {
-                WrapStack(getList("list")) { listItem in
+            else if from.type == "flowstack" {
+                FlowStack(getList("list")) { listItem in
                     ForEach(0..<self.from.children.count){ index in
                         GUIElementInstance(self.from.children[index], listItem)
                     }

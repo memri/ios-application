@@ -231,7 +231,7 @@ class Sync {
             podAPI.update(item, callback)
         case "fetch":
             // TODO
-            1+1
+            break
         default:
             // Ignore unknown tasks
             print("Unknown sync state action: \(item.syncState!.actionNeeded)")

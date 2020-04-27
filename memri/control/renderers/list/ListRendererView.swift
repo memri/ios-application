@@ -91,12 +91,7 @@ struct ListRendererView: View {
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
-                    .padding(.top, 5)
                 }
-//                .environment(\.editMode, $main.currentSession.isEditMode)
-//                .navigationBarTitle("")
-//                .navigationBarHidden(true)
-//                .padding(.top, 5)
             }
         }
     }
