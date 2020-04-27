@@ -17,6 +17,8 @@ struct ListRendererView: View {
     let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: ListConfig {
+        print(self.main.computedView.renderConfigs["list"])
+        
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     
@@ -56,38 +58,44 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                // TODO REfactor: why are there 2px between each list row?
-                SwiftUI.List {
-                    ForEach(main.items) { dataItem in
-                        Button (action:{
-                            if let press = self.renderConfig.press {
-                                self.main.executeAction(press, dataItem)
+                NavigationView{
+                    // TODO REfactor: why are there 2px between each list row?
+                    SwiftUI.List {
+                        ForEach(main.items) { dataItem in
+                            Button (action:{
+                                if let press = self.renderConfig.press {
+                                    self.main.executeAction(press, dataItem)
+                                }
+                            }) {
+                                self.renderConfig.render(item: dataItem)
                             }
-                        }) {
-                            self.renderConfig.render(item: dataItem)
+                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
-                        .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
-                    }
-                    .onDelete{ indexSet in
-                        
-                        // TODO this should happen automatically in ResultSet
-                        self.main.items.remove(atOffsets: indexSet)
-                        
-                        // I'm sure there is a better way of doing this...
-                        var items:[DataItem] = []
-                        for i in indexSet {
-                            let item = self.main.items[i]
-                            items.append(item)
-                        }
-                        
-                        // Execute Action
-                        self.main.executeAction(self.deleteAction, nil, items)
+                        .onDelete{ indexSet in
+                            
+                            // TODO this should happen automatically in ResultSet
+                            self.main.items.remove(atOffsets: indexSet)
+                            
+                            // I'm sure there is a better way of doing this...
+                            var items:[DataItem] = []
+                            for i in indexSet {
+                                let item = self.main.items[i]
+                                items.append(item)
+                            }
+                            
+                            // Execute Action
+                            self.main.executeAction(self.deleteAction, nil, items)
 
+                        }
                     }
+                    .environment(\.editMode, $main.currentSession.isEditMode)
+                    .navigationBarTitle("")
+                    .navigationBarHidden(true)
+                    .padding(.top, 5)
                 }
-                .environment(\.editMode, $main.currentSession.isEditMode)
-                .navigationBarTitle("")
-                .navigationBarHidden(true)
+//                .environment(\.editMode, $main.currentSession.isEditMode)
+//                .navigationBarTitle("")
+//                .navigationBarHidden(true)
 //                .padding(.top, 5)
             }
         }

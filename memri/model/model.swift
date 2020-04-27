@@ -331,7 +331,7 @@ public class ResultSet: ObservableObject {
         
         if let query = self.queryOptions.query, query != "" {
             if let typeName = query.split(separator: " ").first {
-                return String(typeName)
+                return String(typeName == "*" ? "mixed" : typeName)
             }
         }
         return nil

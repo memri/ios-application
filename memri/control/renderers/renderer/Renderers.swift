@@ -159,10 +159,16 @@ public class RenderConfig: Object, Codable {
                        variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
         if _renderDescription == nil {
+            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item)")
             return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {
-            return GUIElementInstance(self.renderDescription![part]!, item, variables)
+            if self.renderDescription![part] != nil {
+                return GUIElementInstance(self.renderDescription![part]!, item, variables)
+            }
+            else {
+                return GUIElementInstance(self.renderDescription!["*"]!, item, variables)
+            }
         }
     }
     

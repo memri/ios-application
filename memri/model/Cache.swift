@@ -201,8 +201,20 @@ public class Cache {
             // Parse query
             let (typeName, filter) = parseQuery(q)
             
+            if typeName == "*" {
+                
+                var returnValue:[DataItem] = []
+
+                for dtype in DataItemFamily.allCases{
+                    let objects = realm.objects(dtype.getType() as! Object.Type)
+                                        .filter("deleted = false " + (filter ?? ""))
+                    for item in objects { returnValue.append(item as! DataItem) }
+                }
+                
+                callback(nil, returnValue)
+            }
             // Fetch the type of the data item
-            if let type = DataItemFamily(rawValue: typeName) {
+            else if let type = DataItemFamily(rawValue: typeName) {
                 // Get primary key of data item
                 // let primKey = type.getPrimaryKey()
                 
