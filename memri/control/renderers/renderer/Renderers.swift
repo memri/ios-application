@@ -13,21 +13,23 @@ import OrderedDictionary
 
 public class Renderers {
     var all: [String: Renderer] = [
-        "list":             ListRenderer(),
-        "list.alphabet":    ListRenderer(mode: "alphabet"),
-        "richTextEditor":   RichTextRenderer(),
-        "thumbnail":        ThumbnailRenderer(),
-        "thumbnail.grid":   ThumbGridRenderer(),
-        "generalEditor":    GeneralEditor()
+        "list":                  ListRenderer(),
+        "list.alphabet":         ListRenderer(mode: "alphabet"),
+        "richTextEditor":        RichTextRenderer(),
+        "thumbnail":             ThumbnailRenderer(),
+        "thumbnail.grid":        ThumbGridRenderer(),
+        "thumbnail.waterfall":   ThumbWaterfallRenderer(),
+        "generalEditor":         GeneralEditor()
     ]
     
     var allViews: [String: AnyView] = [
-        "list":             AnyView(ListRendererView()),
-        "list.alphabet":    AnyView(ListRendererView()),
-        "richTextEditor":   AnyView(RichTextRendererView()),
-        "thumbnail":        AnyView(ThumbnailRendererView()),
-        "thumbnail.grid":   AnyView(ThumbGridRendererView()),
-        "generalEditor":    AnyView(GeneralEditorView())
+        "list":                  AnyView(ListRendererView()),
+        "list.alphabet":         AnyView(ListRendererView()),
+        "richTextEditor":        AnyView(RichTextRendererView()),
+        "thumbnail":             AnyView(ThumbnailRendererView()),
+        "thumbnail.grid":        AnyView(ThumbGridRendererView()),
+        "thumbnail.waterfall":   AnyView(ThumbWaterfallRendererView()),
+        "generalEditor":         AnyView(GeneralEditorView())
     ]
     
     var tuples: [(key: String, value: Renderer)] {
@@ -79,6 +81,10 @@ public class RenderConfigs: Object, Codable {
     /**
      *
      */
+    @objc dynamic var thumbnail_waterfall: ThumbWaterfallConfig? = nil
+    /**
+     *
+     */
     @objc dynamic var generalEditor: GeneralEditorConfig? = nil
     /**
      *
@@ -98,6 +104,10 @@ public class RenderConfigs: Object, Codable {
             if self.thumbnail_grid == nil { self.thumbnail_grid = ThumbGridConfig() }
             self.thumbnail_grid!.merge(config)
         }
+        if let config = renderConfigs.thumbnail_waterfall {
+            if self.thumbnail_waterfall == nil { self.thumbnail_waterfall = ThumbWaterfallConfig() }
+            self.thumbnail_waterfall!.merge(config)
+        }
         if let config = renderConfigs.generalEditor {
             if self.generalEditor == nil { self.generalEditor = GeneralEditorConfig() }
             self.generalEditor!.merge(config)
@@ -116,6 +126,7 @@ public class RenderConfigs: Object, Codable {
             self.list = try decoder.decodeIfPresent("list") ?? self.list
             self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
             self.thumbnail_grid = try decoder.decodeIfPresent("thumbnail.grid") ?? self.thumbnail_grid
+            self.thumbnail_waterfall = try decoder.decodeIfPresent("thumbnail.waterfall") ?? self.thumbnail_waterfall
             self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
             
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("virtual") {

@@ -154,6 +154,8 @@
 		86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */; };
 		86A5D848243EC46700F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
+		86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */; };
+		86B7A6712457333000292E81 /* ThumbWaterfallRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */; };
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
 		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
 		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
@@ -314,6 +316,8 @@
 		86A5D840243CEB8000F8FAD8 /* ThumbnailRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailRenderer.swift; sourceTree = "<group>"; };
 		86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRenderer.swift; sourceTree = "<group>"; };
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
+		86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbWaterfallRendererView.swift; sourceTree = "<group>"; };
+		86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbWaterfallRenderer.swift; sourceTree = "<group>"; };
 		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		86C3A7362452BF65006D4F55 /* MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriButton.swift; sourceTree = "<group>"; };
 		86C3A7382452FFD4006D4F55 /* default_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_database.json; sourceTree = "<group>"; };
@@ -527,6 +531,7 @@
 				86A5D842243CEBF400F8FAD8 /* list */,
 				86A5D843243CEC0300F8FAD8 /* thumbnail */,
 				866F87E824571E13000E5FAB /* thumbnail.grid */,
+				866F87ED24572FA9000E5FAB /* thumbnail.waterfall */,
 				86A5D844243CEC2B00F8FAD8 /* richTextEditor */,
 			);
 			path = renderers;
@@ -752,6 +757,15 @@
 				866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */,
 			);
 			path = thumbnail.grid;
+			sourceTree = "<group>";
+		};
+		866F87ED24572FA9000E5FAB /* thumbnail.waterfall */ = {
+			isa = PBXGroup;
+			children = (
+				86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */,
+				86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */,
+			);
+			path = thumbnail.waterfall;
 			sourceTree = "<group>";
 		};
 		86865D342449965B0010271A /* common */ = {
@@ -1164,6 +1178,7 @@
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				5D0EBA2924040D6300D9D842 /* Browser_v1.swift in Sources */,
+				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				866F87C624536626000E5FAB /* MapView.swift in Sources */,
 				5D487F22244073DF00B50202 /* GUIElement.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
@@ -1213,6 +1228,7 @@
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
+				86B7A6712457333000292E81 /* ThumbWaterfallRenderer.swift in Sources */,
 				5D2934F023FEA1CD0073E25F /* DataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
