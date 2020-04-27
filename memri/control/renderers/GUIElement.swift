@@ -49,11 +49,12 @@ extension View {
             fallthrough
         case "padding":
             if let value = value as? [CGFloat] {
-                return AnyView(self
-                    .padding(.top, value[0])
-                    .padding(.trailing, value[1])
-                    .padding(.bottom, value[2])
-                    .padding(.leading, value[3]))
+                return AnyView(self.padding(EdgeInsets(
+                    top: value[0],
+                    leading: value[3],
+                    bottom: value[2],
+                    trailing: value[1]))
+                )
             }
             else if let value = value as? CGFloat {
                 return AnyView(self.padding(value))
@@ -87,18 +88,6 @@ extension View {
                     return AnyView(self.border(Color(hex:color), width: value[1] as! CGFloat))
                 }
             }
-//        case "rowinset":
-//            if let value = value as? [CGFloat] {
-//                return AnyView(self.listRowInsets(EdgeInsets(
-//                    top: value[0],
-//                    leading: value[3],
-//                    bottom: value[2],
-//                    trailing: value[1])))
-//            }
-//            else if let value = value as? CGFloat {
-//                return AnyView(self.listRowInsets(EdgeInsets(top: value,
-//                            leading: value, bottom: value, trailing: value)))
-//            }
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
@@ -1069,8 +1058,31 @@ public struct GUIElementInstance: View {
     
 //    @ViewBuilder // This crashes the build when Group is gone
     // TODO add this for multiline editing: https://github.com/kenmueller/TextView
+//    func renderTextfield() -> some View {
+//        let (type, propName) = from.getType("value", self.item)
+//
+//        return Group {
+//            if type != PropertyType.string {
+//                TextField(LocalizedStringKey(self.get("hint") ?? ""), value: Binding<Any>(
+//                    get: { self.item[propName] as Any},
+//                    set: { self.item.set(propName, $0) }
+//                ), formatter: type == .date ? DateFormatter() : NumberFormatter()) // TODO Refactor: expand to properly support all types
+//                .keyboardType(.decimalPad)
+//                .generalEditorInput()
+//            }
+//            else {
+//                TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(
+//                    get: { self.item.getString(propName) },
+//                    set: { self.item.set(propName, $0) }
+//                ))
+//                .generalEditorInput()
+//            }
+//        }
+//    }
+    
     func renderTextfield() -> some View {
         let (type, propName) = from.getType("value", self.item)
+        let rows:CGFloat = self.get("rows") ?? 2
         
         return Group {
             if type != PropertyType.string {
@@ -1080,6 +1092,28 @@ public struct GUIElementInstance: View {
                 ), formatter: type == .date ? DateFormatter() : NumberFormatter()) // TODO Refactor: expand to properly support all types
                 .keyboardType(.decimalPad)
                 .generalEditorInput()
+            }
+            else if self.has("rows") {
+                VStack {
+                    TextView(
+                        text: Binding<String>(
+                            get: { self.item.getString(propName) },
+                            set: { self.item.set(propName, $0) }
+                        ),
+                        isEditing: Binding<Bool>(
+                            get: { return true },
+                            set: { $0 }
+                        ), // ??
+                        placeholder: self.get("hint") ?? "",
+                        textAlignment: self.get("textalign") ?? TextView.TextAlignment.left,
+                        font: UIFont.systemFont(ofSize: 16, weight: .regular),
+                        textColor: Color(hex:"#223322").uiColor()
+                    )
+                }
+                .frame(height: rows * 25)
+                .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 5))
+                .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+                .clipped()
             }
             else {
                 TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(

@@ -70,9 +70,17 @@
     {
         "name": "all-items-with-label",
         "title": "Items with label {name}",
-        "rendererName": "list",
         "queryOptions": {
             "query": "* AND ANY labels.uid = '{uid}'"
+        },
+        "rendererName": "list",
+        "renderConfigs": {
+            "list": [
+                "ItemCell", {
+                    "rendererNames": ["list", "thumbnail"],
+                    "variables": "{variables}"
+                }
+            ]
         }
     }
 ]
