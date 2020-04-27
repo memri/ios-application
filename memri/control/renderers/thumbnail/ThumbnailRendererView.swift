@@ -74,7 +74,9 @@ struct ThumbnailRendererView: View {
     }
     
     var body: some View {
-        VStack {
+        let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
+        
+        return VStack {
             if main.computedView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
@@ -89,7 +91,13 @@ struct ThumbnailRendererView: View {
                 Spacer()
             }
             else {
-                ASCollectionView (section: section).layout (self.layout)
+                ASCollectionView (section: section)
+                    .layout (self.layout)
+                    .contentInsets(.init(
+                        top: edgeInset[0],
+                        left: edgeInset[3],
+                        bottom: edgeInset[2],
+                        right: edgeInset[1]))
             }
         }
     }
