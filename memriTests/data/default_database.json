@@ -371,7 +371,10 @@
                 "city": "Washington, DC",
                 "state": "NW",
                 "street": "1600 Pennsylvania Ave",
-                "postalCode": "20500"
+                "postalCode": "20500",
+                "labels": [
+                    { "name": "Government", "color": "#835506" }
+                ],
             },
             {
                 "type": "Holiday home in France",
