@@ -16,8 +16,6 @@ where ID == Data.Element.ID, Content : View, Data.Element : Identifiable, Data.E
     let data: Data
     let content: (_ item:Data.Element) -> Content
     
-    @State var dataExample = (0 ..< 21).map { $0 }
-    
     init(_ data:Data, @ViewBuilder content: @escaping (_ item:Data.Element) -> Content) {
         self.data = data
         self.content = content

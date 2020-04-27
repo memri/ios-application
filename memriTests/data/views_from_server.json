@@ -1092,10 +1092,8 @@
             "rendererName": "thumbnail",
             "renderConfigs": {
                 "thumbnail": {
-                    "vSpacing": 2,
-                    "hSpacing": 2,
-                    "vPadding": 0,
-                    "hPadding": 0,
+                    "itemInset": 1,
+                    "edgeInset": [0,0,0,0],
                     "renderDescription": [
                         "Image", {
                             "image": "{.file}",

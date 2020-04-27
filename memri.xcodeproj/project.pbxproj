@@ -75,7 +75,6 @@
 		5D90464F243616B000632492 /* color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D90464E243616B000632492 /* color.swift */; };
 		5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* OrderedDictionary */; };
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
-		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
 		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
@@ -336,7 +335,6 @@
 			files = (
 				866F87E524570891000E5FAB /* ASCollectionView in Frameworks */,
 				5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */,
-				5DA7BAFB241A72640087B81D /* QGrid in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
 				866F87E7245708E6000E5FAB /* TextView in Frameworks */,
 				39FDADE8F88621C2AA70F24A /* Pods_memri.framework in Frameworks */,
@@ -524,6 +522,7 @@
 				5D487F21244073DF00B50202 /* GUIElement.swift */,
 				86A5D842243CEBF400F8FAD8 /* list */,
 				86A5D843243CEC0300F8FAD8 /* thumbnail */,
+				866F87E824571E13000E5FAB /* thumbnail.grid */,
 				86A5D844243CEC2B00F8FAD8 /* richTextEditor */,
 			);
 			path = renderers;
@@ -742,6 +741,13 @@
 			path = persons;
 			sourceTree = "<group>";
 		};
+		866F87E824571E13000E5FAB /* thumbnail.grid */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = thumbnail.grid;
+			sourceTree = "<group>";
+		};
 		86865D342449965B0010271A /* common */ = {
 			isa = PBXGroup;
 			children = (
@@ -838,7 +844,6 @@
 			name = memri;
 			packageProductDependencies = (
 				5DD17B60241293010018A8F1 /* AnyCodable */,
-				5DA7BAFA241A72640087B81D /* QGrid */,
 				5D9637B8244DBC400053EB84 /* OrderedDictionary */,
 				866F87E424570891000E5FAB /* ASCollectionView */,
 				866F87E6245708E6000E5FAB /* TextView */,
@@ -1634,11 +1639,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */;
 			productName = OrderedDictionary;
-		};
-		5DA7BAFA241A72640087B81D /* QGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */;
-			productName = QGrid;
 		};
 		5DD17B60241293010018A8F1 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
