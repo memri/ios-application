@@ -2,18 +2,6 @@
     {
         "uid": "0x011",
         "type": "person",
-        "firstName": "Alice",
-        "lastName": "Awesome",
-        "age": 21,
-        "dateCreated": "1996-12-20T00:39:57Z",
-        "profilePicture": {
-            "uri": "/Users/rubendaniels/Downloads/nikolai.jpeg"
-        },
-        "starred": true,
-        "labels": [
-            { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
-            { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
-        ],
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
@@ -22,114 +10,16 @@
     {
         "uid": "0x012",
         "type": "person",
-        "firstName": "Bob",
-        "lastName": "Brown",
-        "age": 37,
-        "relations": [{"uid":"0x01"}],
-        "profilePicture": {
-            "uri": "/Users/rubendaniels/Downloads/ruben.jpeg"
-        },
-        "labels": [
-            {
-                "name": "Soccer team",
-                "color": "#83ac06",
-                "uid": "0x0124"
-            },
-            { "name": "Friends from University", "color": "#ffd966" }
-        ],
         "syncState": {
+            "isPartiallyLoaded": true,
             "version": 1
         }
     },
     {
         "uid": "0x013",
         "type": "person",
-        "firstName": "Eve",
-        "lastName": "Eagle",
-        "age": 97,
-        "starred": true,
-        "height": 185,
-        "shoulderWidth": 42,
-        "armLength": 73,
-        "relations": [{"uid":"0x011"},{"uid":"0x012"}],
-        "labels": [
-            {
-                "name": "Soccer team",
-                "color": "#83ac06",
-                "uid": "0x0124"
-            },
-            { "name": "Friends from University", "color": "#ffd966" }
-        ],
-        "phoneNumbers": [
-            {
-                "type": "mobile",
-                "number": "0654271340"
-            }
-        ],
-        "websites": [
-            {
-                "type": "blog",
-                "url": "www.revolutionairyblog.com"
-            },
-            {
-                "type": "website",
-                "url": "www.eagleve.com"
-            }
-        ],
-        "companies": [
-            {
-                "type": "freelance",
-                "name": "eagle solutions"
-            }
-        ],
-        "publicKeys":[
-            {
-                "name": "PGP Email",
-                "key": "****************"
-            }
-        ],
-        "onlineProfiles":[
-            {
-                "type": "twitter",
-                "handle": "@eagleve91"
-            },
-            {
-                "type": "facebook",
-                "handle": "@eagleve2393"
-            }
-        ],
-        "diets":[
-            {
-                "name": "Vegan",
-                "additions": ["egg"]
-            },{
-                "name": "Gluten Free",
-                "additions": ["sourdough"]
-            }
-        ],
-        "medicalConditions":[
-            {
-                "name": "Psoriasis"
-            }
-        ],
-        "addresses":  [
-            {
-                "type": "home",
-                "country": "USA",
-                "town": "EastBorrow",
-                "street": "Somestreet",
-                "StreetNr": 45,
-                "postalCode": "9021DX"
-            },{
-                "type": "Holiday home in France",
-                "country": "France",
-                "town": "Paris",
-                "street": "Rue de la plage",
-                "StreetNr": 45,
-                "postalCode": "EL29"
-            }
-        ],
         "syncState": {
+            "isPartiallyLoaded": true,
             "version": 1
         }
     }

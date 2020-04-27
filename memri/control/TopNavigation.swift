@@ -2,7 +2,6 @@
 //  TopNavigation.swift
 //  memri
 //
-//  Created by Koen van der Veen on 19/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -15,6 +14,19 @@ public struct TopNavigation: View {
     @State private var showingTitleActions = false
     
     @State private var isPressing = false // HACK because long-press isnt working why?
+    
+    private let inSubView:Bool
+    private let showCloseButton:Bool
+    
+    init() {
+        self.inSubView = false
+        self.showCloseButton = false
+    }
+    
+    init(inSubView:Bool, showCloseButton:Bool) {
+        self.inSubView = inSubView
+        self.showCloseButton = showCloseButton
+    }
     
     private func forward(){
         self.main.executeAction(ActionDescription(actionName:.forward))
@@ -74,9 +86,11 @@ public struct TopNavigation: View {
     }
         
     public var body: some View {
-        ZStack{
+        let backButton = main.currentSession.backButton
+        
+        return ZStack {
             // we place the title *over* the rest of the topnav, to center it horizontally
-            HStack{
+            HStack {
                 Button(action: { self.showingTitleActions = true }) {
                     Text(main.computedView.title)
                         .font(.headline)
@@ -89,20 +103,35 @@ public struct TopNavigation: View {
             VStack (alignment: .leading, spacing: 0) {
                 HStack(alignment: .top, spacing: 10) {
                     
-                    Action(action: ActionDescription(actionName: .showNavigation))
-                        .font(Font.system(size: 20, weight: .semibold))
-                        
-                    if main.currentSession.backButton != nil{
+                    if !inSubView {
+                        Action(action: ActionDescription(actionName: .showNavigation))
+                            .font(Font.system(size: 20, weight: .semibold))
+                    }
+                    else if showCloseButton {
+                        // TODO Refactor: Properly support text labels
+//                        Action(action: ActionDescription(actionName: .closePopup))
+//                            .font(Font.system(size: 20, weight: .semibold))
+                        Button(action: { self.main.executeAction(ActionDescription(actionName: .closePopup)) }) {
+                            Text("Close")
+                                .font(.system(size: 16, weight: .regular))
+                                .padding(.horizontal, 5)
+                                .padding(.vertical, 2)
+                                .foregroundColor(Color(hex: "#106b9f"))
+                        }
+                        .font(Font.system(size: 19, weight: .semibold))
+                    }
+                    
+                    if backButton != nil{
                         Button(action: {
                             if !self.showingBackActions {
-                                self.main.executeAction(self.main.currentSession.backButton!)
+                                self.main.executeAction(backButton!)
                             }
                         }) {
-                            Image(systemName: main.currentSession.backButton!.icon)
+                            Image(systemName: backButton!.icon)
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .foregroundColor(Color(main.currentSession.backButton!.computeColor(state: false)))
+                                .foregroundColor(Color(backButton!.computeColor(state: false)))
                         }
                         .font(Font.system(size: 19, weight: .semibold))
                         .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
@@ -149,10 +178,11 @@ public struct TopNavigation: View {
                     Action(action: main.computedView.actionButton)
                         .font(Font.system(size: 22, weight: .semibold))
                     
-                    Action(action: ActionDescription(actionName: .showSessionSwitcher))
-                        .font(Font.system(size: 20, weight: .medium))
-                        .rotationEffect(.degrees(90))
-                        
+                    if !inSubView {
+                        Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                            .font(Font.system(size: 20, weight: .medium))
+                            .rotationEffect(.degrees(90))
+                    }
                 }
                 .padding(.top, 15)
                 .padding(.bottom, 10)
@@ -171,6 +201,6 @@ public struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(Main(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }

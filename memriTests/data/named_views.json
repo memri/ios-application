@@ -14,21 +14,17 @@
         "queryOptions": {
             "query": "{query}"
         },
-        "editActionButton": {
-            "title": "{title}",
-            "actionName": ["{actionName}", "back"],
-            "_actionArgs": ["{actionArgs}"]
-        },
+        "_editActionButton": { "actionName": "toggleEditMode" },
         "actionButton": {
             "actionName": "add",
-            "_actionArgs": [{
-                "type": "{type}"
+            "actionArgs": [{
+                "type": "person"
             }]
         },
         "rendererName": "list",
-        "renderConfig": {
+        "renderConfigs": {
             "list": {
-                "press": { "actionName": "noop" }
+                "press": { "actionName": "closePopup" }
             }
         },
         "title": "Choose a {type}"
@@ -51,9 +47,21 @@
         "name": "all-people",
         "views": [
             {
-                "title": "All people",
+                "title": "All People",
                 "queryOptions": {
                     "query": "person"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-photos",
+        "views": [
+            {
+                "title": "All Photos",
+                "queryOptions": {
+                    "query": "photo"
                 }
             }
         ]

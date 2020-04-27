@@ -119,7 +119,7 @@ func getRealmPath() -> String{
 }
 
 public class Cache {
-    var podApi: PodAPI
+    var podAPI: PodAPI
     var sync: Sync
     var realm: Realm
     
@@ -130,7 +130,8 @@ public class Cache {
     /**
      * @private
      */
-    public var scheduleUIUpdate: (() -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
+    
     
     public init(_ api: PodAPI){
                 
@@ -145,11 +146,41 @@ public class Cache {
         
         print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
-        podApi = api
+        podAPI = api
         
         // Create scheduler objects
-        sync = Sync(podApi, realm)
+        sync = Sync(podAPI, realm)
         sync.cache = self
+    }
+    
+    /**
+     *
+     */
+    public func install() {
+        // Load default database from disk
+        let jsonData = try! jsonDataFromFile("default_database")
+        let items:[DataItem] = try! MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
+        
+        try! realm.write {
+            for item in items {
+                realm.add(item, update: .modified)
+            }
+        }
+    }
+    
+    // TODO Refactor: don't use async syntax when nothing is async
+    public func query(_ queryOptions:QueryOptions) throws -> [DataItem] {
+        var error:Error?
+        var items:[DataItem]?
+        
+        query(queryOptions) {
+            error = $0
+            items = $1
+        }
+        
+        if let error = error { throw error }
+        
+        return items!
     }
     
     /**
@@ -246,7 +277,9 @@ public class Cache {
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
-                self.scheduleUIUpdate!()
+                self.scheduleUIUpdate!() { main in
+                    return main.computedView.resultSet.queryOptions == resultSet.queryOptions
+                }
             })
             
             return resultSet
@@ -264,7 +297,7 @@ public class Cache {
         }
         return nil
     }
-
+    
     /**
      *
      */
@@ -330,7 +363,7 @@ public class Cache {
                     if self.realm.isInWriteTransaction { doAction() }
                     else { try! self.realm.write { doAction() } }
                 }
-                self.scheduleUIUpdate!()
+                self.scheduleUIUpdate!{_ in true}
             }
         })
         

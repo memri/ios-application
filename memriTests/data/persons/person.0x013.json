@@ -59,14 +59,12 @@
     "addresses":  [
         {
             "type": "home",
-            "country": "USA",
             "town": "EastBorrow",
             "street": "Somestreet",
             "StreetNr": 45,
             "postalCode": "9021DX"
         },{
             "type": "Holiday home in France",
-            "country": "France",
             "town": "Paris",
             "street": "Rue de la plage",
             "StreetNr": 45,

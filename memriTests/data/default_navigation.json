@@ -20,6 +20,11 @@
     },
     {
         "type": "item",
+        "title": "photos",
+        "view": "all-photos"
+    },
+    {
+        "type": "item",
         "title": "log",
         "view": "all-logitems"
     },

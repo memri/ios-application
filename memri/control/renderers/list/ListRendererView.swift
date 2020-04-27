@@ -14,7 +14,7 @@ struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
-    var deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
+    let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: ListConfig {
         print(self.main.computedView.renderConfigs["list"])
@@ -36,6 +36,13 @@ struct ListRendererView: View {
     }
     
     var body: some View {
+        let guiEl = renderConfig.renderDescription?["*"]
+        if guiEl != nil {
+            if guiEl!._properties["padding"] == nil {
+                guiEl!._properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
+            }
+        }
+        
         return VStack{
             if main.computedView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
@@ -52,16 +59,18 @@ struct ListRendererView: View {
             }
             else {
                 NavigationView{
-                    List{
+                    // TODO REfactor: why are there 2px between each list row?
+                    SwiftUI.List {
                         ForEach(main.items) { dataItem in
-                            self.renderConfig.render(item: dataItem, part: dataItem.genericType)
-                                .onTapGesture {
-                                    if let press = self.renderConfig.press {
-                                        self.main.executeAction(press, dataItem)
-                                    }
+                            Button (action:{
+                                if let press = self.renderConfig.press {
+                                    self.main.executeAction(press, dataItem)
                                 }
+                            }) {
+                                self.renderConfig.render(item: dataItem)
+                            }
+                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
-                    
                         .onDelete{ indexSet in
                             
                             // TODO this should happen automatically in ResultSet
@@ -84,6 +93,10 @@ struct ListRendererView: View {
                     .navigationBarHidden(true)
                     .padding(.top, 5)
                 }
+//                .environment(\.editMode, $main.currentSession.isEditMode)
+//                .navigationBarTitle("")
+//                .navigationBarHidden(true)
+//                .padding(.top, 5)
             }
         }
     }
@@ -91,6 +104,6 @@ struct ListRendererView: View {
 
 struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRendererView().environmentObject(Main(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }

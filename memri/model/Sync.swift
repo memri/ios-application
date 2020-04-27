@@ -50,7 +50,7 @@ class SyncState: Object, Codable {
  */
 class Sync {
     
-    private var podApi: PodAPI
+    private var podAPI: PodAPI
     private var realm: Realm
     public var cache: Cache? = nil
     
@@ -59,7 +59,7 @@ class Sync {
     private var backgroundSyncing: Bool = false
     
     init(_ api:PodAPI, _ rlm:Realm) {
-        podApi = api
+        podAPI = api
         realm = rlm
         
         // Periodically sync data from the pod
@@ -117,7 +117,7 @@ class Sync {
         print("Syncing from pod with query: \(queryOptions.query!)")
         
         // Call out to the pod with the query
-        podApi.query(queryOptions) { (error, items) in
+        podAPI.query(queryOptions) { (error, items) in
             if let items = items {
                 
                 // Find resultset that belongs to this query
@@ -208,7 +208,7 @@ class Sync {
     public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         switch item.syncState!.actionNeeded {
         case "create":
-            podApi.create(item) { (error, id) -> Void in
+            podAPI.create(item) { (error, id) -> Void in
                 if error != nil { return callback(error, false) }
                 
                 // Set the new id from the server
@@ -217,7 +217,7 @@ class Sync {
                 callback(nil, true)
             }
         case "delete":
-            podApi.remove(item.getString("uid")) { (error, success) -> Void in
+            podAPI.remove(item.getString("uid")) { (error, success) -> Void in
                 if (error == nil) {
                     // Remove from local storage
                     try! realm.write() {
@@ -228,7 +228,7 @@ class Sync {
                 callback(error, success)
             }
         case "update":
-            podApi.update(item, callback)
+            podAPI.update(item, callback)
         case "fetch":
             // TODO
             1+1

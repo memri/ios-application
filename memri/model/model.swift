@@ -85,6 +85,9 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             let timeSinceCreated = GUIElementDescription.formatDateSinceCreated(self.dateCreated)
             return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
         }
+        self.functions["computeTitle"] = {_ in
+            return self.computeTitle
+        }
     }
     
     /**

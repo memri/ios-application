@@ -8,12 +8,18 @@
 
 import Foundation
 import Combine
+import SwiftUI
 import RealmSwift
+
+typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily, CaseIterable {
     case note = "note"
     case label = "label"
+    case photo = "photo"
+    case video = "video"
+    case audio = "audio"
     case file = "file"
     case person = "person"
     case logitem = "logitem"
@@ -21,6 +27,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case phonenumber = "phonenumber"
     case website = "website"
     case location = "location"
+    case address = "address"
+    case country = "country"
     case company = "company"
     case publickey = "publickey"
     case onlineprofile = "onlineprofile"
@@ -31,6 +39,39 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 //    case dynamicview = "dynamicview"
 
     static var discriminator: Discriminator = .type
+    
+    var backgroundColor: Color {
+        switch self{
+        case .note: return Color(hex: "#93c47d")
+        case .label: return Color(hex: "#93c47d")
+        case .file: return Color(hex: "#93c47d")
+        case .photo: return Color(hex: "#93c47d")
+        case .video: return Color(hex: "#93c47d")
+        case .audio: return Color(hex: "#93c47d")
+        case .person: return Color(hex: "#3a5eb2")
+        case .logitem: return Color(hex: "#93c47d")
+        case .sessions: return Color(hex: "#93c47d")
+        case .phonenumber: return Color(hex: "#eccf23")
+        case .website: return Color(hex: "#3d57e2")
+        case .location: return Color(hex: "#93c47d")
+        case .address: return Color(hex: "#93c47d")
+        case .country: return Color(hex: "#93c47d")
+        case .company: return Color(hex: "#93c47d")
+        case .publickey: return Color(hex: "#93c47d")
+        case .onlineprofile: return Color(hex: "#93c47d")
+        case .diet: return Color(hex: "#37af1c")
+        case .medicalcondition: return Color(hex: "#3dc8e2")
+        case .session: return Color(hex: "#93c47d")
+        case .sessionview: return Color(hex: "#93c47d")
+        }
+    }
+    
+    var foregroundColor: Color {
+        switch self{
+        default:
+            return Color(hex: "#fff")
+        }
+    }
     
     func getPrimaryKey() -> String {
         return self.getType().primaryKey() ?? ""
@@ -46,6 +87,12 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
         case .file:
             (object as! RealmSwift.List<File>).forEach{ collection.append($0) }
+        case .photo:
+            (object as! RealmSwift.List<Photo>).forEach{ collection.append($0) }
+        case .video:
+            (object as! RealmSwift.List<Video>).forEach{ collection.append($0) }
+        case .audio:
+            (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
         case .person:
             (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
         case .logitem:
@@ -56,6 +103,10 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             (object as! RealmSwift.List<Website>).forEach{ collection.append($0) }
         case .location:
             (object as! RealmSwift.List<Location>).forEach{ collection.append($0) }
+        case .address:
+            (object as! RealmSwift.List<Address>).forEach{ collection.append($0) }
+        case .country:
+            (object as! RealmSwift.List<Country>).forEach{ collection.append($0) }
         case .company:
             (object as! RealmSwift.List<Company>).forEach{ collection.append($0) }
         case .publickey:
@@ -90,6 +141,12 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             return Label.self
         case .file:
             return File.self
+        case .photo:
+            return Photo.self
+        case .video:
+            return Video.self
+        case .audio:
+            return Audio.self
         case .person:
             return Person.self
         case .phonenumber:
@@ -98,6 +155,10 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             return Website.self
         case .location:
             return Location.self
+        case .address:
+            return Address.self
+        case .country:
+            return Country.self
         case .company:
             return Company.self
         case .publickey:
@@ -212,13 +273,9 @@ class Website:DataItem{
 
 class Location:DataItem{
     override var genericType:String { "location" }
-    // country/adress/etc.
-    @objc dynamic var type:String? = nil
-    @objc dynamic var country:String? = nil
-    @objc dynamic var town:String? = nil
-    @objc dynamic var street:String? = nil
-    let streetNr = RealmOptional<Int>()
-    @objc dynamic var postalCode:String? = nil
+    
+    let latitude = RealmOptional<Double>()
+    let longitude = RealmOptional<Double>()
     
     required init () {
         super.init()
@@ -228,12 +285,79 @@ class Location:DataItem{
         super.init()
         
         jsonErrorHandling(decoder) {
+            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
+            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
+
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+class Country:DataItem {
+    override var genericType:String { "country" }
+    
+    @objc dynamic var name:String? = nil
+    @objc dynamic var flag:File? = nil // or Image ??
+    @objc dynamic var location:Location? = nil
+    
+    override var computeTitle:String {
+        return "\(name ?? "")"
+    }
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            flag = try decoder.decodeIfPresent("flag") ?? flag
+            location = try decoder.decodeIfPresent("location") ?? location
+
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+class Address:DataItem {
+    override var genericType:String { "address" }
+    
+    @objc dynamic var type:String? = nil
+    @objc dynamic var country:Country? = nil
+    @objc dynamic var city:String? = nil
+    @objc dynamic var street:String? = nil
+    @objc dynamic var state:String? = nil
+    @objc dynamic var postalCode:String? = nil
+    @objc dynamic var location:Location? = nil
+    
+    override var computeTitle:String {
+        return """
+        \(street ?? "")
+        \(city ?? "")
+        \(postalCode ?? ""), \(state ?? "")
+        \(country?.computeTitle ?? "")
+        """
+    }
+    
+    required init () {
+        super.init()
+        
+        // TODO:Refactor when any of the fields change, location should be reset
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             country = try decoder.decodeIfPresent("country") ?? country
-            town = try decoder.decodeIfPresent("town") ?? town
+            city = try decoder.decodeIfPresent("city") ?? city
+            state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
-            streetNr.value = try decoder.decodeIfPresent("streetNr") ?? streetNr.value
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
+            location = try decoder.decodeIfPresent("location") ?? location
 
             try! self.superDecode(from: decoder)
         }
@@ -386,12 +510,11 @@ class Person:DataItem {
     //TODO
 //    let placeOfBirth = List<Location>()
     let companies = List<Company>()
-    let addresses = List<Location>()
+    let addresses = List<Address>()
     let publicKeys = List<PublicKey>()
     let onlineProfiles = List<OnlineProfile>()
     let diets = List<Diet>()
     let medicalConditions = List<MedicalCondition>()
-
     
     override var computeTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
@@ -488,6 +611,110 @@ class Label:DataItem {
             color = try decoder.decodeIfPresent("color") ?? color
             
             decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Photo:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let width = RealmOptional<Int>()
+    let height = RealmOptional<Int>()
+    override var genericType:String { "photo" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<Person>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Video:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let width = RealmOptional<Int>()
+    let height = RealmOptional<Int>()
+    let duration = RealmOptional<Int>()
+    override var genericType:String { "video" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
+            
+            try! self.superDecode(from: decoder)
+        }
+    }
+}
+
+// TODO Refactor: can this inherit from a Media class?
+class Audio:DataItem {
+    @objc dynamic var name:String = ""
+    @objc dynamic var file:File? = nil
+    let bitrate = RealmOptional<Int>()
+    let duration = RealmOptional<Int>()
+    override var genericType:String { "video" }
+    
+    override var computeTitle:String {
+        return name
+    }
+    
+    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            file = try decoder.decodeIfPresent("file") ?? file
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            
+            decodeIntoList(decoder, "includes", self.includes)
             
             try! self.superDecode(from: decoder)
         }

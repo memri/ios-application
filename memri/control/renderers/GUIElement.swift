@@ -12,8 +12,8 @@ import RealmSwift
 
 let ViewConfig:[String:[String]] = [
     "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
-    "order": ["frame", "color", "font", "rowinset", "padding", "background", "textalign",
-              "rowbackground", "cornerradius", "cornerborder", "border", "shadow", "offset",
+    "order": ["frame", "color", "font", /*"rowinset",*/ "padding", "background", "textalign",
+              "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow", "offset",
               "blur", "opacity", "zindex"]
 ]
 
@@ -45,6 +45,8 @@ extension View {
                             x: value[2] as! CGFloat,
                             y: value[3] as! CGFloat))
             }
+        case "margin":
+            fallthrough
         case "padding":
             if let value = value as? [CGFloat] {
                 return AnyView(self
@@ -85,18 +87,18 @@ extension View {
                     return AnyView(self.border(Color(hex:color), width: value[1] as! CGFloat))
                 }
             }
-        case "rowinset":
-            if let value = value as? [CGFloat] {
-                return AnyView(self.listRowInsets(EdgeInsets(
-                    top: value[0],
-                    leading: value[3],
-                    bottom: value[2],
-                    trailing: value[1])))
-            }
-            else if let value = value as? CGFloat {
-                return AnyView(self.listRowInsets(EdgeInsets(top: value,
-                            leading: value, bottom: value, trailing: value)))
-            }
+//        case "rowinset":
+//            if let value = value as? [CGFloat] {
+//                return AnyView(self.listRowInsets(EdgeInsets(
+//                    top: value[0],
+//                    leading: value[3],
+//                    bottom: value[2],
+//                    trailing: value[1])))
+//            }
+//            else if let value = value as? CGFloat {
+//                return AnyView(self.listRowInsets(EdgeInsets(top: value,
+//                            leading: value, bottom: value, trailing: value)))
+//            }
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
@@ -158,6 +160,30 @@ extension View {
         if conditional { return AnyView(content(self)) }
         else { return AnyView(self) }
     }
+    
+    // TODO Refactor: use only one path to draw this (is that possible?)
+    func border(width: [CGFloat], color: Color) -> some View {
+        var x:AnyView = AnyView(self)
+        if width[0] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[0], edge: .leading).foregroundColor(color)))
+        }
+        if width[1] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[1], edge: .top).foregroundColor(color)))
+        }
+        if width[2] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[2], edge: .trailing).foregroundColor(color)))
+        }
+        if width[3] > 0 {
+            x = AnyView(x.overlay(EdgeBorder(width: width[3], edge: .bottom).foregroundColor(color)))
+        }
+        
+        return x
+    }
+    func border(width: CGFloat, edge: Edge, color: Color) -> some View {
+        self.overlay(
+            EdgeBorder(width: width, edge: edge).foregroundColor(color)
+        )
+    }
 }
 
 extension Text {
@@ -173,6 +199,44 @@ extension Text {
 //        else { return self }
 //    }
 //}
+
+struct EdgeBorder: Shape {
+
+    var width: CGFloat
+    var edge: Edge
+
+    func path(in rect: CGRect) -> Path {
+        var x: CGFloat {
+            switch edge {
+            case .top, .bottom, .leading: return rect.minX
+            case .trailing: return rect.maxX - width
+            }
+        }
+
+        var y: CGFloat {
+            switch edge {
+            case .top, .leading, .trailing: return rect.minY
+            case .bottom: return rect.maxY - width
+            }
+        }
+
+        var w: CGFloat {
+            switch edge {
+            case .top, .bottom: return rect.width
+            case .leading, .trailing: return self.width
+            }
+        }
+
+        var h: CGFloat {
+            switch edge {
+            case .top, .bottom: return self.width
+            case .leading, .trailing: return rect.height
+            }
+        }
+
+        return Path( CGRect(x: x, y: y, width: w, height: h) )
+    }
+}
 
 /*
     TODO: In order to support mixed content we will need to add an element that renders a dataitem
@@ -205,7 +269,7 @@ extension Text {
           only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
           look like this:
  
-            ItemCell(dataItem, rendererNames [, viewType, viewOverride])
+            ItemCell(dataItem, rendererNames [, viewOverride])
  
           with viewOverride being the name of a view that should be the template instead of the
           default. rendererNames is an array of rendererName so that it can search for multiple,
@@ -222,8 +286,7 @@ extension Text {
                             "VStack", ["Text", {"text": "Type: {.type}"}],
                             "ItemCell", {
                                 "dataItem": "{.}",
-                                "rendererNames: ["list", "thumbnail", "map"],
-                                "viewType": "inbox"
+                                "rendererNames: ["inbox", "list", "thumbnail", "map"]
                             }
                         ],
                     ]
@@ -233,14 +296,14 @@ extension Text {
           In addition and to facilitate the abilities of the view hyper network is the introduction of
           the subview element that can display views inline. An immediate use case is to view a list
           of views (in fact they are sessions, but its easier to perceive them as views), and
-          instead of seeing a screenshot of the last state they are the actual life instantiation of
+          instead of seeing a screenshot of the last state they are the actual live instantiation of
           that view. This can be used for showing a list of charts that are easy to scroll through
           and thus easy to check daily without having to go to many views (N.B. this can somewhat be
           achieved with a session that has a history of each chart you want. you can then navigate
           with the back button and via the list of views in the session. However this is not as
           easy as scrolling). This is the signature of the element
  
-            SubView(viewName or viewInstance, dataItem, options)
+            SubView(viewName or viewInstance, dataItem, variables)
  
           And the renderConfig of the session view for the charts could look like this:
           
@@ -252,7 +315,7 @@ extension Text {
                             "SubView", {
                                 "view": "{.}", // or "viewName": "someView" for other use cases
                                 "dataItem": "{.}", // this could be left out in this case
-                                "options": {
+                                "variables": {
                                     "toolbar": false,
                                     "readonly": true
                                 }
@@ -270,11 +333,15 @@ extension Text {
           exact shape of that is still beyond the horizon of my imagination.
  */
              
- 
-public class GUIElementDescription: Decodable {
+public class GUIElementDescription: Codable {
     var type: String = ""
-    var properties: [String: Any] = [:]
+    var properties: [String: AnyCodable] = [:]
     var children: [GUIElementDescription] = []
+    var _properties: [String:Any] = [:]
+    
+    private enum CodingKeys: String, CodingKey {
+        case type, properties, children
+    }
     
     required convenience public init(from decoder: Decoder) throws {
         self.init()
@@ -282,46 +349,45 @@ public class GUIElementDescription: Decodable {
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             children = try decoder.decodeIfPresent("children") ?? children
+            properties = try decoder.decodeIfPresent("properties") ?? properties
             
-            if let props:[String:AnyCodable] = try decoder.decodeIfPresent("properties") {
-                parseProperties(props)
-            }
+            parseProperties(properties)
         }
     }
     
     func parseProperties(_ props:[String:AnyCodable]){
         for (key, value) in props {
-            properties[key.lowercased()] = parseProperty(key, value.value)
+            _properties[key.lowercased()] = parseProperty(key, value.value)
         }
         
         for item in ViewConfig["frame"]! {
-            if properties[item] != nil {
+            if _properties[item] != nil {
                 
                 let values:[Any?] = [
-                    properties["minwidth"] as Any?,
-                    properties["maxwidth"] as Any?,
-                    properties["minheight"] as Any?,
-                    properties["maxheight"] as Any?,
-                    properties["align"] as Any?
+                    _properties["minwidth"] as Any?,
+                    _properties["maxwidth"] as Any?,
+                    _properties["minheight"] as Any?,
+                    _properties["maxheight"] as Any?,
+                    _properties["align"] as Any?
                 ]
                 
-                properties["minwidth"] = nil
-                properties["maxwidth"] = nil
-                properties["minheight"] = nil
-                properties["maxheight"] = nil
-                properties["align"] = nil
+                _properties["minwidth"] = nil
+                _properties["maxwidth"] = nil
+                _properties["minheight"] = nil
+                _properties["maxheight"] = nil
+                _properties["align"] = nil
                 
-                properties["frame"] = values
+                _properties["frame"] = values
                 break
             }
         }
         
-        if properties["cornerradius"] != nil && properties["border"] != nil {
-            var value = properties["border"] as! [Any]
-            value.append(properties["cornerradius"]!)
+        if _properties["cornerradius"] != nil && _properties["border"] != nil {
+            var value = _properties["border"] as! [Any]
+            value.append(_properties["cornerradius"]!)
             
-            properties["cornerborder"] = value as Any
-            properties["border"] = nil
+            _properties["cornerborder"] = value as Any
+            _properties["border"] = nil
         }
     }
     
@@ -407,6 +473,17 @@ public class GUIElementDescription: Decodable {
             
             return value
         }
+        else if let value = value as? [String:Any] {
+            if value["actionName"] != nil {
+                return ActionDescription(
+                    icon: value["icon"] as? String ?? nil,
+                    title: value["title"] as? String ?? nil,
+                    actionName: ActionName(rawValue: value["actionName"] as? String ?? "nil"),
+                    actionArgs: (value["actionArgs"] as? [Any] ?? [] ).map { AnyCodable($0) },
+                    actionType: ActionType(rawValue: value["actionType"] as? String ?? "nil")
+                )
+            }
+        }
         
         return value
     }
@@ -475,7 +552,7 @@ public class GUIElementDescription: Decodable {
     }
     
     public func has(_ propName:String) -> Bool {
-        return properties[propName] != nil
+        return _properties[propName] != nil
     }
     
     public func getString(_ propName:String, _ item:DataItem? = nil) -> String {
@@ -489,7 +566,7 @@ public class GUIElementDescription: Decodable {
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
                        _ variables:[String: () -> Any] = [:]) -> T? {
         
-        if let prop = properties[propName] {
+        if let prop = _properties[propName] {
             let propValue = prop
             
             // Compile string properties
@@ -498,9 +575,33 @@ public class GUIElementDescription: Decodable {
                 return x
             }
             
+            // TODO REfactor: Properly generalize. It's weird to do this here. What other edge cases are there?
+            if T.self == SessionView.self {
+                return (SessionView(value: propValue) as! T)
+            }
+            
             return (propValue as! T)
         }
         return nil
+    }
+    
+    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, String) {
+        // TODO REfactor: Error Handling
+        if let prop = _properties[propName] {
+            let propValue = prop
+            
+            // Compile string properties
+            // TODO: Refactor: the following wouldn't work: dataItem.address[0].street
+            if let compiled = propValue as? CompiledProperty {
+                if let dataItemPropName = (compiled.result.first as? [String])?.last {
+                    let type = item.objectSchema[dataItemPropName]?.type
+                    return (type ?? .any, dataItemPropName)
+                }
+            }
+        }
+        
+        // TODO Refactor: Error Handling
+        return (.any, "")
     }
     
     public class func formatDate(_ date:Date?) -> String{
@@ -554,7 +655,13 @@ public class GUIElementDescription: Decodable {
             value = item
         }
         else {
-            value = variables[firstItem.lowercased()]!()
+            if let f = variables[firstItem.lowercased()] {
+                value = f()
+            }
+            else { // TODO Refactor: integrate in larger error handling effort
+                print("Warn: fetching undefined variable: \(firstItem)")
+                value = nil
+            }
         }
         
         var lastPart:String? = nil
@@ -580,7 +687,7 @@ public class GUIElementDescription: Decodable {
             }
         }
         
-        if let lastPart = lastPart,
+        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
            let className = lastObject?.objectSchema[lastPart]?.objectClassName {
             
             // Convert Realm List into Array
@@ -605,13 +712,13 @@ public class GUIElementDescription: Decodable {
         else if T.self == Bool.self {
             if isNegationTest {
                 value = negateAny(value ?? true)
-                
             }
             else {
                 value = !negateAny(value ?? false)
-                
             }
         }
+        
+        // TODO: Refactor: Many things, but generalize and make sure all types are supported
         
         // Return the value as a string
         return value as? T
@@ -679,8 +786,14 @@ public struct GUIElementInstance: View {
     
     public func get<T>(_ propName:String) -> T? {
         if propName.first == "$" {
-            // TODO Error Handling
-            return (variables[propName.substr(1)]!() as! T)
+            // TODO Refactor Error Handling
+            if let f = variables[propName.substr(1)] {
+                return (f() as! T)
+            }
+            else { // TODO Refactor: integrate in larger error handling effort
+                print("Warn: fetching undefined variable: \(propName.substr(1))")
+                return nil
+            }
         }
         else {
             return from.get(propName, item, variables)
@@ -743,7 +856,7 @@ public struct GUIElementInstance: View {
                 }
                 .clipped()
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "hstack" {
                 HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
@@ -751,15 +864,15 @@ public struct GUIElementInstance: View {
                 }
                 .clipped()
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "zstack" {
                 ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
-            if from.type == "editorsection" {
+            else if from.type == "editorsection" {
                 if self.has("title") {
                     Section(header: Text(LocalizedStringKey(
                         (self.get("title") ?? "").uppercased()
@@ -770,7 +883,7 @@ public struct GUIElementInstance: View {
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
                 }
                 else {
                     VStack(spacing: 0){
@@ -778,13 +891,13 @@ public struct GUIElementInstance: View {
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
                 }
             }
-            if from.type == "editorrow" {
+            else if from.type == "editorrow" {
                 VStack (spacing: 0) {
                     VStack(alignment: .leading, spacing: 4){
-                        if self.has("title"){
+                        if self.has("title") && self.get("nopadding") != true {
                             Text(LocalizedStringKey(self.get("title") ?? ""
                                 .camelCaseToWords()
                                 .lowercased()
@@ -797,24 +910,54 @@ public struct GUIElementInstance: View {
                             .generalEditorCaption()
                     }
                     .fullWidth()
-                    .padding(.bottom, 10)
-                    .padding(.horizontal, 36)
+//                    .padding(.bottom, 10)
+                    .padding(.leading, self.get("nopadding") != true ? 36 : 0)
+                    .padding(.trailing, self.get("nopadding") != true ? 36 : 0)
+                    .clipped()
+                    .animation(nil)
+                    .setProperties(from._properties, self.item)
                     .background(self.get("$readonly") ?? false
                         ? Color(hex:"#f9f9f9")
                         : Color(hex:"#f7fcf5"))
-                    .clipped()
-                    .animation(nil)
-                    .setProperties(from.properties, self.item)
                     
-                    Divider().padding(.leading, 35)
+                    if self.has("title") {
+                        Divider().padding(.leading, 35)
+                    }
                 }
 
+            }
+            else if from.type == "editorlabel" {
+                HStack (alignment: .center, spacing:15) {
+                    Button (action:{}) {
+                        Image (systemName: "minus.circle.fill")
+                            .foregroundColor(Color.red)
+                            .font(.system(size: 22))
+                    }
+                    
+                    if self.has("title") {
+                        Button (action:{}) {
+                            HStack {
+                                Text (LocalizedStringKey(self.get("title") ?? ""))
+                                    .foregroundColor(Color.blue)
+                                    .font(.system(size: 15))
+                                    .lineLimit(1)
+                                Spacer()
+                                Image (systemName: "chevron.right")
+                                    .font(.system(size: 14, weight: .bold))
+                                    .foregroundColor(Color.gray)
+                            }
+                        }
+                    }
+                }
+                .frame(minWidth: 130, maxWidth: 130, maxHeight: .infinity, alignment: .leading)
+                .padding(10)
+                .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
             }
             else if from.type == "button" {
                 Button(action: { self.main.executeAction(self.get("press")!, self.item) }) {
                     self.renderChildren
                 }
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "wrapstack" {
                 WrapStack(getList("list")) { listItem in
@@ -823,7 +966,7 @@ public struct GUIElementInstance: View {
                     }
                 }
                 .animation(nil)
-                .setProperties(from.properties, self.item)
+                .setProperties(from._properties, self.item)
             }
             else if from.type == "text" {
                 Text(from.processText(get("text") ?? "[nil]"))
@@ -832,52 +975,140 @@ public struct GUIElementInstance: View {
                     .if(from.getBool("underline")){ $0.underline() }
                     .if(from.getBool("strikethrough")){ $0.strikethrough() }
                     .fixedSize(horizontal: false, vertical: true)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "textfield" {
+                self.renderTextfield()
+                    .setProperties(from._properties, self.item)
+            }
+            else if from.type == "itemcell" {
+                // TODO Refactor fix this
+//                ItemCell(
+//                    item: self.item,
+//                    rendererNames: get("rendererNames") as [String],
+//                    variables: [] // get("variables") // TODO Refactor fix this
+//                )
+//                .environmentObject(self.main)
+//                .setProperties(from._properties, self.item)
+            }
+            else if from.type == "subview" {
+                if has("viewName") {
+                    SubView(
+                        main: self.main,
+                        viewName: from.getString("viewName"),
+                        context: self.item,
+                        variables: get("variables") ?? [:] // TODO Refactor: Error Handling
+                    )
+                    .setProperties(from._properties, self.item)
+                }
+                else {
+                    SubView(
+                        main: self.main,
+                        view: { let x:SessionView = get("view")!; return x }(),
+                        context: self.item,
+                        variables: get("variables") ?? [:]
+                    )
+                    .setProperties(from._properties, self.item)
+                }
+            }
+            else if from.type == "map" {
+                MapView(address: get("address"))
+                    .setProperties(from._properties, self.item)
+            }
+            else if from.type == "picker" {
+                self.renderPicker()
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "securefield" {
             }
             else if from.type == "action" {
                 Action(action: get("press"))
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
+            }
+            else if from.type == "memributton" {
+                MemriButton(item: self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "image" {
                 if has("systemname") {
                     Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                         .if(from.has("resizable")) { self.resize($0) }
-                        .setProperties(from.properties, self.item)
+                        .setProperties(from._properties, self.item)
                 }
                 else { // assuming image property
-//                    Image(uiImage: try! fileCache.read(from.getString("image", self.item)) ?? UIImage())
                     Image(uiImage: getImage("image"))
+                        .renderingMode(.original)
                         .if(from.has("resizable")) { self.resize($0) }
-                        .setProperties(from.properties, self.item)
+                        .setProperties(from._properties, self.item)
                 }
             }
             else if from.type == "circle" {
             }
             else if from.type == "horizontalline" {
                 HorizontalLine()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "rectangle" {
                 Rectangle()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "roundedrectangle" {
                 RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "spacer" {
                 Spacer()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
             else if from.type == "divider" {
                 Divider()
-                    .setProperties(from.properties, self.item)
+                    .setProperties(from._properties, self.item)
             }
         }
+    }
+    
+//    @ViewBuilder // This crashes the build when Group is gone
+    // TODO add this for multiline editing: https://github.com/kenmueller/TextView
+    func renderTextfield() -> some View {
+        let (type, propName) = from.getType("value", self.item)
+        
+        return Group {
+            if type != PropertyType.string {
+                TextField(LocalizedStringKey(self.get("hint") ?? ""), value: Binding<Any>(
+                    get: { self.item[propName] as Any},
+                    set: { self.item.set(propName, $0) }
+                ), formatter: type == .date ? DateFormatter() : NumberFormatter()) // TODO Refactor: expand to properly support all types
+                .keyboardType(.decimalPad)
+                .generalEditorInput()
+            }
+            else {
+                TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(
+                    get: { self.item.getString(propName) },
+                    set: { self.item.set(propName, $0) }
+                ))
+                .generalEditorInput()
+            }
+        }
+    }
+    
+    func renderPicker() -> some View {
+        let dataItem:DataItem? = self.get("value")
+        let (_, propName) = from.getType("value", self.item)
+        let queryOptions:[String:Any] = self.get("queryoptions")! // TODO refactor error handling
+        let emptyValue = self.get("empty") ?? "Pick a value"
+        
+        return Picker(
+            item: self.item,
+            selected: dataItem ?? self.get("default"),
+            title: "Select a \(emptyValue)",
+            emptyValue: emptyValue,
+            propName: propName,
+            queryOptions: QueryOptions(value: [
+                "query": queryOptions["query"],
+                "sortProperty": queryOptions["sortProperty"],
+                "sortAscending": queryOptions["sortAscending"]
+            ])
+        )
     }
     
     @ViewBuilder

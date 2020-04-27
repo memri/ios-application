@@ -29,14 +29,14 @@ public class MainNavigation:ObservableObject {
         set (newFilter) {
             Settings.set("device/navigation/filterText", newFilter)
             
-            scheduleUIUpdate!()
+            scheduleUIUpdate!{_ in true}
         }
     }
     
     /**
      * @private
      */
-    public var scheduleUIUpdate: (() -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
     
     private var realm:Realm
     

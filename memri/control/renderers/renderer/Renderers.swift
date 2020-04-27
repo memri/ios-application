@@ -74,7 +74,10 @@ public class RenderConfigs: Object, Codable {
      *
      */
     @objc dynamic var generalEditor: GeneralEditorConfig? = nil
-
+    /**
+     *
+     */
+    @objc dynamic var virtual: RenderConfig? = nil
     
     public func merge(_ renderConfigs:RenderConfigs) {
         if let config = renderConfigs.list {
@@ -89,8 +92,13 @@ public class RenderConfigs: Object, Codable {
             if self.generalEditor == nil { self.generalEditor = GeneralEditorConfig() }
             self.generalEditor!.merge(config)
         }
+        if let config = renderConfigs.virtual {
+            if self.virtual == nil { self.virtual = RenderConfig() }
+            self.virtual!.superMerge(config)
+        }
     }
     
+    // Refactor maybe: https://stackoverflow.com/questions/50713638/swift-codable-with-dynamic-keys
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
@@ -98,6 +106,11 @@ public class RenderConfigs: Object, Codable {
             self.list = try decoder.decodeIfPresent("list") ?? self.list
             self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
             self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
+            
+            if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("virtual") {
+                let str = String(data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
+                self.virtual = RenderConfig(name: "virtual", renderDescription: str)
+            }
         }
     }
 }
@@ -113,21 +126,27 @@ public class RenderConfig: Object, Codable {
      */
     @objc dynamic var _renderDescription: String? = nil
     
+    convenience init(name:String, renderDescription:String) {
+        self.init()
+        
+        self.name = name
+        self._renderDescription = renderDescription
+    }
     
     /**
      *
      */
     var renderDescription: [String:GUIElementDescription]? {
-        if let _description = self._renderDescription{
-            if let renderDescription:[String: GUIElementDescription] = renderCache.get(_description) {
-                return renderDescription
-            }
-            else if let description = self._renderDescription {
-                if let renderDescription:[String: GUIElementDescription] = unserialize(description) {
-                    renderCache.set(description, renderDescription)
-                    return renderDescription
-                }
-            }
+        guard let rd = self._renderDescription else {
+            return nil
+        }
+        
+        if let renderDescription:[String: GUIElementDescription] = renderCache.get(rd) {
+            return renderDescription
+        }
+        else if let renderDescription:[String: GUIElementDescription] = unserialize(rd) {
+            renderCache.set(rd, renderDescription)
+            return renderDescription
         }
         
         return nil
@@ -144,9 +163,10 @@ public class RenderConfig: Object, Codable {
             return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {
-            if self.renderDescription![part] != nil{
+            if self.renderDescription![part] != nil {
                 return GUIElementInstance(self.renderDescription![part]!, item, variables)
-            } else{
+            }
+            else {
                 return GUIElementInstance(self.renderDescription!["*"]!, item, variables)
             }
         }
@@ -157,7 +177,17 @@ public class RenderConfig: Object, Codable {
      */
     public func superMerge(_ renderConfig:RenderConfig) {
         self.name = renderConfig.name ?? self.name
-        self._renderDescription = renderConfig._renderDescription ?? self._renderDescription
+        
+        if let renderDescription = renderConfig.renderDescription {
+            var myRD = self.renderDescription ?? [:]
+            
+            for (key, value) in renderDescription {
+                myRD[key] = value
+            }
+            
+            let data = try! MemriJSONEncoder.encode(myRD)
+            self._renderDescription = String(data: data, encoding: .utf8)!
+        }
     }
     
     /**
@@ -278,6 +308,7 @@ public class RenderConfig: Object, Codable {
     }
 }
 
+// Refactor: orderedDicts can go probably?
 class RenderCache {
     var cache:[String:[String:GUIElementDescription]] = [:]
     var dictCache:[String:[String:[String]]] = [:]
