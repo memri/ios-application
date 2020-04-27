@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 // TODO Refactor: optimize this for performance
-public struct SubView: View {
+public struct SubView : View {
     @EnvironmentObject var main: Main
     
     var proxyMain: Main? = nil
@@ -43,7 +43,7 @@ public struct SubView: View {
         self.proxyMain!.setComputedView()
     }
     
-    public init (main:Main, view: SessionView, context: DataItem, variables:[String: Any]){
+    public init (main: Main, view: SessionView, context: DataItem, variables: [String: Any]){
         self.toolbar = variables["toolbar"] as? Bool ?? toolbar
         self.searchbar = variables["searchbar"] as? Bool ?? searchbar
         self.showCloseButton = variables["showCloseButton"] as? Bool ?? showCloseButton
@@ -60,14 +60,15 @@ public struct SubView: View {
         self.proxyMain!.setComputedView()
     }
     
-    public var body: some View {
+    public var body : some View {
 //        ZStack {
             VStack(alignment: .center, spacing: 0) {
                 if self.toolbar {
                     TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
                 
-                self.proxyMain!.currentRendererView.fullHeight()
+                self.proxyMain!.currentRendererView
+                    .fullHeight()
                 
                 if self.searchbar {
                     Search()

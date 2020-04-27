@@ -14,22 +14,17 @@
         "queryOptions": {
             "query": "{query}"
         },
-        "editActionButton": {
-            "title": "{title}",
-            "actionName": "closePopup",
-            "_actionName": ["{actionName}", "closePopup"],
-            "_actionArgs": ["{actionArgs}"]
-        },
+        "_editActionButton": { "actionName": "toggleEditMode" },
         "actionButton": {
             "actionName": "add",
-            "_actionArgs": [{
-                "type": "{type}"
+            "actionArgs": [{
+                "type": "person"
             }]
         },
         "rendererName": "list",
-        "renderConfig": {
+        "renderConfigs": {
             "list": {
-                "press": { "actionName": "noop" }
+                "press": { "actionName": "closePopup" }
             }
         },
         "title": "Choose a {type}"

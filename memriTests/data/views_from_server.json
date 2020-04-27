@@ -587,7 +587,7 @@
                 "query": "person",
                 "sortProperty": "dateModified",
             },
-            "emptyResultText": "There are no notes here yet",
+            "emptyResultText": "There are no people here yet",
             "rendererName": "list",
             "renderConfigs": {
                 "list": {
