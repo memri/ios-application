@@ -1102,12 +1102,13 @@ public struct GUIElementInstance: View {
                         ),
                         isEditing: Binding<Bool>(
                             get: { return true },
-                            set: { $0 }
+                            set: { let _ = $0 }
                         ), // ??
                         placeholder: self.get("hint") ?? "",
                         textAlignment: self.get("textalign") ?? TextView.TextAlignment.left,
                         font: UIFont.systemFont(ofSize: 16, weight: .regular),
-                        textColor: Color(hex:"#223322").uiColor()
+                        textColor: Color(hex:"#223322").uiColor(),
+                        autocorrection: TextView.Autocorrection.no
                     )
                 }
                 .frame(height: rows * 25)
