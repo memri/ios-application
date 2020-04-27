@@ -25,6 +25,11 @@
     },
     {
         "type": "item",
+        "title": "addresses",
+        "view": "all-addresses"
+    },
+    {
+        "type": "item",
         "title": "log",
         "view": "all-logitems"
     },

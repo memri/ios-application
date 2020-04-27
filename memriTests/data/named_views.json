@@ -68,6 +68,18 @@
     },
     
     {
+        "name": "all-addresses",
+        "views": [
+            {
+                "title": "All Addresses",
+                "queryOptions": {
+                    "query": "address"
+                }
+            }
+        ]
+    },
+    
+    {
         "name": "all-items-with-label",
         "title": "Items with label {name}",
         "queryOptions": {

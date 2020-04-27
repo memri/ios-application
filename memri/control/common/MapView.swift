@@ -1,16 +1,3 @@
-/*
- Copyright © 2019 Apple Inc.
-
- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
- Abstract:
- A view that hosts an `MKMapView`.
- */
-
 import SwiftUI
 import MapKit
 import RealmSwift
@@ -21,39 +8,49 @@ struct MapView: UIViewRepresentable {
     var location: Location? = nil
     var address: Address? = nil
     
+    var locations: [Location]? = nil
+    var addresses: [Address]? = nil
+    
     init (location:Location? = nil, address:Address? = nil) {
         self.location = location
         self.address = address
     }
-//
-//    func searchAddress(_ callback: @escaping (_ items:[MKMapItem]) -> Void){
-//        guard let address = address else {
-//            return
-//        }
-//
-//        let request = MKLocalSearch.Request()
-//        request.naturalLanguageQuery = "\(address.street ?? "") \(address.city ?? "") \(address.postalCode ?? "") \(address.state ?? "") \(address.country?.computeTitle ?? "")"
-////        request.region = mapView.region
-//
-//        var matchingItems:[MKMapItem] = []
-//        let search = MKLocalSearch(request: request)
-//        search.start { response, _ in
-//            guard let response = response else {
-//                return
-//            }
-//
-//            matchingItems = response.mapItems // What do I do with this?
-//
-//            callback(matchingItems)
-//        }
-//    }
+    
+    init (locations:[Location]? = nil, addresses:[Address]? = nil) {
+        self.locations = locations
+        self.addresses = addresses
+    }
 
     func makeUIView(context: Context) -> MKMapView {
         MKMapView(frame: .zero)
     }
 
     func updateUIView(_ view: MKMapView, context: Context) {
-        if let address = address {
+        if let addresses = addresses {
+            var count = 0
+            for address in addresses {
+                if address.location == nil {
+                    count += 1
+                    address.retrieveLocation { error in
+                        count -= 1
+                        
+                        if count == 0 {
+                            self.setRegionForCollection(view)
+                        }
+                    }
+                }
+            }
+            
+            if count == 0 {
+                self.setRegionForCollection(view)
+            }
+            return
+        }
+        else if let _ = locations {
+            self.setRegionForCollection(view)
+            return
+        }
+        else if let address = address {
             if address.location == nil {
                 // TODO Refactor: Passing realm here is very ugly
                 address.retrieveLocation { error in
@@ -67,6 +64,41 @@ struct MapView: UIViewRepresentable {
         }
         
         setRegion(view, self.location ?? address?.location)
+    }
+    
+    func setRegionForCollection(_ view: MKMapView) {
+        let locations = self.locations ?? self.addresses?.map({ $0.location }).filter({ $0 != nil })
+        
+        var dLat:[Double] = [100,0], dLong:[Double] = [100,0]
+        for location in locations! {
+            let coordinate = CLLocationCoordinate2D(
+                latitude: location!.latitude.value!, // TODO Refactor error handling?
+                longitude: location!.longitude.value!
+            )
+            
+            dLat[0] = min(dLat[0], coordinate.latitude)
+            dLat[1] = max(dLat[1], coordinate.latitude)
+            
+            dLong[0] = min(dLong[0], coordinate.longitude)
+            dLong[1] = max(dLong[1], coordinate.longitude)
+            
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            view.addAnnotation(annotation)
+        }
+        
+        let region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(
+                latitude: dLat[0] + (dLat[1] - dLat[0]) / 2,
+                longitude: dLong[0] + (dLong[1] - dLong[0]) / 2
+            ),
+            span: MKCoordinateSpan(
+                latitudeDelta: max(0.02, (dLat[1] - dLat[0]) * 1.2),
+                longitudeDelta: max(0.02, (dLong[1] - dLong[0]) * 1.2)
+            )
+        )
+        
+        view.setRegion(region, animated: true)
     }
     
     func setRegion(_ view: MKMapView, _ location:Location?) {
@@ -101,6 +133,7 @@ extension Address {
         let search = MKLocalSearch(request: request)
         search.start { response, _ in
             guard let response = response else {
+                callback("Unknown error")
                 return
             }
 

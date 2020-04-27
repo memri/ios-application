@@ -1002,7 +1002,7 @@ public struct GUIElementInstance: View {
                 }
             }
             else if from.type == "map" {
-                MapView(address: get("address"))
+                MapView(location: get("location"), address: get("address"))
                     .setProperties(from._properties, self.item)
             }
             else if from.type == "picker" {

@@ -94,10 +94,10 @@ struct ThumbnailRendererView: View {
                 ASCollectionView (section: section)
                     .layout (self.layout)
                     .contentInsets(.init(
-                        top: edgeInset[0],
-                        left: edgeInset[3],
-                        bottom: edgeInset[2],
-                        right: edgeInset[1]))
+                        top: edgeInset[safe: 0] ?? 0,
+                        left: edgeInset[safe: 3] ?? 0,
+                        bottom: edgeInset[safe: 2] ?? 0,
+                        right: edgeInset[safe: 1] ?? 0))
             }
         }
     }

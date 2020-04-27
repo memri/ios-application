@@ -685,9 +685,11 @@
                                 "minHeight": 165,
                                 "view": {
                                     "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
+                                    "rendererName": "thumbnail.grid",
                                     "renderConfigs": {
-                                        "thumbnail": {
-                                            "columns": 5
+                                        "thumbnail.grid": {
+                                            "columns": 5,
+                                            "itemInset": 0
                                         }
                                     }
                                 },
@@ -1011,7 +1013,31 @@
         },
         
         "{[type:address]}": {
+            "rendererName": "list",
             "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "HStack", [
+                            "Text", {
+                                "text": "{.computeTitle()}",
+                                "font": [16],
+                                "padding": [0, 0, 10, 0]
+                            },
+                            "Spacer",
+                            "Map", {
+                                "address": "{dataItem}",
+                                "maxWidth": 150,
+                                "minHeight": 150,
+                                "maxHeight": 150,
+                                "cornerRadius": 10,
+                                "border": ["#DDD", 1],
+                                "margin": [0, 0, 10, 0]
+                            }
+                        ]
+                    ]
+                },
+                "map": {
+                },
                 "virtual": {
                     "generalEditor": [
                         "EditorRow", {
@@ -1062,7 +1088,11 @@
                         ]
                     ]
                 }
-            }
+            },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
         },
         "{type:address}": {
             "title": "{dataItem.computedTitle}",

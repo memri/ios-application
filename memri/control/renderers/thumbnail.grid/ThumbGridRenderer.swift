@@ -13,6 +13,7 @@ class ThumbGridRenderer: Renderer{
         super.init()
         self.name = "thumbnail.grid"
         self.title = "Photo Grid"
+        self.order = 20
         self.icon = "square.grid.3x2.fill"
         self.renderConfig = ThumbGridConfig()
 

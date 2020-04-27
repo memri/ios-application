@@ -2,7 +2,6 @@
 //  Renderer.swift
 //  memri
 //
-//  Created by Koen van der Veen on 19/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -19,6 +18,7 @@ public class Renderers {
         "thumbnail":             ThumbnailRenderer(),
         "thumbnail.grid":        ThumbGridRenderer(),
         "thumbnail.waterfall":   ThumbWaterfallRenderer(),
+        "map":                   MapRenderer(),
         "generalEditor":         GeneralEditor()
     ]
     
@@ -29,6 +29,7 @@ public class Renderers {
         "thumbnail":             AnyView(ThumbnailRendererView()),
         "thumbnail.grid":        AnyView(ThumbGridRendererView()),
         "thumbnail.waterfall":   AnyView(ThumbWaterfallRendererView()),
+        "map":                   AnyView(MapRendererView()),
         "generalEditor":         AnyView(GeneralEditorView())
     ]
     

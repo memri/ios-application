@@ -34,7 +34,9 @@ struct ThumbGridRendererView: View {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let isWide = environment.container.effectiveContentSize.width > 500
-                let gridBlockSize = environment.container.effectiveContentSize.width / CGFloat(isWide ? self.renderConfig.columnsWide.value ?? 5 : self.renderConfig.columns.value ?? 3)
+                let columns = CGFloat(isWide ? self.renderConfig.columnsWide.value ?? 5 : self.renderConfig.columns.value ?? 3)
+                
+                let gridBlockSize = environment.container.effectiveContentSize.width / columns
                 let inset = CGFloat(self.renderConfig.itemInset.value ?? 5)
                 let gridItemInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize), heightDimension: .absolute(gridBlockSize))
@@ -56,7 +58,7 @@ struct ThumbGridRendererView: View {
                 let verticalAndFeatureGroupB = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: isWide ? [verticalGroup, featureItem, verticalGroup, verticalGroup] : [featureItem, verticalGroup])
 
                 let rowGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(gridBlockSize))
-                let rowGroup = NSCollectionLayoutGroup.horizontal(layoutSize: rowGroupSize, subitem: item, count: isWide ? 5 : 3)
+                let rowGroup = NSCollectionLayoutGroup.horizontal(layoutSize: rowGroupSize, subitem: item, count: Int(columns))
 
                 let outerGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(gridBlockSize * 8))
                 let outerGroup = NSCollectionLayoutGroup.vertical(layoutSize: outerGroupSize, subitems: [verticalAndFeatureGroupA, rowGroup, fullWidthItem, verticalAndFeatureGroupB, rowGroup])
@@ -117,10 +119,10 @@ struct ThumbGridRendererView: View {
                 ASCollectionView(section: section)
                     .layout(self.layout)
                         .contentInsets(.init(
-                            top: edgeInset[0],
-                            left: edgeInset[3],
-                            bottom: edgeInset[2],
-                            right: edgeInset[1]))
+                            top: edgeInset[safe: 0] ?? 0,
+                            left: edgeInset[safe: 3] ?? 0,
+                            bottom: edgeInset[safe: 2] ?? 0,
+                            right: edgeInset[safe: 1] ?? 0))
 //                    .initialScrollPosition(startingAtBottom ? .bottom : nil)
 //                    .edgesIgnoringSafeArea(.all)
 //                    .navigationBarTitle("Explore", displayMode: .large)
