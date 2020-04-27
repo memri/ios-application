@@ -684,7 +684,7 @@
                                 "sectionTitle": "Photos of {.computeTitle()}",
                                 "minHeight": 165,
                                 "view": {
-                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x13'" },
+                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
                                     "renderConfigs": {
                                         "thumbnail": {
                                             "columns": 5
