@@ -1155,22 +1155,17 @@
                                 ]
                             ]
                         ],
-                        "address2": [
-                            "VStack", {
-                                "for": "group",
-                                "sectionTitle": "",
-                                "nopadding": true
-                            }, [
-                                "Textfield", { "hint": "Street", "value": "{.street}", "rows": 2 },
-                                "Textfield", { "hint": "City", "value": "{.city}" },
-                                "HStack", [
-                                    "Textfield", { "hint": "State", "value": "{.state}" },
-                                    "Textfield", { "hint": "Zip", "value": "{.postalCode}" }
-                                ],
+                        "country": [
+                            "VStack", [
+                                "Text", {
+                                    "text": "{.country.name}",
+                                    "condition": "{readOnly}"
+                                },
                                 "Picker", {
                                     "empty": "Country",
                                     "value": "{.country}",
                                     "default": "{me.address[primary = true].country}",
+                                    "condition": "{!readOnly}",
                                     "queryOptions": {
                                         "query": "country",
                                         "sortProperty": "name"
