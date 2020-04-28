@@ -18,7 +18,6 @@ struct ListRendererView: View {
     
     var renderConfig: ListConfig {
         print(self.main.computedView.renderConfigs["list"])
-        
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
     

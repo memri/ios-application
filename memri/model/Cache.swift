@@ -407,22 +407,17 @@ public class Cache {
      * Does not copy the id property
      */
     public func duplicate(_ item:DataItem) -> DataItem {
-        let type = DataItemFamily(rawValue: item.genericType)!
-        let T = DataItemFamily.getType(type)
-        let cls = T() as! DataItem.Type
-        let copy = cls.init()
-        let properties = item.objectSchema.properties
+        let cls = item.getType()
+        let copy = item.getType().init()
         let primaryKey = cls.primaryKey()
-        for prop in properties {
-            if prop.name == primaryKey {
-                // TODO allow generation of uid based on number replaces {uid}
-//                if (item[prop.name] as! String).includes("{uid}") {
-//
-//                }
-                
-                continue
+        for prop in item.objectSchema.properties {
+            // TODO allow generation of uid based on number replaces {uid}
+            // if (item[prop.name] as! String).includes("{uid}")
+            
+            if prop.name != primaryKey{
+                copy[prop.name] = item[prop.name]
+
             }
-            copy[prop.name] = item[prop.name]
         }
         return copy
     }

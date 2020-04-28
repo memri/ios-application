@@ -146,6 +146,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    public func getType() -> DataItem.Type{
+        let type = DataItemFamily(rawValue: self.genericType)!
+        let T = DataItemFamily.getType(type)
+        return T() as! DataItem.Type
+    }
+    
     /**
      *
      */
@@ -180,7 +186,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
-    private func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
+    public func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
         let prop = self.objectSchema[fieldName]!
 
         // List
