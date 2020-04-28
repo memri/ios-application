@@ -10,6 +10,8 @@ import SwiftUI
 struct Navigation: View {
     @EnvironmentObject var main: Main
     
+    @ObservedObject var keyboardResponder = KeyboardResponder()
+    
     @State var showSettings: Bool = false
     
     public func hide(){
@@ -64,6 +66,7 @@ struct Navigation: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(hex: "543184"))
+        .padding(.bottom, keyboardResponder.currentHeight)
     }
 
     func item(_ navigationItem: NavigationItem) -> AnyView{
