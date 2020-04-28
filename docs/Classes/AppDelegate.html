@@ -4,760 +4,766 @@
     <title>AppDelegate Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
-    <meta charset='utf-8'>
-	<meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1.0" />
+    <meta charset="utf-8">
     <script src="../js/jquery.min.js" defer></script>
     <script src="../js/jazzy.js" defer></script>
     
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
   </head>
   <body>
+
     <a name="//apple_ref/swift/Class/AppDelegate" class="dashAnchor"></a>
+
     <a title="AppDelegate Class Reference"></a>
-    <header>
-      <div class="content-wrapper">
-        <p>
-          <a href="../index.html">memri 0.0.1 Docs</a>
-          <span class="no-mobile"> (31% documented)</span>
-        </p>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+          memri 0.0.1 Docs
+        </a>
+         (31% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
     
     
-      </div>
     </header>
-    <div id="breadcrumbs-container">
-      <div class="content-wrapper">
-        <p id="breadcrumbs">
-          <span class="no-mobile">
-            <a href="../index.html">memri Reference</a>
-            <img id="carat" src="../img/carat.png" />
-          </span>
-          AppDelegate Class Reference
-        </p>
-      </div>
-    </div>
-    <div class="wrapper">
-      <div class="article-wrapper">
-        <article class="main-content">
-          <section>
-            <section class="section">
-              <h1>AppDelegate</h1>
-                <div class="declaration">
-                  <div class="language">
-                    <pre class="highlight swift"><code><span class="kd">@UIApplicationMain</span>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html">memri Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      AppDelegate Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ActionDescription.html">ActionDescription</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ActionDescription/ActionDescriptionKeys.html">– ActionDescriptionKeys</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Address.html">Address</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/AppDelegate.html">AppDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Audio.html">Audio</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Cache.html">Cache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/CalendarRenderer.html">CalendarRenderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ClassWrapper.html">ClassWrapper</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Company.html">Company</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/CompiledView.html">CompiledView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ComputedView.html">ComputedView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Country.html">Country</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataItem.html">DataItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DataItem/DataItemError.html">– DataItemError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Diet.html">Diet</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DynamicView.html">DynamicView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/File.html">File</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/FileCache.html">FileCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GUIElementDescription.html">GUIElementDescription</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GUIElementDescription/CompiledProperty.html">– CompiledProperty</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GeneralEditor.html">GeneralEditor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/GeneralEditorConfig.html">GeneralEditorConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Installer.html">Installer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Label.html">Label</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ListConfig.html">ListConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ListRenderer.html">ListRenderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Location.html">Location</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LogItem.html">LogItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Main.html">Main</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Main/Alias.html">– Alias</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MainNavigation.html">MainNavigation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MapRenderer.html">MapRenderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MedicalCondition.html">MedicalCondition</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/NavigationItem.html">NavigationItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Note.html">Note</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/OnlineProfile.html">OnlineProfile</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Person.html">Person</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/PhoneNumber.html">PhoneNumber</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Photo.html">Photo</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/PodAPI.html">PodAPI</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ProxyMain.html">ProxyMain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/PublicKey.html">PublicKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/QueryOptions.html">QueryOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/RenderCache.html">RenderCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/RenderConfig.html">RenderConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/RenderConfigs.html">RenderConfigs</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Renderer.html">Renderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Renderers.html">Renderers</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ResultSet.html">ResultSet</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/RichTextRenderer.html">RichTextRenderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/RootMain.html">RootMain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SceneDelegate.html">SceneDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Session.html">Session</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SessionResult.html">SessionResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SessionView.html">SessionView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Sessions.html">Sessions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Setting.html">Setting</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SettingCollection.html">SettingCollection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Settings.html">Settings</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Sync.html">Sync</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/SyncState.html">SyncState</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ThumbnailConfig.html">ThumbnailConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ThumbnailRenderer.html">ThumbnailRenderer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Video.html">Video</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Views.html">Views</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/Website.html">Website</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/graphRenderer.html">graphRenderer</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Global%20Variables.html">Global Variables</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri16MemriJSONDecoder10Foundation0C0Cvp">MemriJSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri16MemriJSONEncoder10Foundation0C0Cvp">MemriJSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri10ViewConfigSDySSSaySSGGvp">ViewConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri6config10RealmSwift0C0V13ConfigurationVvp">config</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri9fileCacheAA04FileC0Cvp">fileCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri14globalSettingsAA0C0CSgvp">globalSettings</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Global%20Variables.html#/s:5memri11renderCacheAA06RenderC0Cvp">renderCache</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ActionName.html">ActionName</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/ActionType.html">ActionType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/DataItemFamily.html">DataItemFamily</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/Discriminator.html">Discriminator</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Collection.html">Collection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Color.html">Color</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Date.html">Date</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSDateFormatter">DateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Decodable.html">Decodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Decoder.html">Decoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Encodable.html">Encodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Encoder.html">Encoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/c:objc(cs)NSISO8601DateFormatter">ISO8601DateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/JSONDecoder.html">JSONDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation11JSONEncoderC">JSONEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/KeyedDecodingContainer.html">KeyedDecodingContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions.html#/s:10Foundation19PropertyListEncoderC">PropertyListEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Published.html">Published</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/StringProtocol.html">StringProtocol</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Text.html">Text</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/UIView.html">UIView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/View.html">View</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri14decodeIntoListyys7Decoder_p_SS10RealmSwift0D0CyxGtAD0F15CollectionValueRzSeRzlF">decodeIntoList(_:_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri19getCodingPathStringySSSays0C3Key_pGF">getCodingPathString(_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri12getRealmPathSSyF">getRealmPath()</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri16jsonDataFromFiley10Foundation0C0VSS_SStKF">jsonDataFromFile(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri17jsonErrorHandlingyy10Foundation11JSONDecoderC_yyKXEtF">jsonErrorHandling(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri17jsonErrorHandlingyys7Decoder_p_yyKXEtF">jsonErrorHandling(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri9negateAnyySbypF">negateAny(_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri21realmWriteIfAvailableyy10RealmSwift0F0VSg_yyXEtF">realmWriteIfAvailable(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri9serializeySSAA10AnyCodableVF">serialize(_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri13serializeJSONySSSg10Foundation4DataVAD11JSONEncoderCKXEF">serializeJSON(_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri14stringFromFileyS2S_SStKF">stringFromFile(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Functions.html#/s:5memri11unserializeyxSSSeRzlF">unserialize(_:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AnyDateFormatter.html">AnyDateFormatter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AnyDecoder.html">AnyDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/AnyEncoder.html">AnyEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ClassFamily.html">ClassFamily</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/_AnyDecodable.html">_AnyDecodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/_AnyDecodable.html">_AnyDecodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/_AnyEncodable.html">_AnyEncodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/_AnyEncodable.html">_AnyEncodable</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Action.html">Action</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ActionButton.html">ActionButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ActionPopup.html">ActionPopup</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ActionPopupButton.html">ActionPopupButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Action_Previews.html">Action_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ActivityIndicator.html">ActivityIndicator</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AnyCodable.html">AnyCodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AnyDecodable.html">AnyDecodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AnyEncodable.html">AnyEncodable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Application.html">Application</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Application_Previews.html">Application_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BackgroundPane_Previews.html">BackgroundPane_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BrowseSetting.html">BrowseSetting</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Browser.html">Browser</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Browser_Previews.html">Browser_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ContentPane_Previews.html">ContentPane_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ContextPane.html">ContextPane</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ContextPaneBackground.html">ContextPaneBackground</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ContextPaneForground.html">ContextPaneForground</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DataItemReference.html">DataItemReference</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DefaultGeneralEditorRow.html">DefaultGeneralEditorRow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DetailsView.html">DetailsView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/EdgeBorder.html">EdgeBorder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FilterPanel.html">FilterPanel</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/FilterPanel_Previews.html">FilterPanel_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ForgroundContextPane_Previews.html">ForgroundContextPane_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GUIElementInstance.html">GUIElementInstance</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GeneralEditorSection.html">GeneralEditorSection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GeneralEditorView.html">GeneralEditorView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/GeneralEditorView_Previews.html">GeneralEditorView_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/HorizontalLine.html">HorizontalLine</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ItemCell.html">ItemCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ListRendererView.html">ListRendererView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ListRendererView/MyButtonStyle.html">– MyButtonStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ListRendererView_Previews.html">ListRendererView_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Loading.html">Loading</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Loading_Previews.html">Loading_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MapView.html">MapView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MapView_Previews.html">MapView_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MemriButton.html">MemriButton</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/MemriToggleStyle.html">MemriToggleStyle</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Navigation.html">Navigation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/NavigationHeadingView.html">NavigationHeadingView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/NavigationItemView.html">NavigationItemView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/NavigationLineView.html">NavigationLineView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Navigation_Previews.html">Navigation_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Picker.html">Picker</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PickerPane.html">PickerPane</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RichTextRendererView.html">RichTextRendererView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RichTextRendererView_Previews.html">RichTextRendererView_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Search.html">Search</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Search_Previews.html">Search_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SessionSwitcher.html">SessionSwitcher</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SessionSwitcher_Previews.html">SessionSwitcher_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SettingsPane.html">SettingsPane</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SubView.html">SubView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ThumbnailRendererView.html">ThumbnailRendererView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ThumbnailRendererView_Previews.html">ThumbnailRendererView_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/TopNavigation.html">TopNavigation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Topnavigation_Previews.html">Topnavigation_Previews</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/WrapStack.html">WrapStack</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/_RichTextEditor.html">_RichTextEditor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/_RichTextEditor/Coordinator.html">– Coordinator</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/memriButton_Previews.html">memriButton_Previews</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:5memri4Lista">List</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>AppDelegate</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight swift"><code><span class="kd">@UIApplicationMain</span>
 <span class="kd">class</span> <span class="kt">AppDelegate</span> <span class="p">:</span> <span class="kt">UIResponder</span><span class="p">,</span> <span class="kt">UIApplicationDelegate</span></code></pre>
 
-                  </div>
                 </div>
-              <p>Undocumented</p>
-
-            </section>
-            <section class="section task-group-section">
-              <div class="task-group">
-                <ul>
-                  <li class="item">
-                    <div>
-                      <code>
-                      <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:didFinishLaunchingWithOptions:"></a>
-                      <a name="//apple_ref/swift/Method/application(_:didFinishLaunchingWithOptions:)" class="dashAnchor"></a>
-                      <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:didFinishLaunchingWithOptions:">application(_:<wbr>didFinishLaunchingWithOptions:<wbr>)</a>
-                      </code>
-                    </div>
-                    <div class="height-container">
-                      <div class="pointer-container"></div>
-                      <section class="section">
-                        <div class="pointer"></div>
-                        <div class="abstract">
-                          <p>Undocumented</p>
-
-                        </div>
-                        <div class="declaration">
-                          <h4>Declaration</h4>
-                          <div class="language">
-                            <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">didFinishLaunchingWithOptions</span> <span class="nv">launchOptions</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIApplication</span><span class="o">.</span><span class="kt">LaunchOptionsKey</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
-
-                          </div>
-                        </div>
-                      </section>
-                    </div>
-                  </li>
-                </ul>
               </div>
-              <div class="task-group">
-                <div class="task-name-container">
-                  <a name="/UISceneSession%20Lifecycle"></a>
-                  <a name="//apple_ref/swift/Section/UISceneSession Lifecycle" class="dashAnchor"></a>
-                  <div class="section-name-container">
-                    <a class="section-name-link" href="#/UISceneSession%20Lifecycle"></a>
-                    <h3 class="section-name"><p>UISceneSession Lifecycle</p>
-</h3>
-                  </div>
-                </div>
-                <ul>
-                  <li class="item">
-                    <div>
-                      <code>
-                      <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:configurationForConnectingSceneSession:options:"></a>
-                      <a name="//apple_ref/swift/Method/application(_:configurationForConnecting:options:)" class="dashAnchor"></a>
-                      <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:configurationForConnectingSceneSession:options:">application(_:<wbr>configurationForConnecting:<wbr>options:<wbr>)</a>
-                      </code>
-                    </div>
-                    <div class="height-container">
-                      <div class="pointer-container"></div>
-                      <section class="section">
-                        <div class="pointer"></div>
-                        <div class="abstract">
-                          <p>Undocumented</p>
+            <p>Undocumented</p>
 
-                        </div>
-                        <div class="declaration">
-                          <h4>Declaration</h4>
-                          <div class="language">
-                            <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">configurationForConnecting</span> <span class="nv">connectingSceneSession</span><span class="p">:</span> <span class="kt">UISceneSession</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt">UIScene</span><span class="o">.</span><span class="kt">ConnectionOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UISceneConfiguration</span></code></pre>
-
-                          </div>
-                        </div>
-                      </section>
-                    </div>
-                  </li>
-                  <li class="item">
-                    <div>
-                      <code>
-                      <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:didDiscardSceneSessions:"></a>
-                      <a name="//apple_ref/swift/Method/application(_:didDiscardSceneSessions:)" class="dashAnchor"></a>
-                      <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:didDiscardSceneSessions:">application(_:<wbr>didDiscardSceneSessions:<wbr>)</a>
-                      </code>
-                    </div>
-                    <div class="height-container">
-                      <div class="pointer-container"></div>
-                      <section class="section">
-                        <div class="pointer"></div>
-                        <div class="abstract">
-                          <p>Undocumented</p>
-
-                        </div>
-                        <div class="declaration">
-                          <h4>Declaration</h4>
-                          <div class="language">
-                            <p class="aside-title">Swift</p>
-                            <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">didDiscardSceneSessions</span> <span class="nv">sceneSessions</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">UISceneSession</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
-
-                          </div>
-                        </div>
-                      </section>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </section>
-          </section>
-        </article>
-      </div>
-      <div class="nav-wrapper">
-        <nav class="nav-bottom">
-          <ul class="nav-groups">
-            <li class="nav-group-name">
-              <a href="../Classes.html">Classes</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Classes/ActionDescription.html">ActionDescription</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ActionDescription/ActionDescriptionKeys.html">– ActionDescriptionKeys</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Address.html">Address</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/AppDelegate.html">AppDelegate</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Audio.html">Audio</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Cache.html">Cache</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/CalendarRenderer.html">CalendarRenderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ClassWrapper.html">ClassWrapper</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Company.html">Company</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/CompiledView.html">CompiledView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ComputedView.html">ComputedView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Country.html">Country</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/DataItem.html">DataItem</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/DataItem/DataItemError.html">– DataItemError</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Diet.html">Diet</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/DynamicView.html">DynamicView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/File.html">File</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/FileCache.html">FileCache</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/GUIElementDescription.html">GUIElementDescription</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/GUIElementDescription/CompiledProperty.html">– CompiledProperty</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/GeneralEditor.html">GeneralEditor</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/GeneralEditorConfig.html">GeneralEditorConfig</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Installer.html">Installer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Label.html">Label</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ListConfig.html">ListConfig</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ListRenderer.html">ListRenderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Location.html">Location</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/LogItem.html">LogItem</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Main.html">Main</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Main/Alias.html">– Alias</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/MainNavigation.html">MainNavigation</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/MapRenderer.html">MapRenderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/MedicalCondition.html">MedicalCondition</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/NavigationItem.html">NavigationItem</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Note.html">Note</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/OnlineProfile.html">OnlineProfile</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Person.html">Person</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/PhoneNumber.html">PhoneNumber</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Photo.html">Photo</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/PodAPI.html">PodAPI</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ProxyMain.html">ProxyMain</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/PublicKey.html">PublicKey</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/QueryOptions.html">QueryOptions</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/RenderCache.html">RenderCache</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/RenderConfig.html">RenderConfig</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/RenderConfigs.html">RenderConfigs</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Renderer.html">Renderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Renderers.html">Renderers</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ResultSet.html">ResultSet</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/RichTextRenderer.html">RichTextRenderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/RootMain.html">RootMain</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/SceneDelegate.html">SceneDelegate</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Session.html">Session</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/SessionResult.html">SessionResult</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/SessionView.html">SessionView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Sessions.html">Sessions</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Setting.html">Setting</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/SettingCollection.html">SettingCollection</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Settings.html">Settings</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Sync.html">Sync</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/SyncState.html">SyncState</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ThumbnailConfig.html">ThumbnailConfig</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/ThumbnailRenderer.html">ThumbnailRenderer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Video.html">Video</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Views.html">Views</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/Website.html">Website</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Classes/graphRenderer.html">graphRenderer</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Global%20Variables.html">Global Variables</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri16MemriJSONDecoder10Foundation0C0Cvp">MemriJSONDecoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri16MemriJSONEncoder10Foundation0C0Cvp">MemriJSONEncoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri10ViewConfigSDySSSaySSGGvp">ViewConfig</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri6config10RealmSwift0C0V13ConfigurationVvp">config</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri9fileCacheAA04FileC0Cvp">fileCache</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri14globalSettingsAA0C0CSgvp">globalSettings</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Global%20Variables.html#/s:5memri11renderCacheAA06RenderC0Cvp">renderCache</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Enums.html">Enumerations</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Enums/ActionName.html">ActionName</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Enums/ActionType.html">ActionType</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Enums/DataItemFamily.html">DataItemFamily</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Enums/Discriminator.html">Discriminator</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Extensions.html">Extensions</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Extensions/Collection.html">Collection</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Color.html">Color</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Data.html">Data</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Date.html">Date</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions.html#/c:objc(cs)NSDateFormatter">DateFormatter</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Decodable.html">Decodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Decoder.html">Decoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Encodable.html">Encodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Encoder.html">Encoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions.html#/c:objc(cs)NSISO8601DateFormatter">ISO8601DateFormatter</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/JSONDecoder.html">JSONDecoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions.html#/s:10Foundation11JSONEncoderC">JSONEncoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/KeyedDecodingContainer.html">KeyedDecodingContainer</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions.html#/s:10Foundation19PropertyListDecoderC">PropertyListDecoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions.html#/s:10Foundation19PropertyListEncoderC">PropertyListEncoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Published.html">Published</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/String.html">String</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/StringProtocol.html">StringProtocol</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/Text.html">Text</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/UIView.html">UIView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Extensions/View.html">View</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Functions.html">Functions</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri14decodeIntoListyys7Decoder_p_SS10RealmSwift0D0CyxGtAD0F15CollectionValueRzSeRzlF">decodeIntoList(_:_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri19getCodingPathStringySSSays0C3Key_pGF">getCodingPathString(_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri12getRealmPathSSyF">getRealmPath()</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri16jsonDataFromFiley10Foundation0C0VSS_SStKF">jsonDataFromFile(_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri17jsonErrorHandlingyy10Foundation11JSONDecoderC_yyKXEtF">jsonErrorHandling(_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri17jsonErrorHandlingyys7Decoder_p_yyKXEtF">jsonErrorHandling(_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri9negateAnyySbypF">negateAny(_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri21realmWriteIfAvailableyy10RealmSwift0F0VSg_yyXEtF">realmWriteIfAvailable(_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri9serializeySSAA10AnyCodableVF">serialize(_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri13serializeJSONySSSg10Foundation4DataVAD11JSONEncoderCKXEF">serializeJSON(_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri14stringFromFileyS2S_SStKF">stringFromFile(_:_:)</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Functions.html#/s:5memri11unserializeyxSSSeRzlF">unserialize(_:)</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Protocols.html">Protocols</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Protocols/AnyDateFormatter.html">AnyDateFormatter</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/AnyDecoder.html">AnyDecoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/AnyEncoder.html">AnyEncoder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/ClassFamily.html">ClassFamily</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/_AnyDecodable.html">_AnyDecodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/_AnyDecodable.html">_AnyDecodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/_AnyEncodable.html">_AnyEncodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Protocols/_AnyEncodable.html">_AnyEncodable</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Structs.html">Structures</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Structs/Action.html">Action</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ActionButton.html">ActionButton</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ActionPopup.html">ActionPopup</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ActionPopupButton.html">ActionPopupButton</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Action_Previews.html">Action_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ActivityIndicator.html">ActivityIndicator</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/AnyCodable.html">AnyCodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/AnyDecodable.html">AnyDecodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/AnyEncodable.html">AnyEncodable</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Application.html">Application</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Application_Previews.html">Application_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/BackgroundPane_Previews.html">BackgroundPane_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/BrowseSetting.html">BrowseSetting</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Browser.html">Browser</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Browser_Previews.html">Browser_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ContentPane_Previews.html">ContentPane_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ContextPane.html">ContextPane</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ContextPaneBackground.html">ContextPaneBackground</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ContextPaneForground.html">ContextPaneForground</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/DataItemReference.html">DataItemReference</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/DefaultGeneralEditorRow.html">DefaultGeneralEditorRow</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/DetailsView.html">DetailsView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/EdgeBorder.html">EdgeBorder</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/FilterPanel.html">FilterPanel</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/FilterPanel_Previews.html">FilterPanel_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ForgroundContextPane_Previews.html">ForgroundContextPane_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/GUIElementInstance.html">GUIElementInstance</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/GeneralEditorSection.html">GeneralEditorSection</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/GeneralEditorView.html">GeneralEditorView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/GeneralEditorView_Previews.html">GeneralEditorView_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/HorizontalLine.html">HorizontalLine</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ItemCell.html">ItemCell</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ListRendererView.html">ListRendererView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ListRendererView/MyButtonStyle.html">– MyButtonStyle</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ListRendererView_Previews.html">ListRendererView_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Loading.html">Loading</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Loading_Previews.html">Loading_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/MapView.html">MapView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/MapView_Previews.html">MapView_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/MemriButton.html">MemriButton</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/MemriToggleStyle.html">MemriToggleStyle</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Navigation.html">Navigation</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/NavigationHeadingView.html">NavigationHeadingView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/NavigationItemView.html">NavigationItemView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/NavigationLineView.html">NavigationLineView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Navigation_Previews.html">Navigation_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Picker.html">Picker</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/PickerPane.html">PickerPane</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/RichTextRendererView.html">RichTextRendererView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/RichTextRendererView_Previews.html">RichTextRendererView_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Search.html">Search</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Search_Previews.html">Search_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/SessionSwitcher.html">SessionSwitcher</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/SessionSwitcher_Previews.html">SessionSwitcher_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/SettingsPane.html">SettingsPane</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/SubView.html">SubView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ThumbnailRendererView.html">ThumbnailRendererView</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/ThumbnailRendererView_Previews.html">ThumbnailRendererView_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/TopNavigation.html">TopNavigation</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/Topnavigation_Previews.html">Topnavigation_Previews</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/WrapStack.html">WrapStack</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/_RichTextEditor.html">_RichTextEditor</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/_RichTextEditor/Coordinator.html">– Coordinator</a>
-                </li>
-                <li class="nav-group-task">
-                  <a href="../Structs/memriButton_Previews.html">memriButton_Previews</a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-group-name">
-              <a href="../Typealiases.html">Type Aliases</a>
-              <ul class="nav-group-tasks">
-                <li class="nav-group-task">
-                  <a href="../Typealiases.html#/s:5memri4Lista">List</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </nav>
-      </div>
-      <div class="footer-wrapper">
-        <section id="footer">
-          <p>Copyright message here</p>
-          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+          </div>
         </section>
-      </div>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:didFinishLaunchingWithOptions:"></a>
+                    <a name="//apple_ref/swift/Method/application(_:didFinishLaunchingWithOptions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:didFinishLaunchingWithOptions:">application(_:<wbr>didFinishLaunchingWithOptions:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">didFinishLaunchingWithOptions</span> <span class="nv">launchOptions</span><span class="p">:</span> <span class="p">[</span><span class="kt">UIApplication</span><span class="o">.</span><span class="kt">LaunchOptionsKey</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/UISceneSession%20Lifecycle"></a>
+                <a name="//apple_ref/swift/Section/UISceneSession Lifecycle" class="dashAnchor"></a>
+                <div class="section-name-container">
+                  <a class="section-name-link" href="#/UISceneSession%20Lifecycle"></a>
+                  <h3 class="section-name"><p>UISceneSession Lifecycle</p>
+</h3>
+                </div>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:configurationForConnectingSceneSession:options:"></a>
+                    <a name="//apple_ref/swift/Method/application(_:configurationForConnecting:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:configurationForConnectingSceneSession:options:">application(_:<wbr>configurationForConnecting:<wbr>options:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">configurationForConnecting</span> <span class="nv">connectingSceneSession</span><span class="p">:</span> <span class="kt">UISceneSession</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kt">UIScene</span><span class="o">.</span><span class="kt">ConnectionOptions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">UISceneConfiguration</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@M@memri@objc(cs)AppDelegate(im)application:didDiscardSceneSessions:"></a>
+                    <a name="//apple_ref/swift/Method/application(_:didDiscardSceneSessions:)" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@M@memri@objc(cs)AppDelegate(im)application:didDiscardSceneSessions:">application(_:<wbr>didDiscardSceneSessions:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">application</span><span class="p">(</span><span class="n">_</span> <span class="nv">application</span><span class="p">:</span> <span class="kt">UIApplication</span><span class="p">,</span> <span class="n">didDiscardSceneSessions</span> <span class="nv">sceneSessions</span><span class="p">:</span> <span class="kt">Set</span><span class="o">&lt;</span><span class="kt">UISceneSession</span><span class="o">&gt;</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
     </div>
+    <section class="footer">
+      <p>Copyright message here</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
   </body>
 </div>
 </html>

@@ -7,7 +7,7 @@ xcodebuild_arguments:
 - -scheme
 - memri
 - CODE_SIGNING_ALLOWED = NO
-author: Koen van der VEen
+author: Koen van der Veen
 module: memri
 module_version: 0.0.1
 copyright: Copyright message here
