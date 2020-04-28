@@ -19,10 +19,10 @@ struct Browser: View {
                 TopNavigation()
 //                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
                     self.main.currentRendererView.fullHeight()
-                        .padding(.bottom, keyboardResponder.currentHeight*0.9)
+                        .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()
                 Search()
-                    .offset(y: -keyboardResponder.currentHeight*0.9)
+                    .offset(y: min(0, -keyboardResponder.currentHeight+20))
             }.fullHeight()
             
             ContextPane()

@@ -25,7 +25,7 @@ struct Search: View {
             }
             .padding(.horizontal, 15)
             .padding(.top, 5)
-            .padding(.bottom, 15)
+            .padding(.bottom, 5)
             
             if self.main.currentSession.showFilterPanel {
                 FilterPanel()
