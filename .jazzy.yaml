@@ -1,5 +1,5 @@
 # Ordered by output of `jazzy — help config`
-output: docs
+output: public
 clean: true
 xcodebuild_arguments:
 - -workspace

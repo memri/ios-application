@@ -3,6 +3,23 @@ import Combine
 import SwiftUI
 import RealmSwift
 
+/**
+ Notes on documentation
+ 
+ We use the following documentation keywords
+ - bug
+ - Remark
+ - Requires
+ - See also
+ - warning
+
+ Also remember, when using markdown in your documentation
+ - Use backticks for code
+ */
+
+
+
+
 public class Main: ObservableObject {
     /**
      *
