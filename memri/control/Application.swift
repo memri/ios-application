@@ -50,12 +50,12 @@ struct Application: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
                         .disabled(self.showNavigation ? true : false)
-                        .overlay(Group{
+                        .overlay(
                             Color.black
                                 .opacity(self.showNavigation ? 0.40 : 0)
                                 .edgesIgnoringSafeArea(.vertical)
                                 .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                        })
+                        )
                     
                     if self.showNavigation {
                         Navigation()
