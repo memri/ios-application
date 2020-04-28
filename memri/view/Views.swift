@@ -352,7 +352,7 @@ public class Views {
         for needle in needles {
             for key in searchOrder {
                 if let view = getSessionView(self.defaultViews[key]![needle]) {
-                    computedView.merge(view)
+                    computedView.merge(view) // TODO Refactor: can this be optimized to only pick the top-most renderDescription?
                 }
             }
         }

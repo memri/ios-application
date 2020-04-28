@@ -2,7 +2,6 @@
 //  Renderer.swift
 //  memri
 //
-//  Created by Koen van der Veen on 19/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -13,19 +12,25 @@ import OrderedDictionary
 
 public class Renderers {
     var all: [String: Renderer] = [
-        "list":             ListRenderer(),
-        "list.alphabet":    ListRenderer(mode: "alphabet"),
-        "richTextEditor":   RichTextRenderer(),
-        "thumbnail":        ThumbnailRenderer(),
-        "generalEditor":    GeneralEditor()
+        "list":                  ListRenderer(),
+        "list.alphabet":         ListRenderer(mode: "alphabet"),
+        "richTextEditor":        RichTextRenderer(),
+        "thumbnail":             ThumbnailRenderer(),
+        "thumbnail.grid":        ThumbGridRenderer(),
+        "thumbnail.waterfall":   ThumbWaterfallRenderer(),
+        "map":                   MapRenderer(),
+        "generalEditor":         GeneralEditor()
     ]
     
     var allViews: [String: AnyView] = [
-        "list":             AnyView(ListRendererView()),
-        "list.alphabet":    AnyView(ListRendererView()),
-        "richTextEditor":   AnyView(RichTextRendererView()),
-        "thumbnail":        AnyView(ThumbnailRendererView()),
-        "generalEditor":    AnyView(GeneralEditorView())
+        "list":                  AnyView(ListRendererView()),
+        "list.alphabet":         AnyView(ListRendererView()),
+        "richTextEditor":        AnyView(RichTextRendererView()),
+        "thumbnail":             AnyView(ThumbnailRendererView()),
+        "thumbnail.grid":        AnyView(ThumbGridRendererView()),
+        "thumbnail.waterfall":   AnyView(ThumbWaterfallRendererView()),
+        "map":                   AnyView(MapRendererView()),
+        "generalEditor":         AnyView(GeneralEditorView())
     ]
     
     var tuples: [(key: String, value: Renderer)] {
@@ -73,6 +78,14 @@ public class RenderConfigs: Object, Codable {
     /**
      *
      */
+    @objc dynamic var thumbnail_grid: ThumbGridConfig? = nil
+    /**
+     *
+     */
+    @objc dynamic var thumbnail_waterfall: ThumbWaterfallConfig? = nil
+    /**
+     *
+     */
     @objc dynamic var generalEditor: GeneralEditorConfig? = nil
     /**
      *
@@ -87,6 +100,14 @@ public class RenderConfigs: Object, Codable {
         if let config = renderConfigs.thumbnail {
             if self.thumbnail == nil { self.thumbnail = ThumbnailConfig() }
             self.thumbnail!.merge(config)
+        }
+        if let config = renderConfigs.thumbnail_grid {
+            if self.thumbnail_grid == nil { self.thumbnail_grid = ThumbGridConfig() }
+            self.thumbnail_grid!.merge(config)
+        }
+        if let config = renderConfigs.thumbnail_waterfall {
+            if self.thumbnail_waterfall == nil { self.thumbnail_waterfall = ThumbWaterfallConfig() }
+            self.thumbnail_waterfall!.merge(config)
         }
         if let config = renderConfigs.generalEditor {
             if self.generalEditor == nil { self.generalEditor = GeneralEditorConfig() }
@@ -105,7 +126,13 @@ public class RenderConfigs: Object, Codable {
         jsonErrorHandling(decoder) {
             self.list = try decoder.decodeIfPresent("list") ?? self.list
             self.thumbnail = try decoder.decodeIfPresent("thumbnail") ?? self.thumbnail
+            self.thumbnail_grid = try decoder.decodeIfPresent("thumbnail.grid") ?? self.thumbnail_grid
+            self.thumbnail_waterfall = try decoder.decodeIfPresent("thumbnail.waterfall") ?? self.thumbnail_waterfall
             self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
+            
+            // TODO Refactor:
+//            let container = try decoder.singleValueContainer()
+//            let dictionary = try container.decode([String : Double].self)
             
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("virtual") {
                 let str = String(data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
@@ -159,7 +186,7 @@ public class RenderConfig: Object, Codable {
                        variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
         if _renderDescription == nil {
-            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item)")
+            print("WARNING, NO RENDERDESCRIPTION GIVEN FOR \(item.genericType) : \(item.uid)")
             return GUIElementInstance(GUIElementDescription(), item, variables)
         }
         else {

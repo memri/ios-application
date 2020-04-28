@@ -75,7 +75,6 @@
 		5D90464F243616B000632492 /* color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D90464E243616B000632492 /* color.swift */; };
 		5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* OrderedDictionary */; };
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
-		5DA7BAFB241A72640087B81D /* QGrid in Frameworks */ = {isa = PBXBuildFile; productRef = 5DA7BAFA241A72640087B81D /* QGrid */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
 		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
@@ -137,9 +136,13 @@
 		866F87DB2456AD76000E5FAB /* person.0x012.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D62456AD76000E5FAB /* person.0x012.json */; };
 		866F87DC2456AD76000E5FAB /* person.0x011.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D72456AD76000E5FAB /* person.0x011.json */; };
 		866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D72456AD76000E5FAB /* person.0x011.json */; };
+		866F87E524570891000E5FAB /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E424570891000E5FAB /* ASCollectionView */; };
+		866F87E7245708E6000E5FAB /* TextView in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E6245708E6000E5FAB /* TextView */; };
+		866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87E924572512000E5FAB /* ThumbGridRenderer.swift */; };
+		866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
-		86865D38244996AA0010271A /* WrapStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* WrapStack.swift */; };
+		86865D38244996AA0010271A /* FlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* FlowStack.swift */; };
 		869789EA24344A530003756B /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789E924344A530003756B /* schema.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
@@ -151,6 +154,11 @@
 		86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */; };
 		86A5D848243EC46700F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
 		86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86A5D847243EC46700F8FAD8 /* named_views.json */; };
+		86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */; };
+		86B7A6712457333000292E81 /* ThumbWaterfallRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */; };
+		86B7A6742457402C00292E81 /* MapRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A6732457402C00292E81 /* MapRenderer.swift */; };
+		86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A6752457404C00292E81 /* MapRendererView.swift */; };
+		86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A6772457F28A00292E81 /* KeyboardResponder.swift */; };
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
 		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
 		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
@@ -296,9 +304,11 @@
 		866F87D52456AD76000E5FAB /* person.0x013.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x013.json; sourceTree = "<group>"; };
 		866F87D62456AD76000E5FAB /* person.0x012.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x012.json; sourceTree = "<group>"; };
 		866F87D72456AD76000E5FAB /* person.0x011.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x011.json; sourceTree = "<group>"; };
+		866F87E924572512000E5FAB /* ThumbGridRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbGridRenderer.swift; sourceTree = "<group>"; };
+		866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbGridRendererView.swift; sourceTree = "<group>"; };
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
-		86865D37244996AA0010271A /* WrapStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WrapStack.swift; sourceTree = "<group>"; };
+		86865D37244996AA0010271A /* FlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowStack.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -309,6 +319,11 @@
 		86A5D840243CEB8000F8FAD8 /* ThumbnailRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailRenderer.swift; sourceTree = "<group>"; };
 		86A5D845243CED0E00F8FAD8 /* RichTextRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRenderer.swift; sourceTree = "<group>"; };
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
+		86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbWaterfallRendererView.swift; sourceTree = "<group>"; };
+		86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbWaterfallRenderer.swift; sourceTree = "<group>"; };
+		86B7A6732457402C00292E81 /* MapRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRenderer.swift; sourceTree = "<group>"; };
+		86B7A6752457404C00292E81 /* MapRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRendererView.swift; sourceTree = "<group>"; };
+		86B7A6772457F28A00292E81 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };
 		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		86C3A7362452BF65006D4F55 /* MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriButton.swift; sourceTree = "<group>"; };
 		86C3A7382452FFD4006D4F55 /* default_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_database.json; sourceTree = "<group>"; };
@@ -332,9 +347,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				866F87E524570891000E5FAB /* ASCollectionView in Frameworks */,
 				5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */,
-				5DA7BAFB241A72640087B81D /* QGrid in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
+				866F87E7245708E6000E5FAB /* TextView in Frameworks */,
 				39FDADE8F88621C2AA70F24A /* Pods_memri.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -514,12 +530,15 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
-				5D4C71EB2445E42700DF09E8 /* generalEditor */,
 				5DD1E9B923FD81C5007BDF7B /* Renderers.swift */,
 				5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */,
 				5D487F21244073DF00B50202 /* GUIElement.swift */,
+				5D4C71EB2445E42700DF09E8 /* generalEditor */,
 				86A5D842243CEBF400F8FAD8 /* list */,
 				86A5D843243CEC0300F8FAD8 /* thumbnail */,
+				866F87E824571E13000E5FAB /* thumbnail.grid */,
+				866F87ED24572FA9000E5FAB /* thumbnail.waterfall */,
+				86B7A6722457400600292E81 /* map */,
 				86A5D844243CEC2B00F8FAD8 /* richTextEditor */,
 			);
 			path = renderers;
@@ -738,16 +757,35 @@
 			path = persons;
 			sourceTree = "<group>";
 		};
+		866F87E824571E13000E5FAB /* thumbnail.grid */ = {
+			isa = PBXGroup;
+			children = (
+				866F87E924572512000E5FAB /* ThumbGridRenderer.swift */,
+				866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */,
+			);
+			path = thumbnail.grid;
+			sourceTree = "<group>";
+		};
+		866F87ED24572FA9000E5FAB /* thumbnail.waterfall */ = {
+			isa = PBXGroup;
+			children = (
+				86B7A66F2457333000292E81 /* ThumbWaterfallRenderer.swift */,
+				86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */,
+			);
+			path = thumbnail.waterfall;
+			sourceTree = "<group>";
+		};
 		86865D342449965B0010271A /* common */ = {
 			isa = PBXGroup;
 			children = (
 				86865D35244996900010271A /* styles.swift */,
-				86865D37244996AA0010271A /* WrapStack.swift */,
+				86865D37244996AA0010271A /* FlowStack.swift */,
 				86C3A7362452BF65006D4F55 /* MemriButton.swift */,
 				86C3A73424518763006D4F55 /* ItemCell.swift */,
 				866F87C8245434A1000E5FAB /* SubView.swift */,
 				866F87C2245354B5000E5FAB /* PickerPane.swift */,
 				866F87C524536626000E5FAB /* MapView.swift */,
+				86B7A6772457F28A00292E81 /* KeyboardResponder.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -785,6 +823,15 @@
 				5D493FDD23FC15FF0034692B /* RichTextRendererView.swift */,
 			);
 			path = richTextEditor;
+			sourceTree = "<group>";
+		};
+		86B7A6722457400600292E81 /* map */ = {
+			isa = PBXGroup;
+			children = (
+				86B7A6732457402C00292E81 /* MapRenderer.swift */,
+				86B7A6752457404C00292E81 /* MapRendererView.swift */,
+			);
+			path = map;
 			sourceTree = "<group>";
 		};
 		C818E60B241C3D640051E653 /* Utilities */ = {
@@ -834,8 +881,9 @@
 			name = memri;
 			packageProductDependencies = (
 				5DD17B60241293010018A8F1 /* AnyCodable */,
-				5DA7BAFA241A72640087B81D /* QGrid */,
 				5D9637B8244DBC400053EB84 /* OrderedDictionary */,
+				866F87E424570891000E5FAB /* ASCollectionView */,
+				866F87E6245708E6000E5FAB /* TextView */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -920,6 +968,8 @@
 				5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */,
 				5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */,
+				866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */,
+				866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1137,6 +1187,7 @@
 				5D1A3E6B2408086800A0583B /* Session_v1.swift in Sources */,
 				86A5D841243CEB8000F8FAD8 /* ThumbnailRenderer.swift in Sources */,
 				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
+				86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */,
 				5D4C71EF2445E4F200DF09E8 /* GeneralEditor.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
@@ -1145,6 +1196,7 @@
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				5D0EBA2924040D6300D9D842 /* Browser_v1.swift in Sources */,
+				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				866F87C624536626000E5FAB /* MapView.swift in Sources */,
 				5D487F22244073DF00B50202 /* GUIElement.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
@@ -1157,6 +1209,8 @@
 				869789EE2434CC750003756B /* Settings.swift in Sources */,
 				863CDB712441E69F000D7AC0 /* File.swift in Sources */,
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
+				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
+				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */,
 				5D228B062432385300464506 /* Action.swift in Sources */,
 				86A5D83F243CEB6700F8FAD8 /* ListRenderer.swift in Sources */,
@@ -1170,7 +1224,7 @@
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
 				5DD1E9B823FD814E007BDF7B /* Note.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
-				86865D38244996AA0010271A /* WrapStack.swift in Sources */,
+				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
@@ -1189,9 +1243,12 @@
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,
 				5D0EBA272404036600D9D842 /* Renderer_v1.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
+				866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
+				86B7A6742457402C00292E81 /* MapRenderer.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
+				86B7A6712457333000292E81 /* ThumbWaterfallRenderer.swift in Sources */,
 				5D2934F023FEA1CD0073E25F /* DataStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1603,6 +1660,22 @@
 				minimumVersion = 0.2.3;
 			};
 		};
+		866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kenmueller/TextView";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apptekstudios/ASCollectionView";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1611,15 +1684,20 @@
 			package = 5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */;
 			productName = OrderedDictionary;
 		};
-		5DA7BAFA241A72640087B81D /* QGrid */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */;
-			productName = QGrid;
-		};
 		5DD17B60241293010018A8F1 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */;
 			productName = AnyCodable;
+		};
+		866F87E424570891000E5FAB /* ASCollectionView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */;
+			productName = ASCollectionView;
+		};
+		866F87E6245708E6000E5FAB /* TextView */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */;
+			productName = TextView;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

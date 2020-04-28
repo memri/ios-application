@@ -253,13 +253,10 @@ public class Session: DataItem {
             else { return .inactive }
         }
         set (value) {
-            let doIt = {
+            realmWriteIfAvailable(self.realm) {
                 if value == .active { self.editMode = true }
                 else { self.editMode = false }
             }
-            
-            if self.realm!.isInWriteTransaction { doIt() }
-            else { try! self.realm!.write { doIt() } }
         }
     }
     

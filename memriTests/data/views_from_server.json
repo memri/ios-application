@@ -76,7 +76,7 @@
                                     "condition": "{!.labels.count}",
                                     "text": "no labels yet"
                                 },
-                                "WrapStack", {
+                                "FlowStack", {
                                     "list": "{.labels}"
                                 }, [
                                     "button", {
@@ -685,9 +685,11 @@
                                 "minHeight": 165,
                                 "view": {
                                     "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
+                                    "rendererName": "thumbnail.grid",
                                     "renderConfigs": {
-                                        "thumbnail": {
-                                            "columns": 5
+                                        "thumbnail.grid": {
+                                            "columns": 5,
+                                            "itemInset": 0
                                         }
                                     }
                                 },
@@ -758,7 +760,7 @@
                                     "condition": "{!.labels.count}",
                                     "text": "no labels yet"
                                 },
-                                "WrapStack", {
+                                "FlowStack", {
                                     "list": "{.labels}"
                                 }, [
                                     "button", {
@@ -1011,7 +1013,31 @@
         },
         
         "{[type:address]}": {
+            "rendererName": "list",
             "renderConfigs": {
+                "list": {
+                    "renderDescription": [
+                        "HStack", [
+                            "Text", {
+                                "text": "{.computeTitle()}",
+                                "font": [16],
+                                "padding": [0, 0, 10, 0]
+                            },
+                            "Spacer",
+                            "Map", {
+                                "address": "{dataItem}",
+                                "maxWidth": 150,
+                                "minHeight": 150,
+                                "maxHeight": 150,
+                                "cornerRadius": 10,
+                                "border": ["#DDD", 1],
+                                "margin": [0, 0, 10, 0]
+                            }
+                        ]
+                    ]
+                },
+                "map": {
+                },
                 "virtual": {
                     "generalEditor": [
                         "EditorRow", {
@@ -1062,15 +1088,91 @@
                         ]
                     ]
                 }
-            }
+            },
+            "filterButtons": [
+                { "actionName": "showStarred" },
+                { "actionName": "toggleFilterPanel" }
+            ]
         },
         "{type:address}": {
             "title": "{dataItem.computedTitle}",
             "rendererName": "generalEditor",
             "renderConfigs": {
                 "generalEditor": {
+                    "groups": {
+                        "dates": ["dateCreated", "dateModified", "dateAccessed", "changelog"],
+                        "address": ["street", "city", "state", "postalCode", "country"],
+                        "location": ["location"]
+                    },
+                    "sequence": ["location", "labels", "address", "other", "dates"],
                     "renderDescription": {
-                        
+                        "location": [
+                            "Map", {
+                                "for": "group",
+                                "sectionTitle": "",
+                                "location": "{.}",
+                                "minHeight": 150,
+                                "maxHeight": 150
+                            }
+                        ],
+                        "labels": [
+                            "VSTack", {
+                                "for": "group",
+                                "sectionTitle": "",
+                                "padding": [10, 36, 5, 36]
+                            }, [
+                                "Text", {
+                                    "condition": "{!.labels.count}",
+                                    "text": "no labels yet"
+                                },
+                                "FlowStack", {
+                                    "list": "{.labels}"
+                                }, [
+                                    "button", {
+                                        "press": {
+                                            "actionName": "openViewByName",
+                                            "actionArgs": [
+                                                "all-items-with-label",
+                                                {
+                                                    "name": "Soccer team",
+                                                    "uid": "0x0124"
+                                                }
+                                            ]
+                                        }
+                                    }, [
+                                        "VStack", {
+                                            "background": "{.color}",
+                                            "cornerRadius": 5
+                                        }, [
+                                            "Text", {
+                                                "text": "{.name}",
+                                                "font": [16, "semibold"],
+                                                "color": "#fff",
+                                                "padding": [5, 8, 5, 8]
+                                            }
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        "country": [
+                            "VStack", [
+                                "Text", {
+                                    "text": "{.country.name}",
+                                    "condition": "{readOnly}"
+                                },
+                                "Picker", {
+                                    "empty": "Country",
+                                    "value": "{.country}",
+                                    "default": "{me.address[primary = true].country}",
+                                    "condition": "{!readOnly}",
+                                    "queryOptions": {
+                                        "query": "country",
+                                        "sortProperty": "name"
+                                    }
+                                }
+                            ]
+                        ]
                     }
                 }
             },
@@ -1092,10 +1194,28 @@
             "rendererName": "thumbnail",
             "renderConfigs": {
                 "thumbnail": {
-                    "vSpacing": 2,
-                    "hSpacing": 2,
-                    "vPadding": 0,
-                    "hPadding": 0,
+                    "itemInset": 1,
+                    "edgeInset": [0,0,0,0],
+                    "renderDescription": [
+                        "Image", {
+                            "image": "{.file}",
+                            "resizable": "fill"
+                        }
+                    ]
+                },
+                "thumbnail.grid": {
+                    "itemInset": 1,
+                    "edgeInset": [0,0,0,0],
+                    "renderDescription": [
+                        "Image", {
+                            "image": "{.file}",
+                            "resizable": "fill"
+                        }
+                    ]
+                },
+                "thumbnail.waterfall": {
+                    "itemInset": 10,
+                    "edgeInset": [0,0,0,0],
                     "renderDescription": [
                         "Image", {
                             "image": "{.file}",

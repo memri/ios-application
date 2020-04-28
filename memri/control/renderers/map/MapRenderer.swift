@@ -1,5 +1,5 @@
 //
-//  ListConfig.swift
+//  MapConfig.swift
 //  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
@@ -8,26 +8,20 @@
 import Foundation
 import RealmSwift
 
-class ListRenderer: Renderer{
+class MapRenderer: Renderer{
     var mode:String = ""
     
     required init(){
         super.init()
-        self.name = "list"
+        self.name = "map"
         self.title = "Default"
-        self.order = 0
-        self.icon = "line.horizontal.3"
-        self.renderConfig = ListConfig()
+        self.order = 3
+        self.icon = "map"
+        self.renderConfig = MapConfig()
     }
     
     convenience required init(mode:String){
         self.init()
-        
-        if (mode == "alphabet") {
-            self.name = "list.alphabet"
-            self.order = 1
-            self.title = "Alphabet"
-        }
     }
     
     override func canDisplayResultSet(items: [DataItem]) -> Bool{
@@ -36,14 +30,11 @@ class ListRenderer: Renderer{
     }
 }
 
-class ListConfig: RenderConfig {
-    @objc dynamic var type: String? = "list"
+class MapConfig: RenderConfig {
+    @objc dynamic var type: String? = "map"
     @objc dynamic var browse: String? = ""
     @objc dynamic var longPress: ActionDescription? = nil
     @objc dynamic var press: ActionDescription? = nil
-    
-    let slideLeftActions = List<ActionDescription>()
-    let slideRightActions = List<ActionDescription>()
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -54,9 +45,6 @@ class ListConfig: RenderConfig {
             self.longPress = try decoder.decodeIfPresent("longPress") ?? self.longPress
             self.press = try decoder.decodeIfPresent("press") ?? self.press
             
-            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
-            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
-            
             try! self.superDecode(from: decoder)
         }
     }
@@ -65,16 +53,13 @@ class ListConfig: RenderConfig {
         super.init()
     }
     
-    public func merge(_ listConfig:ListConfig) {
-        self.type = listConfig.type ?? self.type
-        self.browse = listConfig.browse ?? self.browse
-        self.longPress = listConfig.longPress ?? self.longPress
-        self.press = listConfig.press ?? self.press
+    public func merge(_ mapConfig:MapConfig) {
+        self.type = mapConfig.type ?? self.type
+        self.browse = mapConfig.browse ?? self.browse
+        self.longPress = mapConfig.longPress ?? self.longPress
+        self.press = mapConfig.press ?? self.press
         
-        self.slideLeftActions.append(objectsIn: listConfig.slideLeftActions)
-        self.slideRightActions.append(objectsIn: listConfig.slideRightActions)
-        
-        super.superMerge(listConfig)
+        super.superMerge(mapConfig)
     }
 }
 

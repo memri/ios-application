@@ -364,7 +364,7 @@ extension Main {
             print("Warn: Can't go back. Already at earliest view in session")
         }
         else {
-            let duplicateSession = cache.duplicate(session as! DataItem) as! Session // This will work when merged with multiple-data-types branch
+            let duplicateSession = cache.duplicate(session as DataItem) as! Session // This will work when merged with multiple-data-types branch
             
             try! realm.write {
                 duplicateSession.currentViewIndex -= 1
@@ -408,7 +408,7 @@ extension Main {
         if !self.computedView.hasState(starButton.actionStateName!) {
         
             // Open named view 'showStarred'
-            openView("filter-starred", ["stateName": starButton.actionStateName])
+            openView("filter-starred", ["stateName": starButton.actionStateName as Any])
         }
         else {
             // Go back to the previous view
