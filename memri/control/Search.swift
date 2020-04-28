@@ -24,12 +24,14 @@ struct Search: View {
                 }
             }
             .padding(.horizontal, 15)
-            .padding(.vertical, 5)
+            .padding(.top, 5)
+            .padding(.bottom, 15)
             
             if self.main.currentSession.showFilterPanel {
                 FilterPanel()
             }
         }
+        .background(Color.white)
     }
 }
 
