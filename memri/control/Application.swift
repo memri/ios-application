@@ -55,7 +55,6 @@ struct Application: View {
                                 .opacity(self.showNavigation ? 0.40 : 0)
                                 .edgesIgnoringSafeArea(.vertical)
                                 .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                                .gesture(drag)
                         })
                     
                     if self.showNavigation {
