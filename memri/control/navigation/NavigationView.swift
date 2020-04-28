@@ -10,19 +10,10 @@ import SwiftUI
 struct Navigation: View {
     @EnvironmentObject var main: Main
     
-    @State var dragOffset = CGSize.zero
     @State var showSettings: Bool = false
     
-    private let foreGroundPercentageWidth: CGFloat = 0.9
-    
-    var offsetLeft: CGFloat {
-        return -(1.0 - foreGroundPercentageWidth) * (UIScreen.main.bounds.width)
-    }
-    
     public func hide(){
-        try! self.main.realm.write {
-            self.main.showNavigation = false
-        }
+        self.main.showNavigation = false
     }
     
     var body: some View {
@@ -58,8 +49,7 @@ struct Navigation: View {
                 }
             }
             .padding(.top, 40)
-            .padding(.leading, -offsetLeft + 20)
-            .padding(.trailing, 20)
+            .padding(.horizontal, 20)
             .frame(minHeight: 95)
             .background(Color(hex:"#492f6c"))
             
@@ -71,21 +61,9 @@ struct Navigation: View {
                 }
             }
             .padding(.top, 10)
-            .padding(.leading, -offsetLeft)
         }
-        .edgesIgnoringSafeArea(.vertical)
-        .frame(width: UIScreen.main.bounds.width * 0.95,
-               height: UIScreen.main.bounds.height)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(hex: "543184"))
-        .padding(.leading, offsetLeft + min(self.dragOffset.width, 0) )
-
-        .gesture(DragGesture()
-            .onChanged{ value in
-               self.dragOffset = value.translation
-            }
-            .onEnded{ value in
-                self.hide()
-            })
     }
 
     func item(_ navigationItem: NavigationItem) -> AnyView{

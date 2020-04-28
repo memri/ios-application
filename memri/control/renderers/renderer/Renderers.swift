@@ -130,6 +130,10 @@ public class RenderConfigs: Object, Codable {
             self.thumbnail_waterfall = try decoder.decodeIfPresent("thumbnail.waterfall") ?? self.thumbnail_waterfall
             self.generalEditor = try decoder.decodeIfPresent("generalEditor") ?? self.generalEditor
             
+            // TODO Refactor:
+//            let container = try decoder.singleValueContainer()
+//            let dictionary = try container.decode([String : Double].self)
+            
             if let parsedJSON:[String:AnyCodable] = try decoder.decodeIfPresent("virtual") {
                 let str = String(data: try! MemriJSONEncoder.encode(parsedJSON), encoding: .utf8)!
                 self.virtual = RenderConfig(name: "virtual", renderDescription: str)
