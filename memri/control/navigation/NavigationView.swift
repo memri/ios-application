@@ -15,7 +15,9 @@ struct Navigation: View {
     @State var showSettings: Bool = false
     
     public func hide(){
-        self.main.showNavigation = false
+        withAnimation {
+            self.main.showNavigation = false
+        }
     }
     
     var body: some View {
