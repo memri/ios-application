@@ -31,9 +31,11 @@ struct Application: View {
         
         let drag = DragGesture()
             .onEnded {
-                if $0.translation.width < -100 {
-                    withAnimation {
-                        self.main.showNavigation = false
+                if self.showNavigation {
+                    if $0.translation.width < -100 {
+                        withAnimation {
+                            self.main.showNavigation = false
+                        }
                     }
                 }
             }
@@ -49,18 +51,11 @@ struct Application: View {
                         .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
                         .disabled(self.showNavigation ? true : false)
                         .overlay(Group{
-                            if self.showNavigation {
-                                Color.black
-                                    .opacity(0.40)
-                                    .edgesIgnoringSafeArea(.vertical)
-                                    .transition(.opacity)
-                                    .gesture(TapGesture()
-                                        .onEnded{ value in
-                                            withAnimation {
-                                                self.main.showNavigation = false
-                                            }
-                                        })
-                            }
+                            Color.black
+                                .opacity(self.showNavigation ? 0.40 : 0)
+                                .edgesIgnoringSafeArea(.vertical)
+                                .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
+                                .gesture(drag)
                         })
                     
                     if self.showNavigation {
