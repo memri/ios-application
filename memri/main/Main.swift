@@ -3,6 +3,23 @@ import Combine
 import SwiftUI
 import RealmSwift
 
+/**
+ Notes on documentation
+ 
+ We use the following documentation keywords
+ - bug
+ - Remark
+ - Requires
+ - See also
+ - warning
+
+ Also remember, when using markdown in your documentation
+ - Use backticks for code
+ */
+
+
+
+
 public class Main: ObservableObject {
     /**
      *
@@ -190,7 +207,8 @@ public class Main: ObservableObject {
     struct Alias {
         var key:String
         var type:String
-        var on:() -> Void
+        var on:(() -> Void)?
+        var off:(() -> Void)?
     }
     
     var aliases:[String:Alias] = [:]
@@ -222,7 +240,8 @@ public class Main: ObservableObject {
             let alias = aliases[propName]!
             settings.set(alias.key, AnyCodable(newValue))
             
-            if let x = newValue as? Bool, x { alias.on() }
+            if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
+            
             
             scheduleUIUpdate{_ in true}
         }
@@ -232,6 +251,12 @@ public class Main: ObservableObject {
         get { return self["showSessionSwitcher"] as! Bool }
         set(value) { self["showSessionSwitcher"] = value }
     }
+    
+    // TODO Refactor: use a property wrapper to apply state recording in settings
+    public var showNavigationBinding = Binding<Bool>(
+        get: { return true },
+        set: { let _ = $0 }
+    )
     
     public var showNavigation:Bool {
         get { return self["showNavigation"] as! Bool }
@@ -330,9 +355,15 @@ public class RootMain: Main {
             self.currentSession.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
         }
         
+        // TODO Refactor: This is a mess. Create a nice API, possible using property wrappers
         aliases = [
            "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
-           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
+           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:{
+                self.showNavigationBinding.wrappedValue = true
+                takeScreenShot()
+           }, off: {
+                self.showNavigationBinding.wrappedValue = false
+           })
        ]
         
         cache.scheduleUIUpdate = scheduleUIUpdate
@@ -340,6 +371,16 @@ public class RootMain: Main {
         
         // Make settings global so it can be reached everywhere
         globalSettings = settings
+    }
+    
+    // TODO Refactor: This is a mess.
+    public func initNavigation(_ showNav:Binding<Bool>) {
+        self.showNavigationBinding = showNav
+        if self.showNavigation {
+            DispatchQueue.main.async {
+                showNav.wrappedValue = true
+            }
+        }
     }
     
     public func createProxy(_ session:Session) -> Main {

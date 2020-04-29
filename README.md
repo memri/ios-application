@@ -6,3 +6,9 @@ Can't wait? Cool! Reach out to us via our [Slack](https://app.slack.com/client/T
 
 ## Installation
 ```brew install nshipster/formulae/swift-format```
+
+```[sudo] gem install jazzy```
+
+## Run formatter
+*make sure to run this from the repo directory only*
+```swift-format . --configuration .swift-format.json```

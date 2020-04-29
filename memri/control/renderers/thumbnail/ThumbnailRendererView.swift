@@ -2,21 +2,11 @@
 //  TumbnailRenderer.swift
 //  memri
 //
-//  Created by Koen van der Veen on 10/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
 import SwiftUI
-import QGrid
-
-extension Text {
-    func asThumbnail(withMaxWidth maxWidth: CGFloat = 120) -> some View {
-        self.bold()
-            .frame(minWidth: maxWidth, maxWidth: maxWidth, minHeight: maxWidth, maxHeight: maxWidth)
-            .background(Color(red: 250 / 255, green: 252 / 255, blue: 252 / 255))
-    }
-}
-
+import ASCollectionView
 
 struct ThumbnailRendererView: View {
     @EnvironmentObject var main: Main
@@ -31,8 +21,62 @@ struct ThumbnailRendererView: View {
         return self.main.computedView.renderConfigs[name] as? ThumbnailConfig ?? ThumbnailConfig()
     }
     
+    var layout: ASCollectionLayout<Int> {
+        ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
+            ASCollectionLayoutSection {
+                let gridBlockSize = NSCollectionLayoutDimension
+                    .fractionalWidth(1 / CGFloat(self.renderConfig.columns.value ?? 3))
+                
+                let item = NSCollectionLayoutItem(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: gridBlockSize,
+                        heightDimension: .fractionalHeight(1.0)))
+                
+                let inset = CGFloat(self.renderConfig.itemInset.value ?? 5)
+                item.contentInsets = NSDirectionalEdgeInsets(
+                    top: inset, leading: inset, bottom: inset, trailing: inset)
+
+                let itemsGroup = NSCollectionLayoutGroup.horizontal(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: gridBlockSize),
+                    subitems: [item])
+
+                let section = NSCollectionLayoutSection(group: itemsGroup)
+                return section
+            }
+        }
+    }
+    
+    var section: ASCollectionViewSection<Int> {
+        ASCollectionViewSection (id: 0, data: main.items) { dataItem, state in
+            ZStack (alignment: .bottomTrailing) {
+                self.renderConfig.render(item: dataItem)
+                    .onTapGesture {
+                        if let press = self.renderConfig.press {
+                            self.main.executeAction(press, dataItem)
+                        }
+                    }
+
+                if state.isSelected {
+                    ZStack {
+                        Circle().fill(Color.blue)
+                        Circle().strokeBorder(Color.white, lineWidth: 2)
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 10, weight: .bold))
+                            .foregroundColor(.white)
+                    }
+                    .frame(width: 20, height: 20)
+                    .padding(10)
+                }
+            }
+        }
+    }
+    
     var body: some View {
-        VStack {
+        let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
+        
+        return VStack {
             if main.computedView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
@@ -47,23 +91,13 @@ struct ThumbnailRendererView: View {
                 Spacer()
             }
             else {
-                // TODO: vPadding, hPadding, vSpacing, hSpacing, columnsInLandscape
-                QGrid(main.items,
-                      columns: renderConfig.columns.value ?? 3,
-                      columnsInLandscape: renderConfig.columnsInLandscape.value ?? 5,
-                      vSpacing: CGFloat(renderConfig.vSpacing.value ?? 10),
-                      hSpacing: CGFloat(renderConfig.hSpacing.value ?? 10),
-                      vPadding: CGFloat(renderConfig.vPadding.value ?? 20),
-                      hPadding: CGFloat(renderConfig.hPadding.value ?? 20)
-                ) { dataItem in
-                    
-                    self.renderConfig.render(item: dataItem)
-                        .onTapGesture {
-                            if let press = self.renderConfig.press {
-                                self.main.executeAction(press, dataItem)
-                            }
-                        }
-                }
+                ASCollectionView (section: section)
+                    .layout (self.layout)
+                    .contentInsets(.init(
+                        top: edgeInset[safe: 0] ?? 0,
+                        left: edgeInset[safe: 3] ?? 0,
+                        bottom: edgeInset[safe: 2] ?? 0,
+                        right: edgeInset[safe: 1] ?? 0))
             }
         }
     }

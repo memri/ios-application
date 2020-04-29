@@ -2,7 +2,6 @@
 //  ListConfig.swift
 //  memri
 //
-//  Created by Ruben Daniels on 4/7/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -14,6 +13,7 @@ class ThumbnailRenderer: Renderer{
         super.init()
         self.name = "thumbnail"
         self.title = "Default"
+        self.order = 10
         self.icon = "square.grid.3x2.fill"
         self.renderConfig = ThumbnailConfig()
 
@@ -30,14 +30,8 @@ class ThumbnailConfig: RenderConfig {
     @objc dynamic var press: ActionDescription? = nil
     
     let columns = RealmOptional<Int>()
-    let vPadding = RealmOptional<Int>()
-    let hPadding = RealmOptional<Int>()
-    let vSpacing = RealmOptional<Int>()
-    let hSpacing = RealmOptional<Int>()
-    let columnsInLandscape = RealmOptional<Int>()
-    
-    let slideLeftActions = List<ActionDescription>()
-    let slideRightActions = List<ActionDescription>()
+    let itemInset = RealmOptional<Int>()
+    let edgeInset = List<Int>()
     
     public convenience required init(from decoder: Decoder) throws {
         self.init()
@@ -49,14 +43,9 @@ class ThumbnailConfig: RenderConfig {
             self.press = try decoder.decodeIfPresent("press") ?? self.press
             
             self.columns.value = try decoder.decodeIfPresent("columns") ?? self.columns.value
-            self.vPadding.value = try decoder.decodeIfPresent("vPadding") ?? self.vPadding.value
-            self.hPadding.value = try decoder.decodeIfPresent("hPadding") ?? self.hPadding.value
-            self.vSpacing.value = try decoder.decodeIfPresent("vSpacing") ?? self.vSpacing.value
-            self.hSpacing.value = try decoder.decodeIfPresent("hSpacing") ?? self.hSpacing.value
-            self.columnsInLandscape.value = try decoder.decodeIfPresent("columnsInLandscape") ?? self.columnsInLandscape.value
+            self.itemInset.value = try decoder.decodeIfPresent("itemInset") ?? self.itemInset.value
             
-            decodeIntoList(decoder, "slideLeftActions", self.slideLeftActions)
-            decodeIntoList(decoder, "slideRightActions", self.slideRightActions)
+            decodeIntoList(decoder, "edgeInset", self.edgeInset)
             
             try! self.superDecode(from: decoder)
         }
@@ -73,14 +62,9 @@ class ThumbnailConfig: RenderConfig {
         self.press = thumbnailConfig.press ?? self.press
         
         self.columns.value = thumbnailConfig.columns.value ?? self.columns.value
-        self.vPadding.value = thumbnailConfig.vPadding.value ?? self.vPadding.value
-        self.hPadding.value = thumbnailConfig.hPadding.value ?? self.hPadding.value
-        self.vSpacing.value = thumbnailConfig.vSpacing.value ?? self.vSpacing.value
-        self.hSpacing.value = thumbnailConfig.hSpacing.value ?? self.hSpacing.value
-        self.columnsInLandscape.value = thumbnailConfig.columnsInLandscape.value ?? self.columnsInLandscape.value
+        self.itemInset.value = thumbnailConfig.itemInset.value ?? self.itemInset.value
         
-        self.slideLeftActions.append(objectsIn: thumbnailConfig.slideLeftActions)
-        self.slideRightActions.append(objectsIn: thumbnailConfig.slideRightActions)
+        self.edgeInset.append(objectsIn: thumbnailConfig.edgeInset)
         
         super.superMerge(thumbnailConfig)
     }

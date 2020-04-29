@@ -133,6 +133,8 @@ public class Cache {
     public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
     
     
+    /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
+    /// - Parameter api: api object
     public init(_ api: PodAPI){
                 
         // Tell Realm to use this new configuration object for the default Realm
@@ -153,9 +155,8 @@ public class Cache {
         sync.cache = self
     }
     
-    /**
-     *
-     */
+    
+    /// gets default item from database, and adds them to realm
     public func install() {
         // Load default database from disk
         let jsonData = try! jsonDataFromFile("default_database")
@@ -184,7 +185,11 @@ public class Cache {
     }
     
     /**
-     *
+     *  This function does two things 1) executes a query on the local realm database with given querOptions, and executes callback on the result.
+     *  2) calls the syncer with the same queryOptions to execute the query on the pod.
+     * - Parameters:
+     *   - queryOptions: queryOptions for the query, containing datatype(s), filters, sortInstructions etc.
+     *   - callback: action exectued on the result
      */
     public func query(_ queryOptions:QueryOptions,
                       _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
@@ -244,6 +249,9 @@ public class Cache {
         }
     }
     
+    /// Parses the query string, which whould be of format \<type\>\<space\>\<filter-text\>
+    /// - Parameter query: query string
+    /// - Returns: (type to query, filter to apply)
     public func parseQuery(_ query: String) -> (type:String, filter:String?) {
         if let _ = query.firstIndex(of: " ") {
             let splits = query.split(separator: " ")
@@ -287,7 +295,11 @@ public class Cache {
     }
     
     /**
-     *
+     * retrieves item from realm by type and uid.
+     * - Parameters:
+     *   - type: realm type
+     *   - uid: item uid
+     * - Returns: retrieved item. If the item does not exist, returns nil.
      */
     public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
         let type = DataItemFamily(rawValue: type)
@@ -298,10 +310,7 @@ public class Cache {
         return nil
     }
     
-    /**
-     *
-     */
-    public func addToCache(_ item:DataItem) throws -> DataItem {
+    private func mergeWithCache(_ item: DataItem) throws -> DataItem?  {
         // Check if this is a new item or an existing one
         if item.uid.contains("0xNEW") {
             // Schedule to be created on the pod
@@ -313,7 +322,7 @@ public class Cache {
                 
                 // Do nothing when the version is not higher then what we already have
                 if !cachedItem.syncState!.isPartiallyLoaded
-                  && item.syncState!.version <= cachedItem.syncState!.version {
+                    && item.syncState!.version <= cachedItem.syncState!.version {
                     return cachedItem
                 }
                 
@@ -336,10 +345,10 @@ public class Cache {
                 }
             }
         }
-        
-        // Add item to realm
-        try realm.write() { realm.add(item, update: .modified) }
-        
+        return nil
+    }
+    
+    private func bindSyncing(_ item: DataItem) {
         // Update the sync state when the item changes
         rlmTokens.append(item.observe { (objectChange) in
             if case let .change(propChanges) = objectChange {
@@ -348,7 +357,7 @@ public class Cache {
                     let syncState = item.syncState!
                     
                     func doAction(){
-                    
+                        
                         // Mark item for updating
                         syncState.actionNeeded = "update"
                         
@@ -375,13 +384,33 @@ public class Cache {
                 }
             }
         })
+    }
+    
+    /// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
+    /// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
+    /// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
+    /// the the item changes
+    /// - Parameter item:DataItem to be added
+    /// - Throws: Sync conflict exception
+    /// - Returns: cached dataItem
+    public func addToCache(_ item:DataItem) throws -> DataItem {
+        
+        if let newerItem = try! mergeWithCache(item){
+            return newerItem
+        }
+        
+        // Add item to realm
+        try realm.write() { realm.add(item, update: .modified) }
+        
+        bindSyncing(item)
         
         return item
     }
     
     /**
-     * Sets deleted to true
-     * All methods and properties must throw when deleted = true;
+     * sets delete to true in the syncstate, for an array of items
+     * - Parameter item: item to be deleted
+     * - Remark: All methods and properties must throw when deleted = true;
      */
     public func delete(_ item:DataItem) {
         if (!item.deleted) {
@@ -392,6 +421,10 @@ public class Cache {
         }
     }
     
+    /**
+     * sets delete to true in the syncstate, for an array of items
+     * - Parameter items: items to be deleted
+     */
     public func delete(_ items:[DataItem]) {
         try! self.realm.write {
             for item in items {
@@ -404,7 +437,9 @@ public class Cache {
     }
     
     /**
-     * Does not copy the id property
+     * - Parameter item: item to be duplicated
+     * - Remark:Does not copy the id property
+     * - Returns: copied item
      */
     public func duplicate(_ item:DataItem) -> DataItem {
         let cls = item.getType()

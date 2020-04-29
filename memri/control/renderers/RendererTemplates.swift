@@ -20,17 +20,6 @@ class CalendarRenderer: Renderer{
     }
 }
 
-class MapRenderer: Renderer{
-    required init(){
-        super.init()
-        self.name = "map"
-        self.icon = "location.fill"
-    }
-    override func canDisplayResultSet(items: [DataItem]) -> Bool{
-        return false
-    }
-}
-
 class graphRenderer: Renderer{
     required init(){
         super.init()

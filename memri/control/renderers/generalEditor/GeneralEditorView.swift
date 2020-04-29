@@ -12,9 +12,6 @@ import RealmSwift
 /*
  TODO:
     - Add + button behavior near grouped sections
-        - Open the subview in a popup: .openViewAsPopup()
-        - requires implementing subview (which is good to prepare for the refactor)
-        - also requires a version of Main only for the subview
     - Permutations of groups:
         - Custom group (each field is a row renderer based on its type)
             - if it is an object type, then a virtual renderer definition is sought
@@ -42,21 +39,6 @@ import RealmSwift
               (e.g. everyone on a diet, or with that label)
         - Clicking on a memri button in readwrite mode allows to change it into something else.
           Though in most cases in readwrite mode it doesnt show the memri button
-    - Evolve EditorRow
-        - e.g. "phoneNumbers": ["EditorRow", {
-            "title": "{.type}",
-            "type-hierarchy": "phoneNumber",
-            "field": "{.number}",
-            "formatter": "{.format()}"
-        }]
-         - e.g. "addresses": ["EditorRow", {
-             "title": "{.name or .type}",
-             "type-hierarchy": "address"
-         }, [ ... ]]
-        - make sure that fully custom rows have an archive button (for person broken heart)
-            - requires separate views for editMode and view mode
-        - add .each to the title of a group to execute it for each element
-            - e.g. "phoneNumbers.each": {}
     - By default use ItemCell to render each item of a list. Search for generalEditor virtual
       renderer. Implement a type:* virtual renderer that renders using the buttons. Implement the
       buttons using subview.
@@ -67,6 +49,7 @@ import RealmSwift
  
     LATER:
     - Create a nice scrolling version of ProfilePicture in a reusable element
+        - https://blckbirds.com/post/stretchy-header-and-parallax-scrolling-in-swiftui/
     - Implement Image picker
     - Implement Color picker
     - Implement the buttons as a non-property section

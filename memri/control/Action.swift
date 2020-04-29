@@ -58,7 +58,11 @@ struct ActionButton: View {
     }
     
     var body: some View {
-        Button(action: { self.execute?() } ) {
+        Button(action: {
+            withAnimation {
+                self.execute?()
+            }
+        }) {
             if action.icon != "" {
                 Image(systemName: action.icon)
                     .fixedSize()

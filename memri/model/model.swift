@@ -3,7 +3,6 @@ import Combine
 import RealmSwift
 
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
-    
     /**
      *
      */
