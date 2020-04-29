@@ -116,7 +116,7 @@ class CacheTest: XCTestCase {
             if prop.name != cls.primaryKey(){
                 item!.isEqualProperty(prop.name, copy)
             }
-        }
+        }   
     }
 
     func testPerformanceExample() {

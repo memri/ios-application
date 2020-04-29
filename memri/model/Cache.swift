@@ -86,8 +86,6 @@ import RealmSwift
  */
 
 var config = Realm.Configuration(
-//    fileURL: URL(string: "file:///Users/rubendaniels/Development/realm/memri.realm"),
-    
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
     schemaVersion: 50,
@@ -103,6 +101,8 @@ var config = Realm.Configuration(
         }
     })
 
+/// Computes the Realm path /home/<user>/realm.memri and creates the directory if it does not exist.
+/// - Returns: the computed directory
 func getRealmPath() -> String{
     let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
     let realmDir = homeDir + "/realm.memri"
