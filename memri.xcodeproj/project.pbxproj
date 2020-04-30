@@ -47,6 +47,12 @@
 		5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57424476FFB00562AAC /* note.0x01.json */; };
 		5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D414AD7242B875F00A3DDFA /* FilterPanel.swift */; };
 		5D41618B23FFE2730017EC4A /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D41618A23FFE2730017EC4A /* TestView.swift */; };
+		5D42A8F0245ADE210093D85F /* LEOTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8EA245ADE210093D85F /* LEOTextStorage.swift */; };
+		5D42A8F1245ADE210093D85F /* LEOTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8EB245ADE210093D85F /* LEOTextView.swift */; };
+		5D42A8F2245ADE210093D85F /* LEOTextUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8EC245ADE210093D85F /* LEOTextUtil.swift */; };
+		5D42A8F3245ADE210093D85F /* LEOTextViewStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8ED245ADE210093D85F /* LEOTextViewStructs.swift */; };
+		5D42A8F4245ADE210093D85F /* LEOTextView+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8EE245ADE210093D85F /* LEOTextView+Toolbar.swift */; };
+		5D42A8F5245ADE210093D85F /* LEOTextView+UITextViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8EF245ADE210093D85F /* LEOTextView+UITextViewDelegate.swift */; };
 		5D487F22244073DF00B50202 /* GUIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D487F21244073DF00B50202 /* GUIElement.swift */; };
 		5D487F242440772100B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
 		5D487F252440772D00B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
@@ -77,6 +83,7 @@
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
 		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
+		5DB8EC682459DA190028FD2E /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB8EC602459D9650028FD2E /* NSAttributedString+SafeReplace.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692924093E7000367905 /* sessions_manually_expanded.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692524093BD300367905 /* sessions_manually_expanded.json */; };
@@ -235,6 +242,12 @@
 		5D3EE57424476FFB00562AAC /* note.0x01.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x01.json; sourceTree = "<group>"; };
 		5D414AD7242B875F00A3DDFA /* FilterPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPanel.swift; sourceTree = "<group>"; };
 		5D41618A23FFE2730017EC4A /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		5D42A8EA245ADE210093D85F /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
+		5D42A8EB245ADE210093D85F /* LEOTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextView.swift; sourceTree = "<group>"; };
+		5D42A8EC245ADE210093D85F /* LEOTextUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextUtil.swift; sourceTree = "<group>"; };
+		5D42A8ED245ADE210093D85F /* LEOTextViewStructs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextViewStructs.swift; sourceTree = "<group>"; };
+		5D42A8EE245ADE210093D85F /* LEOTextView+Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LEOTextView+Toolbar.swift"; sourceTree = "<group>"; };
+		5D42A8EF245ADE210093D85F /* LEOTextView+UITextViewDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LEOTextView+UITextViewDelegate.swift"; sourceTree = "<group>"; };
 		5D487F21244073DF00B50202 /* GUIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GUIElement.swift; sourceTree = "<group>"; };
 		5D487F232440772100B50202 /* list_item_component.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = list_item_component.json; sourceTree = "<group>"; };
 		5D487F262440776700B50202 /* ItemRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ItemRendererTest.swift; path = memriTests/data/ItemRendererTest.swift; sourceTree = SOURCE_ROOT; };
@@ -265,6 +278,7 @@
 		5D98DBD8243B598100046F3E /* MainActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainActions.swift; sourceTree = "<group>"; };
 		5DB66FB42431DD41007736D6 /* mainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainTest.swift; sourceTree = "<group>"; };
 		5DB66FB62431DEB0007736D6 /* realmTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = realmTest.swift; sourceTree = "<group>"; };
+		5DB8EC602459D9650028FD2E /* NSAttributedString+SafeReplace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+SafeReplace.swift"; path = "memri/extension/NSAttibutedString/NSAttributedString+SafeReplace.swift"; sourceTree = SOURCE_ROOT; };
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
@@ -468,6 +482,8 @@
 		5D1A3E62240704BF00A0583B /* extension */ = {
 			isa = PBXGroup;
 			children = (
+				5D42A8E4245ADD640093D85F /* LEOTextView */,
+				5D42A8DB245AD7FF0093D85F /* NSAttibutedString */,
 				5D90464D243616A100632492 /* color */,
 				5D3D96222416764A0004040E /* codable */,
 			);
@@ -534,7 +550,6 @@
 				5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */,
 				5D487F21244073DF00B50202 /* GUIElement.swift */,
 				5D4C71EB2445E42700DF09E8 /* generalEditor */,
-				86A5D842243CEBF400F8FAD8 /* list */,
 				86A5D843243CEC0300F8FAD8 /* thumbnail */,
 				866F87E824571E13000E5FAB /* thumbnail.grid */,
 				866F87ED24572FA9000E5FAB /* thumbnail.waterfall */,
@@ -542,6 +557,27 @@
 				86A5D844243CEC2B00F8FAD8 /* richTextEditor */,
 			);
 			path = renderers;
+			sourceTree = "<group>";
+		};
+		5D42A8DB245AD7FF0093D85F /* NSAttibutedString */ = {
+			isa = PBXGroup;
+			children = (
+				5DB8EC602459D9650028FD2E /* NSAttributedString+SafeReplace.swift */,
+			);
+			path = NSAttibutedString;
+			sourceTree = "<group>";
+		};
+		5D42A8E4245ADD640093D85F /* LEOTextView */ = {
+			isa = PBXGroup;
+			children = (
+				5D42A8EA245ADE210093D85F /* LEOTextStorage.swift */,
+				5D42A8EC245ADE210093D85F /* LEOTextUtil.swift */,
+				5D42A8EB245ADE210093D85F /* LEOTextView.swift */,
+				5D42A8EE245ADE210093D85F /* LEOTextView+Toolbar.swift */,
+				5D42A8EF245ADE210093D85F /* LEOTextView+UITextViewDelegate.swift */,
+				5D42A8ED245ADE210093D85F /* LEOTextViewStructs.swift */,
+			);
+			path = LEOTextView;
 			sourceTree = "<group>";
 		};
 		5D487F1C2440735E00B50202 /* Recovered References */ = {
@@ -568,6 +604,7 @@
 		5D4C71EB2445E42700DF09E8 /* generalEditor */ = {
 			isa = PBXGroup;
 			children = (
+				86A5D842243CEBF400F8FAD8 /* list */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D4C71EE2445E4F200DF09E8 /* GeneralEditor.swift */,
 			);
@@ -1188,6 +1225,8 @@
 				86A5D841243CEB8000F8FAD8 /* ThumbnailRenderer.swift in Sources */,
 				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
 				86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */,
+				5DB8EC682459DA190028FD2E /* NSAttributedString+SafeReplace.swift in Sources */,
+				5D42A8F4245ADE210093D85F /* LEOTextView+Toolbar.swift in Sources */,
 				5D4C71EF2445E4F200DF09E8 /* GeneralEditor.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
@@ -1196,11 +1235,13 @@
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				5D0EBA2924040D6300D9D842 /* Browser_v1.swift in Sources */,
+				5D42A8F0245ADE210093D85F /* LEOTextStorage.swift in Sources */,
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				866F87C624536626000E5FAB /* MapView.swift in Sources */,
 				5D487F22244073DF00B50202 /* GUIElement.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
+				5D42A8F5245ADE210093D85F /* LEOTextView+UITextViewDelegate.swift in Sources */,
 				86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */,
 				861439F22435942A008D6B5B /* Installer.swift in Sources */,
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
@@ -1223,7 +1264,10 @@
 				5D41618B23FFE2730017EC4A /* TestView.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
 				5DD1E9B823FD814E007BDF7B /* Note.swift in Sources */,
+				5D42A8F2245ADE210093D85F /* LEOTextUtil.swift in Sources */,
+				5D42A8F1245ADE210093D85F /* LEOTextView.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
+				5D42A8F3245ADE210093D85F /* LEOTextViewStructs.swift in Sources */,
 				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
