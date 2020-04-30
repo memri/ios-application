@@ -72,9 +72,7 @@ class Sync {
         prioritySyncAll()
     }
     
-    /**
-     *
-     */
+ 
     public func syncQuery(_ queryOptions:QueryOptions) {
         // TODO if this query was executed recently, considering postponing action
         
@@ -160,9 +158,7 @@ class Sync {
         }
     }
     
-    /**
-     * Schedule a syncing round
-     */
+    /// Schedule a syncing round
     public func schedule(){
         // Don't schedule when we are already scheduled
         if !scheduled {
@@ -202,9 +198,7 @@ class Sync {
         // TODO
     }
     
-    /**
-     *
-     */
+ 
     public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         switch item.syncState!.actionNeeded {
         case "create":

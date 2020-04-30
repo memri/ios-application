@@ -11,9 +11,7 @@ import SwiftUI
 
 public class ComputedView: ObservableObject {
 
-    /**
-     *
-     */
+ 
     var queryOptions: QueryOptions = QueryOptions()
     var resultSet: ResultSet
 
@@ -193,9 +191,7 @@ public class ComputedView: ObservableObject {
         filterText = _filterText
     }
 
-    /**
-     * Validates a merged view
-     */
+    /// Validates a merged view
     public func validate() throws {
         if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
         

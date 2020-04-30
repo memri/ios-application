@@ -67,29 +67,17 @@ class Renderer: ActionDescription, ObservableObject{
 }
 
 public class RenderConfigs: Object, Codable {
-    /**
-     *
-     */
+ 
     @objc dynamic var list: ListConfig? = nil
-    /**
-     *
-     */
+ 
     @objc dynamic var thumbnail: ThumbnailConfig? = nil
-    /**
-     *
-     */
+ 
     @objc dynamic var thumbnail_grid: ThumbGridConfig? = nil
-    /**
-     *
-     */
+ 
     @objc dynamic var thumbnail_waterfall: ThumbWaterfallConfig? = nil
-    /**
-     *
-     */
+ 
     @objc dynamic var generalEditor: GeneralEditorConfig? = nil
-    /**
-     *
-     */
+ 
     @objc dynamic var virtual: RenderConfig? = nil
     
     public func merge(_ renderConfigs:RenderConfigs) {
@@ -143,14 +131,10 @@ public class RenderConfigs: Object, Codable {
 }
 
 public class RenderConfig: Object, Codable {
-    /**
-     *
-     */
+ 
     @objc dynamic var name: String? = nil
     
-    /**
-     *
-     */
+ 
     @objc dynamic var _renderDescription: String? = nil
     
     convenience init(name:String, renderDescription:String) {
@@ -160,9 +144,7 @@ public class RenderConfig: Object, Codable {
         self._renderDescription = renderDescription
     }
     
-    /**
-     *
-     */
+ 
     var renderDescription: [String:GUIElementDescription]? {
         guard let rd = self._renderDescription else {
             return nil
@@ -179,9 +161,7 @@ public class RenderConfig: Object, Codable {
         return nil
     }
     
-    /**
-     *
-     */
+ 
     public func render(item:DataItem, part:String = "*",
                        variables:[String:() -> Any] = [:]) -> GUIElementInstance {
         
@@ -199,9 +179,7 @@ public class RenderConfig: Object, Codable {
         }
     }
     
-    /**
-     *
-     */
+ 
     public func superMerge(_ renderConfig:RenderConfig) {
         self.name = renderConfig.name ?? self.name
         
@@ -217,9 +195,7 @@ public class RenderConfig: Object, Codable {
         }
     }
     
-    /**
-     * @private
-     */
+    /// @private
     public func superDecode(from decoder: Decoder) throws {
         self.name = try decoder.decodeIfPresent("name") ?? self.name
         

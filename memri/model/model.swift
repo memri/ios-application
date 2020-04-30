@@ -2,59 +2,36 @@ import Foundation
 import Combine
 import RealmSwift
 
+/// DataItem is the baseclass for all of the data clases, all functions
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
-    /**
-     *
-     */
+ 
     var genericType:String { "unknown" }
     
-    /**
-     *
-     */
+ 
     var computeTitle:String {
         return "\(genericType) [\(uid)]"
     }
     
-    /**
-     *
-     */
+ 
     @objc dynamic var uid:String = DataItem.generateUID()
-    /**
-     *
-     */
+ 
     @objc dynamic var deleted:Bool = false
-    /**
-     *
-     */
+ 
     @objc dynamic var starred:Bool = false
-    /**
-     *
-     */
+ 
     @objc dynamic var dateCreated:Date? = Date()
-    /**
-     *
-     */
+ 
     @objc dynamic var dateModified:Date? = Date()
-    /**
-     * 
-     */
+
     @objc dynamic var dateAccessed:Date? = nil
-    /**
-     *
-     */
+ 
     let changelog = List<LogItem>()
-    /**
-     *
-     */
+ 
     let labels = List<memri.Label>()
-    /**
-     *
-     */
+ 
     @objc dynamic var syncState:SyncState? = SyncState()
     
-    /**
-     *
-     */
+ 
     var functions:[String: (_ args:[Any]?) -> String] = [:]
     
     public override static func primaryKey() -> String? {
@@ -89,9 +66,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /**
-     * @private
-     */
+    required public convenience init(from decoder: Decoder) throws{
+        self.init()
+        try! superDecode(from: decoder)
+    }
+    
+    /// @private
     public func superDecode(from decoder: Decoder) throws {
         uid = try decoder.decodeIfPresent("uid") ?? uid
         starred = try decoder.decodeIfPresent("starred") ?? starred
@@ -106,9 +86,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         decodeIntoList(decoder, "labels", self.labels)
     }
     
-    /**
-     *
-     */
+ 
     public func getString(_ name:String) -> String {
         if self.objectSchema[name] == nil {
             
@@ -151,9 +129,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return T() as! DataItem.Type
     }
     
-    /**
-     *
-     */
+ 
     public func set(_ name:String, _ value:Any) {
         try! self.realm!.write() {
             self[name] = value
@@ -169,9 +145,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /**
-     *
-     */
+ 
     public func match(_ needle:String) -> Bool{
         let properties = self.objectSchema.properties
         for prop in properties {
@@ -312,25 +286,15 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 }
 
 public class ResultSet: ObservableObject {
-    /**
-     *
-     */
+ 
     var queryOptions: QueryOptions = QueryOptions(query: "")
-    /**
-     * Retrieves the data loaded from the pod
-     */
+    /// Retrieves the data loaded from the pod
     var items: [DataItem] = []
-    /**
-     *
-     */
+ 
     var count: Int = 0
-    /**
-     *
-     */
+ 
     var isLoading: Bool = false
-    /**
-     *
-     */
+ 
     var determinedType: String? {
         // TODO implement (more) proper query language (and parser)
         
@@ -341,9 +305,7 @@ public class ResultSet: ObservableObject {
         }
         return nil
     }
-    /**
-     *
-     */
+ 
     var isList: Bool {
         // TODO change this to be a proper query parser
         
@@ -358,9 +320,7 @@ public class ResultSet: ObservableObject {
         
         return true
     }
-    /**
-     *
-     */
+ 
     var item: DataItem? {
         get{
             if !isList && count > 0 { return items[0] }
@@ -369,9 +329,7 @@ public class ResultSet: ObservableObject {
             
         }
     }
-    /**
-     *
-     */
+ 
     var filterText: String {
         get {
             return _filterText
@@ -463,9 +421,7 @@ public class ResultSet: ObservableObject {
         self.objectWillChange.send() // TODO create our own publishers
     }
 
-    /**
-     * Client side filter //, with a fallback to the server
-     */
+    /// Client side filter //, with a fallback to the server
     public func filter() {
         // Cancel filtering
         if _filterText == "" {
@@ -505,9 +461,7 @@ public class ResultSet: ObservableObject {
         self.objectWillChange.send() // TODO create our own publishers
     }
         
-    /**
-     * Executes the query again
-     */
+    /// Executes the query again
     public func reload(_ searchResult:ResultSet) -> Void {
         // Reload all pages
 //        for (page, _) in searchResult.pages {
@@ -515,9 +469,7 @@ public class ResultSet: ObservableObject {
 //        }
     }
     
-    /**
-     *
-     */
+ 
     public func resort(_ options:QueryOptions) {
         
     }

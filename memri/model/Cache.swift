@@ -127,9 +127,9 @@ public class Cache {
     private var cancellables: [AnyCancellable] = []
     private var queryIndex: [String:ResultSet] = [:]
     
-    /**
-     * @private
-     */
+    
+     /// @private
+     
     public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
     
     
@@ -184,13 +184,12 @@ public class Cache {
         return items!
     }
     
-    /**
-     *  This function does two things 1) executes a query on the local realm database with given querOptions, and executes callback on the result.
-     *  2) calls the syncer with the same queryOptions to execute the query on the pod.
-     * - Parameters:
-     *   - queryOptions: queryOptions for the query, containing datatype(s), filters, sortInstructions etc.
-     *   - callback: action exectued on the result
-     */
+    
+     ///  This function does two things 1) executes a query on the local realm database with given querOptions, and executes callback on the result.
+     ///  2) calls the syncer with the same queryOptions to execute the query on the pod.
+     /// - Parameters:
+     ///   - queryOptions: queryOptions for the query, containing datatype(s), filters, sortInstructions etc.
+     ///   - callback: action exectued on the result
     public func query(_ queryOptions:QueryOptions,
                       _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
 
@@ -294,13 +293,12 @@ public class Cache {
         }
     }
     
-    /**
-     * retrieves item from realm by type and uid.
-     * - Parameters:
-     *   - type: realm type
-     *   - uid: item uid
-     * - Returns: retrieved item. If the item does not exist, returns nil.
-     */
+    
+     /// retrieves item from realm by type and uid.
+     /// - Parameters:
+     ///   - type: realm type
+     ///   - uid: item uid
+     /// - Returns: retrieved item. If the item does not exist, returns nil.
     public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
         let type = DataItemFamily(rawValue: type)
         if let type = type {
@@ -407,11 +405,10 @@ public class Cache {
         return item
     }
     
-    /**
-     * sets delete to true in the syncstate, for an array of items
-     * - Parameter item: item to be deleted
-     * - Remark: All methods and properties must throw when deleted = true;
-     */
+    
+     /// sets delete to true in the syncstate, for an array of items
+     /// - Parameter item: item to be deleted
+     /// - Remark: All methods and properties must throw when deleted = true;
     public func delete(_ item:DataItem) {
         if (!item.deleted) {
             try! self.realm.write {
@@ -421,10 +418,9 @@ public class Cache {
         }
     }
     
-    /**
-     * sets delete to true in the syncstate, for an array of items
-     * - Parameter items: items to be deleted
-     */
+    
+     /// sets delete to true in the syncstate, for an array of items
+     /// - Parameter items: items to be deleted
     public func delete(_ items:[DataItem]) {
         try! self.realm.write {
             for item in items {
@@ -436,11 +432,9 @@ public class Cache {
         }
     }
     
-    /**
-     * - Parameter item: item to be duplicated
-     * - Remark:Does not copy the id property
-     * - Returns: copied item
-     */
+     /// - Parameter item: item to be duplicated
+     /// - Remark:Does not copy the id property
+     /// - Returns: copied item
     public func duplicate(_ item:DataItem) -> DataItem {
         let cls = item.getType()
         let copy = item.getType().init()

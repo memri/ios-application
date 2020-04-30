@@ -11,9 +11,7 @@ import RealmSwift
 
 extension Main {
     
-    /**
-     * Executes the action as described in the action description
-     */
+    /// Executes the action as described in the action description
     public func executeAction(_ action:ActionDescription, _ itm:DataItem? = nil,
                               _ itms:[DataItem]? = nil) {
         
@@ -217,10 +215,8 @@ extension Main {
         return false
     }
 
-    /**
-     * Adds a view to the history of the currentSession and displays it.
-     * If the view was already part of the currentSession.views it reorders it on top
-     */
+    /// Adds a view to the history of the currentSession and displays it.
+    /// If the view was already part of the currentSession.views it reorders it on top
     func openView(_ view:SessionView, _ variables:[String:Any]? = nil) {
         let session = self.currentSession
         
@@ -268,10 +264,8 @@ extension Main {
     }
     public func openView(_ items: [DataItem], _ variables:[String:Any]? = nil) {}
 
-    /**
-     * Adds a view to the history of the currentSession and displays it.
-     * If the view was already part of the currentSession.views it reorders it on top
-     */
+    /// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
+    ///  reorders it on top
     func openSession(_ session:Session) {
         let sessions = self.sessions // TODO generalize
         
@@ -281,9 +275,7 @@ extension Main {
         // Recompute view
         scheduleComputeView()
     }
-    /**
-     *
-     */
+ 
     public func openSession(_ name:String, _ variables:[String:Any]? = nil) {
         
         // TODO: This should not fetch the session from named sessions
@@ -303,10 +295,7 @@ extension Main {
         }
     }
     
-    /**
-     * Add a new data item and displays that item in the UI
-     * in edit mode
-     */
+    /// Add a new data item and displays that item in the UI in edit mode
     public func addFromTemplate(_ template:DataItem) {
         // Copy template
         let copy = self.cache.duplicate(template)

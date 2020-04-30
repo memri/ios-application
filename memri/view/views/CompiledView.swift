@@ -12,37 +12,21 @@ import SwiftUI
 import RealmSwift
 
 public class CompiledView {
-    /**
-     *
-     */
+ 
     var name: String = ""
-    /**
-     *
-     */
+ 
     var variables: [String:String] = [:]
-    /**
-     *
-     */
+ 
     var parsed: [String:Any]? = nil
-    /**
-     *
-     */
+ 
     var jsonString: String = ""
-    /**
-     *
-     */
+ 
     var dynamicView:DynamicView
-    /**
-     *
-     */
+ 
     var lastSessionView:SessionView? = nil
-    /**
-     *
-     */
+ 
     var hasSession:Bool = false
-    /**
-     *
-     */
+ 
     var views:[CompiledView] = []
     
     private var main:Main
@@ -52,9 +36,7 @@ public class CompiledView {
         dynamicView = view
     }
     
-    /**
-     *
-     */
+ 
     func parse() throws {
         // Turn the declaration in json data
         let data = dynamicView.declaration.data(using: .utf8)!
@@ -207,9 +189,7 @@ public class CompiledView {
         return result
     }
     
-    /**
-     *
-     */
+ 
     func generateView(_ varValues:[String:Any]? = nil) throws -> SessionView {
         // Prevent views generated from a session template
         if self.hasSession { throw "Exception: Cannot generate view from a session template" }

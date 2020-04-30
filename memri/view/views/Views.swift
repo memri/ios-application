@@ -5,13 +5,9 @@ import RealmSwift
 
 // Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
-    /**
-     *
-     */
+ 
     var compiledViews: [String:CompiledView] = [:]
-    /**
-     *
-     */
+ 
     var defaultViews: [String:[String:DynamicView]] = [:]
     
     private var realm:Realm
@@ -21,9 +17,7 @@ public class Views {
         realm = rlm
     }
     
-    /**
-     *
-     */
+ 
     public func load(_ mn:Main, _ callback: () -> Void) throws {
         // Store main for use within computeView()
         self.main = mn
@@ -47,9 +41,7 @@ public class Views {
         callback()
     }
     
-    /**
-     *
-     */
+ 
     public func install() {
         
         // Load named views from the package
@@ -65,9 +57,7 @@ public class Views {
         }
     }
     
-    /**
-     *
-     */
+ 
     public func getDynamicView (_ viewName:String) -> DynamicView? {
         var dynamicView:DynamicView?
         
@@ -83,9 +73,7 @@ public class Views {
         return dynamicView
     }
     
-    /**
-     *
-     */
+ 
     public func getCompiledView (_ viewName:String) -> CompiledView? {
         // Find an already compiled view
         if let compiledView = compiledViews[viewName] {
@@ -100,9 +88,7 @@ public class Views {
         return nil
     }
     
-    /**
-     *
-     */
+ 
     public func getSessionView (_ viewName:String,
                                 _ variables:[String:Any]? = nil) -> SessionView? {
         if let compiledView = getCompiledView(viewName) {
@@ -111,9 +97,7 @@ public class Views {
         
         return nil
     }
-    /**
-     *
-     */
+ 
     public func getSessionView (_ view:DynamicView?,
                                 _ variables:[String:Any]? = nil) -> SessionView? {
         if let dynamicView = view {
@@ -122,9 +106,7 @@ public class Views {
         
         return nil
     }
-    /**
-     *
-     */
+ 
     public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
                                  _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
         if let compiledView = getCompiledView(viewName) {
@@ -144,9 +126,7 @@ public class Views {
         return (nil, nil)
     }
     
-    /**
-     *
-     */
+ 
     func compileView(_ dynamicView:DynamicView) -> CompiledView {
         // If we have a cached version, let's return that
         if let compiledView = compiledViews[dynamicView.name] {

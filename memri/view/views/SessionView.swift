@@ -12,13 +12,9 @@ import SwiftUI
 import RealmSwift
 
 public class SessionView: DataItem {
-    /**
-     *
-     */
+ 
     override var genericType:String { "sessionview" }
-    /**
-     *
-     */
+ 
     @objc dynamic var name: String? = nil
     @objc dynamic var title: String? = nil
     @objc dynamic var rendererName: String? = nil
@@ -51,9 +47,7 @@ public class SessionView: DataItem {
     
     @objc dynamic var _variables: String? = nil
     
-    /**
-     *
-     */
+ 
     // TODO Refactor: Holy Guacamole this seems inefficient
     // Variables should probably be a more intelligent class that does conversion to codable
     var variables: [String:Any]? {

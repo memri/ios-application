@@ -12,17 +12,11 @@ import SwiftUI
 import RealmSwift
 
 public class DynamicView: Object, ObservableObject, Codable {
-    /**
-     *
-     */
+ 
     @objc dynamic var name:String = ""
-    /**
-     *
-     */
+ 
     @objc dynamic var declaration:String = ""
-    /**
-     *
-     */
+ 
     @objc dynamic var fromTemplate:String? = nil
     
     public override static func primaryKey() -> String? {
