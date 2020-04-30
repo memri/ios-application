@@ -128,7 +128,7 @@ extension Address {
         let request = MKLocalSearch.Request()
 
         request.naturalLanguageQuery = "\(self.street ?? "") \(self.city ?? "") "
-            + "\(self.postalCode ?? "") \(self.state ?? "") \(self.country?.computeTitle ?? "")"
+            + "\(self.postalCode ?? "") \(self.state ?? "") \(self.country?.computedTitle ?? "")"
 
         let search = MKLocalSearch(request: request)
         search.start { response, _ in

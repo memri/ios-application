@@ -119,8 +119,12 @@ func getRealmPath() -> String{
 }
 
 public class Cache {
+    
+    /// PodAPI object
     var podAPI: PodAPI
+    /// Object that schedules with the POD
     var sync: Sync
+    /// Realm Database object
     var realm: Realm
     
     private var rlmTokens: [NotificationToken] = []
@@ -128,8 +132,7 @@ public class Cache {
     private var queryIndex: [String:ResultSet] = [:]
     
     
-     /// @private
-     
+     //TODO: document
     public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
     
     

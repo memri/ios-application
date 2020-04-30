@@ -99,7 +99,7 @@ public class SessionView: DataItem {
         }
     }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         if let value = self.name ?? self.title { return value }
         else if let rendererName = self.rendererName {
             return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
@@ -122,7 +122,7 @@ public class SessionView: DataItem {
         
         self.functions["computedDescription"] = {_ in
             print("MAKE THIS DISSAPEAR")
-            return self.computeTitle
+            return self.computedTitle
         }
     }
     

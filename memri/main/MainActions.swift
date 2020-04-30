@@ -16,7 +16,7 @@ extension Main {
                               _ itms:[DataItem]? = nil) {
         
         let params = action.actionArgs
-        let item = itm ?? computedView.resultSet.item
+        let item = itm ?? computedView.resultSet.exampleItem
         let selection = itms ?? computedView.selection
         
         if action.actionName.opensView {
@@ -134,7 +134,7 @@ extension Main {
         
     func toggleState(_ statePattern:String, _ itm:DataItem? = nil) {
         // Make sure we have an item update
-        let item = itm ?? computedView.resultSet.item
+        let item = itm ?? computedView.resultSet.exampleItem
         
         // Parse the state pattern
         let (objectToUpdate, propToUpdate) = CompiledView.parseExpression(statePattern, "view")
@@ -180,7 +180,7 @@ extension Main {
     
     func hasState(_ statePattern:String, _ itm:DataItem? = nil) -> Bool {
         // Make sure we have an item update
-        let item = itm ?? computedView.resultSet.item
+        let item = itm ?? computedView.resultSet.exampleItem
         
         // Parse the state pattern
         let (objectToQuery, propToQuery) = CompiledView.parseExpression(statePattern, "view")

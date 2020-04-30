@@ -366,7 +366,7 @@ public class CompiledView {
                 let item = main.realm.object(ofType: type() as! Object.Type, forPrimaryKey: itemRef.uid)
                 return item?[prop]
             }
-            else if let item = extraVars["."] as? DataItem ?? main.computedView.resultSet.item {
+            else if let item = extraVars["."] as? DataItem ?? main.computedView.resultSet.exampleItem {
                 return item[prop]
             }
             else {

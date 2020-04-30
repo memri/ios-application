@@ -62,7 +62,7 @@ public class Main: ObservableObject {
  
     public var item: DataItem? {
         get {
-            self.computedView.resultSet.item
+            self.computedView.resultSet.exampleItem
         }
         set {
             // Do nothing
