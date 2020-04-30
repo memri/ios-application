@@ -15,6 +15,7 @@ build_project:
 pages:
   stage: build
   script:
+  - pod install
   - jazzy
   artifacts:
     paths:
