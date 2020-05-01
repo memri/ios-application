@@ -71,7 +71,6 @@ struct _RichTextEditor: UIViewRepresentable {
 
 struct RichTextRendererView: View {
     @EnvironmentObject var main: Main
-    @State var title: String = ""
     
     //wrapper
     var renderConfig: RenderConfig = RenderConfig()
