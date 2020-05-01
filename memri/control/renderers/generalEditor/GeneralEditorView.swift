@@ -106,7 +106,7 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        let item = main.computedView.resultSet.exampleItem!
+        let item = main.computedView.resultSet.singletonItem!
         let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)

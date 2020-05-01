@@ -77,8 +77,8 @@ struct RichTextRendererView: View {
 
     var body: some View {
         return VStack{
-            if main.computedView.resultSet.exampleItem != nil {
-                _RichTextEditor(dataItem: main.computedView.resultSet.exampleItem!)
+            if main.computedView.resultSet.singletonItem != nil {
+                _RichTextEditor(dataItem: main.computedView.resultSet.singletonItem!)
             }
         }
     }

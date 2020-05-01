@@ -108,7 +108,7 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 15)
             VStack(alignment: .leading, spacing: 10){
-                ForEach (self.main.computedView.resultSet.exampleItem!.labels) { labelItem in
+                ForEach (self.main.computedView.resultSet.singletonItem!.labels) { labelItem in
                     Button(action:{
                         self.main.executeAction(self.openLabelViewAction, labelItem)
                     }) {

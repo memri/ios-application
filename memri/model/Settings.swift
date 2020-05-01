@@ -9,17 +9,26 @@
 import Foundation
 import RealmSwift
 
+/// This class stores the settings used in the memri app. Settings may include things like how to format dates, whether to show certain
+/// buttons by default, etc.
 public class Settings {
+    /// Realm database object
     let realm:Realm
-    
+    /// Default settings
     var defaults:SettingCollection = SettingCollection()
+    /// Device settings
     var device:SettingCollection = SettingCollection()
+    /// User defined settings
     var user:SettingCollection = SettingCollection()
     
-    init(_ rlm:Realm) {
-        realm = rlm
+    /// Init settings with the relam database
+    /// - Parameter rlm: realm database object
+    init(_ realm:Realm) {
+        self.realm = realm
     }
     
+    /// Load all settings from the local realm database
+    /// - Parameter callback: function that is called after completing loading the settings
     public func load(_ callback: () -> Void) {
         // TODO: This could probably be optimized, but lets first get familiar with the process
         
@@ -42,7 +51,9 @@ public class Settings {
         callback()
     }
     
- 
+    
+    /// Initialize SettingsCollection objects for default, device and user-settings. Populate them by reading the default settings from
+    /// disk and updating the empty SettingCollections.
     public func install() {
         let defaults = SettingCollection(value: ["type": "defaults"])
         let device = SettingCollection(value: ["type": "device"])
@@ -69,7 +80,10 @@ public class Settings {
         device.set("/name", "iphone")
     }
     
- 
+    
+    /// Get setting from path
+    /// - Parameter path: path of the setting
+    /// - Returns: setting value
     public func get<T:Decodable>(_ path:String) -> T? {
         let (collection, query) = parse(path)
         
@@ -81,20 +95,29 @@ public class Settings {
         }
         return nil
     }
-
+    
+    /// get settings from path as String
+    /// - Parameter path: path of the setting
+    /// - Returns: setting value as String
     public func getString(_ path:String) -> String {
         return get(path) ?? ""
     }
     
+    /// get settings from path as Bool
+    /// - Parameter path: path of the setting
+    /// - Returns: setting value as Bool
     public func getBool(_ path:String) -> Bool? {
         return get(path) ?? nil
     }
     
+    /// get settings from path as Int
+    /// - Parameter path: path of the setting
+    /// - Returns: setting value as Int
     public func getInt(_ path:String) -> Int? {
         return get(path) ?? nil
     }
     
-    private func parse(_ path:String) -> (collection:SettingCollection?, rest:String) {
+    private func parse(_ path:String) -> (collection:SettingCollection?, query:String) {
         let splits = path.split(separator: "/")
         let type = splits.first
         let query = splits.dropFirst().joined(separator: "/")
@@ -117,8 +140,11 @@ public class Settings {
         return (collection, query)
     }
 
-    /// Also responsible for saving the setting to the permanent storage
-    public func set(_ path:String, _ value:Any) -> Void {
+    /// Sets the value of a setting for the given path. Also responsible for saving the setting to the permanent storage
+    /// - Parameters:
+    ///   - path: path used to store the setting
+    ///   - value: setting value
+    public func set(_ path:String, _ value:Any) {
         let (collection, query) = parse(path)
         
         var codableValue = value as? AnyCodable
@@ -130,26 +156,40 @@ public class Settings {
     }
     
     
+    /// Get *global* setting value for given path
+    /// - Parameter path: global setting path
+    /// - Returns: setting value
     public class func get<T:Decodable>(_ path:String) -> T? {
         return globalSettings!.get(path)
     }
     
-    public class func set(_ path:String, _ value:Any) -> Void {
+    /// Get *global* setting value for given path
+    /// - Parameter path: global setting path
+    ///   - value: setting value for the given path
+    public class func set(_ path:String, _ value:Any) {
         return globalSettings!.set(path, value)
     }
 }
 
+/// Collection of settings that are grouped based on who defined them
 class SettingCollection:Object {
+    /// Type that represent who created the setting: Default/User/Device
     @objc dynamic var type:String = ""
     
+    /// Setting in this collection
     let settings = List<Setting>()
+    /// SyncState for this colleciton
     @objc dynamic var syncState:SyncState? = SyncState()
     
+    /// primary key for the local realm database
     override static func primaryKey() -> String? {
         return "type"
     }
     
- 
+    
+    /// get setting for given path
+    /// - Parameter path: path for the setting
+    /// - Returns: setting value
     public func get<T:Decodable>(_ path:String) -> T? {
         let needle = self.type + (path.first == "/" ? "" :"/") + path
         
@@ -163,12 +203,18 @@ class SettingCollection:Object {
         }
     }
     
+    /// Get setting as String for given path
+    /// - Parameter path: path for the setting
+    /// - Returns: setting value as String
     public func getString(_ path:String) -> String {
         return get(path) ?? ""
     }
-
-    /// Also responsible for saving the setting to the permanent storage
-    public func set(_ path:String, _ value:AnyCodable) -> Void {
+    
+    /// Sets a setting to the value passed.Also responsible for saving the setting to the permanent storage
+    /// - Parameters:
+    ///   - path: path of the setting
+    ///   - value: setting Value
+    public func set(_ path:String, _ value:AnyCodable) {
         let key = self.type + (path.first == "/" ? "" :"/") + path
         
         func saveState(){
@@ -184,10 +230,14 @@ class SettingCollection:Object {
     }
 }
 
+/// Single setting object, persisted to disk
 class Setting:Object {
+    /// key of the setting
     @objc dynamic var key:String = ""
+    /// json value of the setting
     @objc dynamic var json:String = ""
     
+    /// primary key for the setting object in the realm database
     override static func primaryKey() -> String? {
         return "key"
     }

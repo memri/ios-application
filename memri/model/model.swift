@@ -378,7 +378,9 @@ public class ResultSet: ObservableObject {
         return true
     }
  
-    var exampleItem: DataItem? {
+    /// Get the only item from the resultset if the set has size 1, else return nil. Note that
+    ///  [singleton](https://en.wikipedia.org/wiki/Singleton_(mathematics)) is here in the mathematical sense.
+    var singletonItem: DataItem? {
         get{
             if !isList && count > 0 { return items[0] }
             else { return nil }
@@ -387,6 +389,7 @@ public class ResultSet: ObservableObject {
         }
     }
  
+    /// Text used to filter queries
     var filterText: String {
         get {
             return _filterText
@@ -401,6 +404,10 @@ public class ResultSet: ObservableObject {
         cache = ch
     }
     
+    /// Executes a query given the current QueryOptions, filters the result client side and executes the callback on the resulting
+    ///  DataItems
+    /// - Parameter callback: Callback with params (error: Error, result: [DataItem]) that is executed on the returned result
+    /// - Throws: empty query error
     func load(_ callback:(_ error:Error?) -> Void) throws {
         
         // Only execute one loading process at the time
@@ -454,6 +461,8 @@ public class ResultSet: ObservableObject {
         }
     }
     
+    /// Force update the items property, recompute the counts and reapply filters
+    /// - Parameter result: the new items
     func forceItemsUpdate(_ result:[DataItem]) {
         
         // Set data and count
@@ -473,7 +482,7 @@ public class ResultSet: ObservableObject {
         self.objectWillChange.send() // TODO create our own publishers
     }
 
-    /// Client side filter //, with a fallback to the server
+    /// Apply client side filter using the FilterText , with a fallback to the server
     public func filter() {
         // Cancel filtering
         if _filterText == "" {
@@ -521,11 +530,16 @@ public class ResultSet: ObservableObject {
 //        }
     }
     
- 
+    
+    /// - Remark: currently unused
+    /// - Todo: Implement
+    /// - Parameter options:
     public func resort(_ options:QueryOptions) {
         
     }
     
+    /// Mark page with pageIndex as index as loaded
+    /// - Parameter pageIndex: index of the page to mark as loaded
     func setPagesLoaded(_ pageIndex:Int) {
         if !pages.contains(pageIndex) {
             pages.append(pageIndex)
