@@ -77,19 +77,19 @@ struct RichTextRendererView: View {
 
     var body: some View {
         let binding = Binding(
-            get: { self.main.computedView.resultSet.item!.getString("title") },
-            set: { self.main.computedView.resultSet.item!.set("title", $0) }
+            get: { self.main.computedView.resultSet.singletonItem!.getString("title") },
+            set: { self.main.computedView.resultSet.singletonItem!.set("title", $0) }
         )
         
         return VStack{
-            if main.computedView.resultSet.item != nil {
+            if main.computedView.resultSet.singletonItem != nil {
                 TextField("Daily Note", text: binding)
                     .padding(.horizontal, 10)
                     .padding(.top, 20)
                     .font(.headline)
                     .foregroundColor(.gray)
                     
-                _RichTextEditor(dataItem: main.computedView.resultSet.item!)
+                _RichTextEditor(dataItem: main.computedView.resultSet.singletonItem!)
             }
         }
     }

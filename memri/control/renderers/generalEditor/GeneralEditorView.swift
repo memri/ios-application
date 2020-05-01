@@ -106,7 +106,7 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        let item = main.computedView.resultSet.item!
+        let item = main.computedView.resultSet.singletonItem!
         let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)
@@ -360,7 +360,7 @@ struct DefaultGeneralEditorRow: View {
                     if [.string, .bool, .date, .int, .double].contains(propType){
                         defaultRow(self.item.getString(self.prop))
                     }
-                    else if propType == .object { defaultRow(self.item.computeTitle) }
+                    else if propType == .object { defaultRow(self.item.computedTitle) }
                     else { defaultRow() }
                 }
                 else {

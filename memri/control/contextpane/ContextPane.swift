@@ -3,7 +3,7 @@
 //  memri
 //
 //  Created by Jess Taylor on 3/10/20.
-//  Copyright © 2020 Koen van der Veen. All rights reserved.
+//  Copyright © 2020 memri. All rights reserved.
 //
 
 import SwiftUI

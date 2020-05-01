@@ -199,7 +199,7 @@ class Note:DataItem {
     let sharedWith = List<DataItem>()
     let comments = List<DataItem>()
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return "\(title ?? "")"
     }
     
@@ -225,7 +225,7 @@ class PhoneNumber:DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var number:String? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return number ?? ""
     }
     
@@ -251,7 +251,7 @@ class Website:DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var url:String? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return url ?? ""
     }
     
@@ -300,7 +300,7 @@ class Country:DataItem {
     @objc dynamic var flag:File? = nil // or Image ??
     @objc dynamic var location:Location? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return "\(name ?? "")"
     }
     
@@ -332,12 +332,12 @@ class Address:DataItem {
     @objc dynamic var postalCode:String? = nil
     @objc dynamic var location:Location? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return """
         \(street ?? "")
         \(city ?? "")
         \(postalCode ?? ""), \(state ?? "")
-        \(country?.computeTitle ?? "")
+        \(country?.computedTitle ?? "")
         """
     }
     
@@ -369,7 +369,7 @@ class Company: DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name ?? ""
     }
     
@@ -417,7 +417,7 @@ class OnlineProfile: DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var handle:String? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return handle ?? ""
     }
     
@@ -443,7 +443,7 @@ class Diet: DataItem{
     @objc dynamic var name:String? = nil
     let additions = List<String>()
 
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name ?? ""
     }
     
@@ -470,7 +470,7 @@ class MedicalCondition: DataItem{
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name ?? ""
     }
     
@@ -516,7 +516,7 @@ class Person:DataItem {
     let diets = List<Diet>()
     let medicalConditions = List<MedicalCondition>()
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
     }
     
@@ -561,7 +561,7 @@ class LogItem:DataItem {
     @objc dynamic var action:String? = nil
     override var genericType:String { "logitem" }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
     }
     
@@ -592,7 +592,7 @@ class Label:DataItem {
     @objc dynamic var color:String? = nil
     override var genericType:String { "label" }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name
     }
     
@@ -625,7 +625,7 @@ class Photo:DataItem {
     let height = RealmOptional<Int>()
     override var genericType:String { "photo" }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name
     }
     
@@ -660,7 +660,7 @@ class Video:DataItem {
     let duration = RealmOptional<Int>()
     override var genericType:String { "video" }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name
     }
     
@@ -695,7 +695,7 @@ class Audio:DataItem {
     let duration = RealmOptional<Int>()
     override var genericType:String { "video" }
     
-    override var computeTitle:String {
+    override var computedTitle:String {
         return name
     }
     
