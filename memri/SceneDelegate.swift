@@ -2,7 +2,6 @@
 //  SceneDelegate.swift
 //  memri
 //
-//  Created by Koen van der Veen on 11/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -20,16 +19,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-//        let contentView = Application()
-//            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
         
-        let sessions = try! Sessions.from_json("empty_sessions")
-        let contentView = Browser().environmentObject(sessions)
+        let main = RootMain(name: "Memri GUI", key: "ABCDEF")
+        let application = Application().environmentObject(main as Main)
+
+//        var application: Application = Application(, browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
+//            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
+//        var browser = application.browserPane
+//        var sessions = Sessions()
+//        var browser: some View = Browser().environmentObject(sessions)
+        
+        let _ = main.boot() { (error, success) in
+            print("Booted")
+        }
 
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: contentView)
+            window.rootViewController = UIHostingController(rootView: application)
             self.window = window
             window.makeKeyAndVisible()
         }

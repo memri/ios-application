@@ -1,0 +1,98 @@
+[
+    {
+        "name": "filter-starred",
+        "fromTemplate": "{view}",
+        "queryOptions": {
+            "query": "{computedView.queryOptions.query} AND starred = true"
+        },
+        "title": "Starred {computedView.title}"
+    },
+    
+    {
+        "name": "choose-item-by-query",
+        "editMode": true,
+        "queryOptions": {
+            "query": "{query}"
+        },
+        "_editActionButton": { "actionName": "toggleEditMode" },
+        "actionButton": {
+            "actionName": "add",
+            "actionArgs": [{
+                "type": "person"
+            }]
+        },
+        "rendererName": "list",
+        "renderConfigs": {
+            "list": {
+                "press": { "actionName": "closePopup" }
+            }
+        },
+        "title": "Choose a {type}"
+    },
+    
+    {
+        "name": "shopping-notes",
+        "views": [
+            "all-notes",
+            {
+                "title": "Shopping Notes",
+                "queryOptions": {
+                    "query": "note AND title BEGINSWITH[c] 'shopping'"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-people",
+        "views": [
+            {
+                "title": "All People",
+                "queryOptions": {
+                    "query": "person"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-photos",
+        "views": [
+            {
+                "title": "All Photos",
+                "queryOptions": {
+                    "query": "photo"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-addresses",
+        "views": [
+            {
+                "title": "All Addresses",
+                "queryOptions": {
+                    "query": "address"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-items-with-label",
+        "title": "Items with label {name}",
+        "queryOptions": {
+            "query": "* AND ANY labels.uid = '{uid}'"
+        },
+        "rendererName": "list",
+        "renderConfigs": {
+            "list": [
+                "ItemCell", {
+                    "rendererNames": ["list", "thumbnail"],
+                    "variables": "{variables}"
+                }
+            ]
+        }
+    }
+]

@@ -1,0 +1,26 @@
+[
+    {
+        "uid": "0x011",
+        "type": "person",
+        "syncState": {
+            "isPartiallyLoaded": true,
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x012",
+        "type": "person",
+        "syncState": {
+            "isPartiallyLoaded": true,
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x013",
+        "type": "person",
+        "syncState": {
+            "isPartiallyLoaded": true,
+            "version": 1
+        }
+    }
+]

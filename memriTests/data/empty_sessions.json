@@ -2,65 +2,22 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentSessionViewIndex" :0,
-            "sessionViews": [
+            "currentViewIndex" :0,
+            "showFilterPanel": true,
+            "views": [
                 {
                     "searchResult": {
-                        "query": "",
-                        "data": [
-                            {
-                                "uid": "0x01",
-                                "type": "note",
-                                "predicates": {},
-                                "properties": {
-                                    "title": "first example note",
-                                    "content": "This is an example note"
-                                }
-                            },
-                            {
-                                "uid": "0x02",
-                                "type": "note",
-                                "predicates": {},
-                                "properties": {
-                                    "title": "second example note",
-                                    "content": "This is again an example note"
-                                }
-                            },
-                            {
-                                "uid": "0x03",
-                                "type": "note",
-                                "predicates": {},
-                                "properties": {
-                                    "title": "third example note",
-                                    "content": "This is AGAIN an example note"
-                                }
-                            },
-                            {
-                                "uid": "0x04",
-                                "type": "note",
-                                "predicates": {},
-                                "properties": {
-                                    "title": "fourth example note",
-                                    "content": "This is AGAINNNN an example note"
-                                }
-                            },
-                            {
-                                "uid": "0x05",
-                                "type": "note",
-                                "predicates": {},
-                                "properties": {
-                                    "title": "fifth example note",
-                                    "content": "This is AGAINNN an example note"
-                                }
-                            }
-                        ],
-                        "sortProperty": "None",
-                        "sortAscending": 1,
-                        "loading": 0,
-                        "pageCount": 0,
+                        "query": {
+                            "query": "",
+                            "sortProperty": "None",
+                            "sortAscending": 1,
+                            "loading": 0,
+                            "pageCount": 0,
+                        },
+                        "data": []
                     },
                     "name": "testname",
-                    "subtitle": "testSubtitle",
+                    "subtitle": "daily",
                     "title": "notes",
                     "rendererName": "list",
                     "selection": [],
@@ -72,19 +29,69 @@
                         "actionName": "add",
                         "actionArgs": [{
                             "type": "note",
-                            "predicates": {"owner": "{me}"},
                             "properties": {"title": "Untitled Note"}
                         }]
                     },
-                    "backButton":{
-                        "icon": "chevron.left",
-                        "title": "Back",
-                        "actionName": "back",
+                    "editActionButton":{
+                        "icon": "pencil",
+                        "title": "edit",
+                        "actionName": "toggleEditMode",
                         "actionArgs": []
                     },
-                    "filterButtons": [],
-                    "actionItems": [],
-                    "navigateItems": [],
+                    "filterButtons": [
+                        {
+                            "icon": "star.fill",
+                            "title": "star",
+                            "actionName": "star",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "chevron.down",
+                            "title": "showFilterPanel",
+                            "actionName": "toggleFilterPanel",
+                            "actionArgs": []
+                        }
+                    ],
+                    "actionItems": [
+                        {
+                            "icon": "",
+                            "title": "Share with ...",
+                            "actionName": "share",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Add to list",
+                            "actionName": "addToList",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Duplicate Note",
+                            "actionName": "duplicateNote",
+                            "actionArgs": []
+                        }
+                    ],
+                    "navigateItems": [
+                        {
+                            "icon": "",
+                            "title": "Timeline of this note",
+                            "actionName": "noteTimeline",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "Starred notes",
+                            "actionName": "starredNotes",
+                            "actionArgs": []
+                        },
+                        {
+                            "icon": "",
+                            "title": "All notes",
+                            "actionName": "allNotes",
+                            "actionArgs": []
+                        }
+                    ],
                     "contextButtons": [],
                     "icon": "testIcon",
                     "showLabels": false,

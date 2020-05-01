@@ -1,0 +1,68 @@
+[
+    {
+        "uid": "0x01",
+        "type": "note",
+        "title": "Shopping list",
+        "content": "- potatoes\n- mayonaise",
+        "starred": true,
+        "labels": [
+            { "uid":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "uid":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
+            {
+                "name": "Soccer team",
+                "color": "#83ac06",
+                "uid": "0x0124"
+            }
+        ],
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "isPartiallyLoaded": true,
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x02",
+        "type": "note",
+        "title": "To read list",
+        "content": "Age of surveillance capitalism",
+        "labels": [
+            { "uid":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "uid":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
+        ],
+        "dateModified": "2020-04-14T03:10:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x03",
+        "type": "note",
+        "title": "Ideas for memri",
+        "content": "privacy by design, digital memory",
+        "starred": true,
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x04",
+        "type": "note",
+        "title": "Love letter",
+        "content": "Roses are red, violets are blue",
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "uid": "0x05",
+        "type": "note",
+        "title": "Notes to self",
+        "content": "Be in time with hour administration",
+        "dateModified": "2011-11-11T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
+    }
+]

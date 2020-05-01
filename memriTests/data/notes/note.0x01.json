@@ -1,0 +1,17 @@
+[{
+    "uid": "0x01",
+    "type": "note",
+    "title": "Shopping list",
+    "content": "- potatoes\n- mayonaise\n- avocados",
+    "starred": true,
+    "labels": [
+        { "uid":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+        { "uid":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
+        {
+            "name": "Soccer team",
+            "color": "#83ac06",
+            "uid": "0x0124"
+        }
+    ],
+    "syncState": { "version": 1 }
+}]

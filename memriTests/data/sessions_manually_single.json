@@ -2,7 +2,7 @@
     "currentSessionIndex": 0,
     "sessions": [
         {
-            "currentSessionViewIndex": 0,
+            "currentViewIndex": 0,
             "sessionViews": [
                 {
                     "name": "all-notes",

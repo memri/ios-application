@@ -2,7 +2,6 @@
 //  memriUITests.swift
 //  memriUITests
 //
-//  Created by Koen van der Veen on 11/02/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -25,9 +24,9 @@ class memriUITests: XCTestCase {
 
     func testExample() {
         // UI tests must launch the application that they test.
+    
         let app = XCUIApplication()
         app.launch()
-
         // Use recording to get started writing UI tests.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
