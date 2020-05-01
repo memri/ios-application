@@ -1,0 +1,175 @@
+//
+//  LEOTextView+Toolbar.swift
+//  LEOTextView
+//
+//  Created by Leonardo Hammer on 21/04/2017.
+//
+//
+
+import UIKit
+
+public var toolbar: UIToolbar?
+public var toolbarHeight: CGFloat = 40
+public var currentFrame: CGRect = CGRect.zero
+
+public var toolbarButtonTintColor: UIColor = UIColor.black
+public var toolbarButtonHighlightColor: UIColor = UIColor.orange
+
+var formatButton: UIBarButtonItem?
+var formatMenuView: UIView?
+
+extension LEOTextView {
+
+    /**
+     Remove toolbar notifications
+     */
+
+    public func removeToolbarNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    /**
+     Enable the toolbar, binding the show and hide events.
+
+     */
+    public func enableToolbar() -> UIToolbar {
+        toolbar = UIToolbar(frame: CGRect(origin: CGPoint(x: 0, y: UIScreen.main.bounds.height),
+                                          size: CGSize(width: UIScreen.main.bounds.width, height: toolbarHeight))
+        )
+        // style
+        toolbar?.autoresizingMask = .flexibleWidth
+        toolbar?.backgroundColor = UIColor.white
+        toolbar?.barTintColor = UIColor.white // bar background colour
+
+        toolbar?.items = enableBarButtonItems()
+
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShowOrHide(_:)),
+                                               name: UIResponder.keyboardWillShowNotification,
+                                               object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShowOrHide(_:)),
+                                               name: UIResponder.keyboardWillHideNotification,
+                                               object: nil)
+
+        currentFrame = self.frame
+
+        return toolbar!
+    }
+
+    // MARK: - Toolbar buttons
+
+    func enableBarButtonItems() -> [UIBarButtonItem] {
+
+        let flexibleSpaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        
+        let hideKeyboardButton = UIBarButtonItem(image: UIImage(named: "icon-keyboard", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.hideKeyboardButtonAction))
+        
+        // richttext
+        let boldButton = UIBarButtonItem(image: UIImage(named: "bold", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.boldButtonAction))
+        let italicButton = UIBarButtonItem(image: UIImage(named: "italic", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.italicButtonAction))
+        let underlineButton = UIBarButtonItem(image: UIImage(named: "underline", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
+        
+        // lists
+        let bulletedListButton = UIBarButtonItem(image: UIImage(named: "list.bullet", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.bulletedListButtonAction))
+        let NumberedListButton = UIBarButtonItem(image: UIImage(named: "list.number", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.numberedButtonAction))
+
+        let buttonItems = [boldButton, italicButton, underlineButton, bulletedListButton, NumberedListButton]
+
+        // Button styles
+        for buttonItem in buttonItems {
+            buttonItem.tintColor = toolbarButtonTintColor
+        }
+
+        return buttonItems
+    }
+
+    
+    @objc func underlineButtonAction() {
+        // TODO
+    }
+
+    @objc func normalFontButtonAction() {
+        self.inputFontMode = .normal
+
+        if self.currentParagraphType() == .title {
+            self.changeCurrentParagraphTextWithInputFontMode(.normal)
+        }
+    }
+
+    @objc func bulletedListButtonAction() {
+        if self.currentParagraphType() == .title {
+            self.changeCurrentParagraphTextWithInputFontMode(.normal)
+        }
+
+        self.changeCurrentParagraphToOrderedList(orderedList: false, listPrefix: "• ")
+    }
+    
+    @objc func numberedButtonAction() {
+        if self.currentParagraphType() == .title {
+            self.changeCurrentParagraphTextWithInputFontMode(.normal)
+        }
+
+        self.changeCurrentParagraphToOrderedList(orderedList: true, listPrefix: "1. ")
+    }
+
+    @objc func dashedButtonAction() {
+        if self.currentParagraphType() == .title {
+            self.changeCurrentParagraphTextWithInputFontMode(.normal)
+        }
+
+        self.changeCurrentParagraphToOrderedList(orderedList: false, listPrefix: "- ")
+    }
+
+    @objc func formatMenuViewDoneButtonAction() {
+        formatMenuView?.removeFromSuperview()
+    }
+
+    @objc func hideKeyboardButtonAction() {
+        self.resignFirstResponder()
+    }
+
+    @objc func keyboardWillShowOrHide(_ notification: Notification) {
+        guard let info = (notification as NSNotification).userInfo else {
+            return
+        }
+
+        guard self.superview != nil else {
+            return
+        }
+
+        let duration = info[UIResponder.keyboardAnimationDurationUserInfoKey] as! Double
+        let keyboardEnd = (info[UIResponder.keyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
+
+        let toolbarHeight = toolbar!.frame.size.height
+
+        if notification.name == UIResponder.keyboardWillShowNotification{
+            formatMenuView?.removeFromSuperview()
+
+            self.superview?.addSubview(toolbar!)
+
+            var textViewFrame = self.frame
+            textViewFrame.size.height = self.superview!.frame.height - keyboardEnd.height - toolbarHeight
+            self.frame = textViewFrame
+
+            UIView.animate(withDuration: duration, animations: {
+                var frame = toolbar!.frame
+                // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
+                frame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 25)
+                toolbar!.frame = frame
+            }, completion: nil)
+        } else {
+            self.frame = currentFrame
+
+            UIView.animate(withDuration: duration, animations: {
+                var frame = toolbar!.frame
+                frame.origin.y = self.superview!.frame.size.height
+                toolbar!.frame = frame
+
+            }, completion: { (success) in
+                toolbar!.removeFromSuperview()
+            })
+
+            formatMenuView?.removeFromSuperview()
+        }
+    }
+}
