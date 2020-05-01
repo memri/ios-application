@@ -81,7 +81,6 @@ struct RichTextRendererView: View {
             set: { self.main.computedView.resultSet.item!.set("title", $0) }
         )
         
-        let x = 5
         return VStack{
             if main.computedView.resultSet.item != nil {
                 TextField("Daily Note", text: binding)
