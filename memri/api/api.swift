@@ -3,33 +3,22 @@ import Combine
 import RealmSwift
 
 public class QueryOptions: Object, Codable {
-    /**
-     * Retrieves the query which is used to load data from the pod
-     */
+    /// Retrieves the query which is used to load data from the pod
     @objc dynamic var query: String? = nil
     
-    /**
-     * Retrieves the property that is used to sort on
-     */
+    /// Retrieves the property that is used to sort on
     @objc dynamic var sortProperty: String? = nil
-    /**
-     * Retrieves whether the sort direction
-     *    false sort descending
-     *    true sort ascending
-     */
+    
+    /// Retrieves whether the sort direction
+    /// false sort descending
+    /// true sort ascending
     let sortAscending = RealmOptional<Bool>()
-    /**
-     * Retrieves the number of items per page
-     */
+    /// Retrieves the number of items per page
     let pageCount = RealmOptional<Int>() // Todo move to ResultSet
-    /**
-     *
-     */
+ 
     let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
-    /**
-     * Returns a string representation of the data in QueryOptions that is unique for that data
-     * Each QueryOptions object with the same data will return the same uniqueString
-     */
+     /// Returns a string representation of the data in QueryOptions that is unique for that data
+     /// Each QueryOptions object with the same data will return the same uniqueString
     var uniqueString:String {
         var result:[String] = []
         
@@ -94,9 +83,7 @@ public class PodAPI {
         print("created \(item)")
         callback(nil, "0x" + UUID().uuidString);
     }
-    /**
-     *
-     */
+ 
     public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
         if id == "sessions" {
             let jsonString = try! stringFromFile("default_sessions", "json")
@@ -110,42 +97,32 @@ public class PodAPI {
         callback(nil, Note(value: ["id": id]))
     }
     
-    /**
-     *
-     */
+ 
     public func update(_ item:DataItem, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("updated \(item.id)")
         callback(nil, true);
     }
-    /**
-     *
-     */
+ 
     public func remove(_ id:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("removed \(id)")
         callback(nil, true);
     }
     
-    /**
-     *
-     */
+ 
     public func link(_ subjectId:String, _ entityId:String, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {
         print("linked \(subjectId) - \(predicate) > \(entityId)")
         callback(nil, true);
     }
     public func link(_ item:DataItem, _ item2:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ created:Bool) -> Void) -> Void {}
     
-    /**
-     *
-     */
+ 
     public func unlink(_ subjectId:String, _ entityId:String, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {
         print("unlinked \(subjectId) - \(predicate) > \(entityId)")
         callback(nil, true);
     }
     public func unlink(_ fromItem:DataItem, _ toItem:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {}
 
-    /**
-     *
-     */
+ 
     public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         
         //        // this simulates async call
@@ -183,34 +160,20 @@ public class PodAPI {
 //        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")
 //        callback(nil, items);
     }
-    /**
-     *
-     */
+ 
     public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
-    /**
-     *
-     */
+ 
     public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
-    /**
-     *
-     */
+ 
     public func queryRAW(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
-    /**
-     * Returns a read-only SettingsData object.
-     */
+    /// Returns a read-only SettingsData object.
     public func getDefaultSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
-    /**
-     * Returns a read-write SettingsData object.
-     */
+    /// Returns a read-write SettingsData object.
     public func getDeviceSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
-    /**
-     * Returns a read-write SettingsData object when admin, otherwise read-only.
-     */
+    /// Returns a read-write SettingsData object when admin, otherwise read-only.
     public func getGroupSettings(_ groupId:String, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
-    /**
-     * Returns a read-write SettingsData object.
-     */
+    /// Returns a read-write SettingsData object.
     public func getUserSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
 //    public func import() -> Void {}

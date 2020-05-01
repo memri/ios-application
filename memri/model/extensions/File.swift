@@ -133,21 +133,40 @@ class File:DataItem {
 
 //        let databuffer = FileManager.default.contents(atPath: path)
         
-        if let file = FileHandle(forReadingAtPath: path) {
-            // Read all the data
-            let data = file.readDataToEndOfFile()
+        func readFromPath(_ path: String) -> Data? {
+            if let file = FileHandle(forReadingAtPath: path) {
+                // Read all the data
+                let data = file.readDataToEndOfFile()
 
-            // Close the file
-            file.closeFile()
+                // Close the file
+                file.closeFile()
 
-            // Return data
+                // Return data
+                return data
+            } else{
+                return nil
+            }
+        }
+        
+        if let data = readFromPath(path){
             return data
         }
         else {
-            print("Warning: Could not read file \(path)")
+            let splitted = path.split(separator: ".")
+            let file = String(splitted[0])
+            let ext = String(splitted[1])
+            if let file = Bundle.main.path(forResource: file, ofType: ext){
+                if let data = readFromPath(file){
+                    return data
+                }else{
+                    return nil
+                }
+            }else{
+                print("Warning: Could not read file \(path)")
+                return nil
+            }
         }
         
-        return nil
     }
     
     // TODO where to save these files properly?

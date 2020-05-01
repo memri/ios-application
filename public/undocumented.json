@@ -268,56 +268,56 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 79,
+      "line": 83,
       "symbol": "ActionPopupButton",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 80,
+      "line": 84,
       "symbol": "ActionPopupButton.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 82,
+      "line": 86,
       "symbol": "ActionPopupButton.action",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 84,
+      "line": 88,
       "symbol": "ActionPopupButton.isShowing",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 96,
+      "line": 100,
       "symbol": "ActionPopup",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 97,
+      "line": 101,
       "symbol": "ActionPopup.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 98,
+      "line": 102,
       "symbol": "ActionPopup.presentationMode",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Action.swift",
-      "line": 100,
+      "line": 104,
       "symbol": "ActionPopup.action",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -352,7 +352,14 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Application.swift",
-      "line": 63,
+      "line": 27,
+      "symbol": "Application.showNavigation",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/Application.swift",
+      "line": 73,
       "symbol": "Application_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -373,7 +380,14 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Browser.swift",
-      "line": 29,
+      "line": 14,
+      "symbol": "Browser.keyboardResponder",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/Browser.swift",
+      "line": 33,
       "symbol": "Browser_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -542,90 +556,83 @@
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
       "line": 13,
-      "symbol": "Navigation.dragOffset",
+      "symbol": "Navigation.keyboardResponder",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 14,
+      "line": 15,
       "symbol": "Navigation.showSettings",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 18,
-      "symbol": "Navigation.offsetLeft",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 22,
+      "line": 17,
       "symbol": "Navigation.hide()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 91,
+      "line": 74,
       "symbol": "Navigation.item(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 105,
+      "line": 88,
       "symbol": "NavigationItemView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 106,
+      "line": 89,
       "symbol": "NavigationItemView.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 108,
+      "line": 91,
       "symbol": "NavigationItemView.item",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 110,
+      "line": 93,
       "symbol": "NavigationItemView.hide",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 131,
+      "line": 114,
       "symbol": "NavigationHeadingView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 132,
+      "line": 115,
       "symbol": "NavigationHeadingView.title",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 146,
+      "line": 129,
       "symbol": "NavigationLineView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Navigation/NavigationView.swift",
-      "line": 154,
+      "line": 137,
       "symbol": "Navigation_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -646,7 +653,7 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/Search.swift",
-      "line": 36,
+      "line": 38,
       "symbol": "Search_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -757,6 +764,62 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 13,
+      "symbol": "FlowStack",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 16,
+      "symbol": "FlowStack.data",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 17,
+      "symbol": "FlowStack.content",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 19,
+      "symbol": "FlowStack.init(_:content:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 45,
+      "symbol": "AlignedFlowLayout",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 47,
+      "symbol": "AlignedFlowLayout.shouldInvalidateLayout(forBoundsChange:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 52,
+      "symbol": "AlignedFlowLayout.layoutAttributesForElements(in:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/FlowStack.swift",
+      "line": 102,
+      "symbol": "AlignedFlowLayout.layoutAttributesForItem(at:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/ItemCell.swift",
       "line": 11,
       "symbol": "ItemCell",
@@ -792,57 +855,127 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 11,
+      "symbol": "KeyboardResponder",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 14,
+      "symbol": "KeyboardResponder.currentHeight",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 17,
+      "symbol": "KeyboardResponder._center",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 19,
+      "symbol": "KeyboardResponder.init(center:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 27,
+      "symbol": "KeyboardResponder.keyBoardWillShow(notification:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/KeyboardResponder.swift",
+      "line": 36,
+      "symbol": "KeyboardResponder.keyBoardWillHide(notification:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 18,
+      "line": 5,
       "symbol": "MapView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 19,
+      "line": 6,
       "symbol": "MapView.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 21,
+      "line": 8,
       "symbol": "MapView.location",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 22,
+      "line": 9,
       "symbol": "MapView.address",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 24,
+      "line": 11,
+      "symbol": "MapView.locations",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
+      "line": 12,
+      "symbol": "MapView.addresses",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
+      "line": 14,
       "symbol": "MapView.init(location:address:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 72,
+      "line": 19,
+      "symbol": "MapView.init(locations:addresses:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
+      "line": 69,
+      "symbol": "MapView.setRegionForCollection(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
+      "line": 104,
       "symbol": "MapView.setRegion(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 95,
+      "line": 127,
       "symbol": "Address.retrieveLocation(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/MapView.swift",
-      "line": 126,
+      "line": 159,
       "symbol": "MapView_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
@@ -1051,34 +1184,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/koen/workspace/ios-application/memri/control/common/WrapStack.swift",
-      "line": 12,
-      "symbol": "WrapStack",
-      "symbol_kind": "source.lang.swift.decl.struct",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/common/WrapStack.swift",
-      "line": 15,
-      "symbol": "WrapStack.data",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/common/WrapStack.swift",
-      "line": 16,
-      "symbol": "WrapStack.content",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/common/WrapStack.swift",
-      "line": 18,
-      "symbol": "WrapStack.init(_:content:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/koen/workspace/ios-application/memri/control/common/styles.swift",
       "line": 12,
       "symbol": "MemriToggleStyle",
@@ -1185,315 +1290,315 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 13,
+      "line": 14,
       "symbol": "ViewConfig",
       "symbol_kind": "source.lang.swift.decl.var.global",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 21,
+      "line": 22,
       "symbol": "View.setProperties(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 39,
+      "line": 40,
       "symbol": "View.setProperty(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 159,
+      "line": 149,
       "symbol": "View.if(_:content:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 165,
+      "line": 155,
       "symbol": "View.border(width:color:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 182,
+      "line": 172,
       "symbol": "View.border(width:edge:color:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 190,
+      "line": 180,
       "symbol": "Text.if(_:content:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 203,
+      "line": 193,
       "symbol": "EdgeBorder",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 205,
+      "line": 195,
       "symbol": "EdgeBorder.width",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 206,
+      "line": 196,
       "symbol": "EdgeBorder.edge",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 336,
+      "line": 326,
       "symbol": "GUIElementDescription",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 337,
+      "line": 327,
       "symbol": "GUIElementDescription.type",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 338,
+      "line": 328,
       "symbol": "GUIElementDescription.properties",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 339,
+      "line": 329,
       "symbol": "GUIElementDescription.children",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 340,
+      "line": 330,
       "symbol": "GUIElementDescription._properties",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 358,
+      "line": 348,
       "symbol": "GUIElementDescription.parseProperties(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 394,
+      "line": 384,
       "symbol": "GUIElementDescription.parseProperty(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 491,
+      "line": 481,
       "symbol": "GUIElementDescription.CompiledProperty",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 492,
+      "line": 482,
       "symbol": "GUIElementDescription.CompiledProperty.result",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 497,
+      "line": 487,
       "symbol": "GUIElementDescription.compile(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 554,
+      "line": 544,
       "symbol": "GUIElementDescription.has(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 558,
+      "line": 548,
       "symbol": "GUIElementDescription.getString(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 562,
+      "line": 552,
       "symbol": "GUIElementDescription.getBool(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 566,
+      "line": 556,
       "symbol": "GUIElementDescription.get(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 588,
+      "line": 578,
       "symbol": "GUIElementDescription.getType(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 607,
+      "line": 597,
       "symbol": "GUIElementDescription.formatDate(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 630,
+      "line": 620,
       "symbol": "GUIElementDescription.formatDateSinceCreated(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 727,
+      "line": 717,
       "symbol": "GUIElementDescription.computeProperty(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 745,
+      "line": 735,
       "symbol": "GUIElementDescription.fromJSONFile(_:ext:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 753,
+      "line": 743,
       "symbol": "GUIElementDescription",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 755,
+      "line": 745,
       "symbol": "GUIElementDescription.processText(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 765,
+      "line": 755,
       "symbol": "GUIElementDescription.removeWhiteSpace(text:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 770,
+      "line": 760,
       "symbol": "GUIElementInstance",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 771,
+      "line": 761,
       "symbol": "GUIElementInstance.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 773,
+      "line": 763,
       "symbol": "GUIElementInstance.from",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 774,
+      "line": 764,
       "symbol": "GUIElementInstance.item",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 775,
+      "line": 765,
       "symbol": "GUIElementInstance.variables",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 777,
+      "line": 767,
       "symbol": "GUIElementInstance.init(_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 783,
+      "line": 773,
       "symbol": "GUIElementInstance.has(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 787,
+      "line": 777,
       "symbol": "GUIElementInstance.get(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 803,
+      "line": 793,
       "symbol": "GUIElementInstance.getImage(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 811,
+      "line": 801,
       "symbol": "GUIElementInstance.getList(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 1072,
+      "line": 1084,
       "symbol": "GUIElementInstance.renderTextfield()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 1094,
+      "line": 1130,
       "symbol": "GUIElementInstance.renderPicker()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/GUIElement.swift",
-      "line": 1115,
+      "line": 1151,
       "symbol": "GUIElementInstance.renderChildren",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -1515,27 +1620,13 @@
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/RendererTemplates.swift",
       "line": 23,
-      "symbol": "MapRenderer",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/RendererTemplates.swift",
-      "line": 29,
-      "symbol": "MapRenderer.canDisplayResultSet(items:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/RendererTemplates.swift",
-      "line": 34,
       "symbol": "graphRenderer",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/RendererTemplates.swift",
-      "line": 40,
+      "line": 29,
       "symbol": "graphRenderer.canDisplayResultSet(items:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -1626,371 +1717,371 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 78,
+      "line": 61,
       "symbol": "GeneralEditorView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 79,
+      "line": 62,
       "symbol": "GeneralEditorView.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 81,
+      "line": 64,
       "symbol": "GeneralEditorView.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 83,
+      "line": 66,
       "symbol": "GeneralEditorView.renderConfig",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 87,
+      "line": 70,
       "symbol": "GeneralEditorView.getGroups(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 108,
+      "line": 91,
       "symbol": "GeneralEditorView.getSortedKeys(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 148,
+      "line": 131,
       "symbol": "GeneralEditorSection",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 149,
+      "line": 132,
       "symbol": "GeneralEditorSection.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 151,
+      "line": 134,
       "symbol": "GeneralEditorSection.item",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 152,
+      "line": 135,
       "symbol": "GeneralEditorSection.renderConfig",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 153,
+      "line": 136,
       "symbol": "GeneralEditorSection.groupKey",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 154,
+      "line": 137,
       "symbol": "GeneralEditorSection.groups",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 156,
+      "line": 139,
       "symbol": "GeneralEditorSection.getArray(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 162,
+      "line": 145,
       "symbol": "GeneralEditorSection.getProperties(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 170,
+      "line": 153,
       "symbol": "GeneralEditorSection.getVars(_:_:_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 182,
+      "line": 165,
       "symbol": "GeneralEditorSection.hasSectionTitle(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 186,
+      "line": 169,
       "symbol": "GeneralEditorSection.getSectionTitle(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 190,
+      "line": 173,
       "symbol": "GeneralEditorSection.isDescriptionForGroup(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 194,
+      "line": 177,
       "symbol": "GeneralEditorSection.getType(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 198,
+      "line": 181,
       "symbol": "GeneralEditorSection.getHeader(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 245,
+      "line": 228,
       "symbol": "GeneralEditorSection.constructSectionHeader(title:action:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 350,
+      "line": 333,
       "symbol": "DefaultGeneralEditorRow",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 351,
+      "line": 334,
       "symbol": "DefaultGeneralEditorRow.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 353,
+      "line": 336,
       "symbol": "DefaultGeneralEditorRow.item",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 354,
+      "line": 337,
       "symbol": "DefaultGeneralEditorRow.prop",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 355,
+      "line": 338,
       "symbol": "DefaultGeneralEditorRow.readOnly",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 356,
+      "line": 339,
       "symbol": "DefaultGeneralEditorRow.isLast",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 357,
+      "line": 340,
       "symbol": "DefaultGeneralEditorRow.renderConfig",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 358,
+      "line": 341,
       "symbol": "DefaultGeneralEditorRow.variables",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 404,
+      "line": 387,
       "symbol": "DefaultGeneralEditorRow.stringRow()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 416,
+      "line": 399,
       "symbol": "DefaultGeneralEditorRow.boolRow()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 435,
+      "line": 418,
       "symbol": "DefaultGeneralEditorRow.intRow()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 449,
+      "line": 432,
       "symbol": "DefaultGeneralEditorRow.doubleRow()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 463,
+      "line": 446,
       "symbol": "DefaultGeneralEditorRow.dateRow()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 479,
+      "line": 462,
       "symbol": "DefaultGeneralEditorRow.defaultRow(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 486,
+      "line": 469,
       "symbol": "View.generalEditorLabel()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 487,
+      "line": 470,
       "symbol": "View.generalEditorCaption()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 488,
+      "line": 471,
       "symbol": "View.generalEditorHeader()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 489,
+      "line": 472,
       "symbol": "View.generalEditorInput()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/generalEditor/GeneralEditorView.swift",
-      "line": 532,
+      "line": 515,
       "symbol": "GeneralEditorView_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 12,
+      "line": 11,
       "symbol": "ListRenderer",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 13,
+      "line": 12,
       "symbol": "ListRenderer.mode",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 24,
+      "line": 23,
       "symbol": "ListRenderer.init(mode:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 34,
+      "line": 33,
       "symbol": "ListRenderer.canDisplayResultSet(items:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 40,
+      "line": 39,
       "symbol": "ListConfig",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 41,
+      "line": 40,
       "symbol": "ListConfig.type",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 42,
+      "line": 41,
       "symbol": "ListConfig.browse",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 43,
+      "line": 42,
       "symbol": "ListConfig.longPress",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 44,
+      "line": 43,
       "symbol": "ListConfig.press",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 46,
+      "line": 45,
       "symbol": "ListConfig.slideLeftActions",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 47,
+      "line": 46,
       "symbol": "ListConfig.slideRightActions",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 49,
+      "line": 48,
       "symbol": "ListConfig.init(from:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRenderer.swift",
-      "line": 69,
+      "line": 68,
       "symbol": "ListConfig.merge(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -2032,203 +2123,315 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRendererView.swift",
-      "line": 25,
+      "line": 23,
       "symbol": "ListRendererView.init()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRendererView.swift",
-      "line": 29,
+      "line": 27,
       "symbol": "ListRendererView.MyButtonStyle",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/list/ListRendererView.swift",
-      "line": 105,
+      "line": 98,
       "symbol": "ListRendererView_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 11,
+      "symbol": "MapRenderer",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 12,
+      "symbol": "MapRenderer.mode",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 23,
+      "symbol": "MapRenderer.init(mode:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 27,
+      "symbol": "MapRenderer.canDisplayResultSet(items:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 33,
+      "symbol": "MapConfig",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 34,
+      "symbol": "MapConfig.type",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 35,
+      "symbol": "MapConfig.browse",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 36,
+      "symbol": "MapConfig.longPress",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 37,
+      "symbol": "MapConfig.press",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 39,
+      "symbol": "MapConfig.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRenderer.swift",
+      "line": 56,
+      "symbol": "MapConfig.merge(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRendererView.swift",
+      "line": 13,
+      "symbol": "MapRendererView",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRendererView.swift",
       "line": 14,
+      "symbol": "MapRendererView.main",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRendererView.swift",
+      "line": 16,
+      "symbol": "MapRendererView.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRendererView.swift",
+      "line": 18,
+      "symbol": "MapRendererView.renderConfig",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/map/MapRendererView.swift",
+      "line": 30,
+      "symbol": "MapRendererView_Previews",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
+      "line": 13,
       "symbol": "Renderers",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 15,
+      "line": 14,
       "symbol": "Renderers.all",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 23,
+      "line": 25,
       "symbol": "Renderers.allViews",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 31,
+      "line": 36,
       "symbol": "Renderers.tuples",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 37,
+      "line": 42,
       "symbol": "Renderer",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 38,
+      "line": 43,
       "symbol": "Renderer.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 39,
+      "line": 44,
       "symbol": "Renderer.order",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 40,
+      "line": 45,
       "symbol": "Renderer.lastActive",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 41,
+      "line": 46,
       "symbol": "Renderer.renderConfig",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 59,
+      "line": 64,
       "symbol": "Renderer.canDisplayResultSet(items:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 64,
+      "line": 69,
       "symbol": "RenderConfigs",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 82,
+      "line": 95,
       "symbol": "RenderConfigs.merge(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 118,
+      "line": 145,
       "symbol": "RenderConfig",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 129,
+      "line": 156,
       "symbol": "RenderConfig.init(name:renderDescription:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 262,
+      "line": 289,
       "symbol": "RenderConfig.parseRenderDescription(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 312,
+      "line": 339,
       "symbol": "RenderCache",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 313,
+      "line": 340,
       "symbol": "RenderCache.cache",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 314,
+      "line": 341,
       "symbol": "RenderCache.dictCache",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 315,
+      "line": 342,
       "symbol": "RenderCache.orderedDictCache",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 317,
+      "line": 344,
       "symbol": "RenderCache.get(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 321,
+      "line": 348,
       "symbol": "RenderCache.get(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 325,
+      "line": 352,
       "symbol": "RenderCache.set(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 329,
+      "line": 356,
       "symbol": "RenderCache.set(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 333,
+      "line": 360,
       "symbol": "RenderCache.get(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 337,
+      "line": 364,
       "symbol": "RenderCache.set(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/renderer/Renderers.swift",
-      "line": 341,
+      "line": 368,
       "symbol": "renderCache",
       "symbol_kind": "source.lang.swift.decl.var.global",
       "warning": "undocumented"
@@ -2312,7 +2515,7 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 12,
+      "line": 11,
       "symbol": "ThumbnailRenderer",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
@@ -2369,113 +2572,407 @@
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
       "line": 33,
-      "symbol": "ThumbnailConfig.vPadding",
+      "symbol": "ThumbnailConfig.itemInset",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
       "line": 34,
-      "symbol": "ThumbnailConfig.hPadding",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 35,
-      "symbol": "ThumbnailConfig.vSpacing",
+      "symbol": "ThumbnailConfig.edgeInset",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
       "line": 36,
-      "symbol": "ThumbnailConfig.hSpacing",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 37,
-      "symbol": "ThumbnailConfig.columnsInLandscape",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 39,
-      "symbol": "ThumbnailConfig.slideLeftActions",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 40,
-      "symbol": "ThumbnailConfig.slideRightActions",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 42,
       "symbol": "ThumbnailConfig.init(from:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRenderer.swift",
-      "line": 69,
+      "line": 58,
       "symbol": "ThumbnailConfig.merge(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 13,
-      "symbol": "Text.asThumbnail(withMaxWidth:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 21,
+      "line": 11,
       "symbol": "ThumbnailRendererView",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 22,
+      "line": 12,
       "symbol": "ThumbnailRendererView.main",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 24,
+      "line": 14,
       "symbol": "ThumbnailRendererView.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 26,
+      "line": 16,
       "symbol": "ThumbnailRendererView.renderConfig",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 71,
+      "line": 24,
+      "symbol": "ThumbnailRendererView.layout",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
+      "line": 51,
+      "symbol": "ThumbnailRendererView.section",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
+      "line": 105,
       "symbol": "ThumbnailRendererView.onTap(actionDescription:dataItem:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail/ThumbnailRendererView.swift",
-      "line": 76,
+      "line": 110,
       "symbol": "ThumbnailRendererView_Previews",
       "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 11,
+      "symbol": "ThumbGridRenderer",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 21,
+      "symbol": "ThumbGridRenderer.canDisplayResultSet(items:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 26,
+      "symbol": "ThumbGridConfig",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 27,
+      "symbol": "ThumbGridConfig.type",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 28,
+      "symbol": "ThumbGridConfig.browse",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 29,
+      "symbol": "ThumbGridConfig.longPress",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 30,
+      "symbol": "ThumbGridConfig.press",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 32,
+      "symbol": "ThumbGridConfig.columns",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 33,
+      "symbol": "ThumbGridConfig.columnsWide",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 34,
+      "symbol": "ThumbGridConfig.itemInset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 35,
+      "symbol": "ThumbGridConfig.edgeInset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 37,
+      "symbol": "ThumbGridConfig.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRenderer.swift",
+      "line": 60,
+      "symbol": "ThumbGridConfig.merge(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 11,
+      "symbol": "ThumbGridRendererView",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 12,
+      "symbol": "ThumbGridRendererView.main",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 14,
+      "symbol": "ThumbGridRendererView.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 16,
+      "symbol": "ThumbGridRendererView.selectedItems",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 24,
+      "symbol": "ThumbGridRendererView.renderConfig",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 33,
+      "symbol": "ThumbGridRendererView.layout",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 72,
+      "symbol": "ThumbGridRendererView.section",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 152,
+      "symbol": "ThumbGridRendererView.onTap(actionDescription:dataItem:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.grid/ThumbGridRendererView.swift",
+      "line": 157,
+      "symbol": "ThumbGridRendererView_Previews",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 11,
+      "symbol": "ThumbWaterfallRenderer",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 21,
+      "symbol": "ThumbWaterfallRenderer.canDisplayResultSet(items:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 26,
+      "symbol": "ThumbWaterfallConfig",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 27,
+      "symbol": "ThumbWaterfallConfig.type",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 28,
+      "symbol": "ThumbWaterfallConfig.browse",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 29,
+      "symbol": "ThumbWaterfallConfig.longPress",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 30,
+      "symbol": "ThumbWaterfallConfig.press",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 32,
+      "symbol": "ThumbWaterfallConfig.columns",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 33,
+      "symbol": "ThumbWaterfallConfig.columnsWide",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 34,
+      "symbol": "ThumbWaterfallConfig.itemInset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 35,
+      "symbol": "ThumbWaterfallConfig.edgeInset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 37,
+      "symbol": "ThumbWaterfallConfig.init(from:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRenderer.swift",
+      "line": 60,
+      "symbol": "ThumbWaterfallConfig.merge(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 11,
+      "symbol": "ThumbWaterfallRendererView",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 12,
+      "symbol": "ThumbWaterfallRendererView.main",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 14,
+      "symbol": "ThumbWaterfallRendererView.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 16,
+      "symbol": "ThumbWaterfallRendererView.selectedItems",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 24,
+      "symbol": "ThumbWaterfallRendererView.renderConfig",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 33,
+      "symbol": "ThumbWaterfallRendererView.layout",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 47,
+      "symbol": "ThumbWaterfallRendererView.section",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 133,
+      "symbol": "ThumbWaterfallRendererView.onTap(actionDescription:dataItem:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 138,
+      "symbol": "ThumbWaterfallRendererView_Previews",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 144,
+      "symbol": "WaterfallScreenLayoutDelegate",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/control/renderers/thumbnail.waterfall/ThumbWaterfallRendererView.swift",
+      "line": 145,
+      "symbol": "WaterfallScreenLayoutDelegate.heightForHeader(sectionIndex:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -2830,154 +3327,161 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 6,
-      "symbol": "Main",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 12,
-      "symbol": "Main",
-      "symbol_kind": "source.lang.swift.decl.extension",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 86,
+      "line": 103,
       "symbol": "Main.closeStack",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 91,
+      "line": 108,
       "symbol": "Main.scheduleUIUpdate(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 110,
+      "line": 127,
       "symbol": "Main.scheduleComputeView()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 129,
+      "line": 146,
       "symbol": "Main.setComputedView()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 178,
+      "line": 195,
       "symbol": "Main.getPropertyValue(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 190,
+      "line": 207,
       "symbol": "Main.Alias",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 191,
+      "line": 208,
       "symbol": "Main.Alias.key",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 192,
+      "line": 209,
       "symbol": "Main.Alias.type",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 193,
+      "line": 210,
       "symbol": "Main.Alias.on",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 196,
+      "line": 211,
+      "symbol": "Main.Alias.off",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
+      "line": 214,
       "symbol": "Main.aliases",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 198,
+      "line": 216,
       "symbol": "Main.subscript(_:)",
       "symbol_kind": "source.lang.swift.decl.function.subscript",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 231,
+      "line": 250,
       "symbol": "Main.showSessionSwitcher",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 236,
+      "line": 256,
+      "symbol": "Main.showNavigationBinding",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
+      "line": 261,
       "symbol": "Main.showNavigation",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 241,
+      "line": 266,
       "symbol": "Main.init(name:podAPI:cache:realm:settings:installer:sessions:views:computedView:navigation:renderers:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 268,
+      "line": 293,
       "symbol": "ProxyMain",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 270,
+      "line": 295,
       "symbol": "ProxyMain.init(name:_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 309,
+      "line": 334,
       "symbol": "RootMain.init(name:key:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 345,
+      "line": 377,
+      "symbol": "RootMain.initNavigation(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
+      "line": 386,
       "symbol": "RootMain.createProxy(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 349,
+      "line": 390,
       "symbol": "RootMain.boot(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/main/Main.swift",
-      "line": 388,
+      "line": 429,
       "symbol": "RootMain.mockBoot()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -3089,13 +3593,6 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 106,
-      "symbol": "getRealmPath()",
-      "symbol_kind": "source.lang.swift.decl.function.free",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
       "line": 121,
       "symbol": "Cache",
       "symbol_kind": "source.lang.swift.decl.class",
@@ -3124,36 +3621,15 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 136,
-      "symbol": "Cache.init(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 172,
+      "line": 173,
       "symbol": "Cache.query(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 247,
-      "symbol": "Cache.parseQuery(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 258,
+      "line": 266,
       "symbol": "Cache.getResultSet(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/koen/workspace/ios-application/memri/model/Cache.swift",
-      "line": 395,
-      "symbol": "Cache.delete(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -3425,35 +3901,35 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/extensions/File.swift",
-      "line": 154,
+      "line": 173,
       "symbol": "File.generateFilePath()",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/extensions/File.swift",
-      "line": 173,
+      "line": 192,
       "symbol": "FileCache",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/extensions/File.swift",
-      "line": 178,
+      "line": 197,
       "symbol": "FileCache.add(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/extensions/File.swift",
-      "line": 193,
+      "line": 212,
       "symbol": "FileCache.read(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/extensions/File.swift",
-      "line": 209,
+      "line": 228,
       "symbol": "fileCache",
       "symbol_kind": "source.lang.swift.decl.var.global",
       "warning": "undocumented"
@@ -3467,119 +3943,133 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 65,
+      "line": 64,
       "symbol": "DataItem.cast()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 74,
+      "line": 73,
       "symbol": "DataItem.DataItemError",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 75,
+      "line": 74,
       "symbol": "DataItem.DataItemError.cannotMergeItemWithDifferentId",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 158,
+      "line": 148,
+      "symbol": "DataItem.getType()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
+      "line": 163,
       "symbol": "DataItem.toggle(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 211,
+      "line": 188,
+      "symbol": "DataItem.isEqualProperty(_:_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
+      "line": 216,
       "symbol": "DataItem.safeMerge(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 233,
+      "line": 238,
       "symbol": "DataItem.merge(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 271,
+      "line": 276,
       "symbol": "DataItem.access()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 280,
+      "line": 285,
       "symbol": "DataItem.==(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 284,
+      "line": 289,
       "symbol": "DataItem.generateUID()",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 289,
+      "line": 294,
       "symbol": "DataItem.fromJSONFile(_:ext:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 296,
+      "line": 301,
       "symbol": "DataItem.fromJSONString(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 302,
+      "line": 307,
       "symbol": "DataItem.fromUid(uid:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 309,
+      "line": 314,
       "symbol": "ResultSet",
       "symbol_kind": "source.lang.swift.decl.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 385,
+      "line": 390,
       "symbol": "ResultSet.init(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 389,
+      "line": 394,
       "symbol": "ResultSet.load(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 442,
+      "line": 447,
       "symbol": "ResultSet.forceItemsUpdate(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/model.swift",
-      "line": 520,
+      "line": 525,
       "symbol": "ResultSet.setPagesLoaded(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -3775,7 +4265,7 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/model/schema.swift",
-      "line": 94,
+      "line": 126,
       "symbol": "Address",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -4608,70 +5098,70 @@
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 269,
+      "line": 266,
       "symbol": "Session.backButton",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 278,
+      "line": 275,
       "symbol": "Session.currentView",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 282,
+      "line": 279,
       "symbol": "Session.init(from:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 305,
+      "line": 302,
       "symbol": "Session.postInit()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 348,
+      "line": 345,
       "symbol": "Session.setCurrentView(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 370,
+      "line": 367,
       "symbol": "Session.takeScreenShot()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 389,
+      "line": 386,
       "symbol": "Session.fromJSONFile(_:ext:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 395,
+      "line": 392,
       "symbol": "Session.fromJSONString(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.class",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 400,
+      "line": 397,
       "symbol": "Session.==(_:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/koen/workspace/ios-application/memri/view/Sessions.swift",
-      "line": 462,
+      "line": 459,
       "symbol": "UIView.takeScreenShot()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

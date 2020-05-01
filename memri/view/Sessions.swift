@@ -12,27 +12,17 @@ import SwiftUI
 import RealmSwift
 
 public class Sessions: DataItem {
-    /**
-     *
-     */
+ 
     override var genericType:String { "sessions" }
-    /**
-     *
-     */
+ 
     @objc dynamic var currentSessionIndex: Int = 0
-    /**
-     *
-     */
+ 
     let sessions = RealmSwift.List<Session>()
-    /**
-     *
-     */
+ 
     var currentSession: Session {
         return sessions.count > 0 ? sessions[currentSessionIndex] : Session()
     }
-    /**
-     *
-     */
+ 
     var currentView: SessionView {
         return currentSession.currentView
     }
@@ -114,9 +104,7 @@ public class Sessions: DataItem {
         decorate(session)
     }
     
-    /**
-     *
-     */
+ 
     public func load(_ realm:Realm, _ ch:Cache, _ callback: () -> Void) throws {
         
         // Determine self.uid
@@ -153,9 +141,7 @@ public class Sessions: DataItem {
         callback()
     }
     
-    /**
-     *
-     */
+ 
     public func install(_ realm:Realm) {
         // Load default sessions from the package
         let defaultSessions:Sessions = try! Sessions.fromJSONFile("default_sessions")
@@ -188,14 +174,10 @@ public class Sessions: DataItem {
         else { doMerge() }
     }
     
-    /**
-     * Find a session using text
-     */
+    /// Find a session using text
     public func findSession(_ query:String) -> Void {}
 
-    /**
-     * Clear all sessions and create a new one
-     */
+    /// Clear all sessions and create a new one
     public func clear() -> Void {}
     
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
@@ -211,42 +193,24 @@ public class Sessions: DataItem {
 }
 
 public class Session: DataItem {
-    /**
-     *
-     */
+ 
     override var genericType:String { "session" }
-    /**
-     *
-     */
+ 
     @objc dynamic var name: String = ""
-    /**
-     *
-     */
+ 
     @objc dynamic var currentViewIndex: Int = 0
-    /**
-     *
-     */
+ 
     let views = RealmSwift.List<SessionView>() // @Published
-    /**
-     *
-     */
+ 
     @objc dynamic var showFilterPanel:Bool = false
-    /**
-     *
-     */
+ 
     @objc dynamic var showContextPane:Bool = false
-    /**
-     *
-     */
+ 
     @objc dynamic var editMode:Bool = false
-    /**
-     *
-     */
+ 
     @objc dynamic var screenshot:File? = nil
     
-    /**
-     *
-     */
+ 
     var isEditMode: EditMode {
         get {
             if editMode { return .active }

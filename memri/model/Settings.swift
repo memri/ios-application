@@ -42,9 +42,7 @@ public class Settings {
         callback()
     }
     
-    /**
-     *
-     */
+ 
     public func install() {
         let defaults = SettingCollection(value: ["type": "defaults"])
         let device = SettingCollection(value: ["type": "device"])
@@ -71,9 +69,7 @@ public class Settings {
         device.set("/name", "iphone")
     }
     
-    /**
-     *
-     */
+ 
     public func get<T:Decodable>(_ path:String) -> T? {
         let (collection, query) = parse(path)
         
@@ -121,9 +117,7 @@ public class Settings {
         return (collection, query)
     }
 
-    /**
-     * Also responsible for saving the setting to the permanent storage
-     */
+    /// Also responsible for saving the setting to the permanent storage
     public func set(_ path:String, _ value:Any) -> Void {
         let (collection, query) = parse(path)
         
@@ -155,9 +149,7 @@ class SettingCollection:Object {
         return "type"
     }
     
-    /**
-     *
-     */
+ 
     public func get<T:Decodable>(_ path:String) -> T? {
         let needle = self.type + (path.first == "/" ? "" :"/") + path
         
@@ -175,9 +167,7 @@ class SettingCollection:Object {
         return get(path) ?? ""
     }
 
-    /**
-     * Also responsible for saving the setting to the permanent storage
-     */
+    /// Also responsible for saving the setting to the permanent storage
     public func set(_ path:String, _ value:AnyCodable) -> Void {
         let key = self.type + (path.first == "/" ? "" :"/") + path
         

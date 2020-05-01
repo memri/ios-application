@@ -20,7 +20,7 @@ class ItemRendererTest: XCTestCase {
     }
 
     func testExample() throws {
-       var x = try! ItemRenderer(baseComponent: try! ItemRendererComponent.fromJSONFile("list_item_component"))
+//       var x = try! ItemRenderer(baseComponent: try! ItemRendererComponent.fromJSONFile("list_item_component"))
 
     }
 

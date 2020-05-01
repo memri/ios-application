@@ -15,13 +15,9 @@ extension StringProtocol {
 }
 
 public class MainNavigation:ObservableObject {
-    /**
-     *
-     */
+ 
     var items: [NavigationItem] = []
-    /**
-     *
-     */
+ 
     var filterText: String {
         get {
             return Settings.get("device/navigation/filterText") ?? ""
@@ -33,9 +29,6 @@ public class MainNavigation:ObservableObject {
         }
     }
     
-    /**
-     * @private
-     */
     public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
     
     private var realm:Realm
@@ -44,9 +37,7 @@ public class MainNavigation:ObservableObject {
         realm = rlm
     }
     
-    /**
-     *
-     */
+ 
     public func getItems() -> [NavigationItem] {
         let needle = self.filterText.lowercased()
         
@@ -55,9 +46,7 @@ public class MainNavigation:ObservableObject {
         }
     }
     
-    /**
-     *
-     */
+ 
     public func load(_ callback: () -> Void) {
         // Fetch navigation from realm and sort based on the order property
         let navItems = realm.objects(NavigationItem.self).sorted(byKeyPath: "order")
@@ -69,9 +58,7 @@ public class MainNavigation:ObservableObject {
         
         callback()
     }
-    /**
-     *
-     */
+ 
     public func install() {
         // Load default navigation items from pacakge
         let jsonData = try! jsonDataFromFile("default_navigation")
@@ -89,23 +76,17 @@ public class MainNavigation:ObservableObject {
 }
 
 public class NavigationItem: Object, ObservableObject, Codable {
-    /**
-     * Used as the caption in the navigation
-     */
+
+    /// Used as the caption in the navigation
     @objc dynamic var title: String = ""
-    /**
-     * Name of the view it opens
-     */
+    /// Name of the view it opens
     @objc dynamic var view: String? = nil
-    /**
-     * Defines the position in the navigation
-     */
+    /// Defines the position in the navigation
     @objc dynamic var order: Int = 0
-    /**
-     *  0 = Item
-     *  1 = Heading
-     *  2 = Line
-     */
+    
+    ///     0 = Item
+    ///     1 = Heading
+    ///     2 = Line
     @objc dynamic var type: String = "item"
     
     public convenience required init(from decoder: Decoder) throws {

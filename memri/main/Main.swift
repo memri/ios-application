@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-/**
+/*
  Notes on documentation
  
  We use the following documentation keywords
@@ -21,63 +21,35 @@ import RealmSwift
 
 
 public class Main: ObservableObject {
-    /**
-     *
-     */
+ 
     public var name: String = ""
-    /**
-     * The current session that is active in the application
-     */
+    /// The current session that is active in the application
     @Published public var currentSession: Session = Session()
-    /**
-     *
-     */
+ 
     @Published public var computedView: ComputedView
-    /**
-     *
-     */
+ 
     @Published public var sessions: Sessions
-    /**
-     *
-     */
+ 
     public var views: Views
-    /**
-     *
-     */
+ 
     public var settings: Settings
-    /**
-     *
-     */
+ 
     public var installer: Installer
-    /**
-     *
-     */
+ 
     public var podAPI: PodAPI
-    /**
-     *
-     */
+ 
     public var cache: Cache
-    /**
-     *
-     */
+ 
     public var realm: Realm
-    /**
-     *
-     */
+ 
     public var navigation: MainNavigation
-    /**
-     *
-     */
+ 
     public var renderers: Renderers
-    /**
-     *
-     */
+ 
     public var currentRendererView: AnyView {
         self.renderers.allViews[self.computedView.rendererName]!
     }
-    /**
-     *
-     */
+ 
     public var items: [DataItem] {
         get {
             self.computedView.resultSet.items
@@ -87,9 +59,7 @@ public class Main: ObservableObject {
             print("THIS SHOULD NEVER BE PRINTED2")
         }
     }
-    /**
-     *
-     */
+ 
     public var item: DataItem? {
         get {
             self.computedView.resultSet.item
@@ -320,12 +290,9 @@ public class ProxyMain: Main {
     }
 }
 
-/**
- * Represents the entire application user interface.
- * One can imagine in the future there being multiple applications,
- * each aimed at a different way to represent the data. For instance
- * an application that is focussed on voice-first instead of gui-first.
- */
+
+/// Represents the entire application user interface. One can imagine in the future there being multiple applications, each aimed at a
+///  different way to represent the data. For instance an application that is focussed on voice-first instead of gui-first.
 public class RootMain: Main {
     private var cancellable: AnyCancellable? = nil
     

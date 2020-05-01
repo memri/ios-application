@@ -20,7 +20,7 @@ class mainTest: XCTestCase {
     }
 
     func testMain() throws {
-        let main = Main(name: "Memri GUI", key: "ABCDEF")
+//        let main = Main(name: "Memri GUI", key: "ABCDEF")
     }
 
     func testPerformanceExample() throws {
