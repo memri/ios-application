@@ -76,9 +76,19 @@ struct RichTextRendererView: View {
     var renderConfig: RenderConfig = RenderConfig()
 
     var body: some View {
+        let binding = Binding(
+            get: { self.main.computedView.resultSet.item!.getString("title") },
+            set: { self.main.computedView.resultSet.item!.set("title", $0) }
+        )
+        
         return VStack{
             if main.computedView.resultSet.item != nil {
-//                _LEORichTextEditor()
+                TextField("Daily Note", text: binding)
+                    .padding(.horizontal, 10)
+                    .padding(.top, 20)
+                    .font(.headline)
+                    .foregroundColor(.gray)
+                    
                 _RichTextEditor(dataItem: main.computedView.resultSet.item!)
             }
         }
