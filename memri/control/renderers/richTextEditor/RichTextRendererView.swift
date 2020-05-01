@@ -19,19 +19,46 @@ struct _RichTextEditor: UIViewRepresentable {
             self.control = control
         }
         func textViewDidChange(_ textView: UITextView) {
-            control.dataItem.set("content", textView.text ?? "")
+            control.dataItem.set("content", textView.attributedText.string)
         }
     }
 
     func makeUIView(context: Context) -> UITextView {
-        let view = UITextView()
-        view.isScrollEnabled = true
-        view.isEditable = true
-        view.isUserInteractionEnabled = true
-        view.contentInset = UIEdgeInsets(top: 5,left: 10, bottom: 5, right: 5)
-        view.delegate = context.coordinator
-        view.text = self.dataItem.getString("content")
-        return view
+
+        // NOT SURE WHY THIS IS NEEDED, doesnt seem to do anything
+        let bounds = CGRect(x: 0, y: 0, width: 0, height: 0)
+        
+        
+        var textView = LEOTextView(frame: bounds,
+                                   textContainer: NSTextContainer())
+        
+        
+        let escapedContent = self.dataItem.getString("content").replacingOccurrences(of: "\n", with: "\\n")
+        let textAttributedJson = """
+        {
+        "text": "\(escapedContent)",
+        "attributes": []
+        }
+        """
+        
+        
+        textView.setAttributeTextWithJSONString(textAttributedJson)
+        textView.isScrollEnabled = true
+        textView.contentInset = UIEdgeInsets(top: 5,left: 5, bottom: 5, right: 5)
+        textView.delegate = context.coordinator
+        textView.enableToolbar()
+        
+        return textView
+        
+        
+//        let view = UITextView()
+//        view.isScrollEnabled = true
+//        view.isEditable = true
+//        view.isUserInteractionEnabled = true
+//        view.contentInset = UIEdgeInsets(top: 5,left: 10, bottom: 5, right: 5)
+//        view.delegate = context.coordinator
+//        view.text = self.dataItem.getString("content")
+//        return view
     }
     
     func updateUIView(_ uiView: UITextView, context: Context) {}
