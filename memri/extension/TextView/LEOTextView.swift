@@ -25,11 +25,16 @@ open class LEOTextView: UITextView {
     open var titleFont: UIFont = UIFont.boldSystemFont(ofSize: 18)
     open var boldFont: UIFont = UIFont.boldSystemFont(ofSize: 17)
     open var italicFont: UIFont = UIFont.italicSystemFont(ofSize: 17)
+    
+    var boldButton: UIBarButtonItem? = nil
+    var italicButton: UIBarButtonItem? = nil
+    var underlineButton: UIBarButtonItem? = nil
+
 
     // MARK: - instance relations
 
     var nck_textStorage: LEOTextStorage!
-
+    
     var currentAttributesDataWithPasteboard: [Dictionary<String, AnyObject>]?
 
     let nck_attributesDataWithPasteboardUserDefaultKey = "leo_attributesDataWithPasteboardUserDefaultKey"
@@ -54,7 +59,7 @@ open class LEOTextView: UITextView {
         textStorage.textView = self
 
         // TextView property set
-        delegate = self
+//        delegate = self
         nck_textStorage = textStorage
 
         customTextView()
@@ -145,7 +150,7 @@ open class LEOTextView: UITextView {
         var targetText: NSString!
         var targetRange: NSRange!
 
-        let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.text, location: selectedRange.location)
+        let objectLineAndIndex = LEOTextUtil.objectLineAndIndexForString(self.text, location: selectedRange.location)
         let objectIndex = objectLineAndIndex.1
 
         if selectedRange.length == 0 {
@@ -162,8 +167,8 @@ open class LEOTextView: UITextView {
         // Confirm current is To list or To body by first line
         let objectLineRange = NSRange(location: 0, length: targetText.length)
 
-        let isCurrentOrderedList = LEOTextUtil.markdownOrderedListRegularExpression.matches(in: String(targetText), options: [], range: objectLineRange).count > 0
-        let isCurrentUnorderedList = LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: String(targetText), options: [], range: objectLineRange).count > 0
+        let isCurrentOrderedList = LEOTextUtil.orderedListRE.matches(in: String(targetText), options: [], range: objectLineRange).count > 0
+        let isCurrentUnorderedList = LEOTextUtil.unonderedListRE.matches(in: String(targetText), options: [], range: objectLineRange).count > 0
 
         let isListNow = (isCurrentOrderedList || isCurrentUnorderedList)
         let isTransformToList = (isOrderedList && !isCurrentOrderedList) || (!isOrderedList && !isCurrentUnorderedList)
@@ -199,7 +204,10 @@ open class LEOTextView: UITextView {
         }
 
         // Replace paragraph
-        nck_textStorage.undoSupportReplaceRange(targetRange, withAttributedString: NSAttributedString(string: replacedContent, attributes: defaultAttributesForLoad), oldAttributedString: NSAttributedString(string: String(targetText), attributes: defaultAttributesForLoad), selectedRangeLocationMove: replacedContent.length() - targetText.length)
+        nck_textStorage.undoSupportReplaceRange(targetRange,
+                                                withAttributedString: NSAttributedString(string: replacedContent, attributes: defaultAttributesForLoad),
+                                                oldAttributedString: NSAttributedString(string: String(targetText), attributes: defaultAttributesForLoad),
+                                                selectedRangeLocationMove: replacedContent.length() - targetText.length)
 
         if isListNow {
             // Already list paragraph.
@@ -252,6 +260,11 @@ open class LEOTextView: UITextView {
 
                     attributesData.append(attribute)
                 }
+                    
+                else if $0 == NSAttributedString.Key.underlineStyle {
+                    attribute["fontType"] = "underline" as AnyObject?
+                    attributesData.append(attribute)
+                }
                 // Paragraph indent saved
                 else if $0 == NSAttributedString.Key.paragraphStyle {
                     let paragraphType = self.nck_textStorage.currentParagraphTypeWithLocation(range.location)
@@ -261,8 +274,10 @@ open class LEOTextView: UITextView {
                         attributesData.append(attribute)
                     }
                 }
+                print(attribute)
             }
         }
+        
 
         return attributesData
     }
@@ -290,13 +305,19 @@ open class LEOTextView: UITextView {
         let textString = NSString(string: LEOTextView.textWithJSONString(jsonString))
 
         attributes.forEach {
+            print($0)
             let attribute = $0
             let attributeName = attribute["name"] as! String
             let range = NSRange(location: attribute["location"] as! Int, length: attribute["length"] as! Int)
+            
+            
 
             if attributeName == NSAttributedString.Key.font.rawValue {
                 let currentFont = fontOfTypeWithAttribute(attribute)
                 textStorage.addAttribute(NSAttributedString.Key(rawValue: attributeName), value: currentFont, range: range)
+            } else if attributeName == NSAttributedString.Key.underlineStyle.rawValue{
+                textStorage.addAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue], range: range)
+                
             } else if attributeName == NSAttributedString.Key.paragraphStyle.rawValue {
                 let listTypeRawValue = attribute["listType"]
 
@@ -320,66 +341,10 @@ open class LEOTextView: UITextView {
                     textStorage.addAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: normalFont], range: range)
                 }
             }
-        }
-    }
-
-    open class func addAttributesWithAttributedString(_ attributedString: NSAttributedString, jsonString: String, normalFont: UIFont, titleFont: UIFont, boldFont: UIFont, italicFont: UIFont, defaultParagraphStyle: NSParagraphStyle?) -> NSAttributedString {
-        let mutableAttributedString = NSMutableAttributedString(attributedString: attributedString)
-
-        let attributes = LEOTextView.attributesWithJSONString(jsonString)
-        let textString = NSString(string: LEOTextView.textWithJSONString(jsonString))
-
-        attributes.forEach {
-            let attribute = $0
-            let attributeName = attribute["name"] as! String
-            let range  = NSRange(location: attribute["location"] as! Int, length: attribute["length"] as! Int)
-
-            if attributeName == NSAttributedString.Key.font.rawValue {
-                let fontType = attribute["fontType"] as? String
-                var currentFont = normalFont
-
-                if fontType == "title" {
-                    currentFont = titleFont
-                } else if fontType == "bold" {
-                    currentFont = boldFont
-                } else if fontType == "italic" {
-                    currentFont = italicFont
-                }
-
-                mutableAttributedString.addAttribute(NSAttributedString.Key.font, value: currentFont, range: range)
-            } else if attributeName == NSAttributedString.Key.paragraphStyle.rawValue {
-                let listTypeRawValue = attribute["listType"]
-
-                if listTypeRawValue != nil {
-                    let listType = LEOInputParagraphType(rawValue: listTypeRawValue as! Int)
-                    var listPrefixWidth: CGFloat = 0
-
-                    if listType == .numberedList {
-                        var listPrefixString = textString.substring(with: range).components(separatedBy: " ")[0]
-                        listPrefixString.append(" ")
-                        listPrefixWidth = NSString(string: listPrefixString).size(withAttributes: [NSAttributedString.Key.font: normalFont]).width
-                    } else {
-                        listPrefixWidth = NSString(string: "• ").size(withAttributes: [NSAttributedString.Key.font: normalFont]).width
-                    }
-
-                    let lineHeight = normalFont.lineHeight
-
-                    var paragraphStyle: NSMutableParagraphStyle!
-
-                    if defaultParagraphStyle != nil {
-                        paragraphStyle = defaultParagraphStyle!.mutableCopy() as! NSMutableParagraphStyle
-                    } else {
-                        paragraphStyle = NSMutableParagraphStyle()
-                    }
-
-                    paragraphStyle.headIndent = listPrefixWidth + lineHeight
-                    paragraphStyle.firstLineHeadIndent = lineHeight
-                    mutableAttributedString.addAttributes([NSAttributedString.Key.paragraphStyle: paragraphStyle, NSAttributedString.Key.font: normalFont], range: range)
-                }
+            else{
+                
             }
         }
-
-        return mutableAttributedString
     }
 
     open class func attributesWithJSONString(_ jsonString: String) -> [[String: AnyObject]] {
@@ -452,49 +417,13 @@ open class LEOTextView: UITextView {
 
     // MARK: - Menu controller button actions
 
-  @objc func boldButtonAction() {
-        buttonActionWithInputFontMode(.bold)
-    }
-    
-    @objc func underlineFontButtonAction() {
-      buttonActionWithInputFontMode(.underline)
-    }
-
-  @objc func italicButtonAction() {
-        buttonActionWithInputFontMode(.italic)
-    }
-
-    func buttonActionWithInputFontMode(_ mode: LEOInputFontMode) {
-        
+    func buttonAction(_ mode: LEOInputFontMode) {
         guard mode != .normal else {
             return
         }
 
-        if LEOTextUtil.isSelectedTextWithTextView(self) {
-            
-            let currentFont = self.attributedText.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: selectedRange.location, effectiveRange: nil, defaultValue: normalFont) as! UIFont
-            
-            let compareFontName = (mode == .bold) ? boldFont.fontName : (mode == .italic ? italicFont.fontName : underlineFont.fontName)
-
-            let isSpecialFont: Bool
-            
-            switch mode{
-            case .bold:
-                isSpecialFont = LEOTextUtil.isBoldFont(currentFont, boldFontName: compareFontName)
-            case .italic:
-                isSpecialFont = LEOTextUtil.isItalicFont(currentFont, italicFontName: compareFontName)
-            case .underline:
-                isSpecialFont = LEOTextUtil.isUnderlineFont(currentFont, underLineFontName: compareFontName)
-            default:
-                isSpecialFont = false
-            }
-            
-            
-            if !isSpecialFont {
-                changeSelectedTextWithInputFontMode(mode)
-            } else {
-                changeSelectedTextWithInputFontMode(.normal)
-            }
+        if LEOTextUtil.isSelecting(self) {
+            changeSelectedTextWithInputFontMode(mode)
         } else {
             inputFontMode = (inputFontMode != mode) ? mode : .normal
         }
@@ -582,8 +511,8 @@ open class LEOTextView: UITextView {
         pasteText.enumerateLines { [unowned self] (line, stop) in
             let lineLength = line.length()
 
-            if LEOTextUtil.markdownOrderedListRegularExpression.matches(in: line, options: .reportProgress, range: NSMakeRange(0, lineLength)).count > 0 ||
-                       LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: line, options: .reportProgress, range: NSMakeRange(0, lineLength)).count > 0 {
+            if LEOTextUtil.orderedListRE.matches(in: line, options: .reportProgress, range: NSMakeRange(0, lineLength)).count > 0 ||
+                       LEOTextUtil.unonderedListRE.matches(in: line, options: .reportProgress, range: NSMakeRange(0, lineLength)).count > 0 {
                 let listPrefixString: NSString = NSString(string: line.components(separatedBy: " ")[0]).appending(" ") as NSString
 
                 let paragraphStyle = NSMutableParagraphStyle()

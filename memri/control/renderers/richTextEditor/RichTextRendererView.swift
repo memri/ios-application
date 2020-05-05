@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import UIKit
 import Combine
 
 struct _RichTextEditor: UIViewRepresentable {
@@ -20,7 +21,19 @@ struct _RichTextEditor: UIViewRepresentable {
         }
         func textViewDidChange(_ textView: UITextView) {
             control.dataItem.set("content", textView.attributedText.string)
+            control.dataItem.set("attributedContent", (textView as! LEOTextView).textAttributesJSON())        }
+    }
+    
+    func emptyAttributedContent() -> String{
+        let escapedContent = self.dataItem.getString("content").replacingOccurrences(of: "\n", with: "\\n")
+        let attributedContent = """
+        {
+        "text": "\(escapedContent)",
+        "attributes": []
         }
+        """
+        return attributedContent
+        
     }
 
     func makeUIView(context: Context) -> UITextView {
@@ -28,21 +41,15 @@ struct _RichTextEditor: UIViewRepresentable {
         // NOT SURE WHY THIS IS NEEDED, doesnt seem to do anything
         let bounds = CGRect(x: 0, y: 0, width: 0, height: 0)
         
-        
         var textView = LEOTextView(frame: bounds,
                                    textContainer: NSTextContainer())
-        
-        
-        let escapedContent = self.dataItem.getString("content").replacingOccurrences(of: "\n", with: "\\n")
-        let textAttributedJson = """
-        {
-        "text": "\(escapedContent)",
-        "attributes": []
+                
+        if let attributedContent = self.dataItem["attributedContent"]{
+            textView.setAttributeTextWithJSONString(attributedContent as! String)
+        }else{
+            textView.setAttributeTextWithJSONString(emptyAttributedContent())
         }
-        """
         
-        
-        textView.setAttributeTextWithJSONString(textAttributedJson)
         textView.isScrollEnabled = true
         textView.contentInset = UIEdgeInsets(top: 5,left: 5, bottom: 5, right: 5)
         textView.delegate = context.coordinator
