@@ -92,32 +92,25 @@ class LEOTextStorage: NSTextStorage {
             let lineTokens = objectLine.components(separatedBy: " ")
             
             // is empty list object
-            if LEOTextUtil.isListObject(objectLine) && lineTokens.count >= 2 && lineTokens[1] == "" {
+            if LEOTextUtil.isListItem(objectLine) && lineTokens.count >= 2 && lineTokens[1] == "" {
                     let lastIndex = objectIndex + objectLine.length()
                     let isEndOfText = lastIndex >= string.length()
                                     
                     // after this list the text ends, or the list ends
                     if isEndOfText || LEOTextUtil.isReturn(NSString(string: string).substring(with: NSMakeRange(lastIndex, 1))) {
-                                                
-                        // Delete mark
                         deleteCurrentListPrefixItemByReturn = true
                     }
             }
         } else if LEOTextUtil.isBackspace(str) && range.length == 1 {
             var firstLine = LEOTextUtil.objectLineWithString(self.textView.text, location: range.location)
+            // TODO: WHY IS THE SPACE NOT INCLUDED?
             firstLine.append(" ")
+            let lineTokens = firstLine.components(separatedBy: " ").count
 
-            let separates = firstLine.components(separatedBy: " ").count
-            let firstLineRange = NSMakeRange(0, firstLine.length())
-
-            if separates == 2 &&
-                (LEOTextUtil.unonderedListRE.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0 ||
-                 LEOTextUtil.orderedListRE.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0) {
-                // Delete mark
+            if lineTokens == 2 && LEOTextUtil.isListItem(firstLine){
                 deleteCurrentListPrefixItemByBackspace = true
                 // a space char will deleting by edited operate, so we auto delete length needs subtraction one
-                currentItemPrefixLength = firstLineRange.length - 1
-                newItemText = ""
+                currentItemPrefixLength = firstLine.length() - 1
             }
         }
 

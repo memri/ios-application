@@ -38,7 +38,7 @@ class LEOTextUtil: NSObject {
         return length > 0
     }
     
-    class func isListObject(_ objectLine: String) -> Bool{
+    class func isListItem(_ objectLine: String) -> Bool{
         let objectLineRange = NSMakeRange(0, objectLine.length())
         let isUnorderedList = unonderedListRE.matches(in: objectLine, options: .reportProgress,
                                                       range: objectLineRange).count > 0
