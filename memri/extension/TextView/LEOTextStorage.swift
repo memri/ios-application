@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class LEOTextStorage: NSTextStorage {
     var textView: LEOTextView!
 
@@ -26,13 +27,54 @@ class LEOTextStorage: NSTextStorage {
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key : Any] {
         return currentString.attributes(at: location, effectiveRange: range)
     }
-
+    
+    func getNewItemText(_ objectLine: String) -> NSString?{
+        switch LEOTextUtil.paragraphType(objectLine) {
+        case .numberedList:
+            var number = Int(objectLine.components(separatedBy: ".")[0])
+            if number == nil {
+                return nil
+            }
+            // number changed.
+            number! += 1
+            return  "\(number!). " as NSString
+        case .bulletedList, .dashedList:
+            let listPrefixItem = objectLine.components(separatedBy: " ")[0]
+            return "\(listPrefixItem) " as NSString
+        case .body:
+            return nil
+        default:
+            return nil
+        }
+        return nil
+    }
+    func getPrefixLength(_ objectLine: String) -> Int{
+        // is it an empty
+        switch LEOTextUtil.paragraphType(objectLine) {
+        case .numberedList:
+            var number = Int(objectLine.components(separatedBy: ".")[0])
+            if number == nil {return 0}
+            return "\(number!). ".length()
+        case .bulletedList, .dashedList:
+            let listPrefixItem = objectLine.components(separatedBy: " ")[0]
+            return "\(listPrefixItem) ".length()
+        default:
+            return 0
+        }
+    }
+    
+    /// Main function that is called when an input is generated from the UI
+    /// - Parameters:
+    ///   - range: place to replace the characters
+    ///   - str: string to insert
     override func replaceCharacters(in range: NSRange, with str: String) {
+        
+        
         // New item of list by increase
-        var listItemFillText: NSString = ""
+        var newItemText: NSString = ""
 
         // Current list item punctuation length
-        var listPrefixItemLength = 0
+        var currentItemPrefixLength = 0
         var deleteCurrentListPrefixItemByReturn = false
         var deleteCurrentListPrefixItemByBackspace = false
 
@@ -42,53 +84,24 @@ class LEOTextStorage: NSTextStorage {
                 textView.inputFontMode = .normal
             }
 
-            let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(self.string, location: range.location)
-            let objectLine = objectLineAndIndex.0
-            let objectIndex = objectLineAndIndex.1
+            let (objectLine, objectIndex) = LEOTextUtil.objectLineAndIndexForString(self.string, location: range.location)
+            newItemText = getNewItemText(objectLine) ?? ""
+            currentItemPrefixLength = getPrefixLength(objectLine)
+        
 
-            switch LEOTextUtil.paragraphTypeWithObjectLine(objectLine) {
-            case .numberedList:
-                var number = Int(objectLine.components(separatedBy: ".")[0])
-                if number == nil {
-                    break
-                }
-                listPrefixItemLength = "\(number!). ".length()
-
-                // number changed.
-                number! += 1
-                listItemFillText = "\(number!). " as NSString
-                break
-            case .bulletedList, .dashedList:
-                let listPrefixItem = objectLine.components(separatedBy: " ")[0]
-                listItemFillText = "\(listPrefixItem) " as NSString
-
-                listPrefixItemLength = listItemFillText.length
-
-                break
-            default:
-                break
-            }
-
-            let separateds = objectLine.components(separatedBy: " ")
-            if separateds.count >= 2 {
-                let objectLineRange = NSMakeRange(0, objectLine.length())
-                if separateds[1] == "" && (LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: objectLine, options: .reportProgress, range: objectLineRange).count > 0 || LEOTextUtil.markdownOrderedListRegularExpression.matches(in: objectLine, options: .reportProgress, range: objectLineRange).count > 0) {
-
+            let lineTokens = objectLine.components(separatedBy: " ")
+            
+            // is empty list object
+            if LEOTextUtil.isListObject(objectLine) && lineTokens.count >= 2 && lineTokens[1] == "" {
                     let lastIndex = objectIndex + objectLine.length()
                     let isEndOfText = lastIndex >= string.length()
-                    var isReturnAtNext = false
-
-                    if !isEndOfText {
-                        isReturnAtNext = LEOTextUtil.isReturn(NSString(string: string).substring(with: NSMakeRange(lastIndex, 1)))
-                    }
-
-                    if isEndOfText || isReturnAtNext {
+                                    
+                    // after this list the text ends, or the list ends
+                    if isEndOfText || LEOTextUtil.isReturn(NSString(string: string).substring(with: NSMakeRange(lastIndex, 1))) {
+                                                
                         // Delete mark
                         deleteCurrentListPrefixItemByReturn = true
-                        listPrefixItemLength = listItemFillText.length
-                        listItemFillText = ""
                     }
-                }
             }
         } else if LEOTextUtil.isBackspace(str) && range.length == 1 {
             var firstLine = LEOTextUtil.objectLineWithString(self.textView.text, location: range.location)
@@ -97,12 +110,14 @@ class LEOTextStorage: NSTextStorage {
             let separates = firstLine.components(separatedBy: " ").count
             let firstLineRange = NSMakeRange(0, firstLine.length())
 
-            if separates == 2 && (LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0 || LEOTextUtil.markdownOrderedListRegularExpression.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0) {
+            if separates == 2 &&
+                (LEOTextUtil.unonderedListRE.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0 ||
+                 LEOTextUtil.orderedListRE.matches(in: firstLine, options: .reportProgress, range: firstLineRange).count > 0) {
                 // Delete mark
                 deleteCurrentListPrefixItemByBackspace = true
                 // a space char will deleting by edited operate, so we auto delete length needs subtraction one
-                listPrefixItemLength = firstLineRange.length - 1
-                listItemFillText = ""
+                currentItemPrefixLength = firstLineRange.length - 1
+                newItemText = ""
             }
         }
 
@@ -122,54 +137,24 @@ class LEOTextStorage: NSTextStorage {
             return
         }
 
-        if deleteCurrentListPrefixItemByReturn {
-            // Delete list item characters.
-            let deleteLocation = range.location - listPrefixItemLength
-            let deleteRange = NSRange(location: deleteLocation, length: listPrefixItemLength + 1)
+        if deleteCurrentListPrefixItemByReturn || deleteCurrentListPrefixItemByBackspace {
+            let deleteLocation = range.location - currentItemPrefixLength
+            let deleteRange = NSRange(location: deleteLocation, length: currentItemPrefixLength)
             let deleteString = NSString(string: string).substring(with: deleteRange)
 
-            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(), oldAttributedString: NSAttributedString(string: deleteString), selectedRangeLocationMove: -(deleteLocation > 0 ? listPrefixItemLength + 1 : listPrefixItemLength))
+            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(), oldAttributedString: NSAttributedString(string: deleteString),
+                                    selectedRangeLocationMove: -currentItemPrefixLength)
+            
+            undoSupportResetIndenationRange(deleteRange, headIndent: deleteString.size(withAttributes: [NSAttributedString.Key.font: textView.normalFont]).width)
 
-            var effectIndex = deleteRange.location + 1
-
-            if effectIndex < string.length() {
-                returnKeyDeleteEffectRanges.removeAll()
-
-                while effectIndex < string.length() {
-                    guard let fontAfterDeleteText = self.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: effectIndex, effectiveRange: nil, defaultValue: nil) as? UIFont else {
-                        continue
-                    }
-
-                    var fontType: LEOInputFontMode = .normal
-
-                    if fontAfterDeleteText.pointSize == textView.titleFont.pointSize {
-                        fontType = .title
-                    } else if LEOTextUtil.isBoldFont(fontAfterDeleteText, boldFontName: textView.boldFont.fontName) {
-                        fontType = .bold
-                    } else if LEOTextUtil.isItalicFont(fontAfterDeleteText, italicFontName: textView.italicFont.fontName) {
-                        fontType = .italic
-                    }
-
-                    returnKeyDeleteEffectRanges.append([effectIndex: fontType])
-
-                    effectIndex += 1
-                }
-            }
-
-        } else if deleteCurrentListPrefixItemByBackspace {
-            // Delete list item characters.
-            let deleteLocation = range.location - listPrefixItemLength
-            let deleteRange = NSRange(location: deleteLocation, length: listPrefixItemLength)
-            let deleteString = NSString(string: string).substring(with: deleteRange)
-
-            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(), oldAttributedString: NSAttributedString(string: deleteString), selectedRangeLocationMove: -listPrefixItemLength)
         } else {
             // List item increase
-            let listItemTextLength = listItemFillText.length
+            let listItemTextLength = newItemText.length
 
             if listItemTextLength > 0 {
                 // Follow text cursor to new list item location.
-                undoSupportAppendRange(NSMakeRange(range.location + str.length(), 0), withString: String(listItemFillText), selectedRangeLocationMove: listItemTextLength)
+                undoSupportAppendRange(NSMakeRange(range.location + str.length(), 0),
+                                       withString: String(newItemText), selectedRangeLocationMove: listItemTextLength)
             }
         }
     }
@@ -205,7 +190,7 @@ class LEOTextStorage: NSTextStorage {
             return self.textView.inputFontMode == .title ? .title : .body
         }
 
-        let objectLineAndIndex = LEOTextUtil.objectLineAndIndexWithString(string, location: location)
+        let objectLineAndIndex = LEOTextUtil.objectLineAndIndexForString(string, location: location)
         let titleFirstCharLocation = objectLineAndIndex.1
 
         let currentFont = self.textView.attributedText.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: titleFirstCharLocation, effectiveRange: nil, defaultValue: textView.normalFont) as! UIFont
@@ -217,32 +202,34 @@ class LEOTextStorage: NSTextStorage {
 
         let objectLine = NSString(string: self.string).substring(with: paragraphRange)
 
-        return LEOTextUtil.paragraphTypeWithObjectLine(objectLine)
+        return LEOTextUtil.paragraphType(objectLine)
     }
     
     func turnOffUnderline(_ range: NSRange){
+//        safeRemoveAttributed
         safeAddAttributes([.underlineStyle: 0], range: range)
     }
 
     func performReplacementsForRange(_ range: NSRange, mode: LEOInputFontMode) {
+        
         if range.length > 0 {
             // Add addition attributes.
 //            var attrValue: UIFont!
-            print(range)
+//            print(range)
 
             switch mode {
             case .normal:
                 safeAddAttributes([NSAttributedString.Key.font : textView.normalFont], range: range)
-                turnOffUnderline(range)
+//                turnOffUnderline(range)
 //                safeAddAttributes([.underlineStyle: 0], range: range)
                 break
             case .bold:
                 safeAddAttributes([NSAttributedString.Key.font : textView.boldFont], range: range)
-                turnOffUnderline(range)
+//                turnOffUnderline(range)
                 break
             case .italic:
                 safeAddAttributes([NSAttributedString.Key.font : textView.italicFont], range: range)
-                turnOffUnderline(range)
+//                turnOffUnderline(range)
                 break
             case .underline:
                 safeAddAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue], range: range)

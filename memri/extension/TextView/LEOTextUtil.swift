@@ -8,33 +8,47 @@
 
 import UIKit
 
+extension NSAttributedString {
+    var attributedString2Html: String? {
+        do {
+            let htmlData = try self.data(from: NSRange(location: 0, length: self.length), documentAttributes:[.documentType: NSAttributedString.DocumentType.html]);
+            return String.init(data: htmlData, encoding: String.Encoding.utf8)
+        } catch {
+            print("error:", error)
+            return nil
+        }
+    }
+}
+
 class LEOTextUtil: NSObject {
-    static let markdownUnorderedListRegularExpression = try! NSRegularExpression(pattern: "^[-*••∙●] ", options: .caseInsensitive)
-    static let markdownOrderedListRegularExpression = try! NSRegularExpression(pattern: "^\\d*\\. ", options: .caseInsensitive)
+    static let unonderedListRE = try! NSRegularExpression(pattern: "^[-*••∙●] ", options: .caseInsensitive)
+    static let orderedListRE = try! NSRegularExpression(pattern: "^\\d*\\. ", options: .caseInsensitive)
     static let markdownOrderedListAfterItemsRegularExpression = try! NSRegularExpression(pattern: "\\n\\d*\\. ", options: .caseInsensitive)
 
     class func isReturn(_ text: String) -> Bool {
-        if text == "\n" {
-            return true
-        } else {
-            return false
-        }
+        return text == "\n"
     }
 
     class func isBackspace(_ text: String) -> Bool {
-        if text == "" {
-            return true
-        } else {
-            return false
-        }
+        return text == ""
     }
 
-    class func isSelectedTextWithTextView(_ textView: UITextView) -> Bool {
+    class func isSelecting(_ textView: UITextView) -> Bool {
         let length = textView.selectedRange.length
         return length > 0
     }
+    
+    class func isListObject(_ objectLine: String) -> Bool{
+        let objectLineRange = NSMakeRange(0, objectLine.length())
+        let isUnorderedList = unonderedListRE.matches(in: objectLine, options: .reportProgress,
+                                                      range: objectLineRange).count > 0
+        let isOrderedList = orderedListRE.matches(in: objectLine, options: .reportProgress,
+                                                  range: objectLineRange).count > 0
+        return isUnorderedList || isOrderedList
 
-    class func objectLineAndIndexWithString(_ string: String, location: Int) -> (String, Int) {
+    }
+
+    class func objectLineAndIndexForString(_ string: String, location: Int) -> (String, Int) {
         let ns_string = NSString(string: string)
 
         var objectIndex: Int = 0
@@ -52,7 +66,7 @@ class LEOTextUtil: NSObject {
     }
 
     class func objectLineWithString(_ string: String, location: Int) -> String {
-        return objectLineAndIndexWithString(string, location: location).0
+        return objectLineAndIndexForString(string, location: location).0
     }
 
     class func lineEndIndexWithString(_ string: String, location: Int) -> Int {
@@ -65,7 +79,7 @@ class LEOTextUtil: NSObject {
     }
 
     class func paragraphRangeOfString(_ string: String, location: Int) -> NSRange {
-        let startLocation = objectLineAndIndexWithString(string, location: location).1
+        let startLocation = objectLineAndIndexForString(string, location: location).1
         let endLocation = lineEndIndexWithString(string, location: location)
 
         return NSMakeRange(startLocation, endLocation - startLocation)
@@ -78,10 +92,10 @@ class LEOTextUtil: NSObject {
     /**
      Just return ListTypes.
      */
-    class func paragraphTypeWithObjectLine(_ objectLine: String) -> LEOInputParagraphType {
+    class func paragraphType(_ objectLine: String) -> LEOInputParagraphType {
         let objectLineRange = NSMakeRange(0, objectLine.length())
 
-        let unorderedListMatches = LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: objectLine, options: [], range: objectLineRange)
+        let unorderedListMatches = LEOTextUtil.unonderedListRE.matches(in: objectLine, options: [], range: objectLineRange)
         if unorderedListMatches.count > 0 {
             let firstChar = NSString(string: objectLine).substring(to: 1)
             if firstChar == "-" {
@@ -91,7 +105,7 @@ class LEOTextUtil: NSObject {
             }
         }
 
-        let orderedListMatches = LEOTextUtil.markdownOrderedListRegularExpression.matches(in: objectLine, options: [], range: objectLineRange)
+        let orderedListMatches = LEOTextUtil.orderedListRE.matches(in: objectLine, options: [], range: objectLineRange)
         if orderedListMatches.count > 0 {
             return .numberedList
         }
@@ -102,12 +116,12 @@ class LEOTextUtil: NSObject {
     class func isListParagraph(_ objectLine: String) -> Bool {
         let objectLineRange = NSMakeRange(0, objectLine.length())
 
-        let isCurrentOrderedList = LEOTextUtil.markdownOrderedListRegularExpression.matches(in: objectLine, options: [], range: objectLineRange).count > 0
+        let isCurrentOrderedList = LEOTextUtil.orderedListRE.matches(in: objectLine, options: [], range: objectLineRange).count > 0
         if isCurrentOrderedList {
             return true
         }
 
-        let isCurrentUnorderedList = LEOTextUtil.markdownUnorderedListRegularExpression.matches(in: objectLine, options: [], range: objectLineRange).count > 0
+        let isCurrentUnorderedList = LEOTextUtil.unonderedListRE.matches(in: objectLine, options: [], range: objectLineRange).count > 0
         if isCurrentUnorderedList {
             return true
         }
@@ -158,19 +172,6 @@ class LEOTextUtil: NSObject {
         }
 
         return false
-    }
-
-    class func keyboardWindow() -> UIWindow? {
-        var keyboardWin: UIWindow?
-
-        UIApplication.shared.windows.forEach {
-            if String(describing: type(of: $0)) == "UITextEffectsWindow" {
-                keyboardWin = $0
-                return
-            }
-        }
-
-        return keyboardWin
     }
 
 }

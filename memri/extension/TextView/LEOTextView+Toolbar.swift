@@ -59,16 +59,16 @@ extension LEOTextView {
     // MARK: - Toolbar buttons
 
     func enableBarButtonItems() -> [UIBarButtonItem] {
-
-        let flexibleSpaceButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        
-        let hideKeyboardButton = UIBarButtonItem(image: UIImage(named: "icon-keyboard", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.hideKeyboardButtonAction))
         
         // richttext
         let boldButton = UIBarButtonItem(image: UIImage(named: "bold", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.boldButtonAction))
         let italicButton = UIBarButtonItem(image: UIImage(named: "italic", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.italicButtonAction))
         let underlineButton = UIBarButtonItem(image: UIImage(named: "underline", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
         
+        self.boldButton = boldButton
+        self.italicButton = italicButton
+        self.underlineButton = underlineButton
+    
         // lists
         let bulletedListButton = UIBarButtonItem(image: UIImage(named: "list.bullet", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.bulletedListButtonAction))
         let NumberedListButton = UIBarButtonItem(image: UIImage(named: "list.number", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.numberedButtonAction))
@@ -82,51 +82,42 @@ extension LEOTextView {
 
         return buttonItems
     }
-
     
-    @objc func underlineButtonAction() {
-        // TODO
-    }
-
-    @objc func normalFontButtonAction() {
-        self.inputFontMode = .normal
-
-        if self.currentParagraphType() == .title {
-            self.changeCurrentParagraphTextWithInputFontMode(.normal)
+    func toggleButtonColor(button: UIBarButtonItem, fontClicked: LEOInputFontMode){
+        if (inputFontMode != fontClicked){
+            button.tintColor = UIColor.green
+        }else{
+            button.tintColor = toolbarButtonTintColor
         }
+    }
+    
+    @objc func boldButtonAction() {
+        toggleButtonColor(button: self.boldButton!, fontClicked: .bold)
+        buttonAction(.bold)
+    }
+    
+    @objc func italicButtonAction() {
+        toggleButtonColor(button: self.italicButton!, fontClicked: .italic)
+        buttonAction(.italic)
+    }
+    
+    @objc func underlineFontButtonAction() {
+        toggleButtonColor(button: self.underlineButton!, fontClicked: .underline)
+        buttonAction(.underline)
     }
 
     @objc func bulletedListButtonAction() {
-        if self.currentParagraphType() == .title {
-            self.changeCurrentParagraphTextWithInputFontMode(.normal)
-        }
-
         self.changeCurrentParagraphToOrderedList(orderedList: false, listPrefix: "• ")
     }
     
     @objc func numberedButtonAction() {
-        if self.currentParagraphType() == .title {
-            self.changeCurrentParagraphTextWithInputFontMode(.normal)
-        }
-
         self.changeCurrentParagraphToOrderedList(orderedList: true, listPrefix: "1. ")
     }
 
     @objc func dashedButtonAction() {
-        if self.currentParagraphType() == .title {
-            self.changeCurrentParagraphTextWithInputFontMode(.normal)
-        }
-
         self.changeCurrentParagraphToOrderedList(orderedList: false, listPrefix: "- ")
     }
 
-    @objc func formatMenuViewDoneButtonAction() {
-        formatMenuView?.removeFromSuperview()
-    }
-
-    @objc func hideKeyboardButtonAction() {
-        self.resignFirstResponder()
-    }
 
     @objc func keyboardWillShowOrHide(_ notification: Notification) {
         guard let info = (notification as NSNotification).userInfo else {
@@ -143,20 +134,25 @@ extension LEOTextView {
         let toolbarHeight = toolbar!.frame.size.height
 
         if notification.name == UIResponder.keyboardWillShowNotification{
-            formatMenuView?.removeFromSuperview()
+            // double check if toolbar is not already presented
+            if !superview!.subviews.contains(toolbar!){
+                formatMenuView?.removeFromSuperview()
 
-            self.superview?.addSubview(toolbar!)
+                self.superview?.addSubview(toolbar!)
 
-            var textViewFrame = self.frame
-            textViewFrame.size.height = self.superview!.frame.height - keyboardEnd.height - toolbarHeight
-            self.frame = textViewFrame
+                var textViewFrame = self.frame
+                textViewFrame.size.height = self.superview!.frame.height - keyboardEnd.height - toolbarHeight
+                self.frame = textViewFrame
 
-            UIView.animate(withDuration: duration, animations: {
-                var frame = toolbar!.frame
-                // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
-                frame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 25)
-                toolbar!.frame = frame
-            }, completion: nil)
+                UIView.animate(withDuration: duration, animations: {
+                    var frame = toolbar!.frame
+                    // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
+                    frame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 25)
+                    toolbar!.frame = frame
+                }, completion: nil)
+            }
+            
+            
         } else {
             self.frame = currentFrame
 

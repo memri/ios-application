@@ -193,6 +193,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
+    @objc dynamic var attributedContent:String? = nil
+
     override var genericType:String { "note" }
     
     let writtenBy = List<DataItem>()
@@ -213,6 +215,7 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
+            attributedContent = try decoder.decodeIfPresent("attributedContent") ?? attributedContent
             
             try! self.superDecode(from: decoder)
         }
