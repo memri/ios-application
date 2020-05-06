@@ -39,7 +39,8 @@ struct _RichTextEditor: UIViewRepresentable {
     func makeUIView(context: Context) -> UITextView {
 
         // NOT SURE WHY THIS IS NEEDED, doesnt seem to do anything
-        let bounds = CGRect(x: 0, y: 0, width: 0, height: 0)
+        // It seems to be neede to allow the toolbar to fit in the textview
+        let bounds = CGRect(x: 0, y: 0, width: 0, height: 600)
         
         var textView = LEOTextView(frame: bounds,
                                    textContainer: NSTextContainer())

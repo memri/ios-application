@@ -61,10 +61,9 @@ extension LEOTextView {
     func enableBarButtonItems() -> [UIBarButtonItem] {
         
         // richttext
-        let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(self.boldButtonAction))
+        let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(self.boldButtonAction))        
         let italicButton = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(self.italicButtonAction))
         let underlineButton = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
-        
         self.boldButton = boldButton
         self.italicButton = italicButton
         self.underlineButton = underlineButton
@@ -143,11 +142,11 @@ extension LEOTextView {
                 var textViewFrame = self.frame
                 textViewFrame.size.height = self.superview!.frame.height - keyboardEnd.height - toolbarHeight
                 self.frame = textViewFrame
-
+                
                 UIView.animate(withDuration: duration, animations: {
                     var toolbarFrame = toolbar!.frame
                     // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
-                    toolbarFrame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 10)
+                    toolbarFrame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 15)
                     toolbar!.frame = toolbarFrame
                 }, completion: nil)
             }

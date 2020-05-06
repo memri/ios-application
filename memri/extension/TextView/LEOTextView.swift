@@ -62,7 +62,7 @@ open class LEOTextView: UITextView {
 //        delegate = self
         nck_textStorage = textStorage
 
-        customTextView()
+//        customTextView()
     }
 
     public init(normalFont: UIFont, titleFont: UIFont, boldFont: UIFont, italicFont: UIFont) {
@@ -101,10 +101,8 @@ open class LEOTextView: UITextView {
             switch $0 {
             case .bold:
                 menuItems.append(UIMenuItem(title: NSLocalizedString("Bold", comment: "Bold"), action: #selector(self.boldButtonAction)))
-                break
             case .italic:
                 menuItems.append(UIMenuItem(title: NSLocalizedString("Italic", comment: "Italic"), action: #selector(self.italicButtonAction)))
-                break
             default:
                 break
             }
