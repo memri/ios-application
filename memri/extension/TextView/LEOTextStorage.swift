@@ -131,15 +131,22 @@ class LEOTextStorage: NSTextStorage {
         }
 
         if deleteCurrentListPrefixItemByReturn || deleteCurrentListPrefixItemByBackspace {
-            let deleteLocation = range.location - currentItemPrefixLength
-            let deleteRange = NSRange(location: deleteLocation, length: currentItemPrefixLength)
-            let deleteString = NSString(string: string).substring(with: deleteRange)
-
-            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(), oldAttributedString: NSAttributedString(string: deleteString),
-                                    selectedRangeLocationMove: -currentItemPrefixLength)
             
-            undoSupportResetIndenationRange(deleteRange, headIndent: deleteString.size(withAttributes: [NSAttributedString.Key.font: textView.normalFont]).width)
+            let deleteRange = NSRange(location: range.location - currentItemPrefixLength, length: currentItemPrefixLength)
+            let deleteString = NSString(string: string).substring(with: deleteRange)
+            
 
+            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(),
+                                    oldAttributedString: NSAttributedString(string: deleteString),
+                                    selectedRangeLocationMove: -currentItemPrefixLength)
+            // TODO: currently has no undo support
+            var paragraphStyle = textView.mutableParargraphWithDefaultSetting()
+            paragraphStyle.headIndent = 0
+            paragraphStyle.firstLineHeadIndent = 0
+            
+            safeAddAttributes([NSAttributedString.Key.paragraphStyle : paragraphStyle], range: NSRange(location: range.location - currentItemPrefixLength, length: currentItemPrefixLength + 3))
+//            safeAddAttributes([NSAttributedString.Key.paragraphStyle : paragraphStyle], range: deleteRange)
+            
         } else {
             // List item increase
             let listItemTextLength = newItemText.length
