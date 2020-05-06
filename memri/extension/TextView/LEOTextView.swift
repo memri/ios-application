@@ -274,7 +274,7 @@ open class LEOTextView: UITextView {
                         attributesData.append(attribute)
                     }
                 }
-                print(attribute)
+//                print(attribute)
             }
         }
         
@@ -305,7 +305,6 @@ open class LEOTextView: UITextView {
         let textString = NSString(string: LEOTextView.textWithJSONString(jsonString))
 
         attributes.forEach {
-            print($0)
             let attribute = $0
             let attributeName = attribute["name"] as! String
             let range = NSRange(location: attribute["location"] as! Int, length: attribute["length"] as! Int)
