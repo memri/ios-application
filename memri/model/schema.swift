@@ -193,7 +193,6 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
-    @objc dynamic var attributedContent:String? = nil
     @objc dynamic var rtfContent:String? = nil
 
 
@@ -217,7 +216,7 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
-            attributedContent = try decoder.decodeIfPresent("attributedContent") ?? attributedContent
+            rtfContent = try decoder.decodeIfPresent("rtfContent") ?? rtfContent
             
             try! self.superDecode(from: decoder)
         }
