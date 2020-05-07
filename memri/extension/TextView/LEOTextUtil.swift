@@ -53,11 +53,6 @@ class LEOTextUtil: NSObject {
 
         var objectIndex: Int = 0
         var objectLine = ns_string.substring(to: location)
-        if location < string.length() {
-            var objectLine2 = ns_string.substring(to: location+1)
-            print("\"\(objectLine2)\"")
-            
-        }
 
 
         let textSplits = objectLine.components(separatedBy: "\n")

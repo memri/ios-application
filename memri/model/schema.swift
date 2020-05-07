@@ -194,6 +194,8 @@ class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
     @objc dynamic var attributedContent:String? = nil
+    @objc dynamic var rtfContent:String? = nil
+
 
     override var genericType:String { "note" }
     

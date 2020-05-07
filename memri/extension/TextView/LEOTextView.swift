@@ -92,6 +92,16 @@ open class LEOTextView: UITextView {
     func customTextView() {
         customSelectionMenu()
     }
+    
+    func setAttributedTextFromRtf(_ rtfString: String){
+        let rtfData = rtfString.data(using: .utf8)!
+        let attributedText = try! NSAttributedString(data: rtfData, documentAttributes: nil)
+        self.attributedText = attributedText.mutableCopy() as! NSMutableAttributedString
+        
+        attributedText.enumerateAttributes(in: NSRange(location: 0, length: attributedText.length)){ attribute, range, _ in
+            textStorage.addAttributes(attribute, range: range)
+        }
+    }
 
     func customSelectionMenu() {
         let menuController = UIMenuController.shared
@@ -306,8 +316,6 @@ open class LEOTextView: UITextView {
             let attribute = $0
             let attributeName = attribute["name"] as! String
             let range = NSRange(location: attribute["location"] as! Int, length: attribute["length"] as! Int)
-            
-            
 
             if attributeName == NSAttributedString.Key.font.rawValue {
                 let currentFont = fontOfTypeWithAttribute(attribute)
