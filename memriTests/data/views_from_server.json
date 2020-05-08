@@ -285,7 +285,7 @@
                             }
                         },
                         "queryOptions": {
-                            "query": "logitem appliesTo:{.uid}",
+                            "query": "audititem appliesTo:{.uid}",
                             "sortProperty": "dateCreated",
                             "sortAscending": true
                         }
@@ -306,11 +306,11 @@
             ]
         },
         
-        "{[type:logitem]}": {
-            "name": "all-logitems",
+        "{[type:audititem]}": {
+            "name": "all-audititems",
             "title": "All Log Entries",
             "queryOptions": {
-                "query": "logitem",
+                "query": "audititem",
                 "sortProperty": "date",
                 "sortAscending": false
             },
@@ -941,7 +941,7 @@
                             }
                         },
                         "queryOptions": {
-                            "query": "type:logitem appliesTo:{.id}",
+                            "query": "type:audititem appliesTo:{.id}",
                             "sortProperty": "dateCreated",
                         }
                     }]

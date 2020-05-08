@@ -22,7 +22,7 @@ public class Installer {
     
     public func installIfNeeded(_ main:Main, _ callback: () -> Void) {
         
-        let installLogs = realm.objects(LogItem.self).filter("action = 'install'")
+        let installLogs = realm.objects(AudiItem.self).filter("action = 'install'")
         
         if (installLogs.count == 0) {
             print("Installing defaults in the database")
@@ -44,7 +44,7 @@ public class Installer {
             
             // Installation complete
             try! realm.write {
-                realm.add(LogItem(value: [
+                realm.add(AudiItem(value: [
                     "action": "install",
                     "date": Date(),
                     "contents": serialize(["version": "1.0"])]))

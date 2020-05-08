@@ -22,7 +22,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case audio = "audio"
     case file = "file"
     case person = "person"
-    case logitem = "logitem"
+    case audititem = "audititem"
     case sessions = "sessions"
     case phonenumber = "phonenumber"
     case website = "website"
@@ -49,7 +49,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .video: return Color(hex: "#93c47d")
         case .audio: return Color(hex: "#93c47d")
         case .person: return Color(hex: "#3a5eb2")
-        case .logitem: return Color(hex: "#93c47d")
+        case .audititem: return Color(hex: "#93c47d")
         case .sessions: return Color(hex: "#93c47d")
         case .phonenumber: return Color(hex: "#eccf23")
         case .website: return Color(hex: "#3d57e2")
@@ -95,8 +95,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
         case .person:
             (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
-        case .logitem:
-            (object as! RealmSwift.List<LogItem>).forEach{ collection.append($0) }
+        case .audititem:
+            (object as! RealmSwift.List<AudiItem>).forEach{ collection.append($0) }
         case .phonenumber:
             (object as! RealmSwift.List<PhoneNumber>).forEach{ collection.append($0) }
         case .website:
@@ -135,8 +135,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .note:
             return Note.self
-        case .logitem:
-            return LogItem.self
+        case .audititem:
+            return AudiItem.self
         case .label:
             return Label.self
         case .file:
@@ -558,11 +558,11 @@ class Person:DataItem {
     }
 }
 
-class LogItem:DataItem {
+class AudiItem:DataItem {
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
-    override var genericType:String { "logitem" }
+    override var genericType:String { "audititem" }
     
     override var computedTitle:String {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"

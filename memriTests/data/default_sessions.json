@@ -21,7 +21,7 @@
                 },
                 {
                     "queryOptions": {
-                        "query": "logitem"
+                        "query": "audititem"
                     }
                 },
                 {
