@@ -25,7 +25,7 @@ struct Picker: View {
             self.isShowing.toggle()
         }) {
             HStack {
-                Text(selected?.computeTitle ?? emptyValue)
+                Text(selected?.computedTitle ?? emptyValue)
                     .generalEditorCaption()
                     .lineLimit(1)
                 Spacer()

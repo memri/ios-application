@@ -9,6 +9,8 @@
 import Foundation
 import RealmSwift
 
+/// This class represent the state of syncing for a DataItem, it keeps tracks of the multiple versions of a DataItem on the server and
+/// what actions are needed to sync the DataItem with the latest version on the pod
 class SyncState: Object, Codable {
     // Whether the data item is loaded partially and requires a full load
     @objc dynamic var isPartiallyLoaded:Bool = false
@@ -36,10 +38,8 @@ class SyncState: Object, Codable {
         super.init()
     }
 }
-
 /*
-    - Based on a query sync checks whether it still has the latest version of the results
-    - It does this asynchronous and in the background, items should update automatically
+ Sync notes:
     - It probably needs a hook for Main to update the view when data that is being displayed is updated
         - How does Main know which data is displayed?
         - Because the computedView.resultSet would be updated
@@ -48,16 +48,27 @@ class SyncState: Object, Codable {
     - It should also periodically look at the updated sync states and update the related objects
         - This could be optimized by storing the type and uid of the data item in the syncstate
  */
+
+
+/// Based on a query, Sync checks whether it still has the latest version of the resulting DataItems. It does this asynchronous and in the
+/// background, items are updated automatically.
 class Sync {
     
+    /// PodAPI Object to use for executing queries
     private var podAPI: PodAPI
+    /// The local realm database
     private var realm: Realm
+    /// Cache Object used to fetch resultsets
     public var cache: Cache? = nil
     
     private var scheduled: Bool = false
     private var syncing: Bool = false
     private var backgroundSyncing: Bool = false
     
+    /// Initialization of the cache
+    /// - Parameters:
+    ///   - api: api Object
+    ///   - rlm: local Realm database object
     init(_ api:PodAPI, _ rlm:Realm) {
         podAPI = api
         realm = rlm
@@ -72,7 +83,9 @@ class Sync {
         prioritySyncAll()
     }
     
- 
+    
+    /// Schedule a query to sync the resulting DataItems from the pod
+    /// - Parameter queryOptions: QueryOptions used to perform the query
     public func syncQuery(_ queryOptions:QueryOptions) {
         // TODO if this query was executed recently, considering postponing action
         
@@ -159,6 +172,8 @@ class Sync {
     }
     
     /// Schedule a syncing round
+    /// - Remark: currently calls mock code
+    /// - TODO: implement syncToPod()
     public func schedule(){
         // Don't schedule when we are already scheduled
         if !scheduled {
@@ -198,7 +213,13 @@ class Sync {
         // TODO
     }
     
- 
+    
+    /// - Remark: Currently unused
+    /// - TODO: Implement and document
+    /// - Parameters:
+    ///   - item:
+    ///   - callback:
+    /// - Throws:
     public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
         switch item.syncState!.actionNeeded {
         case "create":

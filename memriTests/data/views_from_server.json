@@ -681,7 +681,7 @@
                         "picturesOfPerson": [
                             "SubView", {
                                 "for": "group",
-                                "sectionTitle": "Photos of {.computeTitle()}",
+                                "sectionTitle": "Photos of {.computedTitle()}",
                                 "minHeight": 165,
                                 "view": {
                                     "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
@@ -973,7 +973,7 @@
                             "padding": [0, 20, 0, 20]
                         }, [
                             "Text", {
-                                "text": "{.computeTitle()}",
+                                "text": "{.computedTitle()}",
                                 "padding": [10, 0, 10, 0]
                             },
                             "Rectangle", {
@@ -1019,7 +1019,7 @@
                     "renderDescription": [
                         "HStack", [
                             "Text", {
-                                "text": "{.computeTitle()}",
+                                "text": "{.computedTitle()}",
                                 "font": [16],
                                 "padding": [0, 0, 10, 0]
                             },
@@ -1046,7 +1046,7 @@
                         }, [
                             "HStack", {"condition": "{readOnly}"}, [
                                 "Text", {
-                                    "text": "{.computeTitle()}",
+                                    "text": "{.computedTitle()}",
                                     "font": [16],
                                     "padding": [0, 0, 10, 0]
                                 },

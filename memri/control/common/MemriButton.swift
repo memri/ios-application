@@ -30,7 +30,7 @@ public struct MemriButton : View {
                 .cornerRadius(20)
                 .compositingGroup()
                 
-            Text(item.computeTitle)
+            Text(item.computedTitle)
                 .padding(.leading, 5)
                 .padding(.trailing, 9)
                 .padding(.vertical, 3)

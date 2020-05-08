@@ -23,6 +23,13 @@
 		5D228B062432385300464506 /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* Action.swift */; };
 		5D228B082432416F00464506 /* ActionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B072432416F00464506 /* ActionTest.swift */; };
 		5D2492FB2434E75A00BCE8DD /* RendererTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */; };
+		5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F61245C372400183BD2 /* ListRendererView.swift */; };
+		5D301F6A245C37EE00183BD2 /* LEOTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F64245C37EE00183BD2 /* LEOTextView.swift */; };
+		5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F65245C37EE00183BD2 /* LEOTextUtil.swift */; };
+		5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F66245C37EE00183BD2 /* LEOTextStorage.swift */; };
+		5D301F6D245C37EE00183BD2 /* LEOTextViewStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F67245C37EE00183BD2 /* LEOTextViewStructs.swift */; };
+		5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */; };
+		5D301F72245C386300183BD2 /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
 		5D38DE172405776B00FF9B70 /* model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* model.swift */; };
@@ -68,7 +75,7 @@
 		5D78D072242531BE00F7BD3B /* MainNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D78D071242531BE00F7BD3B /* MainNavigation.swift */; };
 		5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D81A07D243343CF006E1FA9 /* ActionName.swift */; };
 		5D90464F243616B000632492 /* color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D90464E243616B000632492 /* color.swift */; };
-		5D9637B9244DBC400053EB84 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* SwiftPackageProductDependency */; };
+		5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* OrderedDictionary */; };
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
 		5DB3466324585246008FE8A9 /* FileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB3466124585246008FE8A9 /* FileTest.swift */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
@@ -90,7 +97,7 @@
 		5DD17B5B241252D90018A8F1 /* add_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DD17B59241252D90018A8F1 /* add_action.json */; };
 		5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
 		5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B5C2412677D0018A8F1 /* DefaultCodingKeys.swift */; };
-		5DD17B61241293010018A8F1 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 5DD17B60241293010018A8F1 /* SwiftPackageProductDependency */; };
+		5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */ = {isa = PBXBuildFile; productRef = 5DD17B60241293010018A8F1 /* AnyCodable */; };
 		5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
 		5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */; };
 		5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B6A241294DC0018A8F1 /* AnyDecodable.swift */; };
@@ -106,7 +113,6 @@
 		5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DE95A69241BC954003ABA63 /* DecodableDict.swift */; };
 		5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A6C241BCD34003ABA63 /* back_action.json */; };
 		5DE95A6E241BCD34003ABA63 /* back_action.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DE95A6C241BCD34003ABA63 /* back_action.json */; };
-		5DF96DCE2417AA2B0051EA45 /* ListRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DF96DCD2417AA2B0051EA45 /* ListRendererView.swift */; };
 		5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */; };
 		861439F22435942A008D6B5B /* Installer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861439F12435942A008D6B5B /* Installer.swift */; };
 		861439F52435AF8C008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
@@ -135,8 +141,8 @@
 		866F87DB2456AD76000E5FAB /* person.0x012.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D62456AD76000E5FAB /* person.0x012.json */; };
 		866F87DC2456AD76000E5FAB /* person.0x011.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D72456AD76000E5FAB /* person.0x011.json */; };
 		866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D72456AD76000E5FAB /* person.0x011.json */; };
-		866F87E524570891000E5FAB /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E424570891000E5FAB /* SwiftPackageProductDependency */; };
-		866F87E7245708E6000E5FAB /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E6245708E6000E5FAB /* SwiftPackageProductDependency */; };
+		866F87E524570891000E5FAB /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E424570891000E5FAB /* ASCollectionView */; };
+		866F87E7245708E6000E5FAB /* TextView in Frameworks */ = {isa = PBXBuildFile; productRef = 866F87E6245708E6000E5FAB /* TextView */; };
 		866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87E924572512000E5FAB /* ThumbGridRenderer.swift */; };
 		866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
@@ -215,6 +221,13 @@
 		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
 		5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRendererComponent.swift; sourceTree = "<group>"; };
 		5D2492FA2434E75A00BCE8DD /* RendererTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererTemplates.swift; sourceTree = "<group>"; };
+		5D301F61245C372400183BD2 /* ListRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
+		5D301F64245C37EE00183BD2 /* LEOTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextView.swift; sourceTree = "<group>"; };
+		5D301F65245C37EE00183BD2 /* LEOTextUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextUtil.swift; sourceTree = "<group>"; };
+		5D301F66245C37EE00183BD2 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
+		5D301F67245C37EE00183BD2 /* LEOTextViewStructs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextViewStructs.swift; sourceTree = "<group>"; };
+		5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LEOTextView+Toolbar.swift"; sourceTree = "<group>"; };
+		5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSAttributedString+SafeReplace.swift"; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
 		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; };
 		5D38DE162405776B00FF9B70 /* model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = model.swift; sourceTree = "<group>"; };
@@ -284,7 +297,6 @@
 		5DE95A66241BC92E003ABA63 /* openview_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = openview_action.json; sourceTree = "<group>"; };
 		5DE95A69241BC954003ABA63 /* DecodableDict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodableDict.swift; sourceTree = "<group>"; };
 		5DE95A6C241BCD34003ABA63 /* back_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = back_action.json; sourceTree = "<group>"; };
-		5DF96DCD2417AA2B0051EA45 /* ListRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
 		5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sessions.swift; sourceTree = "<group>"; };
 		6551CB4D7D91FE1BA11F3BCA /* Pods_memriTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memriTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75A2622B303AD831114E4167 /* Pods-memri-memriUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memri-memriUITests.release.xcconfig"; path = "Target Support Files/Pods-memri-memriUITests/Pods-memri-memriUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -350,10 +362,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				866F87E524570891000E5FAB /* BuildFile in Frameworks */,
-				5D9637B9244DBC400053EB84 /* BuildFile in Frameworks */,
-				5DD17B61241293010018A8F1 /* BuildFile in Frameworks */,
-				866F87E7245708E6000E5FAB /* BuildFile in Frameworks */,
+				866F87E524570891000E5FAB /* ASCollectionView in Frameworks */,
+				5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */,
+				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
+				866F87E7245708E6000E5FAB /* TextView in Frameworks */,
 				39FDADE8F88621C2AA70F24A /* Pods_memri.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,10 +475,33 @@
 		5D1A3E62240704BF00A0583B /* extension */ = {
 			isa = PBXGroup;
 			children = (
+				5D301F70245C386300183BD2 /* NSAttibutedString */,
+				5D301F63245C37C100183BD2 /* TextView */,
 				5D90464D243616A100632492 /* color */,
 				5D3D96222416764A0004040E /* codable */,
 			);
 			path = extension;
+			sourceTree = "<group>";
+		};
+		5D301F63245C37C100183BD2 /* TextView */ = {
+			isa = PBXGroup;
+			children = (
+				5D301F66245C37EE00183BD2 /* LEOTextStorage.swift */,
+				5D301F65245C37EE00183BD2 /* LEOTextUtil.swift */,
+				5D301F64245C37EE00183BD2 /* LEOTextView.swift */,
+				5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */,
+				5D301F67245C37EE00183BD2 /* LEOTextViewStructs.swift */,
+			);
+			path = TextView;
+			sourceTree = "<group>";
+		};
+		5D301F70245C386300183BD2 /* NSAttibutedString */ = {
+			isa = PBXGroup;
+			children = (
+				5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */,
+			);
+			name = NSAttibutedString;
+			path = "../../../../Downloads/ios-application-richtext/memri/extension/NSAttibutedString";
 			sourceTree = "<group>";
 		};
 		5D38DE1B2405788700FF9B70 /* api */ = {
@@ -833,7 +868,7 @@
 			isa = PBXGroup;
 			children = (
 				86A5D83E243CEB6700F8FAD8 /* ListRenderer.swift */,
-				5DF96DCD2417AA2B0051EA45 /* ListRendererView.swift */,
+				5D301F61245C372400183BD2 /* ListRendererView.swift */,
 			);
 			path = list;
 			sourceTree = "<group>";
@@ -911,10 +946,10 @@
 			);
 			name = memri;
 			packageProductDependencies = (
-				5DD17B60241293010018A8F1 /* SwiftPackageProductDependency */,
-				5D9637B8244DBC400053EB84 /* SwiftPackageProductDependency */,
-				866F87E424570891000E5FAB /* SwiftPackageProductDependency */,
-				866F87E6245708E6000E5FAB /* SwiftPackageProductDependency */,
+				5DD17B60241293010018A8F1 /* AnyCodable */,
+				5D9637B8244DBC400053EB84 /* OrderedDictionary */,
+				866F87E424570891000E5FAB /* ASCollectionView */,
+				866F87E6245708E6000E5FAB /* TextView */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -996,11 +1031,11 @@
 			);
 			mainGroup = 5D599BAE23F2B77500F218A0;
 			packageReferences = (
-				5DD17B5F241293010018A8F1 /* RemoteSwiftPackageReference */,
-				5DA7BAF9241A72640087B81D /* RemoteSwiftPackageReference */,
-				5D9637B7244DBC400053EB84 /* RemoteSwiftPackageReference */,
-				866F87DE2456EC3B000E5FAB /* RemoteSwiftPackageReference */,
-				866F87E324570891000E5FAB /* RemoteSwiftPackageReference */,
+				5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */,
+				5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */,
+				5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */,
+				866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */,
+				866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1218,9 +1253,12 @@
 				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
 				86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */,
 				5D4C71EF2445E4F200DF09E8 /* GeneralEditor.swift in Sources */,
+				5D301F6D245C37EE00183BD2 /* LEOTextViewStructs.swift in Sources */,
+				5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
+				5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
@@ -1241,8 +1279,8 @@
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */,
 				5D228B062432385300464506 /* Action.swift in Sources */,
+				5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */,
 				86A5D83F243CEB6700F8FAD8 /* ListRenderer.swift in Sources */,
-				5DF96DCE2417AA2B0051EA45 /* ListRendererView.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
@@ -1264,14 +1302,17 @@
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				5D2492FB2434E75A00BCE8DD /* RendererTemplates.swift in Sources */,
 				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
+				5D301F6A245C37EE00183BD2 /* LEOTextView.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */,
 				5DD1E9BA23FD81C5007BDF7B /* Renderers.swift in Sources */,
 				86865D36244996900010271A /* styles.swift in Sources */,
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
+				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
 				866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
+				5D301F72245C386300183BD2 /* NSAttributedString+SafeReplace.swift in Sources */,
 				86B7A6742457402C00292E81 /* MapRenderer.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
@@ -1668,7 +1709,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		5D9637B7244DBC400053EB84 /* RemoteSwiftPackageReference */ = {
+		5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lukaskubanek/OrderedDictionary.git";
 			requirement = {
@@ -1676,7 +1717,7 @@
 				minimumVersion = 2.4.0;
 			};
 		};
-		5DA7BAF9241A72640087B81D /* RemoteSwiftPackageReference */ = {
+		5DA7BAF9241A72640087B81D /* XCRemoteSwiftPackageReference "QGrid" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Q-Mobile/QGrid";
 			requirement = {
@@ -1684,7 +1725,7 @@
 				minimumVersion = 0.1.3;
 			};
 		};
-		5DD17B5F241293010018A8F1 /* RemoteSwiftPackageReference */ = {
+		5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Flight-School/AnyCodable";
 			requirement = {
@@ -1692,7 +1733,7 @@
 				minimumVersion = 0.2.3;
 			};
 		};
-		866F87DE2456EC3B000E5FAB /* RemoteSwiftPackageReference */ = {
+		866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kenmueller/TextView";
 			requirement = {
@@ -1700,7 +1741,7 @@
 				kind = branch;
 			};
 		};
-		866F87E324570891000E5FAB /* RemoteSwiftPackageReference */ = {
+		866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apptekstudios/ASCollectionView";
 			requirement = {
@@ -1711,24 +1752,24 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		5D9637B8244DBC400053EB84 /* SwiftPackageProductDependency */ = {
+		5D9637B8244DBC400053EB84 /* OrderedDictionary */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5D9637B7244DBC400053EB84 /* RemoteSwiftPackageReference */;
+			package = 5D9637B7244DBC400053EB84 /* XCRemoteSwiftPackageReference "OrderedDictionary" */;
 			productName = OrderedDictionary;
 		};
-		5DD17B60241293010018A8F1 /* SwiftPackageProductDependency */ = {
+		5DD17B60241293010018A8F1 /* AnyCodable */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5DD17B5F241293010018A8F1 /* RemoteSwiftPackageReference */;
+			package = 5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */;
 			productName = AnyCodable;
 		};
-		866F87E424570891000E5FAB /* SwiftPackageProductDependency */ = {
+		866F87E424570891000E5FAB /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 866F87E324570891000E5FAB /* RemoteSwiftPackageReference */;
+			package = 866F87E324570891000E5FAB /* XCRemoteSwiftPackageReference "ASCollectionView" */;
 			productName = ASCollectionView;
 		};
-		866F87E6245708E6000E5FAB /* SwiftPackageProductDependency */ = {
+		866F87E6245708E6000E5FAB /* TextView */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 866F87DE2456EC3B000E5FAB /* RemoteSwiftPackageReference */;
+			package = 866F87DE2456EC3B000E5FAB /* XCRemoteSwiftPackageReference "TextView" */;
 			productName = TextView;
 		};
 /* End XCSwiftPackageProductDependency section */

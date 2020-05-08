@@ -5,35 +5,37 @@ import RealmSwift
 /// DataItem is the baseclass for all of the data clases, all functions
 public class DataItem: Object, Codable, Identifiable, ObservableObject {
  
+    /// name of the DataItem implementation class (E.g. "note" or "person")
     var genericType:String { "unknown" }
     
- 
-    var computeTitle:String {
+    /// Title computed by implementations of the DataItem class
+    var computedTitle:String {
         return "\(genericType) [\(uid)]"
     }
     
- 
-    @objc dynamic var uid:String = DataItem.generateUID()
- 
+    /// uid of the DataItem
+    @objc dynamic var uid:String = DataItem.generateUUID()
+    /// Boolean whether the DataItem has been deleted
     @objc dynamic var deleted:Bool = false
- 
+    /// Boolean whether the DataItem has been starred
     @objc dynamic var starred:Bool = false
- 
+    /// Creation date of the DataItem
     @objc dynamic var dateCreated:Date? = Date()
- 
+    /// Last modification date of the DataItem
     @objc dynamic var dateModified:Date? = Date()
-
+    /// Last access date of the DataItem
     @objc dynamic var dateAccessed:Date? = nil
- 
+    /// Array LogItems describing the log history of the DataItem
     let changelog = List<LogItem>()
- 
+    /// Labels assigned to / associated with this DataItem
     let labels = List<memri.Label>()
- 
+    /// Object descirbing syncing information about this object like loading state, versioning, etc.
     @objc dynamic var syncState:SyncState? = SyncState()
     
  
     var functions:[String: (_ args:[Any]?) -> String] = [:]
     
+    /// Primary key used in the realm database of this DataItem
     public override static func primaryKey() -> String? {
         return "uid"
     }
@@ -61,11 +63,14 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             let timeSinceCreated = GUIElementDescription.formatDateSinceCreated(self.dateCreated)
             return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
         }
-        self.functions["computeTitle"] = {_ in
-            return self.computeTitle
+        self.functions["computedTitle"] = {_ in
+            return self.computedTitle
         }
     }
     
+    /// Deserializes DataItem from json decoder
+    /// - Parameter decoder: Decoder object
+    /// - Throws: Decoding error
     required public convenience init(from decoder: Decoder) throws{
         self.init()
         try! superDecode(from: decoder)
@@ -86,7 +91,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         decodeIntoList(decoder, "labels", self.labels)
     }
     
- 
+    
+    /// Get string, or string representation (e.g. "true) from property name
+    /// - Parameter name: property name
+    /// - Returns: string representation
     public func getString(_ name:String) -> String {
         if self.objectSchema[name] == nil {
             
@@ -123,19 +131,27 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    ///Get the type of DataItem
+    /// - Returns: type of the DataItem
     public func getType() -> DataItem.Type{
         let type = DataItemFamily(rawValue: self.genericType)!
         let T = DataItemFamily.getType(type)
         return T() as! DataItem.Type
     }
     
- 
+    
+    /// Set property to value, which will be persisted in the local database
+    /// - Parameters:
+    ///   - name: property name
+    ///   - value: value
     public func set(_ name:String, _ value:Any) {
         try! self.realm!.write() {
             self[name] = value
         }
     }
     
+    /// Toggle boolean property
+    /// - Parameter name: property name
     public func toggle(_ name:String) {
         if self[name] as! Bool == false {
             self.set(name, true)
@@ -145,12 +161,14 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
- 
-    public func match(_ needle:String) -> Bool{
-        let properties = self.objectSchema.properties
-        for prop in properties {
+    
+    /// Determines whether item has property
+    /// - Parameter propName: name of the property
+    /// - Returns: boolean indicating whether DataItem has the property
+    public func hasProperty(_ propName:String) -> Bool{
+        for prop in self.objectSchema.properties {
             if let haystack = self[prop.name] as? String {
-                if haystack.lowercased().contains(needle.lowercased()) {
+                if haystack.lowercased().contains(propName.lowercased()) {
                     return true
                 }
             }
@@ -159,16 +177,21 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return false
     }
     
-    public func isEqualProperty(_ fieldName:String, _ item:DataItem) -> Bool {
-        let prop = self.objectSchema[fieldName]!
+    /// Compares value of this DataItems property with the corresponding property of the passed items property
+    /// - Parameters:
+    ///   - propName: name of the compared property
+    ///   - item: item to compare against
+    /// - Returns: boolean indicating whether the property values are the same
+    public func isEqualProperty(_ propName:String, _ item:DataItem) -> Bool {
+        let prop = self.objectSchema[propName]!
 
         // List
         if prop.objectClassName != nil {
             return false // TODO implement a list compare and a way to add to updatedFields
         }
         else {
-            let value1 = self[fieldName];
-            let value2 = item[fieldName]
+            let value1 = self[propName];
+            let value2 = item[propName]
             
             if let item1 = value1 as? String {
                 return item1 == value2 as! String
@@ -187,6 +210,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return true
     }
     
+    /// Safely merges the passed item with the current DataItem. When there are merge conflicts, meaning that some other process
+    /// requested changes for the same properties with different values, merging is not performed.
+    /// - Parameter item: item to be merged with the current DataItem
+    /// - Returns: boolean indicating the succes of the merge
     public func safeMerge(_ item:DataItem) -> Bool {
         
         // Ignore when marked for deletion
@@ -198,7 +225,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         // Make sure to not overwrite properties that have been changed
         let updatedFields = self.syncState!.updatedFields
         
-        // Compare all properties and make sure they are the same
+        // Compare all updated properties and make sure they are the same
         for fieldName in updatedFields {
             if !isEqualProperty(fieldName, item) { return false }
         }
@@ -209,6 +236,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return true
     }
     
+    /// merges the the passed DataItem in the current item
+    /// - Parameters:
+    ///   - item: passed DataItem
+    ///   - mergeDefaults: boolean describing how to merge. If mergeDefault == true: Overwrite only the property values have
+    ///    not already been set (nil). else: Overwrite all property values with the values from the passed item, with the exception
+    ///    that values cannot be set from a non-nil value to nil.
     public func merge(_ item:DataItem, _ mergeDefaults:Bool=false) {
         // Store these changes in realm
         if let realm = self.realm {
@@ -232,13 +265,14 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             // - TODO needs to detect lists which will always be set
             // - TODO needs to detect optionals which will always be set
             
-            // Merge only the ones that self doesnt already have
+            // Overwrite only the property values that are not already set
             if mergeDefaults {
-                if self[prop.name] != nil {
+                if self[prop.name] == nil {
                     self[prop.name] = item[prop.name]
                 }
             }
-            // Merge all that item doesnt already have
+            // Overwrite all property values with the values from the passed item, with the
+            // exception, that values cannot be set ot nil
             else {
                 if item[prop.name] != nil {
                     self[prop.name] = item[prop.name]
@@ -247,6 +281,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    /// update the dateAccessed property to the current date
     public func access() {
         if let realm = realm, !realm.isInWriteTransaction {
             try! realm.write { self.dateAccessed = Date() }
@@ -256,15 +291,28 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    /// compare two dataItems
+    /// - Parameters:
+    ///   - lhs: DataItem 1
+    ///   - rhs: DataItem 2
+    /// - Returns: boolean indicating equality
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
         lhs.uid == rhs.uid
     }
     
-    public class func generateUID() -> String {
+    /// Generate a new UUID, which are used by swift to identify objects
+    /// - Returns: UUID string with "0xNEW" prepended
+    public class func generateUUID() -> String {
         let counter = UUID().uuidString
         return "0xNEW\(counter)"
     }
     
+    /// Reads DataItems from file
+    /// - Parameters:
+    ///   - file: filename (without extension)
+    ///   - ext: extension
+    /// - Throws: Decoding error
+    /// - Returns: Array of deserialized DataItems
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
         let jsonData = try jsonDataFromFile(file, ext)
         
@@ -272,29 +320,37 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return items
     }
     
+    /// Read DataItem from string
+    /// - Parameter json: string to parse
+    /// - Throws: Decoding error
+    /// - Returns: Array of deserialized DataItems
     public class func fromJSONString(_ json: String) throws -> [DataItem] {
         let items:[DataItem] = try MemriJSONDecoder
             .decode(family:DataItemFamily.self, from:Data(json.utf8))
         return items
     }
     
-    public static func fromUid(uid:String)-> DataItem {
-        let di = DataItem()
-        di.uid = uid
-        return di
-    }
 }
 
+/// This class wraps a query and its results, and is responsible for loading a the result and possibly applying clienside filtering
 public class ResultSet: ObservableObject {
  
+    /// Object describing the query and postprocessing instructions
     var queryOptions: QueryOptions = QueryOptions(query: "")
-    /// Retrieves the data loaded from the pod
+    /// Resulting DataItems
     var items: [DataItem] = []
- 
+    /// Nr of items in the resultset
     var count: Int = 0
- 
+    /// Boolean indicating whether the DataItems in the result are currently being loaded
     var isLoading: Bool = false
+    
+    /// Unused, Experimental
+    private var pages: [Int] = []
+    private let cache: Cache
+    private var _filterText: String = ""
+    private var _unfilteredItems: [DataItem]? = nil
  
+    /// Computes a string representation of the resultset
     var determinedType: String? {
         // TODO implement (more) proper query language (and parser)
         
@@ -305,7 +361,8 @@ public class ResultSet: ObservableObject {
         }
         return nil
     }
- 
+
+    /// Boolean indicating whether the resultset is a collection of items or a single item
     var isList: Bool {
         // TODO change this to be a proper query parser
         
@@ -321,7 +378,9 @@ public class ResultSet: ObservableObject {
         return true
     }
  
-    var item: DataItem? {
+    /// Get the only item from the resultset if the set has size 1, else return nil. Note that
+    ///  [singleton](https://en.wikipedia.org/wiki/Singleton_(mathematics)) is here in the mathematical sense.
+    var singletonItem: DataItem? {
         get{
             if !isList && count > 0 { return items[0] }
             else { return nil }
@@ -330,6 +389,7 @@ public class ResultSet: ObservableObject {
         }
     }
  
+    /// Text used to filter queries
     var filterText: String {
         get {
             return _filterText
@@ -340,15 +400,14 @@ public class ResultSet: ObservableObject {
         }
     }
     
-    private var pages: [Int] = []
-    private let cache: Cache
-    private var _filterText: String = ""
-    private var _unfilteredItems: [DataItem]? = nil
-    
     required init(_ ch:Cache) {
         cache = ch
     }
     
+    /// Executes a query given the current QueryOptions, filters the result client side and executes the callback on the resulting
+    ///  DataItems
+    /// - Parameter callback: Callback with params (error: Error, result: [DataItem]) that is executed on the returned result
+    /// - Throws: empty query error
     func load(_ callback:(_ error:Error?) -> Void) throws {
         
         // Only execute one loading process at the time
@@ -402,6 +461,8 @@ public class ResultSet: ObservableObject {
         }
     }
     
+    /// Force update the items property, recompute the counts and reapply filters
+    /// - Parameter result: the new items
     func forceItemsUpdate(_ result:[DataItem]) {
         
         // Set data and count
@@ -421,7 +482,7 @@ public class ResultSet: ObservableObject {
         self.objectWillChange.send() // TODO create our own publishers
     }
 
-    /// Client side filter //, with a fallback to the server
+    /// Apply client side filter using the FilterText , with a fallback to the server
     public func filter() {
         // Cancel filtering
         if _filterText == "" {
@@ -444,7 +505,7 @@ public class ResultSet: ObservableObject {
             let searchSet = _unfilteredItems ?? items
             if searchSet.count >  0 {
                 for i in 0...searchSet.count - 1 {
-                    if searchSet[i].match(_filterText) {
+                    if searchSet[i].hasProperty(_filterText) {
                         filterResult.append(searchSet[i])
                     }
                 }
@@ -469,11 +530,16 @@ public class ResultSet: ObservableObject {
 //        }
     }
     
- 
+    
+    /// - Remark: currently unused
+    /// - Todo: Implement
+    /// - Parameter options:
     public func resort(_ options:QueryOptions) {
         
     }
     
+    /// Mark page with pageIndex as index as loaded
+    /// - Parameter pageIndex: index of the page to mark as loaded
     func setPagesLoaded(_ pageIndex:Int) {
         if !pages.contains(pageIndex) {
             pages.append(pageIndex)

@@ -29,6 +29,18 @@ class DataItemTest: XCTestCase {
         )
         let item: DataItem = try! JSONDecoder().decode(DataItem.self, from: data)
     }
+    
+    func testGetString(){
+        let data = Data("""
+            {
+                "uid": "0x012345",
+            }
+            """.utf8
+        )
+        let item: DataItem = try! JSONDecoder().decode(DataItem.self, from: data)
+        
+        XCTAssertTrue(item.getString("uid") == "0x012345") 
+    }
 
     func testExample() throws {
         // This is an example of a functional test case.
