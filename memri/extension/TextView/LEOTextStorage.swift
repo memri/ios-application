@@ -68,49 +68,63 @@ class LEOTextStorage: NSTextStorage {
     ///   - range: place to replace the characters
     ///   - str: string to insert
     override func replaceCharacters(in range: NSRange, with str: String) {
-        
+        /// NOTE: some calls of this function causes the function to be called recursively,
+        /// for instance when pressing newlines while being in a bulleted list
         
         // New item of list by increase
         var newItemText: NSString = ""
-
         // Current list item punctuation length
         var currentItemPrefixLength = 0
         var deleteCurrentListPrefixItemByReturn = false
         var deleteCurrentListPrefixItemByBackspace = false
-
+        var addNewListItem = false
+        
+        // TODO: this is super hacky, but for some reason the location of the range is broken when a backspace is passed
+        var searchLoc = LEOTextUtil.isBackspace(str) && range.length == 1 ? range.location + 1 : range.location
+        let (currentLine, indexInLine) = LEOTextUtil.objectLineAndIndexForString(self.string,
+                                                                                location: searchLoc)
+        
+        print("\nREPLACE IN RANGE \(range) WITH STRING \"\(str)\"")
+        print("CURRENT LINE \"\(currentLine)\"")
+//
+        print(LEOTextUtil.isBackspace(str))
         // Unordered and Ordered list auto-complete support
         if LEOTextUtil.isReturn(str) {
             if textView.inputFontMode == .title {
                 textView.inputFontMode = .normal
             }
 
-            let (objectLine, objectIndex) = LEOTextUtil.objectLineAndIndexForString(self.string, location: range.location)
-            newItemText = getNewItemText(objectLine) ?? ""
-            currentItemPrefixLength = getPrefixLength(objectLine)
+            newItemText = getNewItemText(currentLine) ?? ""
+            currentItemPrefixLength = getPrefixLength(currentLine)
         
-
-            let lineTokens = objectLine.components(separatedBy: " ")
+            let lineTokens = currentLine.components(separatedBy: " ")
             
-            // is empty list object
-            if LEOTextUtil.isListItem(objectLine) && lineTokens.count >= 2 && lineTokens[1] == "" {
-                    let lastIndex = objectIndex + objectLine.length()
+            if LEOTextUtil.isListItem(currentLine){
+                // is empty list
+                if lineTokens.count >= 2 && lineTokens[1] == "" {
+                    let lastIndex = indexInLine + currentLine.length()
                     let isEndOfText = lastIndex >= string.length()
                                     
                     // after this list the text ends, or the list ends
                     if isEndOfText || LEOTextUtil.isReturn(NSString(string: string).substring(with: NSMakeRange(lastIndex, 1))) {
                         deleteCurrentListPrefixItemByReturn = true
                     }
+                }else{
+                    // nonempty list, and pressing return
+                    addNewListItem = true
+                }
             }
-        } else if LEOTextUtil.isBackspace(str) && range.length == 1 {
+        }
+        else if LEOTextUtil.isBackspace(str) && range.length == 1 {
+            
             var firstLine = LEOTextUtil.objectLineWithString(self.textView.text, location: range.location)
-            // TODO: WHY IS THE SPACE NOT INCLUDED?
+            // TODO: WHY IS THIS?
             firstLine.append(" ")
             let lineTokens = firstLine.components(separatedBy: " ").count
 
             if lineTokens == 2 && LEOTextUtil.isListItem(firstLine){
                 deleteCurrentListPrefixItemByBackspace = true
-                // a space char will deleting by edited operate, so we auto delete length needs subtraction one
-                currentItemPrefixLength = firstLine.length() - 1
+                currentItemPrefixLength = getPrefixLength(currentLine)
             }
         }
 
@@ -118,6 +132,7 @@ class LEOTextStorage: NSTextStorage {
 
         beginEditing()
 
+        // NSString counts length differently
         let finalStr: NSString = "\(str)" as NSString
 
         currentString.replaceCharacters(in: range, with: String(finalStr))
@@ -130,25 +145,50 @@ class LEOTextStorage: NSTextStorage {
             return
         }
 
-        if deleteCurrentListPrefixItemByReturn || deleteCurrentListPrefixItemByBackspace {
-            let deleteLocation = range.location - currentItemPrefixLength
-            let deleteRange = NSRange(location: deleteLocation, length: currentItemPrefixLength)
-            let deleteString = NSString(string: string).substring(with: deleteRange)
-
-            undoSupportReplaceRange(deleteRange, withAttributedString: NSAttributedString(), oldAttributedString: NSAttributedString(string: deleteString),
-                                    selectedRangeLocationMove: -currentItemPrefixLength)
+        if deleteCurrentListPrefixItemByReturn {
+            let lineStart = range.location - currentItemPrefixLength
+            let (nextLine, _) = LEOTextUtil.objectLineAndIndexForString(self.string,
+                                                                        location: range.location)
+            var rangeLen = currentLine.length() + nextLine.length()
+            rangeLen = lineStart + rangeLen <= string.length() ? rangeLen : string.length() - lineStart
             
-            undoSupportResetIndenationRange(deleteRange, headIndent: deleteString.size(withAttributes: [NSAttributedString.Key.font: textView.normalFont]).width)
+//            let unindentString = NSString(string: string).substring(with: NSRange(location: lineStart, length: rangeLen))
+            safeAddAttributes([NSAttributedString.Key.paragraphStyle : textView.mutableParargraphWithDefaultSetting()],
+                              range: NSRange(location: lineStart,
+                                             length: rangeLen))
+            
+            let deleteRange = NSRange(location: range.location - currentItemPrefixLength - 1, length: currentItemPrefixLength + 1)
+            let deleteString = NSString(string: string).substring(with: deleteRange)
+            
+            if LEOTextUtil.isBackspace(deleteString) && deleteRange.length == 1{ print("ERROR: THIS IS SHOULD NEVER HAPPEN")}
+            
+            // note that this is calling the current function recursively
+            undoSupportReplaceRange(deleteRange,
+                                    withAttributedString: NSAttributedString(),
+                                    oldAttributedString: NSAttributedString(string: deleteString),
+                                    selectedRangeLocationMove: -currentItemPrefixLength)
 
-        } else {
-            // List item increase
-            let listItemTextLength = newItemText.length
-
-            if listItemTextLength > 0 {
-                // Follow text cursor to new list item location.
-                undoSupportAppendRange(NSMakeRange(range.location + str.length(), 0),
-                                       withString: String(newItemText), selectedRangeLocationMove: listItemTextLength)
-            }
+            
+        } else if deleteCurrentListPrefixItemByBackspace{
+            // TODO: for some reason currentLine does only contain the list prefix here, but not the trailing space
+            let lineStart = searchLoc - currentItemPrefixLength
+            var rangeLen = currentLine.length()
+            rangeLen = lineStart + rangeLen <= string.length() ? rangeLen : string.length() - lineStart
+            
+            safeAddAttributes([NSAttributedString.Key.paragraphStyle : textView.mutableParargraphWithDefaultSetting()],
+                              range: NSRange(location: lineStart, length: rangeLen))
+            
+            let deleteRange = NSRange(location: searchLoc - currentItemPrefixLength, length: currentItemPrefixLength - 1)
+            let deleteString = NSString(string: string).substring(with: deleteRange)
+            
+            undoSupportReplaceRange(deleteRange,
+                                    withAttributedString: NSAttributedString(),
+                                    oldAttributedString: NSAttributedString(string: deleteString),
+                                    selectedRangeLocationMove: -currentItemPrefixLength)
+                        
+        } else if addNewListItem{
+            undoSupportAppendRange(NSMakeRange(range.location + str.length(), 0),
+                                   withString: String(newItemText), selectedRangeLocationMove: newItemText.length)
         }
     }
 

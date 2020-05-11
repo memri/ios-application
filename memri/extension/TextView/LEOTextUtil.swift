@@ -54,6 +54,7 @@ class LEOTextUtil: NSObject {
         var objectIndex: Int = 0
         var objectLine = ns_string.substring(to: location)
 
+
         let textSplits = objectLine.components(separatedBy: "\n")
         if textSplits.count > 0 {
             let currentObjectLine = textSplits[textSplits.count - 1]
