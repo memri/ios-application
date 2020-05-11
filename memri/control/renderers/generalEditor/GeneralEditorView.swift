@@ -138,11 +138,39 @@ struct GeneralEditorSection: View {
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         let className = item.objectSchema[prop]?.objectClassName
-        
-        let edges = 
-        
-        let family = DataItemFamily(rawValue: className!.lowercased())!
-        return family.getCollection(item[prop] as Any)
+
+        if className != "Edge"{
+            let family = DataItemFamily(rawValue: className!.lowercased())!
+            return family.getCollection(item[prop] as Any)
+        }
+        else{
+            let edges = item[prop] as? RealmSwift.List<Edge>
+            if let edges = edges{
+                if edges.count > 0 {
+                    let subjectClassName = edges[0].subjectType
+                    let family = DataItemFamily(rawValue: subjectClassName.lowercased())!
+                    
+                    let type = DataItemFamily.getType(family)() as! Object.Type
+                    
+                    var subjects: [DataItem] = []
+                    
+                    for uid in edges.map({$0.subjectUid}){
+                        let subject = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem                        
+                        if let subject = subject{
+                            subjects.append(subject)
+                        }
+                    }
+                    
+                    return subjects
+                    
+                }else{
+                    return []
+                }
+            }else{
+                return []
+            }
+        }
+    
     }
     
     func getProperties(_ item:DataItem) -> [String]{

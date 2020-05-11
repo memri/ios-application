@@ -232,19 +232,14 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
     }
 }
 
-//func decodeEdges<T:Decodable>(_ decoder:Decoder, _ key:String, _ objectList:RealmSwift.List<T>,
-//_ list:RealmSwift.List<Edge>) {
 
 func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
-                              _ edgeList:RealmSwift.List<Edge>) {
-    
-//    let className = item.objectSchema[prop]?.objectClassName
-
-    
-    let subjects:[T]? = try! decoder.decodeIfPresent(key)
-    if let subjects = subjects {
-        for subject in subjects {
-            let edge = Edge("123", subject.uid)
+                             _ edgeList:RealmSwift.List<Edge>, _ subject: DataItem) {
+    let objects:[T]? = try! decoder.decodeIfPresent(key)
+    if let objects = objects {
+        for object in objects {
+            try! globalCache!.addToCache(object)
+            let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
             edgeList.append(edge)
         }
     }

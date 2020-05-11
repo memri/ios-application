@@ -199,8 +199,8 @@ class Note:DataItem {
 
     override var genericType:String { "note" }
     
-    let writtenBy = List<DataItem>()
-    let sharedWith = List<DataItem>()
+    let writtenBy = List<Edge>()
+    let sharedWith = List<Edge>()
     let comments = List<DataItem>()
     
     override var computedTitle:String {
@@ -509,19 +509,19 @@ class Person:DataItem {
     override var genericType:String { "person" }
     @objc dynamic var profilePicture:File? = nil
     
-    let relations = List<Person>()
-    let phoneNumbers = List<PhoneNumber>()
+    let relations = List<Edge>()
+    let phoneNumbers = List<Edge>()
     
     
     let websites = List<Edge>()
     //TODO
 //    let placeOfBirth = List<Location>()
-    let companies = List<Company>()
-    let addresses = List<Address>()
-    let publicKeys = List<PublicKey>()
-    let onlineProfiles = List<OnlineProfile>()
-    let diets = List<Diet>()
-    let medicalConditions = List<MedicalCondition>()
+    let companies = List<Edge>()
+    let addresses = List<Edge>()
+    let publicKeys = List<Edge>()
+    let onlineProfiles = List<Edge>()
+    let diets = List<Edge>()
+    let medicalConditions = List<Edge>()
     
     override var computedTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
@@ -547,16 +547,16 @@ class Person:DataItem {
             age.value = try decoder.decodeIfPresent("age") ?? age.value
             profilePicture = try decoder.decodeIfPresent("profilePicture") ?? profilePicture
             
-            decodeEdges(decoder, "websites", Website.self, self.websites)
+            decodeEdges(decoder, "websites", Website.self, self.websites, self)
             
-            decodeIntoList(decoder, "relations", self.relations)
-            decodeIntoList(decoder, "phoneNumbers", self.phoneNumbers)
-            decodeIntoList(decoder, "companies", self.companies)
-            decodeIntoList(decoder, "addresses", self.addresses)
-            decodeIntoList(decoder, "publicKeys", self.publicKeys)
-            decodeIntoList(decoder, "onlineProfiles", self.onlineProfiles)
-            decodeIntoList(decoder, "diets", self.diets)
-            decodeIntoList(decoder, "medicalConditions", self.medicalConditions)
+            decodeEdges(decoder, "relations", Person.self, self.relations, self)
+            decodeEdges(decoder, "phoneNumbers", PhoneNumber.self, self.phoneNumbers, self)
+            decodeEdges(decoder, "companies", Company.self, self.companies, self)
+            decodeEdges(decoder, "addresses", Address.self, self.addresses, self)
+            decodeEdges(decoder, "publicKeys", PublicKey.self, self.publicKeys, self)
+            decodeEdges(decoder, "onlineProfiles", OnlineProfile.self, self.onlineProfiles, self)
+            decodeEdges(decoder, "diets",  Diet.self, self.diets, self)
+            decodeEdges(decoder, "medicalConditions", MedicalCondition.self, self.medicalConditions, self)
             
             try! self.superDecode(from: decoder)
         }
@@ -573,7 +573,7 @@ class LogItem:DataItem {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
     }
     
-    let appliesTo = List<DataItem>()
+    let appliesTo = List<Edge>()
     
     required init () {
         super.init()
@@ -587,7 +587,7 @@ class LogItem:DataItem {
             contents = try decoder.decodeIfPresent("contents") ?? contents
             action = try decoder.decodeIfPresent("action") ?? action
             
-            decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
             
             try! self.superDecode(from: decoder)
         }
@@ -604,7 +604,7 @@ class Label:DataItem {
         return name
     }
     
-    let appliesTo = List<DataItem>() // TODO make two-way binding in realm
+    let appliesTo = List<Edge>() // TODO make two-way binding in realm
     
     required init () {
         super.init()
@@ -618,7 +618,8 @@ class Label:DataItem {
             comment = try decoder.decodeIfPresent("comment") ?? comment
             color = try decoder.decodeIfPresent("color") ?? color
             
-            decodeIntoList(decoder, "appliesTo", self.appliesTo)
+            decodeEdges(decoder, "includes", DataItem.self, self.appliesTo, self)
+
             
             try! self.superDecode(from: decoder)
         }
@@ -637,7 +638,7 @@ class Photo:DataItem {
         return name
     }
     
-    let includes = List<Person>() // e.g. person, object, recipe, etc
+    let includes = List<Edge>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -652,7 +653,8 @@ class Photo:DataItem {
             width.value = try decoder.decodeIfPresent("width") ?? width.value
             height.value = try decoder.decodeIfPresent("height") ?? height.value
             
-            decodeIntoList(decoder, "includes", self.includes)
+            decodeEdges(decoder, "includes", Person.self, self.includes, self)
+
             
             try! self.superDecode(from: decoder)
         }
@@ -672,7 +674,7 @@ class Video:DataItem {
         return name
     }
     
-    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    let includes = List<Edge>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -688,7 +690,8 @@ class Video:DataItem {
             height.value = try decoder.decodeIfPresent("height") ?? height.value
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             
-            decodeIntoList(decoder, "includes", self.includes)
+            decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
+
             
             try! self.superDecode(from: decoder)
         }
@@ -707,7 +710,7 @@ class Audio:DataItem {
         return name
     }
     
-    let includes = List<DataItem>() // e.g. person, object, recipe, etc
+    let includes = List<Edge>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -722,7 +725,7 @@ class Audio:DataItem {
             bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             
-            decodeIntoList(decoder, "includes", self.includes)
+            decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
             
             try! self.superDecode(from: decoder)
         }

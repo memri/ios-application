@@ -118,6 +118,9 @@ func getRealmPath() -> String{
     return realmDir
 }
 
+// TODO: hack, fix
+var globalCache: Cache? = nil
+
 public class Cache {
     
     /// PodAPI object
@@ -139,23 +142,26 @@ public class Cache {
     /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
     /// - Parameter api: api object
     public init(_ api: PodAPI){
-                
-        // Tell Realm to use this new configuration object for the default Realm
-        #if targetEnvironment(simulator)
-            config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
-        #endif
-        
-        Realm.Configuration.defaultConfiguration = config
-
-        realm = try! Realm()
         
         print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
         
         podAPI = api
         
+        // Tell Realm to use this new configuration object for the default Realm
+        #if targetEnvironment(simulator)
+            config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
+        #endif
+
+        Realm.Configuration.defaultConfiguration = config
+
+        realm = try! Realm()
+        
         // Create scheduler objects
         sync = Sync(podAPI, realm)
         sync.cache = self
+        
+        globalCache = self
+    
     }
     
     
@@ -228,6 +234,9 @@ public class Cache {
                 // Query based on a simple format:
                 // Query format: <type><space><filter-text>
                 let queryType = DataItemFamily.getType(type)
+                let t = queryType() as! Object.Type
+                print(t)
+                
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
                 
@@ -453,4 +462,5 @@ public class Cache {
         }
         return copy
     }
+    
 }

@@ -549,15 +549,25 @@ public class ResultSet: ObservableObject {
 
 
 class Edge: Object {
+
+    
     @objc dynamic var objectUid:String = DataItem.generateUUID()
     @objc dynamic var subjectUid:String = DataItem.generateUUID()
     
+    @objc dynamic var objectType:String = "unknown"
+    @objc dynamic var subjectType:String = "unknown"
+
+    
+    
     required init() {}
     
-    init(_ objectUid: String = DataItem.generateUUID(), _ subjectUid: String = DataItem.generateUUID()) {
+    init(_ objectUid: String = DataItem.generateUUID(), _ subjectUid: String = DataItem.generateUUID(), _ objectType: String = "unknown", _ subjectType: String = "unknown") {
         self.objectUid = objectUid
         self.subjectUid = subjectUid
+        self.objectType = objectType
+        self.subjectType = subjectType
     }
+    
     
     
     // maybe we dont need this
