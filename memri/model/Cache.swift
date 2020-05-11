@@ -142,11 +142,7 @@ public class Cache {
     /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
     /// - Parameter api: api object
     public init(_ api: PodAPI){
-        
-        print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
-        
-        podAPI = api
-        
+
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
             config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
@@ -156,10 +152,13 @@ public class Cache {
 
         realm = try! Realm()
         
+        print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
+        
+        podAPI = api
+        
         // Create scheduler objects
         sync = Sync(podAPI, realm)
         sync.cache = self
-        
         globalCache = self
     
     }

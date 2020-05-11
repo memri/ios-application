@@ -137,40 +137,28 @@ struct GeneralEditorSection: View {
     var groups:[String:[String]]
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+        
+        //TODO: Better error handling
+        //TODO: Move to DataItem?
         let className = item.objectSchema[prop]?.objectClassName
-
-        if className != "Edge"{
-            let family = DataItemFamily(rawValue: className!.lowercased())!
-            return family.getCollection(item[prop] as Any)
-        }
-        else{
-            let edges = item[prop] as? RealmSwift.List<Edge>
-            if let edges = edges{
-                if edges.count > 0 {
-                    let subjectClassName = edges[0].subjectType
-                    let family = DataItemFamily(rawValue: subjectClassName.lowercased())!
-                    
-                    let type = DataItemFamily.getType(family)() as! Object.Type
-                    
-                    var subjects: [DataItem] = []
-                    
-                    for uid in edges.map({$0.subjectUid}){
-                        let subject = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem                        
-                        if let subject = subject{
-                            subjects.append(subject)
-                        }
+        let edges = item[prop] as? RealmSwift.List<Edge>
+        if let edges = edges{
+            if edges.count > 0 {
+                let objectClassName = edges[0].objectType
+                let family = DataItemFamily(rawValue: objectClassName.lowercased())!
+                let type = DataItemFamily.getType(family)() as! Object.Type
+                var objects: [DataItem] = []
+                
+                for uid in edges.map({$0.objectUid}){
+                    let object = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem
+                    if let object = object{
+                        objects.append(object)
                     }
-                    
-                    return subjects
-                    
-                }else{
-                    return []
                 }
-            }else{
-                return []
+                return objects
             }
         }
-    
+        return []
     }
     
     func getProperties(_ item:DataItem) -> [String]{
