@@ -169,7 +169,7 @@ extension View {
         
         return x
     }
-    func border(width: CGFloat, edge: Edge, color: Color) -> some View {
+    func border(width: CGFloat, edge: SwiftUI.Edge, color: Color) -> some View {
         self.overlay(
             EdgeBorder(width: width, edge: edge).foregroundColor(color)
         )
@@ -193,7 +193,7 @@ extension Text {
 struct EdgeBorder: Shape {
 
     var width: CGFloat
-    var edge: Edge
+    var edge: SwiftUI.Edge
 
     func path(in rect: CGRect) -> Path {
         var x: CGFloat {

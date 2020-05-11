@@ -546,3 +546,31 @@ public class ResultSet: ObservableObject {
         }
     }
 }
+
+
+class Edge: Object {
+    @objc dynamic var objectUid:String = DataItem.generateUUID()
+    @objc dynamic var subjectUid:String = DataItem.generateUUID()
+    
+    required init() {}
+    
+    init(_ objectUid: String = DataItem.generateUUID(), _ subjectUid: String = DataItem.generateUUID()) {
+        self.objectUid = objectUid
+        self.subjectUid = subjectUid
+    }
+    
+    
+    // maybe we dont need this
+//    @objc dynamic var objectType:String = DataItem.generateUUID()
+//    @objc dynamic var subectType:String = DataItem.generateUUID()
+    
+    /// Deserializes DataItem from json decoder
+    /// - Parameter decoder: Decoder object
+    /// - Throws: Decoding error
+//    required public convenience init(from decoder: Decoder) throws{
+//        self.init()
+//        objectUid = try decoder.decodeIfPresent("objectUid") ?? objectUid
+//        subjectUid = try decoder.decodeIfPresent("subjectUid") ?? subjectUid
+//    }
+}
+

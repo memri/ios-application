@@ -138,6 +138,9 @@ struct GeneralEditorSection: View {
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         let className = item.objectSchema[prop]?.objectClassName
+        
+        let edges = 
+        
         let family = DataItemFamily(rawValue: className!.lowercased())!
         return family.getCollection(item[prop] as Any)
     }

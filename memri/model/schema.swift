@@ -190,6 +190,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 
 // completion(try JSONDecoder().decode(family: DataItemFamily.self, from: data))
 
+
 class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
@@ -510,7 +511,9 @@ class Person:DataItem {
     
     let relations = List<Person>()
     let phoneNumbers = List<PhoneNumber>()
-    let websites = List<Website>()
+    
+    
+    let websites = List<Edge>()
     //TODO
 //    let placeOfBirth = List<Location>()
     let companies = List<Company>()
@@ -544,9 +547,10 @@ class Person:DataItem {
             age.value = try decoder.decodeIfPresent("age") ?? age.value
             profilePicture = try decoder.decodeIfPresent("profilePicture") ?? profilePicture
             
+            decodeEdges(decoder, "websites", Website.self, self.websites)
+            
             decodeIntoList(decoder, "relations", self.relations)
             decodeIntoList(decoder, "phoneNumbers", self.phoneNumbers)
-            decodeIntoList(decoder, "websites", self.websites)
             decodeIntoList(decoder, "companies", self.companies)
             decodeIntoList(decoder, "addresses", self.addresses)
             decodeIntoList(decoder, "publicKeys", self.publicKeys)
