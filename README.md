@@ -12,3 +12,4 @@ Can't wait? Cool! Reach out to us via our [Slack](https://app.slack.com/client/T
 ## Run formatter
 *make sure to run this from the repo directory only*
 ```swift-format . --configuration .swift-format.json```
+
