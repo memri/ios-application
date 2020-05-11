@@ -83,8 +83,9 @@ class LEOTextStorage: NSTextStorage {
         var searchLoc = LEOTextUtil.isBackspace(str) && range.length == 1 ? range.location + 1 : range.location
         let (currentLine, indexInLine) = LEOTextUtil.objectLineAndIndexForString(self.string,
                                                                                 location: searchLoc)
+
         
-        print("\nREPLACE IN RANGE \(range) WITH STRING \"\(str)\"")
+        print("\nREPLACE IN RANGE \(range) WITH STRING \"\(str.debugDescription)\"")
         print("CURRENT LINE \"\(currentLine)\"")
 //
         print(LEOTextUtil.isBackspace(str))
@@ -136,10 +137,12 @@ class LEOTextStorage: NSTextStorage {
         let finalStr: NSString = "\(str)" as NSString
 
         currentString.replaceCharacters(in: range, with: String(finalStr))
-
+        
         edited(.editedCharacters, range: range, changeInLength: (finalStr.length - range.length))
-
+        
         endEditing()
+
+
 
         if textView.undoManager!.isRedoing {
             return
@@ -190,6 +193,17 @@ class LEOTextStorage: NSTextStorage {
             undoSupportAppendRange(NSMakeRange(range.location + str.length(), 0),
                                    withString: String(newItemText), selectedRangeLocationMove: newItemText.length)
         }
+        else if str.hasPrefix("http://") || str.hasPrefix("www.") || str.hasPrefix("\nhttps://") || str.hasPrefix("https://"){
+            
+            let linkRange = NSRange(location: range.location, length: str.length())
+            // TODO: why is it necessary to do this async
+            DispatchQueue.main.asyncAfter(deadline: .now()) {
+                if let url = URL(string: removeTrailingWhiteSpace(str)){
+                    self.safeAddAttributes([.link: url], range: linkRange)
+                }
+            }
+        }
+        
     }
 
     override func setAttributes(_ attrs: [NSAttributedString.Key : Any]?, range: NSRange) {
