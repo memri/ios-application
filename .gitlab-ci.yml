@@ -6,6 +6,8 @@ image: ruby:2.7
 
 build_project:
   stage: build
+  tags:
+    - ios
   script:
     - rm -rf ~/realm.memri/*
     - xcodebuild clean -workspace memri.xcworkspace -scheme memri | xcpretty
