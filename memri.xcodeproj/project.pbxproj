@@ -475,7 +475,7 @@
 		5D1A3E62240704BF00A0583B /* extension */ = {
 			isa = PBXGroup;
 			children = (
-				5D301F70245C386300183BD2 /* NSAttibutedString */,
+				5D301F70245C386300183BD2 /* NSAttributedString */,
 				5D301F63245C37C100183BD2 /* TextView */,
 				5D90464D243616A100632492 /* color */,
 				5D3D96222416764A0004040E /* codable */,
@@ -495,13 +495,13 @@
 			path = TextView;
 			sourceTree = "<group>";
 		};
-		5D301F70245C386300183BD2 /* NSAttibutedString */ = {
+		5D301F70245C386300183BD2 /* NSAttributedString */ = {
 			isa = PBXGroup;
 			children = (
 				5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */,
 			);
-			name = NSAttibutedString;
-			path = "../../../../Downloads/ios-application-richtext/memri/extension/NSAttibutedString";
+			name = NSAttributedString;
+			path = "../../../../Downloads/ios-application-richtext/memri/extension/NSAttributedString";
 			sourceTree = "<group>";
 		};
 		5D38DE1B2405788700FF9B70 /* api */ = {
