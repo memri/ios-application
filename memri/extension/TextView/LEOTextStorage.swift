@@ -255,21 +255,6 @@ class LEOTextStorage: NSTextStorage {
             
             let attributes = styles.getAttributes()
             safeAddAttributes(attributes, range: range)
-
-            
-            
-            
-//            let inputFont = textView.getInputFont()
-//            safeAddAttributes([NSAttributedString.Key.font : inputFont], range: range)
-//            for style in textView.inputStyles{
-//                if let attributes = style.getAttribute(){
-//                    safeAddAttributes(attributes, range: range)
-//                }
-//            }
-//            if !styles.contains(.underline){
-//                removeAttribute(.underlineStyle, range: range)
-////                safeAddAttributes([.underlineStyle: 0], range: range)
-//            }
         }
     }
 

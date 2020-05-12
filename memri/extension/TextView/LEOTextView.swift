@@ -359,28 +359,6 @@ open class LEOTextView: UITextView {
         return nck_textStorage.currentParagraphTypeWithLocation(selectedRange.location)
     }
 
-//    open func getInputMode(_ index: Int) -> LEOInputFontMode {
-//        guard let currentFont = nck_textStorage.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: index, effectiveRange: nil, defaultValue: nil) as? UIFont else {
-//            return .normal
-//        }
-//        let underlineVal = nck_textStorage.safeAttribute(NSAttributedString.Key.underlineStyle.rawValue,
-//                                                atIndex: index, effectiveRange: nil, defaultValue: nil) as? Int ?? 0
-//
-//
-//        if currentFont.pointSize == titleFont.pointSize {
-//            return .title
-//        } else if LEOTextUtil.isBoldFont(currentFont, boldFontName: boldFont.fontName) {
-//            return .bold
-//        } else if LEOTextUtil.isItalicFont(currentFont, italicFontName: italicFont.fontName) {
-//            return .italic
-//        } else if (underlineVal) == 1 {
-//            return .normal
-////            return .underline
-//        } else {
-//            return .normal
-//        }
-//    }
-
     // MARK: - Utils
 
     func podBundle() -> Bundle {
