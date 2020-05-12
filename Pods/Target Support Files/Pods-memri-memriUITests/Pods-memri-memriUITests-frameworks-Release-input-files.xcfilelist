@@ -1,3 +1,4 @@
 ${PODS_ROOT}/Target Support Files/Pods-memri-memriUITests/Pods-memri-memriUITests-frameworks.sh
+${BUILT_PRODUCTS_DIR}/DirectoryWatcher/DirectoryWatcher.framework
 ${BUILT_PRODUCTS_DIR}/Realm/Realm.framework
 ${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework

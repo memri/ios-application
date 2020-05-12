@@ -8,6 +8,9 @@ target 'memri' do
   # Pods for memri
   pod 'RealmSwift'
 
+  # For latest release in cocoapods
+  pod 'DirectoryWatcher'
+
   target 'memriTests' do
     inherit! :search_paths
     # Pods for testing

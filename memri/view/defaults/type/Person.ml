@@ -173,6 +173,7 @@ Person {
                         }
                     }
                 }
+                
             }
         }
         
@@ -225,7 +226,6 @@ Person {
                 }
             }
         }
-            
         
         onlineProfiles {
             EditorRow {
