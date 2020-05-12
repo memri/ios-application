@@ -2,7 +2,6 @@
 //  util.swift
 //  memri
 //
-//  Created by Koen van der Veen on 09/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -16,6 +15,8 @@ import SwiftUI
 //        prop = try decoder.decodeIfPresent(name) ?? prop
 //    }
 //}
+
+// Run formatter: swift-format . --configuration .swift-format.json
 
 extension String: Error {
     func sha256() -> String {

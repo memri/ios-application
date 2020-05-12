@@ -6,17 +6,19 @@ image: ruby:2.7
 
 build_project:
   stage: build
+  tags:
+    - ios
   script:
     - rm -rf ~/realm.memri/*
     - xcodebuild clean -workspace memri.xcworkspace -scheme memri | xcpretty
     - pod install
     - xcodebuild test -workspace memri.xcworkspace -scheme memri -destination 'platform=iOS Simulator,name=iPhone 11 Pro Max,OS=13.4.1' | xcpretty -s
 
-pages:
-  stage: build
-  script:
-  - pod install
-  - jazzy
-  artifacts:
-    paths:
-    - public
+#pages:
+#  stage: build
+#  script:
+#  - pod install
+#  - jazzy
+#  artifacts:
+#    paths:
+#    - public
