@@ -1,9 +1,28 @@
+[language = "English"] {
+    sharewith: "Share with..."
+    addtolist: "Add to list..."
+    duplicate: "Duplicate"
+    showtimeline: "Show Timeline"
+    timelineof: "Timeline of this"
+    starred: "Starred"
+    all: "All"
+}
+[language = "Dutch"] {
+    sharewith: "Deel met..."
+    addtolist: "Voeg toe aan lijst..."
+    duplicate: "Dupliceer"
+    showtimeline: "Toon Tijdslijn"
+    timelineof: "Tijdslijn van deze"
+    starred: "Favoriete"
+    all: "Alle"
+}
+
 "defaultButtonsForDataItem" {
     editActionButton: toggleEditMode
     filterButtons:
         openView {
             icon: "increase.indent"
-            title: "Show Timeline"
+            title: "{$showtimeline}"
             
             view: {
                 defaultRenderer: timeline
@@ -24,13 +43,13 @@
     contextButtons: star schedule
     
     actionItems:
-        showSharePanel { title: "Share with..." }
-        addToPanel { title: "Add to list..." }
-        duplicate { title: "Duplicate {type}" }
+        showSharePanel { title: "{$sharewith}" }
+        addToPanel { title: "{$addtolist}" }
+        duplicate { title: "{$duplicate} {type}" }
     
     navigateItems:
         openView {
-            title: "Timeline of this {type.lowercased()}"
+            title: "{$timelineof} {type.lowercased()}"
             view: {
                 defaultRenderer: timeline
                 
@@ -46,14 +65,14 @@
             }
         }
         openViewByName {
-            title: "Starred {type.plural()}"
+            title: "{$starred} {type.plural()}"
             name: "filter-starred"
             arguments: {
                 fromTemplate: "all-{type}"
             }
         }
         openViewByName {
-            title: "All {type.lowercased().plural()}"
+            title: "{$all} {type.lowercased().plural()}"
             name: "all-{type}"
         }
 }
