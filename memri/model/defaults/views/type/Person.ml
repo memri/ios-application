@@ -127,7 +127,7 @@ Person {
                     align: center
                 
                     Image {
-                        image: {.}
+                        image: {{.}}
                         resizable: fill
                     }
                     
