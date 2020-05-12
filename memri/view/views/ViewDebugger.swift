@@ -107,8 +107,6 @@ class ErrorHistory: ObservableObject {
     //            computedView: computedView
             ))
         }
-        
-        showErrorConsole = true
     }
     
     func warn(_ message:String/*, _ computedView:ComputedView*/){
