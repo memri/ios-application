@@ -311,6 +311,27 @@ public class Cache {
         return nil
     }
     
+    /// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
+    /// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
+    /// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
+    /// the the item changes
+    /// - Parameter item:DataItem to be added
+    /// - Throws: Sync conflict exception
+    /// - Returns: cached dataItem
+    public func addToCache(_ item:DataItem) throws -> DataItem {
+        
+        if let newerItem = try! mergeWithCache(item){
+            return newerItem
+        }
+        
+        // Add item to realm
+        try realm.write() { realm.add(item, update: .modified) }
+        
+        bindSyncing(item)
+        
+        return item
+    }
+    
     private func mergeWithCache(_ item: DataItem) throws -> DataItem?  {
         // Check if this is a new item or an existing one
         if item.uid.contains("0xNEW") {
@@ -387,31 +408,9 @@ public class Cache {
         })
     }
     
-    /// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
-    /// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
-    /// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
-    /// the the item changes
-    /// - Parameter item:DataItem to be added
-    /// - Throws: Sync conflict exception
-    /// - Returns: cached dataItem
-    public func addToCache(_ item:DataItem) throws -> DataItem {
-        
-        if let newerItem = try! mergeWithCache(item){
-            return newerItem
-        }
-        
-        // Add item to realm
-        try realm.write() { realm.add(item, update: .modified) }
-        
-        bindSyncing(item)
-        
-        return item
-    }
-    
-    
-     /// sets delete to true in the syncstate, for an array of items
-     /// - Parameter item: item to be deleted
-     /// - Remark: All methods and properties must throw when deleted = true;
+    /// sets delete to true in the syncstate, for an array of items
+    /// - Parameter item: item to be deleted
+    /// - Remark: All methods and properties must throw when deleted = true;
     public func delete(_ item:DataItem) {
         if (!item.deleted) {
             try! self.realm.write {

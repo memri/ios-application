@@ -155,16 +155,16 @@ extension View {
     func border(width: [CGFloat], color: Color) -> some View {
         var x:AnyView = AnyView(self)
         if width[0] > 0 {
-            x = AnyView(x.overlay(EdgeBorder(width: width[0], edge: .leading).foregroundColor(color)))
+            x = AnyView(x.overlay(EdgeBorder(width: width[0], edge: .top).foregroundColor(color)))
         }
         if width[1] > 0 {
-            x = AnyView(x.overlay(EdgeBorder(width: width[1], edge: .top).foregroundColor(color)))
+            x = AnyView(x.overlay(EdgeBorder(width: width[1], edge: .trailing).foregroundColor(color)))
         }
         if width[2] > 0 {
-            x = AnyView(x.overlay(EdgeBorder(width: width[2], edge: .trailing).foregroundColor(color)))
+            x = AnyView(x.overlay(EdgeBorder(width: width[2], edge: .bottom).foregroundColor(color)))
         }
         if width[3] > 0 {
-            x = AnyView(x.overlay(EdgeBorder(width: width[3], edge: .bottom).foregroundColor(color)))
+            x = AnyView(x.overlay(EdgeBorder(width: width[3], edge: .leading).foregroundColor(color)))
         }
         
         return x
@@ -649,7 +649,7 @@ public class GUIElementDescription: Codable {
                 value = f()
             }
             else { // TODO Refactor: integrate in larger error handling effort
-                print("Warn: fetching undefined variable: \(firstItem)")
+                errorHistory.warn("fetching undefined variable: \(firstItem)")
                 value = nil
             }
         }
@@ -661,6 +661,11 @@ public class GUIElementDescription: Codable {
             
             if part == "functions" {
                 value = (value as! DataItem).functions[propParts[i+1]];
+                
+                if value == nil {
+                    errorHistory.warn("Unknown function \(propParts.last ?? "")")
+                }
+                
                 lastPart = nil
                 break
             }
@@ -671,9 +676,18 @@ public class GUIElementDescription: Codable {
             }
             else {
                 lastPart = String(part)
-                lastObject = (value as! Object)
-                value = lastObject![lastPart!]
-
+                lastObject = (value as? Object)
+                
+                if lastObject?.objectSchema[lastPart!] == nil {
+                    value = nil
+                }
+                else {
+                    value = lastObject?[lastPart!]
+                }
+                
+                if value == nil {
+                    errorHistory.warn("Unknown property \(propParts.joined(separator: "."))")
+                }
             }
         }
         

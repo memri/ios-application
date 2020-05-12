@@ -16,7 +16,7 @@
     starred: "Favoriete"
     all: "Alle"
 }
-
+ 
 "defaultButtonsForDataItem" {
     editActionButton: toggleEditMode
     filterButtons:

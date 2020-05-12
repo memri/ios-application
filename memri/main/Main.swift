@@ -114,7 +114,6 @@ public class Main: ObservableObject {
     }
     
     public func setComputedView(){
-        
         // Fetch the resultset associated with the current view
         let resultSet = cache.getResultSet(self.sessions.currentSession.currentView.queryOptions!)
         

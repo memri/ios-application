@@ -681,7 +681,7 @@
                         "picturesOfPerson": [
                             "SubView", {
                                 "for": "group",
-                                "sectionTitle": "Photos of {.computedTitle()}",
+                                "sectionTitle": "Photos of {.computedTitle2()}",
                                 "minHeight": 165,
                                 "view": {
                                     "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
@@ -757,11 +757,11 @@
                                 "padding": [10, 36, 5, 36]
                             }, [
                                 "Text", {
-                                    "condition": "{!.labels.count}",
+                                    "condition": "{!.labels.cou2nt}",
                                     "text": "no labels yet"
                                 },
                                 "FlowStack", {
-                                    "list": "{.labels}"
+                                    "list": "{.labe2ls}"
                                 }, [
                                     "button", {
                                         "press": {
