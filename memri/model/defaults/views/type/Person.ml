@@ -78,10 +78,11 @@ Person {
         
         readOnly:
         
-        picturesOfPerson:
+        picturesOfPerson {
+            foreach: false
+            sectionTitle: "Photos of {.computedTitle()}"
+        
             SubView {
-                for: group
-                sectionTitle: "Photos of {.computedTitle()}"
                 minHeight: 165
                 
                 view {
@@ -102,10 +103,12 @@ Person {
                     readonly: true
                 }
             }
+        }
         
-        profilePicture:
+        profilePicture {
+            sectionTitle: ""
+        
             ZStack {
-                sectionTitle: ""
                 alignment: center
             
                 Image {
@@ -152,11 +155,13 @@ Person {
                     }
                 }
             }
+        }
         
-        labels:
+        labels {
+            foreach: false
+            sectionTitle: ""
+        
             VSTack {
-                for: group
-                sectionTitle:
                 padding: 10 36 5 36
             
                 Text {
@@ -171,7 +176,7 @@ Person {
                         press: openViewByName {
                             name: "all-items-with-label"
                             arguments: {
-                                name: Soccer team
+                                name: "Soccer team"
                                 uid: 0x0124
                             }
                         }
@@ -189,9 +194,10 @@ Person {
                         }
                     }
                 }
+            }
         }
         
-        publicKeys:
+        publicKeys {
             EditorRow {
                 title: "{.name}"
             
@@ -199,9 +205,10 @@ Person {
                     text: "{.key}"
                 }
             }
+        }
             
         
-        onlineProfiles:
+        onlineProfiles {
             EditorRow {
                 title: "{.type}"
             
@@ -213,6 +220,7 @@ Person {
                     }
                 }
             }
+        }
     }
 }
 

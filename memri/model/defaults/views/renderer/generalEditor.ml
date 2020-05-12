@@ -7,14 +7,16 @@
         dates: dateCreated dateModified dateAccessed changelog
     }
     
-    starred:
+    starred {
         Action {
             press: star
         }
+    }
     
-    labels:
+    labels {
+        foreach: false
+        
         EditorRow {
-            for: group
             title: "{displayName}"
             
             Text {
@@ -47,11 +49,13 @@
                 }
             }
         }
+    }
     
-    dates:
+    dates {
+        foreach: false
+        sectionTitle: ""
+        
         Text {
-            for: group
-            sectionTitle: ""
             alignment: center
             textalign: center
             text: "{.describeChangelog()}"
@@ -60,4 +64,5 @@
             font: 13
             maxChar: 300
         }
+    }
 }
