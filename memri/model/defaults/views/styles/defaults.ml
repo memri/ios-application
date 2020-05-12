@@ -1,16 +1,20 @@
-color.background { light: #330000; dark: #ff0000 }
+[color = "background"] {
+    light: #330000
+    dark: #ff0000
+}
 
-color.highlight {
+[color = "highlight"] {
     light: #000
     dark: #fff
 }
 
-style.my-label-text {
+
+[style = "my-label-text"] {
     border: background 1
     color: highlight
 }
 
-style.active {
+[style = "active"] {
     background: background
 }
 
@@ -18,6 +22,6 @@ style.active {
 /*
  Text {
     text: "hello"
-    style: my-label-text active
+    style: "my-label-text" "active"
  }
 */
