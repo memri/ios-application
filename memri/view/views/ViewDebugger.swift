@@ -143,6 +143,8 @@ class ErrorHistory: ObservableObject {
     
     func clear(){
         log = []
+        
+        objectWillChange.send()
     }
 }
 
@@ -170,6 +172,12 @@ struct ErrorConsole: View {
                             .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
                             .foregroundColor(Color(hex:"555"))
                         Spacer()
+                        Button(action: { self.history.clear() }) {
+                            Text("clear")
+                        }
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(Color(hex: "#999"))
+                        .padding(10)
                         Button(action: { self.history.showErrorConsole = false }) {
                             Image(systemName: "xmark")
                         }
