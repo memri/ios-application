@@ -323,7 +323,10 @@ public class Cache {
         // Check if this is a new item or an existing one
         if item.uid.contains("0xNEW") {
             // Schedule to be created on the pod
-            try realm.write() { item.syncState!.actionNeeded = "create" }
+            try realm.write() {
+                item.syncState!.actionNeeded = "create"
+                realm.add(AuditItem(action: "create", appliesTo: [item]))
+            }
         }
         else {
             // Fetch item from the cache to double check
@@ -363,12 +366,13 @@ public class Cache {
             if case let .change(propChanges) = objectChange {
                 if item.syncState!.actionNeeded == "" {
                     
-                    let syncState = item.syncState!
+                    var syncState = item.syncState!
                     
                     func doAction(){
                         
                         // Mark item for updating
                         syncState.actionNeeded = "update"
+                        syncState.changedInThisSession = true
                         
                         // Record which field was updated
                         for prop in propChanges {
@@ -425,6 +429,7 @@ public class Cache {
             try! self.realm.write {
                 item.deleted = true;
                 item.syncState!.actionNeeded = "delete"
+                realm.add(AuditItem(action: "delete", appliesTo: [item]))
             }
         }
     }
@@ -438,6 +443,7 @@ public class Cache {
                 if (!item.deleted) {
                     item.deleted = true
                     item.syncState!.actionNeeded = "delete"
+                    realm.add(AuditItem(action: "delete", appliesTo: [item]))
                 }
             }
         }

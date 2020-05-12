@@ -22,7 +22,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case audio = "audio"
     case file = "file"
     case person = "person"
-    case logitem = "logitem"
+    case audititem = "audititem"
     case sessions = "sessions"
     case phonenumber = "phonenumber"
     case website = "website"
@@ -49,7 +49,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .video: return Color(hex: "#93c47d")
         case .audio: return Color(hex: "#93c47d")
         case .person: return Color(hex: "#3a5eb2")
-        case .logitem: return Color(hex: "#93c47d")
+        case .audititem: return Color(hex: "#93c47d")
         case .sessions: return Color(hex: "#93c47d")
         case .phonenumber: return Color(hex: "#eccf23")
         case .website: return Color(hex: "#3d57e2")
@@ -95,8 +95,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
             (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
         case .person:
             (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
-        case .logitem:
-            (object as! RealmSwift.List<LogItem>).forEach{ collection.append($0) }
+        case .audititem:
+            (object as! RealmSwift.List<AuditItem>).forEach{ collection.append($0) }
         case .phonenumber:
             (object as! RealmSwift.List<PhoneNumber>).forEach{ collection.append($0) }
         case .website:
@@ -135,8 +135,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .note:
             return Note.self
-        case .logitem:
-            return LogItem.self
+        case .audititem:
+            return AuditItem.self
         case .label:
             return Label.self
         case .file:
@@ -563,11 +563,12 @@ class Person:DataItem {
     }
 }
 
-class LogItem:DataItem {
+class AuditItem:DataItem {
+    
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
-    override var genericType:String { "logitem" }
+    override var genericType:String { "audititem" }
     
     override var computedTitle:String {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
@@ -577,6 +578,27 @@ class LogItem:DataItem {
     
     required init () {
         super.init()
+    }
+    
+    convenience init(date: Date? = nil,contents: String? = nil, action: String? = nil,
+                     appliesTo: [DataItem]? = nil) {
+        self.init()
+        self.date = date ?? self.date
+        self.contents = contents ?? self.contents
+        self.action = action ?? self.action
+                
+        if let appliesTo = appliesTo{
+            let edges = appliesTo.map{ Edge(self.uid, $0.uid, self.genericType, $0.genericType) }
+            
+            let edgeName = "appliesTo"
+            
+//            item["~appliesTo"] =  edges
+            // TODO
+            self.appliesTo.append(objectsIn: edges)
+//            for item in appliesTo{
+//                item.changelog.append(objectsIn: edges)
+//            }
+        }
     }
     
     public required init(from decoder: Decoder) throws {

@@ -25,8 +25,8 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var dateModified:Date? = Date()
     /// Last access date of the DataItem
     @objc dynamic var dateAccessed:Date? = nil
-    /// Array LogItems describing the log history of the DataItem
-    let changelog = List<LogItem>()
+    /// Array AuditItems describing the log history of the DataItem
+    let changelog = List<AuditItem>()
     /// Labels assigned to / associated with this DataItem
     let labels = List<memri.Label>()
     /// Object descirbing syncing information about this object like loading state, versioning, etc.
