@@ -20,8 +20,6 @@ extension NSAttributedString {
     }
 }
 
-
-
 func removeTrailingWhiteSpace(_ str: String) -> String{
     
     if str.hasPrefix("\n"){

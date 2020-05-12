@@ -96,20 +96,21 @@ extension LEOTextView {
         } else {
             // The normal case
             toggleInputStyle(style)
+
         }
     }
     
     func toggleInputStyle(_ style: InputStyle){
-        if let index = inputStyles.firstIndex(of: style) {
-            inputStyles.remove(at: index)
+        if let index = inputStyles.styles.firstIndex(of: style) {
+            inputStyles.styles.remove(at: index)
         }
         else {
-            inputStyles.append(style)
+            inputStyles.styles.append(style)
         }
     }
     
     func toggleButtonColor(button: UIBarButtonItem, fontClicked: InputStyle){
-        button.tintColor = inputStyles.contains(fontClicked) ? toolbarButtonInactiveColor : toolbarButtonActiveColor
+        button.tintColor = inputStyles.styles.contains(fontClicked) ? toolbarButtonInactiveColor : toolbarButtonActiveColor
     }
     
     @objc func boldButtonAction() {

@@ -248,24 +248,34 @@ class LEOTextStorage: NSTextStorage {
         return LEOTextUtil.paragraphType(objectLine)
     }
 
-    func performReplacementsForRange(_ range: NSRange, styles: [InputStyle]) {
+    func performReplacementsForRange(_ range: NSRange, styles: InputStyles) {
         
         if range.length > 0 {
             // add font, this has to be done separately because bold and italic are wrapping in a single attribute
-            let inputFont = textView.getInputFont()
-            safeAddAttributes([NSAttributedString.Key.font : inputFont], range: range)
-            for style in textView.inputStyles{
-                if let attributes = style.getAttribute(){
-                    safeAddAttributes(attributes, range: range)
-                }
-                
-            }
+            
+            let attributes = styles.getAttributes()
+            safeAddAttributes(attributes, range: range)
+
+            
+            
+            
+//            let inputFont = textView.getInputFont()
+//            safeAddAttributes([NSAttributedString.Key.font : inputFont], range: range)
+//            for style in textView.inputStyles{
+//                if let attributes = style.getAttribute(){
+//                    safeAddAttributes(attributes, range: range)
+//                }
+//            }
+//            if !styles.contains(.underline){
+//                removeAttribute(.underlineStyle, range: range)
+////                safeAddAttributes([.underlineStyle: 0], range: range)
+//            }
         }
     }
 
     // MARK: - Undo & Redo support
 
-    func undoSupportChangeWithRange(_ range: NSRange, addStyle: InputStyle, currentStyles: [InputStyle]) {
+    func undoSupportChangeWithRange(_ range: NSRange, addStyle: InputStyle, currentStyles: InputStyles) {
         textView.undoManager?.registerUndo(withTarget: self, handler: { (type) in
             self.undoSupportChangeWithRange(range, addStyle: addStyle, currentStyles: currentStyles)
         })
@@ -273,7 +283,7 @@ class LEOTextStorage: NSTextStorage {
         if textView.undoManager!.isUndoing {
             performReplacementsForRange(range, styles: currentStyles)
         } else {
-            performReplacementsForRange(range, styles: [addStyle])
+            performReplacementsForRange(range, styles: InputStyles(styles: [addStyle]))
         }
     }
 

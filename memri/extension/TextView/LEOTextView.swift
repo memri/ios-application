@@ -17,7 +17,7 @@ open class LEOTextView: UITextView {
     open var defaultAttributes: [NSAttributedString.Key : AnyObject] = [:]
     
     
-    var inputStyles: [InputStyle] = []
+    var inputStyles: InputStyles = InputStyles()
     
     var boldButton: UIBarButtonItem? = nil
     var italicButton: UIBarButtonItem? = nil
@@ -200,23 +200,6 @@ open class LEOTextView: UITextView {
 
     }
 
-    // MARK: About text attributes and JSON
-    
-    
-    func getInputFont() -> UIFont{
-        if self.inputStyles.contains(.bold) && self.inputStyles.contains(.italic){
-            return normalFont.boldItalics()
-        }
-        else if self.inputStyles.contains(.bold){
-            return normalFont.bold()
-        }
-        else if self.inputStyles.contains(.italic){
-            return normalFont.italics()
-        }else{
-            return normalFont
-        }
-    }
-
     open func textAttributesDataWithAttributedString(_ attributedString: NSAttributedString) -> [Dictionary<String, AnyObject>] {
         var attributesData: [Dictionary<String, AnyObject>] = []
 
@@ -262,10 +245,8 @@ open class LEOTextView: UITextView {
                         attributesData.append(attribute)
                     }
                 }
-//                print(attribute)
             }
-        }
-        
+        }        
 
         return attributesData
     }
