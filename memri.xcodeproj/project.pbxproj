@@ -176,6 +176,7 @@
 		86CDB47F246A4570007EAE67 /* Note.ml in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB47E246A4570007EAE67 /* Note.ml */; };
 		86CDB482246A4D94007EAE67 /* generalEditor.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB481246A4D94007EAE67 /* generalEditor.ml */; };
 		86CDB484246A58FF007EAE67 /* Person.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB483246A58FF007EAE67 /* Person.ml */; };
+		86CDB487246A61F3007EAE67 /* defaults.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB486246A61F3007EAE67 /* defaults.ml */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -360,6 +361,7 @@
 		86CDB47E246A4570007EAE67 /* Note.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Note.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB481246A4D94007EAE67 /* generalEditor.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = generalEditor.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB483246A58FF007EAE67 /* Person.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Person.ml; sourceTree = "<group>"; };
+		86CDB486246A61F3007EAE67 /* defaults.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = defaults.ml; sourceTree = "<group>"; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -928,6 +930,7 @@
 		86CDB46E2469C1F0007EAE67 /* views */ = {
 			isa = PBXGroup;
 			children = (
+				86CDB485246A61D5007EAE67 /* styles */,
 				86CDB480246A4D81007EAE67 /* renderer */,
 				86CDB4772469CB57007EAE67 /* type */,
 				865646322423A7D500D071B4 /* views_from_server.json */,
@@ -957,6 +960,14 @@
 				86CDB481246A4D94007EAE67 /* generalEditor.ml */,
 			);
 			path = renderer;
+			sourceTree = "<group>";
+		};
+		86CDB485246A61D5007EAE67 /* styles */ = {
+			isa = PBXGroup;
+			children = (
+				86CDB486246A61F3007EAE67 /* defaults.ml */,
+			);
+			path = styles;
 			sourceTree = "<group>";
 		};
 		C818E60B241C3D640051E653 /* Utilities */ = {
@@ -1324,6 +1335,7 @@
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */,
+				86CDB487246A61F3007EAE67 /* defaults.ml in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
