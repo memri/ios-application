@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 public enum InputStyle: String{
     case normal, bold, italic, underline

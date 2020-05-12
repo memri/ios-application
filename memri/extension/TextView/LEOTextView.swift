@@ -98,20 +98,8 @@ open class LEOTextView: UITextView {
     }
 
     // MARK: - Public APIs
-
-    // MARK: Type transform
-
-    open func changeCurrentParagraphTextWithInputFontMode(_ mode: LEOInputFontMode) {
-        let paragraphRange = LEOTextUtil.paragraphRangeOfString(self.text, location: selectedRange.location)
-        let currentMode = getInputMode(paragraphRange.location)
-
-        nck_textStorage.undoSupportChangeWithRange(paragraphRange, toMode: mode.rawValue, currentMode: currentMode.rawValue)
-    }
-
-    open func changeSelectedTextWithInputFontMode() {
-//        let currentMode = getInputMode(selectedRange.location)
-        let currentMode = .normal
-        nck_textStorage.undoSupportChangeWithRange(selectedRange, toMode: mode.rawValue, currentMode: currentMode.rawValue)
+    open func changeSelectedTextWithInputFontMode(style: InputStyle) {
+        nck_textStorage.undoSupportChangeWithRange(selectedRange, addStyle: style, currentStyles: self.inputStyles)
     }
 
     /**
@@ -390,27 +378,27 @@ open class LEOTextView: UITextView {
         return nck_textStorage.currentParagraphTypeWithLocation(selectedRange.location)
     }
 
-    open func getInputMode(_ index: Int) -> LEOInputFontMode {
-        guard let currentFont = nck_textStorage.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: index, effectiveRange: nil, defaultValue: nil) as? UIFont else {
-            return .normal
-        }
-        let underlineVal = nck_textStorage.safeAttribute(NSAttributedString.Key.underlineStyle.rawValue,
-                                                atIndex: index, effectiveRange: nil, defaultValue: nil) as? Int ?? 0
-
-
-        if currentFont.pointSize == titleFont.pointSize {
-            return .title
-        } else if LEOTextUtil.isBoldFont(currentFont, boldFontName: boldFont.fontName) {
-            return .bold
-        } else if LEOTextUtil.isItalicFont(currentFont, italicFontName: italicFont.fontName) {
-            return .italic
-        } else if (underlineVal) == 1 {
-            return .normal
-//            return .underline
-        } else {
-            return .normal
-        }
-    }
+//    open func getInputMode(_ index: Int) -> LEOInputFontMode {
+//        guard let currentFont = nck_textStorage.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: index, effectiveRange: nil, defaultValue: nil) as? UIFont else {
+//            return .normal
+//        }
+//        let underlineVal = nck_textStorage.safeAttribute(NSAttributedString.Key.underlineStyle.rawValue,
+//                                                atIndex: index, effectiveRange: nil, defaultValue: nil) as? Int ?? 0
+//
+//
+//        if currentFont.pointSize == titleFont.pointSize {
+//            return .title
+//        } else if LEOTextUtil.isBoldFont(currentFont, boldFontName: boldFont.fontName) {
+//            return .bold
+//        } else if LEOTextUtil.isItalicFont(currentFont, italicFontName: italicFont.fontName) {
+//            return .italic
+//        } else if (underlineVal) == 1 {
+//            return .normal
+////            return .underline
+//        } else {
+//            return .normal
+//        }
+//    }
 
     // MARK: - Utils
 
@@ -423,7 +411,7 @@ open class LEOTextView: UITextView {
         var paragraphStyle: NSMutableParagraphStyle!
 
         if let defaultParagraphStyle = defaultAttributes[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle {
-            paragraphStyle = defaultParagraphStyle.mutableCopy() as! NSMutableParagraphStyle
+            paragraphStyle = (defaultParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
         } else {
             paragraphStyle = NSMutableParagraphStyle()
         }

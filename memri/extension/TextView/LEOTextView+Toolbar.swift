@@ -92,7 +92,7 @@ extension LEOTextView {
 //        }
 
         if LEOTextUtil.isSelecting(self) {
-            changeSelectedTextWithInputFontMode()
+            changeSelectedTextWithInputFontMode(style: style)
         } else {
             // The normal case
             toggleInputStyle(style)

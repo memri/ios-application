@@ -1007,7 +1007,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = memri;
 				TargetAttributes = {
 					5D599BB623F2B77500F218A0 = {
@@ -1120,10 +1120,7 @@
 				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */,
-				86229DCC243508B00013750A /* default_settings.json in Resources */,
-				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				866F87D92456AD76000E5FAB /* person.0x013.json in Resources */,
-				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				865646182422B6A700D071B4 /* notes_from_server.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
