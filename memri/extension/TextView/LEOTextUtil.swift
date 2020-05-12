@@ -20,7 +20,6 @@ extension NSAttributedString {
     }
 }
 
-
 func removeTrailingWhiteSpace(_ str: String) -> String{
     
     if str.hasPrefix("\n"){
@@ -28,7 +27,6 @@ func removeTrailingWhiteSpace(_ str: String) -> String{
     }else{
         return str
     }
-    
 }
 
 class LEOTextUtil: NSObject {

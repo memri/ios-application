@@ -13,6 +13,7 @@
 		5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D0A28B7240677EE00398B17 /* test_dataItems.json */; };
 		5D0A28BB24067E8000398B17 /* test_dataItems.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D0A28B7240677EE00398B17 /* test_dataItems.json */; };
 		5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D0A28C124069A6500398B17 /* SessionViewTest.swift */; };
+		5D165964246AB071006C562D /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D165963246AB071006C562D /* UIFont.swift */; };
 		5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D1A3E63240704D000A0583B /* CodablePublishedExtension.swift */; };
 		5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E652408035A00A0583B /* empty_sessionview.json */; };
 		5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E652408035A00A0583B /* empty_sessionview.json */; };
@@ -212,6 +213,7 @@
 		5D0A28B7240677EE00398B17 /* test_dataItems.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_dataItems.json; sourceTree = "<group>"; };
 		5D0A28B8240678EE00398B17 /* ModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTest.swift; sourceTree = "<group>"; };
 		5D0A28C124069A6500398B17 /* SessionViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionViewTest.swift; sourceTree = "<group>"; };
+		5D165963246AB071006C562D /* UIFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIFont.swift; sourceTree = "<group>"; };
 		5D1A3E63240704D000A0583B /* CodablePublishedExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodablePublishedExtension.swift; sourceTree = "<group>"; };
 		5D1A3E652408035A00A0583B /* empty_sessionview.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = empty_sessionview.json; sourceTree = "<group>"; };
 		5D1A3E68240807C100A0583B /* SessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTest.swift; sourceTree = "<group>"; };
@@ -500,6 +502,7 @@
 			isa = PBXGroup;
 			children = (
 				86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */,
+				5D165963246AB071006C562D /* UIFont.swift */,
 			);
 			name = NSAttributedString;
 			path = "../../../../Downloads/ios-application-richtext/memri/extension/NSAttributedString";
@@ -1005,7 +1008,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = memri;
 				TargetAttributes = {
 					5D599BB623F2B77500F218A0 = {
@@ -1118,10 +1121,7 @@
 				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */,
-				86229DCC243508B00013750A /* default_settings.json in Resources */,
-				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				866F87D92456AD76000E5FAB /* person.0x013.json in Resources */,
-				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				865646182422B6A700D071B4 /* notes_from_server.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1260,6 +1260,7 @@
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */,
+				5D165964246AB071006C562D /* UIFont.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
