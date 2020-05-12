@@ -1,0 +1,32 @@
+[
+    {
+        "name": "filter-starred",
+        "fromTemplate": "{view}",
+        "queryOptions": {
+            "query": "{computedView.queryOptions.query} AND starred = true"
+        },
+        "title": "Starred {computedView.title}"
+    },
+
+    {
+        "name": "choose-item-by-query",
+        "editMode": true,
+        "queryOptions": {
+            "query": "{query}"
+        },
+        "_editActionButton": { "actionName": "toggleEditMode" },
+        "actionButton": {
+            "actionName": "add",
+            "actionArgs": [{
+                "type": "person"
+            }]
+        },
+        "rendererName": "list",
+        "renderConfigs": {
+            "list": {
+                "press": { "actionName": "closePopup" }
+            }
+        },
+        "title": "Choose a {type}"
+    }
+]

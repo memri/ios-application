@@ -1,0 +1,67 @@
+[
+    {
+        "name": "shopping-notes",
+        "views": [
+            "all-notes",
+            {
+                "title": "Shopping Notes",
+                "queryOptions": {
+                    "query": "note AND title BEGINSWITH[c] 'shopping'"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-people",
+        "views": [
+            {
+                "title": "All People",
+                "queryOptions": {
+                    "query": "person"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-photos",
+        "views": [
+            {
+                "title": "All Photos",
+                "queryOptions": {
+                    "query": "photo"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-addresses",
+        "views": [
+            {
+                "title": "All Addresses",
+                "queryOptions": {
+                    "query": "address"
+                }
+            }
+        ]
+    },
+    
+    {
+        "name": "all-items-with-label",
+        "title": "Items with label {name}",
+        "queryOptions": {
+            "query": "* AND ANY labels.uid = '{uid}'"
+        },
+        "rendererName": "list",
+        "renderConfigs": {
+            "list": [
+                "ItemCell", {
+                    "rendererNames": ["list", "thumbnail"],
+                    "variables": "{variables}"
+                }
+            ]
+        }
+    }
+]
