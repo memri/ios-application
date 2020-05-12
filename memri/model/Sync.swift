@@ -25,6 +25,9 @@ class SyncState: Object, Codable {
     // Which fields to update
     let updatedFields = List<String>()
     
+    //
+    @objc dynamic var changedInThisSession = false
+    
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         

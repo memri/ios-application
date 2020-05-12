@@ -559,6 +559,7 @@ class Person:DataItem {
 }
 
 class AuditItem:DataItem {
+    
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
@@ -568,10 +569,22 @@ class AuditItem:DataItem {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
     }
     
-    let appliesTo = List<DataItem>()
+//    let appliesTo = List<Edge>()
     
     required init () {
         super.init()
+    }
+    
+    convenience init(date: Date? = nil,contents: String? = nil, action: String? = nil,
+                     appliesTo: [DataItem]? = nil) {
+        self.init()
+        self.date = date ?? self.date
+        self.contents = contents ?? self.contents
+        self.action = action ?? self.action
+        
+        if let appliesTo = appliesTo{
+            self.appliesTo.append(objectsIn: appliesTo)
+        }
     }
     
     public required init(from decoder: Decoder) throws {
