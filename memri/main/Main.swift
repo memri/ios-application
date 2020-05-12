@@ -120,6 +120,10 @@ public class Main: ObservableObject {
         // If we can guess the type of the result based on the query, let's compute the view
         if resultSet.determinedType != nil {
             
+            if type(of: self) == RootMain.self {
+                errorHistory.info("Computing view \(self.sessions.currentView.name ?? "")")
+            }
+            
             // Calculate cascaded view
             let computedView = try! self.views.computeView() // TODO handle errors better
                 

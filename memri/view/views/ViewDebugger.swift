@@ -67,24 +67,26 @@ class InfoState: Hashable {
     var messageCount: Int = 1
     var type: InfoType = .info
 //    var computedView: ComputedView
+    
+    init (displayMessage m:String) {
+        displayMessage = m
+    }
 }
 
 class ErrorState: InfoState {
     var error: Error? = nil
     
-    init (displayMessage m:String) {
-        super.init()
+    override init (displayMessage m:String) {
+        super.init(displayMessage: m)
         
-        displayMessage = m
         type = .error
     }
 }
 
 class WarnState: InfoState {
-    init (displayMessage m:String) {
-        super.init()
+    override init (displayMessage m:String) {
+        super.init(displayMessage: m)
         
-        displayMessage = m
         type = .warn
     }
 }
@@ -94,6 +96,21 @@ class ErrorHistory: ObservableObject {
     
     var log = [InfoState]()
     
+    func info(_ message:String/*, _ computedView:ComputedView*/){
+        // if same view
+        if log.last?.displayMessage == message {
+            log[log.count - 1].messageCount += 1
+        }
+        else {
+            log.append(InfoState(
+                displayMessage: message
+    //            computedView: computedView
+            ))
+        }
+        
+        showErrorConsole = true
+    }
+    
     func warn(_ message:String/*, _ computedView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
@@ -101,6 +118,21 @@ class ErrorHistory: ObservableObject {
         }
         else {
             log.append(WarnState(
+                displayMessage: message
+    //            computedView: computedView
+            ))
+        }
+        
+        showErrorConsole = true
+    }
+    
+    func error(_ message:String/*, _ computedView:ComputedView*/){
+        // if same view
+        if log.last?.displayMessage == message {
+            log[log.count - 1].messageCount += 1
+        }
+        else {
+            log.append(ErrorState(
                 displayMessage: message
     //            computedView: computedView
             ))
@@ -120,22 +152,33 @@ var errorHistory = ErrorHistory()
 struct ErrorConsole: View {
     @EnvironmentObject var main: Main
     
+    @ObservedObject var history = errorHistory
+    
     var body: some View {
         let dateFormatter = DateFormatter()
         
-        dateFormatter.dateFormat = "HH:mm"
+        dateFormatter.dateFormat = "h:mm a"
         dateFormatter.locale = Locale(identifier: "en_US")
-        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+//        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         
         return Group {
             if errorHistory.showErrorConsole {
                 VStack (spacing:0) {
-                    Text("Error Console")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
-                        .fullWidth()
-                        .foregroundColor(Color(hex:"555"))
-                        .background(Color(hex:"#eee"))
+                    HStack {
+                        Text("Error Console")
+                            .font(.system(size: 14, weight: .semibold))
+                            .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
+                            .foregroundColor(Color(hex:"555"))
+                        Spacer()
+                        Button(action: { self.history.showErrorConsole = false }) {
+                            Image(systemName: "xmark")
+                        }
+                        .font(.system(size: 12))
+                        .foregroundColor(Color(hex: "#999"))
+                        .padding(10)
+                    }
+                    .fullWidth()
+                    .background(Color(hex:"#eee"))
                     
                     CustomScrollView(scrollToEnd: true) {
                         VStack (spacing:0) {
