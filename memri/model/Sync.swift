@@ -90,7 +90,7 @@ class Sync {
         // TODO if this query was executed recently, considering postponing action
         
         // Store query in a log item
-        let audititem = AudiItem()
+        let audititem = AuditItem()
         let data = try! MemriJSONEncoder.encode(queryOptions)
         audititem.contents = String(data: data, encoding: .utf8) ?? ""
         audititem.action = "query"
@@ -123,7 +123,7 @@ class Sync {
         }
     }
     
-    private func prioritySync(_ queryOptions:QueryOptions, _ audititem:AudiItem) {
+    private func prioritySync(_ queryOptions:QueryOptions, _ audititem:AuditItem) {
         
         print("Syncing from pod with query: \(queryOptions.query!)")
         

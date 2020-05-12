@@ -96,7 +96,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .person:
             (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
         case .audititem:
-            (object as! RealmSwift.List<AudiItem>).forEach{ collection.append($0) }
+            (object as! RealmSwift.List<AuditItem>).forEach{ collection.append($0) }
         case .phonenumber:
             (object as! RealmSwift.List<PhoneNumber>).forEach{ collection.append($0) }
         case .website:
@@ -136,7 +136,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .note:
             return Note.self
         case .audititem:
-            return AudiItem.self
+            return AuditItem.self
         case .label:
             return Label.self
         case .file:
@@ -558,7 +558,7 @@ class Person:DataItem {
     }
 }
 
-class AudiItem:DataItem {
+class AuditItem:DataItem {
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
