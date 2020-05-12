@@ -233,6 +233,19 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
     }
 }
 
+
+func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
+                             _ edgeList:RealmSwift.List<Edge>, _ subject: DataItem) {
+    let objects:[T]? = try! decoder.decodeIfPresent(key)
+    if let objects = objects {
+        for object in objects {
+            try! globalCache!.addToCache(object)
+            let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
+            edgeList.append(edge)
+        }
+    }
+}
+
 func negateAny(_ value:Any) -> Bool {
     if let value = value as? Bool { return !value}
     if let value = value as? Int { return value == 0 }

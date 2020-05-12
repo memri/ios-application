@@ -684,7 +684,7 @@
                                 "sectionTitle": "Photos of {.computedTitle()}",
                                 "minHeight": 165,
                                 "view": {
-                                    "queryOptions": { "query": "photo AND ANY includes.uid = '0x013'" },
+                                    "queryOptions": { "query": "photo AND ANY includes.objectUid = '0x013'" },
                                     "rendererName": "thumbnail.grid",
                                     "renderConfigs": {
                                         "thumbnail.grid": {
