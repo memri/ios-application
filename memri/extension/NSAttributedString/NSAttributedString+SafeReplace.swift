@@ -14,18 +14,24 @@ extension NSMutableAttributedString {
     func safeReplaceCharactersInRange(_ range: NSRange, withString str: String) {
         if isSafeRange(range) {
             replaceCharacters(in: range, with: str)
+        }else{
+            print("WARNING, CANNOT ADD ATTRIBUTES (NOT SAFE RANGE)")
         }
     }
 
     func safeReplaceCharactersInRange(_ range: NSRange, withAttributedString attrStr: NSAttributedString) {
         if isSafeRange(range) {
             replaceCharacters(in: range, with: attrStr)
+        }else{
+            print("WARNING, CANNOT ADD ATTRIBUTES (NOT SAFE RANGE)")
         }
     }
 
     func safeAddAttributes(_ attrs: [NSAttributedString.Key : Any], range: NSRange) {
         if isSafeRange(range) {
             addAttributes(attrs, range: range)
+        }else{
+            print("WARNING, CANNOT ADD ATTRIBUTES (NOT SAFE RANGE)")
         }
     }
 }

@@ -137,9 +137,8 @@ public class Main: ObservableObject {
                     print("Error: could not load result: \(error!)")
                 }
                 else {
-                    
-                    // Update the UI
                     maybeLogRead()
+                    // Update the UI
                     scheduleUIUpdate{_ in true}
                 }
             }
@@ -167,7 +166,7 @@ public class Main: ObservableObject {
     
     private func maybeLogRead(){
         if let item = self.computedView.resultSet.singletonItem{
-            try! self.realm.write{
+            realmWriteIfAvailable(realm) {
                 self.realm.add(AuditItem(action: "read", appliesTo: [item]))
             }
         }
@@ -176,10 +175,11 @@ public class Main: ObservableObject {
     private func maybeLogUpdate(){
         if self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession ?? false{
             if let fields = self.computedView.resultSet.singletonItem?.syncState?.updatedFields{
-                try! self.realm.write{
-                    let contents = "Changed fields: " +  Array(fields).joined(separator: " ")
-                    self.realm.add(AuditItem(contents: contents, action: "update",
-                                             appliesTo: [self.computedView.resultSet.singletonItem!]))
+                realmWriteIfAvailable(realm) {
+                    // TODO serialize
+                    let item = self.computedView.resultSet.singletonItem!
+                    self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)), action: "update",
+                                             appliesTo: [item]))
                     self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession = false
                 }
             }

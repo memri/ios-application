@@ -61,17 +61,16 @@ extension LEOTextView {
     func enableBarButtonItems() -> [UIBarButtonItem] {
         
         // richttext
-        let boldButton = UIBarButtonItem(image: UIImage(named: "bold", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.boldButtonAction))
-        let italicButton = UIBarButtonItem(image: UIImage(named: "italic", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.italicButtonAction))
-        let underlineButton = UIBarButtonItem(image: UIImage(named: "underline", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
-        
+        let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(self.boldButtonAction))        
+        let italicButton = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(self.italicButtonAction))
+        let underlineButton = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
         self.boldButton = boldButton
         self.italicButton = italicButton
         self.underlineButton = underlineButton
     
         // lists
-        let bulletedListButton = UIBarButtonItem(image: UIImage(named: "list.bullet", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.bulletedListButtonAction))
-        let NumberedListButton = UIBarButtonItem(image: UIImage(named: "list.number", in: nil, compatibleWith: nil), style: .plain, target: self, action: #selector(self.numberedButtonAction))
+        let bulletedListButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(self.bulletedListButtonAction))
+        let NumberedListButton = UIBarButtonItem(image: UIImage(systemName: "list.number"), style: .plain, target: self, action: #selector(self.numberedButtonAction))
 
         let buttonItems = [boldButton, italicButton, underlineButton, bulletedListButton, NumberedListButton]
 
@@ -143,12 +142,12 @@ extension LEOTextView {
                 var textViewFrame = self.frame
                 textViewFrame.size.height = self.superview!.frame.height - keyboardEnd.height - toolbarHeight
                 self.frame = textViewFrame
-
+                
                 UIView.animate(withDuration: duration, animations: {
-                    var frame = toolbar!.frame
+                    var toolbarFrame = toolbar!.frame
                     // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
-                    frame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 25)
-                    toolbar!.frame = frame
+                    toolbarFrame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 15)
+                    toolbar!.frame = toolbarFrame
                 }, completion: nil)
             }
             

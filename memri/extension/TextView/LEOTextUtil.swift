@@ -20,6 +20,17 @@ extension NSAttributedString {
     }
 }
 
+
+func removeTrailingWhiteSpace(_ str: String) -> String{
+    
+    if str.hasPrefix("\n"){
+        return str.substr(2, str.length() - 2)
+    }else{
+        return str
+    }
+    
+}
+
 class LEOTextUtil: NSObject {
     static let unonderedListRE = try! NSRegularExpression(pattern: "^[-*••∙●] ", options: .caseInsensitive)
     static let orderedListRE = try! NSRegularExpression(pattern: "^\\d*\\. ", options: .caseInsensitive)
@@ -53,6 +64,7 @@ class LEOTextUtil: NSObject {
 
         var objectIndex: Int = 0
         var objectLine = ns_string.substring(to: location)
+
 
         let textSplits = objectLine.components(separatedBy: "\n")
         if textSplits.count > 0 {

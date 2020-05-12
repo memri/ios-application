@@ -57,7 +57,6 @@ import RealmSwift
     - Add customer renderer for starred and labels for person
  */
 
-
 struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
@@ -137,9 +136,28 @@ struct GeneralEditorSection: View {
     var groups:[String:[String]]
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+        
+        //TODO: Better error handling
+        //TODO: Move to DataItem?
         let className = item.objectSchema[prop]?.objectClassName
-        let family = DataItemFamily(rawValue: className!.lowercased())!
-        return family.getCollection(item[prop] as Any)
+        let edges = item[prop] as? RealmSwift.List<Edge>
+        if let edges = edges{
+            if edges.count > 0 {
+                let objectClassName = edges[0].objectType
+                let family = DataItemFamily(rawValue: objectClassName.lowercased())!
+                let type = DataItemFamily.getType(family)() as! Object.Type
+                var objects: [DataItem] = []
+                
+                for uid in edges.map({$0.objectUid}){
+                    let object = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem
+                    if let object = object{
+                        objects.append(object)
+                    }
+                }
+                return objects
+            }
+        }
+        return []
     }
     
     func getProperties(_ item:DataItem) -> [String]{

@@ -2,7 +2,6 @@
 //  Installer.swift
 //  memri
 //
-//  Created by Ruben Daniels on 4/2/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 

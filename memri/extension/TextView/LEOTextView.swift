@@ -62,7 +62,7 @@ open class LEOTextView: UITextView {
 //        delegate = self
         nck_textStorage = textStorage
 
-        customTextView()
+//        customTextView()
     }
 
     public init(normalFont: UIFont, titleFont: UIFont, boldFont: UIFont, italicFont: UIFont) {
@@ -92,6 +92,16 @@ open class LEOTextView: UITextView {
     func customTextView() {
         customSelectionMenu()
     }
+    
+    func setAttributedTextFromRtf(_ rtfString: String){
+        let rtfData = rtfString.data(using: .utf8)!
+        let attributedText = try! NSAttributedString(data: rtfData, documentAttributes: nil)
+        self.attributedText = attributedText.mutableCopy() as! NSMutableAttributedString
+        
+        attributedText.enumerateAttributes(in: NSRange(location: 0, length: attributedText.length)){ attribute, range, _ in
+            textStorage.addAttributes(attribute, range: range)
+        }
+    }
 
     func customSelectionMenu() {
         let menuController = UIMenuController.shared
@@ -101,10 +111,8 @@ open class LEOTextView: UITextView {
             switch $0 {
             case .bold:
                 menuItems.append(UIMenuItem(title: NSLocalizedString("Bold", comment: "Bold"), action: #selector(self.boldButtonAction)))
-                break
             case .italic:
                 menuItems.append(UIMenuItem(title: NSLocalizedString("Italic", comment: "Italic"), action: #selector(self.italicButtonAction)))
-                break
             default:
                 break
             }
@@ -274,7 +282,7 @@ open class LEOTextView: UITextView {
                         attributesData.append(attribute)
                     }
                 }
-                print(attribute)
+//                print(attribute)
             }
         }
         
@@ -305,12 +313,9 @@ open class LEOTextView: UITextView {
         let textString = NSString(string: LEOTextView.textWithJSONString(jsonString))
 
         attributes.forEach {
-            print($0)
             let attribute = $0
             let attributeName = attribute["name"] as! String
             let range = NSRange(location: attribute["location"] as! Int, length: attribute["length"] as! Int)
-            
-            
 
             if attributeName == NSAttributedString.Key.font.rawValue {
                 let currentFont = fontOfTypeWithAttribute(attribute)

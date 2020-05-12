@@ -19,9 +19,21 @@ struct _RichTextEditor: UIViewRepresentable {
         init(_ control: _RichTextEditor) {
             self.control = control
         }
+        
+        func getRtfString(_ attributedText: NSAttributedString) -> String{
+            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
+            let rtfData = try! attributedText.data(from: NSRange(location: 0, length: attributedText.length),
+                                                            documentAttributes: rtfOptions)
+            
+            let rtfString = String(decoding: rtfData, as: UTF8.self)
+            return rtfString
+        }
+        
         func textViewDidChange(_ textView: UITextView) {
             control.dataItem.set("content", textView.attributedText.string)
-            control.dataItem.set("attributedContent", (textView as! LEOTextView).textAttributesJSON())        }
+            control.dataItem.set("rtfContent", getRtfString(textView.attributedText))
+            
+        }
     }
     
     func emptyAttributedContent() -> String{
@@ -33,19 +45,20 @@ struct _RichTextEditor: UIViewRepresentable {
         }
         """
         return attributedContent
-        
     }
+    
 
     func makeUIView(context: Context) -> UITextView {
 
         // NOT SURE WHY THIS IS NEEDED, doesnt seem to do anything
-        let bounds = CGRect(x: 0, y: 0, width: 0, height: 0)
+        // It seems to be neede to allow the toolbar to fit in the textview
+        let bounds = CGRect(x: 0, y: 0, width: 0, height: 600)
         
         var textView = LEOTextView(frame: bounds,
                                    textContainer: NSTextContainer())
                 
-        if let attributedContent = self.dataItem["attributedContent"]{
-            textView.setAttributeTextWithJSONString(attributedContent as! String)
+        if let rtfContent = self.dataItem["rtfContent"]{
+            textView.setAttributedTextFromRtf(rtfContent as! String)
         }else{
             textView.setAttributeTextWithJSONString(emptyAttributedContent())
         }

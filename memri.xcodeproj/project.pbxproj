@@ -29,7 +29,6 @@
 		5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F66245C37EE00183BD2 /* LEOTextStorage.swift */; };
 		5D301F6D245C37EE00183BD2 /* LEOTextViewStructs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F67245C37EE00183BD2 /* LEOTextViewStructs.swift */; };
 		5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */; };
-		5D301F72245C386300183BD2 /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
 		5D38DE172405776B00FF9B70 /* model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* model.swift */; };
@@ -167,6 +166,7 @@
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
 		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
 		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
+		86CDB46C24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -342,6 +342,7 @@
 		86C3A73424518763006D4F55 /* ItemCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemCell.swift; sourceTree = "<group>"; };
 		86C3A7362452BF65006D4F55 /* MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriButton.swift; sourceTree = "<group>"; };
 		86C3A7382452FFD4006D4F55 /* default_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_database.json; sourceTree = "<group>"; };
+		86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+SafeReplace.swift"; path = "memri/extension/NSAttributedString/NSAttributedString+SafeReplace.swift"; sourceTree = SOURCE_ROOT; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -498,7 +499,7 @@
 		5D301F70245C386300183BD2 /* NSAttributedString */ = {
 			isa = PBXGroup;
 			children = (
-				5D301F71245C386300183BD2 /* NSAttributedString+SafeReplace.swift */,
+				86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */,
 			);
 			name = NSAttributedString;
 			path = "../../../../Downloads/ios-application-richtext/memri/extension/NSAttributedString";
@@ -1287,6 +1288,7 @@
 				5D81A07E243343CF006E1FA9 /* ActionName.swift in Sources */,
 				5DB8EC0624598FCC0028FD2E /* DynamicView.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
+				86CDB46C24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
 				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				5DB8EC082459900A0028FD2E /* CompiledView.swift in Sources */,
@@ -1312,7 +1314,6 @@
 				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
 				866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
-				5D301F72245C386300183BD2 /* NSAttributedString+SafeReplace.swift in Sources */,
 				86B7A6742457402C00292E81 /* MapRenderer.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,
