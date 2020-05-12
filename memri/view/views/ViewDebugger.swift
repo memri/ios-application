@@ -165,7 +165,7 @@ struct ErrorConsole: View {
             if errorHistory.showErrorConsole {
                 VStack (spacing:0) {
                     HStack {
-                        Text("Error Console")
+                        Text("Console")
                             .font(.system(size: 14, weight: .semibold))
                             .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
                             .foregroundColor(Color(hex:"555"))
