@@ -198,6 +198,10 @@ public class Cache {
 
         // Do nothing when the query is empty. Should not happen.
         let q = queryOptions.query ?? ""
+        
+        // Log to a maker user
+        errorHistory.info("Executing query \(q)")
+        
         if (q == "") {
             callback("Empty Query", nil)
         }

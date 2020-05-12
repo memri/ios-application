@@ -148,7 +148,7 @@
                                 "text": "{.title}",
                                 "font": [18, "semibold"],
                                 "color": "#333",
-                                "padding": [0, 0, 3, 0]
+                                "padding": [0, 0, 0, 0]
                             },
                             "Text", {
                                 "text": "{.content}",
@@ -757,11 +757,11 @@
                                 "padding": [10, 36, 5, 36]
                             }, [
                                 "Text", {
-                                    "condition": "{!.labels.cou2nt}",
+                                    "condition": "{!.labels.co2unt}",
                                     "text": "no labels yet"
                                 },
                                 "FlowStack", {
-                                    "list": "{.labe2ls}"
+                                    "list": "{.labels}"
                                 }, [
                                     "button", {
                                         "press": {

@@ -126,7 +126,7 @@ public class Main: ObservableObject {
             
             // Calculate cascaded view
             let computedView = try! self.views.computeView() // TODO handle errors better
-                
+            
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
