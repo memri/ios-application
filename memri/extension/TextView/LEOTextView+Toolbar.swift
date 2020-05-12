@@ -12,7 +12,8 @@ public var toolbar: UIToolbar?
 public var toolbarHeight: CGFloat = 40
 public var currentFrame: CGRect = CGRect.zero
 
-public var toolbarButtonTintColor: UIColor = UIColor.black
+public var toolbarButtonInactiveColor: UIColor = UIColor.black
+public var toolbarButtonActiveColor: UIColor = UIColor.green
 public var toolbarButtonHighlightColor: UIColor = UIColor.orange
 
 var formatButton: UIBarButtonItem?
@@ -20,27 +21,22 @@ var formatMenuView: UIView?
 
 extension LEOTextView {
 
-    /**
-     Remove toolbar notifications
-     */
-
+     
+    /// Remove toolbar notifications
     public func removeToolbarNotifications() {
         NotificationCenter.default.removeObserver(self)
     }
 
-    /**
-     Enable the toolbar, binding the show and hide events.
-
-     */
+     
+    /// Enable the toolbar, binding the show and hide events.
     public func enableToolbar() -> UIToolbar {
-        toolbar = UIToolbar(frame: CGRect(origin: CGPoint(x: 0, y: UIScreen.main.bounds.height),
-                                          size: CGSize(width: UIScreen.main.bounds.width, height: toolbarHeight))
-        )
+        let frame = CGRect(origin: CGPoint(x: 0, y: UIScreen.main.bounds.height),
+                           size: CGSize(width: UIScreen.main.bounds.width, height: toolbarHeight))
+        toolbar = UIToolbar(frame: frame)
         // style
         toolbar?.autoresizingMask = .flexibleWidth
         toolbar?.backgroundColor = UIColor.white
         toolbar?.barTintColor = UIColor.white // bar background colour
-
         toolbar?.items = enableBarButtonItems()
 
         NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShowOrHide(_:)),
@@ -61,47 +57,73 @@ extension LEOTextView {
     func enableBarButtonItems() -> [UIBarButtonItem] {
         
         // richttext
-        let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain, target: self, action: #selector(self.boldButtonAction))        
-        let italicButton = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain, target: self, action: #selector(self.italicButtonAction))
-        let underlineButton = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain, target: self, action: #selector(self.underlineFontButtonAction))
+        let boldButton = UIBarButtonItem(image: UIImage(systemName: "bold"), style: .plain,
+                                         target: self, action: #selector(self.boldButtonAction))
+        let italicButton = UIBarButtonItem(image: UIImage(systemName: "italic"), style: .plain,
+                                           target: self,
+                                           action: #selector(self.italicButtonAction))
+        let underlineButton = UIBarButtonItem(image: UIImage(systemName: "underline"), style: .plain,
+                                              target: self,
+                                              action: #selector(self.underlineFontButtonAction))
         self.boldButton = boldButton
         self.italicButton = italicButton
         self.underlineButton = underlineButton
     
         // lists
-        let bulletedListButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"), style: .plain, target: self, action: #selector(self.bulletedListButtonAction))
-        let NumberedListButton = UIBarButtonItem(image: UIImage(systemName: "list.number"), style: .plain, target: self, action: #selector(self.numberedButtonAction))
+        let bulletedListButton = UIBarButtonItem(image: UIImage(systemName: "list.bullet"),
+                                                 style: .plain, target: self,
+                                                 action: #selector(self.bulletedListButtonAction))
+        let NumberedListButton = UIBarButtonItem(image: UIImage(systemName: "list.number"),
+                                                 style: .plain, target: self,
+                                                 action: #selector(self.numberedButtonAction))
 
-        let buttonItems = [boldButton, italicButton, underlineButton, bulletedListButton, NumberedListButton]
+        let buttonItems = [boldButton, italicButton, underlineButton, bulletedListButton,
+                           NumberedListButton]
 
         // Button styles
-        for buttonItem in buttonItems {
-            buttonItem.tintColor = toolbarButtonTintColor
-        }
+        for buttonItem in buttonItems { buttonItem.tintColor = toolbarButtonInactiveColor }
 
         return buttonItems
     }
     
-    func toggleButtonColor(button: UIBarButtonItem, fontClicked: LEOInputFontMode){
-        if (inputFontMode != fontClicked){
-            button.tintColor = UIColor.green
-        }else{
-            button.tintColor = toolbarButtonTintColor
+    func buttonAction(_ style: InputStyle) {
+//        guard mode != .normal else {
+//            return
+//        }
+
+        if LEOTextUtil.isSelecting(self) {
+            changeSelectedTextWithInputFontMode()
+        } else {
+            // The normal case
+            toggleInputStyle(style)
         }
     }
     
+    func toggleInputStyle(_ style: InputStyle){
+        if let index = inputStyles.firstIndex(of: style) {
+            inputStyles.remove(at: index)
+        }
+        else {
+            inputStyles.append(style)
+        }
+    }
+    
+    func toggleButtonColor(button: UIBarButtonItem, fontClicked: InputStyle){
+        button.tintColor = inputStyles.contains(fontClicked) ? toolbarButtonInactiveColor : toolbarButtonActiveColor
+    }
+    
     @objc func boldButtonAction() {
-        toggleButtonColor(button: self.boldButton!, fontClicked: .bold)
+        toggleButtonColor(button: self.boldButton!, fontClicked: InputStyle.bold)
         buttonAction(.bold)
     }
     
     @objc func italicButtonAction() {
-        toggleButtonColor(button: self.italicButton!, fontClicked: .italic)
+        toggleButtonColor(button: self.italicButton!, fontClicked: InputStyle.italic)
         buttonAction(.italic)
     }
     
     @objc func underlineFontButtonAction() {
-        toggleButtonColor(button: self.underlineButton!, fontClicked: .underline)
+        toggleButtonColor(button: self.underlineButton!, fontClicked: InputStyle.underline)
         buttonAction(.underline)
     }
 

@@ -8,6 +8,24 @@
 
 import Foundation
 
+public enum InputStyle: String{
+    case normal, bold, italic, underline
+    
+    func getAttribute() -> [NSAttributedString.Key : Any]?{
+        switch self{
+        case .normal:
+            return nil
+        case .bold:
+            return nil
+        case .italic:
+            return nil
+        case .underline:
+            return [.underlineStyle: NSUnderlineStyle.single.rawValue]
+        }
+    }
+}
+
+
 public enum LEOInputFontMode: Int {
     case normal, bold, italic, title, underline
 }

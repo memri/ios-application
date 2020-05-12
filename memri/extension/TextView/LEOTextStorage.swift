@@ -16,9 +16,6 @@ class LEOTextStorage: NSTextStorage {
 
     var isChangeCharacters: Bool = false
 
-    // Each dictionary in array. Key: location of NSRange, value: FontType
-    var returnKeyDeleteEffectRanges: [[Int: LEOInputFontMode]] = []
-
     // MARK: - Must override
     override var string: String {
         return currentString.string
@@ -260,25 +257,32 @@ class LEOTextStorage: NSTextStorage {
     func performReplacementsForRange(_ range: NSRange, mode: LEOInputFontMode) {
         
         if range.length > 0 {
-            // Add addition attributes.
-//            var attrValue: UIFont!
-//            print(range)
+            
+            let inputFont = textView.getInputFont()
+            safeAddAttributes([NSAttributedString.Key.font : inputFont], range: range)
+            
+            for style in textView.inputStyles{
+                
+            }
+
+            
+            
+            
+            
 
             switch mode {
             case .normal:
                 safeAddAttributes([NSAttributedString.Key.font : textView.normalFont], range: range)
-//                turnOffUnderline(range)
-//                safeAddAttributes([.underlineStyle: 0], range: range)
                 break
             case .bold:
                 safeAddAttributes([NSAttributedString.Key.font : textView.boldFont], range: range)
-//                turnOffUnderline(range)
                 break
             case .italic:
                 safeAddAttributes([NSAttributedString.Key.font : textView.italicFont], range: range)
-//                turnOffUnderline(range)
                 break
             case .underline:
+                
+                
                 safeAddAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue], range: range)
             case .title:
                 safeAddAttributes([NSAttributedString.Key.font : textView.titleFont], range: range)
