@@ -115,7 +115,8 @@ public class Views {
             
             if compiledView.hasSession {
                 return (try! compiledView.generateSession(variables), nil)
-            }          else {
+            }
+            else {
                 let view = try! compiledView.generateView(variables)
                 return (wrapView ? Session(value: ["views": [view]]) : nil, view)
             }

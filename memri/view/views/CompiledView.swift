@@ -34,7 +34,6 @@ public class CompiledView {
         main = mn
         dynamicView = view
     }
-    
  
     func parse() throws {
         // Turn the declaration in json data

@@ -60,6 +60,7 @@ public struct SubView : View {
         self.proxyMain!.setComputedView()
     }
     
+    // TODO refactor: consider inserting Browser here and adding variables instead
     public var body : some View {
 //        ZStack {
             VStack(alignment: .center, spacing: 0) {
