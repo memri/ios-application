@@ -14,21 +14,21 @@ open class LEOTextView: UITextView {
     open var nck_delegate: UITextViewDelegate?
 
     open var inputFontMode: LEOInputFontMode = .normal
-    open var defaultAttributesForLoad: [NSAttributedString.Key : AnyObject] = [:]
-    open var selectMenuItems: [LEOInputFontMode] = [.bold, .italic]
-
-    // Custom fonts
-    open var normalFont: UIFont = UIFont.systemFont(ofSize: 17)
-    open var underlineFont: UIFont = UIFont.systemFont(ofSize: 18)
-//    open var normalFont: UIFont = UIFont.systemFont(ofSize: 17)
-
-    open var titleFont: UIFont = UIFont.boldSystemFont(ofSize: 18)
-    open var boldFont: UIFont = UIFont.boldSystemFont(ofSize: 17)
-    open var italicFont: UIFont = UIFont.italicSystemFont(ofSize: 17)
+    open var defaultAttributes: [NSAttributedString.Key : AnyObject] = [:]
+    
+    
+    var inputStyles: InputStyles = InputStyles()
     
     var boldButton: UIBarButtonItem? = nil
     var italicButton: UIBarButtonItem? = nil
     var underlineButton: UIBarButtonItem? = nil
+
+    // Custom fonts
+    open var normalFont: UIFont = UIFont.systemFont(ofSize: 17)
+    open var underlineFont: UIFont = UIFont.systemFont(ofSize: 18)
+    open var titleFont: UIFont = UIFont.boldSystemFont(ofSize: 18)
+    open var boldFont: UIFont = UIFont.boldSystemFont(ofSize: 17)
+    open var italicFont: UIFont = UIFont.italicSystemFont(ofSize: 17)
 
 
     // MARK: - instance relations
@@ -86,12 +86,6 @@ open class LEOTextView: UITextView {
         originalRect.size.height = (font == nil ? 16 : font!.lineHeight) + 2
         return originalRect;
     }
-
-    // MARK: - Custom text view
-
-    func customTextView() {
-        customSelectionMenu()
-    }
     
     func setAttributedTextFromRtf(_ rtfString: String){
         let rtfData = rtfString.data(using: .utf8)!
@@ -103,38 +97,9 @@ open class LEOTextView: UITextView {
         }
     }
 
-    func customSelectionMenu() {
-        let menuController = UIMenuController.shared
-        var menuItems = [UIMenuItem]()
-
-        selectMenuItems.forEach {
-            switch $0 {
-            case .bold:
-                menuItems.append(UIMenuItem(title: NSLocalizedString("Bold", comment: "Bold"), action: #selector(self.boldButtonAction)))
-            case .italic:
-                menuItems.append(UIMenuItem(title: NSLocalizedString("Italic", comment: "Italic"), action: #selector(self.italicButtonAction)))
-            default:
-                break
-            }
-        }
-
-        menuController.menuItems = menuItems
-    }
-
     // MARK: - Public APIs
-
-    // MARK: Type transform
-
-    open func changeCurrentParagraphTextWithInputFontMode(_ mode: LEOInputFontMode) {
-        let paragraphRange = LEOTextUtil.paragraphRangeOfString(self.text, location: selectedRange.location)
-        let currentMode = inputModeWithIndex(paragraphRange.location)
-
-        nck_textStorage.undoSupportChangeWithRange(paragraphRange, toMode: mode.rawValue, currentMode: currentMode.rawValue)
-    }
-
-    open func changeSelectedTextWithInputFontMode(_ mode: LEOInputFontMode) {
-        let currentMode = inputModeWithIndex(selectedRange.location)
-        nck_textStorage.undoSupportChangeWithRange(selectedRange, toMode: mode.rawValue, currentMode: currentMode.rawValue)
+    open func changeSelectedTextWithInputFontMode(style: InputStyle) {
+        nck_textStorage.undoSupportChangeWithRange(selectedRange, addStyle: style, currentStyles: self.inputStyles)
     }
 
     /**
@@ -213,8 +178,8 @@ open class LEOTextView: UITextView {
 
         // Replace paragraph
         nck_textStorage.undoSupportReplaceRange(targetRange,
-                                                withAttributedString: NSAttributedString(string: replacedContent, attributes: defaultAttributesForLoad),
-                                                oldAttributedString: NSAttributedString(string: String(targetText), attributes: defaultAttributesForLoad),
+                                                withAttributedString: NSAttributedString(string: replacedContent, attributes: defaultAttributes),
+                                                oldAttributedString: NSAttributedString(string: String(targetText), attributes: defaultAttributes),
                                                 selectedRangeLocationMove: replacedContent.length() - targetText.length)
 
         if isListNow {
@@ -234,8 +199,6 @@ open class LEOTextView: UITextView {
         }
 
     }
-
-    // MARK: About text attributes and JSON
 
     open func textAttributesDataWithAttributedString(_ attributedString: NSAttributedString) -> [Dictionary<String, AnyObject>] {
         var attributesData: [Dictionary<String, AnyObject>] = []
@@ -282,10 +245,8 @@ open class LEOTextView: UITextView {
                         attributesData.append(attribute)
                     }
                 }
-//                print(attribute)
             }
-        }
-        
+        }        
 
         return attributesData
     }
@@ -303,7 +264,7 @@ open class LEOTextView: UITextView {
         let jsonDict: [String: AnyObject] = try! JSONSerialization.jsonObject(with: jsonString.data(using: String.Encoding.utf8)!, options: .allowFragments) as! [String : AnyObject]
 
         let text = jsonDict["text"] as! String
-        self.attributedText = NSAttributedString(string: text, attributes: self.defaultAttributesForLoad)
+        self.attributedText = NSAttributedString(string: text, attributes: self.defaultAttributes)
 
         setAttributesWithJSONString(jsonString)
     }
@@ -398,55 +359,18 @@ open class LEOTextView: UITextView {
         return nck_textStorage.currentParagraphTypeWithLocation(selectedRange.location)
     }
 
-    open func inputModeWithIndex(_ index: Int) -> LEOInputFontMode {
-        guard let currentFont = nck_textStorage.safeAttribute(NSAttributedString.Key.font.rawValue, atIndex: index, effectiveRange: nil, defaultValue: nil) as? UIFont else {
-            return .normal
-        }
-        let underlineVal = nck_textStorage.safeAttribute(NSAttributedString.Key.underlineStyle.rawValue,
-                                                atIndex: index, effectiveRange: nil, defaultValue: nil) as? Int ?? 0
-
-
-        if currentFont.pointSize == titleFont.pointSize {
-            return .title
-        } else if LEOTextUtil.isBoldFont(currentFont, boldFontName: boldFont.fontName) {
-            return .bold
-        } else if LEOTextUtil.isItalicFont(currentFont, italicFontName: italicFont.fontName) {
-            return .italic
-        } else if (underlineVal) == 1 {
-            return .normal
-//            return .underline
-        } else {
-            return .normal
-        }
-    }
-
-    // MARK: - Menu controller button actions
-
-    func buttonAction(_ mode: LEOInputFontMode) {
-        guard mode != .normal else {
-            return
-        }
-
-        if LEOTextUtil.isSelecting(self) {
-            changeSelectedTextWithInputFontMode(mode)
-        } else {
-            inputFontMode = (inputFontMode != mode) ? mode : .normal
-        }
-    }
-
     // MARK: - Utils
 
     func podBundle() -> Bundle {
         let bundle = Bundle(path: Bundle(for: LEOTextView.self).path(forResource: "LEOTextView", ofType: "bundle")!)
-
         return bundle!
     }
 
     func mutableParargraphWithDefaultSetting() -> NSMutableParagraphStyle {
         var paragraphStyle: NSMutableParagraphStyle!
 
-        if let defaultParagraphStyle = defaultAttributesForLoad[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle {
-            paragraphStyle = defaultParagraphStyle.mutableCopy() as! NSMutableParagraphStyle
+        if let defaultParagraphStyle = defaultAttributes[NSAttributedString.Key.paragraphStyle] as? NSParagraphStyle {
+            paragraphStyle = (defaultParagraphStyle.mutableCopy() as! NSMutableParagraphStyle)
         } else {
             paragraphStyle = NSMutableParagraphStyle()
         }
