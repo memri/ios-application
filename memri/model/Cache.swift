@@ -118,9 +118,6 @@ func getRealmPath() -> String{
     return realmDir
 }
 
-// TODO: hack, fix
-var globalCache: Cache? = nil
-
 public class Cache {
     
     /// PodAPI object
@@ -159,8 +156,6 @@ public class Cache {
         // Create scheduler objects
         sync = Sync(podAPI, realm)
         sync.cache = self
-        globalCache = self
-    
     }
     
     

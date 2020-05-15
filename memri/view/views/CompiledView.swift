@@ -431,50 +431,6 @@ public class CompiledView {
         return nil
     }
     
-    public class func parseNamedViewDict(_ data:Data) throws -> ([String:[String:DynamicView]], [String:DynamicView]) {
-        
-        // Parse JSON
-        let json = try! JSONSerialization.jsonObject(with: data, options: [])
-        guard let parsedObject = json as? [String: [String: Any]] else {
-            throw "Exception: Invalid JSON while reading named view list"
-        }
-            
-        // Define result
-        var result:[String:[String:DynamicView]] = [:]
-        var named:[String:DynamicView] = [:]
-        
-        // Loop over results from parsed json
-        for (section, lut) in parsedObject {
-        
-            // Loop over lookup table with named views
-            for (key, object) in lut {
-                let object = object as! [String:Any]
-                    
-                // Create the dynamic view
-                let view = DynamicView()
-                
-                // Parse values out of json
-                view.name = section + ":" + key
-                view.fromTemplate = nil
-                view.declaration = serialize(AnyCodable(object))
-                
-                // Add the dynamic view to the result
-                if result[section] == nil { result[section] = [:] }
-                
-                // Store based on key
-                result[section]![key] = view
-                
-                // Store based on name if set
-                if object["name"] != nil {
-                    named[object["name"] as! String] = view
-                }
-            }
-        }
-        
-        // Done
-        return (result, named)
-    }
-    
     public class func parseExpression(_ expression:String, _ defObject:String) -> (object:String, prop:String) {
         // By default we update the named property on the view
         var objectToUpdate:String = defObject, propToUpdate:String = expression

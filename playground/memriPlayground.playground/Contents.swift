@@ -3,30 +3,14 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-//
-//let description: String = """
-//{
-//    "x": ["a", "b"],
-//    "y": ["a", "b"],
-//    "z": ["a", "b"],
-//    "w": ["a", "b"],
-//}
-//"""
-//
-//class KV: Decodable{
-//    
-//    
-//    
-//    public required init(from decoder: Decoder){
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//
-//    }
-//    
-//}
-//
-//
-//let x = try! JSONDecoder().decode(KeyValuePairs<String, [String]>.self, from: description.data(using: .utf8)!)
-//print("a")
-//for (item, val) in x{
-//    print(item)
-//}
+var arr = ["aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads","aasdad","AsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsadsAsdadsasdasdasdadsads"]
+
+let dt = Date()
+
+var x = [String:String]()
+
+for y in stride(from: 0, to: arr.count, by: 2) {
+    x[arr[y]] = arr[y+1]
+}
+
+print (Date().timeIntervalSince(dt))

@@ -3,12 +3,30 @@ import Combine
 import SwiftUI
 import RealmSwift
 
+
+public class Language {
+    let currentLanguage: String = "English"
+    let keywords: [String:String] = [:]
+    
+    public func load(_ definitions:[[String:Any]]) {
+        for def in definitions {
+            for (keyword, naturalLanguageString) in def {
+                if keywords[keyword] {
+                    // TODO warn developers
+                    print("Keyword already exists \(keyword) for language \(self.currentLangauge)")
+                }
+                else {
+                    keywords[keyword] = naturalLanguageString as? String
+                }
+            }
+        }
+    }
+}
+
 // Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
  
-    var compiledViews: [String:CompiledView] = [:]
- 
-    var defaultViews: [String:[String:DynamicView]] = [:]
+    let language = Language()
     
     private var realm:Realm
     var main:Main? = nil
@@ -16,32 +34,56 @@ public class Views {
     init(_ rlm:Realm) {
         realm = rlm
     }
+    
+    public func parse(_ def:BaseDefinition, cache:Bool = true) -> [String:Any] {
+        guard let definition = def.definition else {
+            return [:]
+        }
+        
+        let data = definition.data(using: .utf8)
+        
+        do {
+            let json = try JSONSerialization.jsonObject(with: data, options: [])
+        }
+        catch let error {
+            // TODO refactor: Log this for later feedback to developers
+            print(error)
+            return [:]
+        }
+        
+        if cache {
+            
+        }
+        
+        return json as [String:Any]
+    }
  
     public func load(_ mn:Main, _ callback: () -> Void) throws {
         // Store main for use within computeView()
         self.main = mn
         
-        // Load the default views from the package
-        let data = try! jsonDataFromFile("views_from_server")
-        let (parsed, named) = try! CompiledView.parseNamedViewDict(data)
-        
-        // Set the parsed views to the defaultViews property for later use in computeView
-        self.defaultViews = parsed
-        
-        // TODO Refactor: I think we want to stop getting named views from the defaults and create
-        //                references to them instead
-        
-        // Add the named views to the compiled views
-        for (name, view) in named {
-            compiledViews[name] = compileView(view)
-        }
+        setCurrentLanguage(main.settings.get("user/language") ?? "English")
         
         // Done
         callback()
     }
     
+    // TODO refactor when implementing settings UI call this when changing the language
+    public func setCurrentLanguage(_ language:String) {
+        self.language.currentLanguage = language
+        
+        let definitions = realm.objects(LanguageDefinition.self)
+            .filter("selector = '[language = \(language)'")
+            .map{ parse($0, cache:false) }
+        
+        self.language.load(definitions)
+    }
+    
  
     public func install() {
+        
+        // Load the default views from the package
+        loadStandardViewSetIntoDatabase()
         
         // Load named views from the package
         let namedViews = try! CompiledView.parseNamedViewList(jsonDataFromFile("named_views"))
@@ -53,6 +95,52 @@ public class Views {
                     realm.add(dynamicView, update: .modified)
                 }
             }
+        }
+    }
+    
+    
+    public class func loadStandardViewSetIntoDatabase(_ data:Data) throws {
+        do {
+            let data = try jsonDataFromFile("views_from_server")
+            let json = try JSONSerialization.jsonObject(with: data, options: [])
+            
+            guard let parsedObject = json as? [String: Any] else {
+                throw "Exception: Invalid JSON while reading named view list"
+            }
+        }
+        catch {
+            // TODO Fatal error handling
+        }
+        
+        // Loop over lookup table with named views
+        for (selector, object) in parsedObject {
+            let definition = serialize(AnyCodable(object))
+            
+            var def:BaseDefinition
+            if selector.match(#"\[\]$"#) { // superfluous
+                def = SessionViewDefinition(selector: selector, definition: definition)
+            }
+            else if selector.match(#"^\[renderer = .*\]$"#) {
+                def = RendererDefinition(selector: selector, definition: definition)
+            }
+            else if selector.match(#"^\[style = .*\]$"#) {
+                def = StyleDefinition(selector: selector, definition: definition)
+            }
+            else if selector.match(#"^\[color = .*\]$"#) {
+                def = ColorDefinition(selector: selector, definition: definition)
+            }
+            else if selector.match(#"^\[language = .*\]$"#) {
+                def = LanguageDefinition(selector: selector, definition: definition)
+            }
+            else if let matches = selector.match(#"^\"(.*)\"$"#) {
+                def = SessionViewDefinition(selector: matches[1], definition: definition)
+            }
+            else {
+                def = SessionViewDefinition(selector: selector, definition: definition)
+            }
+            
+            // Store definition
+            try! realm.write { realm.add(def) }
         }
     }
     
@@ -350,20 +438,5 @@ public class Views {
         }
         
         return GUIElementInstance(GUIElementDescription(), item, variables ?? [:])
-    }
-}
-
-public struct DataItemReference {
-    let type: DataItemFamily
-    let uid: String
-    
-    init(type:DataItemFamily, uid:String) {
-        self.type = type
-        self.uid = uid
-    }
-    
-    init(dataItem:DataItem) {
-        type = DataItemFamily(rawValue: dataItem.genericType)! // TODO refactor: error handling
-        uid = dataItem.uid
     }
 }
