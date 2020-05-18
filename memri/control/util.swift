@@ -55,7 +55,7 @@ extension String: Error {
 //    }
     
     // let pattern = #"\{([^\.]+).(.*)\}"#
-    func match(_ pattern:String, _ options:String = "i") -> [String] {
+    func match(_ pattern:String, _ options:String = "i") -> [String]? {
         var nsOptions:NSRegularExpression.Options = NSRegularExpression.Options()
         for chr in options {
             if chr == "i" { nsOptions.update(with: .caseInsensitive) }
@@ -75,7 +75,7 @@ extension String: Error {
             }
         }
         
-        return matches
+        return matches.count ? matches : nil
     }
     
     func substr(_ startIndex:Int, _ length:Int? = nil) -> String {

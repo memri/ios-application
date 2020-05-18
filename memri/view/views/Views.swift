@@ -5,15 +5,15 @@ import RealmSwift
 
 
 public class Language {
-    let currentLanguage: String = "English"
-    let keywords: [String:String] = [:]
+    var currentLanguage: String = "English"
+    var keywords: [String:String] = [:]
     
     public func load(_ definitions:[[String:Any]]) {
         for def in definitions {
             for (keyword, naturalLanguageString) in def {
-                if keywords[keyword] {
+                if keywords[keyword] != nil {
                     // TODO warn developers
-                    print("Keyword already exists \(keyword) for language \(self.currentLangauge)")
+                    print("Keyword already exists \(keyword) for language \(self.currentLanguage)")
                 }
                 else {
                     keywords[keyword] = naturalLanguageString as? String
@@ -40,29 +40,32 @@ public class Views {
             return [:]
         }
         
-        let data = definition.data(using: .utf8)
-        
         do {
-            let json = try JSONSerialization.jsonObject(with: data, options: [])
+            if let data = definition.data(using: .utf8) {
+                let json = try JSONSerialization.jsonObject(with: data, options: [])
+                
+                if cache {
+                    // TODO ???
+                }
+                
+                return json as! [String:Any]
+            }
+            else {
+                 throw "Data is not UTF8"
+            }
         }
         catch let error {
             // TODO refactor: Log this for later feedback to developers
             print(error)
             return [:]
         }
-        
-        if cache {
-            
-        }
-        
-        return json as [String:Any]
     }
  
     public func load(_ mn:Main, _ callback: () -> Void) throws {
         // Store main for use within computeView()
         self.main = mn
         
-        setCurrentLanguage(main.settings.get("user/language") ?? "English")
+        setCurrentLanguage(main?.settings.get("user/language") ?? "English")
         
         // Done
         callback()
@@ -72,34 +75,46 @@ public class Views {
     public func setCurrentLanguage(_ language:String) {
         self.language.currentLanguage = language
         
-        let definitions = realm.objects(LanguageDefinition.self)
+        let definitions = Array(realm.objects(LanguageDefinition.self)
             .filter("selector = '[language = \(language)'")
-            .map{ parse($0, cache:false) }
+            .map{ self.parse($0, cache:false) })
         
         self.language.load(definitions)
     }
     
  
-    public func install() {
+    public func install() throws {
         
         // Load the default views from the package
-        loadStandardViewSetIntoDatabase()
+        try loadStandardViewSetIntoDatabase()
         
         // Load named views from the package
-        let namedViews = try! CompiledView.parseNamedViewList(jsonDataFromFile("named_views"))
+        if let namedViews = try CompiledView.parseNamedViewList(jsonDataFromFile("named_views")) {
+            try realm.write {
+                for viewDef in namedViews {
+                    realm.create(SessionViewDefinition.self,
+                        value: ["selector": viewDef.name, "definition": viewDef.definition],
+                        update: .modified)
+                }
+            }
+        }
         
-        // Store named views
-        if let namedViews = namedViews {
-            try! realm.write {
-                for dynamicView in namedViews {
-                    realm.add(dynamicView, update: .modified)
+        // Load named views from the package
+        if let namedSessions = try CompiledView.parseNamedViewList(jsonDataFromFile("named_sessions")) {
+            try realm.write {
+                for sessionDef in namedSessions {
+                    realm.create(SessionDefinition.self,
+                        value: ["selector": sessionDef.name, "views": sessionDef.views.map {
+                            SessionViewDefinition(value: ["definition": $0])
+                        }],
+                        update: .modified)
                 }
             }
         }
     }
     
     
-    public class func loadStandardViewSetIntoDatabase(_ data:Data) throws {
+    public func loadStandardViewSetIntoDatabase() throws {
         do {
             let data = try jsonDataFromFile("views_from_server")
             let json = try JSONSerialization.jsonObject(with: data, options: [])
@@ -107,40 +122,47 @@ public class Views {
             guard let parsedObject = json as? [String: Any] else {
                 throw "Exception: Invalid JSON while reading named view list"
             }
+            
+            // Loop over lookup table with named views
+            for (selector, object) in parsedObject {
+                let definition = serialize(AnyCodable(object))
+                
+                var def:BaseDefinition
+                if selector.test(#"\[\]$"#) { // superfluous
+                    def = SessionViewDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                else if selector.test(#"^\[renderer = .*\]$"#) {
+                    def = RenderDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                else if selector.test(#"^\[style = .*\]$"#) {
+                    def = StyleDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                else if selector.test(#"^\[color = .*\]$"#) {
+                    def = ColorDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                else if selector.test(#"^\[language = .*\]$"#) {
+                    def = LanguageDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                else if let matches = selector.match(#"^\"(.*)\"$"#) {
+                    def = SessionViewDefinition(value:
+                        ["selector": matches[1], "definition": definition])
+                }
+                else {
+                    def = SessionViewDefinition(value:
+                        ["selector": selector, "definition": definition])
+                }
+                
+                // Store definition
+                try realm.write { realm.add(def) }
+            }
         }
         catch {
             // TODO Fatal error handling
-        }
-        
-        // Loop over lookup table with named views
-        for (selector, object) in parsedObject {
-            let definition = serialize(AnyCodable(object))
-            
-            var def:BaseDefinition
-            if selector.match(#"\[\]$"#) { // superfluous
-                def = SessionViewDefinition(selector: selector, definition: definition)
-            }
-            else if selector.match(#"^\[renderer = .*\]$"#) {
-                def = RendererDefinition(selector: selector, definition: definition)
-            }
-            else if selector.match(#"^\[style = .*\]$"#) {
-                def = StyleDefinition(selector: selector, definition: definition)
-            }
-            else if selector.match(#"^\[color = .*\]$"#) {
-                def = ColorDefinition(selector: selector, definition: definition)
-            }
-            else if selector.match(#"^\[language = .*\]$"#) {
-                def = LanguageDefinition(selector: selector, definition: definition)
-            }
-            else if let matches = selector.match(#"^\"(.*)\"$"#) {
-                def = SessionViewDefinition(selector: matches[1], definition: definition)
-            }
-            else {
-                def = SessionViewDefinition(selector: selector, definition: definition)
-            }
-            
-            // Store definition
-            try! realm.write { realm.add(def) }
         }
     }
     
@@ -234,7 +256,7 @@ public class Views {
     "{renderer:list}"
     "{[type:Note]}"
     */
-    public func computeView(_ argView:SessionView? = nil) throws -> ComputedView {
+    public func computeView(_ argView:SessionView? = nil) throws -> CascadingView {
         guard let main = self.main else {
             throw "Exception: Main is not defined in views"
         }
@@ -244,7 +266,7 @@ public class Views {
             : argView!
         
         // Create a new view
-        let computedView = ComputedView(main.cache)
+        let computedView = CascadingView(main.cache)
         
         let variables = viewFromSession.variables
         var isList = true
@@ -410,7 +432,7 @@ public class Views {
         if viewOverride != nil { throw "View Override Not Implemented" }
 
         // Create a new view
-        let computedView = ComputedView(main.cache)
+        let computedView = CascadingView(main.cache)
 
         let searchOrder = ["defaults", "user"]
         let needles = ["{[type:*]}", "{[type:\(item.genericType)]}"]

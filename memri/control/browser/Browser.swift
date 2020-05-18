@@ -18,7 +18,8 @@ struct Browser: View {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
 //                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
-                    self.main.currentRendererView.fullHeight()
+                    globalRenderers.allViews[self.main.computedView.activeRenderer]
+                        .fullHeight()
                         .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()
                 Search()

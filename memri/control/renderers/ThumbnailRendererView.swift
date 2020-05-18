@@ -8,17 +8,39 @@
 import SwiftUI
 import ASCollectionView
 
+private var register:Void = {
+    Renderers.register(
+        name: "thumbnail",
+        title: "Default",
+        order: 10,
+        icon: "square.grid.3x2.fill",
+        view: AnyView(ThumbnailRendererView()),
+        canDisplayResults: { items -> Bool in true }
+    )
+}()
+
+class CascadingThumbnailConfig: CascadingRenderConfig {
+    var type: String? = "thumbnail"
+    
+    var longPress: ActionDescription? { cascadeProperty("longPress", nil) }
+    var press: ActionDescription? { cascadeProperty("press", nil) }
+    
+    var columns:Int? { cascadeProperty("column", nil) }
+    var itemInset:Int? { cascadeProperty("itemInset", nil) }
+    var edgeInset:[Int]? { cascadeProperty("edgeInset", nil) }
+}
+
 struct ThumbnailRendererView: View {
     @EnvironmentObject var main: Main
     
     var name: String="thumbnail"
     
-    var renderConfig: ThumbnailConfig {
+    var renderConfig: CascadingThumbnailConfig {
         if self.main.computedView.renderConfigs[name] == nil {
             print ("Warning: Using default render config for thumbnail")
         }
         
-        return self.main.computedView.renderConfigs[name] as? ThumbnailConfig ?? ThumbnailConfig()
+        return self.main.computedView.renderConfigs[name] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {

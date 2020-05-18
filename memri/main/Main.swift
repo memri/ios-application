@@ -26,7 +26,7 @@ public class Main: ObservableObject {
     /// The current session that is active in the application
     @Published public var currentSession: Session = Session()
  
-    @Published public var computedView: ComputedView
+    @Published public var computedView: CascadingView
  
     @Published public var sessions: Sessions
  
@@ -45,10 +45,6 @@ public class Main: ObservableObject {
     public var navigation: MainNavigation
  
     public var renderers: Renderers
- 
-    public var currentRendererView: AnyView {
-        self.renderers.allViews[self.computedView.rendererName]!
-    }
  
     public var items: [DataItem] {
         get {
@@ -270,7 +266,7 @@ public class Main: ObservableObject {
         installer: Installer,
         sessions: Sessions,
         views: Views,
-        computedView: ComputedView,
+        computedView: CascadingView,
         navigation: MainNavigation,
         renderers: Renderers
     ) {
@@ -340,7 +336,7 @@ public class RootMain: Main {
             installer: Installer(realm),
             sessions: Sessions(realm),
             views: Views(realm),
-            computedView: ComputedView(cache),
+            computedView: CascadingView(cache),
             navigation: MainNavigation(realm),
             renderers: Renderers()
         )

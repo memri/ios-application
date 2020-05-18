@@ -24,10 +24,7 @@ public class BaseDefinition: DataItem {
 }
 
 public class SessionViewDefinition: BaseDefinition {
-    let renderDefinitions = RealmSwift.List<RenderDefinition>()
-    let colorDefinitions = RealmSwift.List<ColorDefinition>()
-    let styleDefinitions = RealmSwift.List<StyleDefinition>()
-    let languageDefinitions = RealmSwift.List<LanguageDefinition>()
+    
 }
 
 public class RenderDefinition: BaseDefinition {

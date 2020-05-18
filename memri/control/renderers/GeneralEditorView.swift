@@ -57,6 +57,32 @@ import RealmSwift
     - Add customer renderer for starred and labels for person
  */
 
+private var register:Void = {
+    Renderers.register(
+        name: "generalEditor",
+        title: "Default",
+        order: 0,
+        icon: "pencil.circle.fill",
+        view: AnyView(GeneralEditorView()),
+        canDisplayResults: { items -> Bool in items.count == 1 }
+    )
+}()
+
+class CascadingGeneralEditorConfig: CascadingRenderConfig{
+    var type: String? = "generalEditor"
+    
+    var groups: [String:[String]] { cascadeDict("groups") }
+    
+    var readOnly: [String] { cascadeList("readOnly") }
+    var excluded: [String] { cascadeList("excluded") }
+    var sequence: [String] { cascadeList("sequence") }
+    
+    public func allGroupValues() -> [String] {
+        groups.values.flatMap{ Array($0) }
+    }
+}
+
+
 struct GeneralEditorView: View {
     @EnvironmentObject var main: Main
     
@@ -192,9 +218,9 @@ struct GeneralEditorSection: View {
         return renderConfig.renderDescription?[groupKey]?._properties["for"] as? String == "group"
     }
     
-    func getType(_ groupKey:String) -> String {
-        renderConfig.renderDescription?[groupKey]?.type ?? ""
-    }
+//    func getType(_ groupKey:String) -> String {
+//        renderConfig.renderDescription?[groupKey]?.type ?? ""
+//    }
     
     func getHeader(_ renderDescription: [String:GUIElementDescription],
                    _ isArray: Bool) -> some View{

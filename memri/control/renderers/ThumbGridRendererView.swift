@@ -8,6 +8,17 @@
 import SwiftUI
 import ASCollectionView
 
+private var register:Void = {
+    Renderers.register(
+        name: "thumbnail.grid",
+        title: "Photo Grid",
+        order: 20,
+        icon: "square.grid.3x2.fill",
+        view: AnyView(ThumbnailRendererView()),
+        canDisplayResults: { items -> Bool in true }
+    )
+}()
+
 struct ThumbGridRendererView: View {
     @EnvironmentObject var main: Main
     
@@ -21,13 +32,13 @@ struct ThumbGridRendererView: View {
 //        editMode?.wrappedValue.isEditing ?? false
 //    }
     
-    var renderConfig: ThumbGridConfig {
-        if self.main.computedView.renderConfigs[name] == nil {
+    var renderConfig: CascadingThumbnailConfig {
+        if self.main.computedView.renderConfigs["thumbnail"] == nil {
             print ("Warning: Using default render config for thumbnail.grid")
         }
         
         // TODO Refactor: How can we try other render configs?? e.g. ThumbnailConfig
-        return self.main.computedView.renderConfigs[name] as? ThumbGridConfig ?? ThumbGridConfig()
+        return self.main.computedView.renderConfigs["thumbnail"] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {

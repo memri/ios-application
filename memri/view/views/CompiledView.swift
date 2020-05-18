@@ -62,11 +62,11 @@ public class CompiledView {
                     
                 // Turn renderDescription in a string for persistence in realm
                 else if key == "renderDescription" {
-                    parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
+                    parsed.updateValue(CascadingRenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
                 }
                 // Same for virtual renderDescriptions
                 else if key == "virtual" {
-                    parsed.updateValue(RenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
+                    parsed.updateValue(CascadingRenderConfig.parseRenderDescription(parsed[key]!), forKey: key)
                 }
                     
                 // Parse rest of the json

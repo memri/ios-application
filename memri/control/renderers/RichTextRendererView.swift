@@ -10,6 +10,29 @@ import SwiftUI
 import UIKit
 import Combine
 
+private var register:Void = {
+    Renderers.register(
+        name: "richTextEditor",
+        title: "Default",
+        order: 0,
+        icon: "pencil",
+        view: AnyView(MapRendererView()),
+        canDisplayResults: { items -> Bool in
+            if items.count > 0 {
+                if items.count == 1 && items[0] is Note{
+                    return true
+                }
+                else {
+                    return false
+                }
+            }
+            else {
+                return false
+            }
+        }
+    )
+}()
+
 struct _RichTextEditor: UIViewRepresentable {
     @ObservedObject public var dataItem: DataItem
 
@@ -93,7 +116,7 @@ struct RichTextRendererView: View {
     @EnvironmentObject var main: Main
     
     //wrapper
-    var renderConfig: RenderConfig = RenderConfig()
+    var renderConfig: CascadingRenderConfig = CascadingRenderConfig()
 
     var body: some View {
         let binding = Binding(

@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public class Cascadable {
-    let cascadeStack = [[String:Any]]()
+    var cascadeStack = [[String:Any]]()
 //    let cascadeStack = [BaseDefinition]()
     var localCache = [String:Any]()
     
@@ -116,20 +116,24 @@ public class CascadingView: Cascadable, ObservableObject {
 //    var renderer: Renderer? = nil // TODO
 //    var rendererView: AnyView? = nil // TODO
     
-    var renderConfig: ComputedRenderConfig? {
-        if let x = localCache[activeRenderer] { return x }
+    var renderConfig: CascadingRenderConfig? {
+        if let x = localCache[activeRenderer] { return (x as! CascadingRenderConfig) }
         
         if let renderDefinition = cache.realm.objects(RenderDefinition.self)
             .filter("selector = '[renderer = \(activeRenderer)]'").first {
             
-            let renderConfig = ComputedRenderConfig(
-                renderDefinition: renderDefinition,
-                cascadeStack: self.cascadeStack.compactMap { $0["renderConfigs"]?[activeRenderer] }
-            )
-            
-            // Not actively preventing conflicts in namespace - assuming chance to be low
-            localCache[activeRenderer] = renderConfig
-            return renderConfig
+            if let RenderConfigType = globalRenderers!.allConfigTypes[activeRenderer] {
+                let renderConfig = RenderConfigType.init(
+                    // TODO set renderDefinition parsed version as first element of cascadeStack
+                    cascadeStack: self.cascadeStack
+                        .compactMap { $0["renderConfigs"]?[activeRenderer] },
+                    viewArguments: self.viewArguments
+                )
+                
+                // Not actively preventing conflicts in namespace - assuming chance to be low
+                localCache[activeRenderer] = renderConfig
+                return renderConfig
+            }
         }
     }
     

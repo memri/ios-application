@@ -21,7 +21,7 @@ public class GlobalCache {
     private var dictStringArrayCache:[String:[String:[String]]] = [:]
     private var dictAnyCache:[String:[String:Any]] = [:]
     
-    public func add<T>(_ key:String, _ value:T) throws {
+    public func set<T>(_ key:String, _ value:T) throws {
         if T.self == UIImage.self {
             uiImageCache[key] = (value as! UIImage)
         }
@@ -45,7 +45,7 @@ public class GlobalCache {
         }
     }
     
-    public func read<T>(_ key:String) throws -> T? {
+    public func get<T>(_ key:String) throws -> T? {
         if T.self == UIImage.self {
             return uiImageCache[key] as? T
         }
@@ -71,20 +71,20 @@ public class GlobalCache {
 }
 var globalCache = GlobalCache()
 
-public struct DataItemReference {
-    let type: DataItemFamily
-    let uid: String
-
-    init(type:DataItemFamily, uid:String) {
-        self.type = type
-        self.uid = uid
-    }
-
-    init(dataItem:DataItem) {
-        type = DataItemFamily(rawValue: dataItem.genericType)! // TODO refactor: error handling
-        uid = dataItem.uid
-    }
-}
+//public struct DataItemReference {
+//    let type: DataItemFamily
+//    let uid: String
+//
+//    init(type:DataItemFamily, uid:String) {
+//        self.type = type
+//        self.uid = uid
+//    }
+//
+//    init(dataItem:DataItem) {
+//        type = DataItemFamily(rawValue: dataItem.genericType)! // TODO refactor: error handling
+//        uid = dataItem.uid
+//    }
+//}
 
 public class UserState: Object {
     @objc dynamic var uid: String = DataItem.generateUUID()
@@ -93,8 +93,8 @@ public class UserState: Object {
     
     subscript<T>(propName:String) -> T? {
         get {
-            var x:[String:Any]? = try? globalCache.read(uid)
-            if x == nil { x = transformToDict() }
+            var x:[String:Any]? = try? globalCache.get(uid)
+            if x == nil { x = try? transformToDict() }
             
             if T.self == DataItem.self {
                 if let lookup = x?[propName] as? [String:Any] {
@@ -112,8 +112,8 @@ public class UserState: Object {
             return x?[propName] as? T
         }
         set(newValue) {
-            var x:[String:Any]? = try? globalCache.read(uid)
-            if (x == nil) { x = transformToDict() }
+            var x:[String:Any]? = try? globalCache.get(uid)
+            if (x == nil) { x = try? transformToDict() }
             
             if let newValue = newValue as? DataItem {
                 x?[propName] = ["type": newValue.genericType, "uid": newValue.uid]
@@ -122,15 +122,15 @@ public class UserState: Object {
                 x?[propName] = newValue
             }
             
-            try globalCache.add(uid, x)
+            try? globalCache.set(uid, x)
             
             scheduleWrite()
         }
     }
     
-    private func transformToDict() -> [String:Any]{
-        var dict = unserialize(state)
-        try globalCache.add(self.uid, dict)
+    private func transformToDict() throws -> [String:Any]{
+        let dict:[String:AnyDecodable] = unserialize(state)
+        try globalCache.set(self.uid, dict as [String:Any])
         return dict
     }
     
@@ -155,7 +155,7 @@ public class UserState: Object {
     }
     
     private func persist(){
-        if let x:[String:Any] = try globalCache.read(uid) {
+        if let x:[String:Any] = try? globalCache.get(uid) {
             realmWriteIfAvailable(self.realm) {
                 self["state"] = serialize(AnyCodable(x))
             }
@@ -184,15 +184,16 @@ public class SessionView: DataItem {
     @objc dynamic var viewDefinition: SessionViewDefinition? = nil
     @objc dynamic var userState: UserState? = nil
     @objc dynamic var viewArguments: ViewArguments? = nil
+    @objc dynamic var queryOptions: QueryOptions? = nil
     
     override var computedTitle:String {
-        if let value = self.name ?? self.title { return value }
-        else if let rendererName = self.rendererName {
-            return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
-        }
-        else if let query = self.queryOptions?.query {
-            return "Showing: \(query)"
-        }
+//        if let value = self.name ?? self.title { return value }
+//        else if let rendererName = self.rendererName {
+//            return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+//        }
+//        else if let query = self.queryOptions?.query {
+//            return "Showing: \(query)"
+//        }
         return "[No Name]"
     }
     

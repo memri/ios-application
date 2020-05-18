@@ -9,6 +9,34 @@ import Foundation
 import Combine
 import SwiftUI
 
+private var register:Void = {
+    Renderers.register(
+        name: "list",
+        title: "Default",
+        order: 0,
+        icon: "line.horizontal.3",
+        view: AnyView(ListRendererView()),
+        canDisplayResults: { items -> Bool in true }
+    )
+    
+    Renderers.register(
+        name: "list.alphabet",
+        title: "Alphabet",
+        order: 1,
+        view: AnyView(ListRendererView()),
+        canDisplayResults: { items -> Bool in true }
+    )
+}()
+
+class CascadingListConfig: CascadingRenderConfig {
+    var type: String? = "list"
+    
+    var longPress: ActionDescription? { cascadeProperty("longPress", nil) }
+    var press: ActionDescription? { cascadeProperty("press", nil) }
+    
+    var slideLeftActions:[ActionDescription] { cascadeList("slideLeftActions") }
+    var slideRightActions:[ActionDescription] { cascadeList("slideRightActions") }
+}
 
 struct ListRendererView: View {
     @EnvironmentObject var main: Main
@@ -16,8 +44,8 @@ struct ListRendererView: View {
     let name = "list"
     let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
-    var renderConfig: ListConfig {
-        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+    var renderConfig: CascadingListConfig {
+        return self.main.computedView.renderConfigs[name] as? CascadingListConfig ?? CascadingListConfig()
     }
     
     init() {
