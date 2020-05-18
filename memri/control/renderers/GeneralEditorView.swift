@@ -222,7 +222,7 @@ struct GeneralEditorSection: View {
 //        renderConfig.renderDescription?[groupKey]?.type ?? ""
 //    }
     
-    func getHeader(_ renderDescription: [String:GUIElementDescription],
+    func getHeader(_ renderDescription: [String:UIElement],
                    _ isArray: Bool) -> some View{
         
         let editMode = self.main.currentSession.editMode

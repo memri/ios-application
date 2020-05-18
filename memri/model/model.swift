@@ -57,10 +57,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         super.init()
 
         self.functions["describeChangelog"] = {_ in
-            let dateCreated = GUIElementDescription.formatDate(self.dateCreated)
+            let dateCreated = UIElement.formatDate(self.dateCreated)
             let views =  self.changelog.filter{ $0.action == "read" }.count
             let edits = self.changelog.filter{ $0.action == "update" }.count
-            let timeSinceCreated = GUIElementDescription.formatDateSinceCreated(self.dateCreated)
+            let timeSinceCreated = UIElement.formatDateSinceCreated(self.dateCreated)
             return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
         }
         self.functions["computedTitle"] = {_ in

@@ -75,18 +75,18 @@ class FilterPanelRendererButton: ActionDescription, ObservableObject{
 
 public class RenderGroup {
     var options: [String:Any] = [:]
-    var body: GUIElementDescription? = nil
+    var body: UIElement? = nil
 }
 
  
 //    private var renderDescription: [String:Any]? {
 //        let rd = cascadeDict("renderDescription", sessionView.definition)
 //
-//        if let renderDescription:[String: GUIElementDescription] = globalCache.get(rd) {
+//        if let renderDescription:[String: UIElement] = globalInMemoryObjectCache.get(rd) {
 //            return renderDescription
 //        }
-//        else if let renderDescription:[String: GUIElementDescription] = unserialize(rd) {
-//            globalCache.set(rd, renderDescription)
+//        else if let renderDescription:[String: UIElement] = unserialize(rd) {
+//            globalInMemoryObjectCache.set(rd, renderDescription)
 //            return renderDescription
 //        }
 //
@@ -115,12 +115,12 @@ public class CascadingRenderConfig: Cascadable {
     }
     
  
-    public func render(item:DataItem, group:String = "*") -> GUIElementInstance {
+    public func render(item:DataItem, group:String = "*") -> UIElementView {
         if var renderGroup:RenderGroup = cascadeProperty(group, nil) {
-            return GUIElementInstance(renderGroup.body ?? GUIElementDescription(), item, self.viewArguments)
+            return UIElementView(renderGroup.body ?? UIElement(), item, self.viewArguments)
         }
         else {
-            return GUIElementInstance(GUIElementDescription(), item, self.viewArguments)
+            return UIElementView(UIElement(), item, self.viewArguments)
         }
     }
  

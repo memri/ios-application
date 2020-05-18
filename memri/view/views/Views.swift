@@ -3,7 +3,6 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-
 public class Language {
     var currentLanguage: String = "English"
     var keywords: [String:String] = [:]
@@ -62,7 +61,7 @@ public class Views {
     }
  
     public func load(_ mn:Main, _ callback: () -> Void) throws {
-        // Store main for use within computeView()
+        // Store main for use within createCascadingView)
         self.main = mn
         
         setCurrentLanguage(main?.settings.get("user/language") ?? "English")
@@ -216,6 +215,7 @@ public class Views {
         return nil
     }
  
+    // TODO: Refactor: THis function needs to die
     public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
                                  _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
         if let compiledView = getCompiledView(viewName) {
@@ -251,154 +251,139 @@ public class Views {
         return compiledView
     }
     
-    /*
-    "{type:Note}"
-    "{renderer:list}"
-    "{[type:Note]}"
-    */
-    public func computeView(_ argView:SessionView? = nil) throws -> CascadingView {
+//    LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)])
+//    LookupNode([VariableNode(bar), VariableNode(foo)])
+//    LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])
+    
+    func resolveEdge(_ edge:Edge) -> DataItem {
+        // TODO REFACTOR: implement
+        throw "not implemented"
+    }
+    
+    func getGlobalReference (_ name:String, viewArguments:ViewArguments) -> Any? {
+        // Fetch the value of the right property on the right object
+        switch name {
+        case "main": return main
+        case "sessions": return main?.sessions
+        case "currentSession": fallthrough
+        case "session": return main?.currentSession
+        case "computedView": return main?.computedView
+        case "sessionView": return main?.currentSession.currentView
+        case "view": return main?.computedView
+        case "dataItem":
+            // TODO Refactor into a variables/arguments object
+            if let itemRef:DataItem = viewArguments["."] as? DataItem {
+                return itemRef
+            }
+            else if let item = main?.computedView.resultSet.singletonItem {
+                return item
+            }
+            else {
+                print("Warning: No item found to get the property off")
+            }
+        default:
+            print("Warning: Unknown object to get the property off: \(name)")
+        }
+        
+        return nil
+    }
+    
+    // TODO:REFACTOR:Maybe add the viewArguments here to support property access?
+    func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments) -> Any? {
+        return lookupValueOfVariables (lookup: lookup, viewArguments:viewArguments, isFunction:false)
+    }
+    
+    func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments, isFunction:Bool = false) -> Any? {
+        var value:Any? = nil
+        var first = true
+        
+        for node in lookup.sequence {
+            if isFunction && node == lookup.sequence.last {
+                value = (value as? DataItem).functions
+            }
+            
+            if let node = node as? ExprVariableNode {
+                if first {
+                    value = getGlobalReference(node.name == "__DEFAULT__" ? "dataItem" : node.name, viewArguments:viewArguments)
+                    first = false
+                }
+                else {
+                    if let value = value as? DataItem {
+                        if !value.objectSchema[node.name] {
+                            // TODO Warn
+                            return nil
+                        }
+                    }
+                    else if let value = value as? RealmSwift.ListBase {
+                        switch node.name {
+                        case "count": value = value.count
+                        case "first": value = value.first
+                        case "last": value = value.last
+                        case "sum": value = value.sum
+                        case "min": value = value.min
+                        case "max": value = value.max
+                        }
+                    }
+                    
+                    value = value[prop] // How to handle errors?
+                }
+            }
+            // .addresses[primary = true] || [0]
+            else if let node = node as? ExprLookupNode {
+                // TODO REFACTOR: parse and query
+            }
+            
+            if let value = value as? Edge {
+                value = resolveEdge(value)
+            }
+        }
+        
+//        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
+//           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
+//            
+//            // Convert Realm List into Array
+//            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
+//        }
+//        
+//        // Format a date
+//        else if let date = value as? Date { value = formatDate(date) }
+//            
+//        // Get the image uri from a file
+//        else if let file = value as? File {
+//            if T.self == String.self {
+//                // Set the uri string as the value
+//                value = file.uri
+//            }
+//        }
+        
+        return value
+    }
+    
+    func executeFunction (lookup: ViewLookupNode, args:[Any], viewArguments:ViewArguments) -> Any? {
+        if let f = lookupValueOfVariables(lookup: lookup, viewArguments:viewArguments, isFunction:true) {
+            return f(args)
+        }
+    }
+    
+    func getParsedDefinition(_ viewDef:SessionViewDefinition) throws -> ViewParseContext {
+        let viewDef = ViewDefinitionParser(self.definition,
+                                           lookup: lookupValueOfVariables,
+                                           execFunc: executeFunction)
+        return try viewDef.parse()
+    }
+    
+    public func createCascadingView(_ sessionView:SessionView? = nil) throws -> CascadingView {
         guard let main = self.main else {
             throw "Exception: Main is not defined in views"
         }
 
-        let viewFromSession = argView == nil
+        let viewFromSession = sessionView == nil
             ? main.sessions.currentSession.currentView
-            : argView!
+            : sessionView!
         
-        // Create a new view
-        let computedView = CascadingView(main.cache)
+        let cascadingView = CascadingView.fromSessionView(viewFromSession, main.cache)
         
-        let variables = viewFromSession.variables
-        var isList = true
-        var type = ""
-        
-        // Fetch query from the view from session
-        if let queryOptions = viewFromSession.queryOptions {
-            
-            // Look up the associated result set
-            let resultSet = main.cache.getResultSet(queryOptions)
-            
-            // Determine whether this is a list or a single item resultset
-            isList = resultSet.isList
-            
-            // Fetch the type of the results
-            if let determinedType = resultSet.determinedType {
-                type = determinedType
-            }
-            else {
-                throw "Exception: ResultSet does not know the type of its data"
-            }
-        }
-        else {
-            throw "Exception: Cannot compute a view without a query to fetch data"
-        }
-
-        // Helper lists
-        var renderViews:[SessionView] = []
-        var datatypeViews:[SessionView] = []
-        var rendererNames:[String] = []
-        var cascadeOrders:[String:[RealmSwift.List<String>]] = ["defaults":[List()], "user":[]]
-        let searchOrder = ["defaults", "user"]
-        
-        // Default to the rendererName we know from the view from the session
-        var rendererName = viewFromSession.rendererName ?? ""
-        
-        cascadeOrders["defaults"]![0].append(objectsIn: ["renderer", "datatype"])
-        
-        // If we know the type of data we are rendering use it to determine the view
-        var needles:[String]
-        if type != "mixed" {
-            // Determine query
-            needles = [
-                isList ? "{[type:*]}" : "{type:*}",
-                isList ? "{[type:\(type)]}" : "{type:\(type)}", // TODO if this is not found it should get the default template
-            ]
-        }
-        else {
-            needles = [isList ? "{[type:*]}" : "{type:*}"]
-        }
-        
-        // Find views based on datatype
-        for needle in needles {
-            for key in searchOrder {
-                if let datatypeView = getSessionView(self.defaultViews[key]![needle], variables) {
-                    if datatypeView.name != nil && datatypeView.name == viewFromSession.name {
-                        continue
-                    }
-                    
-                    datatypeViews.append(datatypeView)
-                    
-                    if let S = datatypeView.rendererName { rendererNames.append(S) }
-                    if datatypeView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(datatypeView.cascadeOrder)
-                    }
-                }
-            }
-        }
-                
-        if rendererNames.count > 0 {
-            rendererName = rendererNames[rendererNames.count - 1]
-        }
-        
-        // Find renderer views
-        if rendererName != "" {
-            // Determine query
-            let needle = "{renderer:\(rendererName)}"
-            
-            for key in searchOrder {
-                if let rendererView = getSessionView(self.defaultViews[key]![needle], variables) {
-                    renderViews.append(rendererView)
-                    
-                    if rendererView.cascadeOrder.count > 0 {
-                        cascadeOrders[key]?.append(rendererView.cascadeOrder)
-                    }
-                }
-            }
-        }
-        else {
-            throw "Exception: Could not find which renderer to use. rendererName not set in this view"
-        }
-
-        // Choose cascade order
-        let preferredCascadeOrder = (cascadeOrders["user"]!.count > 0
-            ? cascadeOrders["user"]
-            : cascadeOrders["defaults"]) ?? []
-        
-        var cascadeOrder = preferredCascadeOrder[preferredCascadeOrder.count - 1]
-        if (cascadeOrder.count == 0) {
-            cascadeOrder = List()
-            cascadeOrder.append(objectsIn: ["renderer", "datatype"])
-        }
-        
-        if (Set(preferredCascadeOrder).count > 1) {
-            print("Warn: Found multiple cascadeOrders when cascading view. Choosing \(cascadeOrder)")
-        }
-        
-        // Cascade the different views
-        for key in cascadeOrder {
-            var views:[SessionView]
-            
-            if key == "renderer" { views = renderViews }
-            else if key == "datatype" { views = datatypeViews }
-            else {
-                throw ("Exception: Unknown cascadeOrder type specified: \(key)")
-            }
-            
-            for view in views {
-                computedView.merge(view)
-            }
-        }
-        
-        // Cascade the view from the session
-        // Loads user interactions, e.g. selections, scrollstate, changes of renderer, etc.
-        computedView.finalMerge(viewFromSession)
-        
-        do {
-            try computedView.validate()
-        }
-        catch {
-            throw "Exception: Invalid Computed View: \(error)"
-        }
+        // TODO REFACTOR: move these to a better place (main??)
         
         // turn off editMode when navigating
         if main.sessions.currentSession.editMode == true {
@@ -409,20 +394,20 @@ public class Views {
         
         // hide filterpanel if view doesnt have a button to open it
         if main.sessions.currentSession.showFilterPanel {
-            if computedView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
+            if cascadingView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
                 try! realm.write {
                     main.sessions.currentSession.showFilterPanel = false
                 }
             }
         }
         
-        return computedView
+        return cascadingView
     }
     
     // TODO: Refactor: Consider caching computedView based on the type of the item
     public func renderItemCell(_ item:DataItem, _ rendererNames: [String],
                                _ viewOverride: String? = nil,
-                               _ variables: [String: () -> Any]? = nil) throws -> GUIElementInstance {
+                               _ variables: [String: () -> Any]? = nil) throws -> UIElementView {
         
         guard let main = self.main else {
             throw "Exception: Main is not defined in views"
@@ -459,6 +444,6 @@ public class Views {
             }
         }
         
-        return GUIElementInstance(GUIElementDescription(), item, variables ?? [:])
+        return UIElementView(UIElement(), item, variables ?? [:])
     }
 }

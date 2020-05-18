@@ -248,4 +248,59 @@ public class CascadingView: Cascadable, ObservableObject {
         return ""
     }
     
+    public class func fromSessionView(_ sessionView:SessionView, _ main:Main) throws -> CascadingView {
+        var cascadeStack:[[String:Any]] = [main.views.getParsedDefinition(sessionView.viewDefinition)]
+        let viewArguments = sessionView.viewArguments
+        var isList = true
+        var type = ""
+        
+        // Fetch query from the view from session
+        if let queryOptions = sessionView.queryOptions {
+            
+            // Look up the associated result set
+            let resultSet = main.cache.getResultSet(queryOptions)
+            
+            // Determine whether this is a list or a single item resultset
+            isList = resultSet.isList
+            
+            // Fetch the type of the results
+            if let determinedType = resultSet.determinedType {
+                type = determinedType
+            }
+            else {
+                throw "Exception: ResultSet does not know the type of its data"
+            }
+        }
+        else {
+            throw "Exception: Cannot compute a view without a query to fetch data"
+        }
+
+        var needles:[String]
+        if type != "mixed" {
+            // Determine query
+            needles = [
+                isList ? "\(type)[]" : "\(type)", // TODO if this is not found it should get the default template
+                isList ? "*[]" : "*"
+            ]
+        }
+        else {
+            needles = [isList ? "*[]" : "*"]
+        }
+        
+        // Find views based on datatype
+        for needle in needles {
+            for key in ["user", "defaults"] {
+                
+                if let sessionViewDef = main.realm.objects(SessionViewDefinition.self)
+                    .filter("selector = '\(needle)' and domain = '\(key)").first {
+                    
+                    cascadeStack.append(main.views.getParsedDefinition(sessionViewDef))
+                }
+            }
+        }
+        
+        // Create a new view
+        return CascadingView(cache, sessionView, cascadeStack)
+    }
+    
 }

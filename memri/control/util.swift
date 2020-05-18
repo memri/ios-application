@@ -18,120 +18,6 @@ import SwiftUI
 
 // Run formatter: swift-format . --configuration .swift-format.json
 
-extension String: Error {
-    func sha256() -> String {
-        // Convert the string to data
-        let data = self.data(using: .utf8)!
-
-        // Hash the data
-        let digest = SHA256.hash(data: data)
-
-        // Return the hash string 
-        return digest.compactMap { String(format: "%02x", $0) }.joined()
-    }
-    
-    func test(_ pattern:String, _ options:String = "i") -> Bool {
-        return match(pattern, options).count > 0
-    }
-    
-    // TODO Refactor: optimize regex match
-//    var expressions = [String: NSRegularExpression]()
-//    public extension String {
-//        func match(_ regex: String) -> String? {
-//            let expression: NSRegularExpression
-//            if let exists = expressions[regex] {
-//                expression = exists
-//            } else {
-//                expression = try! NSRegularExpression(pattern: "^\(regex)", options: [])
-//                expressions[regex] = expression
-//            }
-//
-//            let range = expression.rangeOfFirstMatch(in: self, options: [], range: NSMakeRange(0, self.utf16.count))
-//            if range.location != NSNotFound {
-//                return (self as NSString).substring(with: range)
-//            }
-//            return nil
-//        }
-//    }
-    
-    // let pattern = #"\{([^\.]+).(.*)\}"#
-    func match(_ pattern:String, _ options:String = "i") -> [String]? {
-        var nsOptions:NSRegularExpression.Options = NSRegularExpression.Options()
-        for chr in options {
-            if chr == "i" { nsOptions.update(with: .caseInsensitive) }
-        }
-        
-        let regex = try! NSRegularExpression(pattern: pattern, options: nsOptions)
-        var matches:[String] = []
-        
-        // Weird complex way to execute a regex
-        let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
-        regex.enumerateMatches(in: self, options: [], range: nsrange) { (match, _, stop) in
-            guard let match = match else { return }
-
-            for i in 0..<match.numberOfRanges {
-                let rangeObject = Range(match.range(at: i), in: self)!
-                matches.append(String(self[rangeObject]))
-            }
-        }
-        
-        return matches.count ? matches : nil
-    }
-    
-    func substr(_ startIndex:Int, _ length:Int? = nil) -> String {
-        let start = startIndex < 0
-            ? self.index(self.endIndex, offsetBy: startIndex)
-            : self.index(self.startIndex, offsetBy: startIndex)
-        
-        let end = length == nil
-            ? self.endIndex
-            : length! < 0
-                ? self.index(self.startIndex, offsetBy: startIndex + length!)
-                : self.index(self.endIndex, offsetBy: length!)
-        
-        let range = start..<end
-
-        return String(self[range])
-    }
-    
-    func replace(_ target: String, _ withString: String) -> String
-    {
-        return self.replacingOccurrences(of: target, with: withString, options: NSString.CompareOptions.regularExpression, range: nil)
-    }
-}
-
-extension Collection {
-
-    /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript (safe index: Index) -> Element? {
-        return indices.contains(index) ? self[index] : nil
-    }
-}
-
-extension Date {
-    
-    
-    var timeDelta: String? {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
-        formatter.maximumUnitCount = 1
-        formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
-
-        guard let deltaString = formatter.string(from: self, to: Date()) else {
-             return nil
-        }
-        return deltaString
-    }
-    
-   var timestampString: String? {
-        guard let timeString = timeDelta else {
-             return nil
-        }
-            let formatString = NSLocalizedString("%@ ago", comment: "")
-            return String(format: formatString, timeString)
-       }
-}
-
 let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder) in
     var encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
@@ -259,7 +145,7 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
     let objects:[T]? = try! decoder.decodeIfPresent(key)
     if let objects = objects {
         for object in objects {
-            try! globalCache!.addToCache(object)
+            try! globalInMemoryObjectCache.addToCache(object)
             let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
             edgeList.append(edge)
         }

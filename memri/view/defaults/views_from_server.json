@@ -747,7 +747,7 @@
                             "padding": [10, 36, 5, 36]
                         }, [
                             "Text", {
-                                "condition": "{!.labels.co2unt}",
+                                "condition": "{!.labels.count}",
                                 "text": "no labels yet"
                             },
                             "FlowStack", {

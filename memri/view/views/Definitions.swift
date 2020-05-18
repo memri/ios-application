@@ -38,3 +38,7 @@ public class StyleDefinition: BaseDefinition {
 
 public class LanguageDefinition: BaseDefinition {
 }
+
+public class ViewParseContext {
+    // subscript
+}

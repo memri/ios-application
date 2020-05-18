@@ -11,66 +11,6 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-// TODO generalize using Any and one dict for cache (add namespace support)
-// TODO wrap all items in a class, so that they are stored by copy i.e. class CacheItem
-public class GlobalCache {
-    private var stringCache:[String:String] = [:]
-    private var uiImageCache:[String:UIImage] = [:]
-    private var dataCache:[String:Data] = [:]
-    private var guiElementCache:[String:[String:GUIElementDescription]] = [:]
-    private var dictStringArrayCache:[String:[String:[String]]] = [:]
-    private var dictAnyCache:[String:[String:Any]] = [:]
-    
-    public func set<T>(_ key:String, _ value:T) throws {
-        if T.self == UIImage.self {
-            uiImageCache[key] = (value as! UIImage)
-        }
-        else if T.self == String.self {
-            stringCache[key] = (value as! String)
-        }
-        else if T.self == Data.self {
-            dataCache[key] = (value as! Data)
-        }
-        else if T.self == [String:[String]].self {
-            dictStringArrayCache[key] = (value as! [String:[String]])
-        }
-        else if T.self == [String:Any].self {
-            dictAnyCache[key] = (value as! [String:Any])
-        }
-        else if T.self == [String:GUIElementDescription].self {
-            guiElementCache[key] = (value as! [String:GUIElementDescription])
-        }
-        else {
-            throw "Exception: Could not parse the type to write to \(key)"
-        }
-    }
-    
-    public func get<T>(_ key:String) throws -> T? {
-        if T.self == UIImage.self {
-            return uiImageCache[key] as? T
-        }
-        else if T.self == String.self {
-            return stringCache[key] as? T
-        }
-        else if T.self == Data.self {
-            return dataCache[key] as? T
-        }
-        else if T.self == [String:[String]].self {
-            return dictStringArrayCache[key] as? T
-        }
-        else if T.self == [String:Any].self {
-            return dictAnyCache[key] as? T
-        }
-        else if T.self == [String:GUIElementDescription].self {
-            return guiElementCache[key] as? T
-        }
-        else {
-            throw "Exception: Could not parse the type to read from \(key)"
-        }
-    }
-}
-var globalCache = GlobalCache()
-
 //public struct DataItemReference {
 //    let type: DataItemFamily
 //    let uid: String
@@ -93,7 +33,7 @@ public class UserState: Object {
     
     subscript<T>(propName:String) -> T? {
         get {
-            var x:[String:Any]? = try? globalCache.get(uid)
+            var x:[String:Any]? = try? globalInMemoryObjectCache.get(uid)
             if x == nil { x = try? transformToDict() }
             
             if T.self == DataItem.self {
@@ -112,7 +52,7 @@ public class UserState: Object {
             return x?[propName] as? T
         }
         set(newValue) {
-            var x:[String:Any]? = try? globalCache.get(uid)
+            var x:[String:Any]? = try? globalInMemoryObjectCache.get(uid)
             if (x == nil) { x = try? transformToDict() }
             
             if let newValue = newValue as? DataItem {
@@ -122,7 +62,7 @@ public class UserState: Object {
                 x?[propName] = newValue
             }
             
-            try? globalCache.set(uid, x)
+            try? globalInMemoryObjectCache.set(uid, x)
             
             scheduleWrite()
         }
@@ -130,7 +70,7 @@ public class UserState: Object {
     
     private func transformToDict() throws -> [String:Any]{
         let dict:[String:AnyDecodable] = unserialize(state)
-        try globalCache.set(self.uid, dict as [String:Any])
+        try globalInMemoryObjectCache.set(self.uid, dict as [String:Any])
         return dict
     }
     
@@ -155,7 +95,7 @@ public class UserState: Object {
     }
     
     private func persist(){
-        if let x:[String:Any] = try? globalCache.get(uid) {
+        if let x:[String:Any] = try? globalInMemoryObjectCache.get(uid) {
             realmWriteIfAvailable(self.realm) {
                 self["state"] = serialize(AnyCodable(x))
             }
