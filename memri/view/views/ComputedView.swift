@@ -20,6 +20,7 @@ public class ComputedView: ObservableObject {
     var backTitle: String = ""
     var icon: String = ""
     var browsingMode: String = ""
+    var searchMatchText: String = ""
 
     var showLabels: Bool = true
 

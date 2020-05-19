@@ -17,6 +17,7 @@ struct Search: View {
             Divider().background(Color(hex: "#efefef"))
             HStack{
                 TextField("type your search query here", text: $main.computedView.filterText)
+                Text(main.computedView.searchMatchText)
                 
                 ForEach(self.main.computedView.filterButtons){ filterButton in
                     Action(action: filterButton)
