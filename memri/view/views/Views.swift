@@ -255,6 +255,38 @@ public class Views {
 //    LookupNode([VariableNode(bar), VariableNode(foo)])
 //    LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])
     
+    public class func formatDate(_ date:Date?) -> String{
+        let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
+        
+        if let date = date {
+            // Compare against 36 hours ago
+            if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129600)) < 0 {
+                let dateFormatter = DateFormatter()
+                
+                dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.locale = Locale(identifier: "en_US")
+                dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+                
+                return dateFormatter.string(from: date)
+            }
+            else {
+                return date.timestampString ?? ""
+            }
+        }
+        else {
+            return "never"
+        }
+    }
+    
+    public class func formatDateSinceCreated(_ date:Date?) -> String{
+        if let date = date {
+            return date.timeDelta ?? ""
+        }
+        else {
+            return "never"
+        }
+    }
+    
     func resolveEdge(_ edge:Edge) -> DataItem {
         // TODO REFACTOR: implement
         throw "not implemented"
@@ -333,27 +365,29 @@ public class Views {
                 // TODO REFACTOR: parse and query
             }
             
-            if let value = value as? Edge {
-                value = resolveEdge(value)
+            if let edge = value as? Edge {
+                value = resolveEdge(edge)
             }
         }
         
-//        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
-//           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
-//            
-//            // Convert Realm List into Array
-//            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
-//        }
-//        
-//        // Format a date
-//        else if let date = value as? Date { value = formatDate(date) }
-//            
+        // Format a date
+        if let date = value as? Date {
+            value = formatDate(date)
+        }
+        
+        // TODO check for string mode
 //        // Get the image uri from a file
 //        else if let file = value as? File {
 //            if T.self == String.self {
-//                // Set the uri string as the value
 //                value = file.uri
 //            }
+//        }
+        
+//        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
+//           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
+//
+//            // Convert Realm List into Array
+//            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
 //        }
         
         return value
