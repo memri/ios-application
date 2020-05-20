@@ -235,22 +235,6 @@ public class Views {
         return (nil, nil)
     }
     
- 
-    func compileView(_ dynamicView:DynamicView) -> CompiledView {
-        // If we have a cached version, let's return that
-        if let compiledView = compiledViews[dynamicView.name] {
-            return compiledView
-        }
-        
-        // Create a compiled view based on the dynamic view
-        let compiledView = try! CompiledView(dynamicView, main!)
-        
-        // Add the dynamic view for easy reference
-        compiledViews[dynamicView.name] = compiledView
-        
-        return compiledView
-    }
-    
 //    LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)])
 //    LookupNode([VariableNode(bar), VariableNode(foo)])
 //    LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])
@@ -372,7 +356,7 @@ public class Views {
         
         // Format a date
         if let date = value as? Date {
-            value = formatDate(date)
+            value = Views.formatDate(date)
         }
         
         // TODO check for string mode
