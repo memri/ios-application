@@ -85,6 +85,38 @@ class CacheTest: XCTestCase {
         // TODO: what to test here
     }
     
+    func testAddToCacheConflicts(){
+        testCache.install()
+        // TODO: FIX
+//        let item: Country = testCache.getItemById("country", "Aruba")
+//        let cachedNote = try! testCache.addToCache(note)
+//        item.set("starred", true)
+//
+//        let item2: Country = testCache.getItemById("country", "Aruba")
+//        // versionnumber 1 higher
+//        item2.uid = note1.uid
+//        item2.syncstate = item1.syncstate +1
+//        item2.set("content", somthing else")
+//        item2.set("starred", true)
+//        item2.set("starred", true)
+//
+//        let cachedNote = try! testCache.addToCache(note2)
+//
+//
+//
+//
+//
+//        // 1) has to be cached not partiallyloaded, should have actionNeeded,
+//        // and safeMerge is not possible
+//
+//        // should conflict when local and server is changed
+//
+//        let note = Note()
+//        let cachedNote = try! testCache.addToCache(note)
+        
+        // TODO: what to test here
+    }
+    
     func testDelete(){
         testCache.install()
         let item = testCache.getItemById("country", "Aruba")
