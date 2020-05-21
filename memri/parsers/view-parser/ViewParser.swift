@@ -305,16 +305,25 @@ class ViewParser {
                         }
                     }
                     
-                    stack.append(ActionDescription(
+                    stack.append(Action(
+                        name: value,
                         icon: options["icon"] as? String ?? "",
                         title: options["title"] as? String ?? "",
-                        actionName: value,
-                        actionArgs: options["arguments"] as? [Any] ?? [],
-                        actionType: options["type"] as? String ?? "",
-                        actionStateName: options["binding"] as? Expression,
                         showTitle: options["showTitle"] as? Bool ?? false,
+                        binding: options["binding"] as? Expression,
+                        hasState: options["hasState"] as? Bool ?? false,
+                        opensView: options["opensView"] as? Bool ?? false,
+                        color: options["color"] as? String ?? "",
+                        backgroundColor: options["backgroundColor"] as? String ?? "",
+                        activeColor: options["activeColor"] as? String ?? "",
+                        inactiveColor: options["inactiveColor"] as? String ?? "",
+                        activeBackgroundColor: options["activeBackgroundColor"] as? String ?? "",
+                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? String ?? "",
+                        arguments: options["arguments"] as? [Any] ?? [],
+                        renderType: options["renderType"] as? String ?? "",
+                        
                         hasStateValue: options["hasStateValue"] as? Bool ?? false,
-                        color: options["color"] as? String ?? ""
+                        
                     ))
                 }
                 else {
@@ -493,69 +502,5 @@ class ViewParser {
             dict["cornerborder"] = value as Any
             dict["border"] = nil
         }
-    }
-}
-
-// Mock
-
-class ActionDescription: CustomStringConvertible {
-    var icon: String = ""
-    var title: String = ""
-    var actionName: String = ""
-    var actionArgs: [Any] = []
-    var actionType: String = ""
-    var actionStateName: Expression?
-    var showTitle: Bool = false
-    var hasStateValue: Bool = false
-    var color: String = ""
-    
-    init(icon:String, title:String, actionName:String, actionArgs:[Any], actionType:String,
-         actionStateName:Expression?, showTitle:Bool, hasStateValue:Bool, color:String){
-        
-        self.icon = icon
-        self.title = title
-        self.actionName = actionName
-        self.actionArgs = actionArgs
-        self.actionType = actionType
-        self.actionStateName = actionStateName
-        self.showTitle = showTitle
-        self.hasStateValue = hasStateValue
-        self.color = color
-    }
-    
-    public var description: String {
-        return "ActionDescription(actionName: \(actionName))"
-    }
-}
-
-public class UIElement: CustomStringConvertible {
-    var type: String = ""
-    var children: [UIElement] = []
-    var properties: [String:Any] = [:]
-    
-    init(type: String, children: [UIElement], properties: [String:Any]) {
-        self.type = type
-        self.children = children
-        self.properties = properties
-    }
-    
-    func serializeDict() -> String {
-        let keys = properties.keys.sorted()
-        
-        var str = [String]()
-        for key in keys {
-            if let p = properties[key] as? String {
-                str.append("\(key): \"\(p)\"")
-            }
-            else {
-                str.append("\(key): \(properties[key] ?? "")")
-            }
-        }
-        
-        return "\(str.joined(separator: ", "))" // TODO remove [ and ]
-    }
-    
-    public var description: String {
-        return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
     }
 }

@@ -106,10 +106,16 @@ import TextView
           exact shape of that is still beyond the horizon of my imagination.
  */
              
-public class UIElement {
+public class UIElement : CustomStringConvertible {
     var type: String = ""
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
+    
+    init(type: String, children: [UIElement], properties: [String:Any]) {
+        self.type = type
+        self.children = children
+        self.properties = properties
+    }
     
     public func has(_ propName:String) -> Bool {
         return properties[propName] != nil
@@ -171,6 +177,26 @@ public class UIElement {
     
     func removeWhiteSpace(text: String) -> String{
         return text.replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
+    }
+    
+    func serializeDict() -> String {
+        let keys = properties.keys.sorted()
+        
+        var str = [String]()
+        for key in keys {
+            if let p = properties[key] as? String {
+                str.append("\(key): \"\(p)\"")
+            }
+            else {
+                str.append("\(key): \(properties[key] ?? "")")
+            }
+        }
+        
+        return "\(str.joined(separator: ", "))" // TODO remove [ and ]
+    }
+    
+    public var description: String {
+        return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
     }
 }
 
