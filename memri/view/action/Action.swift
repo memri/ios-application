@@ -102,7 +102,7 @@ public enum RenderType: String{
 }
 
 public enum ActionName: String, CaseIterable {
-    case back, add, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
+    case back, addDataItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
         star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
@@ -191,7 +191,11 @@ public enum ActionName: String, CaseIterable {
     }
 }
 
-class ActionBack : Action {
+protocol ActionExec {
+    func exec(_ main:Main, arguments:[Any])
+}
+
+private class ActionBack : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "chevron.left",
         "opensView": true,
@@ -199,11 +203,26 @@ class ActionBack : Action {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionBack.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let session = currentSession
         
+        if session.currentViewIndex == 0 {
+            print("Warn: Can't go back. Already at earliest view in session")
+        }
+        else {
+            try! realm.write {
+                session.currentViewIndex -= 1
+            }
+            
+            scheduleComputeView()
+        }
     }
 }
-class ActionAddDataItem : Action {
+private class ActionAddDataItem : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "plus",
         "argumentTypes": [DataItemFamily.self],
@@ -217,6 +236,8 @@ class ActionAddDataItem : Action {
     }
     
     class func exec(_ main:Main, arguments:[Any]) {
+        addFromTemplate(params[0].value as! DataItem)
+        
         // Copy template
         let copy = main.cache.duplicate(template)
         
@@ -227,36 +248,110 @@ class ActionAddDataItem : Action {
         ActionOpenView.exec(main, [copy])
     }
 }
-class ActionOpenView : Action {
+
+///// Adds a view to the history of the currentSession and displays it.
+///// If the view was already part of the currentSession.views it reorders it on top
+//func openView(_ view:SessionView, _ variables:[String:Any]? = nil) {
+//    let session = self.currentSession
+//
+//    // Toggle the state to true
+//    if let stateName = variables?["stateName"] as? String { view.toggleState(stateName) }
+//
+//    // Add view to session
+//    session.setCurrentView(view)
+//
+//    // Register variables
+//    try! realm.write {
+//        view.variables = variables
+//    }
+//
+//    // Set accessed date to now
+//    view.access()
+//
+//    // Recompute view
+//    scheduleComputeView()
+//}
+//
+//func openView(_ item:DataItem, _ variables:[String:Any]? = nil){
+//    // Create a new view
+//    let view = SessionView()
+//
+//    // Set the query options to load the item
+//    let primKey = DataItemFamily(rawValue: item.genericType)!.getPrimaryKey()
+//    view.queryOptions!.query = "\(item.genericType) AND \(primKey) = '\(item.getString(primKey))'"
+//
+//    // Open the view
+//    openView(view, variables)
+//}
+//
+//public func openView(_ viewName: String, _ variables:[String:Any]? = nil) {
+//
+//    // Fetch a dynamic view based on its name
+//    if let view:SessionView = views.getSessionView(viewName, variables) {
+//
+//        // Open the view
+//        openView(view, variables)
+//    }
+//    else {
+//        print("Warn: Could not find view: '\(viewName)")
+//    }
+//}
+//public func openView(_ items: [DataItem], _ variables:[String:Any]? = nil) {}
+//
+
+private class ActionOpenView : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [SessionView.self, [String:Any]?.self],
         "opensView": true
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionOpenView.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        if (params.count > 0) {
+            let view = params[0].value as! SessionView
+            let variables = params[safe: 1]?.value as? [String:Any]
+            
+            openView(view, variables)
+        }
+        else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
+        else if let item = item as? SessionView { openView(item) }
+        else if let item = item { openView(item) }
     }
 }
-class ActionOpenDynamicView : Action {
+private class ActionOpenDynamicView : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionOpenDynamicView.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let name = params[0].value as! String
+        let variables = params[safe: 1]?.value as? [String:Any]
         
+        openView(name, variables)
     }
 }
-class ActionOpenViewByName : Action {
+private class ActionOpenViewByName : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [String.self, [String:Any]?.self],
         "opensView": true
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionOpenViewByName.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
         
     }
 }
-class ActionToggleEditMode : Action {
+private class ActionToggleEditMode : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "rhombus.fill",
         "hasState": true,
@@ -265,33 +360,54 @@ class ActionToggleEditMode : Action {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionToggleEditMode.exec(main, arguments:arguments)
+    }
+    
+    func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
     }
 }
-class ActionToggleFilterPanel : Action {
+private class ActionToggleFilterPanel : Action, ActionExec {
     private var defaults:[String:Any] {[
         "hasState": true,
         "binding": Expression("currentSession.showFilterPanel"),
         "activeColor": Color(hex: "#6aa84f")
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionToggleFilterPanel.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
     }
 }
-class ActionStar : Action {
+private class ActionStar : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
         "binding": "{dataItem.starred}"
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionStar.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        if selection.count > 0, let item = item { star(selection, item.starred) }
         
+        try! realm.write {
+            for item in items {
+                item.starred = toValue
+            }
+        }
+        
+        // TODO if starring is ever allowed in a list resultset view,
+        // it won't be updated as of now
     }
 }
-class ActionShowStarred : Action {
+private class ActionShowStarred : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
@@ -300,22 +416,41 @@ class ActionShowStarred : Action {
         "activeColor": Color(hex: "#ffdb00")
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionShowStarred.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        showStarred(starButton: action)
         
+        // If button is active lets create a filtered view
+        if !self.computedView.hasState(starButton.actionStateName!) {
+        
+            // Open named view 'showStarred'
+            openView("filter-starred", ["stateName": starButton.actionStateName as Any])
+        }
+        else {
+            // Go back to the previous view
+            back()
+        }
     }
 }
-class ActionShowContextPane : Action {
+private class ActionShowContextPane : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
         "binding": Expression("currentSession.showContextPane")
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionShowContextPane.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
     }
 }
-class ActionShowNavigation : Action {
+private class ActionShowNavigation : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "line.horizontal.3",
         "hasState": true,
@@ -323,30 +458,56 @@ class ActionShowNavigation : Action {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionShowNavigation.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
     }
 }
-class ActionSchedule : Action {
+private class ActionSchedule : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "alarm"
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionSchedule.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
         
     }
 }
-class ActionSetRenderer : Action {
+private class ActionSetRenderer : Action, ActionExec {
     private var defaults:[String:Any] {[
         "activeColor": Color(hex: "#6aa84f"),
         "activeBackgroundColor": Color(hex: "#eee")
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionSetRenderer.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        changeRenderer(rendererObject: action as! Renderer)
+//
+//        self.setInactive(objects: Array(self.renderObjects.values))
+    
+        //
+//        setActive(object: rendererObject)
+    
+        //
+        let session = currentSession
+        try! realm.write {
+            session.currentView.rendererName = rendererObject.name
+        }
         
+        //
+        scheduleComputeView()
     }
 }
-class ActionShowSessionSwitcher : Action {
+private class ActionShowSessionSwitcher : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
@@ -354,63 +515,195 @@ class ActionShowSessionSwitcher : Action {
         "color": Color(hex: "#CCC")
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionShowSessionSwitcher.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
     }
 }
-class ActionForward : Action {
+private class ActionForward : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionForward.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let session = currentSession
         
+        if session.currentViewIndex == session.views.count - 1 {
+            print("Warn: Can't go forward. Already at last view in session")
+        }
+        else {
+            try! realm.write {
+                session.currentViewIndex += 1
+            }
+            
+            scheduleComputeView()
+        }
     }
 }
-class ActionForwardToFront : Action {
+private class ActionForwardToFront : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionForwardToFront.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let session = currentSession
         
+        try! realm.write {
+            session.currentViewIndex = session.views.count - 1
+        }
+        
+        scheduleComputeView()
     }
 }
-class ActionBackAsSession : Action {
+private class ActionBackAsSession : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionBackAsSession.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let session = currentSession
         
+        if session.currentViewIndex == 0 {
+            print("Warn: Can't go back. Already at earliest view in session")
+        }
+        else {
+            let duplicateSession = cache.duplicate(session as DataItem) as! Session // This will work when merged with multiple-data-types branch
+            
+            try! realm.write {
+                duplicateSession.currentViewIndex -= 1
+            }
+            
+            openSession(duplicateSession)
+        }
     }
 }
-class ActionOpenSession : Action {
+///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
+/////  reorders it on top
+//func openSession(_ session:Session) {
+//    let sessions = self.sessions // TODO generalize
+//
+//    // Add view to session and set it as current
+//    sessions.setCurrentSession(session)
+//
+//    // Recompute view
+//    scheduleComputeView()
+//}
+//
+//public func openSession(_ name:String, _ variables:[String:Any]? = nil) {
+//
+//    // TODO: This should not fetch the session from named sessions
+//    //       but instead load a sessionview that loads the named sessions by
+//    //       computing them (implement viewFromSession that is used in dynamic
+//    //       view to sessionview
+//
+//    // Fetch a dynamic view based on its name
+//    let (session, _) = views.getSessionOrView(name, wrapView:true, variables)
+//    if let session = session {
+//
+//        // Open the view
+//        openSession(session)
+//    }
+//    else {
+//        print("Warn: Could not find session: '\(name)")
+//    }
+//}
+private class ActionOpenSession : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [Session.self, [String:Any]?.self],
         "opensView": true,
     ]}
     
-    func exec() -> Any {
-        
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionOpenSession.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        if (params.count > 0) {
+            let name = params[0].value as! String
+            let variables = params[safe: 1]?.value as? [String:Any]
+            
+            openSession(name, variables)
+        }
+        else if let item = item as? Session { openSession(item) }
     }
 }
-class ActionOpenSessionByName : Action {
+private class ActionOpenSessionByName : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [String.self, [String:Any]?.self],
         "opensView": true,
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionOpenSessionByName.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        let name = params[0].value as! String
+        let variables = params[safe: 1]?.value as? [String:Any]
         
+        openSession(name, variables)
     }
 }
-class ActionAddSelectionToList : Action {
+private class ActionAddSelectionToList : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [DataItemFamily.self, String.self]
-        ]}
+    ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionAddSelectionToList.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
         
     }
 }
+private class ActionDelete : Action, ActionExec {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionDelete.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        if selection.count > 0 { cache.delete(selection) }
+        else if let item = item { cache.delete(item) }
+        scheduleUIUpdate{_ in true}
+    }
+}
+private class ActionDuplicate : Action, ActionExec {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionDuplicate.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        if selection.count > 0 {
+            selection.forEach{ item in addFromTemplate(item) }
+        }
+        else if let item = item { addFromTemplate(item) }
+
+    }
+}
+private class ActionClosePopup : Action, ActionExec {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionClosePopup.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        (self.closeStack.removeLast())()
+    }
+}
+
+
