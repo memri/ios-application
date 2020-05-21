@@ -29,13 +29,13 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(ActionDescription(actionName:.forward))
+        self.main.executeAction(Action(actionName:.forward))
     }
     private func toFront(){
-        self.main.executeAction(ActionDescription(actionName:.forwardToFront))
+        self.main.executeAction(Action(actionName:.forwardToFront))
     }
     private func backAsSession(){
-        self.main.executeAction(ActionDescription(actionName:.backAsSession))
+        self.main.executeAction(Action(actionName:.backAsSession))
     }
     private func openAllViewsOfSession(){
         let uid = self.main.currentSession.uid
@@ -104,14 +104,14 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        Action(action: ActionDescription(actionName: .showNavigation))
+                        Action(action: Action(actionName: .showNavigation))
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
                         // TODO Refactor: Properly support text labels
-//                        Action(action: ActionDescription(actionName: .closePopup))
+//                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
-                        Button(action: { self.main.executeAction(ActionDescription(actionName: .closePopup)) }) {
+                        Button(action: { self.main.executeAction(Action(actionName: .closePopup)) }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
                                 .padding(.horizontal, 5)
@@ -179,7 +179,7 @@ public struct TopNavigation: View {
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                        Action(action: Action(actionName: .showSessionSwitcher))
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }

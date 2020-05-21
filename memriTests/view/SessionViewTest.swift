@@ -35,9 +35,9 @@ class ViewTest: XCTestCase {
     func testLoadActionFromJson(){
 //        var sessions = try! Sessions.fromJSONFile("empty_sessions")
         
-//        let backDescription = try! ActionDescription.from_json("back_action")
-//        let addDescription = try! ActionDescription.from_json("add_action")
-//        let openViewDescription = try! ActionDescription.from_json("openview_action")
+//        let backDescription = try! Action.from_json("back_action")
+//        let addDescription = try! Action.from_json("add_action")
+//        let openViewDescription = try! Action.from_json("openview_action")
         
 //        sessions.currentSession.executeAction(action: backDescription)
 //        sessions.currentSession.executeAction(action: addDescription)

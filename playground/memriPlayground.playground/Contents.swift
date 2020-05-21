@@ -3,11 +3,18 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-let x = Array(0...10000).map{_ in "x"}.joined()
-
-
-let dt = Date()
-x.forEach { (c) in
+class Action {
+    var defaults:[String:Any] { return [:] }
     
+    init() {
+        print(defaults)
+    }
 }
-print (Date().timeIntervalSince(dt))
+
+class Foo : Action {
+    override var defaults:[String:Any] {[
+        "test": true
+    ]}
+}
+
+let x = Foo()

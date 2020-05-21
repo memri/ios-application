@@ -38,7 +38,7 @@ public class Renderers {
     }
 }
 
-class FilterPanelRendererButton: ActionDescription, ObservableObject{
+class FilterPanelRendererButton: Action, ObservableObject{
     var name: String
     var order: Int
     var canDisplayResults: (_ items: [DataItem]) -> Bool
@@ -134,7 +134,7 @@ public class CascadingRenderConfig: Cascadable {
      
             How is the json string optimized?
             - Looks up all the variables and puts them in a dict
-                - Skips over variables that need to be calculated at runtime (i.e. ActionDescription.actionStateName)
+                - Skips over variables that need to be calculated at runtime (i.e. Action.actionStateName)
             - Replaces the variables that need to be replaces with {$0} (0 being a auto-increment)
             - At the end you have a dict and a json string
      

@@ -160,8 +160,8 @@ struct ThumbGridRendererView: View {
         }
     }
     
-    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        main.executeAction(actionDescription, dataItem)
+    func onTap(Action: Action, dataItem: DataItem){
+        main.executeAction(Action, dataItem)
     }
 }
 

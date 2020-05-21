@@ -8,10 +8,10 @@
 
 import SwiftUI
 
-struct Action: View {
+struct ActionView: View {
     @EnvironmentObject var main: Main
     
-    var action: ActionDescription?
+    var action: Action?
 
     // TODO Refactor: can this be created more efficiently?
     var body: some View {
@@ -39,9 +39,9 @@ struct Action: View {
     }
 }
 
-struct Action_Previews: PreviewProvider {
+struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        Action(action: ActionDescription(icon: "chevron.left", title: "back", actionType: .button))
+        ActionView(action: Action(icon: "chevron.left", title: "back", actionType: .button))
             .environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }
@@ -49,7 +49,7 @@ struct Action_Previews: PreviewProvider {
 struct ActionButton: View {
     @EnvironmentObject var main: Main
     
-    var action: ActionDescription
+    var action: Action
     var execute: (() -> Void)? = nil
     
     var isActive: Bool {
@@ -83,7 +83,7 @@ struct ActionButton: View {
 struct ActionPopupButton: View {
     @EnvironmentObject var main: Main
     
-    var action: ActionDescription
+    var action: Action
     
     @State var isShowing = false
     
@@ -101,7 +101,7 @@ struct ActionPopup: View {
     @EnvironmentObject var main: Main
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-    var action: ActionDescription
+    var action: Action
     
     var body: some View {
         // TODO refactor: this list item needs to be removed when we close the popup in any way

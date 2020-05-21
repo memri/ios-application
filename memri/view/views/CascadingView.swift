@@ -99,17 +99,17 @@ public class CascadingView: Cascadable, ObservableObject {
     var backTitle: String? { cascadeProperty("backTitle", nil) }
     var showLabels: Bool { cascadeProperty("showLabels", true) }
     
-    var actionButton: ActionDescription? { cascadeProperty("actionButton", nil) }
-    var editActionButton: ActionDescription? { cascadeProperty("editActionButton", nil) }
+    var actionButton: Action? { cascadeProperty("actionButton", nil) }
+    var editActionButton: Action? { cascadeProperty("editActionButton", nil) }
     
     
     var cascadeOrder: [String] { cascadeList("cascadeOrder") }
     var sortFields: [String] { cascadeList("sortFields") }
-    var editButtons: [ActionDescription] { cascadeList("editButtons") }
-    var filterButtons: [ActionDescription] { cascadeList("filterButtons") }
-    var actionItems: [ActionDescription] { cascadeList("actionItems") }
-    var navigateItems: [ActionDescription] { cascadeList("navigateItems") }
-    var contextButtons: [ActionDescription] { cascadeList("contextButtons") }
+    var editButtons: [Action] { cascadeList("editButtons") }
+    var filterButtons: [Action] { cascadeList("filterButtons") }
+    var actionItems: [Action] { cascadeList("actionItems") }
+    var navigateItems: [Action] { cascadeList("navigateItems") }
+    var contextButtons: [Action] { cascadeList("contextButtons") }
     
     
     

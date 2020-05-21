@@ -31,18 +31,18 @@ private var register:Void = {
 class CascadingListConfig: CascadingRenderConfig {
     var type: String? = "list"
     
-    var longPress: ActionDescription? { cascadeProperty("longPress", nil) }
-    var press: ActionDescription? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress", nil) }
+    var press: Action? { cascadeProperty("press", nil) }
     
-    var slideLeftActions:[ActionDescription] { cascadeList("slideLeftActions") }
-    var slideRightActions:[ActionDescription] { cascadeList("slideRightActions") }
+    var slideLeftActions:[Action] { cascadeList("slideLeftActions") }
+    var slideRightActions:[Action] { cascadeList("slideRightActions") }
 }
 
 struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
-    let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
+    let deleteAction = Action(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: CascadingListConfig {
         return self.main.computedView.renderConfigs[name] as? CascadingListConfig ?? CascadingListConfig()

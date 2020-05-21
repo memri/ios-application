@@ -230,8 +230,8 @@ struct GeneralEditorSection: View {
         let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
-        let actionDescription = isArray && editMode && !readOnly
-            ? ActionDescription(
+        let Action = isArray && editMode && !readOnly
+            ? Action(
                 icon: "plus",
                 actionName: .openViewByName,
                 actionArgs: [
@@ -256,20 +256,20 @@ struct GeneralEditorSection: View {
                 else {
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
-                        action: actionDescription
+                        action: Action
                     )
                 }
             }
             else {
                 self.constructSectionHeader(
                     title: (groupKey == "other" && groups.count == 0) ? "all" : groupKey,
-                    action: actionDescription
+                    action: Action
                 )
             }
         }
     }
     
-    func constructSectionHeader(title:String, action:ActionDescription? = nil) -> some View {
+    func constructSectionHeader(title:String, action:Action? = nil) -> some View {
         HStack (alignment: .bottom) {
             Text(title.camelCaseToWords().uppercased())
                 .generalEditorHeader()

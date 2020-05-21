@@ -19,9 +19,9 @@ class actionTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testActionDescription() throws {
-        let actionDescription = ActionDescription(actionName: .back)
-        XCTAssertTrue(actionDescription.icon == "chevron.left")
+    func testAction() throws {
+        let Action = Action(actionName: .back)
+        XCTAssertTrue(Action.icon == "chevron.left")
     }
     
     func testAction() throws {

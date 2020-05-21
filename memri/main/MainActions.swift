@@ -12,7 +12,7 @@ import RealmSwift
 extension Main {
     
     /// Executes the action as described in the action description
-    public func executeAction(_ action:ActionDescription, _ itm:DataItem? = nil,
+    public func executeAction(_ action:Action, _ itm:DataItem? = nil,
                               _ itms:[DataItem]? = nil) {
         
         let params = action.actionArgs
@@ -38,9 +38,9 @@ extension Main {
                           to highlight the additions.
                  
                           In order for session choose-item-by-query to be able to add the selection
-                          and then go back, ActionDescription needs to support a set of actions. e.g.
+                          and then go back, Action needs to support a set of actions. e.g.
                  
-                                ActionDescription(
+                                Action(
                                     actionName: [.addSelectionToList, .back],
                                     .actionArgs: [[{dataItem}, {propertyName}], []]
                                 )
@@ -391,7 +391,7 @@ extension Main {
         // it won't be updated as of now
     }
 
-    func showStarred(starButton: ActionDescription){
+    func showStarred(starButton: Action){
         
         // If button is active lets create a filtered view
         if !self.computedView.hasState(starButton.actionStateName!) {

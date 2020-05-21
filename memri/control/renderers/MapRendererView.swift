@@ -23,8 +23,8 @@ private var register:Void = {
 class CascadingMapConfig: CascadingRenderConfig {
     var type: String? = "map"
     
-    var longPress: ActionDescription? { cascadeProperty("longPress", nil) }
-    var press: ActionDescription? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress", nil) }
+    var press: Action? { cascadeProperty("press", nil) }
 }
 
 struct MapRendererView: View {

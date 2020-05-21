@@ -83,12 +83,12 @@ struct PickerPane: View {
                         //                            }
                         //                            self.main.scheduleUIUpdate{_ in true}
                         //
-                        "press": ActionDescription(actionName: .closePopup)
+                        "press": Action(actionName: .closePopup)
                         // TODO: refactor enable selection
 //                        "selection": [DataItemReference(dataItem: self.item)]
                     ]),
                     "thumbnail": ThumbnailConfig(value: [
-                        "press": ActionDescription(actionName: .closePopup)
+                        "press": Action(actionName: .closePopup)
                     ])
                 ])
             ]),

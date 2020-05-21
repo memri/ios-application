@@ -22,8 +22,8 @@ private var register:Void = {
 class CascadingThumbnailConfig: CascadingRenderConfig {
     var type: String? = "thumbnail"
     
-    var longPress: ActionDescription? { cascadeProperty("longPress", nil) }
-    var press: ActionDescription? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress", nil) }
+    var press: Action? { cascadeProperty("press", nil) }
     
     var columns:Int? { cascadeProperty("column", nil) }
     var itemInset:Int? { cascadeProperty("itemInset", nil) }
@@ -124,8 +124,8 @@ struct ThumbnailRendererView: View {
         }
     }
     
-    func onTap(actionDescription: ActionDescription, dataItem: DataItem){
-        main.executeAction(actionDescription, dataItem)
+    func onTap(Action: Action, dataItem: DataItem){
+        main.executeAction(Action, dataItem)
     }
 }
 

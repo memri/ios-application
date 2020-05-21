@@ -1,5 +1,5 @@
 ////
-////  ActionDescription.swift
+////  Action.swift
 ////  memri
 ////
 ////  Created by Koen van der Veen on 30/03/2020.
@@ -10,7 +10,7 @@
 //import Combine
 //import RealmSwift
 //
-//public class ActionDescription: Object, Codable, Identifiable {
+//public class Action: Object, Codable, Identifiable {
 //
 //    var actionName: ActionName = .noop
 //    var actionArgs: [AnyCodable] = []
@@ -67,7 +67,7 @@
 //        case icon, title, actionName, actionArgs, actionType, showTitle, hasState
 //    }
 //    
-//    enum ActionDescriptionKeys: String, CodingKey {
+//    enum ActionKeys: String, CodingKey {
 //      case actionArgs
 //    }
 //    
@@ -138,8 +138,8 @@
 //        
 //        // Some Decoder magic
 //        do {
-//            let ctr = try decoder.container(keyedBy:ActionDescriptionKeys.self)
-//            container = try ctr.nestedUnkeyedContainer(forKey: ActionDescriptionKeys.actionArgs)
+//            let ctr = try decoder.container(keyedBy:ActionKeys.self)
+//            container = try ctr.nestedUnkeyedContainer(forKey: ActionKeys.actionArgs)
 //        }
 //        catch {
 //            return // No actionArgs found
@@ -201,7 +201,7 @@
 //        }
 //    }
 //    
-////    public static func == (lhs: ActionDescription, rhs: ActionDescription) -> Bool {
+////    public static func == (lhs: Action, rhs: Action) -> Bool {
 ////        return true
 ////    }
 //
@@ -216,9 +216,9 @@
 ////
 ////    }
 //    
-//    public class func from_json(_ file: String, ext: String = "json") throws -> ActionDescription {
+//    public class func from_json(_ file: String, ext: String = "json") throws -> Action {
 //        let jsonData = try jsonDataFromFile(file, ext)
-//        let description: ActionDescription = try! MemriJSONDecoder.decode(ActionDescription.self, from: jsonData)
+//        let description: Action = try! MemriJSONDecoder.decode(Action.self, from: jsonData)
 //        return description
 //    }
 //    
