@@ -84,7 +84,7 @@ public class RenderGroup {
 public class CascadingRenderConfig: Cascadable {
     private var viewArguments: ViewArguments
     
-    init(cascadeStack: [[String:Any]], viewArguments: ViewArguments) {
+    init(_ cascadeStack: [ViewSelector], _ viewArguments: ViewArguments) {
         self.viewArguments = viewArguments
         self.cascadeStack = cascadeStack
     }

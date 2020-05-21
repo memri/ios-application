@@ -114,7 +114,7 @@ public class UserState: Object {
         return x
     }
 }
-typealias ViewArguments = UserState
+public typealias ViewArguments = UserState
     
 public class SessionView: DataItem {
  

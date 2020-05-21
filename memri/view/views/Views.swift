@@ -6,7 +6,7 @@ import RealmSwift
 // Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
  
-    let language = Languages()
+    let languages = Languages()
     
     private var realm:Realm
     var main:Main? = nil
@@ -15,7 +15,7 @@ public class Views {
         realm = rlm
     }
     
-    public func parse(_ def:BaseDefinition, cache:Bool = true) -> [String:Any] {
+    public func parse(_ def:ViewDSLDefinition, cache:Bool = true) -> [String:Any] {
         guard let definition = def.definition else {
             return [:]
         }
@@ -45,21 +45,20 @@ public class Views {
         // Store main for use within createCascadingView)
         self.main = mn
         
-        setCurrentLanguage(main?.settings.get("user/language") ?? "English")
+        try setCurrentLanguage(main?.settings.get("user/language") ?? "English")
         
         // Done
         callback()
     }
     
     // TODO refactor when implementing settings UI call this when changing the language
-    public func setCurrentLanguage(_ language:String) {
-        self.language.currentLanguage = language
+    public func setCurrentLanguage(_ language:String) throws {
+        self.languages.currentLanguage = language
         
-        let definitions = Array(realm.objects(LanguageDefinition.self)
-            .filter("selector = '[language = \(language)'")
-            .map{ self.parse($0, cache:false) })
+        let definitions = try fetchDefinitions(type: "language")
+            .compactMap{ try self.getParsedDefinition($0) }
         
-        self.language.load(definitions)
+        self.languages.load(definitions)
     }
     
  
@@ -72,125 +71,81 @@ public class Views {
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
         do {
-            let strDef = try stringFromFile("views_from_server")
-            let json = try JSONSerialization.jsonObject(with: data, options: [])
+            let parser = ViewDefinitionParser(try stringFromFile("views_from_server"),
+                                              lookup: lookupValueOfVariables,
+                                              execFunc: executeFunction)
             
-            guard let parsedObject = json as? [String: Any] else {
-                throw "Exception: Invalid JSON while reading named view list"
-            }
+            let parsedDefinitions = try parser.parse() // TODO this could be optimized
             
             // Loop over lookup table with named views
-            for (selector, object) in parsedObject {
-                let definition = serialize(AnyCodable(object))
+            for def in parsedDefinitions {
+                var values = ["selector": def.selector, "definition": def.description]
                 
-                var def:BaseDefinition
-                if selector.test(#"\[\]$"#) { // superfluous
-                    def = SessionViewDefinition(value:
-                        ["selector": selector, "definition": definition])
+                if def is ViewDefinition {
+                    values["type"] = "view"
                 }
-                else if selector.test(#"^\[renderer = .*\]$"#) {
-                    def = RenderDefinition(value:
-                        ["selector": selector, "definition": definition])
+                else if def is ViewRendererDefinition {
+                    values["type"] = "renderer"
                 }
-                else if selector.test(#"^\[style = .*\]$"#) {
-                    def = StyleDefinition(value:
-                        ["selector": selector, "definition": definition])
+                else if def is ViewStyleDefinition {
+                    values["type"] = "style"
                 }
-                else if selector.test(#"^\[color = .*\]$"#) {
-                    def = ColorDefinition(value:
-                        ["selector": selector, "definition": definition])
+                else if def is ViewColorDefinition {
+                    values["type"] = "color"
                 }
-                else if selector.test(#"^\[language = .*\]$"#) {
-                    def = LanguageDefinition(value:
-                        ["selector": selector, "definition": definition])
-                }
-                else if let matches = selector.match(#"^\"(.*)\"$"#) {
-                    def = SessionViewDefinition(value:
-                        ["selector": matches[1], "definition": definition])
+                else if def is ViewLanguageDefinition {
+                    values["type"] = "language"
                 }
                 else {
-                    def = SessionViewDefinition(value:
-                        ["selector": selector, "definition": definition])
+                    throw "Exception: unknown definition"
                 }
                 
                 // Store definition
-                try realm.write { realm.add(def) }
+                try realm.write { realm.create(ViewDSLDefinition.self, value: values) }
             }
         }
         catch {
             // TODO Fatal error handling
         }
     }
-    
-//
-//    public func getDynamicView (_ viewName:String) -> DynamicView? {
-//        var dynamicView:DynamicView?
-//
-//        // If a declaration is passed instead of a name create new DynamicView
-//        if viewName.prefix(1) == "{" {
-//            dynamicView = DynamicView(viewName)
-//        }
-//        // Otherwise load from the database the dynamic view with that name
-//        else {
-//            dynamicView = realm.objects(DynamicView.self).filter("name = '\(viewName)'").first
-//        }
-//
-//        return dynamicView
-//    }
-//
-//
-//    public func getCompiledView (_ viewName:String) -> CompiledView? {
-//        // Find an already compiled view
-//        if let compiledView = compiledViews[viewName] {
-//            return compiledView
-//        }
-//
-//        // Otherwise generate it from a dynamic view
-//        if let dynamicView = getDynamicView(viewName) {
-//            return compileView(dynamicView)
+
+//    public func getSessionView (_ viewName:String,
+//                                _ variables:[String:Any]? = nil) -> SessionView? {
+//        if let compiledView = getCompiledView(viewName) {
+//            return try! compiledView.generateView(variables)
 //        }
 //
 //        return nil
 //    }
-    
- 
-    public func getSessionView (_ viewName:String,
-                                _ variables:[String:Any]? = nil) -> SessionView? {
-        if let compiledView = getCompiledView(viewName) {
-            return try! compiledView.generateView(variables)
-        }
-        
-        return nil
-    }
- 
-    public func getSessionView (_ view:DynamicView?,
-                                _ variables:[String:Any]? = nil) -> SessionView? {
-        if let dynamicView = view {
-            return try! compileView(dynamicView).generateView(variables)
-        }
-        
-        return nil
-    }
- 
-    // TODO: Refactor: THis function needs to die
-    public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
-                                 _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
-        if let compiledView = getCompiledView(viewName) {
-            
-            // Parse so we now if it includes a session
-            try! compiledView.parse()
-            
-            if compiledView.hasSession {
-                return (try! compiledView.generateSession(variables), nil)
-            }
-            else {
-                let view = try! compiledView.generateView(variables)
-                return (wrapView ? Session(value: ["views": [view]]) : nil, view)
-            }
-        }
-        
-        return (nil, nil)
-    }
+//
+//    public func getSessionView (_ view:DynamicView?,
+//                                _ variables:[String:Any]? = nil) -> SessionView? {
+//        if let dynamicView = view {
+//            return try! compileView(dynamicView).generateView(variables)
+//        }
+//
+//        return nil
+//    }
+//
+//    // TODO: Refactor: THis function needs to die
+//    public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
+//                                 _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
+//        if let compiledView = getCompiledView(viewName) {
+//
+//            // Parse so we now if it includes a session
+//            try! compiledView.parse()
+//
+//            if compiledView.hasSession {
+//                return (try! compiledView.generateSession(variables), nil)
+//            }
+//            else {
+//                let view = try! compiledView.generateView(variables)
+//                return (wrapView ? Session(value: ["views": [view]]) : nil, view)
+//            }
+//        }
+//
+//        return (nil, nil)
+//    }
     
 //    LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)])
 //    LookupNode([VariableNode(bar), VariableNode(foo)])
@@ -228,7 +183,7 @@ public class Views {
         }
     }
     
-    func resolveEdge(_ edge:Edge) -> DataItem {
+    func resolveEdge(_ edge:Edge) throws -> DataItem {
         // TODO REFACTOR: implement
         throw "not implemented"
     }
@@ -255,6 +210,7 @@ public class Views {
                 print("Warning: No item found to get the property off")
             }
         default:
+            if let value = viewArguments[name] { return value }
             print("Warning: Unknown object to get the property off: \(name)")
         }
         
@@ -287,7 +243,7 @@ public class Views {
                 if value == nil {
                     // TODO parse [blah]
                     let message = "Exception: Invalid function call. Could not find"
-                    throw "\(message) \((node as? ExprVariableNode).name ?? "")"
+                    throw "\(message) \((node as? ExprVariableNode)?.name ?? "")"
                 }
             }
             
@@ -333,12 +289,12 @@ public class Views {
                 }
             }
             // .addresses[primary = true] || [0]
-            else if let node = node as? ExprLookupNode {
+            else if let _ = node as? ExprLookupNode {
                 // TODO REFACTOR: parse and query
             }
             
             if let edge = value as? Edge {
-                value = resolveEdge(edge)
+                value = try resolveEdge(edge)
             }
         }
         
@@ -365,14 +321,14 @@ public class Views {
         return value
     }
     
-    func executeFunction (lookup: ExprLookupNode, args:[Any], viewArguments:ViewArguments) throws -> Any {
+    func executeFunction(lookup: ExprLookupNode, args:[Any], viewArguments:ViewArguments) throws -> Any {
         let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
         if let f = f as? ([Any]) -> Any {
             return f(args) as Any
         }
     }
     
-    func getParsedDefinition(_ viewDef:SessionViewDefinition) throws -> ViewSelector? {
+    func getParsedDefinition(_ viewDef:ViewDSLDefinition) throws -> ViewSelector? {
         let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")
         if let cached = cached as? ViewDefinitionParser {
             return try cached.parse().first
@@ -399,21 +355,21 @@ public class Views {
             ? main.sessions.currentSession.currentView
             : sessionView!
         
-        let cascadingView = CascadingView.fromSessionView(viewFromSession, main)
+        let cascadingView = try CascadingView.fromSessionView(viewFromSession, in: main)
         
         // TODO REFACTOR: move these to a better place (main??)
         
         // turn off editMode when navigating
         if main.sessions.currentSession.editMode == true {
-            try! realm.write {
+            realmWriteIfAvailable(realm) {
                 main.sessions.currentSession.editMode = false
             }
         }
         
         // hide filterpanel if view doesnt have a button to open it
         if main.sessions.currentSession.showFilterPanel {
-            if cascadingView.filterButtons.filter({ $0.actionName == .toggleFilterPanel }).count == 0 {
-                try! realm.write {
+            if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
+                realmWriteIfAvailable(realm) {
                     main.sessions.currentSession.showFilterPanel = false
                 }
             }
@@ -422,46 +378,104 @@ public class Views {
         return cascadingView
     }
     
+    public func fetchDefinitions(_ selector:String = "", type:String? = nil,
+                                   domain:String? = nil) -> [ViewDSLDefinition] {
+        
+        let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
+            + (domain != nil  ? "and domain = '\(domain!)" : "")
+        
+        return main!.realm.objects(ViewDSLDefinition.self)
+            .filter(filter)
+            .map({ (def) -> ViewDSLDefinition in def }) // Convert to normal Array
+    }
+    
     // TODO: Refactor: Consider caching cascadingView based on the type of the item
-    public func renderItemCell(_ item:DataItem, _ rendererNames: [String],
+    public func renderItemCell(_ item:DataItem, _ rendererNames: [String] = [],
                                _ viewOverride: String? = nil,
-                               _ viewArguments: ViewArguments? = nil) throws -> UIElementView {
+                               _ viewArguments: ViewArguments = ViewArguments()) throws -> UIElementView {
         
         guard let main = self.main else {
             throw "Exception: Main is not defined in views"
         }
+        
+        func searchForRenderer(in viewDefinition:ViewDSLDefinition) throws -> Bool {
+            let parsed = try main.views.getParsedDefinition(viewDefinition)
+            for def in parsed?["renderDefinitions"] as? [ViewRendererDefinition] ?? [] {
+                for name in rendererNames {
+                    
+                    // TODO: Should this first search for the first renderer everywhere
+                    //       before trying the second renderer?
+                    if let renderDef = def[name] as? ViewRendererDefinition, renderDef["children"] != nil {
+                        cascadeStack.append(renderDef)
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+        
+        var cascadeStack:[ViewSelector] = []
 
-        // TODO: If there is a view override, find it, otherwise
-        if viewOverride != nil { throw "View Override Not Implemented" }
-
-        // Create a new view
-        let cascadingView = CascadingRenderConfig(cascadeStack: <#T##[[String : Any]]#>, viewArguments: <#T##ViewArguments#>)
-
-        let searchOrder = ["defaults", "user"]
-        let needles = ["{[type:*]}", "{[type:\(item.genericType)]}"]
-
-        // Find views based on datatype
-        for needle in needles {
-            for key in searchOrder {
-                if let view = getSessionView(self.defaultViews[key]![needle]) {
-                    cascadingView.merge(view) // TODO Refactor: can this be optimized to only pick the top-most renderDescription?
+        // If there is a view override, find it, otherwise
+        if let viewOverride = viewOverride {
+            if let viewDefinition = main.views.fetchDefinitions("\(viewOverride)").first {
+                if viewDefinition.type == "renderer" {
+                    if let parsed = try main.views.getParsedDefinition(viewDefinition) {
+                        if parsed["children"] != nil { cascadeStack.append(parsed) }
+                        else {
+                            throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
+                        }
+                    }
+                    else {
+                        throw "Exception: View definition is missing: \(viewOverride)"
+                    }
+                }
+                else if viewDefinition.type == "view" {
+                    _ = try searchForRenderer(in: viewDefinition)
+                }
+                else {
+                    throw "Exception: incompatible view type of \(viewDefinition.type ?? ""), expected renderer or view"
+                }
+            }
+            else {
+                throw "Exception: Could not find view to override: \(viewOverride)"
+            }
+        }
+        else {
+            // Find views based on datatype
+            outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
+                for key in ["user", "defaults"] {
+                    
+                    if let viewDefinition = main.views.fetchDefinitions(needle, domain:key).first {
+                        if try searchForRenderer(in: viewDefinition) { break outerLoop }
+                    }
                 }
             }
         }
-
-        // Find the first cascaded renderer for the type and render the item
-        for name in rendererNames {
-            if let _ = cascadingView.renderConfigs.objectSchema[name],
-               let renderConfig = cascadingView.renderConfigs[name] as? RenderConfig {
-                return renderConfig.render(item: item, part: name, variables: variables ?? [:])
-                                                    // Refactor: look at how variables is passed
-            }
-            else if let _ = cascadingView.renderConfigs.virtual?.renderDescription?[name] {
-                return cascadingView.renderConfigs.virtual!
-                    .render(item: item, part: name, variables: variables ?? [:])
+        
+        // If we cant find a way to render using one of the views,
+        // then find a renderer for one of the renderers
+        if cascadeStack.count == 0 {
+            for name in rendererNames {
+                for key in ["user", "defaults"] {
+                    if let viewDefinition = main.views.fetchDefinitions("[renderer = \(name)]", domain:key).first {
+                        if let parsed = try main.views.getParsedDefinition(viewDefinition) {
+                            if parsed["children"] != nil { cascadeStack.append(parsed) }
+                        }
+                    }
+                }
             }
         }
+                        
+        if cascadeStack.count == 0 {
+            throw "Exception: Unable to find a way to render this element: \(item.genericType)"
+        }
         
-        return UIElementView(UIElement(), item, variables ?? [:])
+        // Create a new view
+        let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
+
+        // Return the rendered UIElements in a UIElementView
+        return cascadingRenderConfig.render(item: item)
+//        return UIElementView(UIElement(), item, variables ?? [:])
     }
 }

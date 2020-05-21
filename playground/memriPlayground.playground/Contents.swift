@@ -3,18 +3,8 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-class Action {
-    var defaults:[String:Any] { return [:] }
-    
-    init() {
-        print(defaults)
-    }
-}
+let x:[String:Any] = [:]
 
-class Foo : Action {
-    override var defaults:[String:Any] {[
-        "test": true
-    ]}
+if (x["foo"] == nil) {
+    print("bar")
 }
-
-let x = Foo()

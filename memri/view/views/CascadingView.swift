@@ -110,16 +110,15 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-    
-    
 //    var renderer: Renderer? = nil // TODO
 //    var rendererView: AnyView? = nil // TODO
+    
+    private let main:Main
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] { return (x as! CascadingRenderConfig) }
         
-        if let renderDefinition = cache.realm.objects(RenderDefinition.self)
-            .filter("selector = '[renderer = \(activeRenderer)]'").first {
+        if let renderDefinition = main.views.fetchDefinitions("[renderer = \(activeRenderer)]").first {
             
             if let RenderConfigType = globalRenderers!.allConfigTypes[activeRenderer] {
                 let renderConfig = RenderConfigType.init(
@@ -211,10 +210,8 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    private let cache:Cache
-    
-    init(_ ch:Cache, sessionView:SessionView, cascadeStack:[ViewSelector]){
-        self.cache = ch
+    init(_ main:Main, sessionView:SessionView, cascadeStack:[ViewSelector]){
+        self.main = main
         self.sessionView = sessionView
         self.cascadeStack = cascadeStack
     }
@@ -250,8 +247,8 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    public class func fromSessionView(_ sessionView:SessionView, main:Main) throws -> CascadingView {
-        var cascadeStack:[[String:Any]] = [main.views.getParsedDefinition(sessionView.viewDefinition)]
+    public class func fromSessionView(_ sessionView:SessionView, in main:Main) throws -> CascadingView {
+        var cascadeStack:[ViewSelector] = [main.views.getParsedDefinition(sessionView.viewDefinition)]
         let viewArguments = sessionView.viewArguments
         var isList = true
         var type = ""
@@ -293,9 +290,7 @@ public class CascadingView: Cascadable, ObservableObject {
         for needle in needles {
             for key in ["user", "defaults"] {
                 
-                if let sessionViewDef = main.realm.objects(SessionViewDefinition.self)
-                    .filter("selector = '\(needle)' and domain = '\(key)").first {
-                    
+                if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
                     cascadeStack.append(main.views.getParsedDefinition(sessionViewDef))
                 }
             }

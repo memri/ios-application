@@ -15,30 +15,11 @@ public class SessionsDefinition: DataItem {
 
 public class SessionDefinition: DataItem {
     @objc dynamic var selector: String? = nil
-    let views = RealmSwift.List<SessionViewDefinition>()
+    let views = RealmSwift.List<ViewDSLDefinition>()
 }
 
-public class BaseDefinition: DataItem {
+public class ViewDSLDefinition: DataItem {
+    @objc dynamic var type: String? = nil
     @objc dynamic var selector: String? = nil
     @objc dynamic var definition: String? = nil
-}
-
-public class SessionViewDefinition: BaseDefinition {
-    
-}
-
-public class RenderDefinition: BaseDefinition {
-}
-
-public class ColorDefinition: BaseDefinition {
-}
-
-public class StyleDefinition: BaseDefinition {
-}
-
-public class LanguageDefinition: BaseDefinition {
-}
-
-public class ViewParseContext {
-    // subscript
 }

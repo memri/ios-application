@@ -19,9 +19,10 @@ public protocol ViewNode: CustomStringConvertible {
 
 public class ViewSelector:ViewNode {
     let name:String?
+    let selector:String?
     
-    subscript(propName:String) -> Any {
-        return parsed[propName] as Any
+    subscript(propName:String) -> Any? {
+        return parsed[propName]
     }
     
 //    var unparsed:String = ""
@@ -47,7 +48,8 @@ public class ViewSelector:ViewNode {
         return "Selector(\(name ?? ""), context:\(serializeDict())"
     }
     
-    init(_ name:String? = nil) {
+    init(_ selector:String, _ name:String? = nil) {
+        self.selector = selector
         self.name = name
     }
 }
@@ -88,10 +90,10 @@ public class ViewDefinition:ViewSelector {
         }
     }
     
-    init(name:String? = nil, type:String? = nil, query:ExprNode? = nil) {
+    init(_ selector:String, name:String? = nil, type:String? = nil, query:ExprNode? = nil) {
         self.type = type
         self.query = query
         
-        super.init(name)
+        super.init(selector, name)
     }
 }
