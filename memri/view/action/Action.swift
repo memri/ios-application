@@ -113,8 +113,8 @@ public enum ActionName: String, CaseIterable {
         switch self {
         case .back:
             return ActionBack.self
-        case .add:
-            return ActionAdd.self
+        case .addDataItem:
+            return ActionAddDataItem.self
         case .openView:
             return ActionOpenView.self
         case .openDynamicView:
@@ -203,7 +203,7 @@ class ActionBack : Action {
         
     }
 }
-class ActionAdd : Action {
+class ActionAddDataItem : Action {
     private var defaults:[String:Any] {[
         "icon": "plus",
         "argumentTypes": [DataItemFamily.self],
@@ -212,8 +212,19 @@ class ActionAdd : Action {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec() -> Any {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionAddDataItem.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Copy template
+        let copy = main.cache.duplicate(template)
         
+        // Add the new item to the cache
+        _ = try! main.cache.addToCache(copy)
+        
+        // Open view with the now managed copy
+        ActionOpenView.exec(main, [copy])
     }
 }
 class ActionOpenView : Action {
