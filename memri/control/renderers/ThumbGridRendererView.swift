@@ -33,12 +33,12 @@ struct ThumbGridRendererView: View {
 //    }
     
     var renderConfig: CascadingThumbnailConfig {
-        if self.main.computedView.renderConfigs["thumbnail"] == nil {
+        if self.main.cascadingView.renderConfigs["thumbnail"] == nil {
             print ("Warning: Using default render config for thumbnail.grid")
         }
         
         // TODO Refactor: How can we try other render configs?? e.g. ThumbnailConfig
-        return self.main.computedView.renderConfigs["thumbnail"] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+        return self.main.cascadingView.renderConfigs["thumbnail"] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {
@@ -113,10 +113,10 @@ struct ThumbGridRendererView: View {
         let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
         
         return VStack {
-            if main.computedView.resultSet.count == 0 {
+            if main.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.computedView.emptyResultText)
+                    Text(self.main.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)

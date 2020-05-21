@@ -92,7 +92,7 @@ public struct TopNavigation: View {
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack {
                 Button(action: { self.showingTitleActions = true }) {
-                    Text(main.computedView.title)
+                    Text(main.cascadingView.title)
                         .font(.headline)
                         .foregroundColor(Color(hex: "#333"))
                 }
@@ -171,11 +171,11 @@ public struct TopNavigation: View {
                     
                     // TODO this should not be a setting but a user defined view that works on all
                     if self.main.item != nil || self.main.settings.getBool("user/general/gui/showEditButton") != false {
-                        Action(action: main.computedView.editActionButton)
+                        Action(action: main.cascadingView.editActionButton)
                             .font(Font.system(size: 19, weight: .semibold))
                     }
                     
-                    Action(action: main.computedView.actionButton)
+                    Action(action: main.cascadingView.actionButton)
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {

@@ -36,11 +36,11 @@ struct ThumbnailRendererView: View {
     var name: String="thumbnail"
     
     var renderConfig: CascadingThumbnailConfig {
-        if self.main.computedView.renderConfigs[name] == nil {
+        if self.main.cascadingView.renderConfigs[name] == nil {
             print ("Warning: Using default render config for thumbnail")
         }
         
-        return self.main.computedView.renderConfigs[name] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+        return self.main.cascadingView.renderConfigs[name] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {
@@ -99,10 +99,10 @@ struct ThumbnailRendererView: View {
         let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
         
         return VStack {
-            if main.computedView.resultSet.count == 0 {
+            if main.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.computedView.emptyResultText)
+                    Text(self.main.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)

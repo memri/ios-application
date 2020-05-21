@@ -19,19 +19,19 @@ struct ContextPaneForground: View {
     var body: some View {
         VStack(alignment: .leading) {
             VStack (alignment: .leading) {
-                Text(main.computedView.title) // TODO make this generic
+                Text(main.cascadingView.title) // TODO make this generic
                     .font(.system(size: 23, weight: .regular, design: .default))
                     .fontWeight(.bold)
                     .opacity(0.75)
                     .padding(.horizontal, paddingLeft)
                     .padding(.vertical, 5)
-                Text(main.computedView.subtitle)
+                Text(main.cascadingView.subtitle)
                     .font(.body)
                     .opacity(0.75)
                     .padding(.horizontal, paddingLeft)
                 
                 HStack {
-                    ForEach (self.main.computedView.contextButtons) { actionItem in
+                    ForEach (self.main.cascadingView.contextButtons) { actionItem in
                         Action(action: actionItem)
                     }
                 }
@@ -58,7 +58,7 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0){
-                ForEach (self.main.computedView.actionItems) { actionItem in
+                ForEach (self.main.cascadingView.actionItems) { actionItem in
                     Button(action:{
                         self.main.executeAction(actionItem)
                     }) {
@@ -83,7 +83,7 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0){
-                ForEach (self.main.computedView.navigateItems) { navigateItem in
+                ForEach (self.main.cascadingView.navigateItems) { navigateItem in
                     Button(action:{
                         self.main.executeAction(navigateItem)
                     }) {
@@ -108,7 +108,7 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 15)
             VStack(alignment: .leading, spacing: 10){
-                ForEach (self.main.computedView.resultSet.singletonItem!.labels) { labelItem in
+                ForEach (self.main.cascadingView.resultSet.singletonItem!.labels) { labelItem in
                     Button(action:{
                         self.main.executeAction(self.openLabelViewAction, labelItem)
                     }) {

@@ -66,7 +66,7 @@ class InfoState: Hashable {
     var displayMessage: String = ""
     var messageCount: Int = 1
     var type: InfoType = .info
-//    var computedView: ComputedView
+//    var cascadingView: ComputedView
     
     init (displayMessage m:String) {
         displayMessage = m
@@ -96,7 +96,7 @@ class ErrorHistory: ObservableObject {
     
     var log = [InfoState]()
     
-    func info(_ message:String/*, _ computedView:ComputedView*/){
+    func info(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -104,12 +104,12 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(InfoState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
     }
     
-    func warn(_ message:String/*, _ computedView:ComputedView*/){
+    func warn(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -117,14 +117,14 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(WarnState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
         
         showErrorConsole = true
     }
     
-    func error(_ message:String/*, _ computedView:ComputedView*/){
+    func error(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -132,7 +132,7 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(ErrorState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
         

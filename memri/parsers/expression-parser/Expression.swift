@@ -11,8 +11,8 @@ import Foundation
 public class Expression: CustomStringConvertible {
     let code: String
     let startInStringMode: Bool
-    private let lookup: (ExprLookupNode) throws -> Any
-    private let execFunc: (ExprLookupNode, [Any?]) throws -> Any
+    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
+    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
     
     private var interpreter:ExprInterpreter? = nil
     private var parsed = false
@@ -22,8 +22,8 @@ public class Expression: CustomStringConvertible {
     }
     
     init(_ code:String, startInStringMode:Bool,
-           lookup: @escaping (ExprLookupNode) throws -> Any,
-           execFunc: @escaping (ExprLookupNode, [Any?]) throws -> Any) {
+           lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
+           execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
         self.code = code
         self.startInStringMode = startInStringMode

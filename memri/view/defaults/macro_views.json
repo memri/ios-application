@@ -3,9 +3,9 @@
         "name": "filter-starred",
         "fromTemplate": "{view}",
         "queryOptions": {
-            "query": "{computedView.queryOptions.query} AND starred = true"
+            "query": "{cascadingView.queryOptions.query} AND starred = true"
         },
-        "title": "Starred {computedView.title}"
+        "title": "Starred {cascadingView.title}"
     },
 
     {

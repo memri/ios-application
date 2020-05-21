@@ -408,7 +408,7 @@ private class ActionShowStarred : Action, ActionExec {
         showStarred(starButton: action)
         
         // If button is active lets create a filtered view
-        if !self.computedView.hasState(starButton.actionStateName!) {
+        if !self.cascadingView.hasState(starButton.actionStateName!) {
         
             // Open named view 'showStarred'
             openView("filter-starred", ["stateName": starButton.actionStateName as Any])

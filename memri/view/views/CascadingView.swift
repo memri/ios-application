@@ -10,8 +10,7 @@ import Foundation
 import SwiftUI
 
 public class Cascadable {
-    var cascadeStack = [[String:Any]]()
-//    let cascadeStack = [BaseDefinition]()
+    var cascadeStack = [ViewSelector]()
     var localCache = [String:Any]()
     
     // TODO execute x when Expression
@@ -214,7 +213,7 @@ public class CascadingView: Cascadable, ObservableObject {
     
     private let cache:Cache
     
-    init(_ ch:Cache, _ sessionView:SessionView, _ cascadeStack:[[String:Any]]){
+    init(_ ch:Cache, sessionView:SessionView, cascadeStack:[ViewSelector]){
         self.cache = ch
         self.sessionView = sessionView
         self.cascadeStack = cascadeStack
@@ -236,19 +235,22 @@ public class CascadingView: Cascadable, ObservableObject {
 //        }
 //    }
     
-    public func getPropertyValue(_ name:String) -> Any {
-        let type: Mirror = Mirror(reflecting:self)
+    subscript(propName:String) -> Any {
+        get {
+            let type: Mirror = Mirror(reflecting:self)
 
-        for child in type.children {
-            if child.label! == name || child.label! == "_" + name {
-                return child.value
+            for child in type.children {
+                if child.label! == name || child.label! == "_" + name {
+                    return child.value
+                }
             }
+            
+            let x:String? = nil
+            return x as Any
         }
-        
-        return ""
     }
     
-    public class func fromSessionView(_ sessionView:SessionView, _ main:Main) throws -> CascadingView {
+    public class func fromSessionView(_ sessionView:SessionView, main:Main) throws -> CascadingView {
         var cascadeStack:[[String:Any]] = [main.views.getParsedDefinition(sessionView.viewDefinition)]
         let viewArguments = sessionView.viewArguments
         var isList = true

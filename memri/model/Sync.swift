@@ -45,7 +45,7 @@ class SyncState: Object, Codable {
  Sync notes:
     - It probably needs a hook for Main to update the view when data that is being displayed is updated
         - How does Main know which data is displayed?
-        - Because the computedView.resultSet would be updated
+        - Because the cascadingView.resultSet would be updated
         - Perhaps it's best to put an event on the resultSet??
     - It should also ask the server if there are any changes since the last check time
     - It should also periodically look at the updated sync states and update the related objects

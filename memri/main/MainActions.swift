@@ -1,8 +1,6 @@
 //
 //  MainActions.swift
-//  memri
 //
-//  Created by Koen van der Veen on 06/04/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -13,7 +11,7 @@ extension Main {
     
     /*
        TODO: pass options to openView and eventually to where computeView is called
-             add options to computedView before it is assigned to main
+             add options to cascadingView before it is assigned to main
              add variable support to compiledView parser and variable lookup
     
              also include openSession below, this requires variables to be on session
@@ -50,7 +48,7 @@ extension Main {
         var args = [Any]()
         for arg in action.arguments {
             if let expr = arg as? Expression {
-                args.append(expr.execute())
+                args.append(try expr.execute(computedView.viewArguments))
             }
             else {
                 args.append(arg)
@@ -58,7 +56,7 @@ extension Main {
         }
         
         // Last element of arguments array is the context data item
-        args.append(context ?? computedView.resultSet.singletonItem as Any)
+        args.append(context ?? cascadingView.resultSet.singletonItem as Any)
         
         if action.opensView {
             if let action = action as? ActionExec {
@@ -72,7 +70,7 @@ extension Main {
             
             // Track state of the action and toggle the state variable based on actionStateName
             // TODO Refactor: it should be the new way of doing selection
-            if computedView.selection.count == 0 && action.hasState, let binding = action.binding {
+            if cascadingView.selection.count == 0 && action.hasState, let binding = action.binding {
                 binding.toggleBool()
             }
             
@@ -96,7 +94,7 @@ extension Main {
 // TODO Refactor: move to Expression
 //func toggleState(_ statePattern:String, _ itm:DataItem? = nil) {
 //    // Make sure we have an item update
-//    let item = itm ?? computedView.resultSet.singletonItem
+//    let item = itm ?? cascadingView.resultSet.singletonItem
 //
 //    // Parse the state pattern
 //    let (objectToUpdate, propToUpdate) = CompiledView.parseExpression(statePattern, "view")
@@ -116,13 +114,13 @@ extension Main {
 //            fallthrough
 //        case "session":
 //            self.currentSession[propToUpdate] = !(self.currentSession[propToUpdate] as! Bool)
-//        case "computedView":
-//            self.computedView.toggleState(propToUpdate)
+//        case "cascadingView":
+//            self.cascadingView.toggleState(propToUpdate)
 //        case "sessionView":
 //            self.currentSession.currentView.toggleState(propToUpdate)
 //            setComputedView()
 //        case "view":
-//            self.computedView.toggleState(propToUpdate)
+//            self.cascadingView.toggleState(propToUpdate)
 //            self.currentSession.currentView.toggleState(propToUpdate)
 //        case "dataItem":
 //            if let item = item {
@@ -142,7 +140,7 @@ extension Main {
 //
 //func hasState(_ statePattern:String, _ itm:DataItem? = nil) -> Bool {
 //    // Make sure we have an item update
-//    let item = itm ?? computedView.resultSet.singletonItem
+//    let item = itm ?? cascadingView.resultSet.singletonItem
 //
 //    // Parse the state pattern
 //    let (objectToQuery, propToQuery) = CompiledView.parseExpression(statePattern, "view")
@@ -157,12 +155,12 @@ extension Main {
 //        fallthrough
 //    case "session":
 //        return self.currentSession[propToQuery] as? Bool ?? false // TODO REfactor: Error handling
-//    case "computedView":
-//        return self.computedView.hasState(propToQuery)
+//    case "cascadingView":
+//        return self.cascadingView.hasState(propToQuery)
 //    case "sessionView":
 //        return self.currentSession.currentView.hasState(propToQuery)
 //    case "view":
-//        return self.computedView.hasState(propToQuery)
+//        return self.cascadingView.hasState(propToQuery)
 //    case "dataItem":
 //        if let item = item {
 //            return item[propToQuery] as? Bool ?? false  // TODO REfactor: Error handling

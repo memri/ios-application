@@ -16,9 +16,9 @@ struct Search: View {
         VStack{
             Divider().background(Color(hex: "#efefef"))
             HStack{
-                TextField("type your search query here", text: $main.computedView.filterText)
+                TextField("type your search query here", text: $main.cascadingView.filterText)
                 
-                ForEach(self.main.computedView.filterButtons){ filterButton in
+                ForEach(self.main.cascadingView.filterButtons){ filterButton in
                     Action(action: filterButton)
                         .font(Font.system(size: 20, weight: .medium))
                 }

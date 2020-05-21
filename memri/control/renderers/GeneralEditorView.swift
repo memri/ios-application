@@ -89,7 +89,7 @@ struct GeneralEditorView: View {
     var name: String = "generalEditor"
     
     var renderConfig: GeneralEditorConfig {
-        return self.main.computedView.renderConfigs.generalEditor ?? GeneralEditorConfig()
+        return self.main.cascadingView.renderConfigs.generalEditor ?? GeneralEditorConfig()
     }
     
     func getGroups(_ item:DataItem) -> [String:[String]]? {
@@ -131,7 +131,7 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        let item = main.computedView.resultSet.singletonItem!
+        let item = main.cascadingView.resultSet.singletonItem!
         let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)

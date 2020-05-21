@@ -295,7 +295,7 @@ public class Cache {
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
                 self.scheduleUIUpdate!() { main in
-                    return main.computedView.resultSet.queryOptions == resultSet.queryOptions
+                    return main.cascadingView.resultSet.queryOptions == resultSet.queryOptions
                 }
             })
             

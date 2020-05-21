@@ -1,8 +1,6 @@
 //
 //  ObjectCache.swift
-//  memri
 //
-//  Created by Ruben Daniels on 5/18/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -11,62 +9,39 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-// TODO generalize using Any and one dict for cache (add namespace support)
-// TODO wrap all items in a class, so that they are stored by copy i.e. class CacheItem
+// TODO using NSCache for OS level purging of cache when memory is needed
 public class InMemoryObjectCache {
-    private var stringCache:[String:String] = [:]
-    private var uiImageCache:[String:UIImage] = [:]
-    private var dataCache:[String:Data] = [:]
-    private var guiElementCache:[String:[String:UIElement]] = [:]
-    private var dictStringArrayCache:[String:[String:[String]]] = [:]
-    private var dictAnyCache:[String:[String:Any]] = [:]
+    private var cache = [String:CacheItem]()
     
     public func set<T>(_ key:String, _ value:T) throws {
-        if T.self == UIImage.self {
-            uiImageCache[key] = (value as! UIImage)
+        if cache[key] == nil {
+            cache[key] = CacheItem(value)
         }
-        else if T.self == String.self {
-            stringCache[key] = (value as! String)
-        }
-        else if T.self == Data.self {
-            dataCache[key] = (value as! Data)
-        }
-        else if T.self == [String:[String]].self {
-            dictStringArrayCache[key] = (value as! [String:[String]])
-        }
-        else if T.self == [String:Any].self {
-            dictAnyCache[key] = (value as! [String:Any])
-        }
-        else if T.self == [String:UIElement].self {
-            guiElementCache[key] = (value as! [String:UIElement])
+        else if let _ = cache[key]?.value as? T {
+            cache[key]?.value = value
         }
         else {
-            throw "Exception: Could not parse the type to write to \(key)"
+            throw "Exception: Can not set cache value to differen type: \(key)"
         }
     }
     
-    public func get<T>(_ key:String) throws -> T? {
-        if T.self == UIImage.self {
-            return uiImageCache[key] as? T
+    public func get(_ key:String) throws -> Any {
+        if cache[key] == nil {
+            return cache[key] as Any
         }
-        else if T.self == String.self {
-            return stringCache[key] as? T
-        }
-        else if T.self == Data.self {
-            return dataCache[key] as? T
-        }
-        else if T.self == [String:[String]].self {
-            return dictStringArrayCache[key] as? T
-        }
-        else if T.self == [String:Any].self {
-            return dictAnyCache[key] as? T
-        }
-        else if T.self == [String:UIElement].self {
-            return guiElementCache[key] as? T
-        }
-        else {
-            throw "Exception: Could not parse the type to read from \(key)"
-        }
+        return cache[key]?.value as Any
+    }
+    
+    class func set<T>(_ key:String, _ value:T) throws {
+        try globalInMemoryObjectCache.set(key, value)
+    }
+    class func get(_ key:String) throws -> Any {
+        try globalInMemoryObjectCache.get(key)
     }
 }
+public class CacheItem {
+    var value: Any
+    init(_ value:Any) { self.value = value }
+}
+
 var globalInMemoryObjectCache = InMemoryObjectCache()

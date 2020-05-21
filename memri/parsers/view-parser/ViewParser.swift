@@ -28,12 +28,12 @@ class ViewParser {
     var index = 0
     var lastToken:ViewToken? = nil
     
-    private let lookup: (ExprLookupNode) throws -> Any
-    private let execFunc: (ExprLookupNode, [Any?]) throws -> Any
+    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
+    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
 
     init(_ tokens: [ViewToken],
-         lookup: @escaping (ExprLookupNode) throws -> Any,
-         execFunc: @escaping (ExprLookupNode, [Any?]) throws -> Any) {
+         lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
+         execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
         self.tokens = tokens
         self.lookup = lookup
@@ -312,16 +312,15 @@ class ViewParser {
                         showTitle: options["showTitle"] as? Bool ?? false,
                         binding: options["binding"] as? Expression,
                         hasState: options["hasState"] as? Bool ?? false,
-                        color: options["color"] as? String ?? "",
-                        backgroundColor: options["backgroundColor"] as? String ?? "",
-                        activeColor: options["activeColor"] as? String ?? "",
-                        inactiveColor: options["inactiveColor"] as? String ?? "",
-                        activeBackgroundColor: options["activeBackgroundColor"] as? String ?? "",
-                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? String ?? "",
+                        color: options["color"] as? Color,
+                        backgroundColor: options["backgroundColor"] as? Color,
+                        activeColor: options["activeColor"] as? Color,
+                        inactiveColor: options["inactiveColor"] as? Color,
+                        activeBackgroundColor: options["activeBackgroundColor"] as? Color,
+                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? Color,
                         arguments: options["arguments"] as? [Any] ?? [],
                         renderAs: options["renderAs"] as? String ?? "",
-                        hasState: options["hasState"] as? Bool ?? false,
-                        
+                        hasState: options["hasState"] as? Bool ?? false
                     ))
                 }
                 else {

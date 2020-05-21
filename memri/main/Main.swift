@@ -26,7 +26,7 @@ public class Main: ObservableObject {
     /// The current session that is active in the application
     @Published public var currentSession: Session = Session()
  
-    @Published public var computedView: CascadingView
+    @Published public var cascadingView: CascadingView
  
     @Published public var sessions: Sessions
  
@@ -48,7 +48,7 @@ public class Main: ObservableObject {
  
     public var items: [DataItem] {
         get {
-            self.computedView.resultSet.items
+            self.cascadingView.resultSet.items
         }
         set {
             // Do nothing
@@ -58,7 +58,7 @@ public class Main: ObservableObject {
  
     public var item: DataItem? {
         get {
-            self.computedView.resultSet.singletonItem
+            self.cascadingView.resultSet.singletonItem
         }
         set {
             // Do nothing
@@ -123,16 +123,16 @@ public class Main: ObservableObject {
             }
             
             // Calculate cascaded view
-            let computedView = try! self.views.createCascadingView) // TODO handle errors better
+            let cascadingView = try! self.views.createCascadingView) // TODO handle errors better
             
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
             
             // Set the newly computed view
-            self.computedView = computedView
+            self.cascadingView = cascadingView
             
             // Load data in the resultset of the computed view
-            try! self.computedView.resultSet.load { (error) in
+            try! self.cascadingView.resultSet.load { (error) in
                 if error != nil {
                     print("Error: could not load result: \(error!)")
                 }
@@ -165,7 +165,7 @@ public class Main: ObservableObject {
     }
     
     private func maybeLogRead(){
-        if let item = self.computedView.resultSet.singletonItem{
+        if let item = self.cascadingView.resultSet.singletonItem{
             realmWriteIfAvailable(realm) {
                 self.realm.add(AuditItem(action: "read", appliesTo: [item]))
             }
@@ -173,14 +173,14 @@ public class Main: ObservableObject {
     }
     
     private func maybeLogUpdate(){
-        if self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession ?? false{
-            if let fields = self.computedView.resultSet.singletonItem?.syncState?.updatedFields{
+        if self.cascadingView.resultSet.singletonItem?.syncState?.changedInThisSession ?? false{
+            if let fields = self.cascadingView.resultSet.singletonItem?.syncState?.updatedFields{
                 realmWriteIfAvailable(realm) {
                     // TODO serialize
-                    let item = self.computedView.resultSet.singletonItem!
+                    let item = self.cascadingView.resultSet.singletonItem!
                     self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)), action: "update",
                                              appliesTo: [item]))
-                    self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession = false
+                    self.cascadingView.resultSet.singletonItem?.syncState?.changedInThisSession = false
                 }
             }
         }
@@ -266,7 +266,7 @@ public class Main: ObservableObject {
         installer: Installer,
         sessions: Sessions,
         views: Views,
-        computedView: CascadingView,
+        cascadingView: CascadingView,
         navigation: MainNavigation,
         renderers: Renderers
     ) {
@@ -278,7 +278,7 @@ public class Main: ObservableObject {
         self.installer = installer
         self.sessions = sessions
         self.views = views
-        self.computedView = computedView
+        self.cascadingView = cascadingView
         self.navigation = navigation
         self.renderers = renderers
     }
@@ -298,7 +298,7 @@ public class ProxyMain: Main {
             installer: main.installer,
             sessions: Sessions(main.realm),
             views: views,
-            computedView: main.computedView,
+            cascadingView: main.cascadingView,
             navigation: main.navigation,
             renderers: main.renderers
         )
@@ -336,7 +336,7 @@ public class RootMain: Main {
             installer: Installer(realm),
             sessions: Sessions(realm),
             views: Views(realm),
-            computedView: CascadingView(cache),
+            cascadingView: CascadingView(cache),
             navigation: MainNavigation(realm),
             renderers: Renderers()
         )

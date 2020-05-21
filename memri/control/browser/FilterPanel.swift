@@ -25,9 +25,9 @@ struct FilterPanel: View {
     private func allOtherFields() -> [String] {
         var list:[String] = []
         
-        if let item = self.main.computedView.resultSet.items.first {
-            var excludeList = self.main.computedView.sortFields
-            excludeList.append(self.main.computedView.queryOptions.sortProperty ?? "")
+        if let item = self.main.cascadingView.resultSet.items.first {
+            var excludeList = self.main.cascadingView.sortFields
+            excludeList.append(self.main.cascadingView.queryOptions.sortProperty ?? "")
             excludeList.append("uid")
             excludeList.append("deleted")
             
@@ -45,7 +45,7 @@ struct FilterPanel: View {
     private func toggleAscending() {
         try! self.main.realm.write {
             self.main.currentSession.currentView.queryOptions?.sortAscending.value
-                = !(self.main.computedView.queryOptions.sortAscending.value ?? true)
+                = !(self.main.cascadingView.queryOptions.sortAscending.value ?? true)
         }
         self.main.scheduleComputeView()
     }
@@ -64,7 +64,7 @@ struct FilterPanel: View {
     }
     
     private func renderersAvailable() -> [(String, Renderer)] {
-        if let currentCategory = self.main.computedView.rendererName.split(separator: ".").first {
+        if let currentCategory = self.main.cascadingView.rendererName.split(separator: ".").first {
             return self.main.renderers.all.filter { (key, renderer) -> Bool in
                 return renderer.name.split(separator: ".").first == currentCategory
             }.sorted(by: { $0.1.order < $1.1.order })
@@ -73,7 +73,7 @@ struct FilterPanel: View {
     }
     
     private func isActive(_ renderer:Renderer) -> Bool {
-        return self.main.computedView.rendererName.split(separator: ".").first! == renderer.name
+        return self.main.cascadingView.rendererName.split(separator: ".").first! == renderer.name
     }
     
     var body: some View {
@@ -107,7 +107,7 @@ struct FilterPanel: View {
                         ForEach(renderersAvailable(), id:\.0) { (key, renderer:Renderer) in
                             Group {
                                 Button(action:{ self.main.executeAction(renderer) }) {
-                                    if self.main.computedView.rendererName == renderer.name {
+                                    if self.main.cascadingView.rendererName == renderer.name {
                                         Text(renderer.title ?? "Unnamed Renderer")
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
@@ -145,16 +145,16 @@ struct FilterPanel: View {
                         .padding(.bottom, 6)
                         .foregroundColor(Color(hex: "#434343"))
                     
-                    if (self.main.computedView.queryOptions.sortProperty != nil) {
+                    if (self.main.cascadingView.queryOptions.sortProperty != nil) {
                         Button(action:{ self.toggleAscending() }) {
-                            Text(self.main.computedView.queryOptions.sortProperty!)
+                            Text(self.main.cascadingView.queryOptions.sortProperty!)
                                 .foregroundColor(Color(hex: "#6aa84f"))
                                 .font(.system(size: 16, weight: .semibold, design: .default))
                                 .padding(.vertical, 2)
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             
                             // descending: "arrow.down"
-                            Image(systemName: self.main.computedView.queryOptions.sortAscending.value == false
+                            Image(systemName: self.main.cascadingView.queryOptions.sortAscending.value == false
                                 ? "arrow.down"
                                 : "arrow.up")
                                 .resizable()
@@ -168,8 +168,8 @@ struct FilterPanel: View {
                             .foregroundColor(Color(hex: "#efefef"))
                     }
                     
-                    ForEach(self.main.computedView.sortFields.filter {
-                        return self.main.computedView.queryOptions.sortProperty != $0
+                    ForEach(self.main.cascadingView.sortFields.filter {
+                        return self.main.cascadingView.queryOptions.sortProperty != $0
                     }, id:\.self) { fieldName in
                         Group {
                             Button(action:{ self.changeOrderProperty(fieldName) }) {

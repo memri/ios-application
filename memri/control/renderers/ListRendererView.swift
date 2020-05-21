@@ -45,7 +45,7 @@ struct ListRendererView: View {
     let deleteAction = Action(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
     var renderConfig: CascadingListConfig {
-        return self.main.computedView.renderConfigs[name] as? CascadingListConfig ?? CascadingListConfig()
+        return self.main.cascadingView.renderConfigs[name] as? CascadingListConfig ?? CascadingListConfig()
     }
     
     init() {
@@ -70,10 +70,10 @@ struct ListRendererView: View {
         }
         
         return VStack{
-            if main.computedView.resultSet.count == 0 {
+            if main.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.computedView.emptyResultText)
+                    Text(self.main.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)

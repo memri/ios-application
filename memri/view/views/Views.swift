@@ -64,39 +64,15 @@ public class Views {
     
  
     public func install() throws {
-        
         // Load the default views from the package
         try loadStandardViewSetIntoDatabase()
-        
-        // Load named views from the package
-        if let namedViews = try CompiledView.parseNamedViewList(jsonDataFromFile("named_views")) {
-            try realm.write {
-                for viewDef in namedViews {
-                    realm.create(SessionViewDefinition.self,
-                        value: ["selector": viewDef.name, "definition": viewDef.definition],
-                        update: .modified)
-                }
-            }
-        }
-        
-        // Load named views from the package
-        if let namedSessions = try CompiledView.parseNamedViewList(jsonDataFromFile("named_sessions")) {
-            try realm.write {
-                for sessionDef in namedSessions {
-                    realm.create(SessionDefinition.self,
-                        value: ["selector": sessionDef.name, "views": sessionDef.views.map {
-                            SessionViewDefinition(value: ["definition": $0])
-                        }],
-                        update: .modified)
-                }
-            }
-        }
     }
     
     
+    // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
         do {
-            let data = try jsonDataFromFile("views_from_server")
+            let strDef = try stringFromFile("views_from_server")
             let json = try JSONSerialization.jsonObject(with: data, options: [])
             
             guard let parsedObject = json as? [String: Any] else {
@@ -146,36 +122,36 @@ public class Views {
         }
     }
     
- 
-    public func getDynamicView (_ viewName:String) -> DynamicView? {
-        var dynamicView:DynamicView?
-        
-        // If a declaration is passed instead of a name create new DynamicView
-        if viewName.prefix(1) == "{" {
-            dynamicView = DynamicView(viewName)
-        }
-        // Otherwise load from the database the dynamic view with that name
-        else {
-            dynamicView = realm.objects(DynamicView.self).filter("name = '\(viewName)'").first
-        }
-        
-        return dynamicView
-    }
-    
- 
-    public func getCompiledView (_ viewName:String) -> CompiledView? {
-        // Find an already compiled view
-        if let compiledView = compiledViews[viewName] {
-            return compiledView
-        }
-        
-        // Otherwise generate it from a dynamic view
-        if let dynamicView = getDynamicView(viewName) {
-            return compileView(dynamicView)
-        }
-        
-        return nil
-    }
+//
+//    public func getDynamicView (_ viewName:String) -> DynamicView? {
+//        var dynamicView:DynamicView?
+//
+//        // If a declaration is passed instead of a name create new DynamicView
+//        if viewName.prefix(1) == "{" {
+//            dynamicView = DynamicView(viewName)
+//        }
+//        // Otherwise load from the database the dynamic view with that name
+//        else {
+//            dynamicView = realm.objects(DynamicView.self).filter("name = '\(viewName)'").first
+//        }
+//
+//        return dynamicView
+//    }
+//
+//
+//    public func getCompiledView (_ viewName:String) -> CompiledView? {
+//        // Find an already compiled view
+//        if let compiledView = compiledViews[viewName] {
+//            return compiledView
+//        }
+//
+//        // Otherwise generate it from a dynamic view
+//        if let dynamicView = getDynamicView(viewName) {
+//            return compileView(dynamicView)
+//        }
+//
+//        return nil
+//    }
     
  
     public func getSessionView (_ viewName:String,
@@ -264,15 +240,15 @@ public class Views {
         case "sessions": return main?.sessions
         case "currentSession": fallthrough
         case "session": return main?.currentSession
-        case "computedView": return main?.computedView
+        case "cascadingView": return main?.cascadingView
         case "sessionView": return main?.currentSession.currentView
-        case "view": return main?.computedView
+        case "view": return main?.cascadingView
         case "dataItem":
             // TODO Refactor into a variables/arguments object
             if let itemRef:DataItem = viewArguments["."] as? DataItem {
                 return itemRef
             }
-            else if let item = main?.computedView.resultSet.singletonItem {
+            else if let item = main?.cascadingView.resultSet.singletonItem {
                 return item
             }
             else {
@@ -285,44 +261,75 @@ public class Views {
         return nil
     }
     
-    // TODO:REFACTOR:Maybe add the viewArguments here to support property access?
-    func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments) -> Any? {
-        return lookupValueOfVariables (lookup: lookup, viewArguments:viewArguments, isFunction:false)
+    func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments) throws -> Any? {
+        return try lookupValueOfVariables (
+            lookup: lookup,
+            viewArguments:viewArguments,
+            isFunction:false
+        )
     }
     
-    func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments, isFunction:Bool = false) -> Any? {
+    func lookupValueOfVariables (lookup: ExprLookupNode,
+                                 viewArguments:ViewArguments,
+                                 isFunction:Bool = false) throws -> Any? {
         var value:Any? = nil
         var first = true
         
+        // TODO support language lookup: {$name}
+        // TOOD support viewArguments lookup: {name}
+        
+        var i = 0
         for node in lookup.sequence {
-            if isFunction && node == lookup.sequence.last {
-                value = (value as? DataItem).functions
+            i += 1
+            
+            if isFunction && i == lookup.sequence.count {
+                value = (value as? DataItem)?.functions
+                if value == nil {
+                    // TODO parse [blah]
+                    let message = "Exception: Invalid function call. Could not find"
+                    throw "\(message) \((node as? ExprVariableNode).name ?? "")"
+                }
             }
             
             if let node = node as? ExprVariableNode {
                 if first {
-                    value = getGlobalReference(node.name == "__DEFAULT__" ? "dataItem" : node.name, viewArguments:viewArguments)
+                    let name = node.name == "__DEFAULT__" ? "dataItem" : node.name
+                    value = getGlobalReference(name, viewArguments:viewArguments)
                     first = false
                 }
                 else {
                     if let value = value as? DataItem {
-                        if !value.objectSchema[node.name] {
+                        if value.objectSchema[node.name] == nil {
                             // TODO Warn
                             return nil
                         }
                     }
-                    else if let value = value as? RealmSwift.ListBase {
+                    else if let v = value as? RealmSwift.List<Edge> {
                         switch node.name {
-                        case "count": value = value.count
-                        case "first": value = value.first
-                        case "last": value = value.last
-                        case "sum": value = value.sum
-                        case "min": value = value.min
-                        case "max": value = value.max
+                        case "count": value = v.count
+                        case "first": value = v.first
+                        case "last": value = v.last
+//                        case "sum": value = v.sum
+                        case "min": value = v.min
+                        case "max": value = v.max
+                        default:
+                            // TODO Warn
+                            break
                         }
                     }
-                    
-                    value = value[prop] // How to handle errors?
+                    else {
+                        if let v = value as? CascadingView {
+                            value = v[node.name]
+                        }
+                        else if let v = value as? Object {
+                            if v.objectSchema[node.name] == nil {
+                                // TODO error handling
+                            }
+                            else {
+                                value = v[node.name] // How to handle errors?
+                            }
+                        }
+                    }
                 }
             }
             // .addresses[primary = true] || [0]
@@ -358,17 +365,29 @@ public class Views {
         return value
     }
     
-    func executeFunction (lookup: ViewLookupNode, args:[Any], viewArguments:ViewArguments) -> Any? {
-        if let f = lookupValueOfVariables(lookup: lookup, viewArguments:viewArguments, isFunction:true) {
-            return f(args)
+    func executeFunction (lookup: ExprLookupNode, args:[Any], viewArguments:ViewArguments) throws -> Any {
+        let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
+        if let f = f as? ([Any]) -> Any {
+            return f(args) as Any
         }
     }
     
-    func getParsedDefinition(_ viewDef:SessionViewDefinition) throws -> ViewParseContext {
-        let viewDef = ViewDefinitionParser(self.definition,
-                                           lookup: lookupValueOfVariables,
-                                           execFunc: executeFunction)
-        return try viewDef.parse()
+    func getParsedDefinition(_ viewDef:SessionViewDefinition) throws -> ViewSelector? {
+        let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")
+        if let cached = cached as? ViewDefinitionParser {
+            return try cached.parse().first
+        }
+        else if let definition = viewDef.definition {
+            let viewDefParser = ViewDefinitionParser(definition,
+                lookup: lookupValueOfVariables,
+                execFunc: executeFunction
+            )
+            try InMemoryObjectCache.set("uid: \(viewDef.uid)", viewDefParser)
+            return try viewDefParser.parse().first
+        }
+        else {
+            throw "Exception: Missing view definition"
+        }
     }
     
     public func createCascadingView(_ sessionView:SessionView? = nil) throws -> CascadingView {
@@ -380,7 +399,7 @@ public class Views {
             ? main.sessions.currentSession.currentView
             : sessionView!
         
-        let cascadingView = CascadingView.fromSessionView(viewFromSession, main.cache)
+        let cascadingView = CascadingView.fromSessionView(viewFromSession, main)
         
         // TODO REFACTOR: move these to a better place (main??)
         
@@ -403,10 +422,10 @@ public class Views {
         return cascadingView
     }
     
-    // TODO: Refactor: Consider caching computedView based on the type of the item
+    // TODO: Refactor: Consider caching cascadingView based on the type of the item
     public func renderItemCell(_ item:DataItem, _ rendererNames: [String],
                                _ viewOverride: String? = nil,
-                               _ variables: [String: () -> Any]? = nil) throws -> UIElementView {
+                               _ viewArguments: ViewArguments? = nil) throws -> UIElementView {
         
         guard let main = self.main else {
             throw "Exception: Main is not defined in views"
@@ -416,7 +435,7 @@ public class Views {
         if viewOverride != nil { throw "View Override Not Implemented" }
 
         // Create a new view
-        let computedView = CascadingView(main.cache)
+        let cascadingView = CascadingRenderConfig(cascadeStack: <#T##[[String : Any]]#>, viewArguments: <#T##ViewArguments#>)
 
         let searchOrder = ["defaults", "user"]
         let needles = ["{[type:*]}", "{[type:\(item.genericType)]}"]
@@ -425,20 +444,20 @@ public class Views {
         for needle in needles {
             for key in searchOrder {
                 if let view = getSessionView(self.defaultViews[key]![needle]) {
-                    computedView.merge(view) // TODO Refactor: can this be optimized to only pick the top-most renderDescription?
+                    cascadingView.merge(view) // TODO Refactor: can this be optimized to only pick the top-most renderDescription?
                 }
             }
         }
 
         // Find the first cascaded renderer for the type and render the item
         for name in rendererNames {
-            if let _ = computedView.renderConfigs.objectSchema[name],
-               let renderConfig = computedView.renderConfigs[name] as? RenderConfig {
+            if let _ = cascadingView.renderConfigs.objectSchema[name],
+               let renderConfig = cascadingView.renderConfigs[name] as? RenderConfig {
                 return renderConfig.render(item: item, part: name, variables: variables ?? [:])
                                                     // Refactor: look at how variables is passed
             }
-            else if let _ = computedView.renderConfigs.virtual?.renderDescription?[name] {
-                return computedView.renderConfigs.virtual!
+            else if let _ = cascadingView.renderConfigs.virtual?.renderDescription?[name] {
+                return cascadingView.renderConfigs.virtual!
                     .render(item: item, part: name, variables: variables ?? [:])
             }
         }

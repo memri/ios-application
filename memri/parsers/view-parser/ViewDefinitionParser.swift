@@ -10,13 +10,13 @@ import Foundation
 
 public class ViewDefinitionParser {
     let code: String
-    private let lookup: (ExprLookupNode) throws -> Any
-    private let execFunc: (ExprLookupNode, [Any?]) throws -> Any
+    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
+    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
     private var parsed: [ViewSelector]? = nil
     
     init(_ code:String,
-           lookup: @escaping (ExprLookupNode) throws -> Any,
-           execFunc: @escaping (ExprLookupNode, [Any?]) throws -> Any) {
+           lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
+           execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
         self.code = code
         self.lookup = lookup

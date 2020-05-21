@@ -33,12 +33,12 @@ struct MapRendererView: View {
     let name = "map"
     
     var renderConfig: CascadingMapConfig {
-        return self.main.computedView.renderConfigs[name] as? CascadingMapConfig ?? CascadingMapConfig()
+        return self.main.cascadingView.renderConfigs[name] as? CascadingMapConfig ?? CascadingMapConfig()
     }
     
     var body: some View {
         return VStack {
-//            if main.computedView.resultSet.count == 0 {
+//            if main.cascadingView.resultSet.count == 0 {
             MapView(locations: nil, addresses: main.items as? [Address]) // TODO Refactor: this is very not generic
         }
     }
