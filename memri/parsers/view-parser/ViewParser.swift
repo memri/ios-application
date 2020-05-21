@@ -312,7 +312,6 @@ class ViewParser {
                         showTitle: options["showTitle"] as? Bool ?? false,
                         binding: options["binding"] as? Expression,
                         hasState: options["hasState"] as? Bool ?? false,
-                        opensView: options["opensView"] as? Bool ?? false,
                         color: options["color"] as? String ?? "",
                         backgroundColor: options["backgroundColor"] as? String ?? "",
                         activeColor: options["activeColor"] as? String ?? "",
@@ -320,9 +319,8 @@ class ViewParser {
                         activeBackgroundColor: options["activeBackgroundColor"] as? String ?? "",
                         inactiveBackgroundColor: options["inactiveBackgroundColor"] as? String ?? "",
                         arguments: options["arguments"] as? [Any] ?? [],
-                        renderType: options["renderType"] as? String ?? "",
-                        
-                        hasStateValue: options["hasStateValue"] as? Bool ?? false,
+                        renderAs: options["renderAs"] as? String ?? "",
+                        hasState: options["hasState"] as? Bool ?? false,
                         
                     ))
                 }

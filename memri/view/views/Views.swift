@@ -3,29 +3,10 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-public class Language {
-    var currentLanguage: String = "English"
-    var keywords: [String:String] = [:]
-    
-    public func load(_ definitions:[[String:Any]]) {
-        for def in definitions {
-            for (keyword, naturalLanguageString) in def {
-                if keywords[keyword] != nil {
-                    // TODO warn developers
-                    print("Keyword already exists \(keyword) for language \(self.currentLanguage)")
-                }
-                else {
-                    keywords[keyword] = naturalLanguageString as? String
-                }
-            }
-        }
-    }
-}
-
 // Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
  
-    let language = Language()
+    let language = Languages()
     
     private var realm:Realm
     var main:Main? = nil

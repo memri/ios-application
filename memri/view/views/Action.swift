@@ -7,13 +7,6 @@
 import Foundation
 import SwiftUI
 
-class Colors {
-    func byName(_ name:String) -> Color {
-        return Color(hex: "#fff")
-    }
-}
-var globalColors = Colors()
-
 class Action : CustomStringConvertible{
     var name:ActionName = .noop
     var arguments: [Any] = []
@@ -48,7 +41,6 @@ class Action : CustomStringConvertible{
          showTitle:Bool? = nil,
          binding:Expression? = nil,
          hasState:Bool? = nil,
-         opensView:Bool? = nil,
          color:Color? = nil,
          backgroundColor:Color? = nil,
          activeColor:Color? = nil,
@@ -473,6 +465,7 @@ private class ActionSchedule : Action, ActionExec {
 }
 private class ActionSetRenderer : Action, ActionExec {
     private var defaults:[String:Any] {[
+        "hastState": true,
         "activeColor": Color(hex: "#6aa84f"),
         "activeBackgroundColor": Color(hex: "#eee")
     ]}

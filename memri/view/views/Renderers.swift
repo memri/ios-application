@@ -1,6 +1,5 @@
 //
 //  Renderer.swift
-//  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
 //
@@ -38,30 +37,19 @@ public class Renderers {
     }
 }
 
-class FilterPanelRendererButton: Action, ObservableObject{
-    var name: String
+class FilterPanelRendererButton: Action {
     var order: Int
     var canDisplayResults: (_ items: [DataItem]) -> Bool
+    var rendererName: String
     
-    required init(name:String, order:Int, icon:String, canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
-        super.init()
+    required init(name:String, order:Int, icon:String,
+                  canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
         
-        self.name = name
+        super.init("setRenderer", icon:icon)
+        
+        self.rendererName = name
         self.order = order
-        self.icon = icon
         self.canDisplayResults = canDisplayResults
-        
-        self.hasState.value = true
-        self.actionName = .setRenderer
-        self.activeBackgroundColor = Color(white: 0.95).uiColor()
-        self.actionName = .setRenderer
-        
-        self.color = self.actionName.defaultColor
-        self.backgroundColor = self.actionName.defaultBackgroundColor
-        self.activeColor = self.actionName.defaultActiveColor
-        self.inactiveColor = self.actionName.defaultInactiveColor
-        self.activeBackgroundColor = self.actionName.defaultActiveBackgroundColor
-        self.inactiveBackgroundColor = self.actionName.defaultInactiveBackgroundColor
     }
     
     public required init() {
