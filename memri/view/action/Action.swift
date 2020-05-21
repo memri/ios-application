@@ -131,44 +131,34 @@ public enum ActionName: String, CaseIterable {
             return ActionShowStarred.self
         case .showContextPane:
             return ActionShowContextPane.self
-        case .showOverlay:
-            return ActionShowOverlay.self
-        case .share:
-            return ActionShare.self
+//        case .showOverlay:
+//            return ActionShowOverlay.self
+//        case .share:
+//            return ActionShare.self
         case .showNavigation:
             return ActionShowNavigation.self
-        case .addToPanel:
-            return ActionAddToPanel.self
+//        case .addToPanel:
+//            return ActionAddToPanel.self
         case .duplicate:
             return ActionDuplicate.self
         case .schedule:
             return ActionSchedule.self
-        case .addToList:
-            return ActionAddToList.self
-        case .duplicateNote:
-            return ActionDuplicateNote.self
-        case .noteTimeline:
-            return ActionNoteTimeline.self
-        case .starredNotes:
-            return ActionStarredNotes.self
-        case .allNotes:
-            return ActionAllNotes.self
-        case .exampleUnpack:
-            return ActionExampleUnpack.self
+//        case .addToList:
+//            return ActionAddToList.self
         case .delete:
             return ActionDelete.self
         case .setRenderer:
             return ActionSetRenderer.self
-        case .select:
-            return ActionSelect.self
-        case .selectAll:
-            return ActionSelectAll.self
-        case .unselectAll:
-            return ActionUnselectAll.self
-        case .showAddLabel:
-            return ActionShowAddLabel.self
-        case .openLabelView:
-            return ActionOpenLabelView.self
+//        case .select:
+//            return ActionSelect.self
+//        case .selectAll:
+//            return ActionSelectAll.self
+//        case .unselectAll:
+//            return ActionUnselectAll.self
+//        case .showAddLabel:
+//            return ActionShowAddLabel.self
+//        case .openLabelView:
+//            return ActionOpenLabelView.self
         case .showSessionSwitcher:
             return ActionShowSessionSwitcher.self
         case .forward:
@@ -186,6 +176,8 @@ public enum ActionName: String, CaseIterable {
         case .closePopup:
             return ActionClosePopup.self
         case .noop:
+            fallthrough
+        default:
             return ActionNoop.self
         }
     }
@@ -705,5 +697,13 @@ private class ActionClosePopup : Action, ActionExec {
         (self.closeStack.removeLast())()
     }
 }
-
+private class ActionNoop : Action, ActionExec {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionClosePopup.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // Do Nothing
+    }
+}
 
