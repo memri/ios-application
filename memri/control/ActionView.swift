@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ActionView: View {
+struct ActionButton: View {
     @EnvironmentObject var main: Main
     
     var action: Action?
@@ -30,11 +30,11 @@ struct ActionView: View {
         case .popup:
             return AnyView(ActionPopupButton(action: self.action!))
         case .button:
-            return AnyView(ActionButton(action: self.action!) {
+            return AnyView(ActionButtonView(action: self.action!) {
                 self.main.executeAction(self.action!)
             })
         default:
-            return AnyView(ActionButton(action: self.action!))
+            return AnyView(ActionButtonView(action: self.action!))
         }
     }
 }
@@ -46,7 +46,7 @@ struct ActionView_Previews: PreviewProvider {
     }
 }
 
-struct ActionButton: View {
+struct ActionButtonView: View {
     @EnvironmentObject var main: Main
     
     var action: Action

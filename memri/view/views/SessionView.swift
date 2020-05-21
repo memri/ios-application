@@ -33,8 +33,9 @@ public class UserState: Object {
     
     subscript<T>(propName:String) -> T? {
         get {
-            var x:[String:Any]? = try? globalInMemoryObjectCache.get(uid)
-            if x == nil { x = try? transformToDict() }
+            var x:[String:Any]?
+            do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return nil } // TODO refactor: handle error
+            do { if x == nil { x = try transformToDict() } } catch { return nil } // TODO refactor: handle error
             
             if T.self == DataItem.self {
                 if let lookup = x?[propName] as? [String:Any] {
@@ -52,8 +53,9 @@ public class UserState: Object {
             return x?[propName] as? T
         }
         set(newValue) {
-            var x:[String:Any]? = try? globalInMemoryObjectCache.get(uid)
-            if (x == nil) { x = try? transformToDict() }
+            var x:[String:Any]?
+            do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return } // TODO refactor: handle error
+            do { if x == nil { x = try transformToDict() } } catch { return } // TODO refactor: handle error
             
             if let newValue = newValue as? DataItem {
                 x?[propName] = ["type": newValue.genericType, "uid": newValue.uid]
@@ -70,7 +72,7 @@ public class UserState: Object {
     
     private func transformToDict() throws -> [String:Any]{
         let dict:[String:AnyDecodable] = unserialize(state)
-        try globalInMemoryObjectCache.set(self.uid, dict as [String:Any])
+        try InMemoryObjectCache.set(self.uid, dict as [String:Any])
         return dict
     }
     
@@ -94,11 +96,16 @@ public class UserState: Object {
         }
     }
     
-    private func persist(){
-        if let x:[String:Any] = try? globalInMemoryObjectCache.get(uid) {
-            realmWriteIfAvailable(self.realm) {
-                self["state"] = serialize(AnyCodable(x))
+    private func persist() {
+        do {
+            if let x = try InMemoryObjectCache.get(uid) as? [String : Any] {
+                realmWriteIfAvailable(self.realm) {
+                    self["state"] = serialize(AnyCodable(x))
+                }
             }
+        }
+        catch {
+            // TODO refactor: Log error
         }
     }
     
@@ -121,7 +128,7 @@ public class SessionView: DataItem {
     override var genericType:String { "sessionview" }
  
     @objc dynamic var name: String? = nil
-    @objc dynamic var viewDefinition: SessionViewDefinition? = nil
+    @objc dynamic var viewDefinition: ViewDSLDefinition? = nil
     @objc dynamic var userState: UserState? = nil
     @objc dynamic var viewArguments: ViewArguments? = nil
     @objc dynamic var queryOptions: QueryOptions? = nil

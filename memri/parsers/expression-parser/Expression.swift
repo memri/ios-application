@@ -38,9 +38,9 @@ public class Expression: CustomStringConvertible {
         parsed = true
     }
     
-    public func execute() throws -> Any? {
+    public func execute(_ args:ViewArguments) throws -> Any? {
         if !parsed { try parse() }
         
-        return try interpreter!.execute()
+        return try interpreter!.execute(args)
     }
 }

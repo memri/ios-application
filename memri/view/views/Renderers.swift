@@ -14,7 +14,7 @@ var globalRenderers:Renderers? = nil
 public class Renderers {
     var all: [String: FilterPanelRendererButton] = [:]
     var allViews: [String: AnyView] = [:]
-    var allConfigTypes: [String: CascadingRenderConfig.Type]
+    var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
     
     class func register(name:String, title:String, order:Int, icon:String = "",
                         view:AnyView, renderConfigType: CascadingRenderConfig.Type,

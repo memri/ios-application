@@ -57,30 +57,30 @@ struct FilterPanel: View {
         self.main.scheduleComputeView()
     }
     
-    private func rendererCategories() -> [(String, Renderer)] {
+    private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
         return self.main.renderers.tuples.filter{(key, renderer) -> Bool in
-            return !key.contains(".") && renderer.canDisplayResultSet(items: self.main.items)
+            return !key.contains(".") && renderer.canDisplayResults(self.main.items)
         }
     }
     
-    private func renderersAvailable() -> [(String, Renderer)] {
-        if let currentCategory = self.main.cascadingView.rendererName.split(separator: ".").first {
+    private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
+        if let currentCategory = self.main.cascadingView.activeRenderer.split(separator: ".").first {
             return self.main.renderers.all.filter { (key, renderer) -> Bool in
-                return renderer.name.split(separator: ".").first == currentCategory
+                return renderer.rendererName.split(separator: ".").first == currentCategory
             }.sorted(by: { $0.1.order < $1.1.order })
         }
         return []
     }
     
-    private func isActive(_ renderer:Renderer) -> Bool {
-        return self.main.cascadingView.rendererName.split(separator: ".").first! == renderer.name
+    private func isActive(_ renderer:FilterPanelRendererButton) -> Bool {
+        self.main.cascadingView.activeRenderer.split(separator: ".").first! == renderer.rendererName
     }
     
     var body: some View {
         HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
-                    ForEach(rendererCategories(), id: \.0) { (key, renderer:Renderer) in
+                    ForEach(rendererCategories(), id: \.0) { (key, renderer) in
                         
                         Button(action: {self.main.executeAction(renderer)} ) {
                             Image(systemName: renderer.icon)
@@ -88,12 +88,12 @@ struct FilterPanel: View {
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
                                 .frame(width: 40, height: 40, alignment: .center)
-                                .foregroundColor(Color(self.isActive(renderer)
+                                .foregroundColor(self.isActive(renderer)
                                     ? renderer.activeColor!
-                                    : renderer.inactiveColor!))
-                                .background(Color(self.isActive(renderer)
+                                    : renderer.inactiveColor!)
+                                .background(self.isActive(renderer)
                                     ? renderer.activeBackgroundColor!
-                                    : renderer.inactiveBackgroundColor!))
+                                    : renderer.inactiveBackgroundColor!)
                         }
                     }
                 }
@@ -104,10 +104,10 @@ struct FilterPanel: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0){
-                        ForEach(renderersAvailable(), id:\.0) { (key, renderer:Renderer) in
+                        ForEach(renderersAvailable(), id:\.0) { (key, renderer) in
                             Group {
                                 Button(action:{ self.main.executeAction(renderer) }) {
-                                    if self.main.cascadingView.rendererName == renderer.name {
+                                    if self.main.cascadingView.activeRenderer == renderer.rendererName {
                                         Text(renderer.title ?? "Unnamed Renderer")
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)

@@ -7,31 +7,29 @@
 //
 
 import Foundation
+import SwiftUI
 
-private let ViewConfig:[String:[String]] = [
-    "frame": ["minwidth", "maxwidth", "minheight", "maxheight", "align"],
-    "order": ["style", "frame", "color", "font", "padding", "background", "textalign",
-              "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow", "offset",
-              "blur", "opacity", "zindex"]
-]
+private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "background",
+    "textalign", "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow",
+    "offset", "blur", "opacity", "zindex"]
 
 extension View {
-    func setProperties(_ properties:[String:Any], _ item:DataItem) -> AnyView {
+    func setProperties(_ properties:[String:Any], _ item:DataItem, _ main:Main) -> AnyView {
         var view:AnyView = AnyView(self)
         
-        for name in ViewConfig["order"]! {
+        for name in ViewPropertyOrder {
             if var value = properties[name] {
                 
-                // Compile string properties
-                if let compiled = value as? UIElement.CompiledProperty {
-                    value = UIElement.computeProperty(compiled, item) ?? ""
+                if let expr = value as? Expression {
+                    do { value = try expr.execute(main.cascadingView.viewArguments) as Any }
+                    catch { continue } // TODO refactor: Error handling
                 }
                 
                 view = view.setProperty(name, value)
             }
         }
         
-        return AnyView(view)
+        return view
     }
     
     // TODO investigate using ViewModifiers

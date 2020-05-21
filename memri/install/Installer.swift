@@ -19,10 +19,11 @@ public class Installer {
         
     }
     
-    public func installIfNeeded(_ main:Main, _ callback: () -> Void) {
+    public func installIfNeeded(_ main:Main, _ callback: () -> Void) throws {
         
         let installLogs = realm.objects(AuditItem.self).filter("action = 'install'")
         
+        // TODO Refactor: check version??
         if (installLogs.count == 0) {
             print("Installing defaults in the database")
             
@@ -36,7 +37,7 @@ public class Installer {
             main.settings.install()
             
             // Load default views in database
-            main.views.install()
+            try main.views.install()
             
             // Load default sessions in database
             main.sessions.install(main.realm)

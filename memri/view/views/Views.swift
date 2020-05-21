@@ -81,24 +81,12 @@ public class Views {
             for def in parsedDefinitions {
                 var values = ["selector": def.selector, "definition": def.description]
                 
-                if def is ViewDefinition {
-                    values["type"] = "view"
-                }
-                else if def is ViewRendererDefinition {
-                    values["type"] = "renderer"
-                }
-                else if def is ViewStyleDefinition {
-                    values["type"] = "style"
-                }
-                else if def is ViewColorDefinition {
-                    values["type"] = "color"
-                }
-                else if def is ViewLanguageDefinition {
-                    values["type"] = "language"
-                }
-                else {
-                    throw "Exception: unknown definition"
-                }
+                if def is ViewDefinition { values["type"] = "view" }
+                else if def is ViewRendererDefinition { values["type"] = "renderer" }
+                else if def is ViewStyleDefinition { values["type"] = "style" }
+                else if def is ViewColorDefinition { values["type"] = "color" }
+                else if def is ViewLanguageDefinition { values["type"] = "language" }
+                else { throw "Exception: unknown definition" }
                 
                 // Store definition
                 try realm.write { realm.create(ViewDSLDefinition.self, value: values) }

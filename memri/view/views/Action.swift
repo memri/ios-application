@@ -63,7 +63,7 @@ class Action : CustomStringConvertible{
         self.showTitle = showTitle ?? defForName["icon"] as? Bool ?? self.showTitle
         self.binding = binding ?? defForName["icon"] as? Expression ?? self.binding
         self.hasState = hasState ?? defForName["icon"] as? Bool ?? self.hasState
-        self.opensView = opensView ?? defForName["icon"] as? Bool ?? self.opensView
+        self.opensView = defForName["icon"] as? Bool ?? self.opensView
         self.color = color ?? defForName["icon"] as? Color ?? self.color
         self.backgroundColor = backgroundColor ?? defForName["icon"] as? Color ?? self.backgroundColor
         self.activeColor = activeColor ?? defForName["icon"] as? Color ?? self.activeColor
@@ -179,7 +179,7 @@ protocol ActionExec {
     func exec(_ main:Main, arguments:[Any])
 }
 
-private class ActionBack : Action, ActionExec {
+class ActionBack : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "chevron.left",
         "opensView": true,
@@ -206,7 +206,7 @@ private class ActionBack : Action, ActionExec {
         }
     }
 }
-private class ActionAddDataItem : Action, ActionExec {
+class ActionAddDataItem : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "plus",
         "argumentTypes": [DataItemFamily.self],
@@ -283,7 +283,7 @@ private class ActionAddDataItem : Action, ActionExec {
 //public func openView(_ items: [DataItem], _ variables:[String:Any]? = nil) {}
 //
 
-private class ActionOpenView : Action, ActionExec {
+class ActionOpenView : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [SessionView.self, [String:Any]?.self],
         "opensView": true
@@ -305,7 +305,7 @@ private class ActionOpenView : Action, ActionExec {
         else if let item = item { openView(item) }
     }
 }
-private class ActionOpenDynamicView : Action, ActionExec {
+class ActionOpenDynamicView : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true
     ]}
@@ -321,7 +321,7 @@ private class ActionOpenDynamicView : Action, ActionExec {
         openView(name, variables)
     }
 }
-private class ActionOpenViewByName : Action, ActionExec {
+class ActionOpenViewByName : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [String.self, [String:Any]?.self],
         "opensView": true
@@ -335,7 +335,7 @@ private class ActionOpenViewByName : Action, ActionExec {
         
     }
 }
-private class ActionToggleEditMode : Action, ActionExec {
+class ActionToggleEditMode : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "rhombus.fill",
         "hasState": true,
@@ -352,7 +352,7 @@ private class ActionToggleEditMode : Action, ActionExec {
         // Do Nothing
     }
 }
-private class ActionToggleFilterPanel : Action, ActionExec {
+class ActionToggleFilterPanel : Action, ActionExec {
     private var defaults:[String:Any] {[
         "hasState": true,
         "binding": Expression("currentSession.showFilterPanel"),
@@ -367,7 +367,7 @@ private class ActionToggleFilterPanel : Action, ActionExec {
         // Do Nothing
     }
 }
-private class ActionStar : Action, ActionExec {
+class ActionStar : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
@@ -391,7 +391,7 @@ private class ActionStar : Action, ActionExec {
         // it won't be updated as of now
     }
 }
-private class ActionShowStarred : Action, ActionExec {
+class ActionShowStarred : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
@@ -419,7 +419,7 @@ private class ActionShowStarred : Action, ActionExec {
         }
     }
 }
-private class ActionShowContextPane : Action, ActionExec {
+class ActionShowContextPane : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
@@ -434,7 +434,7 @@ private class ActionShowContextPane : Action, ActionExec {
         // Do Nothing
     }
 }
-private class ActionShowNavigation : Action, ActionExec {
+class ActionShowNavigation : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "line.horizontal.3",
         "hasState": true,
@@ -450,7 +450,7 @@ private class ActionShowNavigation : Action, ActionExec {
         // Do Nothing
     }
 }
-private class ActionSchedule : Action, ActionExec {
+class ActionSchedule : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "alarm"
     ]}
@@ -463,7 +463,7 @@ private class ActionSchedule : Action, ActionExec {
         
     }
 }
-private class ActionSetRenderer : Action, ActionExec {
+class ActionSetRenderer : Action, ActionExec {
     private var defaults:[String:Any] {[
         "hastState": true,
         "activeColor": Color(hex: "#6aa84f"),
@@ -492,7 +492,7 @@ private class ActionSetRenderer : Action, ActionExec {
         scheduleComputeView()
     }
 }
-private class ActionShowSessionSwitcher : Action, ActionExec {
+class ActionShowSessionSwitcher : Action, ActionExec {
     private var defaults:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
@@ -508,7 +508,7 @@ private class ActionShowSessionSwitcher : Action, ActionExec {
         // Do Nothing
     }
 }
-private class ActionForward : Action, ActionExec {
+class ActionForward : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
@@ -532,7 +532,7 @@ private class ActionForward : Action, ActionExec {
         }
     }
 }
-private class ActionForwardToFront : Action, ActionExec {
+class ActionForwardToFront : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
@@ -551,7 +551,7 @@ private class ActionForwardToFront : Action, ActionExec {
         scheduleComputeView()
     }
 }
-private class ActionBackAsSession : Action, ActionExec {
+class ActionBackAsSession : Action, ActionExec {
     private var defaults:[String:Any] {[
         "opensView": true,
     ]}
@@ -607,7 +607,7 @@ private class ActionBackAsSession : Action, ActionExec {
 //        print("Warn: Could not find session: '\(name)")
 //    }
 //}
-private class ActionOpenSession : Action, ActionExec {
+class ActionOpenSession : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [Session.self, [String:Any]?.self],
         "opensView": true,
@@ -627,7 +627,7 @@ private class ActionOpenSession : Action, ActionExec {
         else if let item = item as? Session { openSession(item) }
     }
 }
-private class ActionOpenSessionByName : Action, ActionExec {
+class ActionOpenSessionByName : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [String.self, [String:Any]?.self],
         "opensView": true,
@@ -644,7 +644,7 @@ private class ActionOpenSessionByName : Action, ActionExec {
         openSession(name, variables)
     }
 }
-private class ActionAddSelectionToList : Action, ActionExec {
+class ActionAddSelectionToList : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [DataItemFamily.self, String.self]
     ]}
@@ -657,7 +657,7 @@ private class ActionAddSelectionToList : Action, ActionExec {
         
     }
 }
-private class ActionDelete : Action, ActionExec {
+class ActionDelete : Action, ActionExec {
     func exec(_ main:Main, arguments:[Any]) {
         ActionDelete.exec(main, arguments:arguments)
     }
@@ -668,7 +668,7 @@ private class ActionDelete : Action, ActionExec {
         scheduleUIUpdate{_ in true}
     }
 }
-private class ActionDuplicate : Action, ActionExec {
+class ActionDuplicate : Action, ActionExec {
     func exec(_ main:Main, arguments:[Any]) {
         ActionDuplicate.exec(main, arguments:arguments)
     }
@@ -681,7 +681,7 @@ private class ActionDuplicate : Action, ActionExec {
 
     }
 }
-private class ActionClosePopup : Action, ActionExec {
+class ActionClosePopup : Action, ActionExec {
     func exec(_ main:Main, arguments:[Any]) {
         ActionClosePopup.exec(main, arguments:arguments)
     }
@@ -690,7 +690,7 @@ private class ActionClosePopup : Action, ActionExec {
         (self.closeStack.removeLast())()
     }
 }
-private class ActionNoop : Action, ActionExec {
+class ActionNoop : Action, ActionExec {
     func exec(_ main:Main, arguments:[Any]) {
         ActionClosePopup.exec(main, arguments:arguments)
     }

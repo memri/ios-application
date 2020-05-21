@@ -78,7 +78,7 @@ public class CascadingView: Cascadable, ObservableObject {
     
     //self.queryOptions.merge(view.queryOptions!)
     var queryOptions: QueryOptions { return sessionView.queryOptions ?? QueryOptions() } // set same ref??
-    var viewArguments: [String:Any] { cascadeDict("viewArguments", sessionView.viewArguments) } // set same ref??
+    var viewArguments: ViewArguments { cascadeDict("viewArguments", sessionView.viewArguments) } // set same ref??
     
     var resultSet: ResultSet {
         /* lookup based on queryOptions */ 1

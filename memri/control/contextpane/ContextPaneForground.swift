@@ -12,8 +12,8 @@ struct ContextPaneForground: View {
     
     @EnvironmentObject var main: Main
     
-    var addLabelAction = Action(icon: nil, title: nil, actionName: .showAddLabel, actionArgs: [], actionType: .none)
-    var openLabelViewAction = Action(icon: nil, title: nil, actionName: .openLabelView, actionArgs: [], actionType: .none)
+    var addLabelAction = Action("showAddLabel")
+    var openLabelViewAction = Action("openLabelView")
     var paddingLeft:CGFloat = 25
 
     var body: some View {
@@ -32,7 +32,7 @@ struct ContextPaneForground: View {
                 
                 HStack {
                     ForEach (self.main.cascadingView.contextButtons) { actionItem in
-                        Action(action: actionItem)
+                        ActionButton(action: actionItem)
                     }
                 }
                 .padding(.horizontal, paddingLeft)
