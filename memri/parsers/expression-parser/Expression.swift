@@ -17,6 +17,7 @@ public class Expression: CustomStringConvertible {
     
     private var interpreter:ExprInterpreter? = nil
     private var parsed = false
+    private var ast: ExprNode? = nil
     
     public var description: String {
         return "Expression(\(code), startInStringMode:\(startInStringMode))"
@@ -45,9 +46,18 @@ public class Expression: CustomStringConvertible {
     }
     
     public func toggleBool() throws {
-        // Analyze AST
-        // Call lookup
-        // Toggle value
+        if let node = ast as? ExprLookupNode {
+            var sequence = node.sequence
+            if let lastProperty = sequence.popLast() as? ExprVariableNode {
+                let lookupNode = ExprLookupNode(sequence: sequence)
+                if var obj = try self.lookup(lookupNode, ViewArguments()) as? Object {
+                    obj[lastProperty.name] = !interpreter?.evaluateBoolean(obj[lastProperty.name])
+                    return
+                }
+            }
+        }
+            
+        throw "Exception: unable to toggle expression that is not a pure lookup"
     }
     
     public func getTypeOfDataItem() throws -> (PropertyType, DataItem, String){
@@ -59,7 +69,8 @@ public class Expression: CustomStringConvertible {
     private func parse() throws {
         let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
         let parser = ExprParser(try lexer.tokenize())
-        interpreter = ExprInterpreter(try parser.parse(), lookup, execFunc)
+        ast = try parser.parse()
+        interpreter = ExprInterpreter(ast, lookup, execFunc)
         parsed = true
     }
     

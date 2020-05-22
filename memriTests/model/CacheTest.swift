@@ -76,12 +76,12 @@ class CacheTest: XCTestCase {
     func testGetResultSet(){
         testCache.install()
         // TODO: not sure what this should test yet
-        let result = testCache.getResultSet(QueryOptions(query: "*"))
+        let _ = testCache.getResultSet(QueryOptions(query: "*"))
     }
     
     func testAddToCache(){
         let note = Note()
-        let cachedNote = try! testCache.addToCache(note)
+        let _ = try! testCache.addToCache(note)
         // TODO: what to test here
     }
     
@@ -146,7 +146,7 @@ class CacheTest: XCTestCase {
 
         for prop in item!.objectSchema.properties{
             if prop.name != cls.primaryKey(){
-                item!.isEqualProperty(prop.name, copy)
+                _ = item!.isEqualProperty(prop.name, copy)
             }
         }   
     }

@@ -7,7 +7,6 @@
 
 import Foundation
 import RealmSwift
-import CryptoKit
 import SwiftUI
 
 //func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{

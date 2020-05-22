@@ -68,7 +68,17 @@ class ViewParser {
                 continue
             }
 
-            result.append(try parseViewDSL())
+            var dsl = try parseViewDSL()
+            if dsl["sessions"] != nil {
+                dsl = ViewSessionsDefinition(dsl.selector ?? "", name: dsl.name,
+                                             domain: dsl.domain, parsed: dsl.parsed)
+            }
+            else if dsl["views"] != nil {
+                dsl = ViewSessionDefinition(dsl.selector ?? "", name: dsl.name,
+                                             domain: dsl.domain, parsed: dsl.parsed)
+            }
+            
+            result.append(dsl)
         }
         
         return result

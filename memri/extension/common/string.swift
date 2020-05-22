@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CryptoKit
 
 extension String: Error {
     func sha256() -> String {

@@ -120,23 +120,11 @@ public struct UIElementView: SwiftUI.View {
     }
     
     public func has(_ propName:String) -> Bool {
-        return viewArguments[propName] != nil || from.has(propName)
+        viewArguments[propName] != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
-        if propName.first == "$" {
-            // TODO Refactor Error Handling
-            if let f = viewArguments[propName.substr(1)] {
-                return (f() as! T)
-            }
-            else { // TODO Refactor: integrate in larger error handling effort
-                print("Warn: fetching undefined variable: \(propName.substr(1))")
-                return nil
-            }
-        }
-        else {
-            return from.get(propName, item, variables)
-        }
+        from.get(propName, item, viewArguments)
     }
     
     public func getImage(_ propName:String) -> UIImage {

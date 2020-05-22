@@ -50,6 +50,8 @@ public class Action : HashableClass, CustomStringConvertible {
          activeBackgroundColor:Color? = nil,
          inactiveBackgroundColor:Color? = nil
     ) {
+        super.init()
+        
         if let actionName = ActionName(rawValue: name) {
             self.name = actionName
         }
