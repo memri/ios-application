@@ -8,6 +8,7 @@
 import Foundation
 import RealmSwift
 
+// TODO can we get rid of sessions/session??
 public class SessionsDefinition: DataItem {
     @objc dynamic var selector: String? = nil
     @objc dynamic var domain: String = "user"

@@ -689,10 +689,10 @@ class ActionOpenSessionByName : Action, ActionExec {
                 let def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(name)").first)
                 
                 // See if this is a session, if so take the last view
-                if let def = def as? ViewSessionDefinition {
+                if let def = def as? ParsedSessionDefinition {
                     let session = Session()
                     let list:[SessionView] = (def["views"] as? [[String:Any]])?.compactMap {
-                        let viewDef = ViewDefinition(DataItem.generateUUID())
+                        let viewDef = ParsedViewDefinition(DataItem.generateUUID())
                         viewDef.parsed = $0
                         
                         return SessionView(value:[

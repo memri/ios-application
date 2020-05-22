@@ -27,8 +27,8 @@ public struct SubView : View {
         
         do {
             var def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(viewName)").first)
-            if def is ViewSessionDefinition {
-                if let list = def?["views"] as? [ViewDefinition] { def = list.first }
+            if def is ParsedSessionDefinition {
+                if let list = def?["views"] as? [ParsedViewDefinition] { def = list.first }
             }
             guard let viewDef = def else { throw "Exception: Missing view" }
             

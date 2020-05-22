@@ -84,11 +84,11 @@ public class Views {
                     "definition": def.description
                 ]
                 
-                if def is ViewDefinition { values["type"] = "view" }
-                else if def is ViewRendererDefinition { values["type"] = "renderer" }
-                else if def is ViewStyleDefinition { values["type"] = "style" }
-                else if def is ViewColorDefinition { values["type"] = "color" }
-                else if def is ViewLanguageDefinition { values["type"] = "language" }
+                if def is ParsedViewDefinition { values["type"] = "view" }
+                else if def is ParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is ParsedStyleDefinition { values["type"] = "style" }
+                else if def is ParsedColorDefinition { values["type"] = "color" }
+                else if def is ParsedLanguageDefinition { values["type"] = "language" }
                 else { throw "Exception: unknown definition" }
                 
                 // Store definition
@@ -291,7 +291,7 @@ public class Views {
             .map({ (def) -> ViewDSLDefinition in def }) // Convert to normal Array
     }
     
-    func parseDefinition(_ viewDef:ViewDSLDefinition?) throws -> ViewSelector? {
+    func parseDefinition(_ viewDef:ViewDSLDefinition?) throws -> ParsedDefinition? {
         guard let viewDef = viewDef else {
             throw "Exception: Missing view definition"
         }
@@ -356,12 +356,12 @@ public class Views {
             
             func searchForRenderer(in viewDefinition:ViewDSLDefinition) throws -> Bool {
                 let parsed = try main.views.parseDefinition(viewDefinition)
-                for def in parsed?["renderDefinitions"] as? [ViewRendererDefinition] ?? [] {
+                for def in parsed?["renderDefinitions"] as? [ParsedRendererDefinition] ?? [] {
                     for name in rendererNames {
                         
                         // TODO: Should this first search for the first renderer everywhere
                         //       before trying the second renderer?
-                        if let renderDef = def[name] as? ViewRendererDefinition, renderDef["children"] != nil {
+                        if let renderDef = def[name] as? ParsedRendererDefinition, renderDef["children"] != nil {
                             cascadeStack.append(renderDef)
                             return true
                         }
@@ -370,7 +370,7 @@ public class Views {
                 return false
             }
             
-            var cascadeStack:[ViewSelector] = []
+            var cascadeStack:[ParsedDefinition] = []
 
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {

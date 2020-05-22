@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public class Cascadable {
-    var cascadeStack = [ViewSelector]()
+    var cascadeStack = [ParsedDefinition]()
     var localCache = [String:Any]()
     
     // TODO execute x when Expression
@@ -123,14 +123,14 @@ public class CascadingView: Cascadable, ObservableObject {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
         
         var stack = self.cascadeStack.compactMap {
-            ($0["renderDefinitions"] as? [ViewRendererDefinition] ?? [])
+            ($0["renderDefinitions"] as? [ParsedRendererDefinition] ?? [])
                 .filter { $0.name == activeRenderer }.first
         }
         
         let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
         for def in renderDSLDefinitions {
             do {
-                if let parsedRenderDef = try main?.views.parseDefinition(def) as? ViewRendererDefinition {
+                if let parsedRenderDef = try main?.views.parseDefinition(def) as? ParsedRendererDefinition {
                     if parsedRenderDef.domain == "user" {
                         let insertPoint:Int = {
                             for i in 0..<stack.count { if stack[i].domain == "view" { return i } }
@@ -246,7 +246,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     init(_ sessionView:SessionView,
-         _ cascadeStack:[ViewSelector],
+         _ cascadeStack:[ParsedDefinition],
          _ activeRenderer:String
     ){
         self.sessionView = sessionView
@@ -287,7 +287,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     public class func fromSessionView(_ sessionView:SessionView, in main:Main) throws -> CascadingView {
-        var cascadeStack:[ViewSelector] = []
+        var cascadeStack:[ParsedDefinition] = []
         var isList = true
         var type = ""
         

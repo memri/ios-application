@@ -12,7 +12,7 @@ public class ViewDefinitionParser {
     let code: String
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
-    private var parsed: [ViewSelector]? = nil
+    private var parsed: [ParsedDefinition]? = nil
     
     init(_ code:String,
            lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
@@ -23,7 +23,7 @@ public class ViewDefinitionParser {
         self.execFunc = execFunc
     }
     
-    func parse() throws -> [ViewSelector] {
+    func parse() throws -> [ParsedDefinition] {
         if let parsed = parsed {
             return parsed
         }

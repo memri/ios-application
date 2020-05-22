@@ -8,16 +8,7 @@
 
 import Foundation
 
-public protocol ViewNode: CustomStringConvertible {
-}
-
-/*
-    Always a literal in the dict except:
-    - Expression
-    - ViewRendererDefinition (in .renderDefinitions)
- */
-
-public class ViewSelector:ViewNode {
+public class ParsedDefinition : CustomStringConvertible {
     let name:String?
     let selector:String?
     var domain:String?
@@ -56,15 +47,15 @@ public class ViewSelector:ViewNode {
         self.parsed = parsed ?? self.parsed
     }
 }
-public class ViewStyleDefinition:ViewSelector {
+public class ParsedStyleDefinition:ParsedDefinition {
 }
-public class ViewLanguageDefinition:ViewSelector {
+public class ParsedLanguageDefinition:ParsedDefinition {
 }
-public class ViewColorDefinition:ViewSelector {
+public class ParsedColorDefinition:ParsedDefinition {
 }
-public class ViewRendererDefinition:ViewSelector {
+public class ParsedRendererDefinition:ParsedDefinition {
 }
-public class ViewDefinition:ViewSelector {
+public class ParsedViewDefinition:ParsedDefinition {
     let type:String?
     let query:ExprNode?
     
@@ -75,12 +66,12 @@ public class ViewDefinition:ViewSelector {
         super.init(selector, name:name)
     }
 }
-public class ViewSessionDefinition:ViewSelector {
+public class ParsedSessionDefinition:ParsedDefinition {
     override public var description: String {
         return ".\(name ?? "") { \(serializeDict()) }"
     }
 }
-public class ViewSessionsDefinition:ViewSelector {
+public class ParsedSessionsDefinition:ParsedDefinition {
     override public var description: String {
         return ".\(name ?? "") { \(serializeDict()) }"
     }

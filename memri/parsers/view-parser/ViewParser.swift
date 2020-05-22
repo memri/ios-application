@@ -57,9 +57,9 @@ class ViewParser {
         return lastToken! // Check for out of bound?
     }
 
-    func parse() throws -> [ViewSelector] {
+    func parse() throws -> [ParsedDefinition] {
         index = 0
-        var result = [ViewSelector]()
+        var result = [ParsedDefinition]()
 
         while true {
             if case ViewToken.EOF = peekCurrentToken() { return result }
@@ -70,11 +70,11 @@ class ViewParser {
 
             var dsl = try parseViewDSL()
             if dsl["sessions"] != nil {
-                dsl = ViewSessionsDefinition(dsl.selector ?? "", name: dsl.name,
+                dsl = ParsedSessionsDefinition(dsl.selector ?? "", name: dsl.name,
                                              domain: dsl.domain, parsed: dsl.parsed)
             }
             else if dsl["views"] != nil {
-                dsl = ViewSessionDefinition(dsl.selector ?? "", name: dsl.name,
+                dsl = ParsedSessionDefinition(dsl.selector ?? "", name: dsl.name,
                                              domain: dsl.domain, parsed: dsl.parsed)
             }
             
@@ -84,7 +84,7 @@ class ViewParser {
         return result
     }
 
-    func parseViewDSL() throws -> ViewSelector {
+    func parseViewDSL() throws -> ParsedDefinition {
         let node = try parsePrimary()
         
         if case ViewToken.Colon = peekCurrentToken() {
@@ -94,7 +94,7 @@ class ViewParser {
         return try parseDefinition(node)
     }
 
-    func parsePrimary(_ skipOperator:Bool = false) throws -> ViewSelector {
+    func parsePrimary(_ skipOperator:Bool = false) throws -> ParsedDefinition {
         switch (peekCurrentToken()) {
         case .Identifier:
             return try parseIdentifierSelector()
@@ -109,7 +109,7 @@ class ViewParser {
         }
     }
     
-    func parseIdentifierSelector() throws -> ViewSelector {
+    func parseIdentifierSelector() throws -> ParsedDefinition {
         // Example: Person {
         guard case var ViewToken.Identifier(type, _, _) = popCurrentToken() else {
             throw ViewParseErrors.ExpectedIdentifier(lastToken!)
@@ -127,37 +127,37 @@ class ViewParser {
             }
         }
         
-        return ViewDefinition(type, type: type)
+        return ParsedViewDefinition(type, type: type)
     }
     
-    func parseNamedIdentifierSelector() throws -> ViewSelector {
+    func parseNamedIdentifierSelector() throws -> ParsedDefinition {
         // Example: "Some Name" {
         guard case let ViewToken.NamedIdentifier(name, _, _) = popCurrentToken() else {
             throw ViewParseErrors.UnexpectedToken(lastToken!)
         }
         
-        return ViewDefinition(".\(name)", name: name)
+        return ParsedViewDefinition(".\(name)", name: name)
     }
     
     // For JSON support
-    func parseStringSelector() throws -> ViewSelector {
+    func parseStringSelector() throws -> ParsedDefinition {
         guard case let ViewToken.String(value, _, _) = popCurrentToken() else {
             throw ViewParseErrors.UnexpectedToken(lastToken!)
         }
         
         if value.first == "." {
-            return ViewDefinition(value, name:
+            return ParsedViewDefinition(value, name:
                 String(value.suffix(from: value.index(value.startIndex, offsetBy: 1))))
         }
         else if value.first == "[" {
             throw "Not supported yet" // TODO
         }
         else {
-            return ViewDefinition(value, type: value)
+            return ParsedViewDefinition(value, type: value)
         }
     }
     
-    func parseBracketsSelector(_ token:ViewToken? = nil) throws -> ViewSelector {
+    func parseBracketsSelector(_ token:ViewToken? = nil) throws -> ParsedDefinition {
         guard case ViewToken.BracketOpen = (token ?? popCurrentToken()) else {
             throw ViewParseErrors.ExpectedCharacter("[", lastToken!)
         }
@@ -181,10 +181,10 @@ class ViewParser {
             }
             
             switch type {
-            case "style": return ViewStyleDefinition("[style = \"\(name)\"]", name:name)
-            case "color": return ViewColorDefinition("[color = \"\(name)\"]", name:name)
-            case "renderer": return ViewRendererDefinition("[renderer = \"\(name)\"]", name:name)
-            case "language": return ViewLanguageDefinition("[language = \"\(name)\"]", name:name)
+            case "style": return ParsedStyleDefinition("[style = \"\(name)\"]", name:name)
+            case "color": return ParsedColorDefinition("[color = \"\(name)\"]", name:name)
+            case "renderer": return ParsedRendererDefinition("[renderer = \"\(name)\"]", name:name)
+            case "language": return ParsedLanguageDefinition("[language = \"\(name)\"]", name:name)
             default:
                 throw ViewParseErrors.UnknownDefinition(typeToken)
             }
@@ -247,8 +247,8 @@ class ViewParser {
                     setPropertyValue()
                     
                     // SELECTOR - currently only supporting renderers
-                    if let selector = try parseBracketsSelector(lastToken) as? ViewRendererDefinition {
-                        var value = dict["renderDefinitions"] as? [ViewRendererDefinition] ?? [ViewRendererDefinition]()
+                    if let selector = try parseBracketsSelector(lastToken) as? ParsedRendererDefinition {
+                        var value = dict["renderDefinitions"] as? [ParsedRendererDefinition] ?? [ParsedRendererDefinition]()
                         value.append(selector)
                         dict["renderDefinitions"] = value
                         _ = try parseDefinition(selector)
@@ -365,7 +365,7 @@ class ViewParser {
         }
     }
 
-    func parseDefinition(_ selector: ViewSelector) throws -> ViewSelector {
+    func parseDefinition(_ selector: ParsedDefinition) throws -> ParsedDefinition {
         while true {
             if case ViewToken.Newline = peekCurrentToken() {
                 _ = popCurrentToken()

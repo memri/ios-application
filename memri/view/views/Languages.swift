@@ -10,7 +10,7 @@ public class Languages {
     var currentLanguage: String = "English"
     var keywords: [String:String] = [:]
     
-    public func load(_ definitions:[ViewSelector]) {
+    public func load(_ definitions:[ParsedDefinition]) {
         for def in definitions {
             for (keyword, naturalLanguageString) in def.parsed {
                 if keywords[keyword] != nil {
