@@ -478,8 +478,8 @@ public struct UIElementView: SwiftUI.View {
     
     var renderChildren: some View {
         Group {
-            ForEach(0..<from.children.count){ index in
-                UIElementView((self.from.children[index], self.item, self.arguments)
+            ForEach(0..<from.children.count) { index in
+                UIElementView(self.from.children[index], self.item, self.arguments)
             }
         }
     }

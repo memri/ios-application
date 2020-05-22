@@ -11,7 +11,7 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-typealias List = RealmSwift.List
+public typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily, CaseIterable {
@@ -86,30 +86,30 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         var collection:[DataItem] = []
         
         switch self {
-        case .typeNote: (object as? RealmSwift.List<Note>)?.forEach{ collection.append($0) }
-        case .typeLabel: (object as? RealmSwift.List<Label>)?.forEach{ collection.append($0) }
-        case .typePhoto: (object as? RealmSwift.List<Photo>)?.forEach{ collection.append($0) }
-        case .typeVideo: (object as? RealmSwift.List<Video>)?.forEach{ collection.append($0) }
-        case .typeAudio: (object as? RealmSwift.List<Audio>)?.forEach{ collection.append($0) }
-        case .typeFile: (object as? RealmSwift.List<File>)?.forEach{ collection.append($0) }
-        case .typePerson: (object as? RealmSwift.List<Person>)?.forEach{ collection.append($0) }
-        case .typeAuditItem: (object as? RealmSwift.List<AuditItem>)?.forEach{ collection.append($0) }
-        case .typeSessions: (object as? RealmSwift.List<Sessions>)?.forEach{ collection.append($0) }
-        case .typePhoneNumber: (object as? RealmSwift.List<PhoneNumber>)?.forEach{ collection.append($0) }
-        case .typeWebsite: (object as? RealmSwift.List<Website>)?.forEach{ collection.append($0) }
-        case .typeLocation: (object as? RealmSwift.List<Location>)?.forEach{ collection.append($0) }
-        case .typeAddress: (object as? RealmSwift.List<Address>)?.forEach{ collection.append($0) }
-        case .typeCountry: (object as? RealmSwift.List<Country>)?.forEach{ collection.append($0) }
-        case .typeCompany: (object as? RealmSwift.List<Company>)?.forEach{ collection.append($0) }
-        case .typePublicKey: (object as? RealmSwift.List<PublicKey>)?.forEach{ collection.append($0) }
-        case .typeOnlineProfile: (object as? RealmSwift.List<OnlineProfile>)?.forEach{ collection.append($0) }
-        case .typeDiet: (object as? RealmSwift.List<Diet>)?.forEach{ collection.append($0) }
-        case .typeMedicalCondition: (object as? RealmSwift.List<MedicalCondition>)?.forEach{ collection.append($0) }
-        case .typeSession: (object as? RealmSwift.List<Session>)?.forEach{ collection.append($0) }
-        case .typeSessionView: (object as? RealmSwift.List<SessionView>)?.forEach{ collection.append($0) }
-        case .typeSessionsDefinition: (object as? RealmSwift.List<SessionsDefinition>)?.forEach{ collection.append($0) }
-        case .typeSessionDefinition: (object as? RealmSwift.List<SessionDefinition>)?.forEach{ collection.append($0) }
-        case .typeViewDSLDefinition: (object as? RealmSwift.List<ViewDSLDefinition>)?.forEach{ collection.append($0) }
+        case .typeNote: (object as? List<Note>)?.forEach{ collection.append($0) }
+        case .typeLabel: (object as? List<Label>)?.forEach{ collection.append($0) }
+        case .typePhoto: (object as? List<Photo>)?.forEach{ collection.append($0) }
+        case .typeVideo: (object as? List<Video>)?.forEach{ collection.append($0) }
+        case .typeAudio: (object as? List<Audio>)?.forEach{ collection.append($0) }
+        case .typeFile: (object as? List<File>)?.forEach{ collection.append($0) }
+        case .typePerson: (object as? List<Person>)?.forEach{ collection.append($0) }
+        case .typeAuditItem: (object as? List<AuditItem>)?.forEach{ collection.append($0) }
+        case .typeSessions: (object as? List<Sessions>)?.forEach{ collection.append($0) }
+        case .typePhoneNumber: (object as? List<PhoneNumber>)?.forEach{ collection.append($0) }
+        case .typeWebsite: (object as? List<Website>)?.forEach{ collection.append($0) }
+        case .typeLocation: (object as? List<Location>)?.forEach{ collection.append($0) }
+        case .typeAddress: (object as? List<Address>)?.forEach{ collection.append($0) }
+        case .typeCountry: (object as? List<Country>)?.forEach{ collection.append($0) }
+        case .typeCompany: (object as? List<Company>)?.forEach{ collection.append($0) }
+        case .typePublicKey: (object as? List<PublicKey>)?.forEach{ collection.append($0) }
+        case .typeOnlineProfile: (object as? List<OnlineProfile>)?.forEach{ collection.append($0) }
+        case .typeDiet: (object as? List<Diet>)?.forEach{ collection.append($0) }
+        case .typeMedicalCondition: (object as? List<MedicalCondition>)?.forEach{ collection.append($0) }
+        case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
+        case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
+        case .typeSessionsDefinition: (object as? List<SessionsDefinition>)?.forEach{ collection.append($0) }
+        case .typeSessionDefinition: (object as? List<SessionDefinition>)?.forEach{ collection.append($0) }
+        case .typeViewDSLDefinition: (object as? List<ViewDSLDefinition>)?.forEach{ collection.append($0) }
         }
         
         return collection

@@ -259,10 +259,20 @@ class ActionOpenView : Action, ActionExec {
     private func openView(_ main: Main, view: SessionView, _ arguments: ViewArguments? = nil){
         let session = main.currentSession
         
-        // TODO: implement toggleBool
-        if let binding = self.binding{ binding.toggleBool() }
+        if let binding = self.binding {
+            do { try binding.toggleBool() }
+            catch {
+                // TODO ERror handling
+            }
+        }
         
-        // TODO:  merge arguments into view
+        // Merge arguments into view
+        if let dict = arguments?.asDict() {
+            if let viewArguments = view.viewArguments {
+                view.viewArguments = ViewArguments(viewArguments.asDict()
+                    .merging(dict, uniquingKeysWith: { current, new in new }))
+            }
+        }
         
         // Add view to session
         session.setCurrentView(view)
@@ -433,17 +443,21 @@ class ActionShowStarred : Action, ActionExec {
     convenience init(){
         self.init("showStarred")
     }
-    
-    func exec(_ main:Main, _ arguments:[String: Any]) {
-        if let binding = self.binding, binding.hasStateEnabled(){
-            ActionOpenView.exec(main, ["viewArguments": "filter-starred"])
-            // Open named view 'showStarred'
-            // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
 
+    func exec(_ main:Main, _ arguments:[Any]) {
+        do {
+            if let binding = self.binding, try binding.isTrue() {
+                ActionOpenView.exec(main, ["viewArguments": "filter-starred"])
+                // Open named view 'showStarred'
+                // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
+            }
+            else {
+                // Go back to the previous view
+                ActionBack.exec(main, arguments: [])
+            }
         }
-        else{
-            // Go back to the previous view
-            ActionBack.exec(main, arguments: [:])
+        catch {
+            // TODO Error Handling
         }
     }
     

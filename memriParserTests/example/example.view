@@ -137,30 +137,34 @@
     navigateItems: [
         openView {
             title: "{$timelineof} {type.lowercased()}"
-            view: {
-                defaultRenderer: timeline
-                
-                queryOptions {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
-                }
-                
-                [renderer = "timeline"] {
-                    timeProperty: dateCreated
+            arguments: {
+                view: {
+                    defaultRenderer: timeline
+                    
+                    queryOptions {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = "timeline"] {
+                        timeProperty: dateCreated
+                    }
                 }
             }
         }
         openViewByName {
             title: "{$starred} {type.plural()}"
-            name: "filter-starred"
             arguments: {
+                name: "filter-starred"
                 fromTemplate: "all-{type}"
             }
         }
         openViewByName {
             title: "{$all} {type.lowercased().plural()}"
-            name: "all-{type}"
+            arguments: {
+                name: "all-{type}"
+            }
         }
     ]
 }

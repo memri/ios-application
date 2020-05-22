@@ -56,19 +56,22 @@ public class UIElement : CustomStringConvertible {
         return nil
     }
     
-    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, String) {
+    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, DataItem, String) {
         // TODO REfactor: Error Handling
         if let prop = properties[propName] {
             let propValue = prop
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
-                return expr.getTypeOfDataItem() // Should return (type, dataItem, propName)
+                do { return try expr.getTypeOfDataItem() }
+                catch {
+                    // Log error
+                }
             }
         }
         
         // TODO Refactor: Error Handling
-        return (.any, "")
+        return (.any, item, "")
     }
     
     func processText(_ text: String) -> String{

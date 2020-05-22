@@ -127,27 +127,27 @@ public class Main: ObservableObject {
             do {
                 // Calculate cascaded view
                 let cascadingView = try self.views.createCascadingView() // TODO handle errors better
+            
+                // Update current session
+                self.currentSession = self.sessions.currentSession // TODO filter to a single property
+                
+                // Set the newly computed view
+                self.cascadingView = cascadingView
+                
+                // Load data in the resultset of the computed view
+                try self.cascadingView.resultSet.load { (error) in
+                    if error != nil {
+                        print("Error: could not load result: \(error!)")
+                    }
+                    else {
+                        maybeLogRead()
+                        // Update the UI
+                        scheduleUIUpdate{_ in true}
+                    }
+                }
             }
             catch {
                 // TODO Error handling
-            }
-            
-            // Update current session
-            self.currentSession = self.sessions.currentSession // TODO filter to a single property
-            
-            // Set the newly computed view
-            self.cascadingView = cascadingView
-            
-            // Load data in the resultset of the computed view
-            try! self.cascadingView.resultSet.load { (error) in
-                if error != nil {
-                    print("Error: could not load result: \(error!)")
-                }
-                else {
-                    maybeLogRead()
-                    // Update the UI
-                    scheduleUIUpdate{_ in true}
-                }
             }
             
             // Update the UI
@@ -313,7 +313,6 @@ public class ProxyMain: Main {
         self.closeStack = main.closeStack
         
         views.main = self
-        views.defaultViews = main.views.defaultViews
         
         // For now sessions is unmanaged. TODO: Refactor: we may want to change this.
         sessions.sessions.append(session)
@@ -345,7 +344,7 @@ public class RootMain: Main {
             installer: Installer(realm),
             sessions: Sessions(realm),
             views: Views(realm),
-            cascadingView: CascadingView(cache),
+            cascadingView: CascadingView(SessionView(), [], ""),
             navigation: MainNavigation(realm),
             renderers: Renderers()
         )
@@ -387,10 +386,10 @@ public class RootMain: Main {
         return ProxyMain(name: "Proxy", self, session)
     }
     
-    public func boot(_ callback: @escaping (_ error:Error?, _ success:Bool) -> Void) -> Main {
+    public func boot() throws -> Main {
         
         // Make sure memri is installed properly
-        self.installer.installIfNeeded(self) {
+        try self.installer.installIfNeeded(self) {
 
             // Load settings
             self.settings.load() {
@@ -414,9 +413,6 @@ public class RootMain: Main {
                             
                             // Load current view
                             self.updateCascadingView()
-                            
-                            // Done
-                            callback(nil, true)
                         }
                     }
                 }
@@ -427,6 +423,11 @@ public class RootMain: Main {
     }
     
     public func mockBoot() -> Main {
-        return self.boot({_,_ in })
+        do {
+            return try self.boot()
+        }
+        catch let error { print(error) }
+        
+        return self
     }
 }

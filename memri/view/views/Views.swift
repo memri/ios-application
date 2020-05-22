@@ -100,48 +100,6 @@ public class Views {
         }
     }
 
-//    public func getSessionView (_ viewName:String,
-//                                _ variables:[String:Any]? = nil) -> SessionView? {
-//        if let compiledView = getCompiledView(viewName) {
-//            return try! compiledView.generateView(variables)
-//        }
-//
-//        return nil
-//    }
-//
-//    public func getSessionView (_ view:DynamicView?,
-//                                _ variables:[String:Any]? = nil) -> SessionView? {
-//        if let dynamicView = view {
-//            return try! compileView(dynamicView).generateView(variables)
-//        }
-//
-//        return nil
-//    }
-//
-//    // TODO: Refactor: THis function needs to die
-//    public func getSessionOrView(_ viewName:String, wrapView:Bool=false,
-//                                 _ variables:[String:Any]? = nil) -> (Session?, SessionView?) {
-//        if let compiledView = getCompiledView(viewName) {
-//
-//            // Parse so we now if it includes a session
-//            try! compiledView.parse()
-//
-//            if compiledView.hasSession {
-//                return (try! compiledView.generateSession(variables), nil)
-//            }
-//            else {
-//                let view = try! compiledView.generateView(variables)
-//                return (wrapView ? Session(value: ["views": [view]]) : nil, view)
-//            }
-//        }
-//
-//        return (nil, nil)
-//    }
-    
-//    LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)])
-//    LookupNode([VariableNode(bar), VariableNode(foo)])
-//    LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])
-    
     public class func formatDate(_ date:Date?) -> String{
         let showAgoDate:Bool? = Settings.get("user/general/gui/showDateAgo")
         
@@ -317,6 +275,9 @@ public class Views {
         if let f = f as? ([Any]) -> Any {
             return f(args) as Any
         }
+        
+        let x:String? = nil
+        return x as Any
     }
     
     public func fetchDefinitions(_ selector:String = "", type:String? = nil,

@@ -102,8 +102,10 @@ extension Main {
             
             // Track state of the action and toggle the state variable based on actionStateName
             // TODO Refactor: it should be the new way of doing selection
-            if cascadingView.selection.count == 0 && action.hasState, let binding = action.binding {
-                binding.toggleBool()
+            if (cascadingView.userState["selection"] as? [DataItem])?.count == 0
+                && action.hasState, let binding = action.binding {
+                
+                try binding.toggleBool()
             }
             
             if let action = action as? ActionExec {

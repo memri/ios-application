@@ -54,9 +54,12 @@ struct ActionButtonView: View {
     
     var isActive: Bool {
         if action.hasState, let binding = action.binding {
-            return binding.stateIsActive()
+            do { return try binding.isTrue() }
+            catch {
+                // TODO error handling
+            }
         }
-        else { return false }
+        return false
     }
     
     var body: some View {
@@ -146,14 +149,13 @@ struct ActionPopup: View {
                 // TODO Error logging
             }
         }
-        else {
-            // We should never get here. This is just to ease the compiler
-            return SubView(
-                main: self.main,
-                viewName: "catch-all-view",
-                dataItem: dataItem,
-                args: args
-            )
-        }
+        
+        // We should never get here. This is just to ease the compiler
+        return SubView(
+            main: self.main,
+            viewName: "catch-all-view",
+            dataItem: dataItem,
+            args: args
+        )
     }
 }
