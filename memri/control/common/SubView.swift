@@ -32,7 +32,7 @@ public struct SubView : View {
             }
             guard let viewDef = def else { throw "Exception: Missing view" }
             
-            args["."] = context
+            args["."] = dataItem
             
             let view = SessionView(value: [
                 "viewDefinition": viewDef,

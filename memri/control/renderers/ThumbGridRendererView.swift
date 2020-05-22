@@ -15,6 +15,7 @@ private var register:Void = {
         order: 20,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbnailRendererView()),
+        renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
 }()
@@ -32,23 +33,18 @@ struct ThumbGridRendererView: View {
 //        editMode?.wrappedValue.isEditing ?? false
 //    }
     
-    var renderConfig: CascadingThumbnailConfig {
-        if self.main.cascadingView.renderConfigs["thumbnail"] == nil {
-            print ("Warning: Using default render config for thumbnail.grid")
-        }
-        
-        // TODO Refactor: How can we try other render configs?? e.g. ThumbnailConfig
-        return self.main.cascadingView.renderConfigs["thumbnail"] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+    var renderConfig: CascadingThumbnailConfig? {
+        self.main.cascadingView.renderConfig as? CascadingThumbnailConfig
     }
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let isWide = environment.container.effectiveContentSize.width > 500
-                let columns = CGFloat(isWide ? self.renderConfig.columnsWide.value ?? 5 : self.renderConfig.columns.value ?? 3)
+                let columns = CGFloat(isWide ? self.renderConfig!.columnsWide ?? 5 : self.renderConfig!.columns ?? 3)
                 
                 let gridBlockSize = environment.container.effectiveContentSize.width / columns
-                let inset = CGFloat(self.renderConfig.itemInset.value ?? 5)
+                let inset = CGFloat(self.renderConfig!.itemInset ?? 5)
                 let gridItemInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize), heightDimension: .absolute(gridBlockSize))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -84,10 +80,10 @@ struct ThumbGridRendererView: View {
         ASCollectionViewSection(id: 0, data: main.items, selectedItems: $selectedItems) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
-                    self.renderConfig.render(item: dataItem)
+                    self.renderConfig!.render(item: dataItem)
                         .onTapGesture {
-                            if let press = self.renderConfig.press {
-                                self.main.executeAction(press, dataItem)
+                            if let press = self.renderConfig!.press {
+                                self.main.executeAction(press, with: dataItem)
                             }
                         }
                         .frame(width: geom.size.width, height: geom.size.height)
@@ -110,10 +106,13 @@ struct ThumbGridRendererView: View {
     }
     
     var body: some View {
-        let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
+        let edgeInset = renderConfig?.edgeInset ?? []
         
         return VStack {
-            if main.cascadingView.resultSet.count == 0 {
+            if renderConfig == nil {
+                Text("Unable to render this view")
+            }
+            else if main.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
                     Text(self.main.cascadingView.emptyResultText)
@@ -161,7 +160,7 @@ struct ThumbGridRendererView: View {
     }
     
     func onTap(Action: Action, dataItem: DataItem){
-        main.executeAction(Action, dataItem)
+        main.executeAction(Action, with: dataItem)
     }
 }
 

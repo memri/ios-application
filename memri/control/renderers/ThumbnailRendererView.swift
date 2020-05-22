@@ -27,7 +27,8 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
     var press: Action? { cascadeProperty("press", nil) }
     
     var columns:Int? { Int(cascadeProperty("column", 3)) }
-    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset", Double.nan)) }
+    var columnsWide:Int? { Int(cascadeProperty("columnsWide", 5)) }
+    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset", 10)) }
     var edgeInset:[CGFloat]? { cascadeProperty("edgeInset", []).map{ CGFloat($0 as Double) } }
 }
 

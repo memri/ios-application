@@ -15,6 +15,7 @@ private var register:Void = {
         order: 30,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbWaterfallRendererView()),
+        renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
 }()
@@ -32,13 +33,8 @@ struct ThumbWaterfallRendererView: View {
 //        editMode?.wrappedValue.isEditing ?? false
 //    }
     
-    var renderConfig: CascadingThumbnailConfig {
-        if self.main.cascadingView.renderConfigs["thumbnail"] == nil {
-            print ("Warning: Using default render config for thumbnail.grid")
-        }
-        
-        // TODO Refactor: How can we try other render configs?? e.g. ThumbnailConfig
-        return self.main.cascadingView.renderConfigs["thumbnail"] as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+    var renderConfig: CascadingThumbnailConfig? {
+        self.main.cascadingView.renderConfig as? CascadingThumbnailConfig
     }
     
     var layout: ASCollectionLayout<Int> {
@@ -59,10 +55,10 @@ struct ThumbWaterfallRendererView: View {
         ASCollectionViewSection(id: 0, data: main.items, selectedItems: $selectedItems) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
-                    self.renderConfig.render(item: dataItem)
+                    self.renderConfig!.render(item: dataItem)
                         .onTapGesture {
-                            if let press = self.renderConfig.press {
-                                self.main.executeAction(press, dataItem)
+                            if let press = self.renderConfig!.press {
+                                self.main.executeAction(press, with: dataItem)
                             }
                         }
                         .frame(width: geom.size.width, height: geom.size.height)
@@ -88,8 +84,7 @@ struct ThumbWaterfallRendererView: View {
     }
     
     var body: some View {
-        let edgeInset:[CGFloat] = renderConfig.edgeInset.map{ CGFloat($0) }
-        let itemInset = CGFloat(renderConfig.itemInset.value ?? 10)
+        let edgeInset = renderConfig?.edgeInset ?? []
         
         return VStack {
             if main.cascadingView.resultSet.count == 0 {
@@ -141,8 +136,8 @@ struct ThumbWaterfallRendererView: View {
         }
     }
     
-    func onTap(Action: Action, dataItem: DataItem){
-        main.executeAction(Action, dataItem)
+    func onTap(action: Action, dataItem: DataItem){
+        main.executeAction(action, with: dataItem)
     }
 }
 

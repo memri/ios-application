@@ -105,10 +105,9 @@ class File:DataItem {
             }
             
             try self.writeData(data!)
-            try! fileCache.add(self.uri, value)
+            try InMemoryObjectCache.set(self.uri, value)
         }
         catch let error {
-
             throw "\(error)"
         }
     }

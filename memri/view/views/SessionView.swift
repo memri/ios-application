@@ -141,7 +141,7 @@ public class SessionView: DataItem {
     @objc dynamic var name: String? = nil
     @objc dynamic var viewDefinition: ViewDSLDefinition? = nil
     @objc dynamic var userState: UserState? = nil
-    @objc dynamic var viewArguments: ViewArguments? = nil
+    @objc dynamic var viewArguments: ViewArguments? = ViewArguments()
     @objc dynamic var queryOptions: QueryOptions? = nil // TODO refactor: fix cascading
     @objc dynamic var session: Session? = nil
     

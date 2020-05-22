@@ -20,7 +20,7 @@ public protocol ViewNode: CustomStringConvertible {
 public class ViewSelector:ViewNode {
     let name:String?
     let selector:String?
-    let domain:String?
+    var domain:String?
     
     subscript(propName:String) -> Any? {
         return parsed[propName]

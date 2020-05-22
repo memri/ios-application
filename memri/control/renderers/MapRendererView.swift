@@ -16,6 +16,7 @@ private var register:Void = {
         order: 3,
         icon: "map",
         view: AnyView(MapRendererView()),
+        renderConfigType: CascadingMapConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
 }()
@@ -32,8 +33,8 @@ struct MapRendererView: View {
     
     let name = "map"
     
-    var renderConfig: CascadingMapConfig {
-        return self.main.cascadingView.renderConfigs[name] as? CascadingMapConfig ?? CascadingMapConfig()
+    var renderConfig: CascadingMapConfig? {
+        self.main.cascadingView.renderConfig as? CascadingMapConfig
     }
     
     var body: some View {

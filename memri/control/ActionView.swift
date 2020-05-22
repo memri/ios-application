@@ -41,7 +41,7 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionView(action: Action(icon: "chevron.left", title: "back", actionType: .button))
+        ActionButton(action: Action("back"))
             .environmentObject(RootMain(name: "", key: "").mockBoot())
     }
 }
@@ -53,8 +53,8 @@ struct ActionButtonView: View {
     var execute: (() -> Void)? = nil
     
     var isActive: Bool {
-        return action.hasState.value == true && action.actionStateName != nil &&
-            main.hasState(action.actionStateName!)
+        if action.hasState, let binding = action.binding { return binding.stateIsActive() }
+        else { return false }
     }
     
     var body: some View {
@@ -68,8 +68,8 @@ struct ActionButtonView: View {
                     .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
-                    .foregroundColor(Color(action.computeColor(state: isActive)))
-//                    .background(Color(action.computeBackgroundColor(state: isActive)))
+                    .foregroundColor(action.computeColor(state: isActive))
+                    .background(action.computeBackgroundColor(state: isActive))
             }
             if action.title != nil && action.showTitle {
                 Text(action.title!)
@@ -109,37 +109,48 @@ struct ActionPopup: View {
             self.presentationMode.wrappedValue.dismiss()
         }
         
-        var variables = action.actionArgs[1].value as? [String:Any] ?? [:]
-        variables["showCloseButton"] = true
+        let args = action.arguments[1] as? ViewArguments ?? ViewArguments()
+        args["showCloseButton"] = true
         
+        // TODO is this still needed? Need test cases
         // TODO this is now set back on variables["."] there is something wrong in the architecture
         //      that is causing this
-        let context = variables["."] as? DataItem ?? DataItem() // TODO Refactor: Error handling
+        let dataItem = args["."] as? DataItem ?? DataItem() // TODO Refactor: Error handling
         
         // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
-        if action.actionName == .openView {
-            return SubView(
-                main: self.main,
-                view: action.actionArgs[0].value as! SessionView, // TODO refactor: consider adding .closePopup to all press actions
-                context: context,
-                variables: variables
-            )
+        if action.name == .openView {
+            if let view = action.arguments[0] as? SessionView {
+                return SubView(
+                    main: self.main,
+                    view: view, // TODO refactor: consider adding .closePopup to all press actions
+                    dataItem: dataItem,
+                    args: args
+                )
+            }
+            else {
+                // TODO ERror logging
+            }
         }
-        else  if action.actionName == .openViewByName {
-            return SubView(
-                main: self.main,
-                viewName: action.actionArgs[0].value as! String,
-                context: context,
-                variables: variables
-            )
+        else  if action.name == .openViewByName {
+            if let viewName = action.arguments[0] as? String {
+                return SubView(
+                    main: self.main,
+                    viewName: viewName,
+                    dataItem: dataItem,
+                    args: args
+                )
+            }
+            else {
+                // TODO Error logging
+            }
         }
         else {
             // We should never get here. This is just to ease the compiler
             return SubView(
                 main: self.main,
                 viewName: "catch-all-view",
-                context: context,
-                variables: variables
+                dataItem: dataItem,
+                args: args
             )
         }
     }

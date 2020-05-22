@@ -145,7 +145,10 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
     let objects:[T]? = try! decoder.decodeIfPresent(key)
     if let objects = objects {
         for object in objects {
-            try! globalInMemoryObjectCache.addToCache(object)
+            do { _ = try globalCache.addToCache(object) }
+            catch {
+                // TODO Error logging
+            }
             let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
             edgeList.append(edge)
         }

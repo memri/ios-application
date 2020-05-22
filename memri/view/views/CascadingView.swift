@@ -78,16 +78,23 @@ public class CascadingView: Cascadable, ObservableObject {
     
     //self.queryOptions.merge(view.queryOptions!)
     var queryOptions: QueryOptions { return sessionView.queryOptions ?? QueryOptions() } // set same ref??
-    var viewArguments: ViewArguments { cascadeDict("viewArguments", sessionView.viewArguments) } // set same ref??
+    var viewArguments: ViewArguments {
+        sessionView.viewArguments ?? ViewArguments()
+        // TODO let this cascade when the use case for it arrises
+        // cascadeProperty("viewArguments", )
+    }
     
     var resultSet: ResultSet {
         if let x = localCache["resultSet"] as? ResultSet { return x }
         
         // Update search result to match the query
-        localCache["resultSet"] = main.cache.getResultSet(self.queryOptions)
+        let resultSet = main.cache.getResultSet(self.queryOptions)
+        localCache["resultSet"] = resultSet
 
         // Filter the results
         filterText = userState["filterText"] as? String ?? ""
+        
+        return resultSet
         
     } // TODO: Refactor set when queryOptions changes ??
     
@@ -110,35 +117,51 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-//    var renderer: Renderer? = nil // TODO
-//    var rendererView: AnyView? = nil // TODO
-    
     private let main:Main
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
         
-        let stack = self.cascadeStack.compactMap {
+        var stack = self.cascadeStack.compactMap {
             ($0["renderDefinitions"] as? [ViewRendererDefinition] ?? [])
                 .filter { $0.name == activeRenderer }.first
         }
         
         let renderDSLDefinitions = main.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
         for def in renderDSLDefinitions {
-            parsedRenderDef = main.views.parseDefinition(def)
-        }
-            
-            if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
-                let renderConfig = RenderConfigType.init(
-                    // TODO set renderDefinition parsed version as first element of cascadeStack
-                    ,
-                    self.viewArguments
-                )
-                
-                // Not actively preventing conflicts in namespace - assuming chance to be low
-                localCache[activeRenderer] = renderConfig
-                return renderConfig
+            do {
+                if let parsedRenderDef = try main.views.parseDefinition(def) as? ViewRendererDefinition {
+                    if parsedRenderDef.domain == "user" {
+                        let insertPoint:Int = {
+                            for i in 0..<stack.count { if stack[i].domain == "view" { return i } }
+                            return stack.count
+                        }()
+                        
+                        stack.insert(parsedRenderDef, at: insertPoint)
+                    }
+                    else {
+                        stack.append(parsedRenderDef)
+                    }
+                }
+                else {
+                    // TODO Error logging
+                }
             }
+            catch {
+                // TODO Error logging
+            }
+        }
+        
+        if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
+            let renderConfig = RenderConfigType.init(cascadeStack, viewArguments)
+            // Not actively preventing conflicts in namespace - assuming chance to be low
+            localCache[activeRenderer] = renderConfig
+            return renderConfig
+        }
+        else {
+            // TODO Error Logging
+            
+            return CascadingRenderConfig([], ViewArguments())
         }
     }
     
@@ -222,9 +245,15 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    init(_ main:Main, sessionView:SessionView, cascadeStack:[ViewSelector]){
+    init(_ main:Main,
+         _ sessionView:SessionView,
+         _ cascadeStack:[ViewSelector],
+         _ activeRenderer:String
+    ){
         self.main = main
         self.sessionView = sessionView
+        self.activeRenderer = activeRenderer
+        super.init()
         self.cascadeStack = cascadeStack
     }
     
@@ -260,8 +289,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     public class func fromSessionView(_ sessionView:SessionView, in main:Main) throws -> CascadingView {
-        var cascadeStack:[ViewSelector] = [main.views.getParsedDefinition(sessionView.viewDefinition)]
-        let viewArguments = sessionView.viewArguments
+        var cascadeStack:[ViewSelector] = []
         var isList = true
         var type = ""
         
@@ -298,18 +326,51 @@ public class CascadingView: Cascadable, ObservableObject {
             needles = [isList ? "*[]" : "*"]
         }
         
+        var activeRenderer:String? = nil
+        
+        func parse(_ def:ViewDSLDefinition?, _ domain:String){
+            do {
+                guard let def = def else {
+                    throw "Exception: missing view definition"
+                }
+                
+                if let parsedDef = try main.views.parseDefinition(def) {
+                    parsedDef.domain = domain
+                    
+                    if activeRenderer == nil, let d = parsedDef["defaultRenderer"] {
+                        if let d = d as? String { activeRenderer = d }
+                        else {
+                            // TODO ERror logging
+                        }
+                    }
+                    
+                    cascadeStack.append(parsedDef)
+                }
+                else {
+                    // TODO Error logging
+                }
+            }
+            catch {
+                // TODO Error logging
+            }
+        }
+        
         // Find views based on datatype
         for needle in needles {
-            for key in ["user", "defaults"] {
-                
-                if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
-                    cascadeStack.append(main.views.getParsedDefinition(sessionViewDef))
+            for key in ["user", "session", "defaults"] {
+                if key == "view" { parse(sessionView.viewDefinition, key) }
+                else if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
+                    parse(sessionViewDef, key)
                 }
             }
         }
         
+        if activeRenderer == nil {
+            // TODO Error Logging
+        }
+        
         // Create a new view
-        return CascadingView(cache, sessionView, cascadeStack)
+        return CascadingView(main, sessionView, cascadeStack, activeRenderer ?? "")
     }
     
 }

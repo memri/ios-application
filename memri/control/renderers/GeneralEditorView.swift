@@ -64,11 +64,12 @@ private var register:Void = {
         order: 0,
         icon: "pencil.circle.fill",
         view: AnyView(GeneralEditorView()),
+        renderConfigType: CascadingGeneralEditorConfig.self,
         canDisplayResults: { items -> Bool in items.count == 1 }
     )
 }()
 
-class CascadingGeneralEditorConfig: CascadingRenderConfig{
+class CascadingGeneralEditorConfig: CascadingRenderConfig {
     var type: String? = "generalEditor"
     
     var groups: [String:[String]] { cascadeDict("groups") }
@@ -88,12 +89,13 @@ struct GeneralEditorView: View {
     
     var name: String = "generalEditor"
     
-    var renderConfig: GeneralEditorConfig {
-        return self.main.cascadingView.renderConfigs.generalEditor ?? GeneralEditorConfig()
+    var renderConfig: CascadingGeneralEditorConfig? {
+        self.main.cascadingView.renderConfig as? CascadingGeneralEditorConfig
     }
     
     func getGroups(_ item:DataItem) -> [String:[String]]? {
-        let groups = self.renderConfig.groups ?? [:]
+        let renderConfig = self.renderConfig
+        let groups = renderConfig?.groups ?? [:]
         var filteredGroups: [String:[String]] = [:]
         let objectSchema = item.objectSchema
         var alreadyUsed:[String] = []
@@ -104,7 +106,7 @@ struct GeneralEditorView: View {
         
         (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
             return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil)
-                && !self.renderConfig.excluded.contains($0)
+                && !(renderConfig?.excluded.contains($0) ?? false)
                 && !alreadyUsed.contains($0)
         }.forEach({
             filteredGroups[$0] = groups[$0] ?? [$0]
@@ -114,14 +116,14 @@ struct GeneralEditorView: View {
     }
     
     func getSortedKeys(_ groups: [String:[String]]) -> [String] {
-        var keys = Array(self.renderConfig.sequence)
+        var keys = self.renderConfig?.sequence ?? []
         for k in groups.keys{
             if !keys.contains(k) {
                 keys.append(k)
             }
         }
         
-        keys = keys.filter{ !self.renderConfig.excluded.contains($0) }
+        keys = keys.filter{ !(self.renderConfig?.excluded.contains($0) ?? true) }
         
         if !keys.contains("other"){
             keys.append("other")
@@ -157,7 +159,7 @@ struct GeneralEditorSection: View {
     @EnvironmentObject var main: Main
 
     var item: DataItem
-    var renderConfig: GeneralEditorConfig
+    var renderConfig: CascadingGeneralEditorConfig
     var groupKey: String
     var groups:[String:[String]]
     
@@ -165,7 +167,6 @@ struct GeneralEditorSection: View {
         
         //TODO: Better error handling
         //TODO: Move to DataItem?
-        let className = item.objectSchema[prop]?.objectClassName
         let edges = item[prop] as? RealmSwift.List<Edge>
         if let edges = edges{
             if edges.count > 0 {
@@ -207,15 +208,15 @@ struct GeneralEditorSection: View {
     }
     
     func hasSectionTitle(_ groupKey:String) -> Bool {
-        return !(renderConfig.renderDescription?[groupKey]?._properties["sectiontitle"] as? String == "")
+        renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String == ""
     }
     
     func getSectionTitle(_ groupKey:String) -> String? {
-        renderConfig.renderDescription?[groupKey]?.getString("sectiontitle", self.item)
+        renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
-        return renderConfig.renderDescription?[groupKey]?._properties["for"] as? String == "group"
+        renderConfig.getGroupOptions(groupKey)["for"] as? String == "group"
     }
     
 //    func getType(_ groupKey:String) -> String {
@@ -230,25 +231,24 @@ struct GeneralEditorSection: View {
         let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
-        let Action = isArray && editMode && !readOnly
-            ? Action(
-                icon: "plus",
-                actionName: .openViewByName,
-                actionArgs: [
+        let action = isArray && editMode && !readOnly
+            ? Action("openViewByName",
+                [
                     "choose-item-by-query",
-                    [
+                    ViewArguments([
                         "query": className,
                         "type": className,
                         "actionName": "addSelectionToList",
                         "actionArgs": "", // [self.item, groupKey],
                         "title": "Add Selected",
                         ".": item
-                    ]
+                    ])
                 ],
-                actionType: .popup)
+                icon: "plus",
+                renderAs: .popup)
             : nil
         
-        return Group{
+        return Group {
             if renderDescription[groupKey] != nil {
                 if !self.hasSectionTitle(groupKey) {
                     EmptyView()
@@ -256,14 +256,14 @@ struct GeneralEditorSection: View {
                 else {
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
-                        action: Action
+                        action: action
                     )
                 }
             }
             else {
                 self.constructSectionHeader(
                     title: (groupKey == "other" && groups.count == 0) ? "all" : groupKey,
-                    action: Action
+                    action: action
                 )
             }
         }
@@ -276,7 +276,7 @@ struct GeneralEditorSection: View {
             
             if action != nil {
                 Spacer()
-                Action(action: action!)
+                ActionButton(action: action!)
                     .foregroundColor(Color(hex:"#777"))
                     .font(.system(size: 18, weight: .semibold))
                     .padding(.bottom, 10)

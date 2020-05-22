@@ -41,6 +41,7 @@ public class Action : HashableClass, CustomStringConvertible {
          title:String? = nil,
          showTitle:Bool? = nil,
          binding:Expression? = nil,
+         renderAs:RenderType? = nil,
          hasState:Bool? = nil,
          color:Color? = nil,
          backgroundColor:Color? = nil,
@@ -61,6 +62,7 @@ public class Action : HashableClass, CustomStringConvertible {
         
         self.arguments = arguments ?? self.arguments
         self.icon = icon ?? defForName["icon"] as? String ?? self.icon
+        self.renderAs = renderAs ?? defForName["renderAs"] as? RenderType ?? self.renderAs
         self.title = title ?? defForName["icon"] as? String ?? self.title
         self.showTitle = showTitle ?? defForName["icon"] as? Bool ?? self.showTitle
         self.binding = binding ?? defForName["icon"] as? Expression ?? self.binding

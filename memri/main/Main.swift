@@ -18,6 +18,8 @@ import RealmSwift
  */
 
 
+// TODO Remove this and find a solution for Edges
+var globalCache:Cache
 
 
 public class Main: ObservableObject {
@@ -326,6 +328,8 @@ public class RootMain: Main {
         let podAPI = PodAPI(key)
         let cache = Cache(podAPI)
         let realm = cache.realm
+        
+        globalCache = cache // TODO remove this and fix edges
         
         super.init(
             name: name,

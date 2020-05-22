@@ -13,7 +13,7 @@ var allRenderers:Renderers? = nil
 
 public class Renderers {
     var all: [String: FilterPanelRendererButton] = [:]
-    var allViews: [String: AnyView] = [:]
+    var allViewTypes: [String: AnyView] = [:]
     var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
     
     class func register(name:String, title:String, order:Int, icon:String = "",
@@ -25,10 +25,11 @@ public class Renderers {
         allRenderers!.all[name] = FilterPanelRendererButton(
             name: name,
             order: order,
+            title: title,
             icon: icon,
             canDisplayResults: canDisplayResults
         )
-        allRenderers!.allViews[name] = view
+        allRenderers!.allViewTypes[name] = view
         allRenderers!.allConfigTypes[name] = renderConfigType
     }
     
@@ -42,14 +43,14 @@ class FilterPanelRendererButton: Action {
     var canDisplayResults: (_ items: [DataItem]) -> Bool
     var rendererName: String
     
-    required init(name:String, order:Int, icon:String,
+    required init(name:String, order:Int, title:String, icon:String,
                   canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
-        
-        super.init("setRenderer", icon:icon)
         
         self.rendererName = name
         self.order = order
         self.canDisplayResults = canDisplayResults
+        
+        super.init("setRenderer", icon:icon, title:title)
     }
     
     public required init() {
@@ -88,10 +89,9 @@ protocol CascadingRendererDefaults {
 public class CascadingRenderConfig: Cascadable {
     private var viewArguments: ViewArguments
     
-    init(_ cascadeStack: [ViewSelector], _ viewArguments: ViewArguments) {
-        super.init()
-        
+    required init(_ cascadeStack: [ViewSelector], _ viewArguments: ViewArguments) {
         self.viewArguments = viewArguments
+        super.init()
         self.cascadeStack = cascadeStack
     }
     

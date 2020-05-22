@@ -3,6 +3,8 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-let x:Double = 5
+var x = ["a", "b"]
 
-print(Int(x))
+x.insert("c", at: 1)
+
+print(x)

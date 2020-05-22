@@ -380,6 +380,7 @@ public class Cache {
         return nil
     }
     
+    // TODO does this work for subobjects?
     private func bindSyncing(_ item: DataItem) {
         // Update the sync state when the item changes
         rlmTokens.append(item.observe { (objectChange) in
