@@ -29,13 +29,13 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(Action(actionName:.forward))
+        self.main.executeAction(Action("forward"))
     }
     private func toFront(){
-        self.main.executeAction(Action(actionName:.forwardToFront))
+        self.main.executeAction(Action("forwardToFront"))
     }
     private func backAsSession(){
-        self.main.executeAction(Action(actionName:.backAsSession))
+        self.main.executeAction(Action("backAsSession"))
     }
     private func openAllViewsOfSession(){
         let uid = self.main.currentSession.uid
@@ -43,12 +43,12 @@ public struct TopNavigation: View {
         {
             "title": "Views in current session",
             "queryOptions": {
-                "query": "sessionview AND session.uid = '\(uid)'",
+                "query": "SessionView AND session.uid = '\(uid)'",
             }
         }
         """
         
-        self.main.openView(view)
+        ActionOpenView.exec(main, arguments: [view])
     }
     
     private func createTitleActionSheet() -> ActionSheet {
@@ -87,6 +87,7 @@ public struct TopNavigation: View {
         
     public var body: some View {
         let backButton = main.currentSession.backButton
+        let main = self.main
         
         return ZStack {
             // we place the title *over* the rest of the topnav, to center it horizontally
@@ -104,14 +105,16 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        Action(action: Action(actionName: .showNavigation))
+                        ActionButton(action: Action("showNavigation"))
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
                         // TODO Refactor: Properly support text labels
 //                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
-                        Button(action: { self.main.executeAction(Action(actionName: .closePopup)) }) {
+                        Button(action: {
+                            main.executeAction(Action("closePopup"))
+                        }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
                                 .padding(.horizontal, 5)
@@ -124,14 +127,14 @@ public struct TopNavigation: View {
                     if backButton != nil{
                         Button(action: {
                             if !self.showingBackActions {
-                                self.main.executeAction(backButton!)
+                                main.executeAction(backButton!)
                             }
                         }) {
                             Image(systemName: backButton!.icon)
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .foregroundColor(Color(backButton!.computeColor(state: false)))
+                                .foregroundColor(backButton!.computeColor(state: false))
                         }
                         .font(Font.system(size: 19, weight: .semibold))
                         .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
@@ -170,16 +173,16 @@ public struct TopNavigation: View {
                     Spacer()
                     
                     // TODO this should not be a setting but a user defined view that works on all
-                    if self.main.item != nil || self.main.settings.getBool("user/general/gui/showEditButton") != false {
-                        Action(action: main.cascadingView.editActionButton)
+                    if main.item != nil || main.settings.getBool("user/general/gui/showEditButton") != false {
+                        ActionButton(action: main.cascadingView.editActionButton)
                             .font(Font.system(size: 19, weight: .semibold))
                     }
                     
-                    Action(action: main.cascadingView.actionButton)
+                    ActionButton(action: main.cascadingView.actionButton)
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        Action(action: Action(actionName: .showSessionSwitcher))
+                        ActionButton(action: Action("showSessionSwitcher"))
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }

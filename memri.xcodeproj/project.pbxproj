@@ -30,7 +30,7 @@
 		5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
-		5D38DE172405776B00FF9B70 /* model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* model.swift */; };
+		5D38DE172405776B00FF9B70 /* DataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* DataItem.swift */; };
 		5D38DE19240577BA00FF9B70 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE18240577BA00FF9B70 /* Views.swift */; };
 		5D3D961F24164B240004040E /* CodeExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D961E24164B240004040E /* CodeExtended.swift */; };
 		5D3D9621241675100004040E /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D9620241675100004040E /* util.swift */; };
@@ -158,6 +158,7 @@
 		868EF6552476768C00C0375F /* UIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF6542476768C00C0375F /* UIElement.swift */; };
 		868EF657247678B100C0375F /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF656247678B100C0375F /* Languages.swift */; };
 		868EF659247678BC00C0375F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF658247678BC00C0375F /* Colors.swift */; };
+		868EF697247784C600C0375F /* ResultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF696247784C600C0375F /* ResultSet.swift */; };
 		8690AF022472D8C300FC49F4 /* view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF012472D8C300FC49F4 /* view.swift */; };
 		8690AF042472D8CB00FC49F4 /* string.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF032472D8CB00FC49F4 /* string.swift */; };
 		8690AF062472D90D00FC49F4 /* date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF052472D90D00FC49F4 /* date.swift */; };
@@ -262,7 +263,7 @@
 		5D301F69245C37EE00183BD2 /* LEOTextView+Toolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LEOTextView+Toolbar.swift"; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
 		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; };
-		5D38DE162405776B00FF9B70 /* model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = model.swift; sourceTree = "<group>"; };
+		5D38DE162405776B00FF9B70 /* DataItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItem.swift; sourceTree = "<group>"; };
 		5D38DE18240577BA00FF9B70 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; wrapsLines = 1; };
 		5D38DE3F240581E500FF9B70 /* memri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memri.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D3D961E24164B240004040E /* CodeExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeExtended.swift; sourceTree = "<group>"; };
@@ -371,6 +372,7 @@
 		868EF6542476768C00C0375F /* UIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElement.swift; sourceTree = "<group>"; };
 		868EF656247678B100C0375F /* Languages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Languages.swift; sourceTree = "<group>"; };
 		868EF658247678BC00C0375F /* Colors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
+		868EF696247784C600C0375F /* ResultSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultSet.swift; sourceTree = "<group>"; };
 		8690AF012472D8C300FC49F4 /* view.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = view.swift; sourceTree = "<group>"; };
 		8690AF032472D8CB00FC49F4 /* string.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string.swift; sourceTree = "<group>"; };
 		8690AF052472D90D00FC49F4 /* date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = date.swift; sourceTree = "<group>"; };
@@ -816,8 +818,9 @@
 				86CDB46D2469C1E4007EAE67 /* defaults */,
 				863CDB6F2441E680000D7AC0 /* extensions */,
 				869789E924344A530003756B /* schema.swift */,
-				5D38DE162405776B00FF9B70 /* model.swift */,
+				5D38DE162405776B00FF9B70 /* DataItem.swift */,
 				8665ADD8241A8387005B3FA5 /* Cache.swift */,
+				868EF696247784C600C0375F /* ResultSet.swift */,
 				86A5D8392437321700F8FAD8 /* Sync.swift */,
 				869789ED2434CC750003756B /* Settings.swift */,
 				8690AF092472F60600FC49F4 /* ObjectCache.swift */,
@@ -1466,7 +1469,7 @@
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
-				5D38DE172405776B00FF9B70 /* model.swift in Sources */,
+				5D38DE172405776B00FF9B70 /* DataItem.swift in Sources */,
 				86CDB46C24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
 				868EF63424766A8800C0375F /* ExprParser.swift in Sources */,
@@ -1477,6 +1480,7 @@
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
+				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				5D90464F243616B000632492 /* color.swift in Sources */,
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* ThumbnailRendererView.swift in Sources */,

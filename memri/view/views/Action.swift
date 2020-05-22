@@ -7,7 +7,7 @@
 import Foundation
 import SwiftUI
 
-class Action : CustomStringConvertible{
+public class Action : CustomStringConvertible{
     var name:ActionName = .noop
     var arguments: [Any] = []
     var renderAs: RenderType = .button
@@ -202,7 +202,7 @@ class ActionBack : Action, ActionExec {
                 session.currentViewIndex -= 1
             }
             
-            scheduleComputeView()
+            scheduleCascadingViewUpdate()
         }
     }
 }
@@ -253,7 +253,7 @@ class ActionAddDataItem : Action, ActionExec {
 //    view.access()
 //
 //    // Recompute view
-//    scheduleComputeView()
+//    scheduleCascadingViewUpdate()
 //}
 //
 //func openView(_ item:DataItem, _ variables:[String:Any]? = nil){
@@ -489,7 +489,7 @@ class ActionSetRenderer : Action, ActionExec {
         }
         
         //
-        scheduleComputeView()
+        scheduleCascadingViewUpdate()
     }
 }
 class ActionShowSessionSwitcher : Action, ActionExec {
@@ -528,7 +528,7 @@ class ActionForward : Action, ActionExec {
                 session.currentViewIndex += 1
             }
             
-            scheduleComputeView()
+            scheduleCascadingViewUpdate()
         }
     }
 }
@@ -548,7 +548,7 @@ class ActionForwardToFront : Action, ActionExec {
             session.currentViewIndex = session.views.count - 1
         }
         
-        scheduleComputeView()
+        scheduleCascadingViewUpdate()
     }
 }
 class ActionBackAsSession : Action, ActionExec {
@@ -586,7 +586,7 @@ class ActionBackAsSession : Action, ActionExec {
 //    sessions.setCurrentSession(session)
 //
 //    // Recompute view
-//    scheduleComputeView()
+//    scheduleCascadingViewUpdate()
 //}
 //
 //public func openSession(_ name:String, _ variables:[String:Any]? = nil) {
@@ -663,6 +663,18 @@ class ActionDelete : Action, ActionExec {
     }
     
     class func exec(_ main:Main, arguments:[Any]) {
+        
+
+        // TODO this should happen automatically in ResultSet
+        self.main.items.remove(atOffsets: indexSet)
+        
+        // I'm sure there is a better way of doing this...
+        var items:[DataItem] = []
+        for i in indexSet {
+            let item = self.main.items[i]
+            items.append(item)
+        }
+        
         if selection.count > 0 { cache.delete(selection) }
         else if let item = item { cache.delete(item) }
         scheduleUIUpdate{_ in true}

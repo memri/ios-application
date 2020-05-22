@@ -16,6 +16,7 @@ private var register:Void = {
         order: 0,
         icon: "line.horizontal.3",
         view: AnyView(ListRendererView()),
+        renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
     
@@ -24,11 +25,12 @@ private var register:Void = {
         title: "Alphabet",
         order: 1,
         view: AnyView(ListRendererView()),
+        renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
 }()
 
-class CascadingListConfig: CascadingRenderConfig {
+class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
     var type: String? = "list"
     
     var longPress: Action? { cascadeProperty("longPress", nil) }
@@ -36,44 +38,39 @@ class CascadingListConfig: CascadingRenderConfig {
     
     var slideLeftActions:[Action] { cascadeList("slideLeftActions") }
     var slideRightActions:[Action] { cascadeList("slideRightActions") }
+    
+    public func setDefaultValues(_ element:UIElement) {
+        if element.properties["padding"] == nil {
+            element.properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
+        }
+    }
 }
 
 struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
     let name = "list"
-    let deleteAction = Action(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
-    var renderConfig: CascadingListConfig {
-        return self.main.cascadingView.renderConfigs[name] as? CascadingListConfig ?? CascadingListConfig()
+    var renderConfig: CascadingListConfig? {
+        self.main.cascadingView.renderConfig as? CascadingListConfig
     }
     
     init() {
         UITableView.appearance().separatorColor = .clear
     }
     
-    struct MyButtonStyle: ButtonStyle {
-
-      func makeBody(configuration: Self.Configuration) -> some View {
-        configuration.label
-          .background(configuration.isPressed ? Color.red : Color.blue)
-      }
-
-    }
-    
     var body: some View {
-        let guiEl = renderConfig.renderDescription?["*"]
-        if guiEl != nil {
-            if guiEl!._properties["padding"] == nil {
-                guiEl!._properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
-            }
-        }
+        let renderConfig = self.renderConfig
+        let main = self.main
         
         return VStack{
-            if main.cascadingView.resultSet.count == 0 {
+            if renderConfig == nil {
+                Text("Unable to render this view")
+            }
+            else if main.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.cascadingView.emptyResultText)
+                    Text(main.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)
@@ -89,29 +86,16 @@ struct ListRendererView: View {
                     SwiftUI.List {
                         ForEach(main.items) { dataItem in
                             Button (action:{
-                                if let press = self.renderConfig.press {
-                                    self.main.executeAction(press, dataItem)
+                                if let press = renderConfig!.press {
+                                    main.executeAction(press, with: dataItem)
                                 }
                             }) {
-                                self.renderConfig.render(item: dataItem)
+                                renderConfig!.render(item: dataItem)
                             }
                             .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
                         .onDelete{ indexSet in
-                            
-                            // TODO this should happen automatically in ResultSet
-                            self.main.items.remove(atOffsets: indexSet)
-                            
-                            // I'm sure there is a better way of doing this...
-                            var items:[DataItem] = []
-                            for i in indexSet {
-                                let item = self.main.items[i]
-                                items.append(item)
-                            }
-                            
-                            // Execute Action
-                            self.main.executeAction(self.deleteAction, nil, items)
-
+                            main.executeAction(Action("delete"))
                         }
                     }
                     .environment(\.editMode, $main.currentSession.isEditMode)

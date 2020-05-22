@@ -97,3 +97,14 @@ public class ViewDefinition:ViewSelector {
         super.init(selector, name)
     }
 }
+// TODO Refactor: implement
+//public class ViewSessionDefinition:ViewSelector {
+//    override public var description: String {
+//        return ".\(name ?? "") { \(serializeDict()) }"
+//    }
+//}
+//public class ViewSessionsDefinition:ViewSelector {
+//    override public var description: String {
+//        return ".\(name ?? "") { \(serializeDict()) }"
+//    }
+//}

@@ -41,14 +41,12 @@ extension Main {
              Ephemeral views are removed from session when one navigates away from them.
     */
     
-    /// Executes the action as described in the action description
-    public func executeAction(_ action:Action, context:DataItem? = nil) {
-        
+    private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
         // Build arguments array
         var args = [Any]()
         for arg in action.arguments {
             if let expr = arg as? Expression {
-                args.append(try expr.execute(computedView.viewArguments))
+                args.append(try expr.execute(cascadingView.viewArguments) as Any)
             }
             else {
                 args.append(arg)
@@ -56,7 +54,7 @@ extension Main {
         }
         
         // Last element of arguments array is the context data item
-        args.append(context ?? cascadingView.resultSet.singletonItem as Any)
+        args.append(dataItem ?? cascadingView.resultSet.singletonItem as Any)
         
         if action.opensView {
             if let action = action as? ActionExec {
@@ -83,9 +81,26 @@ extension Main {
         }
     }
     
-    public func executeAction(_ actions:[Action], context:DataItem? = nil) {
+    /// Executes the action as described in the action description
+    public func executeAction(_ action:Action, with dataItem:DataItem? = nil) {
+        do {
+            try executeActionThrows(action, with: dataItem)
+        }
+        catch {
+            // TODO Log error to the user
+        }
+    }
+    
+    public func executeAction(_ actions:[Action], with dataItem:DataItem? = nil) {
         for action in actions {
-            executeAction(action, context: context)
+            do {
+                try executeActionThrows(action, with: dataItem)
+            }
+            catch {
+                // TODO Log error to the user
+                
+                break
+            }
         }
     }
 }
@@ -118,7 +133,7 @@ extension Main {
 //            self.cascadingView.toggleState(propToUpdate)
 //        case "sessionView":
 //            self.currentSession.currentView.toggleState(propToUpdate)
-//            setComputedView()
+//            updateCascadingView()
 //        case "view":
 //            self.cascadingView.toggleState(propToUpdate)
 //            self.currentSession.currentView.toggleState(propToUpdate)

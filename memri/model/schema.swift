@@ -15,54 +15,59 @@ typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily, CaseIterable {
-    case note = "note"
-    case label = "label"
-    case photo = "photo"
-    case video = "video"
-    case audio = "audio"
-    case file = "file"
-    case person = "person"
-    case audititem = "audititem"
-    case sessions = "sessions"
-    case phonenumber = "phonenumber"
-    case website = "website"
-    case location = "location"
-    case address = "address"
-    case country = "country"
-    case company = "company"
-    case publickey = "publickey"
-    case onlineprofile = "onlineprofile"
-    case diet = "diet"
-    case medicalcondition = "medicalcondition"
-    case session = "session"
-    case sessionview = "sessionview"
-//    case dynamicview = "dynamicview"
+    case typeNote = "Note"
+    case typeLabel = "Label"
+    case typePhoto = "Photo"
+    case typeVideo = "Video"
+    case typeAudio = "Audio"
+    case typeFile = "File"
+    case typePerson = "Person"
+    case typeAuditItem = "AuditItem"
+    case typeSessions = "Sessions"
+    case typePhoneNumber = "PhoneNumber"
+    case typeWebsite = "Website"
+    case typeLocation = "Location"
+    case typeAddress = "Address"
+    case typeCountry = "Country"
+    case typeCompany = "Company"
+    case typePublicKey = "PublicKey"
+    case typeOnlineProfile = "OnlineProfile"
+    case typeDiet = "Diet"
+    case typeMedicalCondition = "MedicalCondition"
+    case typeSession = "Session"
+    case typeSessionView = "SessionView"
+    case typeSessionsDefinition = "SessionsDefinition"
+    case typeSessionDefinition = "SessionDefinition"
+    case typeViewDSLDefinition = "ViewDSLDefinition"
 
     static var discriminator: Discriminator = .type
     
     var backgroundColor: Color {
         switch self{
-        case .note: return Color(hex: "#93c47d")
-        case .label: return Color(hex: "#93c47d")
-        case .file: return Color(hex: "#93c47d")
-        case .photo: return Color(hex: "#93c47d")
-        case .video: return Color(hex: "#93c47d")
-        case .audio: return Color(hex: "#93c47d")
-        case .person: return Color(hex: "#3a5eb2")
-        case .audititem: return Color(hex: "#93c47d")
-        case .sessions: return Color(hex: "#93c47d")
-        case .phonenumber: return Color(hex: "#eccf23")
-        case .website: return Color(hex: "#3d57e2")
-        case .location: return Color(hex: "#93c47d")
-        case .address: return Color(hex: "#93c47d")
-        case .country: return Color(hex: "#93c47d")
-        case .company: return Color(hex: "#93c47d")
-        case .publickey: return Color(hex: "#93c47d")
-        case .onlineprofile: return Color(hex: "#93c47d")
-        case .diet: return Color(hex: "#37af1c")
-        case .medicalcondition: return Color(hex: "#3dc8e2")
-        case .session: return Color(hex: "#93c47d")
-        case .sessionview: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
+        case .typeLabel: return Color(hex: "#93c47d")
+        case .typePhoto: return Color(hex: "#93c47d")
+        case .typeVideo: return Color(hex: "#93c47d")
+        case .typeAudio: return Color(hex: "#93c47d")
+        case .typeFile: return Color(hex: "#93c47d")
+        case .typePerson: return Color(hex: "#3a5eb2")
+        case .typeAuditItem: return Color(hex: "#93c47d")
+        case .typeSessions: return Color(hex: "#93c47d")
+        case .typePhoneNumber: return Color(hex: "#eccf23")
+        case .typeWebsite: return Color(hex: "#3d57e2")
+        case .typeLocation: return Color(hex: "#93c47d")
+        case .typeAddress: return Color(hex: "#93c47d")
+        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeCompany: return Color(hex: "#93c47d")
+        case .typePublicKey: return Color(hex: "#93c47d")
+        case .typeOnlineProfile: return Color(hex: "#93c47d")
+        case .typeDiet: return Color(hex: "#37af1c")
+        case .typeMedicalCondition: return Color(hex: "#3dc8e2")
+        case .typeSession: return Color(hex: "#93c47d")
+        case .typeSessionView: return Color(hex: "#93c47d")
+        case .typeSessionsDefinition: return Color(hex: "#93c47d")
+        case .typeSessionDefinition: return Color(hex: "#93c47d")
+        case .typeViewDSLDefinition: return Color(hex: "#93c47d")
         }
     }
     
@@ -81,51 +86,30 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         var collection:[DataItem] = []
         
         switch self {
-        case .note:
-            (object as! RealmSwift.List<Note>).forEach{ collection.append($0) }
-        case .label:
-            (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
-        case .file:
-            (object as! RealmSwift.List<File>).forEach{ collection.append($0) }
-        case .photo:
-            (object as! RealmSwift.List<Photo>).forEach{ collection.append($0) }
-        case .video:
-            (object as! RealmSwift.List<Video>).forEach{ collection.append($0) }
-        case .audio:
-            (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
-        case .person:
-            (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
-        case .audititem:
-            (object as! RealmSwift.List<AuditItem>).forEach{ collection.append($0) }
-        case .phonenumber:
-            (object as! RealmSwift.List<PhoneNumber>).forEach{ collection.append($0) }
-        case .website:
-            (object as! RealmSwift.List<Website>).forEach{ collection.append($0) }
-        case .location:
-            (object as! RealmSwift.List<Location>).forEach{ collection.append($0) }
-        case .address:
-            (object as! RealmSwift.List<Address>).forEach{ collection.append($0) }
-        case .country:
-            (object as! RealmSwift.List<Country>).forEach{ collection.append($0) }
-        case .company:
-            (object as! RealmSwift.List<Company>).forEach{ collection.append($0) }
-        case .publickey:
-            (object as! RealmSwift.List<PublicKey>).forEach{ collection.append($0) }
-        case .onlineprofile:
-            (object as! RealmSwift.List<OnlineProfile>).forEach{ collection.append($0) }
-        case .diet:
-            (object as! RealmSwift.List<Diet>).forEach{ collection.append($0) }
-        case .medicalcondition:
-            (object as! RealmSwift.List<MedicalCondition>).forEach{ collection.append($0) }
-        case .sessions:
-            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
-        case .session:
-            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
-        case .sessionview:
-            (object as! RealmSwift.List<SessionView>).forEach{ collection.append($0) }
-//        case .dynamicview:
-//            break
-            //(object as! RealmSwift.List<DynamicView>).forEach{ collection.append($0) }
+        case .typeNote: (object as? RealmSwift.List<Note>)?.forEach{ collection.append($0) }
+        case .typeLabel: (object as? RealmSwift.List<Label>)?.forEach{ collection.append($0) }
+        case .typePhoto: (object as? RealmSwift.List<Photo>)?.forEach{ collection.append($0) }
+        case .typeVideo: (object as? RealmSwift.List<Video>)?.forEach{ collection.append($0) }
+        case .typeAudio: (object as? RealmSwift.List<Audio>)?.forEach{ collection.append($0) }
+        case .typeFile: (object as? RealmSwift.List<File>)?.forEach{ collection.append($0) }
+        case .typePerson: (object as? RealmSwift.List<Person>)?.forEach{ collection.append($0) }
+        case .typeAuditItem: (object as? RealmSwift.List<AuditItem>)?.forEach{ collection.append($0) }
+        case .typeSessions: (object as? RealmSwift.List<Sessions>)?.forEach{ collection.append($0) }
+        case .typePhoneNumber: (object as? RealmSwift.List<PhoneNumber>)?.forEach{ collection.append($0) }
+        case .typeWebsite: (object as? RealmSwift.List<Website>)?.forEach{ collection.append($0) }
+        case .typeLocation: (object as? RealmSwift.List<Location>)?.forEach{ collection.append($0) }
+        case .typeAddress: (object as? RealmSwift.List<Address>)?.forEach{ collection.append($0) }
+        case .typeCountry: (object as? RealmSwift.List<Country>)?.forEach{ collection.append($0) }
+        case .typeCompany: (object as? RealmSwift.List<Company>)?.forEach{ collection.append($0) }
+        case .typePublicKey: (object as? RealmSwift.List<PublicKey>)?.forEach{ collection.append($0) }
+        case .typeOnlineProfile: (object as? RealmSwift.List<OnlineProfile>)?.forEach{ collection.append($0) }
+        case .typeDiet: (object as? RealmSwift.List<Diet>)?.forEach{ collection.append($0) }
+        case .typeMedicalCondition: (object as? RealmSwift.List<MedicalCondition>)?.forEach{ collection.append($0) }
+        case .typeSession: (object as? RealmSwift.List<Session>)?.forEach{ collection.append($0) }
+        case .typeSessionView: (object as? RealmSwift.List<SessionView>)?.forEach{ collection.append($0) }
+        case .typeSessionsDefinition: (object as? RealmSwift.List<SessionsDefinition>)?.forEach{ collection.append($0) }
+        case .typeSessionDefinition: (object as? RealmSwift.List<SessionDefinition>)?.forEach{ collection.append($0) }
+        case .typeViewDSLDefinition: (object as? RealmSwift.List<ViewDSLDefinition>)?.forEach{ collection.append($0) }
         }
         
         return collection
@@ -133,50 +117,30 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     
     func getType() -> AnyObject.Type {
         switch self {
-        case .note:
-            return Note.self
-        case .audititem:
-            return AuditItem.self
-        case .label:
-            return Label.self
-        case .file:
-            return File.self
-        case .photo:
-            return Photo.self
-        case .video:
-            return Video.self
-        case .audio:
-            return Audio.self
-        case .person:
-            return Person.self
-        case .phonenumber:
-            return PhoneNumber.self
-        case .website:
-            return Website.self
-        case .location:
-            return Location.self
-        case .address:
-            return Address.self
-        case .country:
-            return Country.self
-        case .company:
-            return Company.self
-        case .publickey:
-            return PublicKey.self
-        case .onlineprofile:
-            return OnlineProfile.self
-        case .diet:
-            return Diet.self
-        case .medicalcondition:
-            return MedicalCondition.self
-        case .sessions:
-            return Sessions.self
-        case .session:
-            return Session.self
-        case .sessionview:
-            return SessionView.self
-//        case .dynamicview:
-//            return DynamicView.self
+        case .typeNote: return Note.self
+        case .typeLabel: return Label.self
+        case .typePhoto: return Photo.self
+        case .typeVideo: return Video.self
+        case .typeAudio: return Audio.self
+        case .typeFile: return File.self
+        case .typePerson: return Person.self
+        case .typeAuditItem: return AuditItem.self
+        case .typeSessions: return Sessions.self
+        case .typePhoneNumber: return PhoneNumber.self
+        case .typeWebsite: return Website.self
+        case .typeLocation: return Location.self
+        case .typeAddress: return Address.self
+        case .typeCountry: return Country.self
+        case .typeCompany: return Company.self
+        case .typePublicKey: return PublicKey.self
+        case .typeOnlineProfile: return OnlineProfile.self
+        case .typeDiet: return Diet.self
+        case .typeMedicalCondition: return MedicalCondition.self
+        case .typeSession: return Session.self
+        case .typeSessionView: return SessionView.self
+        case .typeSessionsDefinition: return SessionsDefinition.self
+        case .typeSessionDefinition: return SessionDefinition.self
+        case .typeViewDSLDefinition: return ViewDSLDefinition.self
         }
     }
 }

@@ -120,7 +120,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         if let renderDefinition = main.views.fetchDefinitions("[renderer = \(activeRenderer)]").first {
             
-            if let RenderConfigType = globalRenderers!.allConfigTypes[activeRenderer] {
+            if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
                 let renderConfig = RenderConfigType.init(
                     // TODO set renderDefinition parsed version as first element of cascadeStack
                     cascadeStack: self.cascadeStack

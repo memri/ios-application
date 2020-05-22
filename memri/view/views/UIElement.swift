@@ -12,7 +12,7 @@ public class UIElement : CustomStringConvertible {
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
     
-    init(type: String, children: [UIElement], properties: [String:Any]) {
+    init(type: String, children: [UIElement] = [], properties: [String:Any]) {
         self.type = type
         self.children = children
         self.properties = properties

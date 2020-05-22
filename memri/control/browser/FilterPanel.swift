@@ -47,14 +47,14 @@ struct FilterPanel: View {
             self.main.currentSession.currentView.queryOptions?.sortAscending.value
                 = !(self.main.cascadingView.queryOptions.sortAscending.value ?? true)
         }
-        self.main.scheduleComputeView()
+        self.main.scheduleCascadingViewUpdate()
     }
     
     private func changeOrderProperty(_ fieldName:String) {
         try! self.main.realm.write {
             self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
         }
-        self.main.scheduleComputeView()
+        self.main.scheduleCascadingViewUpdate()
     }
     
     private func rendererCategories() -> [(String, FilterPanelRendererButton)] {

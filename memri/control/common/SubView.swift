@@ -20,44 +20,53 @@ public struct SubView : View {
     // There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
-    public init (main:Main, viewName: String, context: DataItem, variables:[String: Any]){
-        self.toolbar = variables["toolbar"] as? Bool ?? toolbar
-        self.searchbar = variables["searchbar"] as? Bool ?? searchbar
-        self.showCloseButton = variables["showCloseButton"] as? Bool ?? showCloseButton
+    public init (main:Main, viewName: String, context: DataItem, args:ViewArguments){
+        self.toolbar = args["toolbar"] as? Bool ?? toolbar
+        self.searchbar = args["searchbar"] as? Bool ?? searchbar
+        self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
         
-        // TODO Refactor: maybe prevent the lower sessions from being created??
-        var (sess, view) = main.views.getSessionOrView(viewName, wrapView:false, variables)
-
-        // TODO Refactor: error handling
-        if view == nil { view = sess!.views.last! }
+        do {
+            var def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(viewName)").first)
+            if def is ViewSessionDefinition {
+                if let list = def?["views"] as? [ViewDefinition] { def = list.first }
+            }
+            guard let viewDef = def else { throw "Exception: Missing view" }
+            
+            args["."] = context
+            
+            let view = SessionView(value: [
+                "viewDefinition": viewDef,
+                "viewArguments": args,
+                "queryOptions": viewDef["queryOptions"] // TODO Refactor
+            ])
         
-        // TODO Refactor: this serializes variables to json twice:
-        view!.variables = variables
-        view!.variables!["."] = context
-        
-        let session = Session()
-        session.views.append(view!)
-        session.currentViewIndex = 0
-        
-        self.proxyMain = (main as! RootMain).createProxy(session)
-        self.proxyMain!.setComputedView()
+            let session = Session()
+            session.views.append(view)
+            session.currentViewIndex = 0
+            
+            self.proxyMain = (main as! RootMain).createProxy(session)
+            self.proxyMain!.updateCascadingView()
+        }
+        catch {
+            // TODO Refactor: error handling
+        }
     }
     
-    public init (main: Main, view: SessionView, context: DataItem, variables: [String: Any]){
-        self.toolbar = variables["toolbar"] as? Bool ?? toolbar
-        self.searchbar = variables["searchbar"] as? Bool ?? searchbar
-        self.showCloseButton = variables["showCloseButton"] as? Bool ?? showCloseButton
+    public init (main: Main, view: SessionView, context: DataItem, args:ViewArguments){
+        self.toolbar = args["toolbar"] as? Bool ?? toolbar
+        self.searchbar = args["searchbar"] as? Bool ?? searchbar
+        self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
         
-        // TODO Refactor: this serializes variables to json twice:
-        view.variables = variables
-        view.variables!["."] = context
+        args["."] = context
+        
+        view.viewArguments = args
         
         let session = Session()
         session.views.append(view)
         session.currentViewIndex = 0
         
         self.proxyMain = (main as! RootMain).createProxy(session)
-        self.proxyMain!.setComputedView()
+        self.proxyMain!.updateCascadingView()
     }
     
     // TODO refactor: consider inserting Browser here and adding variables instead
@@ -68,7 +77,7 @@ public struct SubView : View {
                     TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
                 
-                globalRenderers.allViews[self.proxyMain!.cascadingView.activeRenderer]
+                allRenderers?.allViews[self.proxyMain!.cascadingView.activeRenderer]
                     .fullHeight()
                 
                 if self.searchbar {

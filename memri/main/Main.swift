@@ -90,7 +90,7 @@ public class Main: ObservableObject {
         }
     }
     
-    func scheduleComputeView(){
+    func scheduleCascadingViewUpdate(){
         // Don't schedule when we are already scheduled
         if !scheduledComputeView {
             
@@ -104,12 +104,12 @@ public class Main: ObservableObject {
                 self.scheduledComputeView = false
                 
                 // Update UI
-                self.setComputedView()
+                self.updateCascadingView()
             }
         }
     }
     
-    public func setComputedView(){
+    public func updateCascadingView(){
         self.maybeLogUpdate()
         
         // Fetch the resultset associated with the current view
@@ -123,7 +123,7 @@ public class Main: ObservableObject {
             }
             
             // Calculate cascaded view
-            let cascadingView = try! self.views.createCascadingView) // TODO handle errors better
+            let cascadingView = try self.views.createCascadingView() // TODO handle errors better
             
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property
@@ -404,7 +404,7 @@ public class RootMain: Main {
                             self.currentSession.currentView.access()
                             
                             // Load current view
-                            self.setComputedView()
+                            self.updateCascadingView()
                             
                             // Done
                             callback(nil, true)

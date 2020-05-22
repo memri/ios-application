@@ -13,10 +13,10 @@ public struct ItemCell: View {
     
     let item: DataItem
     let rendererNames: [String]
-    let variables: [String: () -> Any]
+    let arguments: ViewArguments
 //    let viewOverride: String // TODO Refactor: implement viewoverride
     
     public var body: some View {
-        try! main.views.renderItemCell(item, rendererNames, nil, variables)
+        main.views.renderItemCell(with: item, search: rendererNames, use: arguments)
     }
 }

@@ -8,8 +8,6 @@
 
 import Foundation
 
-extension String: Error {}
-
 class ExprInterpreter {
     let ast: ExprNode
     let lookup: (ExprLookupNode, ViewArguments) throws -> Any

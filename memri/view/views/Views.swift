@@ -56,7 +56,7 @@ public class Views {
         self.languages.currentLanguage = language
         
         let definitions = try fetchDefinitions(type: "language")
-            .compactMap{ try self.getParsedDefinition($0) }
+            .compactMap{ try self.parseDefinition($0) }
         
         self.languages.load(definitions)
     }
@@ -316,7 +316,22 @@ public class Views {
         }
     }
     
-    func getParsedDefinition(_ viewDef:ViewDSLDefinition) throws -> ViewSelector? {
+    public func fetchDefinitions(_ selector:String = "", type:String? = nil,
+                                   domain:String? = nil) -> [ViewDSLDefinition] {
+        
+        let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
+            + (domain != nil  ? "and domain = '\(domain!)" : "")
+        
+        return main!.realm.objects(ViewDSLDefinition.self)
+            .filter(filter)
+            .map({ (def) -> ViewDSLDefinition in def }) // Convert to normal Array
+    }
+    
+    func parseDefinition(_ viewDef:ViewDSLDefinition?) throws -> ViewSelector? {
+        guard let viewDef = viewDef else {
+            throw "Exception: Missing view definition"
+        }
+        
         let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")
         if let cached = cached as? ViewDefinitionParser {
             return try cached.parse().first
@@ -366,104 +381,98 @@ public class Views {
         return cascadingView
     }
     
-    public func fetchDefinitions(_ selector:String = "", type:String? = nil,
-                                   domain:String? = nil) -> [ViewDSLDefinition] {
-        
-        let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
-            + (domain != nil  ? "and domain = '\(domain!)" : "")
-        
-        return main!.realm.objects(ViewDSLDefinition.self)
-            .filter(filter)
-            .map({ (def) -> ViewDSLDefinition in def }) // Convert to normal Array
-    }
-    
     // TODO: Refactor: Consider caching cascadingView based on the type of the item
-    public func renderItemCell(_ item:DataItem, _ rendererNames: [String] = [],
-                               _ viewOverride: String? = nil,
-                               _ viewArguments: ViewArguments = ViewArguments()) throws -> UIElementView {
-        
-        guard let main = self.main else {
-            throw "Exception: Main is not defined in views"
-        }
-        
-        func searchForRenderer(in viewDefinition:ViewDSLDefinition) throws -> Bool {
-            let parsed = try main.views.getParsedDefinition(viewDefinition)
-            for def in parsed?["renderDefinitions"] as? [ViewRendererDefinition] ?? [] {
-                for name in rendererNames {
-                    
-                    // TODO: Should this first search for the first renderer everywhere
-                    //       before trying the second renderer?
-                    if let renderDef = def[name] as? ViewRendererDefinition, renderDef["children"] != nil {
-                        cascadeStack.append(renderDef)
-                        return true
-                    }
-                }
+    public func renderItemCell(with dataItem:DataItem, search rendererNames: [String] = [],
+                               inView viewOverride: String? = nil,
+                               use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
+        do {
+            guard let main = self.main else {
+                throw "Exception: Main is not defined in views"
             }
-            return false
-        }
-        
-        var cascadeStack:[ViewSelector] = []
-
-        // If there is a view override, find it, otherwise
-        if let viewOverride = viewOverride {
-            if let viewDefinition = main.views.fetchDefinitions("\(viewOverride)").first {
-                if viewDefinition.type == "renderer" {
-                    if let parsed = try main.views.getParsedDefinition(viewDefinition) {
-                        if parsed["children"] != nil { cascadeStack.append(parsed) }
-                        else {
-                            throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
+            
+            func searchForRenderer(in viewDefinition:ViewDSLDefinition) throws -> Bool {
+                let parsed = try main.views.parseDefinition(viewDefinition)
+                for def in parsed?["renderDefinitions"] as? [ViewRendererDefinition] ?? [] {
+                    for name in rendererNames {
+                        
+                        // TODO: Should this first search for the first renderer everywhere
+                        //       before trying the second renderer?
+                        if let renderDef = def[name] as? ViewRendererDefinition, renderDef["children"] != nil {
+                            cascadeStack.append(renderDef)
+                            return true
                         }
                     }
+                }
+                return false
+            }
+            
+            var cascadeStack:[ViewSelector] = []
+
+            // If there is a view override, find it, otherwise
+            if let viewOverride = viewOverride {
+                if let viewDefinition = main.views.fetchDefinitions("\(viewOverride)").first {
+                    if viewDefinition.type == "renderer" {
+                        if let parsed = try main.views.parseDefinition(viewDefinition) {
+                            if parsed["children"] != nil { cascadeStack.append(parsed) }
+                            else {
+                                throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
+                            }
+                        }
+                        else {
+                            throw "Exception: View definition is missing: \(viewOverride)"
+                        }
+                    }
+                    else if viewDefinition.type == "view" {
+                        _ = try searchForRenderer(in: viewDefinition)
+                    }
                     else {
-                        throw "Exception: View definition is missing: \(viewOverride)"
+                        throw "Exception: incompatible view type of \(viewDefinition.type ?? ""), expected renderer or view"
                     }
                 }
-                else if viewDefinition.type == "view" {
-                    _ = try searchForRenderer(in: viewDefinition)
-                }
                 else {
-                    throw "Exception: incompatible view type of \(viewDefinition.type ?? ""), expected renderer or view"
+                    throw "Exception: Could not find view to override: \(viewOverride)"
                 }
             }
             else {
-                throw "Exception: Could not find view to override: \(viewOverride)"
-            }
-        }
-        else {
-            // Find views based on datatype
-            outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
-                for key in ["user", "defaults"] {
-                    
-                    if let viewDefinition = main.views.fetchDefinitions(needle, domain:key).first {
-                        if try searchForRenderer(in: viewDefinition) { break outerLoop }
-                    }
-                }
-            }
-        }
-        
-        // If we cant find a way to render using one of the views,
-        // then find a renderer for one of the renderers
-        if cascadeStack.count == 0 {
-            for name in rendererNames {
-                for key in ["user", "defaults"] {
-                    if let viewDefinition = main.views.fetchDefinitions("[renderer = \(name)]", domain:key).first {
-                        if let parsed = try main.views.getParsedDefinition(viewDefinition) {
-                            if parsed["children"] != nil { cascadeStack.append(parsed) }
+                // Find views based on datatype
+                outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
+                    for key in ["user", "defaults"] {
+                        
+                        if let viewDefinition = main.views.fetchDefinitions(needle, domain:key).first {
+                            if try searchForRenderer(in: viewDefinition) { break outerLoop }
                         }
                     }
                 }
             }
-        }
-                        
-        if cascadeStack.count == 0 {
-            throw "Exception: Unable to find a way to render this element: \(item.genericType)"
-        }
-        
-        // Create a new view
-        let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
+            
+            // If we cant find a way to render using one of the views,
+            // then find a renderer for one of the renderers
+            if cascadeStack.count == 0 {
+                for name in rendererNames {
+                    for key in ["user", "defaults"] {
+                        if let viewDefinition = main.views.fetchDefinitions("[renderer = \(name)]", domain:key).first {
+                            if let parsed = try main.views.parseDefinition(viewDefinition) {
+                                if parsed["children"] != nil { cascadeStack.append(parsed) }
+                            }
+                        }
+                    }
+                }
+            }
+                            
+            if cascadeStack.count == 0 {
+                throw "Exception: Unable to find a way to render this element: \(item.genericType)"
+            }
+            
+            // Create a new view
+            let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
 
-        // Return the rendered UIElements in a UIElementView
-        return cascadingRenderConfig.render(item: item)
-//        return UIElementView(UIElement(), item, variables ?? [:])
+            // Return the rendered UIElements in a UIElementView
+            return cascadingRenderConfig.render(item: item)
+        }
+        catch {
+            // TODO Refactor: Log error to the user
+            
+            return UIElementView(UIElement(type: "Text", properties: ["text": "Could not render this view"]), item)
+        }
     }
 }

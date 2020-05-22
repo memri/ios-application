@@ -18,7 +18,7 @@ struct Browser: View {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
 //                Loading(isShowing: .constant(self.main.cascadingView.resultSet.isLoading)) {
-                    globalRenderers.allViews[self.main.cascadingView.activeRenderer]
+                    allRenderers?.allViews[self.main.cascadingView.activeRenderer]
                         .fullHeight()
                         .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()

@@ -21,7 +21,7 @@ extension String: Error {
     }
     
     func test(_ pattern:String, _ options:String = "i") -> Bool {
-        return match(pattern, options).count > 0
+        return match(pattern, options)?.count ?? 0 > 0
     }
     
     // TODO Refactor: optimize regex match

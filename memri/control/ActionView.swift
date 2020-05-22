@@ -26,7 +26,7 @@ struct ActionButton: View {
     }
     
     func getAction() -> AnyView{
-        switch self.action!.actionType{
+        switch self.action?.renderAs {
         case .popup:
             return AnyView(ActionPopupButton(action: self.action!))
         case .button:

@@ -47,7 +47,7 @@ public class Session: DataItem {
     
     var backButton: Action? {
         if self.currentViewIndex > 0 {
-            return Action(actionName: .back)
+            return Action("back")
         }
         else {
             return nil
@@ -97,9 +97,7 @@ public class Session: DataItem {
     
     private func decorate(_ view:SessionView) {
         // Set the .session property on views for easy querying
-        if view.session == nil {
-            realmWriteIfAvailable(realm) { view.session = self }
-        }
+        if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
         
         // Observe and process changes for UI updates
         if realm != nil {

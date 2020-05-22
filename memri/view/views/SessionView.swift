@@ -97,6 +97,8 @@ public class UserState: Object {
     }
     
     private func persist() {
+        if self.realm == nil { return }
+        
         do {
             if let x = try InMemoryObjectCache.get(uid) as? [String : Any] {
                 realmWriteIfAvailable(self.realm) {
@@ -131,7 +133,8 @@ public class SessionView: DataItem {
     @objc dynamic var viewDefinition: ViewDSLDefinition? = nil
     @objc dynamic var userState: UserState? = nil
     @objc dynamic var viewArguments: ViewArguments? = nil
-    @objc dynamic var queryOptions: QueryOptions? = nil
+    @objc dynamic var queryOptions: QueryOptions? = nil // TODO refactor: fix cascading
+    @objc dynamic var session: Session? = nil
     
     override var computedTitle:String {
 //        if let value = self.name ?? self.title { return value }
