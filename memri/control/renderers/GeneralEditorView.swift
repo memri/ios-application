@@ -231,15 +231,15 @@ struct GeneralEditorSection: View {
         let action = isArray && editMode && !readOnly
             ? Action("openViewByName",
                 [
-                    "choose-item-by-query",
-                    ViewArguments([
+                    "name": "choose-item-by-query",
+                    "arguments": [
                         "query": className,
                         "type": className,
                         "actionName": "addSelectionToList",
                         "actionArgs": "", // [self.item, groupKey],
                         "title": "Add Selected",
                         ".": item
-                    ])
+                    ]
                 ],
                 icon: "plus",
                 renderAs: .popup)

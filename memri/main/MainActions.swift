@@ -42,49 +42,60 @@ extension Main {
     */
     
     private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
-        // Build arguments array
+        // Build arguments dict
         var args = [String: Any]()
-        for (argName, argValue) in action.arguments {
-            var arg: Any
+        for (argName, inputValue) in action.arguments {
+            var argValue: Any
             
             // preprocess arg
-            if let expr = argValue as? Expression {
-                arg = try expr.execute(cascadingView.viewArguments) as Any
+            if let expr = inputValue as? Expression {
+                argValue = try expr.execute(cascadingView.viewArguments) as Any
             }
             else {
-                arg = argValue
+                argValue = inputValue
             }
             
-            if let arg_ = arg as? [String: Any] {
+            var finalValue:Any = ""
+            if let dict = argValue as? [String: Any] {
                 if action.argumentTypes[argName] == ViewArguments.self {
-                    arg = ViewArguments(arg_)
+                    finalValue = ViewArguments(dict)
                 }
                 else if action.argumentTypes[argName] == DataItemFamily.self {
-                    if let stringType = arg_["type"] as? String,
+                    if let stringType = dict["type"] as? String,
                        let family = DataItemFamily(rawValue: stringType) {
                         
-                        let ItemType = DataItemFamily.getType(family)
-                        let item = ItemType().init(value: arg_)
+                        let ItemType = DataItemFamily.getType(family)() as! Object.Type
+                        finalValue = ItemType.init() as! DataItem
+//                         (value: dict)
                     }
                 }
-                else if action.argumentTypes[argName] == SessionView.self{
+                else if action.argumentTypes[argName] == SessionView.self {
                     let viewDef = ViewDefinition(DataItem.generateUUID())
-                    viewDef.parsed = arg_
+                    viewDef.parsed = dict
                     
-                    let view = SessionView(value: ["viewDefinition": viewDef])
+                    finalValue = SessionView(value: ["viewDefinition": viewDef])
                 }
                 else {
                     throw "Does not recognize argumentType \(argName)"
                 }
             }
-            else if arg is Bool {assert(action.argumentTypes[argName] == Bool.self)}
-            else if arg is String {assert(action.argumentTypes[argName] == String.self)}
-            else if arg is Int {assert(action.argumentTypes[argName] == Int.self)}
-            else if arg is Float {assert(action.argumentTypes[argName] == Float.self)}
-            else {throw "Does not recognize argumentType \(argName)"}
+            else if action.argumentTypes[argName] == Bool.self {
+                finalValue = ExprInterpreter.evaluateBoolean(argValue)
+            }
+            else if action.argumentTypes[argName] == String.self {
+                finalValue = ExprInterpreter.evaluateString(argValue)
+            }
+            else if action.argumentTypes[argName] == Int.self {
+                finalValue = ExprInterpreter.evaluateNumber(argValue)
+            }
+            else if action.argumentTypes[argName] == Double.self {
+                finalValue = ExprInterpreter.evaluateNumber(argValue)
+            }
+            else {
+                throw "Does not recognize argumentType \(argName)"
+            }
             
-            // DataItem, SessionView, ViewArguments,
-            args[argName] = arg
+            args[argName] = finalValue
         }
         
         // Last element of arguments array is the context data item
@@ -92,7 +103,7 @@ extension Main {
         
         if action.opensView {
             if let action = action as? ActionExec {
-                action.exec(self, args)
+                try action.exec(self, args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")
@@ -109,7 +120,7 @@ extension Main {
             }
             
             if let action = action as? ActionExec {
-                action.exec(self, args)
+                try action.exec(self, args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")

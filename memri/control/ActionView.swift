@@ -114,7 +114,7 @@ struct ActionPopup: View {
             self.presentationMode.wrappedValue.dismiss()
         }
         
-        let args = action.arguments[1] as? ViewArguments ?? ViewArguments()
+        let args = action.arguments["viewArguments"] as? ViewArguments ?? ViewArguments()
         args["showCloseButton"] = true
         
         // TODO is this still needed? Need test cases
@@ -124,7 +124,7 @@ struct ActionPopup: View {
         
         // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
         if action.name == .openView {
-            if let view = action.arguments[0] as? SessionView {
+            if let view = action.arguments["view"] as? SessionView {
                 return SubView(
                     main: self.main,
                     view: view, // TODO refactor: consider adding .closePopup to all press actions
@@ -137,7 +137,7 @@ struct ActionPopup: View {
             }
         }
         else  if action.name == .openViewByName {
-            if let viewName = action.arguments[0] as? String {
+            if let viewName = action.arguments["name"] as? String {
                 return SubView(
                     main: self.main,
                     viewName: viewName,

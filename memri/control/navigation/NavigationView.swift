@@ -103,7 +103,9 @@ struct NavigationItemView: View{
         }
         .onTapGesture {
             if let viewName = self.item.view {
-                ActionOpenSessionByName.exec(self.main, [viewName])
+                // TODO 
+                do { try ActionOpenSessionByName.exec(self.main, ["name": viewName]) }
+                catch{}
                 
                 self.hide()
             }

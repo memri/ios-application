@@ -15,6 +15,7 @@ struct Picker: View {
     let selected: DataItem?
     let title: String
     let emptyValue: String
+    let propDataItem: DataItem
     let propName: String
     let queryOptions: QueryOptions
     
@@ -38,6 +39,7 @@ struct Picker: View {
             PickerPane(
                 item: self.item,
                 title: self.title,
+                propDataItem: self.propDataItem,
                 propName: self.propName,
                 selected: self.selected,
                 queryOptions: self.queryOptions
@@ -53,6 +55,7 @@ struct PickerPane: View {
 
     let item: DataItem
     let title: String
+    let propDataItem: DataItem
     let propName: String
     let selected: DataItem?
     let queryOptions: QueryOptions
@@ -76,13 +79,13 @@ struct PickerPane: View {
                 "renderDescriptions": [
                     ViewRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
-                            Action("setProperty", [self.item, self.propName]),
+                            Action("setProperty", ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")
                         ]]
                     ),
                     ViewRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
-                            Action("setProperty", [self.item, self.propName]),
+                            Action("setProperty", ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")
                         ]]
                     )

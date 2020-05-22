@@ -171,7 +171,9 @@ struct SessionSwitcher: View {
 //                            .opacity(0.7)
                         .onTapGesture {
                             let session = self.main.sessions.sessions[i]
-                            ActionOpenSession.exec(self.main, [session])
+                            //TODO 
+                            do { try ActionOpenSession.exec(self.main, ["session": session]) }
+                            catch {}
                             self.hide()
                         }
                 }

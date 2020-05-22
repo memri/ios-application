@@ -42,7 +42,7 @@ public class Expression: CustomStringConvertible {
     
     public func isTrue() throws -> Bool {
         let x = try self.execute()
-        return interpreter?.evaluateBoolean(x) ?? false
+        return ExprInterpreter.evaluateBoolean(x)
     }
     
     public func toggleBool() throws {
@@ -50,8 +50,9 @@ public class Expression: CustomStringConvertible {
             var sequence = node.sequence
             if let lastProperty = sequence.popLast() as? ExprVariableNode {
                 let lookupNode = ExprLookupNode(sequence: sequence)
-                if var obj = try self.lookup(lookupNode, ViewArguments()) as? Object {
-                    obj[lastProperty.name] = !interpreter?.evaluateBoolean(obj[lastProperty.name])
+                if let obj = try self.lookup(lookupNode, ViewArguments()) as? Object {
+                    obj[lastProperty.name] =
+                        !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
                     return
                 }
             }
@@ -64,13 +65,14 @@ public class Expression: CustomStringConvertible {
         // Analyze AST
         // Call lookup
         // Return information
+        return (PropertyType.string, DataItem(), "")
     }
     
     private func parse() throws {
         let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
         let parser = ExprParser(try lexer.tokenize())
         ast = try parser.parse()
-        interpreter = ExprInterpreter(ast, lookup, execFunc)
+        interpreter = ExprInterpreter(ast!, lookup, execFunc)
         parsed = true
     }
     

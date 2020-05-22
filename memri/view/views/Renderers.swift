@@ -60,28 +60,16 @@ class FilterPanelRendererButton: Action, ActionExec {
     }
     
     func exec(_ main:Main, _ arguments:[String: Any]) {
-//        changeRenderer(rendererObject: action as! Renderer)
-        
-        
-        
-    //        self.setInactive(objects: Array(self.renderObjects.values))
-        
-    //        setActive(object: rendererObject)
-        
-            //
+//        self.setInactive(objects: Array(self.renderObjects.values))
+//        setActive(object: rendererObject)
         let session = main.currentSession
         realmWriteIfAvailable(main.cache.realm, {
             // TODO: Implement
             main.cascadingView.activeRenderer = self.rendererName
         })
         
-        //
         main.scheduleCascadingViewUpdate()
     }
-    
-//    class func exec(_ main:Main, _ arguments:[String: Any]) {
-//        FilterPanelRendererButton().exec(main, arguments)
-//    }
 }
 
 public class RenderGroup {

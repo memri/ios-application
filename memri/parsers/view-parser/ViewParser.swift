@@ -315,7 +315,7 @@ class ViewParser {
                         }
                     }
                     
-                    stack.append(Action(value, options["arguments"] as? [Any] ?? [],
+                    stack.append(Action(value, options["arguments"] as? [String:Any] ?? [:],
                         icon: options["icon"] as? String ?? "",
                         title: options["title"] as? String ?? "",
                         showTitle: options["showTitle"] as? Bool ?? false,

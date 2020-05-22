@@ -386,7 +386,7 @@ public class RootMain: Main {
         return ProxyMain(name: "Proxy", self, session)
     }
     
-    public func boot() throws -> Main {
+    public func boot() throws {
         
         // Make sure memri is installed properly
         try self.installer.installIfNeeded(self) {
@@ -418,13 +418,12 @@ public class RootMain: Main {
                 }
             }
         }
-        
-        return self
     }
     
     public func mockBoot() -> Main {
         do {
-            return try self.boot()
+            try self.boot()
+            return self
         }
         catch let error { print(error) }
         
