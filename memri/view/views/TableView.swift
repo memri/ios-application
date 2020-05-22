@@ -13,16 +13,20 @@ private let cellIdentifier = "aTableViewCell"
 struct TableView: UIViewControllerRepresentable {
                
     public var main: Main!
-    @Binding var editMode: EditMode
+    public var canDelete: Bool!
+    public var canReorder: Bool!
+    public var editMode: EditMode
     
     let name = "list"
     public var renderConfig: ListConfig {
         return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
     }
 
-    init(main: Main, editMode: Binding<EditMode>) {
+    init(main: Main, canDelete: Bool? = true, canReorder: Bool? = true) {
         self.main = main
-        self._editMode = editMode
+        self.canDelete = canDelete
+        self.canReorder = canReorder
+        self.editMode = main.currentSession.isEditMode
     }
     
     func makeCoordinator() -> Coordinator {
@@ -93,29 +97,35 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        true
+        if self.parent.canReorder || self.parent.canDelete {
+            return true
+        } else {
+            return false
+        }
     }
 
     func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        true
+        self.parent.canReorder
     }
 
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        print("moving cell to new position")
-        //
-        // TODO: modify data accordingly
-        //
+        let itemMoving = self.parent.main.items[sourceIndexPath.row]
+        self.parent.main.items.remove(at: sourceIndexPath.row)
+        self.parent.main.items.insert(itemMoving, at: destinationIndexPath.row)
     }
     
-    //
-    // TODO: Add the callback to delete a row (when in edit mode)
-    //
+    let deleteItemAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == UITableViewCell.EditingStyle.delete {
+        } else if editingStyle == UITableViewCell.EditingStyle.insert {}
+    }
     
     func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
     {
         if tableView.isEditing {
-            let delete = self.deleteAction()
+            let delete = self.deleteAction(deleteItemAtRow: indexPath)
             return UISwipeActionsConfiguration(actions: [delete])
         } else {
             let share = self.shareAction()
@@ -127,7 +137,7 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView,
                    leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration?
     {
-        let delete = self.deleteAction()
+        let delete = self.deleteAction(deleteItemAtRow: indexPath)
         return UISwipeActionsConfiguration(actions: [delete])
     }
 
@@ -155,12 +165,12 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
         return favorite
     }
 
-    //
-    // TODO: How to communicate destructive versus nomal, does it matter?
-    //
-    private func deleteAction() -> UIContextualAction {
+    private func deleteAction(deleteItemAtRow indexPath: IndexPath) -> UIContextualAction {
+        let itemAtRow = indexPath
         let delete = UIContextualAction(style: .destructive, title:  "Delete", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
             print("Delete Button Tapped")
+            self.parent.main.executeAction(self.deleteItemAction, self.parent.main.items[itemAtRow.row])
+            self.tableViewController.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
             success(true)
         })
         delete.backgroundColor = .red

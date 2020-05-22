@@ -65,7 +65,10 @@ struct Application: View {
                     }
                 }
             }
-            .gesture(drag)
+//
+// TODO - Ruben - Commented out so TableView receives swipe gestures
+//
+//            .gesture(drag)
         }
     }
 }

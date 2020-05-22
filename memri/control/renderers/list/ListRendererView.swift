@@ -14,7 +14,7 @@ struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
 //    let name = "list"
-    let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
+//    let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
 //    var renderConfig: ListConfig {
 //        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
@@ -85,7 +85,7 @@ struct ListRendererView: View {
 //
 //                        }
 //                    }
-                    TableView(main: self.main, editMode: $main.currentSession.isEditMode)
+                    TableView(main: self.main, canReorder: false)
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
