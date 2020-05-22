@@ -17,9 +17,9 @@ struct ContextPaneForground: View {
 
     var body: some View {
         let main = self.main
-        let labels = main.cascadingView.resultSet.singletonItem?.labels
+        let labels = main.cascadingView.resultSet.singletonItem?.labels ?? List<Label>()
         
-        VStack(alignment: .leading) {
+        return VStack(alignment: .leading) {
             VStack (alignment: .leading) {
                 Text(main.cascadingView.title) // TODO make this generic
                     .font(.system(size: 23, weight: .regular, design: .default))
@@ -110,23 +110,21 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 15)
             VStack(alignment: .leading, spacing: 10){
-                if labels != nil {
-                    ForEach (labels, id:\.self) { labelItem in
-                        Button(action:{
-                            main.executeAction(self.openLabelViewAction, with: labelItem)
-                        }) {
-                            Text(labelItem.name)
-                                .foregroundColor(.black)
-                                .opacity(0.6)
-                                .font(.system(size: 20, weight: .regular, design: .default))
-                                .padding(.vertical, 5)
-                                .padding(.horizontal, 15)
-                                .frame(minWidth: 150, alignment: .leading)
-                        }
-                        .background(Color(hex: labelItem.color ?? "#ffd966ff"))
-                        .cornerRadius(5)
-                        .padding(.horizontal, self.paddingLeft)
+                ForEach (labels) { labelItem in
+                    Button(action:{
+                        main.executeAction(self.openLabelViewAction, with: labelItem)
+                    }) {
+                        Text(labelItem.name)
+                            .foregroundColor(.black)
+                            .opacity(0.6)
+                            .font(.system(size: 20, weight: .regular, design: .default))
+                            .padding(.vertical, 5)
+                            .padding(.horizontal, 15)
+                            .frame(minWidth: 150, alignment: .leading)
                     }
+                    .background(Color(hex: labelItem.color ?? "#ffd966ff"))
+                    .cornerRadius(5)
+                    .padding(.horizontal, self.paddingLeft)
                 }
                 Button(action:{
                     main.executeAction(self.addLabelAction)

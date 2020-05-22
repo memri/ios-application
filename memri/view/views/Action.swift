@@ -437,7 +437,7 @@ class ActionShowStarred : Action, ActionExec {
     }
     
     func exec(_ main:Main, _ arguments:[Any]) {
-        if let binding = self.binding, binding.hasStateEnabled(){
+        if let binding = self.binding, binding.hasStateEnabled() {
             ActionOpenView.exec(main, ["filter-starred"])
             // Open named view 'showStarred'
             // openView("filter-starred", ["stateName": starButton.actionStateName as Any])

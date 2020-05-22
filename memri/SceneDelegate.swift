@@ -29,8 +29,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //        var sessions = Sessions()
 //        var browser: some View = Browser().environmentObject(sessions)
         
-        let _ = main.boot() { (error, success) in
-            print("Booted")
+        do { try main.boot() }
+        catch {
+            // TODO Error Handling (show fatal error on screen)
         }
 
         // Use a UIHostingController as window root view controller.

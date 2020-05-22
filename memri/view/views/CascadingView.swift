@@ -117,7 +117,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-    private let main:Main
+    private let main:Main?
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
@@ -245,12 +245,10 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    init(_ main:Main,
-         _ sessionView:SessionView,
+    init(_ sessionView:SessionView,
          _ cascadeStack:[ViewSelector],
          _ activeRenderer:String
     ){
-        self.main = main
         self.sessionView = sessionView
         self.activeRenderer = activeRenderer
         super.init()
