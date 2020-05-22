@@ -427,5 +427,7 @@ public class RootMain: Main {
             return try self.boot()
         }
         catch let error { print(error) }
+        
+        return self
     }
 }

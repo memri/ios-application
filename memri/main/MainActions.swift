@@ -71,7 +71,7 @@ extension Main {
             if (cascadingView.userState["selection"] as? [DataItem])?.count == 0
                 && action.hasState, let binding = action.binding {
                 
-                binding.toggleBool()
+                try binding.toggleBool()
             }
             
             if let action = action as? ActionExec {

@@ -88,7 +88,7 @@ public class CascadingView: Cascadable, ObservableObject {
         if let x = localCache["resultSet"] as? ResultSet { return x }
         
         // Update search result to match the query
-        let resultSet = main.cache.getResultSet(self.queryOptions)
+        let resultSet = main!.cache.getResultSet(self.queryOptions)
         localCache["resultSet"] = resultSet
 
         // Filter the results
@@ -117,7 +117,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-    private let main:Main?
+    var main:Main?
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
@@ -127,10 +127,10 @@ public class CascadingView: Cascadable, ObservableObject {
                 .filter { $0.name == activeRenderer }.first
         }
         
-        let renderDSLDefinitions = main.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
+        let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
         for def in renderDSLDefinitions {
             do {
-                if let parsedRenderDef = try main.views.parseDefinition(def) as? ViewRendererDefinition {
+                if let parsedRenderDef = try main?.views.parseDefinition(def) as? ViewRendererDefinition {
                     if parsedRenderDef.domain == "user" {
                         let insertPoint:Int = {
                             for i in 0..<stack.count { if stack[i].domain == "view" { return i } }
@@ -368,7 +368,9 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         
         // Create a new view
-        return CascadingView(main, sessionView, cascadeStack, activeRenderer ?? "")
+        let c = CascadingView(sessionView, cascadeStack, activeRenderer ?? "")
+        c.main = main
+        return c
     }
     
 }
