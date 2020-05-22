@@ -60,15 +60,14 @@ public:
 };
 
 
-/// The UnsupportedFileFormatVersion exception is thrown by DB::open()
+/// The FileFormatUpgradeRequired exception can be thrown by the SharedGroup
 /// constructor when opening a database that uses a deprecated file format
-/// and/or a deprecated history schema which this version of Realm cannot
-/// upgrade from.
-class UnsupportedFileFormatVersion : public ExceptionWithBacktrace<std::exception> {
+/// and/or a deprecated history schema, and the user has indicated he does not
+/// want automatic upgrades to be performed. This exception indicates that until
+/// an upgrade of the file format is performed, the database will be unavailable
+/// for read or write operations.
+class FileFormatUpgradeRequired : public ExceptionWithBacktrace<std::exception> {
 public:
-    UnsupportedFileFormatVersion(int source_version);
-    /// The unsupported version of the file.
-    int source_version = 0;
     const char* message() const noexcept override;
 };
 
@@ -103,16 +102,6 @@ public:
     /// runtime_error::what() returns the msg provided in the constructor.
 };
 
-/// Thrown when a key can not be used (either not found or already existing
-/// when trying to create a new object)
-class InvalidKey : public std::runtime_error {
-public:
-    InvalidKey(const std::string& msg)
-        : std::runtime_error(msg)
-    {
-    }
-};
-
 // SerialisationError intentionally does not inherit ExceptionWithBacktrace
 // because the query-based-sync permissions queries generated on the server
 // use a LinksToNode which is not currently serialisable (this limitation can
@@ -130,24 +119,6 @@ class InvalidPathError : public std::runtime_error {
 public:
     InvalidPathError(const std::string& msg);
     /// runtime_error::what() returns the msg provided in the constructor.
-};
-
-class DuplicatePrimaryKeyValueException : public std::logic_error {
-public:
-    DuplicatePrimaryKeyValueException(std::string object_type, std::string property);
-
-    std::string const& object_type() const
-    {
-        return m_object_type;
-    }
-    std::string const& property() const
-    {
-        return m_property;
-    }
-
-private:
-    std::string m_object_type;
-    std::string m_property;
 };
 
 
@@ -190,8 +161,6 @@ public:
         binary_too_big,
         table_name_too_long,
         column_name_too_long,
-        column_name_in_use,
-        invalid_column_name,
         table_index_out_of_range,
         row_index_out_of_range,
         column_index_out_of_range,
@@ -278,10 +247,7 @@ public:
         column_does_not_exist,
 
         /// You can not add index on a subtable of a subtable
-        subtable_of_subtable_index,
-
-        /// You try to instantiate a list object not matching column type
-        list_type_mismatch
+        subtable_of_subtable_index
     };
 
     LogicError(ErrorKind message);
@@ -318,14 +284,9 @@ inline const char* DescriptorMismatch::message() const noexcept
     return "Table descriptor mismatch";
 }
 
-inline UnsupportedFileFormatVersion::UnsupportedFileFormatVersion(int version)
-: source_version(version)
+inline const char* FileFormatUpgradeRequired::message() const noexcept
 {
-}
-
-inline const char* UnsupportedFileFormatVersion::message() const noexcept
-{
-    return "Database has an unsupported version and cannot be upgraded";
+    return "Database upgrade required but prohibited";
 }
 
 inline const char* MultipleSyncAgents::message() const noexcept
@@ -346,7 +307,7 @@ inline MaximumFileSizeExceeded::MaximumFileSizeExceeded(const std::string& msg)
 }
 
 inline OutOfDiskSpace::OutOfDiskSpace(const std::string& msg)
-    : std::runtime_error(msg)
+: std::runtime_error(msg)
 {
 }
 

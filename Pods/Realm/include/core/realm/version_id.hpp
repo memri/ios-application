@@ -23,7 +23,6 @@
 #define __STDC_LIMIT_MACROS
 #endif
 
-#include <cstdint>
 #include <limits>
 
 namespace realm {

@@ -50,16 +50,11 @@ FOUNDATION_EXTERN id _Nullable RLMValidatedValueForProperty(id object, NSString 
 // Compare two RLObjectBases
 FOUNDATION_EXTERN BOOL RLMObjectBaseAreEqual(RLMObjectBase * _Nullable o1, RLMObjectBase * _Nullable o2);
 
-typedef void (^RLMObjectNotificationCallback)(RLMObjectBase *_Nullable object,
-                                              NSArray<NSString *> *_Nullable propertyNames,
+typedef void (^RLMObjectNotificationCallback)(NSArray<NSString *> *_Nullable propertyNames,
                                               NSArray *_Nullable oldValues,
                                               NSArray *_Nullable newValues,
                                               NSError *_Nullable error);
-FOUNDATION_EXTERN RLMNotificationToken *RLMObjectBaseAddNotificationBlock(RLMObjectBase *obj,
-                                                                          dispatch_queue_t _Nullable queue,
-                                                                          RLMObjectNotificationCallback block);
-RLMNotificationToken *RLMObjectAddNotificationBlock(RLMObjectBase *obj, RLMObjectChangeBlock block,
-                                                    dispatch_queue_t _Nullable queue);
+FOUNDATION_EXTERN RLMNotificationToken *RLMObjectAddNotificationBlock(RLMObjectBase *obj, RLMObjectNotificationCallback block);
 
 // Returns whether the class is a descendent of RLMObjectBase
 FOUNDATION_EXTERN BOOL RLMIsObjectOrSubclass(Class klass);
@@ -68,12 +63,6 @@ FOUNDATION_EXTERN BOOL RLMIsObjectOrSubclass(Class klass);
 FOUNDATION_EXTERN BOOL RLMIsObjectSubclass(Class klass);
 
 FOUNDATION_EXTERN const NSUInteger RLMDescriptionMaxDepth;
-
-FOUNDATION_EXTERN id RLMObjectFreeze(RLMObjectBase *obj) NS_RETURNS_RETAINED;
-
-// Gets an object identifier suitable for use with Combine. This value may
-// change when an unmanaged object is added to the Realm.
-FOUNDATION_EXTERN uint64_t RLMObjectBaseGetCombineId(RLMObjectBase *);
 
 @interface RLMManagedPropertyAccessor : NSObject
 + (void)initializeObject:(void *)object parent:(RLMObjectBase *)parent property:(RLMProperty *)property;

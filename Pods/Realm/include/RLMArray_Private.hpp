@@ -22,6 +22,7 @@
 
 #import "RLMResults_Private.hpp"
 
+#import <realm/link_view_fwd.hpp>
 #import <realm/table_ref.hpp>
 
 namespace realm {

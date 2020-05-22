@@ -47,7 +47,7 @@ public struct ObjectiveCSupport {
 
     /// Convert a `RLMArray` to a `List`.
     public static func convert(object: RLMArray<AnyObject>) -> List<Object> {
-        return List(objc: object)
+        return List(rlmArray: object)
     }
 
     /// Convert a `LinkingObjects` to a `RLMResults`.

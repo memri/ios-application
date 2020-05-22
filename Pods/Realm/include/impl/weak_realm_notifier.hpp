@@ -19,6 +19,8 @@
 #ifndef REALM_WEAK_REALM_NOTIFIER_HPP
 #define REALM_WEAK_REALM_NOTIFIER_HPP
 
+#include "execution_context_id.hpp"
+
 #include <memory>
 #include <thread>
 
@@ -26,7 +28,7 @@ namespace realm {
 class Realm;
 
 namespace util {
-class Scheduler;
+template<typename> class EventLoopSignal;
 }
 
 namespace _impl {
@@ -37,11 +39,17 @@ namespace _impl {
 // a Realm instance is released from within a function holding the cache lock.
 class WeakRealmNotifier {
 public:
-    WeakRealmNotifier(const std::shared_ptr<Realm>& realm);
+    WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache, bool bind_to_context);
     ~WeakRealmNotifier();
 
     // Get a strong reference to the cached realm
     std::shared_ptr<Realm> realm() const { return m_realm.lock(); }
+
+    // Does this WeakRealmNotifier store a Realm instance that should be used on the current thread?
+    bool is_cached_for_execution_context(const AnyExecutionContextID& execution_context) const
+    {
+        return m_cache && m_execution_context == execution_context;
+    }
 
     // Has the Realm instance been destroyed?
     bool expired() const { return m_realm.expired(); }
@@ -49,16 +57,21 @@ public:
     // Is this a WeakRealmNotifier for the given Realm instance?
     bool is_for_realm(Realm* realm) const { return realm == m_realm_key; }
 
-    // Invoke m_realm.notify() on the Realm's thread via the scheduler.
     void notify();
 
-    // Bind this notifier to the Realm's scheduler.
-    void bind_to_scheduler();
+    void bind_to_execution_context(AnyExecutionContextID context);
 
 private:
     std::weak_ptr<Realm> m_realm;
+    AnyExecutionContextID m_execution_context;
     void* m_realm_key;
-    std::shared_ptr<util::Scheduler> m_scheduler;
+    bool m_cache = false;
+
+    struct Callback {
+        const std::weak_ptr<Realm> weak_realm;
+        void operator()() const;
+    };
+    std::shared_ptr<util::EventLoopSignal<Callback>> m_signal;
 };
 
 } // namespace _impl

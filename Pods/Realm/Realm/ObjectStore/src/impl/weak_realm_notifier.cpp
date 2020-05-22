@@ -19,36 +19,38 @@
 #include "impl/weak_realm_notifier.hpp"
 
 #include "shared_realm.hpp"
-#include "util/scheduler.hpp"
+#include "util/event_loop_signal.hpp"
 
 using namespace realm;
 using namespace realm::_impl;
 
-
-WeakRealmNotifier::WeakRealmNotifier(const std::shared_ptr<Realm>& realm)
+WeakRealmNotifier::WeakRealmNotifier(const std::shared_ptr<Realm>& realm, bool cache, bool bind_to_context)
 : m_realm(realm)
+, m_execution_context(realm->config().execution_context)
 , m_realm_key(realm.get())
+, m_cache(cache)
+, m_signal(bind_to_context ? std::make_shared<util::EventLoopSignal<Callback>>(Callback{realm}) : nullptr)
 {
-    bind_to_scheduler();
 }
 
 WeakRealmNotifier::~WeakRealmNotifier() = default;
 
-void WeakRealmNotifier::notify()
+void WeakRealmNotifier::Callback::operator()() const
 {
-    if (m_scheduler)
-        m_scheduler->notify();
+    if (auto realm = weak_realm.lock()) {
+        realm->notify();
+    }
 }
 
-void WeakRealmNotifier::bind_to_scheduler()
+void WeakRealmNotifier::notify()
 {
-    REALM_ASSERT(!m_scheduler);
-    m_scheduler = realm()->scheduler();
-    if (m_scheduler) {
-        m_scheduler->set_notify_callback([weak_realm = m_realm] {
-            if (auto realm = weak_realm.lock()) {
-                realm->notify();
-            }
-        });
-    }
+    if (m_signal)
+        m_signal->notify();
+}
+
+void WeakRealmNotifier::bind_to_execution_context(AnyExecutionContextID context)
+{
+    REALM_ASSERT(!m_signal);
+    m_signal = std::make_shared<util::EventLoopSignal<Callback>>(Callback{m_realm});
+    m_execution_context = context;
 }

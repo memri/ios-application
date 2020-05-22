@@ -13,16 +13,16 @@ import SwiftUI
 struct ListRendererView: View {
     @EnvironmentObject var main: Main
     
-    let name = "list"
+//    let name = "list"
     let deleteAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
     
-    var renderConfig: ListConfig {
-        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
-    }
-    
-    init() {
-        UITableView.appearance().separatorColor = .clear
-    }
+//    var renderConfig: ListConfig {
+//        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+//    }
+//
+//    init() {
+//        UITableView.appearance().separatorColor = .clear
+//    }
     
     struct MyButtonStyle: ButtonStyle {
 
@@ -34,12 +34,12 @@ struct ListRendererView: View {
     }
     
     var body: some View {
-        let guiEl = renderConfig.renderDescription?["*"]
-        if guiEl != nil {
-            if guiEl!._properties["padding"] == nil {
-                guiEl!._properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
-            }
-        }
+//        let guiEl = renderConfig.renderDescription?["*"]
+//        if guiEl != nil {
+//            if guiEl!._properties["padding"] == nil {
+//                guiEl!._properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
+//            }
+//        }
         
         return VStack{
             if main.computedView.resultSet.count == 0 {
@@ -56,36 +56,36 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                NavigationView{
-                    // TODO REfactor: why are there 2px between each list row?
-                    SwiftUI.List {
-                        ForEach(main.items) { dataItem in
-                            Button (action:{
-                                if let press = self.renderConfig.press {
-                                    self.main.executeAction(press, dataItem)
-                                }
-                            }) {
-                                self.renderConfig.render(item: dataItem)
-                            }
-                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
-                        }
-                        .onDelete{ indexSet in
-                            
-                            // TODO this should happen automatically in ResultSet
-                            self.main.items.remove(atOffsets: indexSet)
-                            
-                            // I'm sure there is a better way of doing this...
-                            var items:[DataItem] = []
-                            for i in indexSet {
-                                let item = self.main.items[i]
-                                items.append(item)
-                            }
-                            
-                            // Execute Action
-                            self.main.executeAction(self.deleteAction, nil, items)
-
-                        }
-                    }
+                NavigationView {
+//                    SwiftUI.List {
+//                        ForEach(main.items) { dataItem in
+//                            Button (action:{
+//                                if let press = self.renderConfig.press {
+//                                    self.main.executeAction(press, dataItem)
+//                                }
+//                            }) {
+//                                self.renderConfig.render(item: dataItem)
+//                            }
+//                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
+//                        }
+//                        .onDelete{ indexSet in
+//                            
+//                            // TODO this should happen automatically in ResultSet
+//                            self.main.items.remove(atOffsets: indexSet)
+//                            
+//                            // I'm sure there is a better way of doing this...
+//                            var items:[DataItem] = []
+//                            for i in indexSet {
+//                                let item = self.main.items[i]
+//                                items.append(item)
+//                            }
+//                            
+//                            // Execute Action
+//                            self.main.executeAction(self.deleteAction, nil, items)
+//
+//                        }
+//                    }
+                    TableView(main: self.main, editMode: $main.currentSession.isEditMode)
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)

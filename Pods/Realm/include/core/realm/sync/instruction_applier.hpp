@@ -23,7 +23,6 @@
 #include <realm/sync/changeset.hpp>
 #include <realm/sync/object.hpp>
 #include <realm/util/logger.hpp>
-#include <realm/list.hpp>
 
 
 namespace realm {
@@ -32,7 +31,7 @@ namespace sync {
 struct Changeset;
 
 struct InstructionApplier {
-    explicit InstructionApplier(Transaction&, TableInfoCache&) noexcept;
+    explicit InstructionApplier(Group&, TableInfoCache&) noexcept;
 
     /// Throws BadChangesetError if application fails due to a problem with the
     /// changeset.
@@ -60,10 +59,11 @@ protected:
     TableRef table_for_class_name(StringData) const; // Throws
     REALM_NORETURN void bad_transaction_log(const char*) const;
 
-    Transaction& m_transaction;
+    Group& m_group;
     TableInfoCache& m_table_info_cache;
-    std::unique_ptr<LstBase> m_selected_array;
+    LinkViewRef m_selected_link_list;
     TableRef m_selected_table;
+    TableRef m_selected_array;
     TableRef m_link_target_table;
 
     template <class... Args>
@@ -84,8 +84,8 @@ private:
 
 // Implementation
 
-inline InstructionApplier::InstructionApplier(Transaction& group, TableInfoCache& table_info_cache) noexcept:
-    m_transaction(group),
+inline InstructionApplier::InstructionApplier(Group& group, TableInfoCache& table_info_cache) noexcept:
+    m_group(group),
     m_table_info_cache(table_info_cache)
 {
 }
@@ -101,7 +101,8 @@ inline void InstructionApplier::end_apply() noexcept
     m_log = nullptr;
     m_logger = nullptr;
     m_selected_table = TableRef{};
-    m_selected_array.reset();
+    m_selected_array = TableRef{};
+    m_selected_link_list = LinkViewRef{};
     m_link_target_table = TableRef{};
 }
 

@@ -11,10 +11,17 @@ import SwiftUI
 private let cellIdentifier = "aTableViewCell"
 
 struct TableView: UIViewControllerRepresentable {
-                
+               
+    public var main: Main!
     @Binding var editMode: EditMode
     
-    init(editMode: Binding<EditMode>) {
+    let name = "list"
+    public var renderConfig: ListConfig {
+        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+    }
+
+    init(main: Main, editMode: Binding<EditMode>) {
+        self.main = main
         self._editMode = editMode
     }
     
@@ -35,15 +42,6 @@ struct TableView: UIViewControllerRepresentable {
     }
 }
 
-struct CellContent: View {
-    var body: some View {
-        HStack {
-            Text("Howdy")
-            Spacer()
-        }
-    }
-}
-
 class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
 
     let parent: TableView
@@ -54,10 +52,7 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
         super.init()
         tableViewController.tableView.dataSource = self
         tableViewController.tableView.delegate = self
-        tableViewController.tableView.register(HostingTableViewCell<CellContent>.self, forCellReuseIdentifier: cellIdentifier)
-//        tableViewController.tableView.register(TableViewCell.self, forCellReuseIdentifier: cellIdentifier)
-//        let aNib = UINib(nibName: "TableViewCell", bundle: nil)
-//        tableViewController.tableView.register(aNib, forCellReuseIdentifier: cellIdentifier)
+        tableViewController.tableView.register(HostingTableViewCell<GUIElementInstance>.self, forCellReuseIdentifier: cellIdentifier)
     }
 
     //
@@ -72,21 +67,17 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //
-        // TODO: provide data count from source
-        //
-        100
+        self.parent.main.items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView
-            .dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HostingTableViewCell<CellContent>
+            .dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HostingTableViewCell<GUIElementInstance>
         
-        //
-        // Adding a Swift view!
-        //
-        cell.host(CellContent(), parent: self.tableViewController)
-        
+        let dataItem = self.parent.main.items[indexPath.row]
+        let guiView = self.parent.renderConfig.render(item: dataItem)
+        cell.host(guiView, parent: self.tableViewController)
+                
         return cell
     }
     
@@ -95,10 +86,10 @@ class Coordinator : NSObject, UITableViewDelegate, UITableViewDataSource {
     //
     
     func tableView(_ tableView: UITableView, didSelectRowAt: IndexPath) {
-        print("Cell \(didSelectRowAt.row) selected")
-        //
-        // TODO: Add action when selected
-        //
+        let dataItem = self.parent.main.items[didSelectRowAt.row]
+        if let press = self.parent.renderConfig.press {
+            self.parent.main.executeAction(press, dataItem)
+        }
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
