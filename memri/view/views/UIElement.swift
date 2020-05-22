@@ -6,15 +6,16 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
     
 public class UIElement : CustomStringConvertible {
-    var type: String = ""
+    var type: String
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
     
-    init(type: String, children: [UIElement] = [], properties: [String:Any]) {
+    init(_ type: String, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
         self.type = type
-        self.children = children
+        self.children = children ?? self.children
         self.properties = properties
     }
     
@@ -31,15 +32,19 @@ public class UIElement : CustomStringConvertible {
     }
     
     public func get<T>(_ propName:String, _ item:DataItem? = nil,
-                       _ viewArguments:[String:Any] = [:]) -> T? {
+                       _ viewArguments:ViewArguments = ViewArguments()) -> T? {
         
         if let prop = properties[propName] {
             let propValue = prop
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
-                let x:T? = expr.execute(variables: viewArguments)
-                return x
+                do { let x:T? = try expr.execute(viewArguments) as? T; return x }
+                catch {
+                    // TODO Refactor error handling
+                    
+                    return nil
+                }
             }
             
             return (propValue as! T)
@@ -99,4 +104,33 @@ public class UIElement : CustomStringConvertible {
     public var description: String {
         return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
     }
+}
+
+public enum UIElementFamily : String, CaseIterable {
+    case VStack
+    case HStack
+    case ZStack
+    case EditorSection
+    case EditorRow
+    case EditorLabel
+    case Title
+    case Button
+    case FlowStack
+    case Text
+    case Textfield
+    case ItemCell
+    case SubView
+    case Map
+    case Picker
+    case SecureField
+    case Action
+    case MemriButton
+    case Image
+    case Circle
+    case HorizontalLine
+    case Rectangle
+    case RoundedRectangle
+    case Spacer
+    case Divider
+    case Empty
 }

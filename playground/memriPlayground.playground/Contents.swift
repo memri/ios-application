@@ -3,8 +3,6 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-let x:[String:Any] = [:]
+let x:Double = 5
 
-if (x["foo"] == nil) {
-    print("bar")
-}
+print(Int(x))

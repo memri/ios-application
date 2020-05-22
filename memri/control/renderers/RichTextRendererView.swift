@@ -17,21 +17,16 @@ private var register:Void = {
         order: 0,
         icon: "pencil",
         view: AnyView(MapRendererView()),
+        renderConfigType: CascadingRichTextEditorConfig.self,
         canDisplayResults: { items -> Bool in
-            if items.count > 0 {
-                if items.count == 1 && items[0] is Note{
-                    return true
-                }
-                else {
-                    return false
-                }
-            }
-            else {
-                return false
-            }
+            items.count > 0 && items.count == 1 && items[0] is Note
         }
     )
 }()
+
+class CascadingRichTextEditorConfig: CascadingRenderConfig {
+    var type: String? = "richTextEditor"
+}
 
 struct _RichTextEditor: UIViewRepresentable {
     @ObservedObject public var dataItem: DataItem
@@ -115,8 +110,8 @@ struct _RichTextEditor: UIViewRepresentable {
 struct RichTextRendererView: View {
     @EnvironmentObject var main: Main
     
-    //wrapper
-    var renderConfig: CascadingRenderConfig = CascadingRenderConfig()
+    var renderConfig: CascadingRichTextEditorConfig
+        = CascadingRichTextEditorConfig([], ViewArguments())
 
     var body: some View {
         let binding = Binding(

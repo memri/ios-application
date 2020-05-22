@@ -67,7 +67,6 @@ public class Views {
         try loadStandardViewSetIntoDatabase()
     }
     
-    
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
         do {
@@ -79,7 +78,11 @@ public class Views {
             
             // Loop over lookup table with named views
             for def in parsedDefinitions {
-                var values = ["selector": def.selector, "definition": def.description]
+                var values = [
+                    "selector": def.selector,
+                    "domain": "defaults", // TODO Refactor, is it default or defaults
+                    "definition": def.description
+                ]
                 
                 if def is ViewDefinition { values["type"] = "view" }
                 else if def is ViewRendererDefinition { values["type"] = "renderer" }
@@ -435,7 +438,7 @@ public class Views {
             }
             else {
                 // Find views based on datatype
-                outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
+                outerLoop: for needle in ["\(dataItem.genericType)[]", "*[]"] {
                     for key in ["user", "defaults"] {
                         
                         if let viewDefinition = main.views.fetchDefinitions(needle, domain:key).first {
@@ -460,19 +463,19 @@ public class Views {
             }
                             
             if cascadeStack.count == 0 {
-                throw "Exception: Unable to find a way to render this element: \(item.genericType)"
+                throw "Exception: Unable to find a way to render this element: \(dataItem.genericType)"
             }
             
             // Create a new view
             let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
 
             // Return the rendered UIElements in a UIElementView
-            return cascadingRenderConfig.render(item: item)
+            return cascadingRenderConfig.render(item: dataItem)
         }
         catch {
             // TODO Refactor: Log error to the user
             
-            return UIElementView(UIElement(type: "Text", properties: ["text": "Could not render this view"]), item)
+            return UIElementView(UIElement("Text", properties: ["text": "Could not render this view"]), dataItem)
         }
     }
 }

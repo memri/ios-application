@@ -68,34 +68,28 @@ struct PickerPane: View {
             view: SessionView(value: [
                 "queryOptions": queryOptions,
                 "title": title,
+                "userState": UserState([
+                    "selection": ["type": self.item.genericType, "uid": self.item.uid]
+                ]),
                 // "editMode": true // TODO REfactor: also allow edit mode toggle on session view
                 // TODO REfactor: allow only 1 or more selected items
-                "renderConfigs": RenderConfigs(value: [
-                    // TODO:refactor use "*" for all renderConfigs
-                    "list": ListConfig(value: [
-                        // TODO Refactor: Allow for multiple actions to an action description
-                        //                Then add a .setProperty which takes a type, uid and
-                        //                propName to set the property with the value from selection
-                        //                in order to reimplement:
-                        //
-                        //                            try! self.main.realm.write {
-                        //                                self.item[self.propName] = dataItem
-                        //                            }
-                        //                            self.main.scheduleUIUpdate{_ in true}
-                        //
-                        "press": Action(actionName: .closePopup)
-                        // TODO: refactor enable selection
-//                        "selection": [DataItemReference(dataItem: self.item)]
-                    ]),
-                    "thumbnail": ThumbnailConfig(value: [
-                        "press": Action(actionName: .closePopup)
-                    ])
-                ])
+                "renderDescriptions": [
+                    ViewRendererDefinition(#"[renderer = "list"]"#,
+                        parsed: ["press": [
+                            Action("setProperty", [self.item, self.propName]),
+                            Action("closePopup")
+                        ]]
+                    ),
+                    ViewRendererDefinition(#"[renderer = "thumbnail"]"#,
+                        parsed: ["press": [
+                            Action("setProperty", [self.item, self.propName]),
+                            Action("closePopup")
+                        ]]
+                    )
+                ]
             ]),
-            context: self.item,
-            variables: [
-                "showCloseButton": true
-            ] // TODO: Refactor: optional?
+            dataItem: self.item,
+            args: ViewArguments(["showCloseButton": true])
         )
     }
 }

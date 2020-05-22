@@ -12,7 +12,7 @@ import RealmSwift
 
 class File:DataItem {
     @objc dynamic var uri:String = ""
-    override var genericType:String { "file" }
+    override var genericType:String { "File" }
     
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
     
@@ -33,22 +33,31 @@ class File:DataItem {
     }
     
     public var asUIImage:UIImage? {
-        if let x:UIImage = read() { return x }
+        do { if let x:UIImage = try read() { return x } }
+        catch {
+            // TODO Refactor: error handling
+        }
         return nil
     }
 
     public var asString:String? {
-        if let x:String = read() { return x }
+        do { if let x:String = try read() { return x } }
+        catch {
+            // TODO Refactor: error handling
+        }
         return nil
     }
     
     public var asData:Data? {
-        if let x:Data = read() { return x }
+        do { if let x:Data = try read() { return x } }
+        catch {
+            // TODO Refactor: error handling
+        }
         return nil
     }
     
-    public func read<T>() -> T? {
-        var cachedData:T? = try! fileCache.read(self.uri)
+    public func read<T>() throws -> T? {
+        var cachedData:T? = try InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
         let data = self.readData()
@@ -67,7 +76,7 @@ class File:DataItem {
                 return nil
             }
             
-            try! fileCache.add(self.uri, cachedData!)
+            try InMemoryObjectCache.set(self.uri, cachedData!)
             return cachedData
         }
         else {

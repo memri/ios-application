@@ -20,6 +20,7 @@ public protocol ViewNode: CustomStringConvertible {
 public class ViewSelector:ViewNode {
     let name:String?
     let selector:String?
+    let domain:String?
     
     subscript(propName:String) -> Any? {
         return parsed[propName]
@@ -48,9 +49,11 @@ public class ViewSelector:ViewNode {
         return "Selector(\(name ?? ""), context:\(serializeDict())"
     }
     
-    init(_ selector:String, _ name:String? = nil) {
+    init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any]? = nil) {
         self.selector = selector
         self.name = name
+        self.domain = domain
+        self.parsed = parsed ?? self.parsed
     }
 }
 public class ViewStyleDefinition:ViewSelector {
@@ -94,7 +97,7 @@ public class ViewDefinition:ViewSelector {
         self.type = type
         self.query = query
         
-        super.init(selector, name)
+        super.init(selector, name:name)
     }
 }
 // TODO Refactor: implement

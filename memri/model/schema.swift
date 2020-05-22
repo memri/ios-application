@@ -161,7 +161,7 @@ class Note:DataItem {
     @objc dynamic var rtfContent:String? = nil
 
 
-    override var genericType:String { "note" }
+    override var genericType:String { "Note" }
     
     let writtenBy = List<Edge>()
     let sharedWith = List<Edge>()
@@ -189,7 +189,7 @@ class Note:DataItem {
 }
 
 class PhoneNumber:DataItem{
-    override var genericType:String { "phonenumber" }
+    override var genericType:String { "PhoneNumber" }
     // mobile/landline
     @objc dynamic var type:String? = nil
     @objc dynamic var number:String? = nil
@@ -215,7 +215,7 @@ class PhoneNumber:DataItem{
 }
 
 class Website:DataItem{
-    override var genericType:String { "website" }
+    override var genericType:String { "Website" }
     // blog portifolio website
     @objc dynamic var type:String? = nil
     @objc dynamic var url:String? = nil
@@ -241,7 +241,7 @@ class Website:DataItem{
 }
 
 class Location:DataItem{
-    override var genericType:String { "location" }
+    override var genericType:String { "Location" }
     
     let latitude = RealmOptional<Double>()
     let longitude = RealmOptional<Double>()
@@ -263,7 +263,7 @@ class Location:DataItem{
 }
 
 class Country:DataItem {
-    override var genericType:String { "country" }
+    override var genericType:String { "Country" }
     
     @objc dynamic var name:String? = nil
     @objc dynamic var flag:File? = nil // or Image ??
@@ -291,7 +291,7 @@ class Country:DataItem {
 }
 
 class Address:DataItem {
-    override var genericType:String { "address" }
+    override var genericType:String { "Address" }
     
     @objc dynamic var type:String? = nil
     @objc dynamic var country:Country? = nil
@@ -334,7 +334,7 @@ class Address:DataItem {
 }
 
 class Company: DataItem{
-    override var genericType:String { "company" }
+    override var genericType:String { "Company" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
@@ -359,7 +359,7 @@ class Company: DataItem{
 }
 
 class PublicKey: DataItem{
-    override var genericType:String { "publickey" }
+    override var genericType:String { "PublicKey" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     @objc dynamic var key:String? = nil
@@ -382,7 +382,7 @@ class PublicKey: DataItem{
 }
 
 class OnlineProfile: DataItem{
-    override var genericType:String { "onlineprofile" }
+    override var genericType:String { "OnlineProfile" }
     @objc dynamic var type:String? = nil
     @objc dynamic var handle:String? = nil
     
@@ -407,7 +407,7 @@ class OnlineProfile: DataItem{
 }
 
 class Diet: DataItem{
-    override var genericType:String { "diet" }
+    override var genericType:String { "Diet" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     let additions = List<String>()
@@ -435,7 +435,7 @@ class Diet: DataItem{
 }
 
 class MedicalCondition: DataItem{
-    override var genericType:String { "medicalcondition" }
+    override var genericType:String { "MedicalCondition" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
@@ -470,7 +470,7 @@ class Person:DataItem {
     let armLength = RealmOptional<Double>()
 
     let age = RealmOptional<Double>()
-    override var genericType:String { "person" }
+    override var genericType:String { "Person" }
     @objc dynamic var profilePicture:File? = nil
     
     let relations = List<Edge>()
@@ -532,7 +532,7 @@ class AuditItem:DataItem {
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
-    override var genericType:String { "audititem" }
+    override var genericType:String { "AuditItem" }
     
     override var computedTitle:String {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
@@ -584,7 +584,7 @@ class Label:DataItem {
     @objc dynamic var name:String = ""
     @objc dynamic var comment:String? = nil
     @objc dynamic var color:String? = nil
-    override var genericType:String { "label" }
+    override var genericType:String { "Label" }
     
     override var computedTitle:String {
         return name
@@ -618,7 +618,7 @@ class Photo:DataItem {
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
-    override var genericType:String { "photo" }
+    override var genericType:String { "Photo" }
     
     override var computedTitle:String {
         return name
@@ -654,7 +654,7 @@ class Video:DataItem {
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
-    override var genericType:String { "video" }
+    override var genericType:String { "Video" }
     
     override var computedTitle:String {
         return name
@@ -690,7 +690,7 @@ class Audio:DataItem {
     @objc dynamic var file:File? = nil
     let bitrate = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
-    override var genericType:String { "video" }
+    override var genericType:String { "Audio" }
     
     override var computedTitle:String {
         return name

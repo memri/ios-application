@@ -81,21 +81,21 @@ public class CascadingView: Cascadable, ObservableObject {
     var viewArguments: ViewArguments { cascadeDict("viewArguments", sessionView.viewArguments) } // set same ref??
     
     var resultSet: ResultSet {
-        /* lookup based on queryOptions */ 1
+        if let x = localCache["resultSet"] as? ResultSet { return x }
         
-        // TODO: set filterText the first time resultSet is loaded
-//        // Update search result to match the query
-//        self.resultSet = cache.getResultSet(self.queryOptions)
-//
-//        // Filter the results
-//        filterText = _filterText
+        // Update search result to match the query
+        localCache["resultSet"] = main.cache.getResultSet(self.queryOptions)
+
+        // Filter the results
+        filterText = userState["filterText"] as? String ?? ""
         
-    } // set when queryOptions changes ??
+    } // TODO: Refactor set when queryOptions changes ??
     
     // TODO: REFACTOR: On change clear renderConfig in localCache
     var activeRenderer: String // Set on creation | when changed set on userState
     
     var backTitle: String? { cascadeProperty("backTitle", nil) }
+    var searchHint: String { cascadeProperty("searchHint", nil) ?? "" }
     var showLabels: Bool { cascadeProperty("showLabels", true) }
     
     var actionButton: Action? { cascadeProperty("actionButton", nil) }
@@ -116,16 +116,23 @@ public class CascadingView: Cascadable, ObservableObject {
     private let main:Main
     
     var renderConfig: CascadingRenderConfig? {
-        if let x = localCache[activeRenderer] { return (x as! CascadingRenderConfig) }
+        if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
         
-        if let renderDefinition = main.views.fetchDefinitions("[renderer = \(activeRenderer)]").first {
+        let stack = self.cascadeStack.compactMap {
+            ($0["renderDefinitions"] as? [ViewRendererDefinition] ?? [])
+                .filter { $0.name == activeRenderer }.first
+        }
+        
+        let renderDSLDefinitions = main.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
+        for def in renderDSLDefinitions {
+            parsedRenderDef = main.views.parseDefinition(def)
+        }
             
             if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
                 let renderConfig = RenderConfigType.init(
                     // TODO set renderDefinition parsed version as first element of cascadeStack
-                    cascadeStack: self.cascadeStack
-                        .compactMap { $0["renderConfigs"]?[activeRenderer] },
-                    viewArguments: self.viewArguments
+                    ,
+                    self.viewArguments
                 )
                 
                 // Not actively preventing conflicts in namespace - assuming chance to be low
@@ -170,9 +177,14 @@ public class CascadingView: Cascadable, ObservableObject {
     
     var filterText: String {
         get {
-            return userState["filterText"]
+            return userState["filterText"] as? String ?? ""
         }
         set (newFilter) {
+            // Don't update the filter when it's already set
+            if newFilter.count > 0 && _titleTemp != nil &&
+                userState["filterText"] as? String == newFilter {
+                return
+            }
             
             // Store the new value
             userState["filterText"] = newFilter
@@ -185,13 +197,13 @@ public class CascadingView: Cascadable, ObservableObject {
                 // found results instead of filtering the other data points out
                 
                 // Filter the result set
-                self.resultSet.filterText = userState["filterText"]
+                self.resultSet.filterText = newFilter
             }
             else {
                 print("Warn: Filtering for single items not Implemented Yet!")
             }
             
-            if userState.filterText == "" {
+            if userState["filterText"] == "" {
                 title = ""
                 subtitle = ""
                 emptyResultText = ""
@@ -205,7 +217,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 // Temporarily hide the subtitle
                 // subtitle = " " // TODO how to clear the subtitle ??
                 
-                emptyResultText = "No results found using '\(userState["filterText"])'"
+                emptyResultText = "No results found using '\(userState["filterText"] ?? "")'"
             }
         }
     }

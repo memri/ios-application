@@ -12,7 +12,7 @@ import RealmSwift
 
 public class Session: DataItem {
  
-    override var genericType:String { "session" }
+    override var genericType:String { "Session" }
  
     @objc dynamic var name: String = ""
  

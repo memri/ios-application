@@ -122,12 +122,21 @@ public class UserState: Object {
         let x:Bool = self[stateName] ?? false
         return x
     }
+    
+    convenience init(_ dict:[String:Any]) {
+        self.init()
+        
+        do { try InMemoryObjectCache.set(self.uid, dict) }
+        catch {
+            // TODO Refactor error reporting
+        }
+    }
 }
 public typealias ViewArguments = UserState
     
 public class SessionView: DataItem {
  
-    override var genericType:String { "sessionview" }
+    override var genericType:String { "SessionView" }
  
     @objc dynamic var name: String? = nil
     @objc dynamic var viewDefinition: ViewDSLDefinition? = nil

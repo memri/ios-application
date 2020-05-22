@@ -89,6 +89,8 @@ public class CascadingRenderConfig: Cascadable {
     private var viewArguments: ViewArguments
     
     init(_ cascadeStack: [ViewSelector], _ viewArguments: ViewArguments) {
+        super.init()
+        
         self.viewArguments = viewArguments
         self.cascadeStack = cascadeStack
     }
@@ -108,16 +110,16 @@ public class CascadingRenderConfig: Cascadable {
     
  
     public func render(item:DataItem, group:String = "*") -> UIElementView {
-        if var renderGroup:RenderGroup = cascadeProperty(group, nil) {
+        if let renderGroup:RenderGroup = cascadeProperty(group, nil) {
             let body = renderGroup.body
             if let s = self as? CascadingRendererDefaults, let body = body {
                 s.setDefaultValues(body)
             }
             
-            return UIElementView(body ?? UIElement(), item, self.viewArguments)
+            return UIElementView(body ?? UIElement("Empty"), item, viewArguments)
         }
         else {
-            return UIElementView(UIElement(), item, self.viewArguments)
+            return UIElementView(UIElement("Empty"), item)
         }
     }
 }

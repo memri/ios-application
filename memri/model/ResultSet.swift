@@ -71,8 +71,10 @@ public class ResultSet: ObservableObject {
             return _filterText
         }
         set (newFilter) {
-            _filterText = newFilter
-            filter()
+            if _filterText != newFilter {
+                _filterText = newFilter
+                filter()
+            }
         }
     }
     

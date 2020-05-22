@@ -1,5 +1,9 @@
 {
+    "*": {
+        "searchHint": "Search"
+    },
     "*[]": {
+        "searchHint": "Search",
         "sortFields": [
             "dateCreated", "dateModified", "dateAccessed"
         ],

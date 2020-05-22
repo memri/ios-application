@@ -7,7 +7,7 @@
 import Foundation
 import SwiftUI
 
-public class Action : CustomStringConvertible{
+public class Action : HashableClass, CustomStringConvertible {
     var name:ActionName = .noop
     var arguments: [Any] = []
     var renderAs: RenderType = .button
@@ -36,6 +36,7 @@ public class Action : CustomStringConvertible{
     }
     
     init(_ name:String,
+         _ arguments:[Any]? = nil,
          icon:String? = nil,
          title:String? = nil,
          showTitle:Bool? = nil,
@@ -58,6 +59,7 @@ public class Action : CustomStringConvertible{
         
         let defForName = self.defaults
         
+        self.arguments = arguments ?? self.arguments
         self.icon = icon ?? defForName["icon"] as? String ?? self.icon
         self.title = title ?? defForName["icon"] as? String ?? self.title
         self.showTitle = showTitle ?? defForName["icon"] as? Bool ?? self.showTitle
@@ -702,6 +704,26 @@ class ActionClosePopup : Action, ActionExec {
         (self.closeStack.removeLast())()
     }
 }
+
+class ActionSetProperty : Action, ActionExec {
+    func exec(_ main:Main, arguments:[Any]) {
+        ActionSetProperty.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        // TODO Refactor: Allow for multiple actions to an action description
+        //                Then add a .setProperty which takes a type, uid and
+        //                propName to set the property with the value from selection
+        //                in order to reimplement:
+        //
+        //                            try! self.main.realm.write {
+        //                                self.item[self.propName] = dataItem
+        //                            }
+        //                            self.main.scheduleUIUpdate{_ in true}
+        //
+    }
+}
+
 class ActionNoop : Action, ActionExec {
     func exec(_ main:Main, arguments:[Any]) {
         ActionClosePopup.exec(main, arguments:arguments)

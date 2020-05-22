@@ -21,7 +21,7 @@ extension String: Error {
     }
     
     func test(_ pattern:String, _ options:String = "i") -> Bool {
-        return match(pattern, options)?.count ?? 0 > 0
+        return match(pattern, options).count > 0
     }
     
     // TODO Refactor: optimize regex match
@@ -45,7 +45,7 @@ extension String: Error {
 //    }
     
     // let pattern = #"\{([^\.]+).(.*)\}"#
-    func match(_ pattern:String, _ options:String = "i") -> [String]? {
+    func match(_ pattern:String, _ options:String = "i") -> [String] {
         var nsOptions:NSRegularExpression.Options = NSRegularExpression.Options()
         for chr in options {
             if chr == "i" { nsOptions.update(with: .caseInsensitive) }
@@ -65,7 +65,7 @@ extension String: Error {
             }
         }
         
-        return matches.count > 0 ? matches : nil
+        return matches
     }
     
     func substr(_ startIndex:Int, _ length:Int? = nil) -> String {

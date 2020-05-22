@@ -13,7 +13,7 @@ import RealmSwift
 
 public class Sessions: DataItem {
  
-    override var genericType:String { "sessions" }
+    override var genericType:String { "Sessions" }
  
     @objc dynamic var currentSessionIndex: Int = 0
  

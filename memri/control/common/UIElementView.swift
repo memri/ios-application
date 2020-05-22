@@ -111,12 +111,12 @@ public struct UIElementView: SwiftUI.View {
     
     let from:UIElement
     let item:DataItem
-    let viewArguments:[String:Any]
+    let viewArguments:ViewArguments
     
-    public init(_ gui:UIElement, _ dataItem:DataItem, _ viewArguments:[String:Any]=[:]) {
+    public init(_ gui:UIElement, _ dataItem:DataItem, _ viewArguments:ViewArguments? = nil) {
         self.from = gui
         self.item = dataItem
-        self.viewArguments = viewArguments
+        self.viewArguments = viewArguments ?? ViewArguments()
     }
     
     public func has(_ propName:String) -> Bool {
@@ -484,32 +484,4 @@ public struct UIElementView: SwiftUI.View {
         }
     }
     
-}
-
-public enum UIElementFamily : String {
-    case VStack
-    case HStack
-    case ZStack
-    case EditorSection
-    case EditorRow
-    case EditorLabel
-    case Title
-    case Button
-    case FlowStack
-    case Text
-    case Textfield
-    case ItemCell
-    case SubView
-    case Map
-    case Picker
-    case SecureField
-    case Action
-    case MemriButton
-    case Image
-    case Circle
-    case HorizontalLine
-    case Rectangle
-    case RoundedRectangle
-    case Spacer
-    case Divider
 }
