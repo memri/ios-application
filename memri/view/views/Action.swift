@@ -346,7 +346,7 @@ class ActionOpenViewByName : Action, ActionExec {
             var args = arguments
             args.removeValue(forKey: "view")
             ActionOpenView().openView((main, args, view)
-        }
+        }   
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) {
