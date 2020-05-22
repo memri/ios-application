@@ -180,7 +180,7 @@ public enum ActionName: String, CaseIterable {
 }
 
 protocol ActionExec {
-    func exec(_ main:Main, arguments:[Any])
+    func exec(_ main:Main, _ arguments:[Any])
 }
 
 class ActionBack : Action, ActionExec {
@@ -191,23 +191,25 @@ class ActionBack : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionBack.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("back")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let session = currentSession
+    func exec(_ main:Main, _ arguments:[Any]) {
+//        ActionBack.exec(main, arguments:arguments)
+        let session = main.currentSession
         
         if session.currentViewIndex == 0 {
             print("Warn: Can't go back. Already at earliest view in session")
         }
         else {
-            try! realm.write {
-                session.currentViewIndex -= 1
-            }
-            
-            scheduleCascadingViewUpdate()
+            realmWriteIfAvailable(main.realm, {session.currentViewIndex -= 1})
+            main.scheduleCascadingViewUpdate()
         }
+    }
+    
+    class func exec(_ main:Main, arguments:[Any]) {
+        ActionBack().exec(main, arguments)
     }
 }
 class ActionAddDataItem : Action, ActionExec {
@@ -219,15 +221,13 @@ class ActionAddDataItem : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionAddDataItem.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("addDataItem")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        addFromTemplate(params[0].value as! DataItem)
-        
+    func exec(_ main:Main, _ arguments:[Any]) {
         // Copy template
-        let copy = main.cache.duplicate(template)
+        let copy = main.cache.duplicate(arguments[0] as! DataItem)
         
         // Add the new item to the cache
         _ = try! main.cache.addToCache(copy)
@@ -235,57 +235,12 @@ class ActionAddDataItem : Action, ActionExec {
         // Open view with the now managed copy
         ActionOpenView.exec(main, [copy])
     }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionAddDataItem().exec(main, arguments)
+    }
 }
 
-///// Adds a view to the history of the currentSession and displays it.
-///// If the view was already part of the currentSession.views it reorders it on top
-//func openView(_ view:SessionView, _ variables:[String:Any]? = nil) {
-//    let session = self.currentSession
-//
-//    // Toggle the state to true
-//    if let stateName = variables?["stateName"] as? String { view.toggleState(stateName) }
-//
-//    // Add view to session
-//    session.setCurrentView(view)
-//
-//    // Register variables
-//    try! realm.write {
-//        view.variables = variables
-//    }
-//
-//    // Set accessed date to now
-//    view.access()
-//
-//    // Recompute view
-//    scheduleCascadingViewUpdate()
-//}
-//
-//func openView(_ item:DataItem, _ variables:[String:Any]? = nil){
-//    // Create a new view
-//    let view = SessionView()
-//
-//    // Set the query options to load the item
-//    let primKey = DataItemFamily(rawValue: item.genericType)!.getPrimaryKey()
-//    view.queryOptions!.query = "\(item.genericType) AND \(primKey) = '\(item.getString(primKey))'"
-//
-//    // Open the view
-//    openView(view, variables)
-//}
-//
-//public func openView(_ viewName: String, _ variables:[String:Any]? = nil) {
-//
-//    // Fetch a dynamic view based on its name
-//    if let view:SessionView = views.getSessionView(viewName, variables) {
-//
-//        // Open the view
-//        openView(view, variables)
-//    }
-//    else {
-//        print("Warn: Could not find view: '\(viewName)")
-//    }
-//}
-//public func openView(_ items: [DataItem], _ variables:[String:Any]? = nil) {}
-//
 
 class ActionOpenView : Action, ActionExec {
     private var defaults:[String:Any] {[
@@ -293,20 +248,77 @@ class ActionOpenView : Action, ActionExec {
         "opensView": true
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionOpenView.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("openView")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        if (params.count > 0) {
-            let view = params[0].value as! SessionView
-            let variables = params[safe: 1]?.value as? [String:Any]
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let item = arguments[-1] as? DataItem
+        let selection = main.cascadingView.userState["selection"] as [DataItem]?
+        if (arguments.count > 0) {
+            let view = arguments[0] as! SessionView
+            let variables = arguments[safe: 1] as? [String:Any]
             
-            openView(view, variables)
+            self.openView(main, view, variables)
         }
-        else if selection.count > 0 { openView(selection) } // TODO does this mean anything?
-        else if let item = item as? SessionView { openView(item) }
-        else if let item = item { openView(item) }
+        else if selection?.count ?? 0 > 0 { self.openView(main, selection!) } // TODO does this mean anything?
+        else if let item = item as? SessionView { self.openView(main, view: item) }
+        else if let item = item { self.openView(main, item) }
+    }
+    
+    private func openView(_ main: Main, view: SessionView, _ arguments: ViewArguments? = nil){
+        let session = main.currentSession
+        
+        // TODO: implement toggleBool
+        if let binding = self.binding{ binding.toggleBool() }
+        
+        // TODO:  merge arguments into view
+        
+        // Add view to session
+        session.setCurrentView(view)
+    
+        // Set accessed date to now
+        view.access()
+    
+        // Recompute view
+        main.scheduleCascadingViewUpdate()
+    }
+    
+    /// Adds a view to the history of the currentSession and displays it.
+    /// If the view was already part of the currentSession.views it reorders it on top
+    private func openView(_ main: Main, _ viewName: String, variables: [String: Any]? = nil) throws{
+            // Fetch a dynamic view based on its name
+        var def = try! main.views.parseDefinition(main.views.fetchDefinitions(".\(viewName)").first)
+        
+        guard let viewDef = def else { throw "Exception: Missing view" }
+
+        let view = SessionView(value: [
+            "viewDefinition": viewDef,
+            "viewArguments": variables,
+            "queryOptions": viewDef["queryOptions"] // TODO Refactor
+        ])
+        self.openView(main, view, variables)
+    }
+    
+    private func openView(_ main: Main, _ item: DataItem, _ variables: [String: Any]? = nil){
+        // Create a new view
+        let view = SessionView()
+    
+        // Set the query options to load the item
+        let primKey = DataItemFamily(rawValue: item.genericType)!.getPrimaryKey()
+        view.queryOptions!.query = "\(item.genericType) AND \(primKey) = '\(item.getString(primKey))'"
+    
+        // Open the view
+        self.openView(main, view, variables)
+    }
+    
+    private func openView(_ main: Main, _ items: [DataItem], _ variables: [String: Any]? = nil){
+        print("NOT IMPLEMENTED")
+    }
+    
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionOpenView().exec(main, arguments)
     }
 }
 class ActionOpenDynamicView : Action, ActionExec {
@@ -314,15 +326,16 @@ class ActionOpenDynamicView : Action, ActionExec {
         "opensView": true
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionOpenDynamicView.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("openDynamicView")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let name = params[0].value as! String
-        let variables = params[safe: 1]?.value as? [String:Any]
-        
-        openView(name, variables)
+    func exec(_ main:Main, _ arguments:[Any]) {
+        ActionOpenView.exec(main, arguments)
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionOpenDynamicView().exec(main, arguments)
     }
 }
 class ActionOpenViewByName : Action, ActionExec {
@@ -331,12 +344,15 @@ class ActionOpenViewByName : Action, ActionExec {
         "opensView": true
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionOpenViewByName.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("openViewByName")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        
+    func exec(_ main:Main, _ arguments:[Any]) {
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionOpenViewByName().exec(main, arguments)
     }
 }
 class ActionToggleEditMode : Action, ActionExec {
@@ -348,12 +364,16 @@ class ActionToggleEditMode : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionToggleEditMode.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("toggleEditMode")
     }
     
-    func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
         // Do Nothing
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionToggleEditMode().exec(main, arguments)
     }
 }
 class ActionToggleFilterPanel : Action, ActionExec {
@@ -363,12 +383,16 @@ class ActionToggleFilterPanel : Action, ActionExec {
         "activeColor": Color(hex: "#6aa84f")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionToggleFilterPanel.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("toggleFilterPanel")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
         // Do Nothing
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionToggleFilterPanel().exec(main, arguments)
     }
 }
 class ActionStar : Action, ActionExec {
@@ -378,21 +402,25 @@ class ActionStar : Action, ActionExec {
         "binding": "{dataItem.starred}"
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionStar.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("toggleStar")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        if selection.count > 0, let item = item { star(selection, item.starred) }
-        
-        try! realm.write {
-            for item in items {
-                item.starred = toValue
-            }
-        }
-        
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let item = arguments[-1] as? DataItem
+        var selection = main.cascadingView.userState["selection"] as? [DataItem] ?? []
+        let toValue = !(item?.starred ?? false)
+        if let _item = item, selection.count > 0{
+            if !selection.contains(_item){selection.append(_item)}
+            realmWriteIfAvailable(main.cache.realm, {for item in selection {item.starred = toValue}})
+
         // TODO if starring is ever allowed in a list resultset view,
         // it won't be updated as of now
+        }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionStar.exec(main, arguments)
     }
 }
 class ActionShowStarred : Action, ActionExec {
@@ -404,23 +432,25 @@ class ActionShowStarred : Action, ActionExec {
         "activeColor": Color(hex: "#ffdb00")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionShowStarred.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("showStarred")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        showStarred(starButton: action)
-        
-        // If button is active lets create a filtered view
-        if !self.cascadingView.hasState(starButton.actionStateName!) {
-        
+    func exec(_ main:Main, _ arguments:[Any]) {
+        if let binding = self.binding, binding.hasStateEnabled(){
+            ActionOpenView.exec(main, ["filter-starred"])
             // Open named view 'showStarred'
-            openView("filter-starred", ["stateName": starButton.actionStateName as Any])
+            // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
+
         }
-        else {
+        else{
             // Go back to the previous view
-            back()
+            ActionBack.exec(main, arguments: [])
         }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionShowStarred().exec(main, arguments)
     }
 }
 class ActionShowContextPane : Action, ActionExec {
@@ -430,12 +460,16 @@ class ActionShowContextPane : Action, ActionExec {
         "binding": Expression("currentSession.showContextPane")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionShowContextPane.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("showContextPane")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
         // Do Nothing
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionShowContextPane().exec(main, arguments)
     }
 }
 class ActionShowNavigation : Action, ActionExec {
@@ -446,12 +480,16 @@ class ActionShowNavigation : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionShowNavigation.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("showNavigation")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
         // Do Nothing
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionShowNavigation.exec(main, arguments)
     }
 }
 class ActionSchedule : Action, ActionExec {
@@ -459,11 +497,15 @@ class ActionSchedule : Action, ActionExec {
         "icon": "alarm"
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionSchedule.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("schedule")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
+//        ActionSchedule.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
         
     }
 }
@@ -474,26 +516,32 @@ class ActionSetRenderer : Action, ActionExec {
         "activeBackgroundColor": Color(hex: "#eee")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionSetRenderer.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("setRenderer")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        changeRenderer(rendererObject: action as! Renderer)
-//
-//        self.setInactive(objects: Array(self.renderObjects.values))
-    
-        //
-//        setActive(object: rendererObject)
-    
-        //
-        let session = currentSession
-        try! realm.write {
-            session.currentView.rendererName = rendererObject.name
-        }
+    func exec(_ main:Main, _ arguments:[Any]) {
+//        changeRenderer(rendererObject: action as! Renderer)
         
-        //
-        scheduleCascadingViewUpdate()
+        if let rendererObject = arguments[0] as? FilterPanelRendererButton{
+    //        self.setInactive(objects: Array(self.renderObjects.values))
+        
+    //        setActive(object: rendererObject)
+        
+            //
+            let session = main.currentSession
+            realmWriteIfAvailable(main.cache.realm, {
+                // TODO: Implement
+                main.cascadingView.activeRenderer = rendererObject.rendererName
+            })
+            
+            //
+            main.scheduleCascadingViewUpdate()
+        }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionSetRenderer().exec(main, arguments)
     }
 }
 class ActionShowSessionSwitcher : Action, ActionExec {
@@ -504,11 +552,15 @@ class ActionShowSessionSwitcher : Action, ActionExec {
         "color": Color(hex: "#CCC")
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionShowSessionSwitcher.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("showSessionSwitcher")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
+//        ActionShowSessionSwitcher.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
         // Do Nothing
     }
 }
@@ -517,23 +569,24 @@ class ActionForward : Action, ActionExec {
         "opensView": true,
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionForward.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("forward")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let session = currentSession
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let session = main.currentSession
         
         if session.currentViewIndex == session.views.count - 1 {
             print("Warn: Can't go forward. Already at last view in session")
         }
         else {
-            try! realm.write {
-                session.currentViewIndex += 1
-            }
-            
-            scheduleCascadingViewUpdate()
+            realmWriteIfAvailable(main.cache.realm, {session.currentViewIndex += 1})
+            main.scheduleCascadingViewUpdate()
         }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionForward().exec(main, arguments)
     }
 }
 class ActionForwardToFront : Action, ActionExec {
@@ -541,18 +594,18 @@ class ActionForwardToFront : Action, ActionExec {
         "opensView": true,
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionForwardToFront.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("forwardToFront")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let session = currentSession
-        
-        try! realm.write {
-            session.currentViewIndex = session.views.count - 1
-        }
-        
-        scheduleCascadingViewUpdate()
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let session = main.currentSession
+        realmWriteIfAvailable(main.cache.realm, {session.currentViewIndex = session.views.count - 1})
+        main.scheduleCascadingViewUpdate()
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionForwardToFront.exec(main, arguments)
     }
 }
 class ActionBackAsSession : Action, ActionExec {
@@ -560,75 +613,101 @@ class ActionBackAsSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionBackAsSession.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("backAsSession")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let session = currentSession
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let session = main.currentSession
         
         if session.currentViewIndex == 0 {
             print("Warn: Can't go back. Already at earliest view in session")
         }
         else {
-            let duplicateSession = cache.duplicate(session as DataItem) as! Session // This will work when merged with multiple-data-types branch
+            let duplicateSession = main.cache.duplicate(session as DataItem) as! Session // This will work when merged with multiple-data-types branch
             
-            try! realm.write {
-                duplicateSession.currentViewIndex -= 1
-            }
+            realmWriteIfAvailable(main.cache.realm, {duplicateSession.currentViewIndex -= 1})
             
-            openSession(duplicateSession)
+            ActionOpenSession.exec(main, [duplicateSession])
         }
     }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionBackAsSession.exec(main, arguments)
+    }
 }
-///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
-/////  reorders it on top
-//func openSession(_ session:Session) {
-//    let sessions = self.sessions // TODO generalize
-//
-//    // Add view to session and set it as current
-//    sessions.setCurrentSession(session)
-//
-//    // Recompute view
-//    scheduleCascadingViewUpdate()
-//}
-//
-//public func openSession(_ name:String, _ variables:[String:Any]? = nil) {
-//
-//    // TODO: This should not fetch the session from named sessions
-//    //       but instead load a sessionview that loads the named sessions by
-//    //       computing them (implement viewFromSession that is used in dynamic
-//    //       view to sessionview
-//
-//    // Fetch a dynamic view based on its name
-//    let (session, _) = views.getSessionOrView(name, wrapView:true, variables)
-//    if let session = session {
-//
-//        // Open the view
-//        openSession(session)
-//    }
-//    else {
-//        print("Warn: Could not find session: '\(name)")
-//    }
-//}
+
 class ActionOpenSession : Action, ActionExec {
     private var defaults:[String:Any] {[
         "argumentTypes": [Session.self, [String:Any]?.self],
         "opensView": true,
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionOpenSession.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("openSession")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        if (params.count > 0) {
-            let name = params[0].value as! String
-            let variables = params[safe: 1]?.value as? [String:Any]
+    ///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
+    /////  reorders it on top
+    func exec(_ main:Main, _ arguments:[Any]) {
+        if (arguments.count > 0) {
+            let name = arguments[0] as! String
+            let variables = arguments[safe: 1] as? [String:Any]
             
-            openSession(name, variables)
+            do{
+                try self.openSession(main, name, variables)
+            } catch{
+                // TODO: Log error, Error handling
+                print("COULD NOT OPEN SESSION")
+            }
         }
-        else if let item = item as? Session { openSession(item) }
+        else if let item = arguments[-1] as? Session { self.openSession(main, item) }
+        
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionOpenSession.exec(main, arguments)
+    }
+    
+    func openSession(_ main: Main, _ session:Session) {
+        let sessions = main.sessions // TODO generalize
+    
+        // Add view to session and set it as current
+        sessions.setCurrentSession(session)
+    
+        // Recompute view
+        main.scheduleCascadingViewUpdate()
+    }
+    
+    func openSession(_ main: Main, _ name:String, _ variables:[String:Any]? = nil) throws {
+    
+        // TODO: This should not fetch the session from named sessions
+        //       but instead load a sessionview that loads the named sessions by
+        //       computing them (implement viewFromSession that is used in dynamic
+        //       view to sessionview
+    
+        // Fetch a dynamic view based on its name
+        var def = try! main.views.parseDefinition(main.views.fetchDefinitions(".\(name)").first)
+        
+        // TODO IMPLEMENT
+        // TODO IMPLEMENT
+        // TODO IMPLEMENT
+
+        if def is ViewSessionDefinition {
+            if let list = def?["views"] as? [ViewDefinition] { def = list.first }
+        }
+        
+        let session = Optional(Session())
+        
+//        let (session, _) = views.getSessionOrView(name, wrapView:true, variables)
+        if let session = session {
+    
+            // Open the view
+            self.openSession(main, session)
+        }
+        else {
+            print("Warn: Could not find session: '\(name)")
+        }
     }
 }
 class ActionOpenSessionByName : Action, ActionExec {
@@ -637,15 +716,19 @@ class ActionOpenSessionByName : Action, ActionExec {
         "opensView": true,
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionOpenSessionByName.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("openSessionByName")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        let name = params[0].value as! String
-        let variables = params[safe: 1]?.value as? [String:Any]
+    func exec(_ main:Main, _ arguments:[Any]) {
+//        ActionOpenSessionByName.exec(main, arguments:arguments)
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+//        let name = arguments[0] as! String
+//        let arguments_ = arguments[safe: 1]
+        ActionOpenSession().exec(main, arguments)
         
-        openSession(name, variables)
     }
 }
 class ActionAddSelectionToList : Action, ActionExec {
@@ -653,66 +736,90 @@ class ActionAddSelectionToList : Action, ActionExec {
         "argumentTypes": [DataItemFamily.self, String.self]
     ]}
     
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionAddSelectionToList.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("AddSelectionToList")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        
+    func exec(_ main:Main, _ arguments:[Any]) {
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionAddSelectionToList().exec(main, arguments)
     }
 }
 class ActionDelete : Action, ActionExec {
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionDelete.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("delete")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        
-
+    func exec(_ main:Main, _ arguments:[Any]) {
+                
         // TODO this should happen automatically in ResultSet
-        self.main.items.remove(atOffsets: indexSet)
-        
-        // I'm sure there is a better way of doing this...
-        var items:[DataItem] = []
-        for i in indexSet {
-            let item = self.main.items[i]
-            items.append(item)
+        //        self.main.items.remove(atOffsets: indexSet)
+        let indexSet = arguments[0] as? IndexSet
+        if let indexSet = indexSet{
+            var items:[DataItem] = []
+            for i in indexSet {
+                let item = main.items[i]
+                items.append(item)
+            }
         }
         
-        if selection.count > 0 { cache.delete(selection) }
-        else if let item = item { cache.delete(item) }
-        scheduleUIUpdate{_ in true}
+        // I'm sure there is a better way of doing this...
+
+        let selection = main.cascadingView.userState["selection"] as [DataItem]?
+
+        if selection?.count ?? 0 > 0 { main.cache.delete(selection!) }
+        else if let item = arguments[-1] as? DataItem { main.cache.delete(item) }
+        main.scheduleUIUpdate{_ in true}
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionDelete().exec(main, arguments)
     }
 }
 class ActionDuplicate : Action, ActionExec {
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionDuplicate.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("duplicate")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        if selection.count > 0 {
-            selection.forEach{ item in addFromTemplate(item) }
-        }
-        else if let item = item { addFromTemplate(item) }
+    func exec(_ main:Main, _ arguments:[Any]) {
+        let selection = main.cascadingView.userState["selection"] as [DataItem]?
 
+        if selection?.count ?? 0 > 0 {
+            selection!.forEach{ item in ActionAddDataItem.exec(main, [item]) }
+        }
+        else if let item = arguments[-1] as? DataItem { ActionAddDataItem.exec(main, [item]) }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionDuplicate.exec(main, arguments)
     }
 }
 class ActionClosePopup : Action, ActionExec {
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionClosePopup.exec(main, arguments:arguments)
+    
+    convenience init(){
+        self.init("closePopup")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        (self.closeStack.removeLast())()
+    func exec(_ main:Main, _ arguments:[Any]) {
+        (main.closeStack.removeLast())()
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionClosePopup().exec(main, arguments)
     }
 }
 
 class ActionSetProperty : Action, ActionExec {
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionSetProperty.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("setProperty")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
+    func exec(_ main:Main, _ arguments:[Any]) {
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
         // TODO Refactor: Allow for multiple actions to an action description
         //                Then add a .setProperty which takes a type, uid and
         //                propName to set the property with the value from selection
@@ -723,16 +830,21 @@ class ActionSetProperty : Action, ActionExec {
         //                            }
         //                            self.main.scheduleUIUpdate{_ in true}
         //
+        ActionSetProperty().exec(main, arguments)
     }
 }
 
 class ActionNoop : Action, ActionExec {
-    func exec(_ main:Main, arguments:[Any]) {
-        ActionClosePopup.exec(main, arguments:arguments)
+    convenience init(){
+        self.init("noop")
     }
     
-    class func exec(_ main:Main, arguments:[Any]) {
-        // Do Nothing
+    func exec(_ main:Main, _ arguments:[Any]) {
+        // do nothing
+    }
+    
+    class func exec(_ main:Main, _ arguments:[Any]) {
+        ActionClosePopup.exec(main, arguments)
     }
 }
 
