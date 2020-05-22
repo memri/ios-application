@@ -38,7 +38,13 @@ public class Renderers {
     }
 }
 
-class FilterPanelRendererButton: Action {
+class FilterPanelRendererButton: Action, ActionExec {
+    private var defaults:[String:Any] {[
+        "hasState": true,
+        "activeColor": Color(hex: "#6aa84f"),
+        "activeBackgroundColor": Color(hex: "#eee")
+    ]}
+    
     var order: Int
     var canDisplayResults: (_ items: [DataItem]) -> Bool
     var rendererName: String
@@ -53,13 +59,29 @@ class FilterPanelRendererButton: Action {
         super.init("setRenderer", icon:icon, title:title)
     }
     
-    public required init() {
-        fatalError("init() has not been implemented")
+    func exec(_ main:Main, _ arguments:[String: Any]) {
+//        changeRenderer(rendererObject: action as! Renderer)
+        
+        
+        
+    //        self.setInactive(objects: Array(self.renderObjects.values))
+        
+    //        setActive(object: rendererObject)
+        
+            //
+        let session = main.currentSession
+        realmWriteIfAvailable(main.cache.realm, {
+            // TODO: Implement
+            main.cascadingView.activeRenderer = self.rendererName
+        })
+        
+        //
+        main.scheduleCascadingViewUpdate()
     }
     
-    public convenience required init(from decoder: Decoder) throws {
-        fatalError("init(from:) has not been implemented")
-    }
+//    class func exec(_ main:Main, _ arguments:[String: Any]) {
+//        FilterPanelRendererButton().exec(main, arguments)
+//    }
 }
 
 public class RenderGroup {
