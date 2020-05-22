@@ -43,18 +43,52 @@ extension Main {
     
     private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
         // Build arguments array
-        var args = [Any]()
-        for arg in action.arguments {
-            if let expr = arg as? Expression {
-                args.append(try expr.execute(cascadingView.viewArguments) as Any)
+        var args = [String: Any]()
+        for (argName, argValue) in action.arguments {
+            var arg: Any
+            
+            // preprocess arg
+            if let expr = argValue as? Expression {
+                arg = try expr.execute(cascadingView.viewArguments) as Any
             }
             else {
-                args.append(arg)
+                arg = argValue
             }
+            
+            if let arg_ = arg as? [String: Any] {
+                if action.argumentTypes[argName] == ViewArguments.self {
+                    arg = ViewArguments(arg_)
+                }
+                else if action.argumentTypes[argName] == DataItemFamily.self {
+                    if let stringType = arg_["type"] as? String,
+                       let family = DataItemFamily(rawValue: stringType) {
+                        
+                        let ItemType = DataItemFamily.getType(family)
+                        let item = ItemType().init(value: arg_)
+                    }
+                }
+                else if action.argumentTypes[argName] == SessionView.self{
+                    let viewDef = ViewDefinition(DataItem.generateUUID())
+                    viewDef.parsed = arg_
+                    
+                    let view = SessionView(value: ["viewDefinition": viewDef])
+                }
+                else {
+                    throw "Does not recognize argumentType \(argName)"
+                }
+            }
+            else if arg is Bool {assert(action.argumentTypes[argName] == Bool.self)}
+            else if arg is String {assert(action.argumentTypes[argName] == String.self)}
+            else if arg is Int {assert(action.argumentTypes[argName] == Int.self)}
+            else if arg is Float {assert(action.argumentTypes[argName] == Float.self)}
+            else {throw "Does not recognize argumentType \(argName)"}
+            
+            // DataItem, SessionView, ViewArguments,
+            args[argName] = arg
         }
         
         // Last element of arguments array is the context data item
-        args.append(dataItem ?? cascadingView.resultSet.singletonItem as Any)
+        args["dataItem"] = dataItem ?? cascadingView.resultSet.singletonItem as Any
         
         if action.opensView {
             if let action = action as? ActionExec {
