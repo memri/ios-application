@@ -13,7 +13,7 @@ var allRenderers:Renderers? = nil
 
 public class Renderers {
     var all: [String: FilterPanelRendererButton] = [:]
-    var allViewTypes: [String: AnyView] = [:]
+    var allViews: [String: AnyView] = [:]
     var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
     
     class func register(name:String, title:String, order:Int, icon:String = "",
@@ -29,7 +29,7 @@ public class Renderers {
             icon: icon,
             canDisplayResults: canDisplayResults
         )
-        allRenderers!.allViewTypes[name] = view
+        allRenderers!.allViews[name] = view
         allRenderers!.allConfigTypes[name] = renderConfigType
     }
     
@@ -87,7 +87,7 @@ protocol CascadingRendererDefaults {
 //    }
 
 public class CascadingRenderConfig: Cascadable {
-    private var viewArguments: ViewArguments
+    var viewArguments: ViewArguments
     
     required init(_ cascadeStack: [ViewSelector], _ viewArguments: ViewArguments) {
         self.viewArguments = viewArguments
@@ -109,14 +109,16 @@ public class CascadingRenderConfig: Cascadable {
     }
     
  
-    public func render(item:DataItem, group:String = "*") -> UIElementView {
+    public func render(item:DataItem, group:String = "*",
+                       arguments:ViewArguments? = nil) -> UIElementView {
+        
         if let renderGroup:RenderGroup = cascadeProperty(group, nil) {
             let body = renderGroup.body
             if let s = self as? CascadingRendererDefaults, let body = body {
                 s.setDefaultValues(body)
             }
             
-            return UIElementView(body ?? UIElement("Empty"), item, viewArguments)
+            return UIElementView(body ?? UIElement("Empty"), item, arguments ?? viewArguments)
         }
         else {
             return UIElementView(UIElement("Empty"), item)

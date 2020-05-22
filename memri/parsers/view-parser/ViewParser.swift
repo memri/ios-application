@@ -117,7 +117,7 @@ class ViewParser {
             }
         }
         
-        return ViewDefinition(type: type)
+        return ViewDefinition(type, type: type)
     }
     
     func parseNamedIdentifierSelector() throws -> ViewSelector {
@@ -126,7 +126,7 @@ class ViewParser {
             throw ViewParseErrors.UnexpectedToken(lastToken!)
         }
         
-        return ViewDefinition(name: name)
+        return ViewDefinition(".\(name)", name: name)
     }
     
     // For JSON support
@@ -136,14 +136,14 @@ class ViewParser {
         }
         
         if value.first == "." {
-            return ViewDefinition(name:
+            return ViewDefinition(value, name:
                 String(value.suffix(from: value.index(value.startIndex, offsetBy: 1))))
         }
         else if value.first == "[" {
             throw "Not supported yet" // TODO
         }
         else {
-            return ViewDefinition(type: value)
+            return ViewDefinition(value, type: value)
         }
     }
     
@@ -171,10 +171,10 @@ class ViewParser {
             }
             
             switch type {
-            case "style": return ViewStyleDefinition(name)
-            case "color": return ViewColorDefinition(name)
-            case "renderer": return ViewRendererDefinition(name)
-            case "language": return ViewLanguageDefinition(name)
+            case "style": return ViewStyleDefinition("[style = \"\(name)\"]", name:name)
+            case "color": return ViewColorDefinition("[color = \"\(name)\"]", name:name)
+            case "renderer": return ViewRendererDefinition("[renderer = \"\(name)\"]", name:name)
+            case "language": return ViewLanguageDefinition("[language = \"\(name)\"]", name:name)
             default:
                 throw ViewParseErrors.UnknownDefinition(typeToken)
             }
@@ -219,7 +219,7 @@ class ViewParser {
         func addUIElement(_ type:String, _ properties: inout [String:Any]){
             var children = dict["children"] as? [UIElement] ?? [UIElement]()
             let subChildren = properties.removeValue(forKey: "children")
-            children.append(UIElement(type: type,
+            children.append(UIElement(type,
                                       children: subChildren as? [UIElement] ?? [],
                                       properties: properties))
             dict["children"] = children
@@ -305,22 +305,19 @@ class ViewParser {
                         }
                     }
                     
-                    stack.append(Action(
-                        name: value,
+                    stack.append(Action(value, options["arguments"] as? [Any] ?? [],
                         icon: options["icon"] as? String ?? "",
                         title: options["title"] as? String ?? "",
                         showTitle: options["showTitle"] as? Bool ?? false,
                         binding: options["binding"] as? Expression,
+                        renderAs: RenderType(rawValue: options["renderAs"] as? String ?? "button"),
                         hasState: options["hasState"] as? Bool ?? false,
                         color: options["color"] as? Color,
                         backgroundColor: options["backgroundColor"] as? Color,
                         activeColor: options["activeColor"] as? Color,
                         inactiveColor: options["inactiveColor"] as? Color,
                         activeBackgroundColor: options["activeBackgroundColor"] as? Color,
-                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? Color,
-                        arguments: options["arguments"] as? [Any] ?? [],
-                        renderAs: options["renderAs"] as? String ?? "",
-                        hasState: options["hasState"] as? Bool ?? false
+                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? Color
                     ))
                 }
                 else {

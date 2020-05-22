@@ -58,7 +58,7 @@ extension Main {
         
         if action.opensView {
             if let action = action as? ActionExec {
-                action.exec(self, arguments: args)
+                action.exec(self, args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")
@@ -73,7 +73,7 @@ extension Main {
             }
             
             if let action = action as? ActionExec {
-                action.exec(self, arguments: args)
+                action.exec(self, args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")

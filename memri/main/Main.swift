@@ -19,7 +19,7 @@ import RealmSwift
 
 
 // TODO Remove this and find a solution for Edges
-var globalCache:Cache
+var globalCache:Cache? = nil
 
 
 public class Main: ObservableObject {
@@ -124,8 +124,13 @@ public class Main: ObservableObject {
                 errorHistory.info("Computing view \(self.sessions.currentView.name ?? "")")
             }
             
-            // Calculate cascaded view
-            let cascadingView = try self.views.createCascadingView() // TODO handle errors better
+            do {
+                // Calculate cascaded view
+                let cascadingView = try self.views.createCascadingView() // TODO handle errors better
+            }
+            catch {
+                // TODO Error handling
+            }
             
             // Update current session
             self.currentSession = self.sessions.currentSession // TODO filter to a single property

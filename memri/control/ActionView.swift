@@ -53,7 +53,9 @@ struct ActionButtonView: View {
     var execute: (() -> Void)? = nil
     
     var isActive: Bool {
-        if action.hasState, let binding = action.binding { return binding.stateIsActive() }
+        if action.hasState, let binding = action.binding {
+            return binding.stateIsActive()
+        }
         else { return false }
     }
     
@@ -88,7 +90,7 @@ struct ActionPopupButton: View {
     @State var isShowing = false
     
     var body: some View {
-        return ActionButton(action: self.action, execute: {
+        return ActionButtonView(action: self.action, execute: {
             self.isShowing = true
         })
         .sheet(isPresented: $isShowing) {

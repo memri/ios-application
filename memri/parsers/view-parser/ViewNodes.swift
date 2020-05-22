@@ -46,7 +46,7 @@ public class ViewSelector:ViewNode {
     }
     
     public var description: String {
-        return "Selector(\(name ?? ""), context:\(serializeDict())"
+        "\(selector ?? "") { \(serializeDict()) }"
     }
     
     init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any]? = nil) {
@@ -57,41 +57,16 @@ public class ViewSelector:ViewNode {
     }
 }
 public class ViewStyleDefinition:ViewSelector {
-    override public var description: String {
-        return "[style = \"\(name ?? "")\"] { \(serializeDict()) }"
-    }
 }
 public class ViewLanguageDefinition:ViewSelector {
-    override public var description: String {
-        return "[language = \"\(name ?? "")\"]  \(serializeDict()) }"
-    }
 }
 public class ViewColorDefinition:ViewSelector {
-    override public var description: String {
-        return "[color = \"\(name ?? "")\"] { \(serializeDict()) }"
-    }
 }
 public class ViewRendererDefinition:ViewSelector {
-    override public var description: String {
-        return "[renderer = \"\(name ?? "")\"] { \(serializeDict()) }"
-    }
 }
 public class ViewDefinition:ViewSelector {
     let type:String?
     let query:ExprNode?
-    
-    override public var description: String {
-        if name != nil {
-            return ".\(name ?? "") { \(serializeDict()) }"
-        }
-        else if type != nil {
-            //return "\(type ?? "")\(query == nil ? "" : "[\(query ?? "")]") {\n\(serializeDict())\n}"
-            return "\(type ?? "") { \(serializeDict()) }"
-        }
-        else {
-            return ""
-        }
-    }
     
     init(_ selector:String, name:String? = nil, type:String? = nil, query:ExprNode? = nil) {
         self.type = type

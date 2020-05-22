@@ -144,7 +144,7 @@ struct GeneralEditorView: View {
                     ForEach(sortedKeys, id: \.self) { groupKey in
                         GeneralEditorSection(
                             item: item,
-                            renderConfig: renderConfig,
+                            renderConfig: renderConfig!,
                             groupKey: groupKey,
                             groups: groups)
                     }
@@ -195,16 +195,16 @@ struct GeneralEditorSection: View {
         }.map({$0.name})
     }
     
-    func getVars(_ groupKey:String, _ name:String, _ value:Any?,
-                    _ item:DataItem)-> [String:() -> Any] {
+    func getViewArguments(_ groupKey:String, _ name:String, _ value:Any?,
+                    _ item:DataItem)-> ViewArguments {
         
-        return [
+        ViewArguments(renderConfig.viewArguments.asDict().merging([
             "readonly": { !self.main.currentSession.editMode },
             "sectiontitle": { groupKey.camelCaseToWords().uppercased() },
             "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
             "name": { name },
             ".": { value ?? item[name] as Any }
-        ]
+        ], uniquingKeysWith: { current, new in new }))
     }
     
     func hasSectionTitle(_ groupKey:String) -> Bool {
@@ -223,11 +223,8 @@ struct GeneralEditorSection: View {
 //        renderConfig.renderDescription?[groupKey]?.type ?? ""
 //    }
     
-    func getHeader(_ renderDescription: [String:UIElement],
-                   _ isArray: Bool) -> some View{
-        
+    func getHeader(_ isArray: Bool) -> some View {
         let editMode = self.main.currentSession.editMode
-        let isArray = item.objectSchema[groupKey]?.isArray ?? false
         let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
@@ -249,15 +246,15 @@ struct GeneralEditorSection: View {
             : nil
         
         return Group {
-            if renderDescription[groupKey] != nil {
-                if !self.hasSectionTitle(groupKey) {
-                    EmptyView()
-                }
-                else {
+            if renderConfig.hasGroup(groupKey) {
+                if self.hasSectionTitle(groupKey) {
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
                         action: action
                     )
+                }
+                else {
+                    EmptyView()
                 }
             }
             else {
@@ -285,9 +282,8 @@ struct GeneralEditorSection: View {
     }
 
     var body: some View {
-        let renderDescription = renderConfig.renderDescription!
+        let renderConfig = self.renderConfig
         let editMode = self.main.currentSession.editMode
-        
         let properties = groupKey == "other"
             ? self.getProperties(item)
             : self.groups[self.groupKey]!
@@ -295,16 +291,16 @@ struct GeneralEditorSection: View {
         let showDividers = self.getSectionTitle(groupKey) != ""
         
         return Group {
-            Section (header: self.getHeader(renderDescription, groupContainsNodes)){
+            Section (header: self.getHeader(groupContainsNodes)){
                 // Render using a view specified renderer
-                if renderDescription[groupKey] != nil {
+                if renderConfig.hasGroup(groupKey) {
                     if showDividers { Divider() }
                     
                     if self.isDescriptionForGroup(groupKey) {
                         renderConfig.render(
                             item: item,
-                            part: groupKey,
-                            variables: self.getVars(self.groupKey, groupKey, nil, self.item)
+                            group: groupKey,
+                            arguments: self.getViewArguments(self.groupKey, groupKey, nil, self.item)
                         )
                     }
                     else {
@@ -312,16 +308,16 @@ struct GeneralEditorSection: View {
                             ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
                                 self.renderConfig.render(
                                     item: otherItem,
-                                    part: self.groupKey,
-                                    variables: self.getVars(self.groupKey, "", otherItem, otherItem))
+                                    group: self.groupKey,
+                                    arguments: self.getViewArguments(self.groupKey, "", otherItem, otherItem))
                             }
                         }
                         else {
                             ForEach(groups[groupKey]!, id:\.self) { groupElement in
                                 self.renderConfig.render(
                                     item: self.item,
-                                    part: self.groupKey,
-                                    variables: self.getVars(self.groupKey, groupElement, nil, self.item)
+                                    group: self.groupKey,
+                                    arguments: self.getViewArguments(self.groupKey, groupElement, nil, self.item)
                                 )
                             }
                         }
@@ -338,7 +334,7 @@ struct GeneralEditorSection: View {
                                 ItemCell(
                                     item: item,
                                     rendererNames: ["generalEditor"],
-                                    variables: self.getVars(self.groupKey, self.groupKey, item, self.item)
+                                    arguments: self.getViewArguments(self.groupKey, self.groupKey, item, self.item)
                                 )
                             }
                         }
@@ -360,10 +356,10 @@ struct GeneralEditorSection: View {
                             main: self._main,
                             item: self.item,
                             prop: prop,
-                            readOnly: !editMode || self.renderConfig.readOnly.contains(prop),
+                            readOnly: !editMode || renderConfig.readOnly.contains(prop),
                             isLast: properties.last == prop,
-                            renderConfig: self.renderConfig,
-                            variables: self.getVars("", prop, nil, self.item)
+                            renderConfig: renderConfig,
+                            arguments: self.getViewArguments("", prop, nil, self.item)
                         )
                     }
                     Divider()
@@ -381,8 +377,8 @@ struct DefaultGeneralEditorRow: View {
     var prop: String
     var readOnly: Bool
     var isLast: Bool
-    var renderConfig: GeneralEditorConfig
-    var variables: [String:() -> Any]
+    var renderConfig: CascadingRenderConfig
+    var arguments: ViewArguments
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
@@ -397,8 +393,8 @@ struct DefaultGeneralEditorRow: View {
                 )
                 .generalEditorLabel()
                 
-                if renderConfig.renderDescription![prop] != nil {
-                    renderConfig.render(item: item, part: prop, variables: variables)
+                if renderConfig.hasGroup(prop) {
+                    renderConfig.render(item: item, group: prop, arguments: arguments)
                 }
                 else if readOnly {
                     if [.string, .bool, .date, .int, .double].contains(propType){

@@ -124,7 +124,7 @@ struct SessionSwitcher: View {
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
             HStack(alignment: .top, spacing: 10) {
-                Action(action: Action(actionName: .showSessionSwitcher))
+                ActionButton(action: Action("showSessionSwitcher"))
                     .fixedSize()
                     .font(Font.system(size: 20, weight: .medium))
                     .rotationEffect(.degrees(90))
@@ -171,7 +171,7 @@ struct SessionSwitcher: View {
 //                            .opacity(0.7)
                         .onTapGesture {
                             let session = self.main.sessions.sessions[i]
-                            self.main.openSession(session)
+                            ActionOpenSession.exec(self.main, [session])
                             self.hide()
                         }
                 }

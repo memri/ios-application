@@ -48,7 +48,7 @@ public struct TopNavigation: View {
         }
         """
         
-        ActionOpenView.exec(main, arguments: [view])
+        ActionOpenView.exec(main, [view])
     }
     
     private func createTitleActionSheet() -> ActionSheet {

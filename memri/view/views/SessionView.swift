@@ -33,12 +33,10 @@ public class UserState: Object {
     
     subscript<T>(propName:String) -> T? {
         get {
-            var x:[String:Any]?
-            do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return nil } // TODO refactor: handle error
-            do { if x == nil { x = try transformToDict() } } catch { return nil } // TODO refactor: handle error
+            let x = self.asDict()
             
             if T.self == DataItem.self {
-                if let lookup = x?[propName] as? [String:Any] {
+                if let lookup = x[propName] as? [String:Any] {
                     if let type = DataItemFamily(rawValue: lookup["type"] as! String) {
                         let x:DataItem? = realm?.object(
                             ofType: DataItemFamily.getType(type)() as! DataItem.Type,
@@ -50,21 +48,20 @@ public class UserState: Object {
                 return nil
             }
             
-            return x?[propName] as? T
+            return x[propName] as? T
         }
         set(newValue) {
-            var x:[String:Any]?
-            do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return } // TODO refactor: handle error
-            do { if x == nil { x = try transformToDict() } } catch { return } // TODO refactor: handle error
+            var x = self.asDict()
             
             if let newValue = newValue as? DataItem {
-                x?[propName] = ["type": newValue.genericType, "uid": newValue.uid]
+                x[propName] = ["type": newValue.genericType, "uid": newValue.uid]
             }
             else {
-                x?[propName] = newValue
+                x[propName] = newValue
             }
             
-            try? globalInMemoryObjectCache.set(uid, x)
+            do { try globalInMemoryObjectCache.set(uid, x) }
+            catch { /* TODO ERROR HANDLIGNN */ }
             
             scheduleWrite()
         }
@@ -121,6 +118,13 @@ public class UserState: Object {
     public func hasState(_ stateName:String) -> Bool {
         let x:Bool = self[stateName] ?? false
         return x
+    }
+    
+    public func asDict() -> [String:Any] {
+        var x:[String:Any]?
+        do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return [:] } // TODO refactor: handle error
+        do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO refactor: handle error
+        return x ?? [:]
     }
     
     convenience init(_ dict:[String:Any]) {

@@ -17,6 +17,7 @@ struct ContextPaneForground: View {
 
     var body: some View {
         let main = self.main
+        let labels = main.cascadingView.resultSet.singletonItem?.labels
         
         VStack(alignment: .leading) {
             VStack (alignment: .leading) {
@@ -109,21 +110,23 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 15)
             VStack(alignment: .leading, spacing: 10){
-                ForEach (main.cascadingView.resultSet.singletonItem?.labels ?? [], id:\.self) { labelItem in
-                    Button(action:{
-                        main.executeAction(self.openLabelViewAction, with: labelItem)
-                    }) {
-                        Text(labelItem.name)
-                            .foregroundColor(.black)
-                            .opacity(0.6)
-                            .font(.system(size: 20, weight: .regular, design: .default))
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 15)
-                            .frame(minWidth: 150, alignment: .leading)
+                if labels != nil {
+                    ForEach (labels, id:\.self) { labelItem in
+                        Button(action:{
+                            main.executeAction(self.openLabelViewAction, with: labelItem)
+                        }) {
+                            Text(labelItem.name)
+                                .foregroundColor(.black)
+                                .opacity(0.6)
+                                .font(.system(size: 20, weight: .regular, design: .default))
+                                .padding(.vertical, 5)
+                                .padding(.horizontal, 15)
+                                .frame(minWidth: 150, alignment: .leading)
+                        }
+                        .background(Color(hex: labelItem.color ?? "#ffd966ff"))
+                        .cornerRadius(5)
+                        .padding(.horizontal, self.paddingLeft)
                     }
-                    .background(Color(hex: labelItem.color ?? "#ffd966ff"))
-                    .cornerRadius(5)
-                    .padding(.horizontal, self.paddingLeft)
                 }
                 Button(action:{
                     main.executeAction(self.addLabelAction)
