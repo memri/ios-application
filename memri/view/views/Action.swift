@@ -66,7 +66,7 @@ public class Action : HashableClass, CVUToString {
         }
         
         return strBuilder.count > 0
-            ? "\(name) {\n\(strBuilder.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
+            ? "\(name) {\n\(tabs)\(strBuilder.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
             : "\(name)"
     }
     

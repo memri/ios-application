@@ -22,7 +22,7 @@ public class ParsedDefinition : CVUToString {
     
     func toString(_ depth:Int, _ tab:String) -> String {
         let tabs = Array(0...depth).map{_ in ""}.joined(separator: tab)
-        return "\(tabs)\(selector ?? "") \(CVUSerializer.dictToString(parsed, depth+1, tab))\n"
+        return "\(selector ?? "") \(CVUSerializer.dictToString(parsed, depth+1, tab))\n"
     }
     
     public var description: String {

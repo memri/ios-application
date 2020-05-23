@@ -12,8 +12,9 @@ protocol CVUToString : CustomStringConvertible {
 
 class CVUSerializer {
     
-    class func arrayToString(_ list:[Any?], _ depth:Int = 0, _ tab:String = "    ") -> String {
-        let tabs = Array(0...depth).map{_ in tab}.joined()
+    class func arrayToString(_ list:[Any?], _ depth:Int = 0, _ tab:String = "    ", _ dec:Bool = true) -> String {
+        let tabs = Array(0..<depth).map{_ in tab}.joined()
+        let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         
         var str = [String]()
         var isMultiline = false
@@ -25,30 +26,35 @@ class CVUSerializer {
             if !isMultiline { isMultiline = strValue.contains("\n") }
         }
         
-        return isMultiline
-            ? "[\n\(tabs)\(str.joined(separator:"\n\(tabs)"))\(tabs)\n]"
-            : str.joined(separator: " ")
+        return dec
+            ? isMultiline
+                ? "[\n\(tabs)\(str.joined(separator:"\n\(tabs)"))\(tabsEnd)\n\(tabsEnd)]"
+                : str.joined(separator: " ")
+            : str.joined(separator: "\n\(tabs)")
     }
-
-    class func dictToString(_ dict:[String:Any?], _ depth:Int = 0, _ tab:String = "    ") -> String {
+    
+    class func dictToString(_ dict:[String:Any?], _ depth:Int = 0, _ tab:String = "    ", _ dec:Bool = true) -> String {
         let keys = dict.keys.sorted()
         let tabs = Array(0..<depth).map{_ in tab}.joined()
-        let tabsEnd = Array(0..<depth - 1).map{_ in tab}.joined()
+        let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         
         var str = [String]()
         for key in keys {
-            if dict[key] == nil {
+            if key == "children" || key == "renderDefinitions" {
+                continue
+            }
+            else if dict[key] == nil {
                 str.append("\(key): null")
             }
             else if let p = dict[key]! {
-                if let p = p as? String, (p.contains(" ") || p.contains("\t")) {
+                if let p = p as? String, (p.contains(" ") || p.contains("\t") || p == "") {
                     str.append("\(key): \"\(p)\"")
                 }
                 else if let p = p as? [Any?] {
-                    str.append("\(key): \"\(arrayToString(p, depth+1, tab))\"")
+                    str.append("\(key): \(arrayToString(p, depth+1, tab))")
                 }
                 else if let p = p as? [String:Any?] {
-                    str.append("\(key): \"\(dictToString(p, depth+1, tab))\"")
+                    str.append("\(key): \(dictToString(p, depth+1, tab))")
                 }
                 else if let p = p as? CVUToString {
                     str.append("\(key): \(p.toString(depth + 1, tab))")
@@ -59,6 +65,17 @@ class CVUSerializer {
             }
         }
         
-        return "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
+        var children:String = ""
+        var definitions:String = ""
+        if let p = dict["children"] as? [UIElement], p.count > 0 {
+            children = "\n\n\(tabs)\(arrayToString(p, depth, tab, false))"
+        }
+        if let p = dict["renderDefinitions"] as? [ParsedRendererDefinition], p.count > 0 {
+            definitions = "\n\n\(tabs)\(arrayToString(p, depth, tab, false))"
+        }
+        
+        return dec
+            ? "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
+            : "\(str.joined(separator: "\n\(tabsEnd)"))\(children)\(definitions)"
     }
 }

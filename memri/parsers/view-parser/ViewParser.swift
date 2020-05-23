@@ -203,7 +203,7 @@ class ViewParser {
         var dict = [String:Any]()
         var stack = [Any]()
         
-        let forUIElement = knownUIElements[UIElementName ?? ""] != nil
+        let forUIElement = knownUIElements[UIElementName ?? ""] ?? false
         var lastKey:String? = nil
         var isArrayMode = false
         
@@ -288,7 +288,7 @@ class ViewParser {
                             throw ViewParseErrors.ExpectedKey(lastToken!)
                     }
                     
-                    if knownUIElements[value] != nil {
+                    if knownUIElements[value] ?? false {
                         var properties:[String:Any] = [:]
                         if case ViewToken.CurlyBracketOpen = peekCurrentToken() {
                             _ = popCurrentToken()
@@ -401,10 +401,23 @@ class ViewParser {
     
     // Based on keyword when its added to the dict
     // Should be loaded from the outside
-    let knownActions = ["star":1, "openView":1, "openViewByName":1, "showContextPane":1, "toggleEditMode":1, "showStarred":1, "toggleFilterPanel":1, "showSharePanel":1, "addToPanel":1, "duplicate":1]
+    let knownActions:[String:Bool] = {
+        var result = [String:Bool]()
+        for name in ActionName.allCases {
+            result[name.rawValue] = true
+        }
+        return result
+    }()
     // Only when key is this should it parse the properties
     // Should be loaded from the outside
-    let knownUIElements = ["VStack":1, "HStack":1, "Image":1, "Text":1, "FlowStack":1]
+    let knownUIElements:[String:Bool] = {
+        var result = [String:Bool]()
+        for name in UIElementFamily.allCases {
+            result[name.rawValue] = true
+        }
+        return result
+    }()
+        
     // Same as above to be converted once per dict
     let frameProperties = ["minwidth":1, "maxwidth":1, "minheight":1, "maxheight":1, "align":1]
     // Based on key when its added to the dict (only needed within rendererDefinition / UIElement)
