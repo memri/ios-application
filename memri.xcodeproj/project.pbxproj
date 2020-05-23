@@ -88,6 +88,7 @@
 		5DAFB630247952D300719160 /* All-items-with-label.ml in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB62F247952D300719160 /* All-items-with-label.ml */; };
 		5DAFB633247952F500719160 /* Note.ml in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB632247952F500719160 /* Note.ml */; };
 		5DAFB6382479533000719160 /* Sessions.ml in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6372479533000719160 /* Sessions.ml */; };
+		5DAFB63A24796E1C00719160 /* CombineViewFilesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */; };
 		5DB3466324585246008FE8A9 /* FileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB3466124585246008FE8A9 /* FileTest.swift */; };
 		5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* mainTest.swift */; };
 		5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB62431DEB0007736D6 /* realmTest.swift */; };
@@ -321,6 +322,7 @@
 		5DAFB62F247952D300719160 /* All-items-with-label.ml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "All-items-with-label.ml"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB632247952F500719160 /* Note.ml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Note.ml; sourceTree = "<group>"; };
 		5DAFB6372479533000719160 /* Sessions.ml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sessions.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineViewFilesTest.swift; sourceTree = "<group>"; };
 		5DB3466124585246008FE8A9 /* FileTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTest.swift; sourceTree = "<group>"; };
 		5DB66FB42431DD41007736D6 /* mainTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainTest.swift; sourceTree = "<group>"; };
 		5DB66FB62431DEB0007736D6 /* realmTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = realmTest.swift; sourceTree = "<group>"; };
@@ -538,6 +540,7 @@
 				5DB8EBFE24598E1E0028FD2E /* ViewsTest.swift */,
 				5DB8EC0A24599A080028FD2E /* ComputedViewTest.swift */,
 				5DB8EC0C24599A280028FD2E /* DynamicViewTest.swift */,
+				5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -1551,6 +1554,7 @@
 				5D0A28B9240678EE00398B17 /* ModelTest.swift in Sources */,
 				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				5DB3466324585246008FE8A9 /* FileTest.swift in Sources */,
+				5DAFB63A24796E1C00719160 /* CombineViewFilesTest.swift in Sources */,
 				5DB8EC0D24599A280028FD2E /* DynamicViewTest.swift in Sources */,
 				5D228B082432416F00464506 /* ActionTest.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
