@@ -477,7 +477,7 @@ class ViewParserTests: XCTestCase {
         let results = try viewDef.parse()
         
         let codeClone = results.map{$0.toString(0, "    ")}.joined(separator: "\n")
-        print(codeClone.prefix(1300))
+        print(codeClone) //.prefix(2000))
         
         let viewDefClone = ViewDefinitionParser(codeClone,
             lookup: { lookup, viewArgs in return 10 },

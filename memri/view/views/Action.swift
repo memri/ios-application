@@ -35,11 +35,12 @@ public class Action : HashableClass, CVUToString {
     
     func toString(_ depth:Int, _ tab:String) -> String {
         let tabs = Array(0..<depth).map{_ in tab}.joined()
+        let tabsPlus = Array(0..<depth + 1).map{_ in tab}.joined()
         let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         var strBuilder:[String] = []
         
         if arguments.count > 0 {
-            strBuilder.append("arguments: \(CVUSerializer.dictToString(arguments, depth+1, tab))")
+            strBuilder.append("arguments: \(CVUSerializer.dictToString(arguments, depth + 1, tab))")
         }
         if renderAs != .button { strBuilder.append("renderAs: \(renderAs)") }
         if icon != "exclamationmark.bubble" && icon != self.defaults["icon"] as? String && icon != "" {
@@ -66,7 +67,7 @@ public class Action : HashableClass, CVUToString {
         }
         
         return strBuilder.count > 0
-            ? "\(name) {\n\(tabs)\(strBuilder.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
+            ? "\(name) {\n\(tabs)\(strBuilder.joined(separator: "\n\(tabsPlus)"))\n\(tabsEnd)}"
             : "\(name)"
     }
     

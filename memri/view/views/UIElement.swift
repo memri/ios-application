@@ -92,14 +92,21 @@ public class UIElement : CVUToString {
         let tabs = Array(0..<depth).map{_ in ""}.joined(separator: tab)
         let tabsPlus = Array(0..<depth + 1).map{_ in ""}.joined(separator: tab)
         let tabsEnd = Array(0..<depth - 1).map{_ in ""}.joined(separator: tab)
+        
+        if properties["HSTack"] != nil {
+            
+        }
+        
         return properties.count > 0 || children.count > 0
             ? "\(type) {\n"
                 + (properties.count > 0
-                    ? "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth+1, tab, false))"
+                    ? "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth + 1, tab, withDef: false))"
                     : "")
-                + (properties.count > 0 && children.count > 0 ? "\n\n" : "")
+                + (properties.count > 0 && children.count > 0
+                    ? "\n\n"
+                    : "")
                 + (children.count > 0
-                    ? "\(tabsPlus)\(CVUSerializer.arrayToString(children, depth+1, tab, false))"
+                    ? "\(tabsPlus)\(CVUSerializer.arrayToString(children, depth, tab, withDef: false, extraNewLine: true))"
                     : "")
                 + "\n\(tabs)}"
             : "\(type)\n"

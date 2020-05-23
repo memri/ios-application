@@ -12,8 +12,11 @@ protocol CVUToString : CustomStringConvertible {
 
 class CVUSerializer {
     
-    class func arrayToString(_ list:[Any?], _ depth:Int = 0, _ tab:String = "    ", _ dec:Bool = true) -> String {
+    class func arrayToString(_ list:[Any?], _ depth:Int = 0, _ tab:String = "    ",
+                             withDef:Bool = true, extraNewLine:Bool = false) -> String {
+        
         let tabs = Array(0..<depth).map{_ in tab}.joined()
+        let tabsPlus = Array(0..<depth+1).map{_ in tab}.joined()
         let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         
         var str = [String]()
@@ -26,15 +29,24 @@ class CVUSerializer {
             if !isMultiline { isMultiline = strValue.contains("\n") }
         }
         
-        return dec
+        return withDef
             ? isMultiline
                 ? "[\n\(tabs)\(str.joined(separator:"\n\(tabs)"))\(tabsEnd)\n\(tabsEnd)]"
                 : str.joined(separator: " ")
-            : str.joined(separator: "\n\(tabs)")
+            : str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabs)")
     }
     
-    class func dictToString(_ dict:[String:Any?], _ depth:Int = 0, _ tab:String = "    ", _ dec:Bool = true) -> String {
-        let keys = dict.keys.sorted()
+    class func dictToString(_ dict:[String:Any?], _ depth:Int = 0, _ tab:String = "    ",
+                            withDef:Bool = true, extraNewLine:Bool = false,
+                            _ sortFunc:((Dictionary<String, Any?>.Keys.Element, Dictionary<String, Any?>.Keys.Element) throws -> Bool)? = nil) -> String {
+        var keys:[String]
+        do {
+            keys = (sortFunc != nil) ? try dict.keys.sorted(by: sortFunc!) : dict.keys.sorted()
+        }
+        catch {
+            keys = dict.keys.sorted()
+        }
+        
         let tabs = Array(0..<depth).map{_ in tab}.joined()
         let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         
@@ -68,14 +80,16 @@ class CVUSerializer {
         var children:String = ""
         var definitions:String = ""
         if let p = dict["children"] as? [UIElement], p.count > 0 {
-            children = "\n\n\(tabs)\(arrayToString(p, depth, tab, false))"
+            let body = arrayToString(p, depth, tab, withDef:false, extraNewLine:true)
+            children = "\n\n\(tabs)\(body)"
         }
         if let p = dict["renderDefinitions"] as? [ParsedRendererDefinition], p.count > 0 {
-            definitions = "\n\n\(tabs)\(arrayToString(p, depth, tab, false))"
+            let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
+            definitions = "\n\n\(tabs)\(body)"
         }
         
-        return dec
-            ? "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
-            : "\(str.joined(separator: "\n\(tabsEnd)"))\(children)\(definitions)"
+        return withDef
+            ? "{\n\(tabs)\(str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
+            : "\(str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabsEnd)"))\(children)\(definitions)"
     }
 }

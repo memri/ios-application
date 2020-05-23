@@ -21,8 +21,16 @@ public class ParsedDefinition : CVUToString {
     var parsed:[String:Any] = [:]
     
     func toString(_ depth:Int, _ tab:String) -> String {
-        let tabs = Array(0...depth).map{_ in ""}.joined(separator: tab)
-        return "\(selector ?? "") \(CVUSerializer.dictToString(parsed, depth+1, tab))\n"
+        let body = CVUSerializer.dictToString(parsed, depth+1, tab) { lhp, rhp in
+            if let lv = self.parsed[lhp] as? [String:Any] {
+                return !(lv["children"] != nil)
+            }
+            if let rv = self.parsed[lhp] as? [String:Any] {
+                return (rv["children"] != nil)
+            }
+            return true
+        }
+        return "\(selector ?? "") \(body)\n"
     }
     
     public var description: String {

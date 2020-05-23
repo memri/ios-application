@@ -203,7 +203,7 @@ class ViewParser {
         var dict = [String:Any]()
         var stack = [Any]()
         
-        let forUIElement = knownUIElements[UIElementName ?? ""] ?? false
+        let forUIElement = knownUIElements[UIElementName?.lowercased() ?? ""] != nil
         var lastKey:String? = nil
         var isArrayMode = false
         
@@ -236,6 +236,11 @@ class ViewParser {
         }
         
         while true {
+            if case let .Identifier(name, ln, ch) = peekCurrentToken() {
+                if ln == 35 {
+                    
+                }
+            }
             switch (popCurrentToken()) {
             case let .Bool(v, _, _):
                 stack.append(v)
@@ -281,27 +286,32 @@ class ViewParser {
                 stack.append(Color(hex: value))
             case let .Identifier(value, _, _):
                 if lastKey == nil {
-                    switch peekCurrentToken() {
-                        case ViewToken.Colon: _ = popCurrentToken()
-                        case ViewToken.CurlyBracketOpen: _ = 1
-                        default:
-                            throw ViewParseErrors.ExpectedKey(lastToken!)
+                    let nextToken = peekCurrentToken()
+                    if case ViewToken.Colon = nextToken {
+                        _ = popCurrentToken()
+                        lastKey = value
                     }
-                    
-                    if knownUIElements[value] ?? false {
-                        var properties:[String:Any] = [:]
-                        if case ViewToken.CurlyBracketOpen = peekCurrentToken() {
-                            _ = popCurrentToken()
-                            properties = try parseDict(value)
+                    else {
+                        if case ViewToken.CurlyBracketOpen = nextToken {
+                            if let type = knownUIElements[value.lowercased()] {
+                                var properties:[String:Any] = [:]
+                                if case ViewToken.CurlyBracketOpen = peekCurrentToken() {
+                                    _ = popCurrentToken()
+                                    properties = try parseDict(value)
+                                }
+                                
+                                addUIElement(type, &properties)
+                                continue
+                            }
                         }
-                        
-                        addUIElement(value, &properties)
-                        continue
+                        else {
+                            throw ViewParseErrors.ExpectedKey(lastToken!)
+                        }
                     }
                     
                     lastKey = value
                 }
-                else if knownActions[value] != nil {
+                else if let name = knownActions[value.lowercased()] {
                     var options:[String:Any] = [:]
                     outerLoop: while true {
                         switch peekCurrentToken() {
@@ -315,7 +325,7 @@ class ViewParser {
                         }
                     }
                     
-                    stack.append(Action(value, options["arguments"] as? [String:Any] ?? [:],
+                    stack.append(Action(name, options["arguments"] as? [String:Any] ?? [:],
                         icon: options["icon"] as? String ?? "",
                         title: options["title"] as? String ?? "",
                         showTitle: options["showTitle"] as? Bool ?? false,
@@ -401,19 +411,19 @@ class ViewParser {
     
     // Based on keyword when its added to the dict
     // Should be loaded from the outside
-    let knownActions:[String:Bool] = {
-        var result = [String:Bool]()
+    let knownActions:[String:String] = {
+        var result = [String:String]()
         for name in ActionName.allCases {
-            result[name.rawValue] = true
+            result[name.rawValue.lowercased()] = name.rawValue
         }
         return result
     }()
     // Only when key is this should it parse the properties
     // Should be loaded from the outside
-    let knownUIElements:[String:Bool] = {
-        var result = [String:Bool]()
+    let knownUIElements:[String:String] = {
+        var result = [String:String]()
         for name in UIElementFamily.allCases {
-            result[name.rawValue] = true
+            result[name.rawValue.lowercased()] = name.rawValue
         }
         return result
     }()

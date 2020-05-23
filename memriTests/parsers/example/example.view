@@ -246,6 +246,7 @@ Person {
                     }
                     
                     HSTack {
+                        debug : true
                         align: center
                         maxWidth: 140
                         maxHeight: 140
@@ -346,7 +347,7 @@ Person[] {
     }
     
     actionButton:
-        add {
+        addDataItem {
             template: {
                 type: "Person"
             }
