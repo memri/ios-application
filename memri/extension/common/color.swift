@@ -16,7 +16,7 @@ extension Color {
         let components = self.components()
         return UIColor(red: components.r, green: components.g, blue: components.b, alpha: components.a)
     }
-
+    
     private func components() -> (r: CGFloat, g: CGFloat, b: CGFloat, a: CGFloat) {
 
         let scanner = Scanner(string: self.description.trimmingCharacters(in: CharacterSet.alphanumerics.inverted))

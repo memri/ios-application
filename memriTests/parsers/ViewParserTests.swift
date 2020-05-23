@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import memri
 
 class ViewParserTests: XCTestCase {
     override func setUpWithError() throws {
@@ -15,10 +16,10 @@ class ViewParserTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
-    private func parse(_ snippet:String) throws -> [ViewNode] {
+    private func parse(_ snippet:String) throws -> [ParsedDefinition] {
         let lexer = ViewLexer(input: snippet)
         let tokens = try lexer.tokenize()
-        let parser = ViewParser(tokens, lookup: {_ in}, execFunc: {_,_ in})
+        let parser = ViewParser(tokens, lookup: {_,_ in}, execFunc: {_,_,_ in})
         let x = try parser.parse()
         return x
     }
@@ -70,6 +71,7 @@ class ViewParserTests: XCTestCase {
         """
         
         let results = try parse(snippet)
+        print(results)
         
         XCTAssertEqual(results.description, #"[[language = "Dutch"]  [addtolist: "Voeg toe aan lijst...";sharewith: "Deel met..."] }]"#)
     }
@@ -462,6 +464,28 @@ class ViewParserTests: XCTestCase {
         print(results)
         
         XCTAssertEqual(results.description, #"[Person { [children: [VStack { alignment: HorizontalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557288)), font: 14.0 , Text { font: [12.0, SwiftUI.Font.Weight(value: -0.4)], frame: [nil, nil, nil, nil, Optional(SwiftUI.Alignment(horizontal: SwiftUI.HorizontalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557312)), vertical: SwiftUI.VerticalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557361))))], textalign: center }, Text { cornerborder: [#FF0000FF, 1.0, 10.0], cornerradius: 10.0, frame: [nil, nil, nil, Optional(500.0), nil] }}]] }]"#)
+    }
+    
+    func testSerialization() throws {
+        let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
+        let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+
+        let viewDef = ViewDefinitionParser(code,
+            lookup: { lookup, viewArgs in return 10 },
+            execFunc: { lookup, args, viewArgs in return 20 })
+        
+        let results = try viewDef.parse()
+        
+        let codeClone = results.map{$0.toString(0, "    ")}.joined(separator: "\n")
+        print(codeClone)
+        
+        let viewDefClone = ViewDefinitionParser(codeClone,
+            lookup: { lookup, viewArgs in return 10 },
+            execFunc: { lookup, args, viewArgs in return 20 })
+        
+        let codeCloneClone = try viewDefClone.parse().map{$0.toString(0, "    ")}.joined(separator: "\n")
+        
+        XCTAssertEqual(codeClone, codeCloneClone)
     }
     
     func testErrorMissingCurlBracketClose() throws {

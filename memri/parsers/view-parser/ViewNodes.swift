@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ParsedDefinition : CustomStringConvertible {
+public class ParsedDefinition : CVUToString {
     let name:String?
     let selector:String?
     var domain:String?
@@ -20,24 +20,13 @@ public class ParsedDefinition : CustomStringConvertible {
 //    var unparsed:String = ""
     var parsed:[String:Any] = [:]
     
-    func serializeDict() -> String {
-        let keys = parsed.keys.sorted()
-        
-        var str = [String]()
-        for key in keys {
-            if let p = parsed[key] as? String {
-                str.append("\(key): \"\(p)\"")
-            }
-            else {
-                str.append("\(key): \(parsed[key] ?? "")")
-            }
-        }
-        
-        return "[\(str.joined(separator: ";"))]" // TODO remove [ and ] 
+    func toString(_ depth:Int, _ tab:String) -> String {
+        let tabs = Array(0...depth).map{_ in ""}.joined(separator: tab)
+        return "\(tabs)\(selector ?? "") \(CVUSerializer.dictToString(parsed, depth+1, tab))\n"
     }
     
     public var description: String {
-        "\(selector ?? "") { \(serializeDict()) }"
+        toString(0, "    ")
     }
     
     init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any]? = nil) {
@@ -67,12 +56,6 @@ public class ParsedViewDefinition:ParsedDefinition {
     }
 }
 public class ParsedSessionDefinition:ParsedDefinition {
-    override public var description: String {
-        return ".\(name ?? "") { \(serializeDict()) }"
-    }
 }
 public class ParsedSessionsDefinition:ParsedDefinition {
-    override public var description: String {
-        return ".\(name ?? "") { \(serializeDict()) }"
-    }
 }

@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import memri
 
 class ExprInterpreterTests: XCTestCase {
     override func setUpWithError() throws {
@@ -24,7 +25,7 @@ class ExprInterpreterTests: XCTestCase {
     
     private func exec(_ snippet:String) throws -> Any? {
         let tree = try parse(snippet)
-        let interpreter = ExprInterpreter(tree, {_ in}, {_,_ in})
+        let interpreter = ExprInterpreter(tree, {_,_ in}, {_,_,_ in})
         return try interpreter.execute()
     }
     
@@ -75,11 +76,11 @@ class ExprInterpreterTests: XCTestCase {
         
         let tree = try parse(snippet)
         let interpreter = ExprInterpreter(tree,
-            { lookup in
+            { lookup, viewArgs in
                 results.append(lookup)
                 return true
             },
-            { lookup, args in
+            { lookup, args, viewArgs in
                 results.append(lookup)
                 XCTAssertEqual(args[0] as! Double, 10)
                 return true
@@ -151,8 +152,8 @@ class ExprInterpreterTests: XCTestCase {
         let parser = ExprParser(tokens)
         let tree = try parser.parse()
         let interpreter = ExprInterpreter(tree,
-            { lookup in "" },
-            { lookup, args in return "Memri" })
+            { lookup, viewArgs in "" },
+            { lookup, args, viewArgs in return "Memri" })
         let result = try interpreter.execute()
 
         XCTAssertEqual(result as! String, "Hello Memri!")
@@ -166,8 +167,8 @@ class ExprInterpreterTests: XCTestCase {
         let parser = ExprParser(tokens)
         let tree = try parser.parse()
         let interpreter = ExprInterpreter(tree,
-            { lookup in "" },
-            { lookup, args in return "Memri" })
+            { lookup, viewArgs in "" },
+            { lookup, args, viewArgs in return "Memri" })
         let result = try interpreter.execute()
 
         XCTAssertEqual(result as! String, "Memri Hello")
@@ -180,8 +181,8 @@ class ExprInterpreterTests: XCTestCase {
         
         let tree = try parse(snippet)
         let interpreter = ExprInterpreter(tree,
-            { lookup in return 10 },
-            { lookup, args in return 20 })
+            { lookup, viewArgs in return 10 },
+            { lookup, args, viewArgs in return 20 })
         let result = try interpreter.execute()
         
         XCTAssertEqual(result as! Int, 20)
@@ -192,8 +193,8 @@ class ExprInterpreterTests: XCTestCase {
         
         let tree = try parse(snippet)
         let interpreter = ExprInterpreter(tree,
-            { lookup in throw "Undefined variable" },
-            { lookup, args in 1 })
+            { lookup, viewArgs in throw "Undefined variable" },
+            { lookup, args, viewArgs in 1 })
         
         do {
             let _ = try interpreter.execute()

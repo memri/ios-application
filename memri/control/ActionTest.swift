@@ -20,14 +20,10 @@ class actionTest: XCTestCase {
     }
 
     func testAction() throws {
-        let Action = Action(actionName: .back)
-        XCTAssertTrue(Action.icon == "chevron.left")
+        let action = Action("back")
+        XCTAssertTrue(action.icon == "chevron.left")
     }
     
-    func testAction() throws {
-        let action: ActionName = .add
-    }
-
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

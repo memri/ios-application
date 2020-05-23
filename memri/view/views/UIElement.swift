@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
     
-public class UIElement : CustomStringConvertible {
+public class UIElement : CVUToString {
     var type: String
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
@@ -88,24 +88,15 @@ public class UIElement : CustomStringConvertible {
         return text.replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
     }
     
-    func serializeDict() -> String {
-        let keys = properties.keys.sorted()
-        
-        var str = [String]()
-        for key in keys {
-            if let p = properties[key] as? String {
-                str.append("\(key): \"\(p)\"")
-            }
-            else {
-                str.append("\(key): \(properties[key] ?? "")")
-            }
-        }
-        
-        return "\(str.joined(separator: ", "))" // TODO remove [ and ]
+    func toString(_ depth:Int, _ tab:String) -> String {
+//        let tabs = Array(0...depth).map{_ in ""}.joined(separator: tab)
+//        return "\(tabs)\(selector ?? "") \(CVUSerializer.dictToString(parsed, depth+1, tab))\n"
+        return ""
     }
     
     public var description: String {
-        return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
+        return ""
+//        return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
     }
 }
 

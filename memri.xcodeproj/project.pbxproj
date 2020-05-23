@@ -130,6 +130,12 @@
 		86229DCD243509F60013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		862A934F24435372005E06A6 /* default_navigation_full.json in Sources */ = {isa = PBXBuildFile; fileRef = 862A934E24435372005E06A6 /* default_navigation_full.json */; };
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
+		863D0E0424794D8C00DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
+		863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63A24766AA100C0375F /* ExprParserTests.swift */; };
+		863D0E0624794D9000DAB6C8 /* ViewParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63B24766AA100C0375F /* ViewParserTests.swift */; };
+		863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */; };
+		863D0E0A247955A900DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
+		863D0E0C24796C0A00DAB6C8 /* CVUToString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */; };
 		8656461424222C2000D071B4 /* Application.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8656461324222C2000D071B4 /* Application.swift */; };
 		865646162422B68A00D071B4 /* default_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 865646152422B68A00D071B4 /* default_sessions.json */; };
 		865646182422B6A700D071B4 /* notes_from_server.json in Resources */ = {isa = PBXBuildFile; fileRef = 865646172422B6A700D071B4 /* notes_from_server.json */; };
@@ -165,25 +171,11 @@
 		868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62B24766A8800C0375F /* ExprInterpreter.swift */; };
 		868EF63724766A8800C0375F /* ExprLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62C24766A8800C0375F /* ExprLexer.swift */; };
 		868EF63824766A8800C0375F /* ExprNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62D24766A8800C0375F /* ExprNodes.swift */; };
-		868EF64924766B2200C0375F /* memriParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF64824766B2200C0375F /* memriParserTests.swift */; };
-		868EF65024766B3700C0375F /* ExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63A24766AA100C0375F /* ExprParserTests.swift */; };
-		868EF65124766B3700C0375F /* ViewParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63B24766AA100C0375F /* ViewParserTests.swift */; };
-		868EF65224766B3700C0375F /* ExprInterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */; };
-		868EF65324766B4B00C0375F /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
 		868EF6552476768C00C0375F /* UIElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF6542476768C00C0375F /* UIElement.swift */; };
 		868EF657247678B100C0375F /* Languages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF656247678B100C0375F /* Languages.swift */; };
 		868EF659247678BC00C0375F /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF658247678BC00C0375F /* Colors.swift */; };
 		868EF697247784C600C0375F /* ResultSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF696247784C600C0375F /* ResultSet.swift */; };
 		868EF6992477960D00C0375F /* HashableClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF6982477960D00C0375F /* HashableClass.swift */; };
-		868EF69A2478257400C0375F /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62A24766A8800C0375F /* Expression.swift */; };
-		868EF69B2478257400C0375F /* ExprParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62924766A8800C0375F /* ExprParser.swift */; };
-		868EF69C2478257400C0375F /* ExprInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62B24766A8800C0375F /* ExprInterpreter.swift */; };
-		868EF69D2478257400C0375F /* ExprLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62C24766A8800C0375F /* ExprLexer.swift */; };
-		868EF69E2478257400C0375F /* ExprNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62D24766A8800C0375F /* ExprNodes.swift */; };
-		868EF69F2478257800C0375F /* ViewDefinitionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62524766A8800C0375F /* ViewDefinitionParser.swift */; };
-		868EF6A02478257800C0375F /* ViewLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62124766A8800C0375F /* ViewLexer.swift */; };
-		868EF6A12478257800C0375F /* ViewNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62424766A8800C0375F /* ViewNodes.swift */; };
-		868EF6A22478257800C0375F /* ViewParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62624766A8800C0375F /* ViewParser.swift */; };
 		8690AF022472D8C300FC49F4 /* view.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF012472D8C300FC49F4 /* view.swift */; };
 		8690AF042472D8CB00FC49F4 /* string.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF032472D8CB00FC49F4 /* string.swift */; };
 		8690AF062472D90D00FC49F4 /* date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF052472D90D00FC49F4 /* date.swift */; };
@@ -230,13 +222,6 @@
 			remoteInfo = memri;
 		};
 		5D599BD923F2B77700F218A0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 5D599BAF23F2B77500F218A0 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 5D599BB623F2B77500F218A0;
-			remoteInfo = memri;
-		};
-		868EF64B24766B2200C0375F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 5D599BAF23F2B77500F218A0 /* Project object */;
 			proxyType = 1;
@@ -368,6 +353,9 @@
 		86229DCB243508B00013750A /* default_settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_settings.json; sourceTree = "<group>"; };
 		862A934E24435372005E06A6 /* default_navigation_full.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_navigation_full.json; sourceTree = "<group>"; };
 		863CDB702441E69F000D7AC0 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		863D0E00247922C900DAB6C8 /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		863D0E02247922C900DAB6C8 /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUToString.swift; sourceTree = "<group>"; };
 		8656461324222C2000D071B4 /* Application.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Application.swift; sourceTree = "<group>"; };
 		865646152422B68A00D071B4 /* default_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_sessions.json; sourceTree = "<group>"; };
 		865646172422B6A700D071B4 /* notes_from_server.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = notes_from_server.json; sourceTree = "<group>"; };
@@ -396,10 +384,8 @@
 		868EF62C24766A8800C0375F /* ExprLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprLexer.swift; sourceTree = "<group>"; };
 		868EF62D24766A8800C0375F /* ExprNodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprNodes.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF63A24766AA100C0375F /* ExprParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprParserTests.swift; sourceTree = "<group>"; };
-		868EF63B24766AA100C0375F /* ViewParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewParserTests.swift; sourceTree = "<group>"; };
-		868EF63C24766AA100C0375F /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		868EF63B24766AA100C0375F /* ViewParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewParserTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprInterpreterTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		868EF64624766B2200C0375F /* memriParserTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriParserTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		868EF64824766B2200C0375F /* memriParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memriParserTests.swift; sourceTree = "<group>"; };
 		868EF64A24766B2200C0375F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		868EF6542476768C00C0375F /* UIElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElement.swift; sourceTree = "<group>"; };
@@ -483,13 +469,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				1BCB0599F5AC5209AA5EA280 /* Pods_memri_memriUITests.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		868EF64324766B2200C0375F /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -710,7 +689,6 @@
 				5D406F2223F5667C00F98616 /* playground */,
 				5D599BB923F2B77500F218A0 /* memri */,
 				5D599BD023F2B77700F218A0 /* memriTests */,
-				868EF63924766AA100C0375F /* memriParserTests */,
 				5D599BDB23F2B77700F218A0 /* memriUITests */,
 				5D38DE3F240581E500FF9B70 /* memri.app */,
 				5D0A28B5240671C700398B17 /* memriTests.xctest */,
@@ -719,7 +697,6 @@
 				8624530424268E2A0017393F /* Frameworks */,
 				37D1450C778B6676F3F42425 /* Pods */,
 				5D487F1C2440735E00B50202 /* Recovered References */,
-				868EF64624766B2200C0375F /* memriParserTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -761,6 +738,7 @@
 				5D0A28BD24069A3000398B17 /* api */,
 				5D0A28BC2406834700398B17 /* data */,
 				5D599BD323F2B77700F218A0 /* Info.plist */,
+				868EF63924766AA100C0375F /* parsers */,
 			);
 			path = memriTests;
 			sourceTree = "<group>";
@@ -919,6 +897,8 @@
 		8624530424268E2A0017393F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				863D0E00247922C900DAB6C8 /* Realm.framework */,
+				863D0E02247922C900DAB6C8 /* RealmSwift.framework */,
 				CBFBAB361D2E7658A14EB0EE /* Pods_memri.framework */,
 				BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */,
 				6551CB4D7D91FE1BA11F3BCA /* Pods_memriTests.framework */,
@@ -986,6 +966,7 @@
 				868EF62124766A8800C0375F /* ViewLexer.swift */,
 				868EF62424766A8800C0375F /* ViewNodes.swift */,
 				868EF62624766A8800C0375F /* ViewParser.swift */,
+				863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */,
 			);
 			path = "view-parser";
 			sourceTree = "<group>";
@@ -1010,16 +991,15 @@
 			path = "expression-parser";
 			sourceTree = "<group>";
 		};
-		868EF63924766AA100C0375F /* memriParserTests */ = {
+		868EF63924766AA100C0375F /* parsers */ = {
 			isa = PBXGroup;
 			children = (
 				868EF62224766A8800C0375F /* example */,
 				868EF63A24766AA100C0375F /* ExprParserTests.swift */,
 				868EF63B24766AA100C0375F /* ViewParserTests.swift */,
-				868EF63C24766AA100C0375F /* Info.plist */,
 				868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */,
 			);
-			path = memriParserTests;
+			path = parsers;
 			sourceTree = "<group>";
 		};
 		868EF64724766B2200C0375F /* memriParserTests */ = {
@@ -1204,24 +1184,6 @@
 			productReference = 5D0A28B6240671C700398B17 /* memriUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		868EF64524766B2200C0375F /* memriParserTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 868EF64D24766B2200C0375F /* Build configuration list for PBXNativeTarget "memriParserTests" */;
-			buildPhases = (
-				868EF64224766B2200C0375F /* Sources */,
-				868EF64324766B2200C0375F /* Frameworks */,
-				868EF64424766B2200C0375F /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				868EF64C24766B2200C0375F /* PBXTargetDependency */,
-			);
-			name = memriParserTests;
-			productName = memriParserTests;
-			productReference = 868EF64624766B2200C0375F /* memriParserTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1244,10 +1206,6 @@
 					};
 					5D599BD723F2B77700F218A0 = {
 						CreatedOnToolsVersion = 11.3.1;
-						TestTargetID = 5D599BB623F2B77500F218A0;
-					};
-					868EF64524766B2200C0375F = {
-						CreatedOnToolsVersion = 11.4.1;
 						TestTargetID = 5D599BB623F2B77500F218A0;
 					};
 				};
@@ -1276,7 +1234,6 @@
 				5D599BB623F2B77500F218A0 /* memri */,
 				5D599BCC23F2B77700F218A0 /* memriTests */,
 				5D599BD723F2B77700F218A0 /* memriUITests */,
-				868EF64524766B2200C0375F /* memriParserTests */,
 			);
 		};
 /* End PBXProject section */
@@ -1324,6 +1281,7 @@
 				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
 				86229DCD243509F60013750A /* default_settings.json in Resources */,
 				86CDB4762469C542007EAE67 /* template_views.json in Resources */,
+				863D0E0A247955A900DAB6C8 /* example.view in Resources */,
 				5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */,
 				86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */,
 				5DAFB630247952D300719160 /* All-items-with-label.ml in Resources */,
@@ -1365,6 +1323,7 @@
 				5D44D5292458581A004796BA /* testfile.txt in Resources */,
 				5DD17B5B241252D90018A8F1 /* add_action.json in Resources */,
 				5D487F242440772100B50202 /* list_item_component.json in Resources */,
+				863D0E0424794D8C00DAB6C8 /* example.view in Resources */,
 				86229DCC243508B00013750A /* default_settings.json in Resources */,
 				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
@@ -1378,14 +1337,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		868EF64424766B2200C0375F /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				868EF65324766B4B00C0375F /* example.view in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1527,6 +1478,7 @@
 				866F87C624536626000E5FAB /* MapView.swift in Sources */,
 				868EF63224766A8800C0375F /* ViewParser.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
+				863D0E0C24796C0A00DAB6C8 /* CVUToString.swift in Sources */,
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
@@ -1604,6 +1556,7 @@
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
 				5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */,
+				863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */,
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,
 				5D42A8F7245AF1ED0093D85F /* DataItemTest.swift in Sources */,
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
@@ -1614,6 +1567,8 @@
 				5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */,
 				5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */,
 				5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */,
+				863D0E0624794D9000DAB6C8 /* ViewParserTests.swift in Sources */,
+				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
 				5DB8EC0B24599A080028FD2E /* ComputedViewTest.swift in Sources */,
 				86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */,
 				5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
@@ -1629,26 +1584,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		868EF64224766B2200C0375F /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				868EF6A02478257800C0375F /* ViewLexer.swift in Sources */,
-				868EF64924766B2200C0375F /* memriParserTests.swift in Sources */,
-				868EF6A22478257800C0375F /* ViewParser.swift in Sources */,
-				868EF6A12478257800C0375F /* ViewNodes.swift in Sources */,
-				868EF69D2478257400C0375F /* ExprLexer.swift in Sources */,
-				868EF65124766B3700C0375F /* ViewParserTests.swift in Sources */,
-				868EF65024766B3700C0375F /* ExprParserTests.swift in Sources */,
-				868EF69B2478257400C0375F /* ExprParser.swift in Sources */,
-				868EF69E2478257400C0375F /* ExprNodes.swift in Sources */,
-				868EF69F2478257800C0375F /* ViewDefinitionParser.swift in Sources */,
-				868EF69C2478257400C0375F /* ExprInterpreter.swift in Sources */,
-				868EF65224766B3700C0375F /* ExprInterpreterTests.swift in Sources */,
-				868EF69A2478257400C0375F /* Expression.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1661,11 +1596,6 @@
 			isa = PBXTargetDependency;
 			target = 5D599BB623F2B77500F218A0 /* memri */;
 			targetProxy = 5D599BD923F2B77700F218A0 /* PBXContainerItemProxy */;
-		};
-		868EF64C24766B2200C0375F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 5D599BB623F2B77500F218A0 /* memri */;
-			targetProxy = 868EF64B24766B2200C0375F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1873,6 +1803,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K92CHY7KDL;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/memri/Resources",
@@ -1900,6 +1831,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K92CHY7KDL;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/memri/Resources",
@@ -1962,46 +1894,6 @@
 			};
 			name = Release;
 		};
-		868EF64E24766B2200C0375F /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = memriParserTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.memri.memriParserTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/memri.app/memri";
-			};
-			name = Debug;
-		};
-		868EF64F24766B2200C0375F /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = memriParserTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.memri.memriParserTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/memri.app/memri";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2037,15 +1929,6 @@
 			buildConfigurations = (
 				5D599BE823F2B77700F218A0 /* Debug */,
 				5D599BE923F2B77700F218A0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		868EF64D24766B2200C0375F /* Build configuration list for PBXNativeTarget "memriParserTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				868EF64E24766B2200C0375F /* Debug */,
-				868EF64F24766B2200C0375F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
