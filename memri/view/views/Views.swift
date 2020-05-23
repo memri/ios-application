@@ -70,7 +70,7 @@ public class Views {
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
         do {
-            let parser = ViewDefinitionParser(try stringFromFile("views_from_server"),
+            let parser = ViewDefinitionParser(getDefaultViewContents(),
                                               lookup: lookupValueOfVariables,
                                               execFunc: executeFunction)
             
@@ -439,4 +439,10 @@ public class Views {
             return UIElementView(UIElement("Text", properties: ["text": "Could not render this view"]), dataItem)
         }
     }
+}
+
+func getDefaultViewContents() -> String{
+    let urls = Bundle.main.urls(forResourcesWithExtension: "ml", subdirectory: ".")
+    return urls == nil ? "":
+        urls!.compactMap{try? String(contentsOf: $0)}.joined(separator: "\n")
 }
