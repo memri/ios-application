@@ -23,8 +23,8 @@ class ExprInterpreter {
         self.execFunc = execFunc
     }
     
-    func execute(_ args:ViewArguments) throws -> Any? {
-        return try execSingle(ast, args)
+    func execute(_ args:ViewArguments? = nil) throws -> Any? {
+        return try execSingle(ast, args ?? ViewArguments())
     }
     
     class func evaluateBoolean(_ x:Any?) -> Bool {

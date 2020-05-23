@@ -6,6 +6,7 @@
 //
 
 import XCTest
+@testable import memri
 
 class ExprParserTests: XCTestCase {
     override func setUpWithError() throws {

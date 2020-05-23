@@ -9,7 +9,7 @@
 import Foundation
 import RealmSwift
 
-public class Expression: CustomStringConvertible {
+public class Expression : CVUToString {
     let code: String
     let startInStringMode: Bool
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
@@ -19,8 +19,12 @@ public class Expression: CustomStringConvertible {
     private var parsed = false
     private var ast: ExprNode? = nil
     
+    func toString(_ depth:Int, _ tab:String) -> String {
+        startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
+    }
+    
     public var description: String {
-        return "Expression(\(code), startInStringMode:\(startInStringMode))"
+        toString(0, "    ")
     }
     
     init(_ code:String, startInStringMode:Bool = false) {

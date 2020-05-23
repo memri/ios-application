@@ -7,7 +7,7 @@
 import Foundation
 import SwiftUI
 
-public class Action : HashableClass, CustomStringConvertible {
+public class Action : HashableClass, CVUToString {
     var name:ActionName = .noop
     var arguments: [String: Any] = [:]
     var renderAs: RenderType = .button
@@ -16,10 +16,8 @@ public class Action : HashableClass, CustomStringConvertible {
     var title: String? = nil
     var showTitle: Bool = false
     var binding:Expression? = nil
-    
     var hasState = false
     var opensView = false
-    
     var color: Color = Color(hex: "#999999")
     var backgroundColor: Color = .white
     var activeColor: Color? = nil
@@ -32,7 +30,44 @@ public class Action : HashableClass, CustomStringConvertible {
     private var defaults:[String:Any] { return [:] }
     
     public var description: String {
-        return "\(name))"
+        toString(0, "    ")
+    }
+    
+    func toString(_ depth:Int, _ tab:String) -> String {
+        let tabs = Array(0..<depth).map{_ in tab}.joined()
+        let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
+        var strBuilder:[String] = []
+        
+        if arguments.count > 0 {
+            strBuilder.append("arguments: \(CVUSerializer.dictToString(arguments, depth+1, tab))")
+        }
+        if renderAs != .button { strBuilder.append("renderAs: \(renderAs)") }
+        if icon != "exclamationmark.bubble" && icon != self.defaults["icon"] as? String && icon != "" {
+            strBuilder.append("icon: \(icon)")
+        }
+        if title != nil && title != self.defaults["title"] as? String && title != "" {
+            strBuilder.append("title: \(title ?? "nil")")
+        }
+        if showTitle != false { strBuilder.append("showTitle: \(showTitle)") }
+        if binding != nil { strBuilder.append("binding: \(binding?.description ?? "nil")") }
+        if hasState != false { strBuilder.append("hasState: \(hasState)") }
+        if opensView != false { strBuilder.append("opensView: \(opensView)") }
+        if color != Color(hex: "#999999") { strBuilder.append("color: \(color)") }
+        if backgroundColor != .white { strBuilder.append("backgroundColor: \(backgroundColor)") }
+        if activeColor != nil { strBuilder.append("activeColor: \(activeColor?.description ?? "nil")") }
+        if inactiveColor != Color(hex: "#999999") {
+            strBuilder.append("inactiveColor: \(inactiveColor?.description ?? "nil")")
+        }
+        if activeBackgroundColor != .white {
+            strBuilder.append("activeBackgroundColor: \(activeBackgroundColor?.description ?? "nil")")
+        }
+        if inactiveBackgroundColor != .white {
+            strBuilder.append("inactiveBackgroundColor: \(inactiveBackgroundColor?.description ?? "nil")")
+        }
+        
+        return strBuilder.count > 0
+            ? "\(name) {\n\(strBuilder.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
+            : "\(name)"
     }
     
     init(_ name:String,
