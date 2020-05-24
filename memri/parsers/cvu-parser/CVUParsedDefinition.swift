@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ParsedDefinition : CVUToString {
+public class CVUParsedDefinition : CVUToString {
     let name:String?
     let selector:String?
     var domain:String?
@@ -51,15 +51,15 @@ public class ParsedDefinition : CVUToString {
         self.parsed = parsed ?? self.parsed
     }
 }
-public class ParsedStyleDefinition:ParsedDefinition {
+public class CVUParsedStyleDefinition:CVUParsedDefinition {
 }
-public class ParsedLanguageDefinition:ParsedDefinition {
+public class CVUParsedLanguageDefinition:CVUParsedDefinition {
 }
-public class ParsedColorDefinition:ParsedDefinition {
+public class CVUParsedColorDefinition:CVUParsedDefinition {
 }
-public class ParsedRendererDefinition:ParsedDefinition {
+public class CVUParsedRendererDefinition:CVUParsedDefinition {
 }
-public class ParsedViewDefinition:ParsedDefinition {
+public class CVUParsedViewDefinition:CVUParsedDefinition {
     let type:String?
     let query:ExprNode?
     
@@ -70,7 +70,7 @@ public class ParsedViewDefinition:ParsedDefinition {
         super.init(selector, name:name)
     }
 }
-public class ParsedSessionDefinition:ParsedDefinition {
+public class CVUParsedSessionDefinition:CVUParsedDefinition {
 }
-public class ParsedSessionsDefinition:ParsedDefinition {
+public class CVUParsedSessionsDefinition:CVUParsedDefinition {
 }

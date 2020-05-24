@@ -77,13 +77,13 @@ struct PickerPane: View {
                 // "editMode": true // TODO REfactor: also allow edit mode toggle on session view
                 // TODO REfactor: allow only 1 or more selected items
                 "renderDescriptions": [
-                    ParsedRendererDefinition(#"[renderer = "list"]"#,
+                    CVUParsedRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
                             Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")
                         ]]
                     ),
-                    ParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
+                    CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
                             Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")

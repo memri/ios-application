@@ -70,7 +70,7 @@ extension Main {
                     }
                 }
                 else if action.argumentTypes[argName] == SessionView.self {
-                    let viewDef = ParsedViewDefinition(DataItem.generateUUID())
+                    let viewDef = CVUParsedViewDefinition(DataItem.generateUUID())
                     viewDef.parsed = dict
                     
                     finalValue = SessionView(value: ["viewDefinition": viewDef])

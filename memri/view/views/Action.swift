@@ -48,7 +48,7 @@ public class Action : HashableClass, CVUToString {
     }
 
     func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
-        let x:Any? = values["icon"] ?? defaultValues["icon"] ?? baseValues["icon"]
+        let x:Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
         if let x = x as? Expression {
             do { return try x.execute(viewArguments) as? T }
             catch {
@@ -721,10 +721,10 @@ class ActionOpenSessionByName : Action, ActionExec {
                 let def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(name)").first)
                 
                 // See if this is a session, if so take the last view
-                if let def = def as? ParsedSessionDefinition {
+                if let def = def as? CVUParsedSessionDefinition {
                     let session = Session()
                     let list:[SessionView] = (def["views"] as? [[String:Any]])?.compactMap {
-                        let viewDef = ParsedViewDefinition(DataItem.generateUUID())
+                        let viewDef = CVUParsedViewDefinition(DataItem.generateUUID())
                         viewDef.parsed = $0
                         
                         return SessionView(value:[

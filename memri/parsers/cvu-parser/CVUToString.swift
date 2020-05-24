@@ -176,7 +176,7 @@ class CVUSerializer {
             let body = arrayToString(p, depth, tab, withDef:false, extraNewLine:true)
             children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }
-        if let p = dict["renderDefinitions"] as? [ParsedRendererDefinition], p.count > 0 {
+        if let p = dict["renderDefinitions"] as? [CVUParsedRendererDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
             definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }

@@ -9,29 +9,29 @@
 import Foundation
 import SwiftUI
 
-enum ViewParseErrors:Error {
-    case UnexpectedToken(ViewToken)
-    case UnknownDefinition(ViewToken)
-    case ExpectedCharacter(Character, ViewToken)
-    case ExpectedDefinition(ViewToken)
-    case ExpectedIdentifier(ViewToken)
+enum CVUParseErrors:Error {
+    case UnexpectedToken(CVUToken)
+    case UnknownDefinition(CVUToken)
+    case ExpectedCharacter(Character, CVUToken)
+    case ExpectedDefinition(CVUToken)
+    case ExpectedIdentifier(CVUToken)
     
-    case ExpectedKey(ViewToken)
-    case ExpectedString(ViewToken)
+    case ExpectedKey(CVUToken)
+    case ExpectedString(CVUToken)
     
-    case MissingQuoteClose(ViewToken)
-    case MissingExpressionClose(ViewToken)
+    case MissingQuoteClose(CVUToken)
+    case MissingExpressionClose(CVUToken)
 }
 
-class ViewParser {
-    let tokens: [ViewToken]
+class CVUParser {
+    let tokens: [CVUToken]
     var index = 0
-    var lastToken:ViewToken? = nil
+    var lastToken:CVUToken? = nil
     
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
 
-    init(_ tokens: [ViewToken],
+    init(_ tokens: [CVUToken],
          lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
          execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
@@ -40,16 +40,16 @@ class ViewParser {
         self.execFunc = execFunc
     }
 
-    func peekCurrentToken() -> ViewToken {
+    func peekCurrentToken() -> CVUToken {
         return index >= tokens.count
-            ? ViewToken.EOF
+            ? CVUToken.EOF
             : tokens[index]
     }
 
-    func popCurrentToken() -> ViewToken {
+    func popCurrentToken() -> CVUToken {
         if index >= tokens.count {
-            lastToken = ViewToken.EOF
-            return ViewToken.EOF
+            lastToken = CVUToken.EOF
+            return CVUToken.EOF
         }
         
         lastToken = tokens[index]
@@ -57,24 +57,24 @@ class ViewParser {
         return lastToken! // Check for out of bound?
     }
 
-    func parse() throws -> [ParsedDefinition] {
+    func parse() throws -> [CVUParsedDefinition] {
         index = 0
-        var result = [ParsedDefinition]()
+        var result = [CVUParsedDefinition]()
 
         while true {
-            if case ViewToken.EOF = peekCurrentToken() { return result }
-            if case ViewToken.Newline = peekCurrentToken() {
+            if case CVUToken.EOF = peekCurrentToken() { return result }
+            if case CVUToken.Newline = peekCurrentToken() {
                 _ = popCurrentToken()
                 continue
             }
 
             var dsl = try parseViewDSL()
             if dsl["sessions"] != nil {
-                dsl = ParsedSessionsDefinition(dsl.selector ?? "", name: dsl.name,
+                dsl = CVUParsedSessionsDefinition(dsl.selector ?? "", name: dsl.name,
                                              domain: dsl.domain, parsed: dsl.parsed)
             }
             else if dsl["views"] != nil {
-                dsl = ParsedSessionDefinition(dsl.selector ?? "", name: dsl.name,
+                dsl = CVUParsedSessionDefinition(dsl.selector ?? "", name: dsl.name,
                                              domain: dsl.domain, parsed: dsl.parsed)
             }
             
@@ -84,17 +84,17 @@ class ViewParser {
         return result
     }
 
-    func parseViewDSL() throws -> ParsedDefinition {
+    func parseViewDSL() throws -> CVUParsedDefinition {
         let node = try parsePrimary()
         
-        if case ViewToken.Colon = peekCurrentToken() {
+        if case CVUToken.Colon = peekCurrentToken() {
             _ = popCurrentToken()
         }
         
         return try parseDefinition(node)
     }
 
-    func parsePrimary(_ skipOperator:Bool = false) throws -> ParsedDefinition {
+    func parsePrimary(_ skipOperator:Bool = false) throws -> CVUParsedDefinition {
         switch (peekCurrentToken()) {
         case .Identifier:
             return try parseIdentifierSelector()
@@ -105,20 +105,20 @@ class ViewParser {
         case .String:
             return try parseStringSelector()
         default:
-            throw ViewParseErrors.ExpectedDefinition(popCurrentToken())
+            throw CVUParseErrors.ExpectedDefinition(popCurrentToken())
         }
     }
     
-    func parseIdentifierSelector() throws -> ParsedDefinition {
+    func parseIdentifierSelector() throws -> CVUParsedDefinition {
         // Example: Person {
-        guard case var ViewToken.Identifier(type, _, _) = popCurrentToken() else {
-            throw ViewParseErrors.ExpectedIdentifier(lastToken!)
+        guard case var CVUToken.Identifier(type, _, _) = popCurrentToken() else {
+            throw CVUParseErrors.ExpectedIdentifier(lastToken!)
         }
         
         // Example: Person[name = 'john']
-        if case ViewToken.BracketOpen = peekCurrentToken() {
+        if case CVUToken.BracketOpen = peekCurrentToken() {
             _ = popCurrentToken()
-            if case ViewToken.BracketClose = peekCurrentToken() {
+            if case CVUToken.BracketClose = peekCurrentToken() {
                 _ = popCurrentToken()
                 type += "[]"
             }
@@ -127,70 +127,70 @@ class ViewParser {
             }
         }
         
-        return ParsedViewDefinition(type, type: type)
+        return CVUParsedViewDefinition(type, type: type)
     }
     
-    func parseNamedIdentifierSelector() throws -> ParsedDefinition {
+    func parseNamedIdentifierSelector() throws -> CVUParsedDefinition {
         // Example: "Some Name" {
-        guard case let ViewToken.NamedIdentifier(name, _, _) = popCurrentToken() else {
-            throw ViewParseErrors.UnexpectedToken(lastToken!)
+        guard case let CVUToken.NamedIdentifier(name, _, _) = popCurrentToken() else {
+            throw CVUParseErrors.UnexpectedToken(lastToken!)
         }
         
-        return ParsedViewDefinition(".\(name)", name: name)
+        return CVUParsedViewDefinition(".\(name)", name: name)
     }
     
     // For JSON support
-    func parseStringSelector() throws -> ParsedDefinition {
-        guard case let ViewToken.String(value, _, _) = popCurrentToken() else {
-            throw ViewParseErrors.UnexpectedToken(lastToken!)
+    func parseStringSelector() throws -> CVUParsedDefinition {
+        guard case let CVUToken.String(value, _, _) = popCurrentToken() else {
+            throw CVUParseErrors.UnexpectedToken(lastToken!)
         }
         
         if value.first == "." {
-            return ParsedViewDefinition(value, name:
+            return CVUParsedViewDefinition(value, name:
                 String(value.suffix(from: value.index(value.startIndex, offsetBy: 1))))
         }
         else if value.first == "[" {
             throw "Not supported yet" // TODO
         }
         else {
-            return ParsedViewDefinition(value, type: value)
+            return CVUParsedViewDefinition(value, type: value)
         }
     }
     
-    func parseBracketsSelector(_ token:ViewToken? = nil) throws -> ParsedDefinition {
-        guard case ViewToken.BracketOpen = (token ?? popCurrentToken()) else {
-            throw ViewParseErrors.ExpectedCharacter("[", lastToken!)
+    func parseBracketsSelector(_ token:CVUToken? = nil) throws -> CVUParsedDefinition {
+        guard case CVUToken.BracketOpen = (token ?? popCurrentToken()) else {
+            throw CVUParseErrors.ExpectedCharacter("[", lastToken!)
         }
         let typeToken = token ?? lastToken!
         
-        guard case let ViewToken.Identifier(type, _, _) = popCurrentToken() else {
-            throw ViewParseErrors.ExpectedIdentifier(lastToken!)
+        guard case let CVUToken.Identifier(type, _, _) = popCurrentToken() else {
+            throw CVUParseErrors.ExpectedIdentifier(lastToken!)
         }
         
-        guard case let ViewToken.Operator(op, _, _) = popCurrentToken() else {
-            throw ViewParseErrors.ExpectedCharacter("=", lastToken!)
+        guard case let CVUToken.Operator(op, _, _) = popCurrentToken() else {
+            throw CVUParseErrors.ExpectedCharacter("=", lastToken!)
         }
         
-        if case ViewOperator.ConditionEquals = op {
-            guard case let ViewToken.String(name, _, _) = popCurrentToken() else {
-                throw ViewParseErrors.ExpectedString(lastToken!)
+        if case CVUOperator.ConditionEquals = op {
+            guard case let CVUToken.String(name, _, _) = popCurrentToken() else {
+                throw CVUParseErrors.ExpectedString(lastToken!)
             }
             
-            guard case ViewToken.BracketClose = popCurrentToken() else {
-                throw ViewParseErrors.ExpectedCharacter("]", lastToken!)
+            guard case CVUToken.BracketClose = popCurrentToken() else {
+                throw CVUParseErrors.ExpectedCharacter("]", lastToken!)
             }
             
             switch type {
-            case "style": return ParsedStyleDefinition("[style = \"\(name)\"]", name:name)
-            case "color": return ParsedColorDefinition("[color = \"\(name)\"]", name:name)
-            case "renderer": return ParsedRendererDefinition("[renderer = \"\(name)\"]", name:name)
-            case "language": return ParsedLanguageDefinition("[language = \"\(name)\"]", name:name)
+            case "style": return CVUParsedStyleDefinition("[style = \"\(name)\"]", name:name)
+            case "color": return CVUParsedColorDefinition("[color = \"\(name)\"]", name:name)
+            case "renderer": return CVUParsedRendererDefinition("[renderer = \"\(name)\"]", name:name)
+            case "language": return CVUParsedLanguageDefinition("[language = \"\(name)\"]", name:name)
             default:
-                throw ViewParseErrors.UnknownDefinition(typeToken)
+                throw CVUParseErrors.UnknownDefinition(typeToken)
             }
         }
         else {
-            throw ViewParseErrors.ExpectedCharacter("=", lastToken!)
+            throw CVUParseErrors.ExpectedCharacter("=", lastToken!)
         }
     }
 
@@ -247,8 +247,8 @@ class ViewParser {
                     setPropertyValue()
                     
                     // SELECTOR - currently only supporting renderers
-                    if let selector = try parseBracketsSelector(lastToken) as? ParsedRendererDefinition {
-                        var value = dict["renderDefinitions"] as? [ParsedRendererDefinition] ?? [ParsedRendererDefinition]()
+                    if let selector = try parseBracketsSelector(lastToken) as? CVUParsedRendererDefinition {
+                        var value = dict["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
                         value.append(selector)
                         dict["renderDefinitions"] = value
                         _ = try parseDefinition(selector)
@@ -265,7 +265,7 @@ class ViewParser {
                     lastKey = nil
                 }
                 else {
-                    throw ViewParseErrors.UnexpectedToken(lastToken!) // We should never get here
+                    throw CVUParseErrors.UnexpectedToken(lastToken!) // We should never get here
                 }
             case .CurlyBracketOpen(_, _):
                 stack.append(try parseDict(lastKey!))
@@ -274,7 +274,7 @@ class ViewParser {
                 if forUIElement { processCompoundProperties(&dict) }
                 return dict // DONE
             case .Colon(_, _):
-                throw ViewParseErrors.ExpectedKey(lastToken!)
+                throw CVUParseErrors.ExpectedKey(lastToken!)
             case let .Expression(v, _, _):
                 stack.append(createExpression(v))
             case let .Color(value, _, _) :
@@ -282,15 +282,15 @@ class ViewParser {
             case let .Identifier(value, _, _):
                 if lastKey == nil {
                     let nextToken = peekCurrentToken()
-                    if case ViewToken.Colon = nextToken {
+                    if case CVUToken.Colon = nextToken {
                         _ = popCurrentToken()
                         lastKey = value
                     }
                     else {
-                        if case ViewToken.CurlyBracketOpen = nextToken {
+                        if case CVUToken.CurlyBracketOpen = nextToken {
                             if let type = knownUIElements[value.lowercased()] {
                                 var properties:[String:Any] = [:]
-                                if case ViewToken.CurlyBracketOpen = peekCurrentToken() {
+                                if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
                                     _ = popCurrentToken()
                                     properties = try parseDict(value)
                                 }
@@ -300,7 +300,7 @@ class ViewParser {
                             }
                         }
                         else {
-                            throw ViewParseErrors.ExpectedKey(lastToken!)
+                            throw CVUParseErrors.ExpectedKey(lastToken!)
                         }
                     }
                     
@@ -342,7 +342,7 @@ class ViewParser {
                 stack.append(forUIElement ? CGFloat(value) : value)
             case let .String(value, _, _):
                 if !isArrayMode,
-                    case ViewToken.Colon = peekCurrentToken() {
+                    case CVUToken.Colon = peekCurrentToken() {
                     
                     setPropertyValue() // TODO: Is this every necessary?
                     _ = popCurrentToken()
@@ -353,19 +353,19 @@ class ViewParser {
             case let .StringExpression(v, _, _):
                 stack.append(createExpression(v, startInStringMode: true))
             default:
-                throw ViewParseErrors.UnexpectedToken(lastToken!)
+                throw CVUParseErrors.UnexpectedToken(lastToken!)
             }
         }
     }
 
-    func parseDefinition(_ selector: ParsedDefinition) throws -> ParsedDefinition {
+    func parseDefinition(_ selector: CVUParsedDefinition) throws -> CVUParsedDefinition {
         while true {
-            if case ViewToken.Newline = peekCurrentToken() {
+            if case CVUToken.Newline = peekCurrentToken() {
                 _ = popCurrentToken()
             }
             else {
-                guard case ViewToken.CurlyBracketOpen = popCurrentToken() else {
-                    throw ViewParseErrors.ExpectedCharacter("{", lastToken!)
+                guard case CVUToken.CurlyBracketOpen = popCurrentToken() else {
+                    throw CVUParseErrors.ExpectedCharacter("{", lastToken!)
                 }
                 
                 break

@@ -163,10 +163,10 @@
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
 		86865D38244996AA0010271A /* FlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* FlowStack.swift */; };
-		868EF62E24766A8800C0375F /* ViewLexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62124766A8800C0375F /* ViewLexer.swift */; };
-		868EF63024766A8800C0375F /* ViewNodes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62424766A8800C0375F /* ViewNodes.swift */; };
-		868EF63124766A8800C0375F /* ViewDefinitionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62524766A8800C0375F /* ViewDefinitionParser.swift */; };
-		868EF63224766A8800C0375F /* ViewParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62624766A8800C0375F /* ViewParser.swift */; };
+		868EF62E24766A8800C0375F /* CVULexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62124766A8800C0375F /* CVULexer.swift */; };
+		868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62424766A8800C0375F /* CVUParsedDefinition.swift */; };
+		868EF63124766A8800C0375F /* CVU.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62524766A8800C0375F /* CVU.swift */; };
+		868EF63224766A8800C0375F /* CVUParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62624766A8800C0375F /* CVUParser.swift */; };
 		868EF63424766A8800C0375F /* ExprParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62924766A8800C0375F /* ExprParser.swift */; };
 		868EF63524766A8800C0375F /* Expression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62A24766A8800C0375F /* Expression.swift */; };
 		868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62B24766A8800C0375F /* ExprInterpreter.swift */; };
@@ -375,11 +375,11 @@
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* FlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowStack.swift; sourceTree = "<group>"; };
-		868EF62124766A8800C0375F /* ViewLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewLexer.swift; sourceTree = "<group>"; };
+		868EF62124766A8800C0375F /* CVULexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVULexer.swift; sourceTree = "<group>"; };
 		868EF62324766A8800C0375F /* example.view */ = {isa = PBXFileReference; lastKnownFileType = archive.rsrc; path = example.view; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		868EF62424766A8800C0375F /* ViewNodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewNodes.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		868EF62524766A8800C0375F /* ViewDefinitionParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewDefinitionParser.swift; sourceTree = "<group>"; };
-		868EF62624766A8800C0375F /* ViewParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewParser.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		868EF62424766A8800C0375F /* CVUParsedDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParsedDefinition.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		868EF62524766A8800C0375F /* CVU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVU.swift; sourceTree = "<group>"; };
+		868EF62624766A8800C0375F /* CVUParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParser.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF62924766A8800C0375F /* ExprParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprParser.swift; sourceTree = "<group>"; };
 		868EF62A24766A8800C0375F /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
 		868EF62B24766A8800C0375F /* ExprInterpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprInterpreter.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -957,21 +957,21 @@
 			isa = PBXGroup;
 			children = (
 				868EF62824766A8800C0375F /* expression-parser */,
-				868EF62024766A8800C0375F /* view-parser */,
+				868EF62024766A8800C0375F /* cvu-parser */,
 			);
 			path = parsers;
 			sourceTree = "<group>";
 		};
-		868EF62024766A8800C0375F /* view-parser */ = {
+		868EF62024766A8800C0375F /* cvu-parser */ = {
 			isa = PBXGroup;
 			children = (
-				868EF62524766A8800C0375F /* ViewDefinitionParser.swift */,
-				868EF62124766A8800C0375F /* ViewLexer.swift */,
-				868EF62424766A8800C0375F /* ViewNodes.swift */,
-				868EF62624766A8800C0375F /* ViewParser.swift */,
+				868EF62524766A8800C0375F /* CVU.swift */,
+				868EF62124766A8800C0375F /* CVULexer.swift */,
+				868EF62424766A8800C0375F /* CVUParsedDefinition.swift */,
+				868EF62624766A8800C0375F /* CVUParser.swift */,
 				863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */,
 			);
-			path = "view-parser";
+			path = "cvu-parser";
 			sourceTree = "<group>";
 		};
 		868EF62224766A8800C0375F /* example */ = {
@@ -1479,7 +1479,7 @@
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				866F87C624536626000E5FAB /* MapView.swift in Sources */,
-				868EF63224766A8800C0375F /* ViewParser.swift in Sources */,
+				868EF63224766A8800C0375F /* CVUParser.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				863D0E0C24796C0A00DAB6C8 /* CVUToString.swift in Sources */,
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
@@ -1527,7 +1527,7 @@
 				5DB8EC0424598FA30028FD2E /* CascadingView.swift in Sources */,
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
-				868EF62E24766A8800C0375F /* ViewLexer.swift in Sources */,
+				868EF62E24766A8800C0375F /* CVULexer.swift in Sources */,
 				5D301F6A245C37EE00183BD2 /* LEOTextView.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */,
@@ -1537,8 +1537,8 @@
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
 				86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */,
-				868EF63024766A8800C0375F /* ViewNodes.swift in Sources */,
-				868EF63124766A8800C0375F /* ViewDefinitionParser.swift in Sources */,
+				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
+				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */,

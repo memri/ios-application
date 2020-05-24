@@ -8,11 +8,11 @@
 
 import Foundation
 
-public class ViewDefinitionParser {
+public class CVU {
     let code: String
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
-    private var parsed: [ParsedDefinition]? = nil
+    private var parsed: [CVUParsedDefinition]? = nil
     
     init(_ code:String,
            lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
@@ -23,13 +23,13 @@ public class ViewDefinitionParser {
         self.execFunc = execFunc
     }
     
-    func parse() throws -> [ParsedDefinition] {
+    func parse() throws -> [CVUParsedDefinition] {
         if let parsed = parsed {
             return parsed
         }
         else {
-            let lexer = ViewLexer(input: code)
-            let parser = ViewParser(try lexer.tokenize(), lookup:lookup, execFunc:execFunc)
+            let lexer = CVULexer(input: code)
+            let parser = CVUParser(try lexer.tokenize(), lookup:lookup, execFunc:execFunc)
             parsed = try parser.parse()
             return parsed!
         }

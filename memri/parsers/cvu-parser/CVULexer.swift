@@ -6,8 +6,8 @@
 
 import Foundation
 
-public enum ViewToken {
-    case Operator(ViewOperator, Int, Int)
+public enum CVUToken {
+    case Operator(CVUOperator, Int, Int)
     case Bool(Bool, Int, Int)
     case Number(Double, Int, Int)
     case String(String, Int, Int)
@@ -29,7 +29,7 @@ public enum ViewToken {
     case EOF
 }
 
-public enum ViewOperator: String {
+public enum CVUOperator: String {
     case ConditionAND = "AND"
     case ConditionOR = "OR"
     case ConditionEquals = "="
@@ -43,7 +43,7 @@ public enum ViewOperator: String {
     }
 }
 
-public class ViewLexer {
+public class CVULexer {
     let input: String
     
     public enum Mode: Int {
@@ -58,34 +58,34 @@ public class ViewLexer {
         case escapedString = 35
     }
     
-    let keywords:[String:(Int, Int) -> ViewToken] = [
-        "true": { ln, ch in ViewToken.Bool(true, ln, ch) },
-        "True": { ln, ch in ViewToken.Bool(true, ln, ch) },
-        "false": { ln, ch in ViewToken.Bool(false, ln, ch) },
-        "False": { ln, ch in ViewToken.Bool(false, ln, ch) },
-        "and": { ln, ch in ViewToken.Operator(ViewOperator.ConditionAND, ln, ch) },
-        "AND": { ln, ch in ViewToken.Operator(ViewOperator.ConditionAND, ln, ch) },
-        "or": { ln, ch in ViewToken.Operator(ViewOperator.ConditionOR, ln, ch) },
-        "OR": { ln, ch in ViewToken.Operator(ViewOperator.ConditionOR, ln, ch) },
-        "equals": { ln, ch in ViewToken.Operator(ViewOperator.ConditionEquals, ln, ch) },
-        "EQUALS": { ln, ch in ViewToken.Operator(ViewOperator.ConditionEquals, ln, ch) },
-        "not": { ln, ch in ViewToken.Negation(ln, ch) },
-        "NOT": { ln, ch in ViewToken.Negation(ln, ch) },
-        "nil": { ln, ch in ViewToken.Nil(ln, ch) },
-        "null": { ln, ch in ViewToken.Nil(ln, ch) }
+    let keywords:[String:(Int, Int) -> CVUToken] = [
+        "true": { ln, ch in CVUToken.Bool(true, ln, ch) },
+        "True": { ln, ch in CVUToken.Bool(true, ln, ch) },
+        "false": { ln, ch in CVUToken.Bool(false, ln, ch) },
+        "False": { ln, ch in CVUToken.Bool(false, ln, ch) },
+        "and": { ln, ch in CVUToken.Operator(CVUOperator.ConditionAND, ln, ch) },
+        "AND": { ln, ch in CVUToken.Operator(CVUOperator.ConditionAND, ln, ch) },
+        "or": { ln, ch in CVUToken.Operator(CVUOperator.ConditionOR, ln, ch) },
+        "OR": { ln, ch in CVUToken.Operator(CVUOperator.ConditionOR, ln, ch) },
+        "equals": { ln, ch in CVUToken.Operator(CVUOperator.ConditionEquals, ln, ch) },
+        "EQUALS": { ln, ch in CVUToken.Operator(CVUOperator.ConditionEquals, ln, ch) },
+        "not": { ln, ch in CVUToken.Negation(ln, ch) },
+        "NOT": { ln, ch in CVUToken.Negation(ln, ch) },
+        "nil": { ln, ch in CVUToken.Nil(ln, ch) },
+        "null": { ln, ch in CVUToken.Nil(ln, ch) }
     ]
     
     init(input: String) {
         self.input = input
     }
     
-    public func tokenize() throws -> [ViewToken] {
-        var tokens = [ViewToken]()
+    public func tokenize() throws -> [CVUToken] {
+        var tokens = [CVUToken]()
         
         var isMode:Mode = .idle
         var keyword = [String]()
         
-        func addToken(_ token:ViewToken? = nil){
+        func addToken(_ token:CVUToken? = nil){
             if isMode == .number {
                 tokens.append(.Number(Double(keyword.joined()) ?? .nan, ln, ch))
                 keyword = []
@@ -149,7 +149,7 @@ public class ViewLexer {
             
             if isMode == .expression {
                 if c == "}" && lastChar == "}" {
-                    if case let ViewToken.CurlyBracketOpen(ln, ch) = tokens.popLast()! {
+                    if case let CVUToken.CurlyBracketOpen(ln, ch) = tokens.popLast()! {
                         _ = keyword.popLast()
                     
                         tokens.append(.Expression(keyword.joined(), ln, ch))
@@ -179,7 +179,7 @@ public class ViewLexer {
             case "!": addToken(.Negation(ln, ch))
             case "[": addToken(.BracketOpen(ln, ch))
             case "]": addToken(.BracketClose(ln, ch))
-            case "=": addToken(.Operator(ViewOperator.ConditionEquals, ln, ch))
+            case "=": addToken(.Operator(CVUOperator.ConditionEquals, ln, ch))
             case ",": addToken(.Comma(ln, ch))
             case ":": addToken(.Colon(ln, ch))
             case ";": addToken(.SemiColon(ln, ch))
@@ -221,10 +221,10 @@ public class ViewLexer {
         }
         
         if isMode == .string {
-            throw ViewParseErrors.MissingQuoteClose(ViewToken.EOF)
+            throw CVUParseErrors.MissingQuoteClose(CVUToken.EOF)
         }
         else if isMode == .expression {
-            throw ViewParseErrors.MissingExpressionClose(ViewToken.EOF)
+            throw CVUParseErrors.MissingExpressionClose(CVUToken.EOF)
         }
         else if isMode != .idle {
             // TODO

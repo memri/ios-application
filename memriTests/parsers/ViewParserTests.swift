@@ -8,7 +8,7 @@
 import XCTest
 @testable import memri
 
-class ViewParserTests: XCTestCase {
+class CVUParserTests: XCTestCase {
     override func setUpWithError() throws {
         
     }
@@ -16,15 +16,15 @@ class ViewParserTests: XCTestCase {
     override func tearDownWithError() throws {
     }
     
-    private func parse(_ snippet:String) throws -> [ParsedDefinition] {
-        let lexer = ViewLexer(input: snippet)
+    private func parse(_ snippet:String) throws -> [CVUParsedDefinition] {
+        let lexer = CVULexer(input: snippet)
         let tokens = try lexer.tokenize()
-        let parser = ViewParser(tokens, lookup: {_,_ in}, execFunc: {_,_,_ in})
+        let parser = CVUParser(tokens, lookup: {_,_ in}, execFunc: {_,_,_ in})
         let x = try parser.parse()
         return x
     }
     
-    private func toCVUString(_ list:[ParsedDefinition]) -> String {
+    private func toCVUString(_ list:[CVUParsedDefinition]) -> String {
         list.map{ $0.toCVUString(0, "    ") }.joined(separator: "\n\n")
     }
     
@@ -623,14 +623,14 @@ class ViewParserTests: XCTestCase {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
 
-        let viewDef = ViewDefinitionParser(code,
+        let viewDef = CVU(code,
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
         
         let codeClone = toCVUString(try viewDef.parse())
 //        print(codeClone) // .prefix(1500))
 
-        let viewDefClone = ViewDefinitionParser(codeClone,
+        let viewDefClone = CVU(codeClone,
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
 
@@ -648,8 +648,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.UnexpectedToken(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.EOF)")
+        catch let CVUParseErrors.UnexpectedToken(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.EOF)")
             return
         }
         
@@ -666,9 +666,9 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedCharacter(chr, token) {
+        catch let CVUParseErrors.ExpectedCharacter(chr, token) {
             XCTAssertEqual(chr, "]")
-            XCTAssertEqual("\(token)", "\(ViewToken.CurlyBracketOpen(0, 16))")
+            XCTAssertEqual("\(token)", "\(CVUToken.CurlyBracketOpen(0, 16))")
             return
         }
         
@@ -703,8 +703,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.MissingExpressionClose(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.EOF)")
+        catch let CVUParseErrors.MissingExpressionClose(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.EOF)")
             return
         }
         
@@ -721,8 +721,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.MissingExpressionClose(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.EOF)")
+        catch let CVUParseErrors.MissingExpressionClose(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.EOF)")
             return
         }
         
@@ -739,8 +739,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedIdentifier(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.BracketClose(1, 21))")
+        catch let CVUParseErrors.ExpectedIdentifier(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.BracketClose(1, 21))")
             return
         }
         
@@ -755,8 +755,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedIdentifier(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.Number(5, 0, 2))")
+        catch let CVUParseErrors.ExpectedIdentifier(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.Number(5, 0, 2))")
             return
         }
         
@@ -773,8 +773,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.UnexpectedToken(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.BracketClose(1, 21))")
+        catch let CVUParseErrors.UnexpectedToken(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.BracketClose(1, 21))")
             return
         }
         
@@ -791,8 +791,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedKey(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.Colon(1, 20))")
+        catch let CVUParseErrors.ExpectedKey(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.Colon(1, 20))")
             return
         }
         
@@ -809,8 +809,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedKey(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.Colon(1, 17))")
+        catch let CVUParseErrors.ExpectedKey(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.Colon(1, 17))")
             return
         }
         
@@ -827,8 +827,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.MissingQuoteClose(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.EOF)")
+        catch let CVUParseErrors.MissingQuoteClose(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.EOF)")
             return
         }
         
@@ -865,8 +865,8 @@ class ViewParserTests: XCTestCase {
         do {
             _ = try parse(snippet)
         }
-        catch let ViewParseErrors.ExpectedString(token) {
-            XCTAssertEqual("\(token)", "\(ViewToken.Identifier("red", 0, 9))")
+        catch let CVUParseErrors.ExpectedString(token) {
+            XCTAssertEqual("\(token)", "\(CVUToken.Identifier("red", 0, 9))")
             return
         }
         

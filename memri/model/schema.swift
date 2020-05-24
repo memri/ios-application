@@ -36,9 +36,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case typeMedicalCondition = "MedicalCondition"
     case typeSession = "Session"
     case typeSessionView = "SessionView"
-    case typeSessionsDefinition = "SessionsDefinition"
-    case typeSessionDefinition = "SessionDefinition"
-    case typeViewDSLDefinition = "ViewDSLDefinition"
+    case typeStoredCVUDefinition = "ViewDSLDefinition"
 
     static var discriminator: Discriminator = .type
     
@@ -65,9 +63,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return Color(hex: "#3dc8e2")
         case .typeSession: return Color(hex: "#93c47d")
         case .typeSessionView: return Color(hex: "#93c47d")
-        case .typeSessionsDefinition: return Color(hex: "#93c47d")
-        case .typeSessionDefinition: return Color(hex: "#93c47d")
-        case .typeViewDSLDefinition: return Color(hex: "#93c47d")
+        case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
         }
     }
     
@@ -107,9 +103,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: (object as? List<MedicalCondition>)?.forEach{ collection.append($0) }
         case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
         case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
-        case .typeSessionsDefinition: (object as? List<SessionsDefinition>)?.forEach{ collection.append($0) }
-        case .typeSessionDefinition: (object as? List<SessionDefinition>)?.forEach{ collection.append($0) }
-        case .typeViewDSLDefinition: (object as? List<ViewDSLDefinition>)?.forEach{ collection.append($0) }
+        case .typeStoredCVUDefinition: (object as? List<StoredCVUDefinition>)?.forEach{ collection.append($0) }
         }
         
         return collection
@@ -138,9 +132,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return MedicalCondition.self
         case .typeSession: return Session.self
         case .typeSessionView: return SessionView.self
-        case .typeSessionsDefinition: return SessionsDefinition.self
-        case .typeSessionDefinition: return SessionDefinition.self
-        case .typeViewDSLDefinition: return ViewDSLDefinition.self
+        case .typeStoredCVUDefinition: return StoredCVUDefinition.self
         }
     }
 }

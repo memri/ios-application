@@ -100,7 +100,7 @@ protocol CascadingRendererDefaults {
 public class CascadingRenderConfig: Cascadable {
     var viewArguments: ViewArguments
     
-    required init(_ cascadeStack: [ParsedDefinition], _ viewArguments: ViewArguments) {
+    required init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments) {
         self.viewArguments = viewArguments
         super.init()
         self.cascadeStack = cascadeStack

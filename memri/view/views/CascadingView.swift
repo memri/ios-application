@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public class Cascadable {
-    var cascadeStack = [ParsedDefinition]()
+    var cascadeStack = [CVUParsedDefinition]()
     var localCache = [String:Any]()
     
     // TODO execute x when Expression
@@ -123,14 +123,14 @@ public class CascadingView: Cascadable, ObservableObject {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
         
         var stack = self.cascadeStack.compactMap {
-            ($0["renderDefinitions"] as? [ParsedRendererDefinition] ?? [])
+            ($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
                 .filter { $0.name == activeRenderer }.first
         }
         
         let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
         for def in renderDSLDefinitions {
             do {
-                if let parsedRenderDef = try main?.views.parseDefinition(def) as? ParsedRendererDefinition {
+                if let parsedRenderDef = try main?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
                     if parsedRenderDef.domain == "user" {
                         let insertPoint:Int = {
                             for i in 0..<stack.count { if stack[i].domain == "view" { return i } }
@@ -246,7 +246,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     init(_ sessionView:SessionView,
-         _ cascadeStack:[ParsedDefinition],
+         _ cascadeStack:[CVUParsedDefinition],
          _ activeRenderer:String
     ){
         self.sessionView = sessionView
@@ -287,7 +287,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     public class func fromSessionView(_ sessionView:SessionView, in main:Main) throws -> CascadingView {
-        var cascadeStack:[ParsedDefinition] = []
+        var cascadeStack:[CVUParsedDefinition] = []
         var isList = true
         var type = ""
         
@@ -326,7 +326,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         var activeRenderer:String? = nil
         
-        func parse(_ def:ViewDSLDefinition?, _ domain:String){
+        func parse(_ def:StoredCVUDefinition?, _ domain:String){
             do {
                 guard let def = def else {
                     throw "Exception: missing view definition"

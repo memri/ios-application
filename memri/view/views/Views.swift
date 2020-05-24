@@ -15,7 +15,7 @@ public class Views {
         realm = rlm
     }
     
-    public func parse(_ def:ViewDSLDefinition, cache:Bool = true) -> [String:Any] {
+    public func parse(_ def:StoredCVUDefinition, cache:Bool = true) -> [String:Any] {
         guard let definition = def.definition else {
             return [:]
         }
@@ -70,7 +70,7 @@ public class Views {
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
         do {
-            let parser = ViewDefinitionParser(getDefaultViewContents(),
+            let parser = CVU(getDefaultViewContents(),
                                               lookup: lookupValueOfVariables,
                                               execFunc: executeFunction)
             
@@ -84,15 +84,15 @@ public class Views {
                     "definition": def.description
                 ]
                 
-                if def is ParsedViewDefinition { values["type"] = "view" }
-                else if def is ParsedRendererDefinition { values["type"] = "renderer" }
-                else if def is ParsedStyleDefinition { values["type"] = "style" }
-                else if def is ParsedColorDefinition { values["type"] = "color" }
-                else if def is ParsedLanguageDefinition { values["type"] = "language" }
+                if def is CVUParsedViewDefinition { values["type"] = "view" }
+                else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is CVUParsedStyleDefinition { values["type"] = "style" }
+                else if def is CVUParsedColorDefinition { values["type"] = "color" }
+                else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
                 else { throw "Exception: unknown definition" }
                 
                 // Store definition
-                try realm.write { realm.create(ViewDSLDefinition.self, value: values) }
+                try realm.write { realm.create(StoredCVUDefinition.self, value: values) }
             }
         }
         catch {
@@ -281,27 +281,27 @@ public class Views {
     }
     
     public func fetchDefinitions(_ selector:String = "", type:String? = nil,
-                                   domain:String? = nil) -> [ViewDSLDefinition] {
+                                   domain:String? = nil) -> [StoredCVUDefinition] {
         
         let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
             + (domain != nil  ? "and domain = '\(domain!)" : "")
         
-        return main!.realm.objects(ViewDSLDefinition.self)
+        return main!.realm.objects(StoredCVUDefinition.self)
             .filter(filter)
-            .map({ (def) -> ViewDSLDefinition in def }) // Convert to normal Array
+            .map({ (def) -> StoredCVUDefinition in def }) // Convert to normal Array
     }
     
-    func parseDefinition(_ viewDef:ViewDSLDefinition?) throws -> ParsedDefinition? {
+    func parseDefinition(_ viewDef:StoredCVUDefinition?) throws -> CVUParsedDefinition? {
         guard let viewDef = viewDef else {
             throw "Exception: Missing view definition"
         }
         
         let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")
-        if let cached = cached as? ViewDefinitionParser {
+        if let cached = cached as? CVU {
             return try cached.parse().first
         }
         else if let definition = viewDef.definition {
-            let viewDefParser = ViewDefinitionParser(definition,
+            let viewDefParser = CVU(definition,
                 lookup: lookupValueOfVariables,
                 execFunc: executeFunction
             )
@@ -354,14 +354,14 @@ public class Views {
                 throw "Exception: Main is not defined in views"
             }
             
-            func searchForRenderer(in viewDefinition:ViewDSLDefinition) throws -> Bool {
+            func searchForRenderer(in viewDefinition:StoredCVUDefinition) throws -> Bool {
                 let parsed = try main.views.parseDefinition(viewDefinition)
-                for def in parsed?["renderDefinitions"] as? [ParsedRendererDefinition] ?? [] {
+                for def in parsed?["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
                     for name in rendererNames {
                         
                         // TODO: Should this first search for the first renderer everywhere
                         //       before trying the second renderer?
-                        if let renderDef = def[name] as? ParsedRendererDefinition, renderDef["children"] != nil {
+                        if let renderDef = def[name] as? CVUParsedRendererDefinition, renderDef["children"] != nil {
                             cascadeStack.append(renderDef)
                             return true
                         }
@@ -370,7 +370,7 @@ public class Views {
                 return false
             }
             
-            var cascadeStack:[ParsedDefinition] = []
+            var cascadeStack:[CVUParsedDefinition] = []
 
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {
