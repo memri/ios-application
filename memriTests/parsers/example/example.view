@@ -351,8 +351,10 @@ Person[] {
     
     actionButton:
         addDataItem {
-            template: {
-                type: "Person"
+            arguments: {
+                template: {
+                    type: "Person"
+                }
             }
         }
         

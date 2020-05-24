@@ -425,10 +425,7 @@ class CVUParser {
                     ? HorizontalAlignment.center
                     : VerticalAlignment.center
             default:
-                // TODO Warn user
-                
-                let x:String? = nil
-                return x as Any
+                return value // TODO Test if this crashes the view renderer
             }
         },
         "align": { (value:Any, type:String) -> Any in
@@ -443,10 +440,7 @@ class CVUParser {
             case "leftbottom", "bottomleft": return Alignment.bottomLeading
             case "rightbottom", "bottomright": return Alignment.bottomTrailing
             default:
-                // TODO Warn user
-                
-                let x:String? = nil
-                return x as Any
+                return value // TODO Test if this crashes the view renderer
             }
         },
         "textalign": { (value:Any, type:String) -> Any in
@@ -455,10 +449,7 @@ class CVUParser {
             case "center": return TextAlignment.center
             case "right": return TextAlignment.trailing
             default:
-                // TODO Warn user
-                
-                let x:String? = nil
-                return x as Any
+                return value // TODO Test if this crashes the view renderer
             }
         },
         "font": { (input:Any, type:String) -> Any in

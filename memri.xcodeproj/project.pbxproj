@@ -133,7 +133,7 @@
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
 		863D0E0424794D8C00DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
 		863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63A24766AA100C0375F /* ExprParserTests.swift */; };
-		863D0E0624794D9000DAB6C8 /* ViewParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63B24766AA100C0375F /* ViewParserTests.swift */; };
+		863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63B24766AA100C0375F /* CVUParserTests.swift */; };
 		863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */; };
 		863D0E0A247955A900DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
 		863D0E0C24796C0A00DAB6C8 /* CVUToString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */; };
@@ -208,6 +208,7 @@
 		86CDB726246DB047007EAE67 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB725246DB046007EAE67 /* UIFont.swift */; };
 		86DDB361247AAD030051A92F /* Cascadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB360247AAD030051A92F /* Cascadable.swift */; };
 		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
+		86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB363247AD0400051A92F /* CVUValidatorTests.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* HorizonalLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* HorizonalLine.swift */; };
@@ -388,7 +389,7 @@
 		868EF62C24766A8800C0375F /* ExprLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprLexer.swift; sourceTree = "<group>"; };
 		868EF62D24766A8800C0375F /* ExprNodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprNodes.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF63A24766AA100C0375F /* ExprParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprParserTests.swift; sourceTree = "<group>"; };
-		868EF63B24766AA100C0375F /* ViewParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewParserTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		868EF63B24766AA100C0375F /* CVUParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParserTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprInterpreterTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF64824766B2200C0375F /* memriParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memriParserTests.swift; sourceTree = "<group>"; };
 		868EF64A24766B2200C0375F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -432,8 +433,9 @@
 		86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
 		86CDB723246D4D4E007EAE67 /* Mixed.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mixed.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB725246DB046007EAE67 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIFont.swift; path = memri/extension/NSAttributedString/UIFont.swift; sourceTree = SOURCE_ROOT; };
-		86DDB35E247AA9D20051A92F /* CVUValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidator.swift; sourceTree = "<group>"; };
+		86DDB35E247AA9D20051A92F /* CVUValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; };
+		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -1005,8 +1007,9 @@
 			children = (
 				868EF62224766A8800C0375F /* example */,
 				868EF63A24766AA100C0375F /* ExprParserTests.swift */,
-				868EF63B24766AA100C0375F /* ViewParserTests.swift */,
 				868EF63D24766AA100C0375F /* ExprInterpreterTests.swift */,
+				868EF63B24766AA100C0375F /* CVUParserTests.swift */,
+				86DDB363247AD0400051A92F /* CVUValidatorTests.swift */,
 			);
 			path = parsers;
 			sourceTree = "<group>";
@@ -1564,6 +1567,7 @@
 				5DB3466324585246008FE8A9 /* FileTest.swift in Sources */,
 				5DAFB63A24796E1C00719160 /* CombineViewFilesTest.swift in Sources */,
 				5DB8EC0D24599A280028FD2E /* DynamicViewTest.swift in Sources */,
+				86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */,
 				5D228B082432416F00464506 /* ActionTest.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
@@ -1579,7 +1583,7 @@
 				5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */,
 				5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */,
 				5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */,
-				863D0E0624794D9000DAB6C8 /* ViewParserTests.swift in Sources */,
+				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,
 				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
 				5DB8EC0B24599A080028FD2E /* ComputedViewTest.swift in Sources */,
 				86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */,

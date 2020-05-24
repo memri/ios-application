@@ -161,11 +161,6 @@ public enum UIElementProperties : String, CaseIterable {
                     && list[2] is CGFloat && list[3] is CGFloat
             }
             else { return value is CGFloat }
-        case .cornerborder:
-            if let list = value as? [Any] {
-                return list[0] is Color && list[1] is CGFloat && list[2] is CGFloat
-            }
-            else { return false }
         case .border:
             if let list = value as? [Any] {
                 return list[0] is Color && list[1] is CGFloat
@@ -180,12 +175,6 @@ public enum UIElementProperties : String, CaseIterable {
         case .offset:
             if let list = value as? [Any] {
                 return list[0] is CGFloat && list[1] is CGFloat
-            }
-            else { return false }
-        case .frame:
-            if let list = value as? [Any] {
-                return list[0] is CGFloat && list[1] is CGFloat && list[2] is CGFloat
-                    && list[3] is CGFloat && list[4] is Alignment
             }
             else { return false }
         default:
