@@ -135,6 +135,8 @@ class CVUValidator {
     func validateDefinition(_ definition:CVUParsedDefinition) {
         func check(_ definition:CVUParsedDefinition, _ validate:(String,Any) throws -> Bool) {
             for (key, value) in definition.parsed {
+                if value is Expression { continue }
+                
                 do {
                     if !(try validate(key, value)) {
                         errors.append("Invalid property value '\(valueToTruncatedString(value))' for '\(key)' at definition \(definition.selector ?? "").")
@@ -173,9 +175,9 @@ class CVUValidator {
                 case "name", "emptyResultText", "title", "subTitle", "filterText",
                      "activeRenderer", "defaultRenderer", "backTitle", "searchHint":
                     return value is String
-                case "userState": return value is Int
-                case "queryOptions": return value is [CVUParsedViewDefinition]
-                case "viewArguments": return value is Bool
+                case "userState": return value is [String:Any] // TODO
+                case "queryOptions": return value is [String:Any] // TODO
+                case "viewArguments": return value is [String:Any] // TODO
                 case "showLabels": return value is Bool
                 case "actionButton", "editActionButton":
                     if let value = value as? Action { validateAction(value) }
@@ -198,7 +200,7 @@ class CVUValidator {
                         return value[0] is String && value[1] is [String:Any]
                     }
                     else { return value is String }
-                case "renderDefinitions": return value is File
+                case "renderDefinitions": return value is [CVUParsedRendererDefinition]
                 default: throw "Unknown"
                 }
                 
@@ -206,13 +208,14 @@ class CVUValidator {
             }
         }
         else if definition is CVUParsedRendererDefinition {
-            // TODO support all the properties properties
-            check(definition) { (key, value) in
-                if (definition.parsed[key] as? [String:Any?])?["children"] != nil {
-                    return false
-                }
-                return true
-            }
+            // TODO support all the renderer properties
+//            check(definition) { (key, value) in
+//                if (definition.parsed[key] as? [String:Any?])?["children"] != nil
+//                    && !definition.parsed["groups"]?.contains(key) .. also need to check the schema of the thing it renders too complex for now {
+//                    return false
+//                }
+//                return true
+//            }
             
             if let children = definition.parsed["children"] as? [Any] {
                 for child in children {

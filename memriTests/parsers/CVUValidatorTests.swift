@@ -164,6 +164,8 @@ class CVUValidatorTests: XCTestCase {
     func testActionProperties() throws {
         let snippet = """
         Person {
+            viewArguments: { readonly: true }
+
             navigateItems: [
                 openView {
                     title: 10
@@ -210,7 +212,7 @@ class CVUValidatorTests: XCTestCase {
         XCTAssertEqual(validator.warnings.count, 0)
     }
 
-    func testSerialization() throws {
+    func testLargeCVU() throws {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
 
@@ -225,7 +227,7 @@ class CVUValidatorTests: XCTestCase {
         
         validator.debug()
         
-        XCTAssertEqual(validator.errors.count, 1)
+        XCTAssertEqual(validator.errors.count, 0)
         XCTAssertEqual(validator.warnings.count, 0)
     }
     
