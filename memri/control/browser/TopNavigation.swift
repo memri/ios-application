@@ -132,7 +132,7 @@ public struct TopNavigation: View {
                                 main.executeAction(backButton!)
                             }
                         }) {
-                            Image(systemName: backButton!.icon)
+                            Image(systemName: backButton!.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)

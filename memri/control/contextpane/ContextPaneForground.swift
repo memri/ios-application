@@ -64,7 +64,7 @@ struct ContextPaneForground: View {
                     Button(action:{
                         main.executeAction(actionItem)
                     }) {
-                        Text(actionItem.title ?? "")
+                        Text(actionItem.getString("title"))
                             .foregroundColor(.black)
                             .opacity(0.6)
                             .font(.system(size: 20, weight: .regular, design: .default))
@@ -89,7 +89,7 @@ struct ContextPaneForground: View {
                     Button(action:{
                         main.executeAction(navigateItem)
                     }) {
-                        Text(navigateItem.title ?? "")
+                        Text(LocalizedStringKey(navigateItem.getString("title")))
                             .foregroundColor(.black)
                             .opacity(0.6)
                             .font(.system(size: 20, weight: .regular, design: .default))
@@ -129,7 +129,7 @@ struct ContextPaneForground: View {
                 Button(action:{
                     main.executeAction(self.addLabelAction)
                 }) {
-                    Text(self.addLabelAction.title ?? "")
+                    Text(self.addLabelAction.getString("title"))
                         .foregroundColor(.black)
                         .opacity(0.6)
                         .font(.system(size: 20, weight: .regular, design: .default))

@@ -109,17 +109,19 @@
             icon: "increase.indent"
             title: "{$showtimeline}"
             
-            view: {
-                defaultRenderer: timeline
-                
-                queryOptions {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
-                }
-                
-                [renderer = "timeline"] {
-                    timeProperty: dateCreated
+            arguments: {
+                view: {
+                    defaultRenderer: timeline
+                    
+                    queryOptions {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = "timeline"] {
+                        timeProperty: dateCreated
+                    }
                 }
             }
         }
@@ -129,7 +131,7 @@
     contextButtons: star schedule
     
     actionItems: [
-        showSharePanel { title: "{$sharewith}" }
+        showOverlay { title: "{$sharewith}" }
         addToPanel { title: "{$addtolist}" }
         duplicate { title: "{$duplicate} {type}" }
     ]
@@ -208,6 +210,7 @@ Person {
                         itemInset: 0
                     }
                 }
+                
                 arguments: {
                     toolbar: false
                     searchbar: false

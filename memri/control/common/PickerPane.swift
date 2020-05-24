@@ -79,13 +79,13 @@ struct PickerPane: View {
                 "renderDescriptions": [
                     ParsedRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
-                            Action("setProperty", ["sourceDataItem": self.propDataItem, "property": self.propName]),
+                            Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")
                         ]]
                     ),
                     ParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
-                            Action("setProperty", ["sourceDataItem": self.propDataItem, "property": self.propName]),
+                            Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
                             Action("closePopup")
                         ]]
                     )

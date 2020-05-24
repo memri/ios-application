@@ -5,33 +5,113 @@
 //
 
 import Foundation
+import SwiftUI
 
 protocol CVUToString : CustomStringConvertible {
-    func toString(_ depth:Int, _ tab:String) -> String
+    func toCVUString(_ depth:Int, _ tab:String) -> String
 }
 
 class CVUSerializer {
+    
+    class func valueToString(_ value:Any?, _ depth:Int = 0, _ tab:String = "    ") -> String{
+        if value == nil {
+            return "null"
+        }
+        else if let p = value {
+            if let p = p as? String { //}, (p.contains(" ") || p.contains("\t") || p.contains("\"") || p == "") {
+                return "\"\(p.replace("\"", "\\\\\""))\""
+            }
+            else if let p = p as? [Any?] {
+                return arrayToString(p, depth+1, tab)
+            }
+            else if let p = p as? [String:Any?] {
+                return dictToString(p, depth+1, tab)
+            }
+            else if let p = p as? CVUToString {
+                return p.toCVUString(depth + 1, tab)
+            }
+            else if let p = p as? Color {
+                return String(p.description.lowercased().prefix(7))
+            }
+            else if let p = p as? Double {
+                if p.truncatingRemainder(dividingBy: 1) == 0 {
+                    return "\(Int(p))"
+                }
+            }
+            else if let p = p as? CGFloat {
+                if p.truncatingRemainder(dividingBy: 1) == 0 {
+                    return "\(Int(p))"
+                }
+            }
+            else if let p = p as? VerticalAlignment {
+                switch p {
+                case .top: return "top"
+                case .center: return "center"
+                case .bottom: return "bottom"
+                default: return "center"
+                }
+            }
+            else if let p = p as? HorizontalAlignment {
+                switch p {
+                case .leading: return "left"
+                case .center: return "center"
+                case .trailing: return "right"
+                default: return "center"
+                }
+            }
+            else if let p = p as? Alignment {
+                switch p {
+                case .top: return "top"
+                case .center: return "center"
+                case .bottom: return "bottom"
+                case .leading: return "left"
+                case .trailing: return "right"
+                default: return "center"
+                }
+            }
+            else if let p = p as? TextAlignment {
+                switch p {
+                case .leading: return "left"
+                case .center: return "center"
+                case .trailing: return "right"
+                }
+            }
+            else if let p = p as? Font.Weight {
+                switch p {
+                case .regular: return "regular"
+                case .bold: return "bold"
+                case .semibold: return "semibold"
+                case .heavy: return "heavy"
+                case .light: return "light"
+                case .ultraLight: return "ultralight"
+                case .black: return "black"
+                default: return "regular"
+                }
+            }
+            
+            return "\(p)"
+        }
+        
+        return ""
+    }
     
     class func arrayToString(_ list:[Any?], _ depth:Int = 0, _ tab:String = "    ",
                              withDef:Bool = true, extraNewLine:Bool = false) -> String {
         
         let tabs = Array(0..<depth).map{_ in tab}.joined()
-        let tabsPlus = Array(0..<depth+1).map{_ in tab}.joined()
         let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         
         var str = [String]()
         var isMultiline = false
         for value in list {
-            let strValue = value is CVUToString
-                ? (value as? CVUToString)?.toString(depth + 1, tab) ?? "nil"
-                : "\(value ?? "nil")"
+            let strValue = valueToString(value, depth, tab)
             str.append(strValue)
             if !isMultiline { isMultiline = strValue.contains("\n") }
         }
         
         return withDef
             ? isMultiline
-                ? "[\n\(tabs)\(str.joined(separator:"\n\(tabs)"))\(tabsEnd)\n\(tabsEnd)]"
+                ? "[\n\(tabs)\(str.joined(separator:"\n\(tabs)"))\n\(tabsEnd)]"
                 : str.joined(separator: " ")
             : str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabs)")
     }
@@ -41,7 +121,11 @@ class CVUSerializer {
                             _ sortFunc:((Dictionary<String, Any?>.Keys.Element, Dictionary<String, Any?>.Keys.Element) throws -> Bool)? = nil) -> String {
         var keys:[String]
         do {
-            keys = (sortFunc != nil) ? try dict.keys.sorted(by: sortFunc!) : dict.keys.sorted()
+            keys = (sortFunc != nil)
+                ? try dict.keys.sorted(by: sortFunc!)
+                : dict.keys.sorted(by: {
+                    $0 > $1
+                })
         }
         catch {
             keys = dict.keys.sorted()
@@ -55,24 +139,33 @@ class CVUSerializer {
             if key == "children" || key == "renderDefinitions" {
                 continue
             }
-            else if dict[key] == nil {
-                str.append("\(key): null")
-            }
-            else if let p = dict[key]! {
-                if let p = p as? String, (p.contains(" ") || p.contains("\t") || p == "") {
-                    str.append("\(key): \"\(p)\"")
-                }
-                else if let p = p as? [Any?] {
-                    str.append("\(key): \(arrayToString(p, depth+1, tab))")
-                }
-                else if let p = p as? [String:Any?] {
-                    str.append("\(key): \(dictToString(p, depth+1, tab))")
-                }
-                else if let p = p as? CVUToString {
-                    str.append("\(key): \(p.toString(depth + 1, tab))")
+            else if key == "cornerradius" {
+                if var value = dict[key] as? [Any] {
+                    let radius = value.popLast()
+                    str.append("cornerradius: \(valueToString(radius, depth, tab))")
+                    str.append("border: \(valueToString(value, depth, tab))")
                 }
                 else {
-                    str.append("\(key): \(p)")
+                    // ???
+                }
+            }
+            else if key == "frame" {
+                let names = ["minWidth", "maxWidth", "minHeight", "maxHeight", "align"]
+                if let list = dict[key] as? [Any?] {
+                    for i in 0..<list.count {
+                        if let v = list[i] {
+                            str.append("\(names[i]): \(valueToString(v, depth, tab))")
+                        }
+                    }
+                }
+            }
+            else {
+                if let p = dict[key] as? [String:Any?] {
+                    str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
+                        + "\(key): \(valueToString(p, depth, tab))")
+                }
+                else {
+                    str.append("\(key): \(valueToString(dict[key]!, depth, tab))")
                 }
             }
         }
@@ -81,15 +174,15 @@ class CVUSerializer {
         var definitions:String = ""
         if let p = dict["children"] as? [UIElement], p.count > 0 {
             let body = arrayToString(p, depth, tab, withDef:false, extraNewLine:true)
-            children = "\n\n\(tabs)\(body)"
+            children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }
         if let p = dict["renderDefinitions"] as? [ParsedRendererDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
-            definitions = "\n\n\(tabs)\(body)"
+            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }
         
         return withDef
-            ? "{\n\(tabs)\(str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
-            : "\(str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabsEnd)"))\(children)\(definitions)"
+            ? "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
+            : "\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)"
     }
 }

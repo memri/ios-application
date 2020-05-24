@@ -24,30 +24,39 @@ class ViewParserTests: XCTestCase {
         return x
     }
     
+    private func toCVUString(_ list:[ParsedDefinition]) -> String {
+        list.map{ $0.toCVUString(0, "    ") }.joined(separator: "\n\n")
+    }
+    
+    private func parseToCVUString(_ snippet:String) throws -> String {
+        toCVUString(try parse(snippet))
+    }
+    
     func testColorDefinition() throws {
         let snippet = """
         [color = "background"] {
-            light: #330000
             dark: #ff0000
+            light: #330000
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[[color = "background"] { [dark: #FF0000FF;light: #330000FF] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testStyleDefinition() throws {
         let snippet = """
         [style = "my-label-text"] {
-            border: background 1
             color: highlight
+            border: background 1
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[[style = "my-label-text"] { [border: ["background", 1.0];color: "highlight"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        [style = "my-label-text"] {
+            border: "background" 1
+            color: "highlight"
+        }
+        """)
     }
     
     func testRendererDefinition() throws {
@@ -57,23 +66,22 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[[renderer = "generalEditor"] { [sequence: ["labels", "starred", "other", "dates"]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        [renderer = "generalEditor"] {
+            sequence: "labels" "starred" "other" "dates"
+        }
+        """)
     }
     
     func testLanguageDefinition() throws {
         let snippet = """
         [language = "Dutch"] {
-            sharewith: "Deel met..."
             addtolist: "Voeg toe aan lijst..."
+            sharewith: "Deel met..."
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
-        
-        XCTAssertEqual(results.description, #"[[language = "Dutch"]  [addtolist: "Voeg toe aan lijst...";sharewith: "Deel met..."] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testNamedViewDefinition() throws {
@@ -83,10 +91,7 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
-        
-        XCTAssertEqual(results.description, #"[.defaultButtonsForDataItem { [editActionButton: ActionDescription(actionName: toggleEditMode)] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testTypeViewDefinition() throws {
@@ -96,10 +101,7 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: Expression({.firstName}, startInStringMode:true)] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testListViewDefinition() throws {
@@ -109,26 +111,33 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person[] { [title: "All People"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testMultipleDefinitions() throws {
         let snippet = """
         [color = "background"] {
-            light: #330000
             dark: #ff0000
+            light: #330000
         }
+
         [style = "my-label-text"] {
             border: background 1
             color: highlight
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[[color = "background"] { [dark: #FF0000FF;light: #330000FF] }, [style = "my-label-text"] { [border: ["background", 1.0];color: "highlight"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        [color = "background"] {
+            dark: #ff0000
+            light: #330000
+        }
+
+        [style = "my-label-text"] {
+            border: "background" 1
+            color: "highlight"
+        }
+        """)
     }
     
     // TODO
@@ -139,10 +148,10 @@ class ViewParserTests: XCTestCase {
 //        }
 //        """
 //
-//        let results = try parse(snippet)
+//        XCTAssertEqual(try parseToCVUString(snippet), snippet)
 //        print(results.description)
 //
-//        XCTAssertEqual(results.description, #"[View("", type:Person[], query:nil context:[title: All People]]"#)
+//
 //    }
     
     func testNestedObjects() throws {
@@ -154,9 +163,14 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [group: ["key": "value"]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            
+            group: {
+                key: "value"
+            }
+        }
+        """)
     }
     
     func testNestedObjectsUsingColon() throws {
@@ -168,9 +182,14 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [group: ["key": "value"]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            
+            group: {
+                key: "value"
+            }
+        }
+        """)
     }
     
     func testNestedObjectsWithKeysBefore() throws {
@@ -183,9 +202,35 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            key: 10
+            
+            group: {
+                key: "value"
+            }
+        }
+        """)
+    }
+    
+    func testEscapedStringProperty() throws {
+        let snippet = """
+        [language = "Dutch"] {
+            sharewith: "Deel \\"met..."
+        }
+        """
         
-        XCTAssertEqual(results.description, #"[Person { [group: ["key": "value"];key: 10.0] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
+    
+    func testMixedQuoteTypeProperty() throws {
+        let snippet = """
+        [language = "Dutch"] {
+            addtolist: "Voeg 'toe' aan lijst..."
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testArrayStringProperty() throws {
@@ -195,28 +240,32 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [sequence: ["labels", "starred", "other", "dates"]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            sequence: "labels" "starred" "other" "dates"
+        }
+        """)
     }
     
     func testArrayMixedProperty() throws {
         let snippet = """
         Person {
-            sequence: labels 5 "other" test {date: 10}
+            sequence: labels 5 "other" test
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [sequence: ["labels", 5.0, "other", "test", ["date": 10.0]]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            sequence: "labels" 5 "other" "test"
+        }
+        """)
     }
     
     func testArrayMultilineProperty() throws {
         let snippet = """
         Person {
             sequence: [
-                showSharePanel { title: "{$sharewith}" }
+                showOverlay { title: "{$sharewith}" }
                 addToPanel { title: "{$addtolist}" }
                 duplicate { title: "{$duplicate} {type}" }
             ]
@@ -225,9 +274,22 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [key: "value";sequence: [ActionDescription(actionName: showSharePanel), ActionDescription(actionName: addToPanel), ActionDescription(actionName: duplicate)]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            key: "value"
+            sequence: [
+                showOverlay {
+                    title: "{$sharewith}"
+                }
+                addToPanel {
+                    title: "{$addtolist}"
+                }
+                duplicate {
+                    title: "{$duplicate} {type}"
+                }
+            ]
+        }
+        """)
     }
     
     func testNestedRendererDefinition() throws {
@@ -239,10 +301,13 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
-        
-        XCTAssertEqual(results.description, #"[Person { [renderDefinitions: [[renderer = "timeline"] { [timeProperty: "dateCreated"] }]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            [renderer = "timeline"] {
+                timeProperty: "dateCreated"
+            }
+        }
+        """)
     }
     
     func testNestedRendererDefinitionAfterProperty() throws {
@@ -255,9 +320,15 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [key: 10.0;renderDefinitions: [[renderer = "timeline"] { [timeProperty: "dateCreated"] }]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            key: 10
+
+            [renderer = "timeline"] {
+                timeProperty: "dateCreated"
+            }
+        }
+        """)
     }
     
     func testStringExpressionProperty() throws {
@@ -267,9 +338,7 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: Expression({.firstName}, startInStringMode:true)] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testExpressionProperty() throws {
@@ -279,9 +348,7 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: Expression(.firstName, startInStringMode:false)] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testStringProperty() throws {
@@ -289,9 +356,11 @@ class ViewParserTests: XCTestCase {
         Person { title: "hello" }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: "hello"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            title: "hello"
+        }
+        """)
     }
     
     func testMultilineStringProperty() throws {
@@ -300,11 +369,11 @@ class ViewParserTests: XCTestCase {
                          world!" }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, """
-        [Person { [title: "hello
-                         world!"] }]
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            title: "hello
+                         world!"
+        }
         """)
     }
     
@@ -313,9 +382,11 @@ class ViewParserTests: XCTestCase {
         Person { title: -5.34 }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: -5.34] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            title: -5.34
+        }
+        """)
     }
     
     func testBoolProperty() throws {
@@ -323,9 +394,11 @@ class ViewParserTests: XCTestCase {
         Person { title: true }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: true] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            title: true
+        }
+        """)
     }
     
     func testNilProperty() throws {
@@ -333,9 +406,11 @@ class ViewParserTests: XCTestCase {
         Person { title: nil }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [title: nil] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            title: null
+        }
+        """)
     }
     
     func testIdentifierProperty() throws {
@@ -343,9 +418,11 @@ class ViewParserTests: XCTestCase {
         Person { defaultRenderer: thumbnail.grid }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [defaultRenderer: "thumbnail.grid"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            defaultRenderer: "thumbnail.grid"
+        }
+        """)
     }
     
     func testColorProperty() throws {
@@ -353,9 +430,11 @@ class ViewParserTests: XCTestCase {
         Person { color: #f0f }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [color: #FF00FFFF] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            color: #ff00ff
+        }
+        """)
     }
     
     func testJSONCompatibility() throws {
@@ -370,9 +449,18 @@ class ViewParserTests: XCTestCase {
         """
         // Notice the trailing comma, its there on purpose
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [array: ["10", 5.0];bool: false;number: 10.0;object: ["test": 10.0];string: "test"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            array: "10" 5
+            bool: false
+            number: 10
+            string: "test"
+            
+            object: {
+                test: 10
+            }
+        }
+        """)
     }
     
     func testSingleLineJSONSyntax() throws {
@@ -380,9 +468,18 @@ class ViewParserTests: XCTestCase {
         "Person": { "string": "test", "array": ["10", 5], "object": { "test": 10 }, "bool": false, "number": 10, }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [array: ["10", 5.0];bool: false;number: 10.0;object: ["test": 10.0];string: "test"] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            array: "10" 5
+            bool: false
+            number: 10
+            string: "test"
+            
+            object: {
+                test: 10
+            }
+        }
+        """)
     }
     
     func testCSSLikeSyntax() throws {
@@ -394,9 +491,13 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [background: #FFFFFFFF;border: [1.0, "red"];padding: [1.0, 2.0, 3.0, 4.0]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            background: #ffffff
+            border: 1 "red"
+            padding: 1 2 3 4
+        }
+        """)
     }
     
     func testSingleLineCSSLikeSyntax() throws {
@@ -404,9 +505,13 @@ class ViewParserTests: XCTestCase {
         Person { background: #fff; border: 1 red; padding: 1 2 3 4; }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [background: #FFFFFFFF;border: [1.0, "red"];padding: [1.0, 2.0, 3.0, 4.0]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            background: #ffffff
+            border: 1 "red"
+            padding: 1 2 3 4
+        }
+        """)
     }
     
     func testSingleLineSyntax() throws {
@@ -414,9 +519,17 @@ class ViewParserTests: XCTestCase {
         Person { background: #fff, border: 1 red, padding: 1 2 3 4, object: { test: 1 } }
         """
         
-        let results = try parse(snippet)
-        
-        XCTAssertEqual(results.description, #"[Person { [background: #FFFFFFFF;border: [1.0, "red"];object: ["test": 1.0];padding: [1.0, 2.0, 3.0, 4.0]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            background: #ffffff
+            border: 1 "red"
+            padding: 1 2 3 4
+            
+            object: {
+                test: 1
+            }
+        }
+        """)
     }
     
     func testCurlyBracketsOnSeparateLine() throws {
@@ -433,10 +546,35 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            background: #ffffff
+            
+            bla: {
+                test: 1
+            }
+            
+            object: {
+                test: 1
+            }
+        }
+        """)
+    }
+    
+    func testComments() throws {
+        let snippet = """
+        /* Hello */
+        Person {
+            /* World */
+            key: value
+        }
+        """
         
-        XCTAssertEqual(results.description, #"[Person { [background: #FFFFFFFF;bla: ["test": 1.0];object: ["test": 1.0]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            key: "value"
+        }
+        """)
     }
     
     func testUIElementProperties() throws {
@@ -460,10 +598,25 @@ class ViewParserTests: XCTestCase {
         }
         """
         
-        let results = try parse(snippet)
-        print(results)
-        
-        XCTAssertEqual(results.description, #"[Person { [children: [VStack { alignment: HorizontalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557288)), font: 14.0 , Text { font: [12.0, SwiftUI.Font.Weight(value: -0.4)], frame: [nil, nil, nil, nil, Optional(SwiftUI.Alignment(horizontal: SwiftUI.HorizontalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557312)), vertical: SwiftUI.VerticalAlignment(key: SwiftUI.AlignmentKey(bits: 140735394557361))))], textalign: center }, Text { cornerborder: [#FF0000FF, 1.0, 10.0], cornerradius: 10.0, frame: [nil, nil, nil, Optional(500.0), nil] }}]] }]"#)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            VStack {
+                font: 14
+                alignment: left
+
+                Text {
+                    textalign: center
+                    align: top
+                    font: 12 light
+                }
+
+                Text {
+                    maxHeight: 500
+                    cornerborder: #ff0000 1 10
+                }
+            }
+        }
+        """)
     }
     
     func testSerialization() throws {
@@ -474,17 +627,15 @@ class ViewParserTests: XCTestCase {
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
         
-        let results = try viewDef.parse()
-        
-        let codeClone = results.map{$0.toString(0, "    ")}.joined(separator: "\n")
-        print(codeClone) //.prefix(2000))
-        
+        let codeClone = toCVUString(try viewDef.parse())
+//        print(codeClone) // .prefix(1500))
+
         let viewDefClone = ViewDefinitionParser(codeClone,
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
-        
-        let codeCloneClone = try viewDefClone.parse().map{$0.toString(0, "    ")}.joined(separator: "\n")
-        
+
+        let codeCloneClone = toCVUString(try viewDefClone.parse())
+
         XCTAssertEqual(codeClone, codeCloneClone)
     }
     
@@ -656,7 +807,6 @@ class ViewParserTests: XCTestCase {
         """
         
         do {
-            print(try parse(snippet))
             _ = try parse(snippet)
         }
         catch let ViewParseErrors.ExpectedKey(token) {

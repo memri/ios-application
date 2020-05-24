@@ -26,7 +26,7 @@ struct ActionButton: View {
     }
     
     func getAction() -> AnyView{
-        switch self.action?.renderAs {
+        switch self.action?.getRenderAs(main.cascadingView.viewArguments) {
         case .popup:
             return AnyView(ActionPopupButton(action: self.action!))
         case .button:
@@ -53,7 +53,7 @@ struct ActionButtonView: View {
     var execute: (() -> Void)? = nil
     
     var isActive: Bool {
-        if action.hasState, let binding = action.binding {
+        if action.getBool("hasState"), let binding = action.binding {
             do { return try binding.isTrue() }
             catch {
                 // TODO error handling
@@ -63,21 +63,25 @@ struct ActionButtonView: View {
     }
     
     var body: some View {
-        Button(action: {
+        let icon = action.getString("icon")
+        let title:String? = action.get("title")
+        
+        return Button(action: {
             withAnimation {
                 self.execute?()
             }
         }) {
-            if action.icon != "" {
-                Image(systemName: action.icon)
+            if icon != "" {
+                Image(systemName: icon)
                     .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
                     .foregroundColor(action.computeColor(state: isActive))
                     .background(action.computeBackgroundColor(state: isActive))
             }
-            if action.title != nil && action.showTitle {
-                Text(action.title!)
+            
+            if title != nil && action.getBool("showTitle") {
+                Text(title!)
                     .font(.subheadline)
                     .foregroundColor(.black)
              }

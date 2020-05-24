@@ -82,18 +82,18 @@ struct FilterPanel: View {
                 HStack(alignment: .top, spacing: 3) {
                     ForEach(rendererCategories(), id: \.0) { (key, renderer) in
                         
-                        Button(action: {self.main.executeAction(renderer)} ) {
-                            Image(systemName: renderer.icon)
+                        Button(action: { self.main.executeAction(renderer) } ) {
+                            Image(systemName: renderer.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
                                 .frame(width: 40, height: 40, alignment: .center)
                                 .foregroundColor(self.isActive(renderer)
-                                    ? renderer.activeColor!
-                                    : renderer.inactiveColor!)
+                                    ? renderer.getColor("activeColor")
+                                    : renderer.getColor("inactiveColor"))
                                 .background(self.isActive(renderer)
-                                    ? renderer.activeBackgroundColor!
-                                    : renderer.inactiveBackgroundColor!)
+                                    ? renderer.getColor("activeBackgroundColor")
+                                    : renderer.getColor("inactiveBackgroundColor"))
                         }
                     }
                 }
@@ -108,14 +108,14 @@ struct FilterPanel: View {
                             Group {
                                 Button(action:{ self.main.executeAction(renderer) }) {
                                     if self.main.cascadingView.activeRenderer == renderer.rendererName {
-                                        Text(renderer.title ?? "Unnamed Renderer")
+                                        Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
                                             .font(.system(size: 16))
                                             .padding(.vertical, 12)
                                     }
                                     else {
-                                        Text(renderer.title ?? "Unnamed Renderer")
+                                        Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#434343"))
                                             .fontWeight(.regular)
                                             .font(.system(size: 16))

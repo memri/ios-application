@@ -42,7 +42,8 @@ class FilterPanelRendererButton: Action, ActionExec {
     private var defaults:[String:Any] {[
         "hasState": true,
         "activeColor": Color(hex: "#6aa84f"),
-        "activeBackgroundColor": Color(hex: "#eee")
+        "activeBackgroundColor": Color(hex: "#eee"),
+        "title": "Unnamed Renderer"
     ]}
     
     var order: Int
@@ -56,7 +57,7 @@ class FilterPanelRendererButton: Action, ActionExec {
         self.order = order
         self.canDisplayResults = canDisplayResults
         
-        super.init("setRenderer", icon:icon, title:title)
+        super.init("setRenderer", values: ["icon":icon, "title":title])
     }
     
     func exec(_ main:Main, _ arguments:[String: Any]) {

@@ -20,21 +20,28 @@ public class ParsedDefinition : CVUToString {
 //    var unparsed:String = ""
     var parsed:[String:Any] = [:]
     
-    func toString(_ depth:Int, _ tab:String) -> String {
-        let body = CVUSerializer.dictToString(parsed, depth+1, tab) { lhp, rhp in
-            if let lv = self.parsed[lhp] as? [String:Any] {
-                return !(lv["children"] != nil)
-            }
-            if let rv = self.parsed[lhp] as? [String:Any] {
-                return (rv["children"] != nil)
-            }
-            return true
+    func toCVUString(_ depth:Int, _ tab:String) -> String {
+        if selector == #"[renderer = "list"]"# {
+            
         }
-        return "\(selector ?? "") \(body)\n"
+        
+        let body = CVUSerializer.dictToString(parsed, depth+1, tab, extraNewLine: true) { lhp, rhp in
+            let lv = self.parsed[lhp] as? [String:Any]
+            let rv = self.parsed[rhp] as? [String:Any]
+            
+            let leftIsDict = lv != nil
+            let rightIsDict = rv != nil
+            let leftHasChildren = lv?["children"] != nil
+            let rightHasChildren = rv?["children"] != nil
+            
+            return (leftHasChildren ? 1 : 0, leftIsDict ? 1 : 0, lhp.lowercased())
+                < (rightHasChildren ? 1 : 0, rightIsDict ? 1 : 0, rhp.lowercased())
+        }
+        return "\(selector ?? "") \(body)"
     }
     
     public var description: String {
-        toString(0, "    ")
+        toCVUString(0, "    ")
     }
     
     init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any]? = nil) {

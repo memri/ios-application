@@ -101,7 +101,7 @@ extension Main {
         // Last element of arguments array is the context data item
         args["dataItem"] = dataItem ?? cascadingView.resultSet.singletonItem as Any
         
-        if action.opensView {
+        if action.getBool("opensView") {
             if let action = action as? ActionExec {
                 try action.exec(self, args)
             }
@@ -114,7 +114,7 @@ extension Main {
             // Track state of the action and toggle the state variable based on actionStateName
             // TODO Refactor: it should be the new way of doing selection
             if (cascadingView.userState["selection"] as? [DataItem])?.count == 0
-                && action.hasState, let binding = action.binding {
+                && action.getBool("hasState"), let binding = action.binding {
                 
                 try binding.toggleBool()
             }

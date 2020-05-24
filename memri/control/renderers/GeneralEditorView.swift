@@ -230,7 +230,7 @@ struct GeneralEditorSection: View {
         
         let action = isArray && editMode && !readOnly
             ? Action("openViewByName",
-                [
+                arguments: [
                     "name": "choose-item-by-query",
                     "arguments": [
                         "query": className,
@@ -241,8 +241,10 @@ struct GeneralEditorSection: View {
                         ".": item
                     ]
                 ],
-                icon: "plus",
-                renderAs: .popup)
+                values: [
+                    "icon": "plus",
+                    "renderAs": RenderType.popup
+                ])
             : nil
         
         return Group {

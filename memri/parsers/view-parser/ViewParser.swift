@@ -236,11 +236,6 @@ class ViewParser {
         }
         
         while true {
-            if case let .Identifier(name, ln, ch) = peekCurrentToken() {
-                if ln == 35 {
-                    
-                }
-            }
             switch (popCurrentToken()) {
             case let .Bool(v, _, _):
                 stack.append(v)
@@ -325,20 +320,8 @@ class ViewParser {
                         }
                     }
                     
-                    stack.append(Action(name, options["arguments"] as? [String:Any] ?? [:],
-                        icon: options["icon"] as? String ?? "",
-                        title: options["title"] as? String ?? "",
-                        showTitle: options["showTitle"] as? Bool ?? false,
-                        binding: options["binding"] as? Expression,
-                        renderAs: RenderType(rawValue: options["renderAs"] as? String ?? "button"),
-                        hasState: options["hasState"] as? Bool ?? false,
-                        color: options["color"] as? Color,
-                        backgroundColor: options["backgroundColor"] as? Color,
-                        activeColor: options["activeColor"] as? Color,
-                        inactiveColor: options["inactiveColor"] as? Color,
-                        activeBackgroundColor: options["activeBackgroundColor"] as? Color,
-                        inactiveBackgroundColor: options["inactiveBackgroundColor"] as? Color
-                    ))
+                    let arguments = options.removeValue(forKey: "arguments") as? [String:Any] ?? [:]
+                    stack.append(Action(name, arguments:arguments, values:options))
                 }
                 else {
                     stack.append(value)
@@ -503,12 +486,12 @@ class ViewParser {
         for (name,_) in frameProperties {
             if dict[name] != nil {
 
-                let values:[Any] = [
-                    dict["minwidth"] as Any,
-                    dict["maxwidth"] as Any,
-                    dict["minheight"] as Any,
-                    dict["maxheight"] as Any,
-                    dict["align"] as Any
+                let values:[Any?] = [
+                    dict["minwidth"] as Any?,
+                    dict["maxwidth"] as Any?,
+                    dict["minheight"] as Any?,
+                    dict["maxheight"] as Any?,
+                    dict["align"] as Any?
                 ]
 
                 dict["minwidth"] = nil

@@ -9,109 +9,105 @@ import SwiftUI
 
 public class Action : HashableClass, CVUToString {
     var name:ActionName = .noop
-    var arguments: [String: Any] = [:]
-    var renderAs: RenderType = .button
+    var arguments: [String: Any?] = [:]
     
-    var icon: String = "exclamationmark.bubble"
-    var title: String? = nil
-    var showTitle: Bool = false
-    var binding:Expression? = nil
-    var hasState = false
-    var opensView = false
-    var color: Color = Color(hex: "#999999")
-    var backgroundColor: Color = .white
-    var activeColor: Color? = nil
-    var inactiveColor: Color? = Color(hex: "#999999")
-    var activeBackgroundColor: Color? = .white
-    var inactiveBackgroundColor: Color? = .white
-    
+    var binding:Expression? { (values["binding"] ?? defaultValues["binding"]) as? Expression }
     var argumentTypes:[String: AnyObject.Type] = [:]
     
-    private var defaults:[String:Any] { return [:] }
+    var defaultValues:[String:Any] { [:] }
+    let baseValues:[String:Any] = [
+        "icon": "exclamationmark.bubble",
+        "renderAs": RenderType.button,
+        "showTitle": false,
+        "hasState": false,
+        "opensView": false,
+        "color": Color(hex: "#999999"),
+        "backgroundColor": Color.white,
+        "inactiveColor": Color(hex: "#999999"),
+        "activeBackgroundColor": Color.white,
+        "inactiveBackgroundColor": Color.white
+    ]
+    var values:[String:Any?] = [:]
     
     public var description: String {
-        toString(0, "    ")
+        toCVUString(0, "    ")
     }
     
-    func toString(_ depth:Int, _ tab:String) -> String {
+    init(_ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+        super.init()
+        
+        if let actionName = ActionName(rawValue: name) { self.name = actionName }
+        else { self.name = .noop } // TODO REfactor: Report error to user
+        
+        self.arguments = arguments ?? self.arguments
+        self.values = values
+        
+        if let x = self.values["renderAs"] as? String {
+            self.values["renderAs"] = RenderType(rawValue: x)
+        }
+    }
+
+    func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
+        let x:Any? = values["icon"] ?? defaultValues["icon"] ?? baseValues["icon"]
+        if let x = x as? Expression {
+            do { return try x.execute(viewArguments) as? T }
+            catch {
+                // TODO Refactor: Error reporting
+                return nil
+            }
+        }
+        return x as? T
+    }
+    
+    func getBool(_ key:String, _ viewArguments:ViewArguments? = nil) -> Bool {
+        let x:Bool = get(key, viewArguments) ?? false
+        return x
+    }
+    
+    func getString(_ key:String, _ viewArguments:ViewArguments? = nil) -> String {
+        let x:String = get(key, viewArguments) ?? ""
+        return x
+    }
+    
+    func getColor(_ key:String, _ viewArguments:ViewArguments? = nil) -> Color {
+        let x:Color = get(key, viewArguments) ?? Color.black
+        return x
+    }
+    
+    func getRenderAs(_ viewArguments:ViewArguments? = nil) -> RenderType {
+        let x:RenderType = get("renderAs", viewArguments) ?? .button
+        return x
+    }
+    
+    func toCVUString(_ depth:Int, _ tab:String) -> String {
         let tabs = Array(0..<depth).map{_ in tab}.joined()
-        let tabsPlus = Array(0..<depth + 1).map{_ in tab}.joined()
         let tabsEnd = depth > 0 ? Array(0..<depth - 1).map{_ in tab}.joined() : ""
         var strBuilder:[String] = []
         
         if arguments.count > 0 {
             strBuilder.append("arguments: \(CVUSerializer.dictToString(arguments, depth + 1, tab))")
         }
-        if renderAs != .button { strBuilder.append("renderAs: \(renderAs)") }
-        if icon != "exclamationmark.bubble" && icon != self.defaults["icon"] as? String && icon != "" {
-            strBuilder.append("icon: \(icon)")
+        
+        if let value = values["binding"] as? Expression {
+            strBuilder.append("binding: \(value.description)")
         }
-        if title != nil && title != self.defaults["title"] as? String && title != "" {
-            strBuilder.append("title: \(title ?? "nil")")
-        }
-        if showTitle != false { strBuilder.append("showTitle: \(showTitle)") }
-        if binding != nil { strBuilder.append("binding: \(binding?.description ?? "nil")") }
-        if hasState != false { strBuilder.append("hasState: \(hasState)") }
-        if opensView != false { strBuilder.append("opensView: \(opensView)") }
-        if color != Color(hex: "#999999") { strBuilder.append("color: \(color)") }
-        if backgroundColor != .white { strBuilder.append("backgroundColor: \(backgroundColor)") }
-        if activeColor != nil { strBuilder.append("activeColor: \(activeColor?.description ?? "nil")") }
-        if inactiveColor != Color(hex: "#999999") {
-            strBuilder.append("inactiveColor: \(inactiveColor?.description ?? "nil")")
-        }
-        if activeBackgroundColor != .white {
-            strBuilder.append("activeBackgroundColor: \(activeBackgroundColor?.description ?? "nil")")
-        }
-        if inactiveBackgroundColor != .white {
-            strBuilder.append("inactiveBackgroundColor: \(inactiveBackgroundColor?.description ?? "nil")")
+        
+        let keys = values.keys.sorted(by: { $0 < $1 })
+        for key in keys {
+            if let value = values[key] as? Expression {
+                strBuilder.append("\(key): \(value.description)")
+            }
+            else if let value = values[key] {
+                strBuilder.append("\(key): \(CVUSerializer.valueToString(value, depth, tab))")
+            }
+            else {
+                strBuilder.append("\(key): null")
+            }
         }
         
         return strBuilder.count > 0
-            ? "\(name) {\n\(tabs)\(strBuilder.joined(separator: "\n\(tabsPlus)"))\n\(tabsEnd)}"
+            ? "\(name) {\n\(tabs)\(strBuilder.joined(separator: "\n\(tabs)"))\n\(tabsEnd)}"
             : "\(name)"
-    }
-    
-    init(_ name:String,
-         _ arguments:[String: Any]? = nil,
-         icon:String? = nil,
-         title:String? = nil,
-         showTitle:Bool? = nil,
-         binding:Expression? = nil,
-         renderAs:RenderType? = nil,
-         hasState:Bool? = nil,
-         color:Color? = nil,
-         backgroundColor:Color? = nil,
-         activeColor:Color? = nil,
-         inactiveColor:Color? = nil,
-         activeBackgroundColor:Color? = nil,
-         inactiveBackgroundColor:Color? = nil
-    ) {
-        super.init()
-        
-        if let actionName = ActionName(rawValue: name) {
-            self.name = actionName
-        }
-        else {
-            // TODO REfactor: Report error to user
-            self.name = .noop
-        }
-        
-        let defForName = self.defaults
-        
-        self.arguments = arguments ?? self.arguments
-        self.icon = icon ?? defForName["icon"] as? String ?? self.icon
-        self.renderAs = renderAs ?? defForName["renderAs"] as? RenderType ?? self.renderAs
-        self.title = title ?? defForName["icon"] as? String ?? self.title
-        self.showTitle = showTitle ?? defForName["icon"] as? Bool ?? self.showTitle
-        self.binding = binding ?? defForName["icon"] as? Expression ?? self.binding
-        self.hasState = hasState ?? defForName["icon"] as? Bool ?? self.hasState
-        self.opensView = defForName["icon"] as? Bool ?? self.opensView
-        self.color = color ?? defForName["icon"] as? Color ?? self.color
-        self.backgroundColor = backgroundColor ?? defForName["icon"] as? Color ?? self.backgroundColor
-        self.activeColor = activeColor ?? defForName["icon"] as? Color ?? self.activeColor
-        self.inactiveColor = inactiveColor ?? defForName["icon"] as? Color ?? self.inactiveColor
-        self.activeBackgroundColor = activeBackgroundColor ?? defForName["icon"] as? Color ?? self.activeBackgroundColor
-        self.inactiveBackgroundColor = inactiveBackgroundColor ?? defForName["icon"] as? Color ?? self.inactiveBackgroundColor
     }
     
 //    // TODO call without exec
@@ -120,19 +116,19 @@ public class Action : HashableClass, CVUToString {
 //    }
     
     public func computeColor(state:Bool) -> Color {
-        if self.hasState == true {
-            if state { return self.activeColor ?? globalColors.byName("activeColor") }
-            else { return self.inactiveColor ?? globalColors.byName("inactiveColor") }
+        if self.getBool("hasState") {
+            if state { return self.get("activeColor") ?? globalColors.byName("activeColor") }
+            else { return self.get("inactiveColor") ?? globalColors.byName("inactiveColor") }
         }
-        else { return self.color }
+        else { return self.getColor("color") }
     }
     
     public func computeBackgroundColor(state:Bool) -> Color{
-        if self.hasState == true {
-            if state { return self.activeBackgroundColor ?? globalColors.byName("activeBackgroundColor") }
-            else { return self.inactiveBackgroundColor ?? globalColors.byName("inactiveBackgroundColor") }
+        if self.getBool("hasState") {
+            if state { return self.get("activeBackgroundColor") ?? globalColors.byName("activeBackgroundColor") }
+            else { return self.get("inactiveBackgroundColor") ?? globalColors.byName("inactiveBackgroundColor") }
         }
-        else { return self.backgroundColor }
+        else { return self.getColor("backgroundColor") }
     }
 }
 
@@ -221,7 +217,7 @@ protocol ActionExec {
 }
 
 class ActionBack : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "chevron.left",
         "opensView": true,
         "color": Color(hex: "#434343"),
@@ -249,7 +245,7 @@ class ActionBack : Action, ActionExec {
     }
 }
 class ActionAddDataItem : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "plus",
         "argumentTypes": ["dataItem": DataItemFamily.self],
         "opensView": true,
@@ -284,7 +280,7 @@ class ActionAddDataItem : Action, ActionExec {
 
 
 class ActionOpenView : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
         "opensView": true
     ]}
@@ -358,7 +354,7 @@ class ActionOpenView : Action, ActionExec {
     }
 }
 class ActionOpenViewByName : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
         "opensView": true
     ]}
@@ -394,7 +390,7 @@ class ActionOpenViewByName : Action, ActionExec {
     }
 }
 class ActionToggleEditMode : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "rhombus.fill",
         "hasState": true,
         "binding": Expression("currentSession.editMode"),
@@ -415,7 +411,7 @@ class ActionToggleEditMode : Action, ActionExec {
     }
 }
 class ActionToggleFilterPanel : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "hasState": true,
         "binding": Expression("currentSession.showFilterPanel"),
         "activeColor": Color(hex: "#6aa84f")
@@ -434,7 +430,7 @@ class ActionToggleFilterPanel : Action, ActionExec {
     }
 }
 class ActionStar : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
         "binding": "{dataItem.starred}"
@@ -470,7 +466,7 @@ class ActionStar : Action, ActionExec {
     }
 }
 class ActionShowStarred : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "star.fill",
         "hasState": true,
         "binding": "showStarred",
@@ -504,7 +500,7 @@ class ActionShowStarred : Action, ActionExec {
     }
 }
 class ActionShowContextPane : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
         "binding": Expression("currentSession.showContextPane")
@@ -523,7 +519,7 @@ class ActionShowContextPane : Action, ActionExec {
     }
 }
 class ActionShowNavigation : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "line.horizontal.3",
         "hasState": true,
         "binding": Expression("main.showNavigation"),
@@ -543,7 +539,7 @@ class ActionShowNavigation : Action, ActionExec {
     }
 }
 class ActionSchedule : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "alarm"
     ]}
     
@@ -561,7 +557,7 @@ class ActionSchedule : Action, ActionExec {
 }
 
 class ActionShowSessionSwitcher : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "icon": "ellipsis",
         "hasState": true,
         "binding": Expression("main.showSessionSwitcher"),
@@ -581,7 +577,7 @@ class ActionShowSessionSwitcher : Action, ActionExec {
     }
 }
 class ActionForward : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "opensView": true,
     ]}
     
@@ -606,7 +602,7 @@ class ActionForward : Action, ActionExec {
     }
 }
 class ActionForwardToFront : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "opensView": true,
     ]}
     
@@ -627,7 +623,7 @@ class ActionForwardToFront : Action, ActionExec {
     }
 }
 class ActionBackAsSession : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "opensView": true,
     ]}
     
@@ -661,7 +657,7 @@ class ActionBackAsSession : Action, ActionExec {
 }
 
 class ActionOpenSession : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "argumentTypes": ["session": Session.self, "viewArguments": [String:Any]?.self],
         "opensView": true,
     ]}
@@ -707,7 +703,7 @@ class ActionOpenSession : Action, ActionExec {
 }
 // TODO How to deal with viewArguments in sessions
 class ActionOpenSessionByName : Action, ActionExec {
-    private var defaults:[String:Any] {[
+    override var defaultValues:[String:Any] {[
         "argumentTypes": ["name": String.self, "viewArguments": [String:Any]?.self],
         "opensView": true,
     ]}

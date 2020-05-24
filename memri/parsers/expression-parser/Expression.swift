@@ -19,12 +19,12 @@ public class Expression : CVUToString {
     private var parsed = false
     private var ast: ExprNode? = nil
     
-    func toString(_ depth:Int, _ tab:String) -> String {
+    func toCVUString(_ depth:Int, _ tab:String) -> String {
         startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
     }
     
     public var description: String {
-        toString(0, "    ")
+        toCVUString(0, "    ")
     }
     
     init(_ code:String, startInStringMode:Bool = false) {

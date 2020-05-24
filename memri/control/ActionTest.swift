@@ -21,7 +21,7 @@ class actionTest: XCTestCase {
 
     func testAction() throws {
         let action = Action("back")
-        XCTAssertTrue(action.icon == "chevron.left")
+        XCTAssertTrue(action.getString("icon") == "chevron.left")
     }
     
     func testPerformanceExample() throws {

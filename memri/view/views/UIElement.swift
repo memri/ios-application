@@ -88,19 +88,15 @@ public class UIElement : CVUToString {
         return text.replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
     }
     
-    func toString(_ depth:Int, _ tab:String) -> String {
+    func toCVUString(_ depth:Int, _ tab:String) -> String {
         let tabs = Array(0..<depth).map{_ in ""}.joined(separator: tab)
         let tabsPlus = Array(0..<depth + 1).map{_ in ""}.joined(separator: tab)
-        let tabsEnd = Array(0..<depth - 1).map{_ in ""}.joined(separator: tab)
-        
-        if properties["HSTack"] != nil {
-            
-        }
+//        let tabsEnd = Array(0..<depth - 1).map{_ in ""}.joined(separator: tab)
         
         return properties.count > 0 || children.count > 0
             ? "\(type) {\n"
                 + (properties.count > 0
-                    ? "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth + 1, tab, withDef: false))"
+                    ? "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth, tab, withDef: false))"
                     : "")
                 + (properties.count > 0 && children.count > 0
                     ? "\n\n"
@@ -113,8 +109,7 @@ public class UIElement : CVUToString {
     }
     
     public var description: String {
-        return ""
-//        return "\(type) { \(serializeDict()) \(children.count > 0 ? ", \(children.map{ $0.description }.joined(separator: ", "))" : "")}"
+        toCVUString(0, "    ")
     }
 }
 

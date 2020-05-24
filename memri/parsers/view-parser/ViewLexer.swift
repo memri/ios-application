@@ -49,6 +49,7 @@ public class ViewLexer {
     public enum Mode: Int {
         case idle = 0
         case color = 5
+        case comment = 8
         case keyword = 10
         case namedIdentifier = 11
         case number = 20
@@ -111,12 +112,20 @@ public class ViewLexer {
             if token != nil { tokens.append(token!) }
         }
         
-        var ln = 0, ch = -1, lastChar:Character = " ", isStringExpression = false
+        var ln = 0, ch = -1, startChar:Character = " "
+        var lastChar:Character = " ", isStringExpression = false
         input.forEach { c in
             ch += 1
             
             if isMode.rawValue >= Mode.string.rawValue {
-                if isMode == .string && (c == "'" || c == "\"") {
+                if isMode == .escapedString {
+                    keyword.append(String(c))
+                    isMode = .string
+                }
+                else if c == "\\" {
+                    isMode = .escapedString
+                }
+                else if isMode == .string && (c == startChar) {
                     if isStringExpression {
                         tokens.append(.StringExpression(keyword.joined(), ln, ch))
                     }
@@ -128,14 +137,6 @@ public class ViewLexer {
                     isMode = .idle
                     isStringExpression = false
                     return
-                }
-                
-                if isMode == .escapedString {
-                    keyword.append(String(c))
-                    isMode = .string
-                }
-                else if c == "\\" {
-                    isMode = .escapedString
                 }
                 else {
                     keyword.append(String(c))
@@ -164,6 +165,12 @@ public class ViewLexer {
                 return
             }
             
+            if isMode == .comment {
+                if c == "/" && lastChar == "*" { isMode = .idle }
+                lastChar = c
+                return
+            }
+            
             switch(c){
             case "\n":
                 addToken(.Newline(ln, ch))
@@ -178,7 +185,10 @@ public class ViewLexer {
             case ";": addToken(.SemiColon(ln, ch))
             case "'", "\"":
                 isMode = .string
+                startChar = c
             case " ", "\t": addToken()
+            case "/":
+                isMode = .comment // TODO check for * after /
             case "-":
                 if isMode == .idle { fallthrough }
                 else { keyword.append("-") }
