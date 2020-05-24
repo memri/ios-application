@@ -103,7 +103,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: (object as? List<MedicalCondition>)?.forEach{ collection.append($0) }
         case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
         case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
-        case .typeStoredCVUDefinition: (object as? List<StoredCVUDefinition>)?.forEach{ collection.append($0) }
+        case .typeStoredCVUDefinition: (object as? List<CVUStoredDefinition>)?.forEach{ collection.append($0) }
         }
         
         return collection
@@ -132,7 +132,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return MedicalCondition.self
         case .typeSession: return Session.self
         case .typeSessionView: return SessionView.self
-        case .typeStoredCVUDefinition: return StoredCVUDefinition.self
+        case .typeStoredCVUDefinition: return CVUStoredDefinition.self
         }
     }
 }

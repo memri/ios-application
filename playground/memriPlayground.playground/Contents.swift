@@ -4,8 +4,9 @@ import SwiftUI
 import PlaygroundSupport
 
 
-let x = [(1,1,"a"),(1,1,"b"),(0,0,"a"),(0,0,"b"),(0,1,"a"),(0,1,"b")]
+enum Foo:String {
+    case test
+}
 
-print(x.sorted(by: { lhp, rhp in
-    return lhp < rhp
-}))
+let x = Foo(rawValue: "test2")
+print(x)

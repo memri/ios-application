@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 public class Action : HashableClass, CVUToString {
-    var name:ActionName = .noop
+    var name:ActionFamily = .noop
     var arguments: [String: Any?] = [:]
     
     var binding:Expression? { (values["binding"] ?? defaultValues["binding"]) as? Expression }
@@ -36,7 +36,7 @@ public class Action : HashableClass, CVUToString {
     init(_ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
         super.init()
         
-        if let actionName = ActionName(rawValue: name) { self.name = actionName }
+        if let actionName = ActionFamily(rawValue: name) { self.name = actionName }
         else { self.name = .noop } // TODO REfactor: Report error to user
         
         self.arguments = arguments ?? self.arguments
@@ -136,7 +136,7 @@ public enum RenderType: String{
     case popup, button, emptytype
 }
 
-public enum ActionName: String, CaseIterable {
+public enum ActionFamily: String, CaseIterable {
     case back, addDataItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
         star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
@@ -146,68 +146,48 @@ public enum ActionName: String, CaseIterable {
 
     func getType() -> Action.Type {
         switch self {
-        case .back:
-            return ActionBack.self
-        case .addDataItem:
-            return ActionAddDataItem.self
-        case .openView:
-            return ActionOpenView.self
-        case .openViewByName:
-            return ActionOpenViewByName.self
-        case .toggleEditMode:
-            return ActionToggleEditMode.self
-        case .toggleFilterPanel:
-            return ActionToggleFilterPanel.self
-        case .star:
-            return ActionStar.self
-        case .showStarred:
-            return ActionShowStarred.self
-        case .showContextPane:
-            return ActionShowContextPane.self
-//        case .showOverlay:
-//            return ActionShowOverlay.self
-//        case .share:
-//            return ActionShare.self
-        case .showNavigation:
-            return ActionShowNavigation.self
-//        case .addToPanel:
-//            return ActionAddToPanel.self
-        case .duplicate:
-            return ActionDuplicate.self
-        case .schedule:
-            return ActionSchedule.self
-//        case .addToList:
-//            return ActionAddToList.self
-        case .delete:
-            return ActionDelete.self
-//        case .select:
-//            return ActionSelect.self
-//        case .selectAll:
-//            return ActionSelectAll.self
-//        case .unselectAll:
-//            return ActionUnselectAll.self
-//        case .showAddLabel:
-//            return ActionShowAddLabel.self
-//        case .openLabelView:
-//            return ActionOpenLabelView.self
-        case .showSessionSwitcher:
-            return ActionShowSessionSwitcher.self
-        case .forward:
-            return ActionForward.self
-        case .forwardToFront:
-            return ActionForwardToFront.self
-        case .backAsSession:
-            return ActionBackAsSession.self
-        case .openSession:
-            return ActionOpenSession.self
-        case .openSessionByName:
-            return ActionOpenSessionByName.self
-        case .closePopup:
-            return ActionClosePopup.self
-        case .noop:
-            fallthrough
-        default:
-            return ActionNoop.self
+        case .back: return ActionBack.self
+        case .addDataItem: return ActionAddDataItem.self
+        case .openView: return ActionOpenView.self
+        case .openViewByName: return ActionOpenViewByName.self
+        case .toggleEditMode: return ActionToggleEditMode.self
+        case .toggleFilterPanel: return ActionToggleFilterPanel.self
+        case .star: return ActionStar.self
+        case .showStarred: return ActionShowStarred.self
+        case .showContextPane: return ActionShowContextPane.self
+        case .showNavigation: return ActionShowNavigation.self
+        case .duplicate: return ActionDuplicate.self
+        case .schedule: return ActionSchedule.self
+        case .delete: return ActionDelete.self
+        case .showSessionSwitcher: return ActionShowSessionSwitcher.self
+        case .forward: return ActionForward.self
+        case .forwardToFront: return ActionForwardToFront.self
+        case .backAsSession: return ActionBackAsSession.self
+        case .openSession: return ActionOpenSession.self
+        case .openSessionByName: return ActionOpenSessionByName.self
+        case .closePopup: return ActionClosePopup.self
+        case .noop: fallthrough
+        default: return ActionNoop.self
+        }
+    }
+}
+
+public enum ActionProperties : String, CaseIterable {
+    case name, arguments, binding, icon, renderAs, showTitle, hasState, opensView, color,
+         backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
+    
+    func validate(_ key:String, _ value:Any?) -> Bool {
+        if value is Expression { return true }
+        
+        let prop = ActionProperties(rawValue: key)
+        switch prop {
+        case .arguments: return value is [Any?] // TODO do better by implementing something similar to executeAction
+        case .renderAs: return value is RenderType
+        case .title, .showTitle, .icon: return value is String
+        case .hasState, .opensView: return value is Bool
+        case .color, .backgroundColor, .inactiveColor, .activeBackgroundColor, .inactiveBackgroundColor:
+            return value is Color
+        default: return false
         }
     }
 }

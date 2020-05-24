@@ -15,7 +15,7 @@ public class Views {
         realm = rlm
     }
     
-    public func parse(_ def:StoredCVUDefinition, cache:Bool = true) -> [String:Any] {
+    public func parse(_ def:CVUStoredDefinition, cache:Bool = true) -> [String:Any] {
         guard let definition = def.definition else {
             return [:]
         }
@@ -92,7 +92,7 @@ public class Views {
                 else { throw "Exception: unknown definition" }
                 
                 // Store definition
-                try realm.write { realm.create(StoredCVUDefinition.self, value: values) }
+                try realm.write { realm.create(CVUStoredDefinition.self, value: values) }
             }
         }
         catch {
@@ -281,17 +281,17 @@ public class Views {
     }
     
     public func fetchDefinitions(_ selector:String = "", type:String? = nil,
-                                   domain:String? = nil) -> [StoredCVUDefinition] {
+                                   domain:String? = nil) -> [CVUStoredDefinition] {
         
         let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
             + (domain != nil  ? "and domain = '\(domain!)" : "")
         
-        return main!.realm.objects(StoredCVUDefinition.self)
+        return main!.realm.objects(CVUStoredDefinition.self)
             .filter(filter)
-            .map({ (def) -> StoredCVUDefinition in def }) // Convert to normal Array
+            .map({ (def) -> CVUStoredDefinition in def }) // Convert to normal Array
     }
     
-    func parseDefinition(_ viewDef:StoredCVUDefinition?) throws -> CVUParsedDefinition? {
+    func parseDefinition(_ viewDef:CVUStoredDefinition?) throws -> CVUParsedDefinition? {
         guard let viewDef = viewDef else {
             throw "Exception: Missing view definition"
         }
@@ -354,7 +354,7 @@ public class Views {
                 throw "Exception: Main is not defined in views"
             }
             
-            func searchForRenderer(in viewDefinition:StoredCVUDefinition) throws -> Bool {
+            func searchForRenderer(in viewDefinition:CVUStoredDefinition) throws -> Bool {
                 let parsed = try main.views.parseDefinition(viewDefinition)
                 for def in parsed?["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
                     for name in rendererNames {

@@ -114,30 +114,82 @@ public class UIElement : CVUToString {
 }
 
 public enum UIElementFamily : String, CaseIterable {
-    case VStack
-    case HStack
-    case ZStack
-    case EditorSection
-    case EditorRow
-    case EditorLabel
-    case Title
-    case Button
-    case FlowStack
-    case Text
-    case Textfield
-    case ItemCell
-    case SubView
-    case Map
-    case Picker
-    case SecureField
-    case Action
-    case MemriButton
-    case Image
-    case Circle
-    case HorizontalLine
-    case Rectangle
-    case RoundedRectangle
-    case Spacer
-    case Divider
-    case Empty
+    case VStack, HStack, ZStack, EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
+         Text, Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
+         Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, Empty
+}
+
+public enum UIElementProperties : String, CaseIterable {
+    case resizable, show, alignment, align, textalign, spacing, title, text, image, nopadding,
+         press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
+         address, systemname, cornerradius, hint, value, queryOptions, defaultValue, empty, style,
+         frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
+         shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
+    
+    func validate(_ key:String, _ value:Any) -> Bool {
+        if value is Expression { return true }
+        
+        let prop = UIElementProperties(rawValue: key)
+        switch prop {
+        case .resizable, .title, .text, .viewName, .systemname, .hint, .empty, .style, .defaultValue:
+            return value is String
+        case .show, .nopadding, .bold, .italic, .underline, .strikethrough:
+            return value is Bool
+        case .alignment: return value is VerticalAlignment || value is HorizontalAlignment
+        case .align: return value is Alignment
+        case .textalign: return value is TextAlignment
+        case .spacing, .cornerradius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity, .zindex:
+            return value is CGFloat
+        case .image: return value is File || value is String
+        case .press: return value is Action || value is [Action]
+        case .list: return value is [DataItem]
+        case .view: return value is CVUParsedDefinition || value is [String:Any]
+        case .arguments: return value is [String:Any]
+        case .location: return value is Location
+        case .address: return value is Address
+        case .value: return true
+        case .queryOptions: return value is QueryOptions
+        case .color, .background, .rowbackground: return value is Color
+        case .font:
+            if let list = value as? [Any] {
+                return list[0] is CGFloat || list[0] is CGFloat && list[1] is Font.Weight
+            }
+            else { return value is CGFloat }
+        case .padding, .margin:
+            if let list = value as? [Any] {
+                return list[0] is CGFloat && list[1] is CGFloat
+                    && list[2] is CGFloat && list[3] is CGFloat
+            }
+            else { return value is CGFloat }
+        case .cornerborder:
+            if let list = value as? [Any] {
+                return list[0] is Color && list[1] is CGFloat && list[2] is CGFloat
+            }
+            else { return false }
+        case .border:
+            if let list = value as? [Any] {
+                return list[0] is Color && list[1] is CGFloat
+            }
+            else { return false }
+        case .shadow:
+            if let list = value as? [Any] {
+                return list[0] is Color && list[1] is CGFloat
+                    && list[2] is CGFloat && list[3] is CGFloat
+            }
+            else { return false }
+        case .offset:
+            if let list = value as? [Any] {
+                return list[0] is CGFloat && list[1] is CGFloat
+            }
+            else { return false }
+        case .frame:
+            if let list = value as? [Any] {
+                return list[0] is CGFloat && list[1] is CGFloat && list[2] is CGFloat
+                    && list[3] is CGFloat && list[4] is Alignment
+            }
+            else { return false }
+        default:
+            return false
+        }
+    }
 }

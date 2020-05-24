@@ -393,16 +393,14 @@ class CVUParser {
 //    }
     
     // Based on keyword when its added to the dict
-    // Should be loaded from the outside
     let knownActions:[String:String] = {
         var result = [String:String]()
-        for name in ActionName.allCases {
+        for name in ActionFamily.allCases {
             result[name.rawValue.lowercased()] = name.rawValue
         }
         return result
     }()
     // Only when key is this should it parse the properties
-    // Should be loaded from the outside
     let knownUIElements:[String:String] = {
         var result = [String:String]()
         for name in UIElementFamily.allCases {
@@ -427,6 +425,8 @@ class CVUParser {
                     ? HorizontalAlignment.center
                     : VerticalAlignment.center
             default:
+                // TODO Warn user
+                
                 let x:String? = nil
                 return x as Any
             }
@@ -443,6 +443,8 @@ class CVUParser {
             case "leftbottom", "bottomleft": return Alignment.bottomLeading
             case "rightbottom", "bottomright": return Alignment.bottomTrailing
             default:
+                // TODO Warn user
+                
                 let x:String? = nil
                 return x as Any
             }
@@ -453,6 +455,8 @@ class CVUParser {
             case "center": return TextAlignment.center
             case "right": return TextAlignment.trailing
             default:
+                // TODO Warn user
+                
                 let x:String? = nil
                 return x as Any
             }
@@ -472,12 +476,15 @@ class CVUParser {
                         case "light": value[1] = Font.Weight.light
                         case "ultralight": value[1] = Font.Weight.ultraLight
                         case "black": value[1] = Font.Weight.black
-                        default: value[1] = Font.Weight.regular
+                        default:
+                            // TODO Warn user
+                            value[1] = Font.Weight.regular
                         }
                     }
                 }
                 return value
             }
+            // TODO Warn user
             return input
         }
     ]

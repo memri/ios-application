@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-public class StoredCVUDefinition: DataItem {
+public class CVUStoredDefinition: DataItem {
     @objc dynamic var type: String? = nil
     @objc dynamic var selector: String? = nil
     @objc dynamic var definition: String? = nil

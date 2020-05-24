@@ -155,7 +155,7 @@ public struct UIElementView: SwiftUI.View {
     
     public var body: some View {
         Group {
-            if (!has("condition") || get("condition") == true) {
+            if (!has("show") || get("show") == true) {
                 if from.type == "vstack" {
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
@@ -456,7 +456,7 @@ public struct UIElementView: SwiftUI.View {
         
         return Picker(
             item: self.item,
-            selected: dataItem ?? self.get("default"),
+            selected: dataItem ?? self.get("defaultValue"),
             title: "Select a \(emptyValue)",
             emptyValue: emptyValue,
             propDataItem: propDataItem,

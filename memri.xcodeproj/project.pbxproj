@@ -206,6 +206,8 @@
 		86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */; };
 		86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */; };
 		86CDB726246DB047007EAE67 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB725246DB046007EAE67 /* UIFont.swift */; };
+		86DDB361247AAD030051A92F /* Cascadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB360247AAD030051A92F /* Cascadable.swift */; };
+		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* HorizonalLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* HorizonalLine.swift */; };
@@ -346,7 +348,7 @@
 		5DE95A66241BC92E003ABA63 /* openview_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = openview_action.json; sourceTree = "<group>"; };
 		5DE95A69241BC954003ABA63 /* DecodableDict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodableDict.swift; sourceTree = "<group>"; };
 		5DE95A6C241BCD34003ABA63 /* back_action.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = back_action.json; sourceTree = "<group>"; };
-		5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sessions.swift; sourceTree = "<group>"; };
+		5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sessions.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		6551CB4D7D91FE1BA11F3BCA /* Pods_memriTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memriTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75A2622B303AD831114E4167 /* Pods-memri-memriUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memri-memriUITests.release.xcconfig"; path = "Target Support Files/Pods-memri-memriUITests/Pods-memri-memriUITests.release.xcconfig"; sourceTree = "<group>"; };
 		7EBEF912311A82914DCE2C3D /* Pods-memriTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.release.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -430,6 +432,8 @@
 		86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
 		86CDB723246D4D4E007EAE67 /* Mixed.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mixed.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB725246DB046007EAE67 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIFont.swift; path = memri/extension/NSAttributedString/UIFont.swift; sourceTree = SOURCE_ROOT; };
+		86DDB35E247AA9D20051A92F /* CVUValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidator.swift; sourceTree = "<group>"; };
+		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -831,6 +835,7 @@
 				86C6D895246EC33A001B87D0 /* Session.swift */,
 				5DB8EC0124598ED80028FD2E /* SessionView.swift */,
 				5DB8EC0324598FA30028FD2E /* CascadingView.swift */,
+				86DDB360247AAD030051A92F /* Cascadable.swift */,
 				5DD1E9B923FD81C5007BDF7B /* Renderers.swift */,
 				86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */,
 				86C6D893246EC0AC001B87D0 /* Definitions.swift */,
@@ -970,6 +975,7 @@
 				868EF62424766A8800C0375F /* CVUParsedDefinition.swift */,
 				868EF62624766A8800C0375F /* CVUParser.swift */,
 				863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */,
+				86DDB35E247AA9D20051A92F /* CVUValidator.swift */,
 			);
 			path = "cvu-parser";
 			sourceTree = "<group>";
@@ -1459,6 +1465,7 @@
 				8665ADD7241A8120005B3FA5 /* Main.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
 				869CA736243F9AA3009C56FF /* SessionSwitcher.swift in Sources */,
+				86DDB361247AAD030051A92F /* Cascadable.swift in Sources */,
 				5D78D072242531BE00F7BD3B /* MainNavigation.swift in Sources */,
 				5D78D0692424D4D900F7BD3B /* NavigationView.swift in Sources */,
 				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
@@ -1537,6 +1544,7 @@
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
 				86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */,
+				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,

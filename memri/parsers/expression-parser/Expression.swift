@@ -62,14 +62,23 @@ public class Expression : CVUToString {
             }
         }
             
-        throw "Exception: unable to toggle expression that is not a pure lookup"
+        throw "Exception: unable to toggle expression. Perhaps expression is not a pure lookup?"
     }
     
     public func getTypeOfDataItem() throws -> (PropertyType, DataItem, String){
-        // Analyze AST
-        // Call lookup
-        // Return information
-        return (PropertyType.string, DataItem(), "")
+        if let node = ast as? ExprLookupNode {
+            var sequence = node.sequence
+            if let lastProperty = sequence.popLast() as? ExprVariableNode {
+                let lookupNode = ExprLookupNode(sequence: sequence)
+                if let dataItem = try self.lookup(lookupNode, ViewArguments()) as? DataItem {
+                    if let propType = dataItem.objectSchema[lastProperty.name]?.type {
+                        return (propType, dataItem, lastProperty.name)
+                    }
+                }
+            }
+        }
+            
+        throw "Exception: unable to fetch type of property referenced in expression. Perhaps expression is not a pure lookup?"
     }
     
     private func parse() throws {
@@ -78,6 +87,10 @@ public class Expression : CVUToString {
         ast = try parser.parse()
         interpreter = ExprInterpreter(ast!, lookup, execFunc)
         parsed = true
+    }
+    
+    public func validate() throws {
+        try parse()
     }
     
     public func execute(_ args:ViewArguments? = nil) throws -> Any? {

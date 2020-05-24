@@ -9,64 +9,6 @@
 import Foundation
 import SwiftUI
 
-public class Cascadable {
-    var cascadeStack = [CVUParsedDefinition]()
-    var localCache = [String:Any]()
-    
-    // TODO execute x when Expression
-    func cascadeProperty<T>(_ name:String, _ defaultValue:T) -> T {
-        if let x = localCache[name] as? T { return x }
-        
-        for def in cascadeStack {
-            if let x = def[name] as? T {
-                localCache[name] = x
-                return x
-            }
-        }
-        
-        return defaultValue
-    }
-    
-    
-    // TODO support deleting items
-    func cascadeList<T>(_ name:String, _ merge:Bool = true) -> [T] {
-        if let x = localCache[name] as? [T] { return x }
-        
-        var result = [T]()
-        
-        for def in cascadeStack {
-            if let x = def[name] as? [T] {
-                if !merge {
-                    localCache[name] = x
-                    return x
-                }
-                else {
-                    result.append(contentsOf: x)
-                }
-            }
-        }
-        
-        localCache[name] = result
-        return result
-    }
-    
-    
-    func cascadeDict<T>(_ name:String, _ defaultDict:[String:T] = [:]) -> [String:T] {
-        if let x = localCache[name] as? [String:T] { return x }
-        
-        var result = defaultDict
-        
-        for def in cascadeStack {
-            if let x = def[name] as? [String:T] {
-                result.merge(x)
-            }
-        }
-        
-        localCache[name] = result
-        return result
-    }
-}
-
 public class CascadingView: Cascadable, ObservableObject {
 
     private let sessionView: SessionView
@@ -108,8 +50,6 @@ public class CascadingView: Cascadable, ObservableObject {
     var actionButton: Action? { cascadeProperty("actionButton", nil) }
     var editActionButton: Action? { cascadeProperty("editActionButton", nil) }
     
-    
-    var cascadeOrder: [String] { cascadeList("cascadeOrder") }
     var sortFields: [String] { cascadeList("sortFields") }
     var editButtons: [Action] { cascadeList("editButtons") }
     var filterButtons: [Action] { cascadeList("filterButtons") }
@@ -255,22 +195,6 @@ public class CascadingView: Cascadable, ObservableObject {
         self.cascadeStack = cascadeStack
     }
     
-    // TODO REFACTOR: Move to parser
-//    public func validate() throws {
-//        if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
-//
-//        let renderProps = self.renderConfigs.objectSchema.properties
-//        if renderProps.filter({ (property) in property.name == self.rendererName }).count == 0 {
-////            throw("Missing renderConfig for \(self.rendererName) in this view")
-//            print("Warn: Missing renderConfig for \(self.rendererName) in this view")
-//        }
-//
-//        if self.queryOptions.query == "" { throw("No query is defined for this view") }
-//        if self.actionButton == nil && self.editActionButton == nil {
-//            print("Warn: Missing action button in this view")
-//        }
-//    }
-    
     subscript(propName:String) -> Any {
         get {
             let type: Mirror = Mirror(reflecting:self)
@@ -326,7 +250,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         var activeRenderer:String? = nil
         
-        func parse(_ def:StoredCVUDefinition?, _ domain:String){
+        func parse(_ def:CVUStoredDefinition?, _ domain:String){
             do {
                 guard let def = def else {
                     throw "Exception: missing view definition"
