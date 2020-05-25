@@ -387,39 +387,36 @@ public class RootMain: Main {
     }
     
     public func boot() throws {
-        print("TERMINATING BOOT")
-        return // TODO REFACTOR BROKEN
-            
-//        // Make sure memri is installed properly
-//        try self.installer.installIfNeeded(self) {
-//
-//            // Load settings
-//            self.settings.load() {
-//                
-//                // Load NavigationCache (from cache and/or api)
-//                self.navigation.load() {
-//                
-//                    // Load views configuration
-//                    try! self.views.load(self) {
-//                    
-//                        // Load sessions configuration
-//                        try! self.sessions.load(realm, cache) {
-//                            
-//                            // Update view when sessions changes
-//                            self.cancellable = self.sessions.objectWillChange.sink { (_) in
-//                                self.scheduleUIUpdate{_ in true}
-//                            }
-//                            
-//                            self.currentSession.access()
-//                            self.currentSession.currentView.access()
-//                            
-//                            // Load current view
-//                            self.updateCascadingView()
-//                        }
-//                    }
-//                }
-//            }
-//        }
+        // Make sure memri is installed properly
+        try self.installer.installIfNeeded(self) {
+
+            // Load settings
+            self.settings.load() {
+                
+                // Load NavigationCache (from cache and/or api)
+                self.navigation.load() {
+                
+                    // Load views configuration
+                    try! self.views.load(self) {
+                    
+                        // Load sessions configuration
+                        try! self.sessions.load(realm, cache) {
+                            
+                            // Update view when sessions changes
+                            self.cancellable = self.sessions.objectWillChange.sink { (_) in
+                                self.scheduleUIUpdate{_ in true}
+                            }
+                            
+                            self.currentSession.access()
+                            self.currentSession.currentView.access()
+                            
+                            // Load current view
+                            self.updateCascadingView()
+                        }
+                    }
+                }
+            }
+        }
     }
     
     public func mockBoot() -> Main {

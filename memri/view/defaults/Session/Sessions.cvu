@@ -1,5 +1,4 @@
-
-{
+.defaultSessions {
     currentSessionIndex: 0
     sessions: {
         currentViewIndex: 4

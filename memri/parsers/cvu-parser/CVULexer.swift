@@ -27,6 +27,34 @@ public enum CVUToken {
     case BracketClose(Int, Int)
     case Nil(Int, Int)
     case EOF
+    
+    func toParts() -> [Any] {
+        var parts:[Any] = []
+        switch self {
+        case let .Operator(value, ln, ch): parts += ["Operator", value.rawValue, ln, ch]
+        case let .Bool(value, ln, ch): parts += ["Bool", value, ln, ch]
+        case let .Number(value, ln, ch): parts += ["Number", value, ln, ch]
+        case let .String(value, ln, ch): parts += ["String", value, ln, ch]
+        case let .Identifier(value, ln, ch): parts += ["Identifier", value, ln, ch]
+        case let .NamedIdentifier(value, ln, ch): parts += ["NamedIdentifier", value, ln, ch]
+        case let .StringExpression(value, ln, ch): parts += ["StringExpression", value, ln, ch]
+        case let .Expression(value, ln, ch): parts += ["Expression", value, ln, ch]
+        case let .Negation(ln, ch): parts += ["Negation", "", ln, ch]
+        case let .Comma(ln, ch): parts += ["Comma", "", ln, ch]
+        case let .Color(value, ln, ch): parts += ["Color", value, ln, ch]
+        case let .SemiColon(ln, ch): parts += ["SemiColon", "", ln, ch]
+        case let .Colon(ln, ch): parts += ["Colon", "", ln, ch]
+        case let .Newline(ln, ch): parts += ["Newline", "", ln, ch]
+        case let .CurlyBracketOpen(ln, ch): parts += ["CurlyBracketOpen", "", ln, ch]
+        case let .CurlyBracketClose(ln, ch): parts += ["CurlyBracketClose", "", ln, ch]
+        case let .BracketOpen(ln, ch): parts += ["BracketOpen", "", ln, ch]
+        case let .BracketClose(ln, ch): parts += ["BracketClose", "", ln, ch]
+        case let .Nil(ln, ch): parts += ["Nil", "", ln, ch]
+        case .EOF: parts += ["EOF", ""]
+        }
+        
+        return parts
+    }
 }
 
 public enum CVUOperator: String {

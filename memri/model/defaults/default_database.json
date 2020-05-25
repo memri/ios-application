@@ -1,293 +1,293 @@
 [
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0001.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0002.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0004.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0005.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0006.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0007.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0008.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0009.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0010.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0011.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0012.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0013.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0014.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0015.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0016.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0017.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0018.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0019.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0020.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0021.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0022.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0023.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0024.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0025.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0026.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0027.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0028.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0029.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0030.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0031.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0032.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0033.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0034.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0035.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0036.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0037.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0038.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0039.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0040.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0041.jpg"},
         "includes": [{"uid": "0x013"}]
     },
     {
-        "type": "photo",
+        "type": "Photo",
         "width": 250,
         "height": 250,
         "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0042.jpg"},
@@ -295,7 +295,7 @@
     },
     {
         "uid": "0x013",
-        "type": "person",
+        "type": "Person",
         "firstName": "Eve",
         "lastName": "Eagle",
         "age": 97,
@@ -308,8 +308,8 @@
             "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"
         },
         "labels": [
-            { "name": "Soccer team", "color": "#83ac06" },
-            { "name": "Friends from University", "color": "#ffd966" }
+            { "type": "label", "name": "Soccer team", "color": "#83ac06" },
+            { "type": "label", "name": "Friends from University", "color": "#ffd966" }
         ],
         "phoneNumbers": [
             {
@@ -391,7 +391,7 @@
     },
     {
         "uid": "0x012",
-        "type": "person",
+        "type": "Person",
         "firstName": "Bob",
         "lastName": "Brown",
         "age": 37,
@@ -409,7 +409,7 @@
     },
     {
         "uid": "0x011",
-        "type": "person",
+        "type": "Person",
         "firstName": "Alice",
         "lastName": "Awesome",
         "age": 21,
@@ -428,1290 +428,1290 @@
     },
     {
         "name": "Afghanistan",
-        "type": "country",
+        "type": "Country",
         "uid": "Afghanistan"
     },
     {
         "name": "Akrotiri",
-        "type": "country",
+        "type": "Country",
         "uid": "Akrotiri"
     },
     {
         "name": "Albania",
-        "type": "country",
+        "type": "Country",
         "uid": "Albania"
     },
     {
         "name": "Algeria",
-        "type": "country",
+        "type": "Country",
         "uid": "Algeria"
     },
     {
         "name": "American Samoa",
-        "type": "country",
+        "type": "Country",
         "uid": "American Samoa"
     },
     {
         "name": "Andorra",
-        "type": "country",
+        "type": "Country",
         "uid": "Andorra"
     },
     {
         "name": "Angola",
-        "type": "country",
+        "type": "Country",
         "uid": "Angola"
     },
     {
         "name": "Anguilla",
-        "type": "country",
+        "type": "Country",
         "uid": "Anguilla"
     },
     {
         "name": "Antarctica",
-        "type": "country",
+        "type": "Country",
         "uid": "Antarctica"
     },
     {
         "name": "Antigua and Barbuda",
-        "type": "country",
+        "type": "Country",
         "uid": "Antigua and Barbuda"
     },
     {
         "name": "Argentina",
-        "type": "country",
+        "type": "Country",
         "uid": "Argentina"
     },
     {
         "name": "Armenia",
-        "type": "country",
+        "type": "Country",
         "uid": "Armenia"
     },
     {
         "name": "Aruba",
-        "type": "country",
+        "type": "Country",
         "uid": "Aruba"
     },
     {
         "name": "Ashmore and Cartier Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Ashmore and Cartier Islands"
     },
     {
         "name": "Australia",
-        "type": "country",
+        "type": "Country",
         "uid": "Australia"
     },
     {
         "name": "Austria",
-        "type": "country",
+        "type": "Country",
         "uid": "Austria"
     },
     {
         "name": "Azerbaijan",
-        "type": "country",
+        "type": "Country",
         "uid": "Azerbaijan"
     },
     {
         "name": "Bahamas, The",
-        "type": "country",
+        "type": "Country",
         "uid": "Bahamas, The"
     },
     {
         "name": "Bahrain",
-        "type": "country",
+        "type": "Country",
         "uid": "Bahrain"
     },
     {
         "name": "Bangladesh",
-        "type": "country",
+        "type": "Country",
         "uid": "Bangladesh"
     },
     {
         "name": "Barbados",
-        "type": "country",
+        "type": "Country",
         "uid": "Barbados"
     },
     {
         "name": "Bassas da India",
-        "type": "country",
+        "type": "Country",
         "uid": "Bassas da India"
     },
     {
         "name": "Belarus",
-        "type": "country",
+        "type": "Country",
         "uid": "Belarus"
     },
     {
         "name": "Belgium",
-        "type": "country",
+        "type": "Country",
         "uid": "Belgium"
     },
     {
         "name": "Belize",
-        "type": "country",
+        "type": "Country",
         "uid": "Belize"
     },
     {
         "name": "Benin",
-        "type": "country",
+        "type": "Country",
         "uid": "Benin"
     },
     {
         "name": "Bermuda",
-        "type": "country",
+        "type": "Country",
         "uid": "Bermuda"
     },
     {
         "name": "Bhutan",
-        "type": "country",
+        "type": "Country",
         "uid": "Bhutan"
     },
     {
         "name": "Bolivia",
-        "type": "country",
+        "type": "Country",
         "uid": "Bolivia"
     },
     {
         "name": "Bosnia and Herzegovina",
-        "type": "country",
+        "type": "Country",
         "uid": "Bosnia and Herzegovina"
     },
     {
         "name": "Botswana",
-        "type": "country",
+        "type": "Country",
         "uid": "Botswana"
     },
     {
         "name": "Bouvet Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Bouvet Island"
     },
     {
         "name": "Brazil",
-        "type": "country",
+        "type": "Country",
         "uid": "Brazil"
     },
     {
         "name": "British Indian Ocean Territory",
-        "type": "country",
+        "type": "Country",
         "uid": "British Indian Ocean Territory"
     },
     {
         "name": "British Virgin Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "British Virgin Islands"
     },
     {
         "name": "Brunei",
-        "type": "country",
+        "type": "Country",
         "uid": "Brunei"
     },
     {
         "name": "Bulgaria",
-        "type": "country",
+        "type": "Country",
         "uid": "Bulgaria"
     },
     {
         "name": "Burkina Faso",
-        "type": "country",
+        "type": "Country",
         "uid": "Burkina Faso"
     },
     {
         "name": "Burma",
-        "type": "country",
+        "type": "Country",
         "uid": "Burma"
     },
     {
         "name": "Burundi",
-        "type": "country",
+        "type": "Country",
         "uid": "Burundi"
     },
     {
         "name": "Cambodia",
-        "type": "country",
+        "type": "Country",
         "uid": "Cambodia"
     },
     {
         "name": "Cameroon",
-        "type": "country",
+        "type": "Country",
         "uid": "Cameroon"
     },
     {
         "name": "Canada",
-        "type": "country",
+        "type": "Country",
         "uid": "Canada"
     },
     {
         "name": "Cape Verde",
-        "type": "country",
+        "type": "Country",
         "uid": "Cape Verde"
     },
     {
         "name": "Cayman Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Cayman Islands"
     },
     {
         "name": "Central African Republic",
-        "type": "country",
+        "type": "Country",
         "uid": "Central African Republic"
     },
     {
         "name": "Chad",
-        "type": "country",
+        "type": "Country",
         "uid": "Chad"
     },
     {
         "name": "Chile",
-        "type": "country",
+        "type": "Country",
         "uid": "Chile"
     },
     {
         "name": "China",
-        "type": "country",
+        "type": "Country",
         "uid": "China"
     },
     {
         "name": "Christmas Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Christmas Island"
     },
     {
         "name": "Clipperton Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Clipperton Island"
     },
     {
         "name": "Cocos (Keeling) Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Cocos (Keeling) Islands"
     },
     {
         "name": "Colombia",
-        "type": "country",
+        "type": "Country",
         "uid": "Colombia"
     },
     {
         "name": "Comoros",
-        "type": "country",
+        "type": "Country",
         "uid": "Comoros"
     },
     {
         "name": "Congo, Democratic Republic of the",
-        "type": "country",
+        "type": "Country",
         "uid": "Congo, Democratic Republic of the"
     },
     {
         "name": "Congo, Republic of the",
-        "type": "country",
+        "type": "Country",
         "uid": "Congo, Republic of the"
     },
     {
         "name": "Cook Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Cook Islands"
     },
     {
         "name": "Coral Sea Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Coral Sea Islands"
     },
     {
         "name": "Costa Rica",
-        "type": "country",
+        "type": "Country",
         "uid": "Costa Rica"
     },
     {
         "name": "Cote d'Ivoire",
-        "type": "country",
+        "type": "Country",
         "uid": "Cote d'Ivoire"
     },
     {
         "name": "Croatia",
-        "type": "country",
+        "type": "Country",
         "uid": "Croatia"
     },
     {
         "name": "Cuba",
-        "type": "country",
+        "type": "Country",
         "uid": "Cuba"
     },
     {
         "name": "Cyprus",
-        "type": "country",
+        "type": "Country",
         "uid": "Cyprus"
     },
     {
         "name": "Czech Republic",
-        "type": "country",
+        "type": "Country",
         "uid": "Czech Republic"
     },
     {
         "name": "Denmark",
-        "type": "country",
+        "type": "Country",
         "uid": "Denmark"
     },
     {
         "name": "Dhekelia",
-        "type": "country",
+        "type": "Country",
         "uid": "Dhekelia"
     },
     {
         "name": "Djibouti",
-        "type": "country",
+        "type": "Country",
         "uid": "Djibouti"
     },
     {
         "name": "Dominica",
-        "type": "country",
+        "type": "Country",
         "uid": "Dominica"
     },
     {
         "name": "Dominican Republic",
-        "type": "country",
+        "type": "Country",
         "uid": "Dominican Republic"
     },
     {
         "name": "Ecuador",
-        "type": "country",
+        "type": "Country",
         "uid": "Ecuador"
     },
     {
         "name": "Egypt",
-        "type": "country",
+        "type": "Country",
         "uid": "Egypt"
     },
     {
         "name": "El Salvador",
-        "type": "country",
+        "type": "Country",
         "uid": "El Salvador"
     },
     {
         "name": "Equatorial Guinea",
-        "type": "country",
+        "type": "Country",
         "uid": "Equatorial Guinea"
     },
     {
         "name": "Eritrea",
-        "type": "country",
+        "type": "Country",
         "uid": "Eritrea"
     },
     {
         "name": "Estonia",
-        "type": "country",
+        "type": "Country",
         "uid": "Estonia"
     },
     {
         "name": "Ethiopia",
-        "type": "country",
+        "type": "Country",
         "uid": "Ethiopia"
     },
     {
         "name": "Europa Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Europa Island"
     },
     {
         "name": "Falkland Islands (Islas Malvinas)",
-        "type": "country",
+        "type": "Country",
         "uid": "Falkland Islands (Islas Malvinas)"
     },
     {
         "name": "Faroe Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Faroe Islands"
     },
     {
         "name": "Fiji",
-        "type": "country",
+        "type": "Country",
         "uid": "Fiji"
     },
     {
         "name": "Finland",
-        "type": "country",
+        "type": "Country",
         "uid": "Finland"
     },
     {
         "name": "France",
-        "type": "country",
+        "type": "Country",
         "uid": "France"
     },
     {
         "name": "French Guiana",
-        "type": "country",
+        "type": "Country",
         "uid": "French Guiana"
     },
     {
         "name": "French Polynesia",
-        "type": "country",
+        "type": "Country",
         "uid": "French Polynesia"
     },
     {
         "name": "French Southern and Antarctic Lands",
-        "type": "country",
+        "type": "Country",
         "uid": "French Southern and Antarctic Lands"
     },
     {
         "name": "Gabon",
-        "type": "country",
+        "type": "Country",
         "uid": "Gabon"
     },
     {
         "name": "Gambia, The",
-        "type": "country",
+        "type": "Country",
         "uid": "Gambia, The"
     },
     {
         "name": "Gaza Strip",
-        "type": "country",
+        "type": "Country",
         "uid": "Gaza Strip"
     },
     {
         "name": "Georgia",
-        "type": "country",
+        "type": "Country",
         "uid": "Georgia"
     },
     {
         "name": "Germany",
-        "type": "country",
+        "type": "Country",
         "uid": "Germany",
         "starred": true
     },
     {
         "name": "Ghana",
-        "type": "country",
+        "type": "Country",
         "uid": "Ghana"
     },
     {
         "name": "Gibraltar",
-        "type": "country",
+        "type": "Country",
         "uid": "Gibraltar"
     },
     {
         "name": "Glorioso Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Glorioso Islands"
     },
     {
         "name": "Greece",
-        "type": "country",
+        "type": "Country",
         "uid": "Greece"
     },
     {
         "name": "Greenland",
-        "type": "country",
+        "type": "Country",
         "uid": "Greenland"
     },
     {
         "name": "Grenada",
-        "type": "country",
+        "type": "Country",
         "uid": "Grenada"
     },
     {
         "name": "Guadeloupe",
-        "type": "country",
+        "type": "Country",
         "uid": "Guadeloupe"
     },
     {
         "name": "Guam",
-        "type": "country",
+        "type": "Country",
         "uid": "Guam"
     },
     {
         "name": "Guatemala",
-        "type": "country",
+        "type": "Country",
         "uid": "Guatemala"
     },
     {
         "name": "Guernsey",
-        "type": "country",
+        "type": "Country",
         "uid": "Guernsey"
     },
     {
         "name": "Guinea",
-        "type": "country",
+        "type": "Country",
         "uid": "Guinea"
     },
     {
         "name": "Guinea-Bissau",
-        "type": "country",
+        "type": "Country",
         "uid": "Guinea-Bissau"
     },
     {
         "name": "Guyana",
-        "type": "country",
+        "type": "Country",
         "uid": "Guyana"
     },
     {
         "name": "Haiti",
-        "type": "country",
+        "type": "Country",
         "uid": "Haiti"
     },
     {
         "name": "Heard Island and McDonald Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Heard Island and McDonald Islands"
     },
     {
         "name": "Holy See (Vatican City)",
-        "type": "country",
+        "type": "Country",
         "uid": "Holy See (Vatican City)"
     },
     {
         "name": "Honduras",
-        "type": "country",
+        "type": "Country",
         "uid": "Honduras"
     },
     {
         "name": "Hong Kong",
-        "type": "country",
+        "type": "Country",
         "uid": "Hong Kong"
     },
     {
         "name": "Hungary",
-        "type": "country",
+        "type": "Country",
         "uid": "Hungary"
     },
     {
         "name": "Iceland",
-        "type": "country",
+        "type": "Country",
         "uid": "Iceland"
     },
     {
         "name": "India",
-        "type": "country",
+        "type": "Country",
         "uid": "India"
     },
     {
         "name": "Indonesia",
-        "type": "country",
+        "type": "Country",
         "uid": "Indonesia"
     },
     {
         "name": "Iran",
-        "type": "country",
+        "type": "Country",
         "uid": "Iran"
     },
     {
         "name": "Iraq",
-        "type": "country",
+        "type": "Country",
         "uid": "Iraq"
     },
     {
         "name": "Ireland",
-        "type": "country",
+        "type": "Country",
         "uid": "Ireland"
     },
     {
         "name": "Isle of Man",
-        "type": "country",
+        "type": "Country",
         "uid": "Isle of Man"
     },
     {
         "name": "Israel",
-        "type": "country",
+        "type": "Country",
         "uid": "Israel"
     },
     {
         "name": "Italy",
-        "type": "country",
+        "type": "Country",
         "uid": "Italy"
     },
     {
         "name": "Jamaica",
-        "type": "country",
+        "type": "Country",
         "uid": "Jamaica"
     },
     {
         "name": "Jan Mayen",
-        "type": "country",
+        "type": "Country",
         "uid": "Jan Mayen"
     },
     {
         "name": "Japan",
-        "type": "country",
+        "type": "Country",
         "uid": "Japan"
     },
     {
         "name": "Jersey",
-        "type": "country",
+        "type": "Country",
         "uid": "Jersey"
     },
     {
         "name": "Jordan",
-        "type": "country",
+        "type": "Country",
         "uid": "Jordan"
     },
     {
         "name": "Juan de Nova Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Juan de Nova Island"
     },
     {
         "name": "Kazakhstan",
-        "type": "country",
+        "type": "Country",
         "uid": "Kazakhstan"
     },
     {
         "name": "Kenya",
-        "type": "country",
+        "type": "Country",
         "uid": "Kenya"
     },
     {
         "name": "Kiribati",
-        "type": "country",
+        "type": "Country",
         "uid": "Kiribati"
     },
     {
         "name": "Korea, North",
-        "type": "country",
+        "type": "Country",
         "uid": "Korea, North"
     },
     {
         "name": "Korea, South",
-        "type": "country",
+        "type": "Country",
         "uid": "Korea, South"
     },
     {
         "name": "Kuwait",
-        "type": "country",
+        "type": "Country",
         "uid": "Kuwait"
     },
     {
         "name": "Kyrgyzstan",
-        "type": "country",
+        "type": "Country",
         "uid": "Kyrgyzstan"
     },
     {
         "name": "Laos",
-        "type": "country",
+        "type": "Country",
         "uid": "Laos"
     },
     {
         "name": "Latvia",
-        "type": "country",
+        "type": "Country",
         "uid": "Latvia"
     },
     {
         "name": "Lebanon",
-        "type": "country",
+        "type": "Country",
         "uid": "Lebanon"
     },
     {
         "name": "Lesotho",
-        "type": "country",
+        "type": "Country",
         "uid": "Lesotho"
     },
     {
         "name": "Liberia",
-        "type": "country",
+        "type": "Country",
         "uid": "Liberia"
     },
     {
         "name": "Libya",
-        "type": "country",
+        "type": "Country",
         "uid": "Libya"
     },
     {
         "name": "Liechtenstein",
-        "type": "country",
+        "type": "Country",
         "uid": "Liechtenstein"
     },
     {
         "name": "Lithuania",
-        "type": "country",
+        "type": "Country",
         "uid": "Lithuania"
     },
     {
         "name": "Luxembourg",
-        "type": "country",
+        "type": "Country",
         "uid": "Luxembourg"
     },
     {
         "name": "Macau",
-        "type": "country",
+        "type": "Country",
         "uid": "Macau"
     },
     {
         "name": "Macedonia",
-        "type": "country",
+        "type": "Country",
         "uid": "Macedonia"
     },
     {
         "name": "Madagascar",
-        "type": "country",
+        "type": "Country",
         "uid": "Madagascar"
     },
     {
         "name": "Malawi",
-        "type": "country",
+        "type": "Country",
         "uid": "Malawi"
     },
     {
         "name": "Malaysia",
-        "type": "country",
+        "type": "Country",
         "uid": "Malaysia"
     },
     {
         "name": "Maldives",
-        "type": "country",
+        "type": "Country",
         "uid": "Maldives"
     },
     {
         "name": "Mali",
-        "type": "country",
+        "type": "Country",
         "uid": "Mali"
     },
     {
         "name": "Malta",
-        "type": "country",
+        "type": "Country",
         "uid": "Malta"
     },
     {
         "name": "Marshall Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Marshall Islands"
     },
     {
         "name": "Martinique",
-        "type": "country",
+        "type": "Country",
         "uid": "Martinique"
     },
     {
         "name": "Mauritania",
-        "type": "country",
+        "type": "Country",
         "uid": "Mauritania"
     },
     {
         "name": "Mauritius",
-        "type": "country",
+        "type": "Country",
         "uid": "Mauritius"
     },
     {
         "name": "Mayotte",
-        "type": "country",
+        "type": "Country",
         "uid": "Mayotte"
     },
     {
         "name": "Mexico",
-        "type": "country",
+        "type": "Country",
         "uid": "Mexico"
     },
     {
         "name": "Micronesia, Federated States of",
-        "type": "country",
+        "type": "Country",
         "uid": "Micronesia, Federated States of"
     },
     {
         "name": "Moldova",
-        "type": "country",
+        "type": "Country",
         "uid": "Moldova"
     },
     {
         "name": "Monaco",
-        "type": "country",
+        "type": "Country",
         "uid": "Monaco"
     },
     {
         "name": "Mongolia",
-        "type": "country",
+        "type": "Country",
         "uid": "Mongolia"
     },
     {
         "name": "Montserrat",
-        "type": "country",
+        "type": "Country",
         "uid": "Montserrat"
     },
     {
         "name": "Morocco",
-        "type": "country",
+        "type": "Country",
         "uid": "Morocco"
     },
     {
         "name": "Mozambique",
-        "type": "country",
+        "type": "Country",
         "uid": "Mozambique"
     },
     {
         "name": "Namibia",
-        "type": "country",
+        "type": "Country",
         "uid": "Namibia"
     },
     {
         "name": "Nauru",
-        "type": "country",
+        "type": "Country",
         "uid": "Nauru"
     },
     {
         "name": "Navassa Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Navassa Island"
     },
     {
         "name": "Nepal",
-        "type": "country",
+        "type": "Country",
         "uid": "Nepal"
     },
     {
         "name": "Netherlands",
-        "type": "country",
+        "type": "Country",
         "uid": "Netherlands",
         "starred": true
     },
     {
         "name": "Netherlands Antilles",
-        "type": "country",
+        "type": "Country",
         "uid": "Netherlands Antilles"
     },
     {
         "name": "New Caledonia",
-        "type": "country",
+        "type": "Country",
         "uid": "New Caledonia"
     },
     {
         "name": "New Zealand",
-        "type": "country",
+        "type": "Country",
         "uid": "New Zealand"
     },
     {
         "name": "Nicaragua",
-        "type": "country",
+        "type": "Country",
         "uid": "Nicaragua"
     },
     {
         "name": "Niger",
-        "type": "country",
+        "type": "Country",
         "uid": "Niger"
     },
     {
         "name": "Nigeria",
-        "type": "country",
+        "type": "Country",
         "uid": "Nigeria"
     },
     {
         "name": "Niue",
-        "type": "country",
+        "type": "Country",
         "uid": "Niue"
     },
     {
         "name": "Norfolk Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Norfolk Island"
     },
     {
         "name": "Northern Mariana Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Northern Mariana Islands"
     },
     {
         "name": "Norway",
-        "type": "country",
+        "type": "Country",
         "uid": "Norway"
     },
     {
         "name": "Oman",
-        "type": "country",
+        "type": "Country",
         "uid": "Oman"
     },
     {
         "name": "Pakistan",
-        "type": "country",
+        "type": "Country",
         "uid": "Pakistan"
     },
     {
         "name": "Palau",
-        "type": "country",
+        "type": "Country",
         "uid": "Palau"
     },
     {
         "name": "Panama",
-        "type": "country",
+        "type": "Country",
         "uid": "Panama"
     },
     {
         "name": "Papua New Guinea",
-        "type": "country",
+        "type": "Country",
         "uid": "Papua New Guinea"
     },
     {
         "name": "Paracel Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Paracel Islands"
     },
     {
         "name": "Paraguay",
-        "type": "country",
+        "type": "Country",
         "uid": "Paraguay"
     },
     {
         "name": "Peru",
-        "type": "country",
+        "type": "Country",
         "uid": "Peru"
     },
     {
         "name": "Philippines",
-        "type": "country",
+        "type": "Country",
         "uid": "Philippines"
     },
     {
         "name": "Pitcairn Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Pitcairn Islands"
     },
     {
         "name": "Poland",
-        "type": "country",
+        "type": "Country",
         "uid": "Poland"
     },
     {
         "name": "Portugal",
-        "type": "country",
+        "type": "Country",
         "uid": "Portugal"
     },
     {
         "name": "Puerto Rico",
-        "type": "country",
+        "type": "Country",
         "uid": "Puerto Rico"
     },
     {
         "name": "Qatar",
-        "type": "country",
+        "type": "Country",
         "uid": "Qatar"
     },
     {
         "name": "Reunion",
-        "type": "country",
+        "type": "Country",
         "uid": "Reunion"
     },
     {
         "name": "Romania",
-        "type": "country",
+        "type": "Country",
         "uid": "Romania"
     },
     {
         "name": "Russia",
-        "type": "country",
+        "type": "Country",
         "uid": "Russia"
     },
     {
         "name": "Rwanda",
-        "type": "country",
+        "type": "Country",
         "uid": "Rwanda"
     },
     {
         "name": "Saint Helena",
-        "type": "country",
+        "type": "Country",
         "uid": "Saint Helena"
     },
     {
         "name": "Saint Kitts and Nevis",
-        "type": "country",
+        "type": "Country",
         "uid": "Saint Kitts and Nevis"
     },
     {
         "name": "Saint Lucia",
-        "type": "country",
+        "type": "Country",
         "uid": "Saint Lucia"
     },
     {
         "name": "Saint Pierre and Miquelon",
-        "type": "country",
+        "type": "Country",
         "uid": "Saint Pierre and Miquelon"
     },
     {
         "name": "Saint Vincent and the Grenadines",
-        "type": "country",
+        "type": "Country",
         "uid": "Saint Vincent and the Grenadines"
     },
     {
         "name": "Samoa",
-        "type": "country",
+        "type": "Country",
         "uid": "Samoa"
     },
     {
         "name": "San Marino",
-        "type": "country",
+        "type": "Country",
         "uid": "San Marino"
     },
     {
         "name": "Sao Tome and Principe",
-        "type": "country",
+        "type": "Country",
         "uid": "Sao Tome and Principe"
     },
     {
         "name": "Saudi Arabia",
-        "type": "country",
+        "type": "Country",
         "uid": "Saudi Arabia"
     },
     {
         "name": "Senegal",
-        "type": "country",
+        "type": "Country",
         "uid": "Senegal"
     },
     {
         "name": "Serbia and Montenegro",
-        "type": "country",
+        "type": "Country",
         "uid": "Serbia and Montenegro"
     },
     {
         "name": "Seychelles",
-        "type": "country",
+        "type": "Country",
         "uid": "Seychelles"
     },
     {
         "name": "Sierra Leone",
-        "type": "country",
+        "type": "Country",
         "uid": "Sierra Leone"
     },
     {
         "name": "Singapore",
-        "type": "country",
+        "type": "Country",
         "uid": "Singapore"
     },
     {
         "name": "Slovakia",
-        "type": "country",
+        "type": "Country",
         "uid": "Slovakia"
     },
     {
         "name": "Slovenia",
-        "type": "country",
+        "type": "Country",
         "uid": "Slovenia"
     },
     {
         "name": "Solomon Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Solomon Islands"
     },
     {
         "name": "Somalia",
-        "type": "country",
+        "type": "Country",
         "uid": "Somalia"
     },
     {
         "name": "South Africa",
-        "type": "country",
+        "type": "Country",
         "uid": "South Africa"
     },
     {
         "name": "South Georgia and the South Sandwich Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "South Georgia and the South Sandwich Islands"
     },
     {
         "name": "Spain",
-        "type": "country",
+        "type": "Country",
         "uid": "Spain"
     },
     {
         "name": "Spratly Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Spratly Islands"
     },
     {
         "name": "Sri Lanka",
-        "type": "country",
+        "type": "Country",
         "uid": "Sri Lanka"
     },
     {
         "name": "Sudan",
-        "type": "country",
+        "type": "Country",
         "uid": "Sudan"
     },
     {
         "name": "Suriname",
-        "type": "country",
+        "type": "Country",
         "uid": "Suriname"
     },
     {
         "name": "Svalbard",
-        "type": "country",
+        "type": "Country",
         "uid": "Svalbard"
     },
     {
         "name": "Swaziland",
-        "type": "country",
+        "type": "Country",
         "uid": "Swaziland"
     },
     {
         "name": "Sweden",
-        "type": "country",
+        "type": "Country",
         "uid": "Sweden"
     },
     {
         "name": "Switzerland",
-        "type": "country",
+        "type": "Country",
         "uid": "Switzerland"
     },
     {
         "name": "Syria",
-        "type": "country",
+        "type": "Country",
         "uid": "Syria"
     },
     {
         "name": "Taiwan",
-        "type": "country",
+        "type": "Country",
         "uid": "Taiwan"
     },
     {
         "name": "Tajikistan",
-        "type": "country",
+        "type": "Country",
         "uid": "Tajikistan"
     },
     {
         "name": "Tanzania",
-        "type": "country",
+        "type": "Country",
         "uid": "Tanzania"
     },
     {
         "name": "Thailand",
-        "type": "country",
+        "type": "Country",
         "uid": "Thailand"
     },
     {
         "name": "Timor-Leste",
-        "type": "country",
+        "type": "Country",
         "uid": "Timor-Leste"
     },
     {
         "name": "Togo",
-        "type": "country",
+        "type": "Country",
         "uid": "Togo"
     },
     {
         "name": "Tokelau",
-        "type": "country",
+        "type": "Country",
         "uid": "Tokelau"
     },
     {
         "name": "Tonga",
-        "type": "country",
+        "type": "Country",
         "uid": "Tonga"
     },
     {
         "name": "Trinidad and Tobago",
-        "type": "country",
+        "type": "Country",
         "uid": "Trinidad and Tobago"
     },
     {
         "name": "Tromelin Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Tromelin Island"
     },
     {
         "name": "Tunisia",
-        "type": "country",
+        "type": "Country",
         "uid": "Tunisia"
     },
     {
         "name": "Turkey",
-        "type": "country",
+        "type": "Country",
         "uid": "Turkey"
     },
     {
         "name": "Turkmenistan",
-        "type": "country",
+        "type": "Country",
         "uid": "Turkmenistan"
     },
     {
         "name": "Turks and Caicos Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Turks and Caicos Islands"
     },
     {
         "name": "Tuvalu",
-        "type": "country",
+        "type": "Country",
         "uid": "Tuvalu"
     },
     {
         "name": "Uganda",
-        "type": "country",
+        "type": "Country",
         "uid": "Uganda"
     },
     {
         "name": "Ukraine",
-        "type": "country",
+        "type": "Country",
         "uid": "Ukraine"
     },
     {
         "name": "United Arab Emirates",
-        "type": "country",
+        "type": "Country",
         "uid": "United Arab Emirates"
     },
     {
         "name": "United Kingdom",
-        "type": "country",
+        "type": "Country",
         "uid": "United Kingdom"
     },
     {
         "name": "United States",
-        "type": "country",
+        "type": "Country",
         "uid": "United States",
         "starred": true
     },
     {
         "name": "Uruguay",
-        "type": "country",
+        "type": "Country",
         "uid": "Uruguay"
     },
     {
         "name": "Uzbekistan",
-        "type": "country",
+        "type": "Country",
         "uid": "Uzbekistan"
     },
     {
         "name": "Vanuatu",
-        "type": "country",
+        "type": "Country",
         "uid": "Vanuatu"
     },
     {
         "name": "Venezuela",
-        "type": "country",
+        "type": "Country",
         "uid": "Venezuela"
     },
     {
         "name": "Vietnam",
-        "type": "country",
+        "type": "Country",
         "uid": "Vietnam"
     },
     {
         "name": "Virgin Islands",
-        "type": "country",
+        "type": "Country",
         "uid": "Virgin Islands"
     },
     {
         "name": "Wake Island",
-        "type": "country",
+        "type": "Country",
         "uid": "Wake Island"
     },
     {
         "name": "Wallis and Futuna",
-        "type": "country",
+        "type": "Country",
         "uid": "Wallis and Futuna"
     },
     {
         "name": "West Bank",
-        "type": "country",
+        "type": "Country",
         "uid": "West Bank"
     },
     {
         "name": "Western Sahara",
-        "type": "country",
+        "type": "Country",
         "uid": "Western Sahara"
     },
     {
         "name": "Yemen",
-        "type": "country",
+        "type": "Country",
         "uid": "Yemen"
     },
     {
         "name": "Zambia",
-        "type": "country",
+        "type": "Country",
         "uid": "Zambia"
     },
     {
         "name": "Zimbabwe",
-        "type": "country",
+        "type": "Country",
         "uid": "Zimbabwe"
     }
 ]

@@ -21,6 +21,64 @@ enum CVUParseErrors:Error {
     
     case MissingQuoteClose(CVUToken)
     case MissingExpressionClose(CVUToken)
+    
+    func toString(_ code:String) -> String {
+        var message = ""
+        var parts:[Any]
+        
+        func loc(_ parts:[Any]) -> String {
+            if parts[2] as? String == "" { return "at the end of the file" }
+            else { return "at line:\(parts[2] as! Int + 1) and character:\(parts[3] as! Int + 1)" }
+        }
+        func displayToken(_ parts:[Any]) -> String {
+            "\(parts[0])" + ((parts[1] as? String ?? "x") != "" ? "('\(parts[1])')" : "")
+        }
+        
+        switch self {
+        case let .UnexpectedToken(token):
+            parts = token.toParts()
+            message = "Unexpected \(displayToken(parts)) found \(loc(parts))"
+        case let .UnknownDefinition(token):
+            parts = token.toParts()
+            message = "Unknown Definition type '\(displayToken(parts))' found \(loc(parts))"
+        case let .ExpectedCharacter(char, token):
+            parts = token.toParts()
+            message = "Expected Character \(char) and found \(displayToken(parts)) instead \(loc(parts))"
+        case let .ExpectedDefinition(token):
+            parts = token.toParts()
+            message = "Expected Definition and found \(displayToken(parts)) instead \(loc(parts))"
+        case let .ExpectedIdentifier(token):
+            parts = token.toParts()
+            message = "Expected Identifier and found \(displayToken(parts)) instead \(loc(parts))"
+        case let .ExpectedKey(token):
+            parts = token.toParts()
+            message = "Expected Key and found \(displayToken(parts)) instead \(loc(parts))"
+        case let .ExpectedString(token):
+            parts = token.toParts()
+            message = "Expected String and found \(displayToken(parts)) instead \(loc(parts))"
+        case let .MissingQuoteClose(token):
+            parts = token.toParts()
+            message = "Missing quote \(loc(parts))"
+        case let .MissingExpressionClose(token):
+            parts = token.toParts()
+            message = "Missing expression close token '}}' \(loc(parts))"
+        }
+        
+        let lines = code.split(separator: "\n")
+        if let line = parts[2] as? Int {
+            let ch = parts[3] as! Int
+            let beforeLines = lines[max(0, line - 10)...line-1].joined(separator: "\n")
+            let afterLines = lines[line...min(line + 10, lines.count)].joined(separator: "\n")
+            
+            return message + "\n\n"
+                + beforeLines + "\n"
+                + Array(0..<ch-1).map{_ in "-"}.joined() + "^\n"
+                + afterLines
+        }
+        else {
+            return message
+        }
+    }
 }
 
 class CVUParser {
@@ -172,7 +230,11 @@ class CVUParser {
         }
         
         if case CVUOperator.ConditionEquals = op {
-            guard case let CVUToken.String(name, _, _) = popCurrentToken() else {
+            var name:String
+            
+            if case let CVUToken.String(nm, _, _) = popCurrentToken() { name = nm }
+            else if case let CVUToken.Identifier(nm, _, _) = lastToken! { name = nm }
+            else {
                 throw CVUParseErrors.ExpectedString(lastToken!)
             }
             
@@ -236,6 +298,7 @@ class CVUParser {
         }
         
         while true {
+            print(peekCurrentToken())
             switch (popCurrentToken()) {
             case let .Bool(v, _, _):
                 stack.append(v)
@@ -287,18 +350,17 @@ class CVUParser {
                         lastKey = value
                     }
                     else {
-                        if case CVUToken.CurlyBracketOpen = nextToken {
-                            if let type = knownUIElements[value.lowercased()] {
-                                var properties:[String:Any] = [:]
-                                if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
-                                    _ = popCurrentToken()
-                                    properties = try parseDict(value)
-                                }
-                                
-                                addUIElement(type, &properties)
-                                continue
+                        if let type = knownUIElements[value.lowercased()] {
+                            var properties:[String:Any] = [:]
+                            if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
+                                _ = popCurrentToken()
+                                properties = try parseDict(value)
                             }
+                            
+                            addUIElement(type, &properties)
+                            continue
                         }
+                        else if case CVUToken.CurlyBracketOpen = nextToken { }
                         else {
                             throw CVUParseErrors.ExpectedKey(lastToken!)
                         }

@@ -25,9 +25,9 @@ Address[] {
         EditorRow {
             title: "{.type}"
             nopadding: {{!readOnly}}
-        } [
+            
             HStack {
-                condition: {{readOnly}}
+                show: {{readOnly}}
                 Text {
                     text: "{.computedTitle()}"
                     font: [16]
@@ -43,34 +43,33 @@ Address[] {
                     border: "#DDD" 1
                     margin: 0 0 10 0
                 }
-            ]
+            }
             HStack {
-                condition: {{!readOnly}}
+                show: {{!readOnly}}
                 EditorLabel {
                     title: "{.type}"
                     edge: {{edge}}
                     hierarchy: address
                 }
                 VStack {
-                    Textfield { hint: Street value: "{.street}" rows: 2 }
-                    Textfield { hint: City value: "{.city}" }
+                    Textfield { hint: Street, value: "{.street}", rows: 2 }
+                    Textfield { hint: City, value: "{.city}" }
                     HStack {
-                        Textfield { hint: "State" value: "{.state}" }
-                        Textfield { hint: "Zip" value: "{.postalCode}" }
+                        Textfield { hint: "State", value: "{.state}" }
+                        Textfield { hint: "Zip", value: "{.postalCode}" }
                     }
                     Picker {
                         empty: Country
                         value: "{.country}"
-                        default: "{me.address[primary = true].country}"
+                        defaultValue: "{me.address[primary = true].country}"
                         queryOptions: {
                             query: "country"
                             sortProperty: name
                         }
                     }
                 }
-            ]
-        ]
-        
+            }
+        }
     }
 }
             
@@ -84,7 +83,7 @@ Address {
         groups {
             dates: dateCreated dateModified dateAccessed changelog
             address: street city state postalCode country
-            location: [location]
+            location: location
         }
         sequence: location labels address other dates
         
@@ -93,7 +92,7 @@ Address {
             sectionTitle: ""
             
             Map {
-                location: {.}
+                location: {{.}}
                 minHeight: 150
                 maxHeight: 150
             }
@@ -106,25 +105,24 @@ Address {
                 padding: 10 36 5 36
                 
                 Text {
-                    condition: {!.labels.count}
+                    show: {{!.labels.count}}
                     text: "no labels yet"
                 }
                 FlowStack {
-                    list {.labels}
+                    list: {{.labels}}
                     
                     button {
-                        press: {
-                            actionName: openViewByName
-                            actionArgs: [
+                        press: openViewByName {
+                            arguments: [
                                 all-items-with-label
                                 {
-                                    name: Soccer team
+                                    name: "Soccer team"
                                     uid: 0x0124
                                 }
                             ]
                         }
                         VStack {
-                            background: {.color}
+                            background: {{.color}}
                             cornerRadius: 5
                             
                             Text {
@@ -142,13 +140,13 @@ Address {
             VStack {
                 Text {
                     text: {{.country.name}}
-                    condition: {{readOnly}}
+                    show: {{readOnly}}
                 }
                 Picker {
-                    empty: Country
+                    empty: "Country"
                     value: {{.country}}
-                    default: {{me.address[primary = true].country}}
-                    condition: {{!readOnly}}
+                    defaultValue: {{me.address[primary = true].country}}
+                    show: {{!readOnly}}
                     queryOptions: {
                         query: "country"
                         sortProperty: name

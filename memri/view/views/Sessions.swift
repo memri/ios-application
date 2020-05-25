@@ -142,18 +142,16 @@ public class Sessions: DataItem {
     }
     
  
-    public func install(_ realm:Realm) {
-        // Load default sessions from the package
-        let defaultSessions:Sessions = try! Sessions.fromJSONFile("default_sessions")
-        
+    public func install(_ realm:Realm) throws {
         fetchUID(realm)
         
-        // Force same primary key
-        defaultSessions.uid = self.uid
-        
-        // Store session
-        try! realm.write {
-            realm.add(defaultSessions, update: .modified)
+        try realm.write {
+            // Load default sessions from the package and store in the database
+            realm.create(CVUStoredDefinition.self, value: [
+                "type": "sessions",
+                "selector": "[sessions = \"\(self.uid)\"]",
+                "definition": try stringFromFile("Sessions", "cvu")
+            ])
         }
     }
     

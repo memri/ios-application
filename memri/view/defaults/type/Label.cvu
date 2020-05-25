@@ -21,16 +21,16 @@ Label[]: {
                     alignment: left
                     spacing: 5
                     
-                    Text { text: {.name} bold: true }
+                    Text { text: "{.name}", bold: true }
                     Text {
-                        text: {.comment}
+                        text: "{.comment}"
                         removeWhiteSpace: true
                         maxChar: 100
                     }
                 }
                 Spacer
                 RoundedRectangle {
-                    color: {.color}
+                    color: {{.color}}
                     maxHeight: 25
                     maxWidth: 25
                     align: center
@@ -55,11 +55,11 @@ Label[]: {
                 HStack {
                     color: #FFF
                     cornerRadius: 5
-                    background: {.color}
+                    background: {{.color}}
                     
                     Spacer
                     Text {
-                        text: {.name}
+                        text: "{.name}"
                         bold: true
                         padding: 3 0 3 0
                     }
@@ -67,7 +67,7 @@ Label[]: {
                 }
                 Spacer
                 Text {
-                    text: {.comment}
+                    text: "{.comment}"
                     removeWhiteSpace: true
                     font: 10
                     maxChar: 100

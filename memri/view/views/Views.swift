@@ -69,12 +69,23 @@ public class Views {
     
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
+        let code = getDefaultViewContents()
+        
         do {
-            let parser = CVU(getDefaultViewContents(),
-                                              lookup: lookupValueOfVariables,
-                                              execFunc: executeFunction)
+            let cvu = CVU(code, lookup: lookupValueOfVariables, execFunc: executeFunction)
+            let parsedDefinitions = try cvu.parse() // TODO this could be optimized
             
-            let parsedDefinitions = try parser.parse() // TODO this could be optimized
+            let validator = CVUValidator()
+            if !validator.validate(parsedDefinitions) {
+                validator.debug()
+                if validator.warnings.count > 0 {
+                    // TODO REPORT TO USER
+                }
+                if validator.errors.count > 0 {
+                    // TODO REPORT TO USER
+                    throw "Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
+                }
+            }
             
             // Loop over lookup table with named views
             for def in parsedDefinitions {
@@ -95,8 +106,11 @@ public class Views {
                 try realm.write { realm.create(CVUStoredDefinition.self, value: values) }
             }
         }
-        catch {
+        catch let error {
+            let error = error as! CVUParseErrors
+            
             // TODO Fatal error handling
+            throw "Parse Error: \(error.toString(code))"
         }
     }
 
@@ -283,8 +297,8 @@ public class Views {
     public func fetchDefinitions(_ selector:String = "", type:String? = nil,
                                    domain:String? = nil) -> [CVUStoredDefinition] {
         
-        let filter = (type != nil ? "type = \(type ?? "")" : "selector = '\(selector)'")
-            + (domain != nil  ? "and domain = '\(domain!)" : "")
+        let filter = (type != nil ? "type = '\(type ?? "")'" : "selector = '\(selector)'")
+            + (domain != nil  ? "and domain = '\(domain!)'" : "")
         
         return main!.realm.objects(CVUStoredDefinition.self)
             .filter(filter)
@@ -442,7 +456,7 @@ public class Views {
 }
 
 func getDefaultViewContents() -> String{
-    let urls = Bundle.main.urls(forResourcesWithExtension: "ml", subdirectory: ".")
+    let urls = Bundle.main.urls(forResourcesWithExtension: "cvu", subdirectory: ".")
     return urls == nil ? "":
         urls!.compactMap{try? String(contentsOf: $0)}.joined(separator: "\n")
 }

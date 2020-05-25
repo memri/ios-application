@@ -85,15 +85,6 @@ public class PodAPI {
     }
  
     public func get(_ id:String, _ callback: (_ error:Error?, _ item:DataItem) -> Void) -> Void {
-        if id == "sessions" {
-            let jsonString = try! stringFromFile("default_sessions", "json")
-            callback(nil, SessionResult(value: ["type": "sessions", "json": jsonString]))
-            return
-        }
-        
-//        let note = Note()
-//        note.id = id
-        
         callback(nil, Note(value: ["id": id]))
     }
     

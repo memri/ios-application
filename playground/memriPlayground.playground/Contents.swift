@@ -4,9 +4,9 @@ import SwiftUI
 import PlaygroundSupport
 
 
-enum Foo:String {
-    case test
-}
+let x = ("asdads", 10)
 
-let x = Foo(rawValue: "test2")
-print(x)
+if let (a,b,c) = x {
+    print(x.0)
+    print(x.1)
+}

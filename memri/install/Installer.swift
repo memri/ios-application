@@ -40,14 +40,15 @@ public class Installer {
             try main.views.install()
             
             // Load default sessions in database
-            main.sessions.install(main.realm)
+            try main.sessions.install(main.realm)
             
             // Installation complete
-            try! realm.write {
-                realm.add(AuditItem(value: [
+            try realm.write {
+                realm.create(AuditItem.self, value: [
                     "action": "install",
                     "date": Date(),
-                    "contents": serialize(["version": "1.0"])]))
+                    "contents": serialize(["version": "1.0"])
+                ])
             }
         }
         

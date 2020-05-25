@@ -619,6 +619,24 @@ class CVUParserTests: XCTestCase {
         """)
     }
     
+    func testUIElementWithoutProperties() throws {
+        let snippet = """
+        Person {
+            VStack {
+                alignment: left
+                Text { font: 12 light }
+                Spacer
+                Text { maxheight: 500 }
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), """
+
+        """)
+    }
+    
+    
     func testSerialization() throws {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
@@ -873,6 +891,34 @@ class CVUParserTests: XCTestCase {
         XCTFail()
     }
     
+    /*
+     FUTURE TESTS:
+     This has the wrong line number (off by one):
+     Photo {
+         name: "all-photos"
+         title: "All Photos"
+         defaultRenderer: thumbnail
+         queryOptions {
+             query: "photo"
+             sortProperty: dateModified
+             sortAscending: false
+         },
+         emptyResultText: "There are no photos here yet",
+         
+         editActionButton: toggleEditMode
+         filterButtons: [ showStarred toggleFilterPanel ]
+         
+         [renderer = thumbnail] {
+             itemInset: 1
+             edgeInset: 0 0 0 0
+             Image, {
+                 image: "{.file}" /* ALLOW BOTH STRINGS AND FILES*/
+                 resizable: fill
+             }
+         }
+     }
+     
+     */
     
     // Test identifier { when its means as a key:object
     

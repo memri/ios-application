@@ -1,4 +1,4 @@
-AuditItem[]: {
+AuditItem[] {
     name: "all-audititems"
     title: "All Log Entries"
     queryOptions {
@@ -7,8 +7,12 @@ AuditItem[]: {
         sortAscending: false
     }
     emptyResultText: "There are no log entries here yet"
-    sortFields: [date]
+    sortFields: date
     defaultrenderer: list
+    
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
+    
     [renderer = list]{
         VStack {
             padding: 5
@@ -31,7 +35,7 @@ AuditItem[]: {
             }
             Text {
                 text: "{.contents}"
-                font: 14 light]
+                font: 14 light
                 removeWhiteSpace: true
                 maxChar: 100
                 cornerRadius: 5
@@ -40,6 +44,4 @@ AuditItem[]: {
             }
         }
     }
-    editActionButton: { actionName: toggleEditMode }
-    filterButtons: [ showStarred toggleFilterPanel ]
 }
