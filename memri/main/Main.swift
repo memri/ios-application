@@ -331,6 +331,9 @@ public class Main: ObservableObject {
         self.cascadingView = cascadingView
         self.navigation = navigation
         self.renderers = renderers
+        
+        // TODO: FIX
+        self.cascadingView.main = self
     }
 }
 

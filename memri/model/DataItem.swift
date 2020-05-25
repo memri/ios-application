@@ -15,6 +15,8 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// uid of the DataItem
     @objc dynamic var uid:String = DataItem.generateUUID()
+    /// memriID of the DataItem
+    @objc dynamic var memriID:String =  DataItem.generateUUID()
     /// Boolean whether the DataItem has been deleted
     @objc dynamic var deleted:Bool = false
     /// The last version loaded from the server

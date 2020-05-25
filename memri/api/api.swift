@@ -64,7 +64,9 @@ public class PodAPI {
     
     private func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         let className = item.objectSchema[prop]?.objectClassName
-        let family = DataItemFamily(rawValue: className!.lowercased())!
+        // TODO TEMP FIX
+        let family = DataItemFamily(rawValue: className!)!
+//        let family = DataItemFamily(rawValue: className!.lowercased())!
         return family.getCollection(item[prop] as Any)
     }
     
@@ -153,7 +155,7 @@ public class PodAPI {
     ///   - item: The data item to create on the pod
     ///   - callback: Function that is called when the task is completed either with the new uid, or an error
     public func create(_ item: DataItem,
-                       _ callback: @escaping (_ error: Error?, _ uid: String?) -> Void) -> Void {
+                       _ callback: @escaping (_ error: Error?, _ memriID: String?) -> Void) -> Void {
         
         self.http(.POST, path: "items", body: toJSON(item, removeUID:true)) { error, data in
             callback(error, data != nil ? String(data: data!, encoding: .utf8) ?? "" : nil)
