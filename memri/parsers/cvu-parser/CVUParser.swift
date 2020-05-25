@@ -181,10 +181,14 @@ class CVUParser {
             }
             
             switch type {
-            case "style": return CVUParsedStyleDefinition("[style = \"\(name)\"]", name:name)
-            case "color": return CVUParsedColorDefinition("[color = \"\(name)\"]", name:name)
-            case "renderer": return CVUParsedRendererDefinition("[renderer = \"\(name)\"]", name:name)
-            case "language": return CVUParsedLanguageDefinition("[language = \"\(name)\"]", name:name)
+            case "sessions": return CVUParsedSessionsDefinition("[sessions = \(name)]", name:name)
+            case "session": return CVUParsedSessionDefinition("[session = \(name)]", name:name)
+            case "view": return CVUParsedViewDefinition("[view = \(name)]", name:name)
+            case "style": return CVUParsedStyleDefinition("[style = \(name)]", name:name)
+            case "datasource": return CVUParsedDatasourceDefinition("[datasource = \(name)]", name:name)
+            case "color": return CVUParsedColorDefinition("[color = \(name)]", name:name)
+            case "renderer": return CVUParsedRendererDefinition("[renderer = \(name)]", name:name)
+            case "language": return CVUParsedLanguageDefinition("[language = \(name)]", name:name)
             default:
                 throw CVUParseErrors.UnknownDefinition(typeToken)
             }
@@ -199,11 +203,11 @@ class CVUParser {
                           lookup: lookup, execFunc: execFunc)
     }
     
-    func parseDict(_ UIElementName:String? = nil) throws -> [String:Any] {
+    func parseDict(_ uiElementName:String? = nil) throws -> [String:Any] {
         var dict = [String:Any]()
         var stack = [Any]()
         
-        let forUIElement = knownUIElements[UIElementName?.lowercased() ?? ""] != nil
+        let forUIElement = knownUIElements[uiElementName?.lowercased() ?? ""] != nil
         var lastKey:String? = nil
         var isArrayMode = false
         
@@ -211,10 +215,10 @@ class CVUParser {
             if stack.count > 0 {
                 if forUIElement, let convert = specialTypedProperties[lastKey!] {
                     if !isArrayMode && stack.count == 1 {
-                        dict[lastKey!] = convert(stack[0], UIElementName!)
+                        dict[lastKey!] = convert(stack[0], uiElementName!)
                     }
                     else if isArrayMode || stack.count > 0 {
-                        dict[lastKey!] = convert(stack, UIElementName!)
+                        dict[lastKey!] = convert(stack, uiElementName!)
                     }
                 }
                 else {
@@ -226,7 +230,7 @@ class CVUParser {
             }
         }
         
-        func addUIElement(_ type:String, _ properties: inout [String:Any]){
+        func addUIElement(_ type:UIElementFamily, _ properties: inout [String:Any]){
             var children = dict["children"] as? [UIElement] ?? [UIElement]()
             let subChildren = properties.removeValue(forKey: "children")
             children.append(UIElement(type,
@@ -268,6 +272,11 @@ class CVUParser {
                         var value = dict["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [CVUParsedViewDefinition]()
                         value.append(selector)
                         dict["viewDefinitions"] = value
+                        _ = try parseDefinition(selector)
+                        lastKey = nil
+                    }
+                    else if let selector = selector as? CVUParsedDatasourceDefinition {
+                        dict["datasourceDefinition"] = selector
                         _ = try parseDefinition(selector)
                         lastKey = nil
                     }
@@ -315,7 +324,7 @@ class CVUParser {
                             addUIElement(type, &properties)
                             continue
                         }
-                        else if value.lowercased() == "queryOptions" {
+                        else if value.lowercased() == "datasource" {
                             
                         }
                         else if case CVUToken.CurlyBracketOpen = nextToken { }
@@ -341,7 +350,13 @@ class CVUParser {
                     }
                     
                     let arguments = options.removeValue(forKey: "arguments") as? [String:Any] ?? [:]
-                    stack.append(Action(name, arguments:arguments, values:options))
+                    if let actionFamily = ActionFamily(rawValue: name) {
+                        let ActionType = ActionFamily.getType(actionFamily)()
+                        stack.append(ActionType.init(arguments:arguments, values:options))
+                    }
+                    else {
+                        // TODO ERROR REPORTING
+                    }
                 }
                 else {
                     stack.append(value)
@@ -421,10 +436,10 @@ class CVUParser {
         return result
     }()
     // Only when key is this should it parse the properties
-    let knownUIElements:[String:String] = {
-        var result = [String:String]()
+    let knownUIElements:[String:UIElementFamily] = {
+        var result = [String:UIElementFamily]()
         for name in UIElementFamily.allCases {
-            result[name.rawValue.lowercased()] = name.rawValue
+            result[name.rawValue.lowercased()] = name
         }
         return result
     }()

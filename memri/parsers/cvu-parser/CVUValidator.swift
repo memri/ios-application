@@ -9,7 +9,7 @@ import SwiftUI
 
 /*
  TODO:
-    - queryOptions (cascading, etc)
+    - datasource (cascading, etc)
     - case insensitive fields for definition
     - include
     - when looking for an array but there is only one element, wrap it in an array (while cascading)
@@ -28,7 +28,7 @@ import SwiftUI
 //            print("Warn: Missing renderConfig for \(self.rendererName) in this view")
 //        }
 //
-//        if self.queryOptions.query == "" { throw("No query is defined for this view") }
+//        if self.datasource.query == "" { throw("No query is defined for this view") }
 //        if self.actionButton == nil && self.editActionButton == nil {
 //            print("Warn: Missing action button in this view")
 //        }
@@ -151,7 +151,7 @@ class CVUValidator {
         if definition is CVUParsedSessionsDefinition {
             check(definition) { (key, value) in
                 switch key {
-                case "currentSessionIndex": return value is Int
+                case "currentSessionIndex": return value is Double
                 case "sessionDefinitions": return value is [CVUParsedSessionDefinition]
                 default: throw "Unknown"
                 }
@@ -161,7 +161,7 @@ class CVUValidator {
             check(definition) { (key, value) in
                 switch key {
                 case "name": return value is String
-                case "currentViewIndex": return value is Int
+                case "currentViewIndex": return value is Double
                 case "viewDefinitions": return value is [CVUParsedViewDefinition]
                 case "editMode", "showFilterPanel", "showContextPane": return value is Bool
                 case "screenshot": return value is File
@@ -176,7 +176,7 @@ class CVUValidator {
                      "activeRenderer", "defaultRenderer", "backTitle", "searchHint":
                     return value is String
                 case "userState": return value is [String:Any] // TODO
-                case "queryOptions": return value is [String:Any] // TODO
+                case "datasourceDefinition": return value is CVUParsedDatasourceDefinition
                 case "viewArguments": return value is [String:Any] // TODO
                 case "showLabels": return value is Bool
                 case "actionButton", "editActionButton":

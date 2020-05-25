@@ -15,16 +15,15 @@
             title: "{displayName}"
             
             Text {
-                condition: {{!.labels.count}}
+                show: {{!.labels.count}}
                 text: "no labels yet"
             }
             FlowStack {
                 list: {{.labels}}
                     
                 button {
-                    press: {
-                        actionName: openViewByName
-                        actionArgs: [
+                    press: openViewByName {
+                        arguments: [
                             all-items-with-label
                             {
                                 name: Soccer team

@@ -13,7 +13,7 @@ public class Cascadable {
     var localCache = [String:Any]()
     
     // TODO execute x when Expression
-    func cascadeProperty<T>(_ name:String, _ defaultValue:T) -> T {
+    func cascadeProperty<T>(_ name:String) -> T? {
         if let x = localCache[name] as? T { return x }
         
         for def in cascadeStack {
@@ -23,7 +23,7 @@ public class Cascadable {
             }
         }
         
-        return defaultValue
+        return nil
     }
     
     

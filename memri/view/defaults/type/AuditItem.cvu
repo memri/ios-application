@@ -1,7 +1,7 @@
 AuditItem[] {
     name: "all-audititems"
     title: "All Log Entries"
-    queryOptions {
+     [datasource = pod] {
         query: "audititem"
         sortProperty: date
         sortAscending: false

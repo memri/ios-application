@@ -12,13 +12,15 @@ public class Languages {
     
     public func load(_ definitions:[CVUParsedDefinition]) {
         for def in definitions {
-            for (keyword, naturalLanguageString) in def.parsed {
-                if keywords[keyword] != nil {
-                    // TODO warn developers
-                    print("Keyword already exists \(keyword) for language \(self.currentLanguage)")
-                }
-                else {
-                    keywords[keyword] = naturalLanguageString as? String
+            if def.name == currentLanguage {
+                for (keyword, naturalLanguageString) in def.parsed {
+                    if keywords[keyword] != nil {
+                        // TODO warn developers
+                        print("Keyword already exists \(keyword) for language \(self.currentLanguage)")
+                    }
+                    else {
+                        keywords[keyword] = naturalLanguageString as? String
+                    }
                 }
             }
         }

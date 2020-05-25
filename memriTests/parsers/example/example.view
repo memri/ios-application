@@ -113,7 +113,7 @@
                 view: {
                     defaultRenderer: timeline
                     
-                    queryOptions {
+                    datasource {
                         query: "AuditItem appliesTo:{.id}"
                         sortProperty: dateCreated
                         sortAscending: true
@@ -143,7 +143,7 @@
                 view: {
                     defaultRenderer: timeline
                     
-                    queryOptions {
+                    datasource {
                         query: "AuditItem appliesTo:{.id}"
                         sortProperty: dateCreated
                         sortAscending: true
@@ -201,7 +201,7 @@ Person {
                 view {
                     defaultRenderer: thumbnail.grid
                     
-                    queryOptions {
+                    datasource {
                         query: "photo AND ANY includes.uid = '0x013'"
                     }
                     
@@ -344,7 +344,7 @@ Person[] {
     defaultRenderer: list
     emptyResultText: "There are no people here yet"
     
-    queryOptions {
+    datasource {
         query: "person"
         sortProperty: dateModified
     }

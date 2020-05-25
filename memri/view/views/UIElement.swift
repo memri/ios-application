@@ -9,11 +9,11 @@ import SwiftUI
 import RealmSwift
     
 public class UIElement : CVUToString {
-    var type: String
+    var type: UIElementFamily
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
     
-    init(_ type: String, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
+    init(_ type: UIElementFamily, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
         self.type = type
         self.children = children ?? self.children
         self.properties = properties
@@ -39,6 +39,8 @@ public class UIElement : CVUToString {
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
+                viewArguments.set(".", item)
+                
                 do { let x:T? = try expr.execute(viewArguments) as? T; return x }
                 catch {
                     // TODO Refactor error handling
@@ -123,7 +125,7 @@ public enum UIElementFamily : String, CaseIterable {
 public enum UIElementProperties : String, CaseIterable {
     case resizable, show, alignment, align, textalign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerradius, hint, value, queryOptions, defaultValue, empty, style,
+         address, systemname, cornerradius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -149,7 +151,7 @@ public enum UIElementProperties : String, CaseIterable {
         case .location: return value is Location
         case .address: return value is Address
         case .value: return true
-        case .queryOptions: return value is QueryOptions
+        case .datasource: return value is Datasource
         case .color, .background, .rowbackground: return value is Color
         case .font:
             if let list = value as? [Any] {

@@ -9,15 +9,9 @@ Session {
     emptyResultText: "There are no sessions here yet"
     defaultRenderer: thumbnail
     
-    /* sortFields: [title, dateModified, dateAccessed, dateCreated] */
-    /* sortFields: title dateModified dateAccessed dateCreated */
-    sortFields:
-        title
-        dateModified
-        dateAccessed
-        dateCreated
+    sortFields: title dateModified dateAccessed dateCreated
     
-    queryOptions {
+    [datasource = pod] {
         query: "session"
         sortProperty: dateAccessed
         sortAscending: false

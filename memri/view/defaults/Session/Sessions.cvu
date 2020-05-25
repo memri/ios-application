@@ -1,31 +1,32 @@
-.defaultSessions {
+
+[sessions = defaultSessions] {
     currentSessionIndex: 0
     
     [session] {
         currentViewIndex: 4
         [view] {
-            queryOptions: {
-                query: label
+            [datasource = pod] {
+                query: Label
             }
         }
         [view] {
-            queryOptions: {
-                query: person
+            [datasource = pod] {
+                query: Person
             }
         }
         [view] {
-            queryOptions: {
-                query: session
+            [datasource = pod] {
+                query: Session
             }
         }
         [view] {
-            queryOptions: {
-                query: audititem
+            [datasource = pod] {
+                query: Audititem
             }
         }
         [view] {
-            queryOptions: {
-                query: note
+            [datasource = pod] {
+                query: Note
             }
         }
     }

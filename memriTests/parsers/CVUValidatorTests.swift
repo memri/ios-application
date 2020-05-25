@@ -173,7 +173,7 @@ class CVUValidatorTests: XCTestCase {
                         view: {
                             defaultRenderer: timeline
                             
-                            queryOptions {
+                            datasource {
                                 query: "AuditItem appliesTo:{.id}"
                                 sortProperty: dateCreated
                                 sortAscending: true
@@ -189,7 +189,7 @@ class CVUValidatorTests: XCTestCase {
                     title: "{$starred} {type.plural()}"
                     arguments: {
                         name: "filter-starred"
-                        fromTemplate: "all-{type}"
+                        include: "all-{type}"
                     }
                 }
                 openViewByName {

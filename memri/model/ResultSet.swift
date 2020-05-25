@@ -12,7 +12,7 @@ import Foundation
 public class ResultSet: ObservableObject {
  
     /// Object describing the query and postprocessing instructions
-    var queryOptions: QueryOptions = QueryOptions(query: "")
+    var datasource: Datasource = Datasource(query: "")
     /// Resulting DataItems
     var items: [DataItem] = []
     /// Nr of items in the resultset
@@ -30,7 +30,7 @@ public class ResultSet: ObservableObject {
     var determinedType: String? {
         // TODO implement (more) proper query language (and parser)
         
-        if let query = self.queryOptions.query, query != "" {
+        if let query = self.datasource.query, query != "" {
             if let typeName = query.split(separator: " ").first {
                 return String(typeName == "*" ? "mixed" : typeName)
             }
@@ -42,7 +42,7 @@ public class ResultSet: ObservableObject {
     var isList: Bool {
         // TODO change this to be a proper query parser
         
-        let (typeName, filter) = cache.parseQuery((self.queryOptions.query ?? ""))
+        let (typeName, filter) = cache.parseQuery((self.datasource.query ?? ""))
         
         if let type = DataItemFamily(rawValue: typeName) {
             let primKey = type.getPrimaryKey()
@@ -91,8 +91,8 @@ public class ResultSet: ObservableObject {
         // Only execute one loading process at the time
         if !isLoading {
         
-            // Validate queryOptions
-            if queryOptions.query == "" {
+            // Validate datasource
+            if datasource.query == "" {
                 throw "Exception: No query specified when loading result set"
             }
             
@@ -103,7 +103,7 @@ public class ResultSet: ObservableObject {
             updateUI()
         
             // Execute the query
-            cache.query(queryOptions) { (error, result) -> Void in
+            cache.query(datasource) { (error, result) -> Void in
                 if let result = result {
                     
                     // Set data and count
@@ -212,7 +212,7 @@ public class ResultSet: ObservableObject {
     /// - Remark: currently unused
     /// - Todo: Implement
     /// - Parameter options:
-    public func resort(_ options:QueryOptions) {
+    public func resort(_ options:Datasource) {
         
     }
     

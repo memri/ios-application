@@ -9,46 +9,52 @@ import RealmSwift
 
 public class UserState: Object {
     @objc dynamic var uid: String = DataItem.generateUUID()
+    @objc dynamic var state:String = ""
     
-    let state:String = ""
+    var onFirstSave: ((UserState) -> Void)? = nil
     
-    subscript<T>(propName:String) -> T? {
-        get {
-            let x = self.asDict()
-            
-            if T.self == DataItem.self {
-                if let lookup = x[propName] as? [String:Any] {
-                    if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
-                        let x:DataItem? = realm?.object(
-                            ofType: DataItemFamily.getType(type)() as! DataItem.Type,
-                            forPrimaryKey: lookup["uid"] as? String ?? "")
-                        return x as? T
-                    }
+    func get<T>(_ propName:String) -> T? {
+        let x = self.asDict()
+        
+        if T.self == DataItem.self {
+            if let lookup = x[propName] as? [String:Any] {
+                if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
+                    let x:DataItem? = realm?.object(
+                        ofType: DataItemFamily.getType(type)() as! DataItem.Type,
+                        forPrimaryKey: lookup["uid"] as? String ?? "")
+                    return x as? T
                 }
-                
-                return nil
             }
             
-            return x[propName] as? T
+            return nil
         }
-        set(newValue) {
-            var x = self.asDict()
-            
-            if let newValue = newValue as? DataItem {
-                x[propName] = ["type": newValue.genericType, "uid": newValue.uid]
-            }
-            else {
-                x[propName] = newValue
-            }
-            
-            do { try globalInMemoryObjectCache.set(uid, x) }
-            catch { /* TODO ERROR HANDLIGNN */ }
-            
-            scheduleWrite()
+        
+        return x[propName] as? T
+    }
+    
+    func set<T>(_ propName:String, _ newValue:T) {
+        if let event = onFirstSave {
+            event(self)
+            onFirstSave = nil
         }
+        
+        var x = self.asDict()
+        
+        if let newValue = newValue as? DataItem {
+            x[propName] = ["type": newValue.genericType, "uid": newValue.uid]
+        }
+        else {
+            x[propName] = newValue
+        }
+        
+        do { try globalInMemoryObjectCache.set(uid, x) }
+        catch { /* TODO ERROR HANDLIGNN */ }
+        
+        scheduleWrite()
     }
     
     private func transformToDict() throws -> [String:Any]{
+        if state == "" { return [String:Any]() }
         let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
         try InMemoryObjectCache.set(self.uid, dict as [String:Any])
         return dict
@@ -92,12 +98,12 @@ public class UserState: Object {
     // Requires support for dataItem lookup.
     
     public func toggleState(_ stateName:String) {
-        let x:Bool = self[stateName] as? Bool ?? true
-        self[stateName] = !x
+        let x:Bool = self.get(stateName) ?? true
+        self.set(stateName, !x)
     }
 
     public func hasState(_ stateName:String) -> Bool {
-        let x:Bool = self[stateName] ?? false
+        let x:Bool = self.get(stateName) ?? false
         return x
     }
     
@@ -115,6 +121,11 @@ public class UserState: Object {
         catch {
             // TODO Refactor error reporting
         }
+    }
+    
+    convenience init(onFirstSave:@escaping (UserState) -> Void) {
+        self.init()
+        self.onFirstSave = onFirstSave
     }
 }
 public typealias ViewArguments = UserState

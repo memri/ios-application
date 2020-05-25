@@ -1,7 +1,7 @@
 [
     {
         "uid": "0x01",
-        "type": "note",
+        "type": "Note",
         "title": "Shopping list",
         "content": "- potatoes\n- mayonaise",
         "starred": true,
@@ -22,7 +22,7 @@
     },
     {
         "uid": "0x02",
-        "type": "note",
+        "type": "Note",
         "title": "To read list",
         "content": "Age of surveillance capitalism",
         "labels": [
@@ -36,7 +36,7 @@
     },
     {
         "uid": "0x03",
-        "type": "note",
+        "type": "Note",
         "title": "Ideas for memri",
         "content": "privacy by design, digital memory",
         "starred": true,
@@ -47,7 +47,7 @@
     },
     {
         "uid": "0x04",
-        "type": "note",
+        "type": "Note",
         "title": "Love letter",
         "content": "Roses are red, violets are blue",
         "dateModified": "2020-04-10T11:11:11Z",
@@ -57,7 +57,7 @@
     },
     {
         "uid": "0x05",
-        "type": "note",
+        "type": "Note",
         "title": "Notes to self",
         "content": "Be in time with hour administration",
         "dateModified": "2011-11-11T11:11:11Z",

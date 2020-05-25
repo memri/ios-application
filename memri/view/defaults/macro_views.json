@@ -2,8 +2,8 @@
     {
         "name": "filter-starred",
         "fromTemplate": "{view}",
-        "queryOptions": {
-            "query": "{cascadingView.queryOptions.query} AND starred = true"
+        "datasource": {
+            "query": "{cascadingView.datasource.query} AND starred = true"
         },
         "title": "Starred {cascadingView.title}"
     },
@@ -11,7 +11,7 @@
     {
         "name": "choose-item-by-query",
         "editMode": true,
-        "queryOptions": {
+        "datasource": {
             "query": "{query}"
         },
         "_editActionButton": { "actionName": "toggleEditMode" },

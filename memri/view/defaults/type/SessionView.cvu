@@ -1,7 +1,7 @@
 SessionView[] {
     name: "all-sessionviews"
     title: "All Session Views"
-    queryOptions: {
+    [datasource = pod] {
         query: "sessionview"
         sortProperty: dateAccessed
         sortAscending: false

@@ -121,7 +121,7 @@
     "Note[]": {
         "name": "all-notes",
         "title": "All Notes",
-        "queryOptions": {
+        "datasource": {
             "query": "note",
             "sortProperty": "dateModified",
             "sortAscending": false
@@ -237,7 +237,7 @@
                             "timeProperty": "dateCreated"
                         }
                     },
-                    "queryOptions": {
+                    "datasource": {
                         "query": "data:Log appliesTo:{.id}",
                         "sortProperty": "dateCreated",
                         "sortAscending": true
@@ -278,7 +278,7 @@
                             "timeProperty": "dateCreated"
                         }
                     },
-                    "queryOptions": {
+                    "datasource": {
                         "query": "audititem appliesTo:{.uid}",
                         "sortProperty": "dateCreated",
                         "sortAscending": true
@@ -289,7 +289,7 @@
                 "title": "Starred notes",
                 "actionName": "openViewByName",
                 "actionArgs": ["filter-starred", {
-                    "fromTemplate": "all-notes"
+                    "include": "all-notes"
                 }]
             },
             {
@@ -303,7 +303,7 @@
     "AuditItem[]": {
         "name": "all-audititems",
         "title": "All Log Entries",
-        "queryOptions": {
+        "datasource": {
             "query": "audititem",
             "sortProperty": "date",
             "sortAscending": false
@@ -356,7 +356,7 @@
     "Label[]": {
         "name": "all-labels",
         "title": "All Labels",
-        "queryOptions": {
+        "datasource": {
             "query": "label",
             "sortProperty": "dateCreated",
             "sortAscending": true
@@ -448,7 +448,7 @@
     "SessionView[]": {
         "name": "all-sessionviews",
         "title": "All Session Views",
-        "queryOptions": {
+        "datasource": {
             "query": "sessionview",
             "sortProperty": "dateAccessed",
             "sortAscending": false
@@ -496,7 +496,7 @@
     "Session[]": {
         "name": "all-sessions",
         "title": "All Sessions",
-        "queryOptions": {
+        "datasource": {
             "query": "session",
             "sortProperty": "dateAccessed",
             "sortAscending": false
@@ -590,7 +590,7 @@
     "Person[]": {
         "name": "all-notestest",
         "title": "All Notes test",
-        "queryOptions": {
+        "datasource": {
             "query": "person",
             "sortProperty": "dateModified",
         },
@@ -678,7 +678,7 @@
                             "sectionTitle": "Photos of {.computedTitle2()}",
                             "minHeight": 165,
                             "view": {
-                                "queryOptions": { "query": "photo AND ANY includes.objectUid = '0x013'" },
+                                "datasource": { "query": "photo AND ANY includes.objectUid = '0x013'" },
                                 "rendererName": "thumbnail.grid",
                                 "renderConfigs": {
                                     "thumbnail.grid": {
@@ -894,7 +894,7 @@
                             "timeProperty": "dateCreated"
                         }
                     },
-                    "queryOptions": {
+                    "datasource": {
                         "query": "data:Log appliesTo:{.id}",
                         "sortProperty": "dateCreated",
                     }
@@ -934,7 +934,7 @@
                             "timeProperty": "dateCreated"
                         }
                     },
-                    "queryOptions": {
+                    "datasource": {
                         "query": "type:audititem appliesTo:{.id}",
                         "sortProperty": "dateCreated",
                     }
@@ -945,7 +945,7 @@
                 "actionName": "openDynamicView",
                 "actionArgs": [{
                     "name": "filter-starred",
-                    "fromTemplate": "all-notes"
+                    "include": "all-notes"
                 }]
             },
             {
@@ -1072,7 +1072,7 @@
                                     "empty": "Country",
                                     "value": "{.country}",
                                     "default": "{me.address[primary = true].country}",
-                                    "queryOptions": {
+                                    "datasource": {
                                         "query": "country",
                                         "sortProperty": "name"
                                     }
@@ -1160,7 +1160,7 @@
                                 "value": "{.country}",
                                 "default": "{me.address[primary = true].country}",
                                 "condition": "{!readOnly}",
-                                "queryOptions": {
+                                "datasource": {
                                     "query": "country",
                                     "sortProperty": "name"
                                 }
@@ -1180,7 +1180,7 @@
     "Photo[]": {
         "name": "all-photos",
         "title": "All Photos",
-        "queryOptions": {
+        "datasource": {
             "query": "photo",
             "sortProperty": "dateModified",
             "sortAscending": false

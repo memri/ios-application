@@ -27,7 +27,7 @@ struct FilterPanel: View {
         
         if let item = self.main.cascadingView.resultSet.items.first {
             var excludeList = self.main.cascadingView.sortFields
-            excludeList.append(self.main.cascadingView.queryOptions.sortProperty ?? "")
+            excludeList.append(self.main.cascadingView.datasource.sortProperty ?? "")
             excludeList.append("uid")
             excludeList.append("deleted")
             
@@ -44,16 +44,15 @@ struct FilterPanel: View {
     
     private func toggleAscending() {
         realmWriteIfAvailable(self.main.realm) {
-            self.main.currentSession.currentView.queryOptions?.sortAscending.value
-                = !(self.main.cascadingView.queryOptions.sortAscending.value ?? true)
+            self.main.currentSession.currentView.datasource?.sortAscending.value
+                = !(self.main.cascadingView.datasource.sortAscending ?? true)
         }
         self.main.scheduleCascadingViewUpdate()
     }
     
     private func changeOrderProperty(_ fieldName:String) {
         realmWriteIfAvailable(self.main.realm) {
-            self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
-
+            self.main.currentSession.currentView.datasource?.sortProperty = fieldName
         }
         self.main.scheduleCascadingViewUpdate()
     }
@@ -78,12 +77,15 @@ struct FilterPanel: View {
     }
     
     var body: some View {
-        HStack(alignment: .top, spacing: 0){
+        let main = self.main
+        let cascadingView = self.main.cascadingView
+        
+        return HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
                     ForEach(rendererCategories(), id: \.0) { (key, renderer) in
                         
-                        Button(action: { self.main.executeAction(renderer) } ) {
+                        Button(action: { main.executeAction(renderer) } ) {
                             Image(systemName: renderer.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
@@ -107,8 +109,8 @@ struct FilterPanel: View {
                     VStack(alignment: .leading, spacing: 0){
                         ForEach(renderersAvailable(), id:\.0) { (key, renderer) in
                             Group {
-                                Button(action:{ self.main.executeAction(renderer) }) {
-                                    if self.main.cascadingView.activeRenderer == renderer.rendererName {
+                                Button(action:{ main.executeAction(renderer) }) {
+                                    if cascadingView.activeRenderer == renderer.rendererName {
                                         Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
@@ -146,17 +148,16 @@ struct FilterPanel: View {
                         .padding(.bottom, 6)
                         .foregroundColor(Color(hex: "#434343"))
                     
-                    if (self.main.cascadingView.queryOptions.sortProperty != nil) {
+                    if (cascadingView.datasource.sortProperty != nil) {
                         Button(action:{ self.toggleAscending() }) {
-                            // NOTE: Allowed force unwrap
-                            Text(self.main.cascadingView.queryOptions.sortProperty!)
+                            Text(cascadingView.datasource.sortProperty ?? "")
                                 .foregroundColor(Color(hex: "#6aa84f"))
                                 .font(.system(size: 16, weight: .semibold, design: .default))
                                 .padding(.vertical, 2)
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             
                             // descending: "arrow.down"
-                            Image(systemName: self.main.cascadingView.queryOptions.sortAscending.value == false
+                            Image(systemName: cascadingView.datasource.sortAscending == false
                                 ? "arrow.down"
                                 : "arrow.up")
                                 .resizable()
@@ -170,8 +171,8 @@ struct FilterPanel: View {
                             .foregroundColor(Color(hex: "#efefef"))
                     }
                     
-                    ForEach(self.main.cascadingView.sortFields.filter {
-                        return self.main.cascadingView.queryOptions.sortProperty != $0
+                    ForEach(cascadingView.sortFields.filter {
+                        return cascadingView.datasource.sortProperty != $0
                     }, id:\.self) { fieldName in
                         Group {
                             Button(action:{ self.changeOrderProperty(fieldName) }) {

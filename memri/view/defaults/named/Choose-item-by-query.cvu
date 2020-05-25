@@ -1,7 +1,7 @@
 .choose-item-by-query{
     title: "Choose a {type}"
     editMode: true
-    queryOptions: {
+    [datasource = pod] {
        query: "{query}"
     }
     _editActionButton: toggleEditMode

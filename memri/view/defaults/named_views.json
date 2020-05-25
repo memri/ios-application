@@ -2,8 +2,8 @@
     {
         "name": "filter-starred",
         "fromTemplate": "{view}",
-        "queryOptions": {
-            "query": "{cascadingView.queryOptions.query} AND starred = true"
+        "datasource": {
+            "query": "{cascadingView.datasource.query} AND starred = true"
         },
         "title": "Starred {cascadingView.title}"
     },
@@ -11,7 +11,7 @@
     {
         "name": "choose-item-by-query",
         "editMode": true,
-        "queryOptions": {
+        "datasource": {
             "query": "{query}"
         },
         "_editActionButton": { "actionName": "toggleEditMode" },
@@ -36,7 +36,7 @@
             "all-notes",
             {
                 "title": "Shopping Notes",
-                "queryOptions": {
+                "datasource": {
                     "query": "note AND title BEGINSWITH[c] 'shopping'"
                 }
             }
@@ -48,7 +48,7 @@
         "views": [
             {
                 "title": "All People",
-                "queryOptions": {
+                "datasource": {
                     "query": "person"
                 }
             }
@@ -60,7 +60,7 @@
         "views": [
             {
                 "title": "All Photos",
-                "queryOptions": {
+                "datasource": {
                     "query": "photo"
                 }
             }
@@ -72,7 +72,7 @@
         "views": [
             {
                 "title": "All Addresses",
-                "queryOptions": {
+                "datasource": {
                     "query": "address"
                 }
             }
@@ -82,7 +82,7 @@
     {
         "name": "all-items-with-label",
         "title": "Items with label {name}",
-        "queryOptions": {
+        "datasource": {
             "query": "* AND ANY labels.uid = '{uid}'"
         },
         "rendererName": "list",

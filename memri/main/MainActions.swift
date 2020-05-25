@@ -45,7 +45,7 @@ extension Main {
         // Build arguments dict
         var args = [String: Any]()
         for (argName, inputValue) in action.arguments {
-            var argValue: Any
+            var argValue: Any?
             
             // preprocess arg
             if let expr = inputValue as? Expression {
@@ -122,7 +122,8 @@ extension Main {
             
             // Track state of the action and toggle the state variable based on actionStateName
             // TODO Refactor: it should be the new way of doing selection
-            if (cascadingView.userState["selection"] as? [DataItem])?.count == 0
+            let list:[DataItem]? = cascadingView.userState.get("selection")
+            if list?.count == 0
                 && action.getBool("hasState"), let binding = action.binding {
                 
                 try binding.toggleBool()

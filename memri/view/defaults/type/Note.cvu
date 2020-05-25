@@ -2,62 +2,71 @@ Note {
     title: "{.title}"
     defaultRenderer: richTextEditor
     editActionButton: toggleEditMode
-    filterButtons:
+    filterButtons: [
         openView {
             icon: "increase.indent"
             title: "Show Timeline"
             
-            view: {
-                defaultRenderer: timeline
-                
-                queryOptions: {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
-                }
-                
-                [renderer = timeline] {
-                    timeProperty: dateCreated
+            arguments {
+                view: {
+                    defaultRenderer: timeline
+                    
+                    [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
                 }
             }
         }
         showContextPane
+    ]
     
     contextButtons: star schedule
     
-    actionItems:
-        showSharePanel { title: "Share with..." }
+    actionItems: [
+        showOverlay { title: "Share with..." }
         addToPanel { title: "Add to list..." }
         duplicate { title: "Duplicate Note" }
+    ]
     
-    navigateItems:
+    navigateItems: [
         openView {
             title: "Timeline of this note"
-            view: {
-                defaultRenderer: timeline
-                
-                queryOptions {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
-                }
-                
-                [renderer = timeline] {
-                    timeProperty: dateCreated
+            arguments {
+                view: {
+                    defaultRenderer: timeline
+                    
+                     [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
                 }
             }
         }
         openViewByName {
             title: "Starred notes"
-            name: "filter-starred"
             arguments: {
-                fromTemplate: "all-notes"
+                name: "filter-starred"
+                viewArguments: {
+                    include: "all-notes"
+                }
             }
         }
         openViewByName {
             title: "All notes"
             name: "all-notes"
         }
+    ]
 }
 
 Note[] {
@@ -67,17 +76,19 @@ Note[] {
     defaultRenderer: list
     sortFields: title dateModified dateAccessed dateCreated
     
-    queryOptions {
+     [datasource = pod] {
         query: "note"
         sortProperty: dateModified
         sortAscending: false
     }
     
     actionButton:
-        add {
-            template {
-                type: note
-                title: Untitled Note
+        addDataItem {
+            arguments {
+                template {
+                    type: note
+                    title: Untitled Note
+                }
             }
         }
         

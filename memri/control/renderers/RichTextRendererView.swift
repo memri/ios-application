@@ -10,7 +10,7 @@ import SwiftUI
 import UIKit
 import Combine
 
-private var register:Void = {
+let registerRichText = {
     Renderers.register(
         name: "richTextEditor",
         title: "Default",
@@ -22,7 +22,7 @@ private var register:Void = {
             items.count > 0 && items.count == 1 && items[0] is Note
         }
     )
-}()
+}
 
 class CascadingRichTextEditorConfig: CascadingRenderConfig {
     var type: String? = "richTextEditor"

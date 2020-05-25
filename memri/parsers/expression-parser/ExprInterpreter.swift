@@ -112,7 +112,7 @@ class ExprInterpreter {
         else if let expr = expr as? ExprStringModeNode {
             var result = [String]()
             for expr in expr.expressions {
-                result.append(try execSingle(expr, args) as! String)
+                result.append(try execSingle(expr, args) as? String ?? "[Error]")
             }
             return result.joined()
         }

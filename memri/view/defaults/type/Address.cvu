@@ -62,7 +62,7 @@ Address[] {
                         empty: Country
                         value: "{.country}"
                         defaultValue: "{me.address[primary = true].country}"
-                        queryOptions: {
+                        [datasource = pod] {
                             query: "country"
                             sortProperty: name
                         }
@@ -147,7 +147,7 @@ Address {
                     value: {{.country}}
                     defaultValue: {{me.address[primary = true].country}}
                     show: {{!readOnly}}
-                    queryOptions: {
+                    [datasource = pod] {
                         query: "country"
                         sortProperty: name
                     }

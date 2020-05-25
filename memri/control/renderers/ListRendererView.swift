@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-private var register:Void = {
+let registerList = {
     Renderers.register(
         name: "list",
         title: "Default",
@@ -19,7 +19,7 @@ private var register:Void = {
         renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-    
+        
     Renderers.register(
         name: "list.alphabet",
         title: "Alphabet",
@@ -28,13 +28,13 @@ private var register:Void = {
         renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-}()
+}
 
 class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
     var type: String? = "list"
     
-    var longPress: Action? { cascadeProperty("longPress", nil) }
-    var press: Action? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress") }
+    var press: Action? { cascadeProperty("press") }
     
     var slideLeftActions:[Action] { cascadeList("slideLeftActions") }
     var slideRightActions:[Action] { cascadeList("slideRightActions") }
@@ -96,7 +96,7 @@ struct ListRendererView: View {
                             .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
                         .onDelete{ indexSet in
-                            main.executeAction(Action("delete"))
+                            main.executeAction(ActionDelete())
                         }
                     }
                     .environment(\.editMode, $main.currentSession.isEditMode)

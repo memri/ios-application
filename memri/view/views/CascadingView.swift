@@ -11,18 +11,43 @@ import SwiftUI
 
 public class CascadingView: Cascadable, ObservableObject {
 
+    /// The name of the cascading view
+    var name: String { return sessionView.name ?? "" } // by copy??
+    
+    /// The session view that is being cascaded
     private let sessionView: SessionView
     
-    var name: String { return sessionView.name ?? "" } // by copy??
-    // Find usage of .activeStates = replace with userState
-    var userState: UserState { return sessionView.userState ?? UserState() } // set same ref??
-    // TODO how to cascade this??
+    var datasource: CascadingDatasource {
+        if let x = localCache["datasource"] as? CascadingDatasource { return x }
+        
+        if let ds = sessionView.datasource {
+            let stack = self.cascadeStack.compactMap {
+                $0["datasourceDefinition"] as? CVUParsedDatasourceDefinition
+            }
+            
+            let datasource = CascadingDatasource(stack, ds)
+            localCache["datasource"] = datasource
+            return datasource
+        }
+        else {
+            // Missing datasource on sessionview, that should never happen (I think)
+            // TODO ERROR REPORTING
+            
+            return CascadingDatasource([], Datasource())
+        }
+    }
     
-    //self.queryOptions.merge(view.queryOptions!)
-    var queryOptions: QueryOptions { return sessionView.queryOptions ?? QueryOptions() } // set same ref??
+    var userState: UserState {
+        sessionView.userState ?? UserState(onFirstSave: { args in
+            realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
+        })
+    }
+        
+    // TODO let this cascade when the use case for it arrises
     var viewArguments: ViewArguments {
-        sessionView.viewArguments ?? ViewArguments()
-        // TODO let this cascade when the use case for it arrises
+        sessionView.viewArguments ?? ViewArguments(onFirstSave: { args in
+            realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
+        })
         // cascadeProperty("viewArguments", )
     }
     
@@ -31,25 +56,25 @@ public class CascadingView: Cascadable, ObservableObject {
         
         // Update search result to match the query
         // NOTE: allowed force unwrap
-        let resultSet = main!.cache.getResultSet(self.queryOptions)
+        let resultSet = main!.cache.getResultSet(self.datasource.flattened())
         localCache["resultSet"] = resultSet
 
         // Filter the results
-        filterText = userState["filterText"] as? String ?? ""
+        filterText = userState.get("filterText") ?? ""
         
         return resultSet
         
-    } // TODO: Refactor set when queryOptions changes ??
+    } // TODO: Refactor set when datasource changes ??
     
     // TODO: REFACTOR: On change clear renderConfig in localCache
     var activeRenderer: String // Set on creation | when changed set on userState
     
-    var backTitle: String? { cascadeProperty("backTitle", nil) }
-    var searchHint: String { cascadeProperty("searchHint", nil) ?? "" }
-    var showLabels: Bool { cascadeProperty("showLabels", true) }
+    var backTitle: String? { cascadeProperty("backTitle") }
+    var searchHint: String { cascadeProperty("searchHint") ?? "" }
+    var showLabels: Bool { cascadeProperty("showLabels") ?? true }
     
-    var actionButton: Action? { cascadeProperty("actionButton", nil) }
-    var editActionButton: Action? { cascadeProperty("editActionButton", nil) }
+    var actionButton: Action? { cascadeProperty("actionButton") }
+    var editActionButton: Action? { cascadeProperty("editActionButton") }
     
     var sortFields: [String] { cascadeList("sortFields") }
     var editButtons: [Action] { cascadeList("editButtons") }
@@ -92,10 +117,9 @@ public class CascadingView: Cascadable, ObservableObject {
                 // TODO Error logging
             }
         }
-        
-        
+                
         if let allRenderers = allRenderers, let RenderConfigType = allRenderers.allConfigTypes[activeRenderer] {
-            let renderConfig = RenderConfigType.init(cascadeStack, viewArguments)
+            let renderConfig = RenderConfigType.init(stack, viewArguments)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
             return renderConfig
@@ -110,7 +134,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _emptyResultTextTemp: String? = nil
     var emptyResultText: String {
         get {
-            return _emptyResultTextTemp ?? cascadeProperty("emptyResultText", "No items found")
+            return _emptyResultTextTemp ?? cascadeProperty("emptyResultText") ?? "No items found"
         }
         set (newEmptyResultText) {
             if newEmptyResultText == "" { _emptyResultTextTemp = nil }
@@ -121,7 +145,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _titleTemp: String? = nil
     var title: String {
         get {
-            return _titleTemp ?? cascadeProperty("title", "")
+            return _titleTemp ?? cascadeProperty("title") ?? ""
         }
         set (newTitle) {
             if newTitle == "" { _titleTemp = nil }
@@ -132,7 +156,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _subtitleTemp: String? = nil
     var subtitle: String {
         get {
-            return _subtitleTemp ?? cascadeProperty("subtitle", "")
+            return _subtitleTemp ?? cascadeProperty("subtitle") ?? ""
         }
         set (newSubtitle) {
             if newSubtitle == "" { _subtitleTemp = nil }
@@ -142,17 +166,17 @@ public class CascadingView: Cascadable, ObservableObject {
     
     var filterText: String {
         get {
-            return userState["filterText"] as? String ?? ""
+            return userState.get("filterText") ?? ""
         }
         set (newFilter) {
             // Don't update the filter when it's already set
             if newFilter.count > 0 && _titleTemp != nil &&
-                userState["filterText"] as? String == newFilter {
+                userState.get("filterText")  == newFilter {
                 return
             }
             
             // Store the new value
-            userState["filterText"] = newFilter
+            userState.set("filterText", newFilter)
             
             // If this is a multi item result set
             if self.resultSet.isList {
@@ -168,7 +192,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 print("Warn: Filtering for single items not Implemented Yet!")
             }
             
-            if userState["filterText"] == "" {
+            if userState.get("filterText") == "" {
                 title = ""
                 subtitle = ""
                 emptyResultText = ""
@@ -182,7 +206,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 // Temporarily hide the subtitle
                 // subtitle = " " // TODO how to clear the subtitle ??
                 
-                emptyResultText = "No results found using '\(userState["filterText"] ?? "")'"
+                emptyResultText = "No results found using '\(userState.get("filterText") ?? "")'"
             }
         }
     }
@@ -218,10 +242,10 @@ public class CascadingView: Cascadable, ObservableObject {
         var type = ""
         
         // Fetch query from the view from session
-        if let queryOptions = sessionView.queryOptions {
+        if let datasource = sessionView.datasource {
             
             // Look up the associated result set
-            let resultSet = main.cache.getResultSet(queryOptions)
+            let resultSet = main.cache.getResultSet(datasource)
             
             // Determine whether this is a list or a single item resultset
             isList = resultSet.isList
@@ -282,15 +306,20 @@ public class CascadingView: Cascadable, ObservableObject {
         // Find views based on datatype
         for needle in needles {
             for key in ["user", "session", "defaults"] {
-                if key == "view" { parse(sessionView.viewDefinition, key) }
+                if key == "session" { parse(sessionView.viewDefinition, key) }
                 else if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
                     parse(sessionViewDef, key)
+                }
+                else if key != "user" {
+                    // TODO Warn logging
+                    print("Could not find definition for \(needle) in domain:\(key)")
                 }
             }
         }
         
         if activeRenderer == nil {
             // TODO Error Logging
+            throw "Exception: could not determine the active renderer for this view"
         }
         
         // Create a new view

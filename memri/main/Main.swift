@@ -119,17 +119,17 @@ public class Main: ObservableObject {
     public func updateCascadingView() throws {
         self.maybeLogUpdate()
         
-        // Fetch queryOptions if not yet parsed yet
+        // Fetch datasource if not yet parsed yet
         let currentView = self.sessions.currentView
-        if currentView.queryOptions == nil {
+        if currentView.datasource == nil {
             if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
-                if let queryOptions = parsedDef["queryOptions"] as? QueryOptions {
+                if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
                     realmWriteIfAvailable(realm) {
-                        currentView.queryOptions = queryOptions
+                        currentView.datasource = Datasource.fromCVUDefinition(ds)
                     }
                 }
                 else {
-                    throw "Exception: Missing queryOptions in session view"
+                    throw "Exception: Missing datasource in session view"
                 }
             }
             else {
@@ -137,9 +137,9 @@ public class Main: ObservableObject {
             }
         }
         
-        if let queryOptions = currentView.queryOptions {
+        if let datasource = currentView.datasource {
             // Fetch the resultset associated with the current view
-            let resultSet = cache.getResultSet(queryOptions)
+            let resultSet = cache.getResultSet(datasource)
             
             // If we can guess the type of the result based on the query, let's compute the view
             if resultSet.determinedType != nil {
@@ -200,7 +200,7 @@ public class Main: ObservableObject {
             }
         }
         else {
-            throw "Exception: Missing queryOptions in session view"
+            throw "Exception: Missing datasource in session view"
         }
     }
     

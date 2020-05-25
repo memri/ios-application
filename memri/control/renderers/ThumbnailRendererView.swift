@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-private var register:Void = {
+let registerThumbnail = {
     Renderers.register(
         name: "thumbnail",
         title: "Default",
@@ -18,18 +18,18 @@ private var register:Void = {
         renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-}()
+}
 
 class CascadingThumbnailConfig: CascadingRenderConfig {
     var type: String? = "thumbnail"
     
-    var longPress: Action? { cascadeProperty("longPress", nil) }
-    var press: Action? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress") }
+    var press: Action? { cascadeProperty("press") }
     
-    var columns:Int? { Int(cascadeProperty("column", 3)) }
-    var columnsWide:Int? { Int(cascadeProperty("columnsWide", 5)) }
-    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset", 10)) }
-    var edgeInset:[CGFloat]? { cascadeProperty("edgeInset", []).map{ CGFloat($0 as Double) } }
+    var columns:Int? { Int(cascadeProperty("column") ?? 3) }
+    var columnsWide:Int? { Int(cascadeProperty("columnsWide") ?? 5) }
+    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset") ?? 10) }
+    var edgeInset:[CGFloat]? { (cascadeProperty("edgeInset") ?? []).map{ CGFloat($0 as Double) } }
 }
 
 struct ThumbnailRendererView: View {

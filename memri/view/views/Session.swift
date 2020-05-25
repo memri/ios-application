@@ -47,7 +47,7 @@ public class Session: DataItem {
     
     var backButton: Action? {
         if self.currentViewIndex > 0 {
-            return Action("back")
+            return ActionBack()
         }
         else {
             return nil
@@ -174,12 +174,12 @@ public class Session: DataItem {
             .map { SessionView.fromCVUDefinition($0) }
         
         return Session(value: [
-            "selector": def.selector ?? "[session]",
-            "name": def["name"] as? String ?? "",
-            "currentViewIndex": def["currentViewIndex"] as? Int ?? 0,
-            "showFilterPanel": def["showFilterPanel"] as? Bool ?? false,
-            "showContextPane": def["showContextPane"] as? Bool ?? false,
-            "editMode": def["editMode"] as? Bool ?? false,
+            "selector": (def.selector ?? "[session]") as Any,
+            "name": (def["name"] as? String ?? "") as Any,
+            "currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
+            "showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
+            "showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
+            "editMode": (def["editMode"] as? Bool ?? false) as Any,
             "screenshot": def["screenshot"] as? File as Any,
             "views": views
         ])

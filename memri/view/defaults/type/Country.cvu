@@ -27,7 +27,7 @@ Country[] {
             
             Text {
                 text: {{.name}}
-                condition: {{readOnly}}
+                show: {{readOnly}}
             }
             Picker {
                 empty: Country
@@ -35,7 +35,7 @@ Country[] {
                 title: "Select a country"
                 default: {{me.address[primary = true].country}}
                 optionsFromQuery: country
-                condition: {{!readOnly}}
+                show: {{!readOnly}}
             }
         }
     }

@@ -895,7 +895,7 @@ class CVUParserTests: XCTestCase {
          name: "all-photos"
          title: "All Photos"
          defaultRenderer: thumbnail
-         queryOptions {
+         datasource {
              query: "photo"
              sortProperty: dateModified
              sortAscending: false
@@ -924,31 +924,31 @@ class CVUParserTests: XCTestCase {
                      viewDefinitions: [
                          [view] {
                                  
-                                 queryOptions: {
+                                 datasource: {
                                      query: "label"
                                  }
                              }
                          [view] {
                                  
-                                 queryOptions: {
+                                 datasource: {
                                      query: "person"
                                  }
                              }
                          [view] {
                                  
-                                 queryOptions: {
+                                 datasource: {
                                      query: "session"
                                  }
                              }
                          [view] {
                                  
-                                 queryOptions: {
+                                 datasource: {
                                      query: "audititem"
                                  }
                              }
                          [view] {
                                  
-                                 queryOptions: {
+                                 datasource: {
                                      query: "note"
                                  }
                              }

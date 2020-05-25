@@ -2,7 +2,7 @@ Photo {
     name: "all-photos"
     title: "All Photos"
     defaultRenderer: thumbnail
-    queryOptions {
+     [datasource = pod] {
         query: "photo"
         sortProperty: dateModified
         sortAscending: false

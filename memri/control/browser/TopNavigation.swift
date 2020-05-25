@@ -29,20 +29,20 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(Action("forward"))
+        self.main.executeAction(ActionForward())
     }
     private func toFront(){
-        self.main.executeAction(Action("forwardToFront"))
+        self.main.executeAction(ActionForwardToFront())
     }
     private func backAsSession(){
-        self.main.executeAction(Action("backAsSession"))
+        self.main.executeAction(ActionBackAsSession())
     }
     private func openAllViewsOfSession(){
         let uid = self.main.currentSession.uid
         let view = """
         {
             "title": "Views in current session",
-            "queryOptions": {
+            "datasource": {
                 "query": "SessionView AND session.uid = '\(uid)'",
             }
         }
@@ -107,7 +107,7 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        ActionButton(action: Action("showNavigation"))
+                        ActionButton(action: ActionShowNavigation())
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
@@ -115,7 +115,7 @@ public struct TopNavigation: View {
 //                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
                         Button(action: {
-                            main.executeAction(Action("closePopup"))
+                            main.executeAction(ActionClosePopup())
                         }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
@@ -185,7 +185,7 @@ public struct TopNavigation: View {
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        ActionButton(action: Action("showSessionSwitcher"))
+                        ActionButton(action: ActionShowSessionSwitcher())
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }

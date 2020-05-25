@@ -120,7 +120,7 @@ public struct UIElementView: SwiftUI.View {
     }
     
     public func has(_ propName:String) -> Bool {
-        viewArguments[propName] != nil || from.has(propName)
+        viewArguments.get(propName) != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
@@ -156,7 +156,7 @@ public struct UIElementView: SwiftUI.View {
     public var body: some View {
         Group {
             if (!has("show") || get("show") == true) {
-                if from.type == "vstack" {
+                if from.type == .VStack {
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
@@ -164,7 +164,7 @@ public struct UIElementView: SwiftUI.View {
                     .animation(nil)
                     .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "hstack" {
+                else if from.type == .HStack {
                     HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
@@ -172,13 +172,13 @@ public struct UIElementView: SwiftUI.View {
                     .animation(nil)
                     .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "zstack" {
+                else if from.type == .ZStack {
                     ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                         .clipped()
                         .animation(nil)
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "editorsection" {
+                else if from.type == .EditorSection {
                     if self.has("title") {
                         Section(header: Text(LocalizedStringKey(
                             (self.get("title") ?? "").uppercased()
@@ -200,7 +200,7 @@ public struct UIElementView: SwiftUI.View {
                         .setProperties(from.properties, self.item, main)
                     }
                 }
-                else if from.type == "editorrow" {
+                else if from.type == .EditorRow {
                     VStack (spacing: 0) {
                         VStack(alignment: .leading, spacing: 4){
                             if self.has("title") && self.get("nopadding") != true {
@@ -232,7 +232,7 @@ public struct UIElementView: SwiftUI.View {
                     }
 
                 }
-                else if from.type == "editorlabel" {
+                else if from.type == .EditorLabel {
                     HStack (alignment: .center, spacing:15) {
                         Button (action:{}) {
                             Image (systemName: "minus.circle.fill")
@@ -259,7 +259,7 @@ public struct UIElementView: SwiftUI.View {
                     .padding(10)
                     .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
                 }
-                else if from.type == "button" {
+                else if from.type == .Button {
                     Button(action: {
                         if let press:Action = self.get("press") {
                             self.main.executeAction(press, with: self.item)
@@ -269,7 +269,7 @@ public struct UIElementView: SwiftUI.View {
                     }
                     .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "flowstack" {
+                else if from.type == .FlowStack {
                     FlowStack(getList("list")) { listItem in
                         ForEach(0..<self.from.children.count){ index in
                             UIElementView(self.from.children[index], listItem)
@@ -278,7 +278,7 @@ public struct UIElementView: SwiftUI.View {
                     .animation(nil)
                     .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "text" {
+                else if from.type == .Text {
                     Text(from.processText(get("text") ?? "[nil]"))
                         .if(from.getBool("bold")){ $0.bold() }
                         .if(from.getBool("italic")){ $0.italic() }
@@ -287,11 +287,11 @@ public struct UIElementView: SwiftUI.View {
                         .fixedSize(horizontal: false, vertical: true)
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "textfield" {
+                else if from.type == .Textfield {
                     self.renderTextfield()
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "itemcell" {
+                else if from.type == .ItemCell {
                     // TODO Refactor fix this
     //                ItemCell(
     //                    item: self.item,
@@ -301,7 +301,7 @@ public struct UIElementView: SwiftUI.View {
     //                .environmentObject(self.main)
     //                .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "subview" {
+                else if from.type == .SubView {
                     if has("viewName") {
                         SubView(
                             main: self.main,
@@ -329,25 +329,25 @@ public struct UIElementView: SwiftUI.View {
                         .setProperties(from.properties, self.item, main)
                     }
                 }
-                else if from.type == "map" {
+                else if from.type == .Map {
                     MapView(location: get("location"), address: get("address"))
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "picker" {
+                else if from.type == .Picker {
                     self.renderPicker()
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "securefield" {
+                else if from.type == .SecureField {
                 }
-                else if from.type == "action" {
+                else if from.type == .Action {
                     ActionButton(action: get("press") ?? ActionNoop())
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "memributton" {
+                else if from.type == .MemriButton {
                     MemriButton(item: self.item)
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "image" {
+                else if from.type == .Image {
                     if has("systemname") {
                         Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                             .if(from.has("resizable")) { self.resize($0) }
@@ -360,27 +360,30 @@ public struct UIElementView: SwiftUI.View {
                             .setProperties(from.properties, self.item, main)
                     }
                 }
-                else if from.type == "circle" {
+                else if from.type == .Circle {
                 }
-                else if from.type == "horizontalline" {
+                else if from.type == .HorizontalLine {
                     HorizontalLine()
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "rectangle" {
+                else if from.type == .Rectangle {
                     Rectangle()
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "roundedrectangle" {
+                else if from.type == .RoundedRectangle {
                     RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "spacer" {
+                else if from.type == .Spacer {
                     Spacer()
                         .setProperties(from.properties, self.item, main)
                 }
-                else if from.type == "divider" {
+                else if from.type == .Divider {
                     Divider()
                         .setProperties(from.properties, self.item, main)
+                }
+                else {
+                    logWarning("Warning: Unknown UI element type '\(from.type)'")
                 }
             }
         }
@@ -409,6 +412,11 @@ public struct UIElementView: SwiftUI.View {
 //            }
 //        }
 //    }
+    
+    func logWarning(_ message:String) -> some View {
+        print (message)
+        return EmptyView()
+    }
     
     func renderTextfield() -> some View {
         let (type, dataItem, propName) = from.getType("value", self.item)
@@ -459,7 +467,7 @@ public struct UIElementView: SwiftUI.View {
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
         let (_, propDataItem, propName) = from.getType("value", self.item)
-        let queryOptions:[String:Any] = self.get("queryoptions") ?? [:] // TODO refactor error handling
+        let datasource:[String:Any] = self.get("datasource") ?? [:] // TODO refactor error handling
         let emptyValue = self.get("empty") ?? "Pick a value"
         
         return Picker(
@@ -469,10 +477,10 @@ public struct UIElementView: SwiftUI.View {
             emptyValue: emptyValue,
             propDataItem: propDataItem,
             propName: propName,
-            queryOptions: QueryOptions(value: [
-                "query": queryOptions["query"],
-                "sortProperty": queryOptions["sortProperty"],
-                "sortAscending": queryOptions["sortAscending"]
+            datasource: Datasource(value: [
+                "query": datasource["query"],
+                "sortProperty": datasource["sortProperty"],
+                "sortAscending": datasource["sortAscending"]
             ])
         )
     }
