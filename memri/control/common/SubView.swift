@@ -37,7 +37,7 @@ public struct SubView : View {
             let view = SessionView(value: [
                 "viewDefinition": viewDef,
                 "viewArguments": args,
-                "queryOptions": viewDef["queryOptions"] // TODO Refactor
+                "datasource": viewDef["datasourceDefinition"] // TODO Refactor
             ])
         
             let session = Session()

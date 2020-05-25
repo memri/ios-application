@@ -122,7 +122,7 @@ public enum UIElementFamily : String, CaseIterable {
 public enum UIElementProperties : String, CaseIterable {
     case resizable, show, alignment, align, textalign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerradius, hint, value, queryOptions, defaultValue, empty, style,
+         address, systemname, cornerradius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -148,7 +148,7 @@ public enum UIElementProperties : String, CaseIterable {
         case .location: return value is Location
         case .address: return value is Address
         case .value: return true
-        case .queryOptions: return value is QueryOptions
+        case .datasource: return value is Datasource
         case .color, .background, .rowbackground: return value is Color
         case .font:
             if let list = value as? [Any] {

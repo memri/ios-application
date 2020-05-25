@@ -87,25 +87,33 @@ class Sync {
     }
     
     /// Schedule a query to sync the resulting DataItems from the pod
-    /// - Parameter queryOptions: QueryOptions used to perform the query
-    public func syncQuery(_ queryOptions:QueryOptions) {
+    /// - Parameter datasource: QueryOptions used to perform the query
+    public func syncQuery(_ datasource:Datasource) {
         // TODO if this query was executed recently, considering postponing action
-        
-        // Store query in a log item
-        let audititem = AuditItem()
-        let data = try! MemriJSONEncoder.encode(queryOptions)
-        audititem.contents = String(data: data, encoding: .utf8) ?? ""
-        audititem.action = "query"
-        audititem.date = Date()
-        
-        // Set syncstate to "fetch" in order to get priority treatment for querying
-        audititem.syncState?.actionNeeded = "fetch"
-        
-        // Add to realm
-        try! realm.write { realm.add(audititem) }
-        
-        // Execute query with priority
-        prioritySync(queryOptions, audititem)
+        do {
+            // Store query in a log item
+            let audititem = AuditItem()
+            let data = try MemriJSONEncoder.encode([ // TODO move this to Datasource
+                "query": datasource.query,
+                "sortProperty": datasource.sortProperty,
+                "sortAscending": datasource.sortAscending.value ?? false ? "true" : "false"
+            ] as? [String:String])
+            audititem.contents = String(data: data, encoding: .utf8) ?? ""
+            audititem.action = "query"
+            audititem.date = Date()
+            
+            // Set syncstate to "fetch" in order to get priority treatment for querying
+            audititem.syncState?.actionNeeded = "fetch"
+            
+            // Add to realm
+            try realm.write { realm.add(audititem) }
+            
+            // Execute query with priority
+            prioritySync(datasource, audititem)
+        }
+        catch {
+            // TODO Error handling
+        }
     }
     
     private func prioritySyncAll() {
@@ -125,16 +133,16 @@ class Sync {
         }
     }
     
-    private func prioritySync(_ queryOptions:QueryOptions, _ audititem:AuditItem) {
+    private func prioritySync(_ datasource:Datasource, _ audititem:AuditItem) {
         
-        print("Syncing from pod with query: \(queryOptions.query!)")
+        print("Syncing from pod with query: \(datasource.query!)")
         
         // Call out to the pod with the query
-        podAPI.query(queryOptions) { (error, items) in
+        podAPI.query(datasource) { (error, items) in
             if let items = items {
                 
                 // Find resultset that belongs to this query
-                let resultSet = cache!.getResultSet(queryOptions)
+                let resultSet = cache!.getResultSet(datasource)
                 
                 // The result that we'll add to resultset
                 var result:[DataItem] = []

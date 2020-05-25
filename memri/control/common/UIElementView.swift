@@ -120,7 +120,7 @@ public struct UIElementView: SwiftUI.View {
     }
     
     public func has(_ propName:String) -> Bool {
-        viewArguments[propName] != nil || from.has(propName)
+        viewArguments.get(propName) != nil || from.has(propName)
     }
     
     public func get<T>(_ propName:String) -> T? {
@@ -451,7 +451,7 @@ public struct UIElementView: SwiftUI.View {
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
         let (_, propDataItem, propName) = from.getType("value", self.item)
-        let queryOptions:[String:Any] = self.get("queryoptions")! // TODO refactor error handling
+        let datasource:[String:Any] = self.get("queryoptions")! // TODO refactor error handling
         let emptyValue = self.get("empty") ?? "Pick a value"
         
         return Picker(
@@ -461,10 +461,10 @@ public struct UIElementView: SwiftUI.View {
             emptyValue: emptyValue,
             propDataItem: propDataItem,
             propName: propName,
-            queryOptions: QueryOptions(value: [
-                "query": queryOptions["query"],
-                "sortProperty": queryOptions["sortProperty"],
-                "sortAscending": queryOptions["sortAscending"]
+            datasource: Datasource(value: [
+                "query": datasource["query"],
+                "sortProperty": datasource["sortProperty"],
+                "sortAscending": datasource["sortAscending"]
             ])
         )
     }

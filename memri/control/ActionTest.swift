@@ -20,7 +20,7 @@ class actionTest: XCTestCase {
     }
 
     func testAction() throws {
-        let action = Action("back")
+        let action = ActionBack()
         XCTAssertTrue(action.getString("icon") == "chevron.left")
     }
     

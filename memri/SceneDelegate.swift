@@ -22,21 +22,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the SwiftUI view that provides the window contents.
         let main = RootMain(name: "Memri GUI", key: "ABCDEF")
         let application = Application().environmentObject(main as Main)
-//
-//        do { try main.boot() }
-//        catch let error {
-//            // TODO Error Handling (show fatal error on screen)
-//            print(error)
-//            exit(1)
-//        }
-//
-//        // Use a UIHostingController as window root view controller.
-//        if let windowScene = scene as? UIWindowScene {
-//            let window = UIWindow(windowScene: windowScene)
-//            window.rootViewController = UIHostingController(rootView: application)
-//            self.window = window
-//            window.makeKeyAndVisible()
-//        }
+
+        do { try main.boot() }
+        catch let error {
+            // TODO Error Handling (show fatal error on screen)
+            print(error)
+            exit(1)
+        }
+
+        // Use a UIHostingController as window root view controller.
+        if let windowScene = scene as? UIWindowScene {
+            let window = UIWindow(windowScene: windowScene)
+            window.rootViewController = UIHostingController(rootView: application)
+            self.window = window
+            window.makeKeyAndVisible()
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

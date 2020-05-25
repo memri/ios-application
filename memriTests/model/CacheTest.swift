@@ -35,7 +35,7 @@ class CacheTest: XCTestCase {
     }
     
     func testEmptyQuery() {
-        testCache.query(QueryOptions(query: "")){error, items in
+        testCache.query(Datasource(query: "")){error, items in
             XCTAssertEqual(items, nil)
         }
     }
@@ -44,7 +44,7 @@ class CacheTest: XCTestCase {
         testCache.install()
         
         for dtype in DataItemFamily.allCases{
-            testCache.query(QueryOptions(query: dtype.rawValue)){error, items in
+            testCache.query(Datasource(query: dtype.rawValue)){error, items in
                 if let result = items{
                     XCTAssertTrue(result.allSatisfy{item in item.genericType == dtype.rawValue })
                 }else{
@@ -76,7 +76,7 @@ class CacheTest: XCTestCase {
     func testGetResultSet(){
         testCache.install()
         // TODO: not sure what this should test yet
-        let _ = testCache.getResultSet(QueryOptions(query: "*"))
+        let _ = testCache.getResultSet(Datasource(query: "*"))
     }
     
     func testAddToCache(){

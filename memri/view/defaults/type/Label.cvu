@@ -1,7 +1,7 @@
 Label[]: {
     name: "all-labels"
     title: "All Labels"
-    queryOptions: {
+    [datasource = pod] {
         query: "label"
         sortProperty: dateCreated
         sortAscending: true

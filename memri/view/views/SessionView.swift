@@ -19,15 +19,15 @@ public class SessionView: DataItem {
     @objc dynamic var viewDefinition: CVUStoredDefinition? = nil
     @objc dynamic var userState: UserState? = nil
     @objc dynamic var viewArguments: ViewArguments? = nil
-    @objc dynamic var queryOptions: QueryOptions? = nil // TODO refactor: fix cascading
+    @objc dynamic var datasource: Datasource? = nil // TODO refactor: fix cascading
     @objc dynamic var session: Session? = nil
     
     override var computedTitle:String {
 //        if let value = self.name ?? self.title { return value }
 //        else if let rendererName = self.rendererName {
-//            return "A \(rendererName) showing: \(self.queryOptions?.query ?? "")"
+//            return "A \(rendererName) showing: \(self.datasource?.query ?? "")"
 //        }
-//        else if let query = self.queryOptions?.query {
+//        else if let query = self.datasource?.query {
 //            return "Showing: \(query)"
 //        }
         return "[No Name]"

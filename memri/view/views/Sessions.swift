@@ -145,7 +145,7 @@ public class Sessions: DataItem {
         fetchUID(main.realm)
         
         let storedDef = main.realm.objects(CVUStoredDefinition.self)
-            .filter("selector = '.defaultSessions'").first
+            .filter("selector = '[sessions = defaultSessions]'").first
     
         if let storedDef = storedDef {
             if let parsed = try main.views.parseDefinition(storedDef) {
@@ -155,7 +155,7 @@ public class Sessions: DataItem {
                         "uid": self.uid,
                         "selector": "[sessions = '\(self.uid)']",
                         "name": self.uid,
-                        "currentSessionIndex": parsed["sessionsDefinition"] as? Int ?? 0,
+                        "currentSessionIndex": Int(parsed["sessionsDefinition"] as? Double ?? 0),
                         "sessions": (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
                             .map { Session.fromCVUDefinition($0) }
                     ])

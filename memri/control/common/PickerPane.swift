@@ -17,7 +17,7 @@ struct Picker: View {
     let emptyValue: String
     let propDataItem: DataItem
     let propName: String
-    let queryOptions: QueryOptions
+    let datasource: Datasource
     
     @State var isShowing = false
     
@@ -42,7 +42,7 @@ struct Picker: View {
                 propDataItem: self.propDataItem,
                 propName: self.propName,
                 selected: self.selected,
-                queryOptions: self.queryOptions
+                datasource: self.datasource
             ).environmentObject(self.main)
         }
         .generalEditorInput()
@@ -58,7 +58,7 @@ struct PickerPane: View {
     let propDataItem: DataItem
     let propName: String
     let selected: DataItem?
-    let queryOptions: QueryOptions
+    let datasource: Datasource
     
     var body: some View {
         self.main.closeStack.append {
@@ -69,7 +69,7 @@ struct PickerPane: View {
         return SubView(
             main: self.main,
             view: SessionView(value: [
-                "queryOptions": queryOptions,
+                "datasource": datasource,
                 "title": title,
                 "userState": UserState([
                     "selection": ["type": self.item.genericType, "uid": self.item.uid]
@@ -79,14 +79,14 @@ struct PickerPane: View {
                 "renderDescriptions": [
                     CVUParsedRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
-                            Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
-                            Action("closePopup")
+                            ActionSetProperty(arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
+                            ActionClosePopup()
                         ]]
                     ),
                     CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
-                            Action("setProperty", arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
-                            Action("closePopup")
+                            ActionSetProperty(arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
+                            ActionClosePopup()
                         ]]
                     )
                 ]

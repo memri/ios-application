@@ -1,7 +1,7 @@
 
 .all-items-with-label {
     title: "Items with label {name}"
-    queryOptions: {
+    [datasource = pod] {
         query: "* AND ANY labels.uid = '{uid}'"
     }
     defaultRenderer: list

@@ -229,7 +229,7 @@ struct GeneralEditorSection: View {
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let action = isArray && editMode && !readOnly
-            ? Action("openViewByName",
+            ? ActionOpenViewByName(
                 arguments: [
                     "name": "choose-item-by-query",
                     "arguments": [

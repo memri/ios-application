@@ -181,10 +181,14 @@ class CVUParser {
             }
             
             switch type {
-            case "style": return CVUParsedStyleDefinition("[style = \"\(name)\"]", name:name)
-            case "color": return CVUParsedColorDefinition("[color = \"\(name)\"]", name:name)
-            case "renderer": return CVUParsedRendererDefinition("[renderer = \"\(name)\"]", name:name)
-            case "language": return CVUParsedLanguageDefinition("[language = \"\(name)\"]", name:name)
+            case "sessions": return CVUParsedSessionsDefinition("[sessions = \(name)]", name:name)
+            case "session": return CVUParsedSessionDefinition("[session = \(name)]", name:name)
+            case "view": return CVUParsedViewDefinition("[view = \(name)]", name:name)
+            case "style": return CVUParsedStyleDefinition("[style = \(name)]", name:name)
+            case "datasource": return CVUParsedDatasourceDefinition("[datasource = \(name)]", name:name)
+            case "color": return CVUParsedColorDefinition("[color = \(name)]", name:name)
+            case "renderer": return CVUParsedRendererDefinition("[renderer = \(name)]", name:name)
+            case "language": return CVUParsedLanguageDefinition("[language = \(name)]", name:name)
             default:
                 throw CVUParseErrors.UnknownDefinition(typeToken)
             }
@@ -271,6 +275,11 @@ class CVUParser {
                         _ = try parseDefinition(selector)
                         lastKey = nil
                     }
+                    else if let selector = selector as? CVUParsedDatasourceDefinition {
+                        dict["datasourceDefinition"] = selector
+                        _ = try parseDefinition(selector)
+                        lastKey = nil
+                    }
                     else {
                         // TODO other defininitions
                         print("this inline definition is not yet supported")
@@ -315,7 +324,7 @@ class CVUParser {
                             addUIElement(type, &properties)
                             continue
                         }
-                        else if value.lowercased() == "queryOptions" {
+                        else if value.lowercased() == "datasource" {
                             
                         }
                         else if case CVUToken.CurlyBracketOpen = nextToken { }
@@ -341,7 +350,13 @@ class CVUParser {
                     }
                     
                     let arguments = options.removeValue(forKey: "arguments") as? [String:Any] ?? [:]
-                    stack.append(Action(name, arguments:arguments, values:options))
+                    if let actionFamily = ActionFamily(rawValue: name) {
+                        let ActionType = ActionFamily.getType(actionFamily)()
+                        stack.append(ActionType.init(name, arguments:arguments, values:options))
+                    }
+                    else {
+                        // TODO ERROR REPORTING
+                    }
                 }
                 else {
                     stack.append(value)

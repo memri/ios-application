@@ -95,7 +95,7 @@ struct ListRendererView: View {
                             .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
                         .onDelete{ indexSet in
-                            main.executeAction(Action("delete"))
+                            main.executeAction(ActionDelete())
                         }
                     }
                     .environment(\.editMode, $main.currentSession.isEditMode)

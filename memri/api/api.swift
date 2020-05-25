@@ -2,7 +2,11 @@ import Foundation
 import Combine
 import RealmSwift
 
-public class QueryOptions: Object, Codable {
+protocol UniqueString {
+    var uniqueString:String { get }
+}
+
+public class Datasource: Object, UniqueString {
     /// Retrieves the query which is used to load data from the pod
     @objc dynamic var query: String? = nil
     
@@ -38,24 +42,38 @@ public class QueryOptions: Object, Codable {
     
     required init() {
         super.init()
+    }
+    
+    public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition) -> Datasource {
+        return Datasource(value: [
+            "selector": def.selector ?? "[datasource]",
+            "query": def["query"] as? String ?? "" as Any,
+            "sortProperty": def["sortProperty"] as? String ?? "",
+            "sortAscending": def["sortAscending"] as? Bool ?? true
+        ])
     }
 }
 
-public class CascadingQueryOptions: Object, Codable {
+public class CascadingDatasource: Cascadable, UniqueString {
     /// Retrieves the query which is used to load data from the pod
-    @objc dynamic var query: String? = nil
+    var query: String? {
+        datasource.query ?? cascadeProperty("query", nil)
+    }
     
     /// Retrieves the property that is used to sort on
-    @objc dynamic var sortProperty: String? = nil
+    var sortProperty: String? {
+        datasource.sortProperty ?? cascadeProperty("sortProperty", nil)
+    }
     
     /// Retrieves whether the sort direction
     /// false sort descending
     /// true sort ascending
-    let sortAscending = RealmOptional<Bool>()
-    /// Retrieves the number of items per page
-    let pageCount = RealmOptional<Int>() // Todo move to ResultSet
+    var sortAscending:Bool? {
+        datasource.sortAscending.value ?? cascadeProperty("sortAscending", nil)
+    }
+    
+    let datasource:Datasource
  
-    let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
      /// Returns a string representation of the data in QueryOptions that is unique for that data
      /// Each QueryOptions object with the same data will return the same uniqueString
     var uniqueString:String {
@@ -64,19 +82,24 @@ public class CascadingQueryOptions: Object, Codable {
         result.append((self.query ?? "").sha256())
         result.append(self.sortProperty ?? "")
         
-        let sortAsc = self.sortAscending.value ?? true
+        let sortAsc = self.sortAscending ?? true
         result.append(String(sortAsc))
             
         return result.joined(separator: ":")
     }
     
-    init(query:String) {
-        super.init()
-        self.query = query
+    func flattened() -> Datasource {
+        return Datasource(value: [
+            "query": self.query as Any,
+            "sortProperty": self.sortProperty as Any,
+            "sortAscending": self.sortAscending as Any
+        ])
     }
     
-    required init() {
+    required init(_ cascadeStack: [CVUParsedDefinition], _ datasource:Datasource) {
+        self.datasource = datasource
         super.init()
+        self.cascadeStack = cascadeStack
     }
 }
 
@@ -129,7 +152,7 @@ public class PodAPI {
     public func unlink(_ fromItem:DataItem, _ toItem:DataItem, _ predicate:String, _ callback: (_ error:Error?, _ success:Bool) -> Void) -> Void {}
 
  
-    public func query(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
+    public func query(_ query:Datasource, _ callback: (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         
         //        // this simulates async call
         //        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -167,11 +190,11 @@ public class PodAPI {
 //        callback(nil, items);
     }
  
-    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryNLP(_ query:Datasource, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
  
-    public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryDSL(_ query:Datasource, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
  
-    public func queryRAW(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+    public func queryRAW(_ query:Datasource, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 
     /// Returns a read-only SettingsData object.
     public func getDefaultSettings(_ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}

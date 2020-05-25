@@ -2,7 +2,7 @@
     "{[type:session]}": {
         "name": "all-sessions",
         "title": "All Sessions",
-        "queryOptions": {
+        "datasource": {
             "query": "session",
             "sortProperty": "dateAccessed",
             "sortAscending": false

@@ -51,6 +51,8 @@ public class CVUParsedDefinition : CVUToString {
         self.parsed = parsed ?? self.parsed
     }
 }
+public class CVUParsedDatasourceDefinition:CVUParsedDefinition {
+}
 public class CVUParsedStyleDefinition:CVUParsedDefinition {
 }
 public class CVUParsedLanguageDefinition:CVUParsedDefinition {

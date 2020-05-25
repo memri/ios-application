@@ -97,9 +97,12 @@ public class Views {
                 
                 if def is CVUParsedViewDefinition { values["type"] = "view" }
                 else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
                 else if def is CVUParsedStyleDefinition { values["type"] = "style" }
                 else if def is CVUParsedColorDefinition { values["type"] = "color" }
                 else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
+                else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
+                else if def is CVUParsedSessionDefinition { values["type"] = "session" }
                 else { throw "Exception: unknown definition" }
                 
                 // Store definition
@@ -166,7 +169,7 @@ public class Views {
         case "view": return main?.cascadingView
         case "dataItem":
             // TODO Refactor into a variables/arguments object
-            if let itemRef:DataItem = viewArguments["."] as? DataItem {
+            if let itemRef:DataItem = viewArguments.get(".") {
                 return itemRef
             }
             else if let item = main?.cascadingView.resultSet.singletonItem {
@@ -176,7 +179,7 @@ public class Views {
                 print("Warning: No item found to get the property off")
             }
         default:
-            if let value = viewArguments[name] { return value }
+            if let value:Any = viewArguments.get(name) { return value }
             print("Warning: Unknown object to get the property off: \(name)")
         }
         

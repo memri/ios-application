@@ -1,8 +1,6 @@
 [renderer = list] {
-    slideLeftActions: [
-        { actionName: delete }
-    ]
-    press: { actionName: openView }
-    longPress: { actionName: select }
+    slideLeftActions: delete
+    press: openView
+    longPress: select
 }
 

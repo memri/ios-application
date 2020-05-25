@@ -173,11 +173,11 @@ public class Cache {
     }
     
     // TODO Refactor: don't use async syntax when nothing is async
-    public func query(_ queryOptions:QueryOptions) throws -> [DataItem] {
+    public func query(_ datasource:Datasource) throws -> [DataItem] {
         var error:Error?
         var items:[DataItem]?
         
-        query(queryOptions) {
+        query(datasource) {
             error = $0
             items = $1
         }
@@ -189,15 +189,15 @@ public class Cache {
     
     
      ///  This function does two things 1) executes a query on the local realm database with given querOptions, and executes callback on the result.
-     ///  2) calls the syncer with the same queryOptions to execute the query on the pod.
+     ///  2) calls the syncer with the same datasource to execute the query on the pod.
      /// - Parameters:
-     ///   - queryOptions: queryOptions for the query, containing datatype(s), filters, sortInstructions etc.
+     ///   - datasource: datasource for the query, containing datatype(s), filters, sortInstructions etc.
      ///   - callback: action exectued on the result
-    public func query(_ queryOptions:QueryOptions,
+    public func query(_ datasource:Datasource,
                       _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) -> Void {
 
         // Do nothing when the query is empty. Should not happen.
-        let q = queryOptions.query ?? ""
+        let q = datasource.query ?? ""
         
         // Log to a maker user
         errorHistory.info("Executing query \(q)")
@@ -207,7 +207,7 @@ public class Cache {
         }
         else {
             // Schedule the query to sync from the pod
-            sync.syncQuery(queryOptions)
+            sync.syncQuery(datasource)
             
             // Parse query
             let (typeName, filter) = parseQuery(q)
@@ -238,10 +238,10 @@ public class Cache {
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
                 
-                if let sortProperty = queryOptions.sortProperty, sortProperty != "" {
+                if let sortProperty = datasource.sortProperty, sortProperty != "" {
                     result = result.sorted(
                         byKeyPath: sortProperty,
-                        ascending: queryOptions.sortAscending.value ?? true)
+                        ascending: datasource.sortAscending.value ?? true)
                 }
                 
                 // Construct return array
@@ -272,9 +272,9 @@ public class Cache {
         }
     }
 
-    public func getResultSet(_ queryOptions:QueryOptions) -> ResultSet {
+    public func getResultSet(_ datasource:Datasource) -> ResultSet {
         // Create a unique key from query options
-        let key = queryOptions.uniqueString
+        let key = datasource.uniqueString
         
         // Look for a resultset based on the key
         if let resultSet = queryIndex[key] {
@@ -290,14 +290,14 @@ public class Cache {
             queryIndex[key] = resultSet
             
             // Make sure the new resultset has the right query properties
-            resultSet.queryOptions.query = queryOptions.query
-            resultSet.queryOptions.sortProperty = queryOptions.sortProperty
-            resultSet.queryOptions.sortAscending.value = queryOptions.sortAscending.value
+            resultSet.datasource.query = datasource.query
+            resultSet.datasource.sortProperty = datasource.sortProperty
+            resultSet.datasource.sortAscending.value = datasource.sortAscending.value
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
                 self.scheduleUIUpdate!() { main in
-                    return main.cascadingView.resultSet.queryOptions == resultSet.queryOptions
+                    return main.cascadingView.resultSet.datasource == resultSet.datasource
                 }
             })
             

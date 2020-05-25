@@ -5,7 +5,8 @@
 
 *[]: {
     searchHint: Search
-    sortFields: [dateCreated, dateModified, dateAccessed],
+    sortFields: dateCreated dateModified dateAccessed,
+    
     [renderer = generalEditor] {
         EditorRow {
             spacing: 5
@@ -16,7 +17,7 @@
                 Spacer
                 Button{
                     press: archive
-                    condition: {{!readOnly}}
+                    show: {{!readOnly}}
                     Image {
                         systemName: bolt.horizontal.circle.fill
                         color: #ff0000

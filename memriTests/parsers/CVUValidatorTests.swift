@@ -173,7 +173,7 @@ class CVUValidatorTests: XCTestCase {
                         view: {
                             defaultRenderer: timeline
                             
-                            queryOptions {
+                            datasource {
                                 query: "AuditItem appliesTo:{.id}"
                                 sortProperty: dateCreated
                                 sortAscending: true

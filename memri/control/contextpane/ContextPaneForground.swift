@@ -11,8 +11,8 @@ import SwiftUI
 struct ContextPaneForground: View {
     @EnvironmentObject var main: Main
     
-    var addLabelAction = Action("showAddLabel")
-    var openLabelViewAction = Action("openLabelView")
+    var addLabelAction = ActionNoop()
+    var openLabelViewAction = ActionNoop()
     var paddingLeft:CGFloat = 25
 
     var body: some View {

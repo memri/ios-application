@@ -86,7 +86,7 @@
 		5DAFB6262479529900719160 /* Filter-starred.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6252479529900719160 /* Filter-starred.cvu */; };
 		5DAFB628247952A800719160 /* Choose-item-by-query.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB627247952A800719160 /* Choose-item-by-query.cvu */; };
 		5DAFB630247952D300719160 /* All-items-with-label.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB62F247952D300719160 /* All-items-with-label.cvu */; };
-		5DAFB633247952F500719160 /* Note.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB632247952F500719160 /* Note.cvu */; };
+		5DAFB633247952F500719160 /* UserNote.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB632247952F500719160 /* UserNote.cvu */; };
 		5DAFB6382479533000719160 /* Sessions.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6372479533000719160 /* Sessions.cvu */; };
 		5DAFB63A24796E1C00719160 /* CombineViewFilesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */; };
 		5DB3466324585246008FE8A9 /* FileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB3466124585246008FE8A9 /* FileTest.swift */; };
@@ -148,7 +148,6 @@
 		866F87B4245302A4000E5FAB /* default_database.json in Resources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
 		866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C2245354B5000E5FAB /* PickerPane.swift */; };
 		866F87C624536626000E5FAB /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C524536626000E5FAB /* MapView.swift */; };
-		866F87C9245434A1000E5FAB /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C8245434A1000E5FAB /* SubView.swift */; };
 		866F87D82456AD76000E5FAB /* person.0x013.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D52456AD76000E5FAB /* person.0x013.json */; };
 		866F87D92456AD76000E5FAB /* person.0x013.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D52456AD76000E5FAB /* person.0x013.json */; };
 		866F87DA2456AD76000E5FAB /* person.0x012.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D62456AD76000E5FAB /* person.0x012.json */; };
@@ -185,6 +184,12 @@
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2A247B958700EC85C0 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA29247B958700EC85C0 /* UserState.swift */; };
 		8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */; };
+		8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C8245434A1000E5FAB /* SubView.swift */; };
+		8699AA2E247BCF1E00EC85C0 /* Session.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB47A2469CC60007EAE67 /* Session.cvu */; };
+		8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB47E246A4570007EAE67 /* Note.cvu */; };
+		8699AA30247BCF2B00EC85C0 /* defaults.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB486246A61F3007EAE67 /* defaults.cvu */; };
+		8699AA31247BCF3000EC85C0 /* generalEditor.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB481246A4D94007EAE67 /* generalEditor.cvu */; };
+		8699AA32247BCF3E00EC85C0 /* Person.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB483246A58FF007EAE67 /* Person.cvu */; };
 		869CA736243F9AA3009C56FF /* SessionSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869CA735243F9AA3009C56FF /* SessionSwitcher.swift */; };
 		86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D8392437321700F8FAD8 /* Sync.swift */; };
 		86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D83B243B3FFF00F8FAD8 /* Loading.swift */; };
@@ -323,7 +328,7 @@
 		5DAFB6252479529900719160 /* Filter-starred.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Filter-starred.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB627247952A800719160 /* Choose-item-by-query.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Choose-item-by-query.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB62F247952D300719160 /* All-items-with-label.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "All-items-with-label.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		5DAFB632247952F500719160 /* Note.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Note.cvu; sourceTree = "<group>"; };
+		5DAFB632247952F500719160 /* UserNote.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserNote.cvu; sourceTree = "<group>"; };
 		5DAFB6372479533000719160 /* Sessions.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sessions.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineViewFilesTest.swift; sourceTree = "<group>"; };
 		5DB3466124585246008FE8A9 /* FileTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTest.swift; sourceTree = "<group>"; };
@@ -405,7 +410,7 @@
 		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
-		8699AA29247B958700EC85C0 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
+		8699AA29247B958700EC85C0 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUParseErrors.swift; sourceTree = "<group>"; };
 		869CA735243F9AA3009C56FF /* SessionSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSwitcher.swift; sourceTree = "<group>"; };
 		86A5D8392437321700F8FAD8 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
@@ -801,7 +806,7 @@
 		5DAFB631247952DF00719160 /* user */ = {
 			isa = PBXGroup;
 			children = (
-				5DAFB632247952F500719160 /* Note.cvu */,
+				5DAFB632247952F500719160 /* UserNote.cvu */,
 			);
 			path = user;
 			sourceTree = "<group>";
@@ -1258,6 +1263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
+				8699AA31247BCF3000EC85C0 /* generalEditor.cvu in Resources */,
 				5D78D06B242500A500F7BD3B /* default_navigation.json in Resources */,
 				5DC1692A24093E7000367905 /* sessions_manually_expanded.json in Resources */,
 				5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */,
@@ -1267,6 +1273,7 @@
 				5DAFB6262479529900719160 /* Filter-starred.cvu in Resources */,
 				5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */,
 				86CDB4742469C49F007EAE67 /* macro_views.json in Resources */,
+				8699AA30247BCF2B00EC85C0 /* defaults.cvu in Resources */,
 				C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */,
 				5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */,
 				8656461A24238BB000D071B4 /* notes_from_server.json in Resources */,
@@ -1281,16 +1288,18 @@
 				5DAFB6212479527600719160 /* Address.cvu in Resources */,
 				5DAFB628247952A800719160 /* Choose-item-by-query.cvu in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
-				5DAFB633247952F500719160 /* Note.cvu in Resources */,
+				5DAFB633247952F500719160 /* UserNote.cvu in Resources */,
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
 				5DAFB6172479524E00719160 /* GeneralEditor.cvu in Resources */,
 				5DAFB6152479524500719160 /* Thumbnail.cvu in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
 				5DAFB6382479533000719160 /* Sessions.cvu in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
+				8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */,
 				5DAFB61D2479526900719160 /* SessionView.cvu in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
 				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
+				8699AA32247BCF3E00EC85C0 /* Person.cvu in Resources */,
 				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
 				86229DCD243509F60013750A /* default_settings.json in Resources */,
 				86CDB4762469C542007EAE67 /* template_views.json in Resources */,
@@ -1300,6 +1309,7 @@
 				5DAFB630247952D300719160 /* All-items-with-label.cvu in Resources */,
 				5D599BC123F2B77700F218A0 /* Assets.xcassets in Resources */,
 				866F87B4245302A4000E5FAB /* default_database.json in Resources */,
+				8699AA2E247BCF1E00EC85C0 /* Session.cvu in Resources */,
 				5D44D52A24585E0B004796BA /* testfile.txt in Resources */,
 				5D3EE57D2447701F00562AAC /* note.0x05.json in Resources */,
 				5DAFB6112479521D00719160 /* Any.cvu in Resources */,
@@ -1471,7 +1481,6 @@
 				86DDB361247AAD030051A92F /* Cascadable.swift in Sources */,
 				5D78D072242531BE00F7BD3B /* MainNavigation.swift in Sources */,
 				5D78D0692424D4D900F7BD3B /* NavigationView.swift in Sources */,
-				866F87C9245434A1000E5FAB /* SubView.swift in Sources */,
 				86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */,
 				868EF657247678B100C0375F /* Languages.swift in Sources */,
 				5D301F6D245C37EE00183BD2 /* LEOTextViewStructs.swift in Sources */,
@@ -1514,6 +1523,7 @@
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				5D228B062432385300464506 /* ActionView.swift in Sources */,
 				868EF6552476768C00C0375F /* UIElement.swift in Sources */,
+				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
 				5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
