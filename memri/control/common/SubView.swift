@@ -44,14 +44,17 @@ public struct SubView : View {
             session.views.append(view)
             session.currentViewIndex = 0
             
+            // NOTE: Allowed force unwrap
             self.proxyMain = (main as! RootMain).createProxy(session)
             do { try self.proxyMain!.updateCascadingView() }
             catch {
                 // TODO Refactor error handling
+                throw "Cannot update CascadingView \(self): \(error)"
             }
         }
         catch {
             // TODO Refactor: error handling
+            errorHistory.error("Error: cannot init subview: \(error)")
         }
     }
     
@@ -68,10 +71,12 @@ public struct SubView : View {
         session.views.append(view)
         session.currentViewIndex = 0
         
+        // NOTE: Allowed force unwrap
         self.proxyMain = (main as! RootMain).createProxy(session)
         do { try self.proxyMain!.updateCascadingView() }
         catch {
             // TODO Refactor error handling
+            errorHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
         }
     }
     
@@ -82,7 +87,7 @@ public struct SubView : View {
                 if self.toolbar {
                     TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
-                
+                // NOTE: Allowed force unwrap
                 allRenderers?.allViews[self.proxyMain!.cascadingView.activeRenderer]
                     .fullHeight()
                 
@@ -91,6 +96,7 @@ public struct SubView : View {
                 }
             }
             .fullHeight()
+            // NOTE: Allowed force unwrap
             .environmentObject(self.proxyMain!)
             
 //            ContextPane()

@@ -85,8 +85,15 @@ public class Expression : CVUToString {
         let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
         let parser = ExprParser(try lexer.tokenize())
         ast = try parser.parse()
-        interpreter = ExprInterpreter(ast!, lookup, execFunc)
-        parsed = true
+        // TODO: Error handlign
+        if let ast = ast {
+            interpreter = ExprInterpreter(ast, lookup, execFunc)
+            parsed = true
+        }
+        else {
+            throw "Exception: unexpected error occurred."
+        }
+
     }
     
     public func validate() throws {

@@ -40,10 +40,17 @@ struct _RichTextEditor: UIViewRepresentable {
         
         func getRtfString(_ attributedText: NSAttributedString) -> String{
             let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
-            let rtfData = try! attributedText.data(from: NSRange(location: 0, length: attributedText.length),
-                                                            documentAttributes: rtfOptions)
-            
-            let rtfString = String(decoding: rtfData, as: UTF8.self)
+            let rtfString: String
+            do {
+                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length),
+                                                                documentAttributes: rtfOptions)
+                
+                rtfString = String(decoding: rtfData, as: UTF8.self)
+            }
+            catch {
+                print("Cannot read rtfString from attributedText: \(attributedText)")
+                rtfString = ""
+            }
             return rtfString
         }
         
@@ -75,8 +82,8 @@ struct _RichTextEditor: UIViewRepresentable {
         let textView = LEOTextView(frame: bounds,
                                    textContainer: NSTextContainer())
                 
-        if let rtfContent = self.dataItem["rtfContent"]{
-            textView.setAttributedTextFromRtf(rtfContent as! String)
+        if let rtfContent = self.dataItem["rtfContent"] as? String{
+            textView.setAttributedTextFromRtf(rtfContent)
         }else{
             textView.setAttributeTextWithJSONString(emptyAttributedContent())
         }
@@ -115,6 +122,7 @@ struct RichTextRendererView: View {
 
     var body: some View {
         let binding = Binding(
+            // NOTE: Allowed for unwrapping
             get: { self.main.cascadingView.resultSet.singletonItem!.getString("title") },
             set: { self.main.cascadingView.resultSet.singletonItem!.set("title", $0) }
         )

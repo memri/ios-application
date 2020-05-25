@@ -25,7 +25,7 @@ public class InMemoryObjectCache {
         }
     }
     
-    public func get(_ key:String) throws -> Any {
+    public func get(_ key:String) -> Any {
         if cache[key] == nil {
             return cache[key] as Any
         }
@@ -35,7 +35,7 @@ public class InMemoryObjectCache {
     class func set<T>(_ key:String, _ value:T) throws {
         try globalInMemoryObjectCache.set(key, value)
     }
-    class func get(_ key:String) throws -> Any {
+    class func get(_ key:String) -> Any {
         try globalInMemoryObjectCache.get(key)
     }
 }

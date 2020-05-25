@@ -26,27 +26,46 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder
     return (encoder, decoder)
 }()
 
-func unserialize<T:Decodable>(_ s:String) -> T {
-    let data = s.data(using: .utf8)!
-    let output:T = try! MemriJSONDecoder.decode(T.self, from: data)
-    return output as T
+func unserialize<T:Decodable>(_ s:String) -> T? {
+    do {
+        // NOTE: Allowed forced unwrapping
+        let data = s.data(using: .utf8)!
+        let output:T = try MemriJSONDecoder.decode(T.self, from: data)
+        return output as T
+    }
+    catch{
+        return nil
+    }
 }
 
 func serialize(_ a:AnyCodable) -> String {
-    let data = try! MemriJSONEncoder.encode(a)
-    let string = String(data: data, encoding: .utf8)!
-    return string
+    do {
+        // NOTE: Allowed force unwrap
+        let data = try MemriJSONEncoder.encode(a)
+        let string = String(data: data, encoding: .utf8)!
+        return string
+    }
+    catch {
+        print("Failed to encode \(a)")
+        return ""
+    }
 }
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     print("Reading from file \(file).\(ext)")
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-    let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-    return jsonString
+    if let fileURL = fileURL{
+        let jsonString = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+        return jsonString
+    }
+    else {
+        throw "Cannot read from \(file) with ext \(ext), path does not result in valid url"
+    }
 }
 
 func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
     let jsonString = try stringFromFile(file, ext)
+    // NOTE: Allowed force unwrap
     let jsonData = jsonString.data(using: .utf8)!
     return jsonData
 }
@@ -130,11 +149,15 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
 }
 
 func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSwift.List<T>) {
-    let parsed:[T]? = try! decoder.decodeIfPresent(key)
-    if let parsed = parsed {
-        for item in parsed {
-            list.append(item)
+    do {
+        if let parsed:[T] = try decoder.decodeIfPresent(key) {
+            for item in parsed {
+                list.append(item)
+            }
         }
+    }
+    catch {
+        print("Failed to decode into list \(error)")
     }
 }
 
@@ -165,10 +188,15 @@ func negateAny(_ value:Any) -> Bool {
 
 func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() -> Void) {
     // TODO Refactor, Error Handling , _ error:(error) -> Void  ??
-    if let realm = realm, !realm.isInWriteTransaction {
-        try! realm.write { doWrite() }
+    if let realm = realm {
+        if !realm.isInWriteTransaction {
+            try! realm.write { doWrite() }
+        }
+        else {
+            doWrite()
+        }
     }
     else {
-        doWrite()
+        print("TRYING TO WRITE BUT REALM IS NIL")
     }
 }

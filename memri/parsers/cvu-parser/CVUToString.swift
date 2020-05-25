@@ -165,8 +165,8 @@ class CVUSerializer {
                     str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
                         + "\(key): \(valueToString(p, depth, tab))")
                 }
-                else {
-                    str.append("\(key): \(valueToString(dict[key]!, depth, tab))")
+                else if let value = dict[key]{
+                    str.append("\(key): \(valueToString(value, depth, tab))")
                 }
             }
         }

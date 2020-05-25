@@ -175,7 +175,7 @@ class Note:DataItem {
             content = try decoder.decodeIfPresent("content") ?? content
             rtfContent = try decoder.decodeIfPresent("rtfContent") ?? rtfContent
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -201,7 +201,7 @@ class PhoneNumber:DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             number = try decoder.decodeIfPresent("number") ?? number
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -227,7 +227,7 @@ class Website:DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             url = try decoder.decodeIfPresent("url") ?? url
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -249,7 +249,7 @@ class Location:DataItem{
             latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
             longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -277,7 +277,7 @@ class Country:DataItem {
             flag = try decoder.decodeIfPresent("flag") ?? flag
             location = try decoder.decodeIfPresent("location") ?? location
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -320,7 +320,7 @@ class Address:DataItem {
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
             location = try decoder.decodeIfPresent("location") ?? location
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -345,7 +345,7 @@ class Company: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -368,7 +368,7 @@ class PublicKey: DataItem{
             name = try decoder.decodeIfPresent("name") ?? name
             key = try decoder.decodeIfPresent("key") ?? key
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -393,7 +393,7 @@ class OnlineProfile: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             handle = try decoder.decodeIfPresent("handle") ?? handle
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -421,7 +421,7 @@ class Diet: DataItem{
             
             decodeIntoList(decoder, "additions", self.additions)
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -446,7 +446,7 @@ class MedicalCondition: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -514,7 +514,7 @@ class Person:DataItem {
             decodeEdges(decoder, "diets",  Diet.self, self.diets, self)
             decodeEdges(decoder, "medicalConditions", MedicalCondition.self, self.medicalConditions, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -567,7 +567,7 @@ class AuditItem:DataItem {
             
             decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -599,7 +599,7 @@ class Label:DataItem {
             decodeEdges(decoder, "includes", DataItem.self, self.appliesTo, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -634,7 +634,7 @@ class Photo:DataItem {
             decodeEdges(decoder, "includes", Person.self, self.includes, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -671,7 +671,7 @@ class Video:DataItem {
             decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -705,7 +705,7 @@ class Audio:DataItem {
             
             decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }

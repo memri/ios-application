@@ -31,7 +31,7 @@ public class CVU {
             let lexer = CVULexer(input: code)
             let parser = CVUParser(try lexer.tokenize(), lookup:lookup, execFunc:execFunc)
             parsed = try parser.parse()
-            return parsed!
+            return parsed ?? []
         }
         
     }

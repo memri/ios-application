@@ -16,6 +16,7 @@ struct SettingsPane: View {
     private func getBinding<T:Decodable>(_ path:String) -> Binding<T> {
         return Binding<T>(
             get: { () -> T in
+                // TODO: Error handling
                 let x:T = self.main.settings.get(path)!
                 return x
             },

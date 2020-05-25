@@ -55,9 +55,10 @@ struct ThumbWaterfallRendererView: View {
         ASCollectionViewSection(id: 0, data: main.items, selectedItems: $selectedItems) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
+                    // TODO: Error handling
                     self.renderConfig!.render(item: dataItem)
                         .onTapGesture {
-                            if let press = self.renderConfig!.press {
+                            if let press = self.renderConfig?.press {
                                 self.main.executeAction(press, with: dataItem)
                             }
                         }

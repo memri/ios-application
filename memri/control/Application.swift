@@ -27,6 +27,7 @@ struct Application: View {
     @State var showNavigation = false
     
     var body: some View {
+        // NOTE: Allowed force unwrapping
         (main as! RootMain).initNavigation(self.$showNavigation)
         
         let drag = DragGesture()

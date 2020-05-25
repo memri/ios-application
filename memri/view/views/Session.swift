@@ -69,7 +69,7 @@ public class Session: DataItem {
             
             decodeIntoList(decoder, "views", self.views)
             
-            try! super.superDecode(from: decoder)
+            try super.superDecode(from: decoder)
         }
         
 //        self.postInit()
@@ -145,21 +145,27 @@ public class Session: DataItem {
     }
     
     public func takeScreenShot(){
-        let view = UIApplication.shared.windows[0].rootViewController?.view
-        let uiImage = view!.takeScreenShot()
-        
-        if self.screenshot == nil {
-            let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
+        if let view = UIApplication.shared.windows[0].rootViewController?.view {
+            let uiImage = view.takeScreenShot()
             
-            if realm!.isInWriteTransaction { doIt() }
-            else { try! realm!.write { doIt() } }
+            if self.screenshot == nil {
+                let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
+                
+                realmWriteIfAvailable(realm) {
+                    doIt()
+                }
+            }
+            
+            // NOTE: Allowed force unwrapping
+            do {
+                try self.screenshot!.write(uiImage)
+            }
+            catch let error {
+                print(error)
+            }
         }
-        
-        do {
-            try self.screenshot!.write(uiImage)
-        }
-        catch let error {
-            print(error)
+        else {
+            print("No view available")
         }
     }
     
@@ -257,6 +263,7 @@ extension UIView {
 
         drawHierarchy(in: self.bounds, afterScreenUpdates: true)
 
+        // NOTE: Allowed force unwrap
         let image = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return image

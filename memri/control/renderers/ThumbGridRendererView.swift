@@ -41,10 +41,10 @@ struct ThumbGridRendererView: View {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let isWide = environment.container.effectiveContentSize.width > 500
-                let columns = CGFloat(isWide ? self.renderConfig!.columnsWide ?? 5 : self.renderConfig!.columns ?? 3)
+                let columns = CGFloat(isWide ? self.renderConfig?.columnsWide ?? 5 : self.renderConfig?.columns ?? 3)
                 
                 let gridBlockSize = environment.container.effectiveContentSize.width / columns
-                let inset = CGFloat(self.renderConfig!.itemInset ?? 5)
+                let inset = CGFloat(self.renderConfig?.itemInset ?? 5)
                 let gridItemInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
                 let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize), heightDimension: .absolute(gridBlockSize))
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -80,9 +80,10 @@ struct ThumbGridRendererView: View {
         ASCollectionViewSection(id: 0, data: main.items, selectedItems: $selectedItems) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
+                    // TODO: Error handling
                     self.renderConfig!.render(item: dataItem)
                         .onTapGesture {
-                            if let press = self.renderConfig!.press {
+                            if let press = self.renderConfig?.press {
                                 self.main.executeAction(press, with: dataItem)
                             }
                         }

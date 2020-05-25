@@ -45,7 +45,7 @@ class ExprParser {
         
         lastToken = tokens[index]
         index += 1
-        return lastToken! // Check for out of bound?
+        return lastToken ?? ExprToken.EOF // Check for out of bound?
     }
 
     func parse() throws -> ExprNode {
@@ -55,9 +55,7 @@ class ExprParser {
         if case ExprToken.EOF = popCurrentToken() {
             return result
         }
-        else {
-            throw ExprParseErrors.UnexpectedToken(lastToken!)
-        }
+        throw ExprParseErrors.UnexpectedToken(lastToken!)
     }
 
     func parseExpression() throws -> ExprNode {

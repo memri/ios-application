@@ -12,6 +12,7 @@ import CryptoKit
 extension String: Error {
     func sha256() -> String {
         // Convert the string to data
+        // NOTE: Allowed force unwrap
         let data = self.data(using: .utf8)!
 
         // Hash the data
@@ -52,21 +53,27 @@ extension String: Error {
             if chr == "i" { nsOptions.update(with: .caseInsensitive) }
         }
         
-        let regex = try! NSRegularExpression(pattern: pattern, options: nsOptions)
-        var matches:[String] = []
-        
-        // Weird complex way to execute a regex
-        let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
-        regex.enumerateMatches(in: self, options: [], range: nsrange) { (match, _, stop) in
-            guard let match = match else { return }
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: nsOptions)
+            var matches:[String] = []
+            
+            // Weird complex way to execute a regex
+            let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
+            regex.enumerateMatches(in: self, options: [], range: nsrange) { (match, _, stop) in
+                guard let match = match else { return }
 
-            for i in 0..<match.numberOfRanges {
-                let rangeObject = Range(match.range(at: i), in: self)!
-                matches.append(String(self[rangeObject]))
+                for i in 0..<match.numberOfRanges {
+                    let rangeObject = Range(match.range(at: i), in: self)!
+                    matches.append(String(self[rangeObject]))
+                }
             }
+            
+            return matches
         }
-        
-        return matches
+        catch {
+            print("Exception: Failed to construct regular expression")
+            return []
+        }
     }
     
     func substr(_ startIndex:Int, _ length:Int? = nil) -> String {

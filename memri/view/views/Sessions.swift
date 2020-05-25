@@ -38,7 +38,7 @@ public class Sessions: DataItem {
             
             decodeIntoList(decoder, "sessions", self.sessions)
             
-            try! super.superDecode(from:decoder)
+            try super.superDecode(from:decoder)
         }
         
         self.postInit()
@@ -82,14 +82,18 @@ public class Sessions: DataItem {
             if let setting = setting {
                 
                 // Set it as the uid
-                self.uid = unserialize(setting.json)
+                if let uid: String = unserialize(setting.json) {
+                    self.uid = uid
+                }
+                else {
+                    print("Cannot unserialize settings.json")
+                }
             }
         }
     }
     
     public func setCurrentSession(_ session:Session) {
-        try! realm!.write {
-            
+        realmWriteIfAvailable(realm) {
             if let index = sessions.firstIndex(of: session) {
                 sessions.remove(at: index)
             }
@@ -100,7 +104,7 @@ public class Sessions: DataItem {
             // Update the index pointer
             currentSessionIndex = sessions.count - 1
         }
-        
+            
         decorate(session)
     }
     
@@ -179,9 +183,10 @@ public class Sessions: DataItem {
                 }
             }
         }
-
-        if let realm = realm { try! realm.write { doMerge() } }
-        else { doMerge() }
+        
+        realmWriteIfAvailable(realm){
+            doMerge()
+        }
     }
     
     /// Find a session using text

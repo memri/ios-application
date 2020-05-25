@@ -22,7 +22,11 @@ extension View {
                 
                 if let expr = value as? Expression {
                     do { value = try expr.execute(main.cascadingView.viewArguments) as Any }
-                    catch { continue } // TODO refactor: Error handling
+                    catch {
+                        // TODO refactor: Error handling
+                        print("Could not set property. Executing expression \(expr) failed")
+                        continue
+                    }
                 }
                 
                 view = view.setProperty(name, value)
@@ -40,10 +44,14 @@ extension View {
             break
         case "shadow":
             if let value = value as? [Any] {
-                return AnyView(self.shadow(color: Color(hex: value[0] as! String),
-                            radius: value[1] as! CGFloat,
-                            x: value[2] as! CGFloat,
-                            y: value[3] as! CGFloat))
+                if let c = value[0] as? String, let r = value[1] as? CGFloat,
+                    let x = value[2] as? CGFloat, let y = value[3] as? CGFloat{
+                    return AnyView(self.shadow(color: Color(hex: c), radius: r, x: x, y: y))
+                }
+                else {
+                    print("Exception: Invalid values for shadow")
+                    return AnyView(self.shadow(radius: 0))
+                }
             }
         case "margin":
             fallthrough
@@ -85,7 +93,7 @@ extension View {
         case "border":
             if let value = value as? [Any] {
                 if let color = value[0] as? String {
-                    return AnyView(self.border(Color(hex:color), width: value[1] as! CGFloat))
+                    return AnyView(self.border(Color(hex:color), width: value[1] as? CGFloat ?? 1.0))
                 }
             }
         case "offset":
@@ -104,8 +112,8 @@ extension View {
             if let value = value as? [Any] {
                 if let color = value[0] as? String {
                     return AnyView(self.overlay(
-                        RoundedRectangle(cornerRadius: value[2] as! CGFloat)
-                            .stroke(Color(hex: color), lineWidth: value[1] as! CGFloat)
+                        RoundedRectangle(cornerRadius: value[2] as? CGFloat ?? 1.0)
+                            .stroke(Color(hex: color), lineWidth: value[1] as? CGFloat ?? 1.0)
                             .padding(1)
                     ))
                 }
@@ -123,11 +131,11 @@ extension View {
             if let value = value as? [Any] {
                 var font:Font
                 if let name = value[0] as? String {
-                    font = .custom(name, size: value[1] as! CGFloat)
+                    font = .custom(name, size: value[1] as? CGFloat ?? 12.0)
                 }
                 else {
-                    font = .system(size: value[0] as! CGFloat,
-                                   weight: value[1] as! Font.Weight,
+                    font = .system(size: value[0] as? CGFloat ?? 12.0,
+                                   weight: value[1] as? Font.Weight ?? Font.Weight.regular,
                                    design: .default)
                 }
                 return AnyView(self.font(font))

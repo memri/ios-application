@@ -42,12 +42,13 @@ public class UIElement : CVUToString {
                 do { let x:T? = try expr.execute(viewArguments) as? T; return x }
                 catch {
                     // TODO Refactor error handling
-                    
+                    errorHistory.error("Could note compute \(propName) with arguments " +
+                                       "\(viewArguments). \(error)")
                     return nil
                 }
             }
             
-            return (propValue as! T)
+            return (propValue as? T)
         }
         else {
             // TODO REfactor: WARN
@@ -57,7 +58,6 @@ public class UIElement : CVUToString {
     }
     
     public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, DataItem, String) {
-        // TODO REfactor: Error Handling
         if let prop = properties[propName] {
             let propValue = prop
             
@@ -65,7 +65,8 @@ public class UIElement : CVUToString {
             if let expr = propValue as? Expression {
                 do { return try expr.getTypeOfDataItem() }
                 catch {
-                    // Log error
+                    // TODO Refactor: Error Handling
+                    errorHistory.error("could not get type of \(item)")
                 }
             }
         }

@@ -92,20 +92,25 @@ class Sync {
         // TODO if this query was executed recently, considering postponing action
         
         // Store query in a log item
-        let audititem = AuditItem()
-        let data = try! MemriJSONEncoder.encode(queryOptions)
-        audititem.contents = String(data: data, encoding: .utf8) ?? ""
-        audititem.action = "query"
-        audititem.date = Date()
-        
-        // Set syncstate to "fetch" in order to get priority treatment for querying
-        audititem.syncState?.actionNeeded = "fetch"
-        
-        // Add to realm
-        try! realm.write { realm.add(audititem) }
-        
-        // Execute query with priority
-        prioritySync(queryOptions, audititem)
+        do {
+            let audititem = AuditItem()
+            let data = try MemriJSONEncoder.encode(queryOptions)
+            audititem.contents = String(data: data, encoding: .utf8) ?? ""
+            audititem.action = "query"
+            audititem.date = Date()
+            
+            // Set syncstate to "fetch" in order to get priority treatment for querying
+            audititem.syncState?.actionNeeded = "fetch"
+            
+            // Add to realm
+            realmWriteIfAvailable(realm) { realm.add(audititem) }
+            
+            // Execute query with priority
+            prioritySync(queryOptions, audititem)
+        }
+        catch{
+            print("syncQuery failed: \(error)")
+        }
     }
     
     private func prioritySyncAll() {
@@ -127,44 +132,53 @@ class Sync {
     
     private func prioritySync(_ queryOptions:QueryOptions, _ audititem:AuditItem) {
         
-        print("Syncing from pod with query: \(queryOptions.query!)")
+        print("Syncing from pod with query: \(queryOptions.query ?? "")")
         
         // Call out to the pod with the query
         podAPI.query(queryOptions) { (error, items) in
             if let items = items {
                 
-                // Find resultset that belongs to this query
-                let resultSet = cache!.getResultSet(queryOptions)
-                
-                // The result that we'll add to resultset
-                var result:[DataItem] = []
-                
-                for item in items {
-                    // TODO handle sync errors
-                    let cachedItem = try! cache!.addToCache(item)
+                if let cache = cache{
                     
-                    // Ignore items marked for deletion
-                    if cachedItem.syncState!.actionNeeded != "deleted" {
-                        
-                        // Add item to result
-                        result.append(cachedItem)
+                    // Find resultset that belongs to this query
+                    let resultSet = cache.getResultSet(queryOptions)
+                    
+                    // The result that we'll add to resultset
+                    var result:[DataItem] = []
+                    
+                    for item in items {
+                        // TODO handle sync errors
+                        do{
+                            let cachedItem = try cache.addToCache(item)
+                            if cachedItem.syncState?.actionNeeded != "deleted" {
+                                // Add item to result
+                                result.append(cachedItem)
+                            }
+                            // Ignore items marked for deletion
+                        }
+                        catch {
+                            print("\(error)")
+                        }
                     }
-                }
-                
-                // Find added items
-                // TODO this could be skipped by re-executing resultSet.load()
-                for item in resultSet.items {
-                    if item.syncState!.actionNeeded == "created" {
-                        result.append(item)
+                    
+                    // Find added items
+                    // TODO this could be skipped by re-executing resultSet.load()
+                    for item in resultSet.items {
+                        if item.syncState?.actionNeeded == "created" {
+                            result.append(item)
+                        }
                     }
+                    
+                    // Update resultset with the new results
+                    resultSet.forceItemsUpdate(items)
+                    
+                    // We no longer need to process this log item
+                    realmWriteIfAvailable(realm){
+                        audititem.setSyncStateActionNeeded("")
+                    }
+                    // TODO consider deleting the log item
                 }
-                
-                // Update resultset with the new results
-                resultSet.forceItemsUpdate(items)
-                
-                // We no longer need to process this log item
-                try! realm.write { audititem.syncState!.actionNeeded = "" }
-                // TODO consider deleting the log item
+
             }
             else {
                 // Ignore errors (we'll retry next time)
@@ -223,35 +237,39 @@ class Sync {
     ///   - callback:
     /// - Throws:
     public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
-        switch item.syncState!.actionNeeded {
-        case "create":
-            podAPI.create(item) { (error, id) -> Void in
-                if error != nil { return callback(error, false) }
-                
-                // Set the new id from the server
-                item.uid = id
-                
-                callback(nil, true)
-            }
-        case "delete":
-            podAPI.remove(item.getString("uid")) { (error, success) -> Void in
-                if (error == nil) {
-                    // Remove from local storage
-                    try! realm.write() {
-                        realm.add(item) // , update: .modified
+        if let syncState = item.syncState {
+            switch syncState.actionNeeded {
+            case "create":
+                podAPI.create(item) { (error, id) -> Void in
+                    if error != nil { return callback(error, false) }
+                    
+                    // Set the new id from the server
+                    item.uid = id
+                    
+                    callback(nil, true)
+                }
+            case "delete":
+                podAPI.remove(item.getString("uid")) { (error, success) -> Void in
+                    if (error == nil) {
+                        // Remove from local storage
+                        realmWriteIfAvailable(realm){
+                            realm.add(item) // , update: .modified
+                        }
+                    callback(error, success)
                     }
                 }
-                
-                callback(error, success)
+            case "update":
+                podAPI.update(item, callback)
+            case "fetch":
+                // TODO
+                break
+            default:
+                // Ignore unknown tasks
+                print("Unknown sync state action: \(item.syncState!.actionNeeded)")
             }
-        case "update":
-            podAPI.update(item, callback)
-        case "fetch":
-            // TODO
-            break
-        default:
-            // Ignore unknown tasks
-            print("Unknown sync state action: \(item.syncState!.actionNeeded)")
+        }
+        else {
+            throw "No syncState deifned"
         }
     }
 }

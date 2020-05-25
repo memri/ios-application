@@ -141,7 +141,7 @@ public struct UIElementView: SwiftUI.View {
     }
 
     private func resize(_ view:SwiftUI.Image) -> AnyView {
-        let resizable:String = from.get("resizable", self.item)!
+        let resizable:String = from.get("resizable", self.item) ?? ""
         let y = view.resizable()
         
         switch resizable {
@@ -314,7 +314,15 @@ public struct UIElementView: SwiftUI.View {
                     else {
                         SubView(
                             main: self.main,
-                            view: { let x:SessionView = get("view")!; return x }(),
+                            view: {
+                                let x:SessionView? = get("view")
+                                if let x = x  {
+                                    return x
+                                } else{
+                                    print("Failed to make subview (not defined), creating empty one instead")
+                                    return SessionView()
+                                }
+                            }(),
                             dataItem: self.item,
                             args: ViewArguments(get("arguments") ?? [:] as [String:Any])
                         )
@@ -451,7 +459,7 @@ public struct UIElementView: SwiftUI.View {
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
         let (_, propDataItem, propName) = from.getType("value", self.item)
-        let queryOptions:[String:Any] = self.get("queryoptions")! // TODO refactor error handling
+        let queryOptions:[String:Any] = self.get("queryoptions") ?? [:] // TODO refactor error handling
         let emptyValue = self.get("empty") ?? "Pick a value"
         
         return Picker(

@@ -25,6 +25,7 @@ public class MainNavigation:ObservableObject {
         set (newFilter) {
             Settings.set("device/navigation/filterText", newFilter)
             
+            // NOTE: Allowed forced unwrapping
             scheduleUIUpdate!{_ in true}
         }
     }
@@ -61,16 +62,20 @@ public class MainNavigation:ObservableObject {
  
     public func install() {
         // Load default navigation items from pacakge
-        let jsonData = try! jsonDataFromFile("default_navigation")
-        items = try! MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
-        
-        try! realm.write {
-        
-            // Store default items in realm
-            for item in items {
-                print(item.title)
-                realm.add(item)
+        do {
+            let jsonData = try jsonDataFromFile("default_navigation")
+            items = try MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
+            
+            realmWriteIfAvailable(realm) {
+                for item in items {
+                    print(item.title)
+                    realm.add(item)
+                }
+                
             }
+        }
+        catch {
+            print("Failed to install MainNavigation")
         }
     }
 }

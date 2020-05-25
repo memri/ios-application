@@ -129,6 +129,7 @@ public struct TopNavigation: View {
                     if backButton != nil{
                         Button(action: {
                             if !self.showingBackActions {
+                                // NOTE: Allowed force unwrap (logic)
                                 main.executeAction(backButton!)
                             }
                         }) {

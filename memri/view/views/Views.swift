@@ -28,7 +28,7 @@ public class Views {
                     // TODO ???
                 }
                 
-                return json as! [String:Any]
+                return json as? [String:Any] ?? [:]
             }
             else {
                  throw "Data is not UTF8"
@@ -246,6 +246,7 @@ public class Views {
                         else if let v = value as? Object {
                             if v.objectSchema[node.name] == nil {
                                 // TODO error handling
+                                throw "No variable with name \(node.name)"
                             }
                             else {
                                 value = v[node.name] // How to handle errors?
@@ -301,7 +302,7 @@ public class Views {
                                    domain:String? = nil) -> [CVUStoredDefinition] {
         
         let filter = (type != nil ? "type = '\(type ?? "")'" : "selector = '\(selector)'")
-            + (domain != nil  ? "and domain = '\(domain!)'" : "")
+            + (domain != nil  ? "and domain = '\(domain ?? "empty")'" : "")
         
         return main!.realm.objects(CVUStoredDefinition.self)
             .filter(filter)

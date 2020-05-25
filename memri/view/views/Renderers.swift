@@ -22,6 +22,7 @@ public class Renderers {
         
         if allRenderers == nil { allRenderers = Renderers() }
     
+        // NOTE: Allowed force unwrap (logic)
         allRenderers!.all[name] = FilterPanelRendererButton(
             name: name,
             order: order,

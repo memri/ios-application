@@ -139,32 +139,52 @@ public class PodAPI {
         //            searchResult.fire(event: "onload")
         //        }
         
-        if query.query!.contains("0xNEW") {
-            callback("nothing to do", nil)
-            return
+        if let query_ = query.query{
+            if query_.contains("0xNEW") {
+                callback("nothing to do", nil)
+                return
+            }
+            else {
+                let matches = query_.match(#"^(\w+) AND uid = '(.*)'$"#)
+                if matches.count == 3 {
+                    callback(nil, itemsFromFile("\(matches[1]).\(matches[2])"))
+                    return
+                }
+                if query_.prefix(6) == "person" {
+                    callback(nil, itemsFromFile("persons_from_server"))
+                    return
+                }
+                
+                if query_.prefix(4) == "note" {
+                    callback(nil, itemsFromFile("notes_from_server"))
+                    return
+                }
+                
+                
+            }
+        }
+        else {
+            // TODO: Error handling
+            print("Tried to execute query with queryOptions \(query), but it did not contain a query")
         }
         
-        let matches = query.query!.match(#"^(\w+) AND uid = '(.*)'$"#)
-        if matches.count == 3 {
-            callback(nil, try! DataItem.fromJSONFile("\(matches[1]).\(matches[2])"))
-            return
-        }
-        
-        if query.query!.prefix(6) == "person" {
-            callback(nil, try! DataItem.fromJSONFile("persons_from_server"))
-            return
-        }
-        
-        if query.query!.prefix(4) == "note" {
-            callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
-            return
-        }
+
         
 
         
         // TODO do nothing
 //        let items:[DataItem] = try! DataItem.fromJSONFile("test_dataItems")
 //        callback(nil, items);
+    }
+    
+    private func itemsFromFile(_ file: String) -> [DataItem]{
+        do{
+            return try DataItem.fromJSONFile("notes_from_server")
+        }
+        catch{
+            print("Could note read DataItems from file: \(file)")
+            return [DataItem]()
+        }
     }
  
     public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}

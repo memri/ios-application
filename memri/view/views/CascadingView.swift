@@ -30,6 +30,7 @@ public class CascadingView: Cascadable, ObservableObject {
         if let x = localCache["resultSet"] as? ResultSet { return x }
         
         // Update search result to match the query
+        // NOTE: allowed force unwrap
         let resultSet = main!.cache.getResultSet(self.queryOptions)
         localCache["resultSet"] = resultSet
 
@@ -92,7 +93,8 @@ public class CascadingView: Cascadable, ObservableObject {
             }
         }
         
-        if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
+        
+        if let allRenderers = allRenderers, let RenderConfigType = allRenderers.allConfigTypes[activeRenderer] {
             let renderConfig = RenderConfigType.init(cascadeStack, viewArguments)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
@@ -200,7 +202,7 @@ public class CascadingView: Cascadable, ObservableObject {
             let type: Mirror = Mirror(reflecting:self)
 
             for child in type.children {
-                if child.label! == name || child.label! == "_" + name {
+                if child.label == name || child.label == "_" + name {
                     return child.value
                 }
             }

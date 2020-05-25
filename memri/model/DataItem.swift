@@ -73,7 +73,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// - Throws: Decoding error
     required public convenience init(from decoder: Decoder) throws{
         self.init()
-        try! superDecode(from: decoder)
+        try superDecode(from: decoder)
     }
     
     /// @private
@@ -111,19 +111,19 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             if let str = val as? String {
                 return str
             }
-            else if val is Bool {
-                return String(val as! Bool)
+            else if let val = val as? Bool {
+                return String(val)
             }
-            else if val is Int {
-                return String(val as! Int)
+            else if let val = val as? Int {
+                return String(val)
             }
-            else if val is Double {
-                return String(val as! Double)
+            else if let val = val as? Double {
+                return String(val)
             }
-            else if val is Date {
+            else if let val = val as? Date {
                 let formatter = DateFormatter()
                 formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
-                return formatter.string(from: val as! Date)
+                return formatter.string(from: val)
             }
             else {
                 return ""
@@ -133,10 +133,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     ///Get the type of DataItem
     /// - Returns: type of the DataItem
-    public func getType() -> DataItem.Type{
-        let type = DataItemFamily(rawValue: self.genericType)!
-        let T = DataItemFamily.getType(type)
-        return T() as! DataItem.Type
+    public func getType() -> DataItem.Type? {
+        if let type = DataItemFamily(rawValue: self.genericType){
+            let T = DataItemFamily.getType(type)
+            // NOTE: allowed forced downcast
+            return (T() as! DataItem.Type)
+        }
+        else {
+            print("Cannot find type \(self.genericType) in DataItemFamily")
+            return nil
+        }
     }
     
     
@@ -145,20 +151,21 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     ///   - name: property name
     ///   - value: value
     public func set(_ name:String, _ value:Any) {
-        try! self.realm!.write() {
+        realmWriteIfAvailable(realm, {
             self[name] = value
-        }
+        })
     }
     
     /// Toggle boolean property
     /// - Parameter name: property name
     public func toggle(_ name:String) {
-        if self[name] as! Bool == false {
-            self.set(name, true)
+        if let val = self[name] as? Bool{
+            val ? self.set(name, false) : self.set(name, true)
         }
-        else {
-            self.set(name, false)
+        else{
+            print("tried to toggle property \(name), but \(name) is not a boolean")
         }
+
     }
     
     
@@ -183,31 +190,41 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     ///   - item: item to compare against
     /// - Returns: boolean indicating whether the property values are the same
     public func isEqualProperty(_ propName:String, _ item:DataItem) -> Bool {
-        let prop = self.objectSchema[propName]!
-
-        // List
-        if prop.objectClassName != nil {
-            return false // TODO implement a list compare and a way to add to updatedFields
-        }
-        else {
-            let value1 = self[propName];
-            let value2 = item[propName]
+        if let prop = self.objectSchema[propName]{
+            // List
+            if prop.objectClassName != nil {
+                return false // TODO implement a list compare and a way to add to updatedFields
+            }
+            else {
+                let value1 = self[propName];
+                let value2 = item[propName]
+                
+                if let item1 = value1 as? String, let value2 = value2 as? String {
+                    return item1 == value2
+                }
+                if let item1 = value1 as? Int, let value2 = value2 as? Int {
+                    return item1 == value2
+                }
+                if let item1 = value1 as? Double, let value2 = value2 as? Double {
+                    return item1 == value2
+                }
+                if let item1 = value1 as? Object, let value2 = value2 as? Object {
+                    return item1 == value2
+                }
+                else {
+                    // TODO: Error handling
+                    print("Trying to compare property \(propName) of item \(item) and \(self) " +
+                          "but types do not mach")
+                }
+            }
             
-            if let item1 = value1 as? String {
-                return item1 == value2 as! String
-            }
-            if let item1 = value1 as? Int {
-                return item1 == value2 as! Int
-            }
-            if let item1 = value1 as? Double {
-                return item1 == value2 as! Double
-            }
-            if let item1 = value1 as? Object {
-                return item1 == value2 as! Object
-            }
+            return true
         }
-        
-        return true
+        else{
+            // TODO: Error handling
+            print("Tried to compare property \(propName), but \(self) does not have that property")
+            return false
+        }
     }
     
     /// Safely merges the passed item with the current DataItem. When there are merge conflicts, meaning that some other process
@@ -215,25 +232,31 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// - Parameter item: item to be merged with the current DataItem
     /// - Returns: boolean indicating the succes of the merge
     public func safeMerge(_ item:DataItem) -> Bool {
-        
-        // Ignore when marked for deletion
-        if self.syncState!.actionNeeded == "delete" { return true }
-        
-        // Do not update when the version is not higher then what we already have
-        if item.syncState!.version <= self.syncState!.version { return true }
-        
-        // Make sure to not overwrite properties that have been changed
-        let updatedFields = self.syncState!.updatedFields
-        
-        // Compare all updated properties and make sure they are the same
-        for fieldName in updatedFields {
-            if !isEqualProperty(fieldName, item) { return false }
+        if let syncState = self.syncState{
+            // Ignore when marked for deletion
+            if syncState.actionNeeded == "delete" { return true }
+            
+            // Do not update when the version is not higher then what we already have
+            if syncState.version <= syncState.version { return true }
+            
+            // Make sure to not overwrite properties that have been changed
+            let updatedFields = syncState.updatedFields
+            
+            // Compare all updated properties and make sure they are the same
+            for fieldName in updatedFields {
+                if !isEqualProperty(fieldName, item) { return false }
+            }
+            
+            // Merge with item
+            merge(item)
+            
+            return true
         }
-        
-        // Merge with item
-        merge(item)
-        
-        return true
+        else {
+            // TODO: Error handling
+            print("trying to merge, but syncState is nil")
+            return false
+        }
     }
     
     /// merges the the passed DataItem in the current item
@@ -245,7 +268,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public func merge(_ item:DataItem, _ mergeDefaults:Bool=false) {
         // Store these changes in realm
         if let realm = self.realm {
-            try! realm.write { doMerge(item, mergeDefaults) }
+            do {
+                try realm.write { doMerge(item, mergeDefaults) }
+            }
+            catch{
+                print("Could not write merge of \(item) and \(self) to realm")
+            }
         }
         else {
             doMerge(item, mergeDefaults)
@@ -315,6 +343,18 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         
         let items:[DataItem] = try MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
         return items
+    }
+    
+    /// Sets syncState .actionNeeded property
+    /// - Parameters:
+    ///   - action: action name
+    public func setSyncStateActionNeeded(_ action: String){
+        if let syncState = self.syncState {
+            syncState.actionNeeded = action
+        }
+        else{
+            print("No syncState available for item \(self)")
+        }
     }
     
     /// Read DataItem from string

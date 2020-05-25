@@ -524,8 +524,8 @@ class CVUParser {
         }
 
         if dict["cornerradius"] != nil && dict["border"] != nil {
-            var value = dict["border"] as! [Any]
-            value.append(dict["cornerradius"]!)
+            var value = dict["border"] as? [Any] ?? []
+            value.append(dict["cornerradius"] ?? 0)
 
             dict["cornerborder"] = value as Any
             dict["border"] = nil

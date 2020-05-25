@@ -61,12 +61,21 @@ extension Main {
                     finalValue = ViewArguments(dict)
                 }
                 else if action.argumentTypes[argName] == DataItemFamily.self {
+                    // TODO refactor: move to function
                     if let stringType = dict["type"] as? String,
                        let family = DataItemFamily(rawValue: stringType) {
                         
-                        let ItemType = DataItemFamily.getType(family)() as! Object.Type
-                        finalValue = ItemType.init() as! DataItem
-//                         (value: dict)
+                        if let ItemType = DataItemFamily.getType(family)() as? Object.Type {
+                            if let type = ItemType.init() as? DataItem{
+                                finalValue = type
+                            }
+                            else {
+                                throw "Cannot cast type \(ItemType) to DataItem"
+                            }
+                        }
+                        else {
+                            throw "Cannot find family \(stringType)"
+                        }
                     }
                 }
                 else if action.argumentTypes[argName] == SessionView.self {

@@ -26,6 +26,7 @@ struct ActionButton: View {
     }
     
     func getAction() -> AnyView{
+        // NOTE: Allowed force unwrappings (logic)
         switch self.action?.getRenderAs(main.cascadingView.viewArguments) {
         case .popup:
             return AnyView(ActionPopupButton(action: self.action!))
@@ -57,6 +58,7 @@ struct ActionButtonView: View {
             do { return try binding.isTrue() }
             catch {
                 // TODO error handling
+                print("Could not read boolean value from binding \(binding)")
             }
         }
         return false
@@ -81,6 +83,7 @@ struct ActionButtonView: View {
             }
             
             if title != nil && action.getBool("showTitle") {
+                // NOTE: Allowed force unwrapping (logic)
                 Text(title!)
                     .font(.subheadline)
                     .foregroundColor(.black)

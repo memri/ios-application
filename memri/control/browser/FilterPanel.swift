@@ -43,7 +43,7 @@ struct FilterPanel: View {
     }
     
     private func toggleAscending() {
-        try! self.main.realm.write {
+        realmWriteIfAvailable(self.main.realm) {
             self.main.currentSession.currentView.queryOptions?.sortAscending.value
                 = !(self.main.cascadingView.queryOptions.sortAscending.value ?? true)
         }
@@ -51,8 +51,9 @@ struct FilterPanel: View {
     }
     
     private func changeOrderProperty(_ fieldName:String) {
-        try! self.main.realm.write {
+        realmWriteIfAvailable(self.main.realm) {
             self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
+
         }
         self.main.scheduleCascadingViewUpdate()
     }
@@ -73,7 +74,7 @@ struct FilterPanel: View {
     }
     
     private func isActive(_ renderer:FilterPanelRendererButton) -> Bool {
-        self.main.cascadingView.activeRenderer.split(separator: ".").first! == renderer.rendererName
+        self.main.cascadingView.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
     }
     
     var body: some View {
@@ -147,6 +148,7 @@ struct FilterPanel: View {
                     
                     if (self.main.cascadingView.queryOptions.sortProperty != nil) {
                         Button(action:{ self.toggleAscending() }) {
+                            // NOTE: Allowed force unwrap
                             Text(self.main.cascadingView.queryOptions.sortProperty!)
                                 .foregroundColor(Color(hex: "#6aa84f"))
                                 .font(.system(size: 16, weight: .semibold, design: .default))

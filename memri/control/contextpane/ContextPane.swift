@@ -26,7 +26,7 @@ struct ContextPane: View {
                     .animation(.easeOut(duration: 0.6))
                     .gesture(TapGesture()
                         .onEnded{ value in
-                            try! self.main.realm.write {
+                            realmWriteIfAvailable(self.main.realm) {
                                 self.main.currentSession.showContextPane.toggle()
                             }
                         })
@@ -40,7 +40,7 @@ struct ContextPane: View {
                             self.dragOffset = value.translation
                         })
                         .onEnded{ value in
-                            try! self.main.realm.write {
+                            realmWriteIfAvailable(self.main.realm) {
                                 self.main.currentSession.showContextPane.toggle()
                             }
                         })

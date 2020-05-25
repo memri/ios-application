@@ -108,7 +108,9 @@ public class Main: ObservableObject {
                 // Update UI
                 do { try self.updateCascadingView() }
                 catch {
-                    // TODO ERror Handling
+                    // TODO User error handling
+                    // TODO Error Handling
+                    errorHistory.error("Could not update CascadingView: \(error)")
                 }
             }
         }
@@ -158,9 +160,9 @@ public class Main: ObservableObject {
                     
                     // Load data in the resultset of the computed view
                     try self.cascadingView.resultSet.load { (error) in
-                        if error != nil {
+                        if let error = error {
                             // TODO Refactor: Log warning to user
-                            print("Error: could not load result: \(error!)")
+                            print("Error: could not load result: \(error)")
                         }
                         else {
                             maybeLogRead()
@@ -172,6 +174,8 @@ public class Main: ObservableObject {
                 }
                 catch {
                     // TODO Error handling
+                    // TODO User Error handling
+                    print("ERROR: MAIN NOT DEFINED")
                 }
                 
                 // Update the UI
@@ -181,11 +185,12 @@ public class Main: ObservableObject {
             else {
                 
                 // Updating the data in the resultset of the session view
-                try! resultSet.load { (error) in
+                try resultSet.load { (error) in
                     
                     // Only update when data was retrieved successfully
-                    if error != nil {
-                        print("Error: could not load result: \(error!)")
+                    if let error = error {
+                        // TODO Error handling
+                        print("Error: could not load result: \(error)")
                     }
                     else {
                         // Update the current view based on the new info
@@ -215,10 +220,14 @@ public class Main: ObservableObject {
             let fields = syncState.updatedFields
             realmWriteIfAvailable(realm) {
                 // TODO serialize
-                let item = self.cascadingView.resultSet.singletonItem!
-                self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)),
-                                         action: "update", appliesTo: [item]))
-                syncState.changedInThisSession = false
+                if let item = self.cascadingView.resultSet.singletonItem{
+                    self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)),
+                                             action: "update", appliesTo: [item]))
+                    syncState.changedInThisSession = false
+                }
+                else {
+                    print("Could not log update, no Item found")
+                }
             }
         }
     }
@@ -227,7 +236,7 @@ public class Main: ObservableObject {
         let type: Mirror = Mirror(reflecting:self)
 
         for child in type.children {
-            if child.label! == name || child.label! == "_" + name {
+            if child.label == name || child.label == "_" + name {
                 return child.value
             }
         }
@@ -268,18 +277,22 @@ public class Main: ObservableObject {
             return nil
         }
         set(newValue) {
-            let alias = aliases[propName]!
-            settings.set(alias.key, AnyCodable(newValue))
-            
-            if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
-            
-            
-            scheduleUIUpdate{_ in true}
+            if let alias = aliases[propName]{
+                settings.set(alias.key, AnyCodable(newValue))
+                
+                if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
+                
+                
+                scheduleUIUpdate{_ in true}
+            }
+            else {
+                print("Cannot set property \(propName), does not exist on main")
+            }
         }
     }
     
     public var showSessionSwitcher:Bool {
-        get { return self["showSessionSwitcher"] as! Bool }
+        get { return self["showSessionSwitcher"] as? Bool == true }
         set(value) { self["showSessionSwitcher"] = value }
     }
     
@@ -290,7 +303,7 @@ public class Main: ObservableObject {
     )
     
     public var showNavigation:Bool {
-        get { return self["showNavigation"] as! Bool }
+        get { return self["showNavigation"] as? Bool == true }
         set(value) { self["showNavigation"] = value }
     }
     

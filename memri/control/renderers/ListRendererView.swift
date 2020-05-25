@@ -86,11 +86,12 @@ struct ListRendererView: View {
                     SwiftUI.List {
                         ForEach(main.items) { dataItem in
                             Button (action:{
-                                if let press = renderConfig!.press {
+                                if let press = renderConfig?.press {
                                     main.executeAction(press, with: dataItem)
                                 }
                             }) {
-                                renderConfig!.render(item: dataItem)
+                                // TODO: Error handling
+                                return renderConfig!.render(item: dataItem)
                             }
                             .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }

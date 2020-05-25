@@ -133,8 +133,16 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        let item = main.cascadingView.resultSet.singletonItem!
-        let renderConfig = self.renderConfig
+        let item: DataItem
+        if main.cascadingView.resultSet.singletonItem != nil{
+            item = main.cascadingView.resultSet.singletonItem!
+        }
+        else {
+            print("Cannot load DataItem, creating empty")
+            item = DataItem()
+        }
+        // TODO: Error Handling
+        let renderConfig = self.renderConfig!
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)
         
@@ -144,7 +152,7 @@ struct GeneralEditorView: View {
                     ForEach(sortedKeys, id: \.self) { groupKey in
                         GeneralEditorSection(
                             item: item,
-                            renderConfig: renderConfig!,
+                            renderConfig: renderConfig,
                             groupKey: groupKey,
                             groups: groups)
                     }
@@ -171,17 +179,29 @@ struct GeneralEditorSection: View {
         if let edges = edges{
             if edges.count > 0 {
                 let objectClassName = edges[0].objectType
-                let family = DataItemFamily(rawValue: objectClassName.lowercased())!
-                let type = DataItemFamily.getType(family)() as! Object.Type
-                var objects: [DataItem] = []
-                
-                for uid in edges.map({$0.objectUid}){
-                    let object = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem
-                    if let object = object{
-                        objects.append(object)
+                if let family = DataItemFamily(rawValue: objectClassName.lowercased()){
+                    // NOTE: Allowed force unwrapping
+                    let type = DataItemFamily.getType(family)() as! Object.Type
+                    var objects: [DataItem] = []
+                    
+                    for uid in edges.map({$0.objectUid}){
+                        let object = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem
+                        if let object = object{
+                            objects.append(object)
+                        }
+                        else {
+                            // TODO Error handling
+                            print("Could not find object of type \(type) with uid \(uid)")
+                        }
                     }
+                    return objects
                 }
-                return objects
+                else{
+                    // TODO user warning
+                    // TODO error handling
+                    print("Could not find family \(objectClassName) for dataItem \(item)")
+                }
+
             }
         }
         return []
@@ -275,6 +295,7 @@ struct GeneralEditorSection: View {
             
             if action != nil {
                 Spacer()
+                // NOTE: Allowed force unwrapping
                 ActionButton(action: action!)
                     .foregroundColor(Color(hex:"#777"))
                     .font(.system(size: 18, weight: .semibold))
@@ -288,7 +309,7 @@ struct GeneralEditorSection: View {
         let editMode = self.main.currentSession.editMode
         let properties = groupKey == "other"
             ? self.getProperties(item)
-            : self.groups[self.groupKey]!
+            : self.groups[self.groupKey] ?? []
         let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
         let showDividers = self.getSectionTitle(groupKey) != ""
         
@@ -315,7 +336,8 @@ struct GeneralEditorSection: View {
                             }
                         }
                         else {
-                            ForEach(groups[groupKey]!, id:\.self) { groupElement in
+                            // TODO: Error handling
+                            ForEach(groups[groupKey] ?? [], id:\.self) { groupElement in
                                 self.renderConfig.render(
                                     item: self.item,
                                     group: self.groupKey,

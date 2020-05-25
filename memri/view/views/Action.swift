@@ -250,6 +250,8 @@ class ActionAddDataItem : Action, ActionExec {
         }
         else {
             // TODO Error handling
+            // TODO User handling
+            throw "Cannot open view, no dataItem passed in arguments"
         }
     }
     
@@ -276,7 +278,9 @@ class ActionOpenView : Action, ActionExec {
         if let binding = self.binding {
             do { try binding.toggleBool() }
             catch {
-                // TODO ERror handling
+                // TODO: User error handling
+                // TODO Error handling
+                errorHistory.error("\(error)")
             }
         }
         
@@ -326,6 +330,7 @@ class ActionOpenView : Action, ActionExec {
         }
         else {
             // TODO Error handling
+            throw "Cannot execute ActionOpenView, arguments require a SessionView. passed arguments:\n \(arguments), "
         }
     }
     
@@ -362,6 +367,7 @@ class ActionOpenViewByName : Action, ActionExec {
         }
         else {
             // TODO Error Handling
+            throw "Cannot execute ActionOpenViewByName, no name found in arguments."
         }
     }
     
@@ -438,6 +444,7 @@ class ActionStar : Action, ActionExec {
         }
         else {
             // TODO Error handling
+            throw "Cannot execute ActionStar, missing dataItem in arguments."
         }
     }
     
@@ -472,6 +479,7 @@ class ActionShowStarred : Action, ActionExec {
         }
         catch {
             // TODO Error Handling
+            throw "Cannot execute ActionShowStarred: \(error)"
         }
     }
     
@@ -626,7 +634,8 @@ class ActionBackAsSession : Action, ActionExec {
                 try ActionOpenSession.exec(main, ["session": duplicateSession])
             }
             else {
-                // TODO ERror handling
+                // TODO Error handling
+                throw ActionError.Warning(message: "Cannot execute ActionBackAsSession, duplicating currentSession resulted in a different type")
             }
         }
     }
@@ -669,11 +678,18 @@ class ActionOpenSession : Action, ActionExec {
     ///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
     /////  reorders it on top
     func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        if let item = arguments["session"] as? Session {
-            self.openSession(main, item)
+        if let item = arguments["session"]{
+            if let session = item as? Session {
+                self.openSession(main, session)
+            }
+            else{
+                // TODO Error handling
+                throw "Cannot execute openSession 'session' argmument cannot be casted to Session"
+            }
         }
         else {
-            // TODO ERror handling
+            // TODO Error handling
+            throw "Cannot execute openSession, no session passed"
         }
     }
     
@@ -719,15 +735,20 @@ class ActionOpenSessionByName : Action, ActionExec {
                 }
                 else {
                     // TODO Error handling
+                    throw "Cannot execute ActionOpenSessionByName: session with name \(name) " +
+                          "cannot be casted as CVUParsedSessionDefinition"
                 }
             }
             catch {
                 // TODO: Log error, Error handling
                 print("COULD NOT OPEN SESSION")
+                throw "Cannot execute ActionOpenSessionByName: \(error)"
+
             }
         }
         else {
             // TODO: Error handling "No name given"
+            throw "Cannot execute ActionOpenSessionByName, no name defined in viewArguments"
         }
     }
     
@@ -784,7 +805,8 @@ class ActionDuplicate : Action, ActionExec {
             try ActionAddDataItem.exec(main, ["dataItem": item])
         }
         else {
-            // TODO ERror handling
+            // TODO Error handling
+            throw "Cannot execute ActionDupliate. The user either needs to make a selection, or a dataItem needs to be passed to this call."
         }
     }
     
@@ -821,9 +843,10 @@ class ActionSetProperty : Action, ActionExec {
                 }
             }
         }
-        
-        // TODO error handling
-        throw "Exception ...."
+        else{
+            // TODO error handling
+            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
+        }
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {

@@ -28,14 +28,16 @@ class File:DataItem {
             
             decodeIntoList(decoder, "usedBy", self.usedBy)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
     
     public var asUIImage:UIImage? {
         do { if let x:UIImage = try read() { return x } }
         catch {
+            // TODO: User error handling
             // TODO Refactor: error handling
+            errorHistory.error("Could not read image in path: \(uri)")
         }
         return nil
     }
@@ -43,6 +45,7 @@ class File:DataItem {
     public var asString:String? {
         do { if let x:String = try read() { return x } }
         catch {
+            // TODO: User error handling
             // TODO Refactor: error handling
         }
         return nil
@@ -51,37 +54,37 @@ class File:DataItem {
     public var asData:Data? {
         do { if let x:Data = try read() { return x } }
         catch {
+            // TODO: User error handling
             // TODO Refactor: error handling
         }
         return nil
     }
     
-    public func read<T>() throws -> T? {
+    public func read<T>() throws -> T?{
         var cachedData:T? = try InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
         let data = self.readData()
-        if data != nil {
+        if let data = data {
+            // NOTE: Allowed forced casting, because we check for types
             if T.self == UIImage.self {
-                cachedData = (UIImage(data: data!) as! T)
+                cachedData = (UIImage(data: data) as! T)
             }
             else if T.self == String.self {
-                cachedData = (String(data: data!, encoding: .utf8) as! T)
+                cachedData = (String(data: data, encoding: .utf8) as! T)
             }
             else if T.self == Data.self {
-                cachedData = (data! as! T)
+                cachedData = (data as! T)
             }
             else {
-                print("Warn: Could not parse \(self.uri)")
-                return nil
+                throw "Could not parse \(self.uri)"
             }
-            
+            // NOTE: Allowed forced unwrapping, because variable must have value by now
             try InMemoryObjectCache.set(self.uri, cachedData!)
             return cachedData
         }
         else {
-            print("Warn: Could not read data from \(self.uri)")
-            return nil
+            throw "Could not read data from \(self.uri)"
         }
     }
     
@@ -89,6 +92,7 @@ class File:DataItem {
         do {
             var data:Data?
             
+            // NOTE: allowed forced casting, because type has been checked
             if T.self == UIImage.self {
                 data = (value as! UIImage).pngData()
                 if data == nil { throw "Exception: Could not write \(self.uri) as PNG" }
@@ -103,7 +107,7 @@ class File:DataItem {
             else {
                 throw "Exception: Could not parse the type to write to \(self.uri)"
             }
-            
+            // NOTE: Allowed forced unwrapping, should have value here
             try self.writeData(data!)
             try InMemoryObjectCache.set(self.uri, value)
         }
@@ -179,20 +183,27 @@ class File:DataItem {
     
     // TODO where to save these files properly?
     public class func generateFilePath() -> String {
-        let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
-        let url = URL(fileURLWithPath: homeDir)
-                    .appendingPathComponent(".memri.cache/File", isDirectory:true)
-        
-        do {
-            try FileManager.default.createDirectory(atPath: url.relativePath,
-                                                    withIntermediateDirectories: true,
-                                                    attributes: nil)
+        let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]
+        if let homeDir = homeDir {
+            let url = URL(fileURLWithPath: homeDir)
+                        .appendingPathComponent(".memri.cache/File", isDirectory:true)
+            
+            do {
+                try FileManager.default.createDirectory(atPath: url.relativePath,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+            }
+            catch {
+                print(error)
+            }
+            
+            let fileName = UUID().uuidString
+            return url.appendingPathComponent(fileName).relativePath
         }
-        catch {
-            print(error)
+        else {
+            // TODO: Error handling
+            print("Cannot generate filePath")
+            return ""
         }
-        
-        let fileName = UUID().uuidString
-        return url.appendingPathComponent(fileName).relativePath
     }
 }

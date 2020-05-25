@@ -18,10 +18,10 @@ public class UserState: Object {
             
             if T.self == DataItem.self {
                 if let lookup = x[propName] as? [String:Any] {
-                    if let type = DataItemFamily(rawValue: lookup["type"] as! String) {
+                    if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
                         let x:DataItem? = realm?.object(
                             ofType: DataItemFamily.getType(type)() as! DataItem.Type,
-                            forPrimaryKey: lookup["uid"] as! String)
+                            forPrimaryKey: lookup["uid"] as? String ?? "")
                         return x as? T
                     }
                 }
@@ -49,7 +49,7 @@ public class UserState: Object {
     }
     
     private func transformToDict() throws -> [String:Any]{
-        let dict:[String:AnyDecodable] = unserialize(state)
+        let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
         try InMemoryObjectCache.set(self.uid, dict as [String:Any])
         return dict
     }

@@ -45,14 +45,14 @@ struct ThumbnailRendererView: View {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection {
                 let gridBlockSize = NSCollectionLayoutDimension
-                    .fractionalWidth(1 / CGFloat(self.renderConfig!.columns ?? 3))
+                    .fractionalWidth(1 / CGFloat(self.renderConfig?.columns ?? 3))
                 
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(
                         widthDimension: gridBlockSize,
                         heightDimension: .fractionalHeight(1.0)))
                 
-                let inset = CGFloat(self.renderConfig!.itemInset ?? 5)
+                let inset = CGFloat(self.renderConfig?.itemInset ?? 5)
                 item.contentInsets = NSDirectionalEdgeInsets(
                     top: inset, leading: inset, bottom: inset, trailing: inset)
 
@@ -71,9 +71,10 @@ struct ThumbnailRendererView: View {
     var section: ASCollectionViewSection<Int> {
         ASCollectionViewSection (id: 0, data: main.items) { dataItem, state in
             ZStack (alignment: .bottomTrailing) {
+                // TODO: Error handling
                 self.renderConfig!.render(item: dataItem)
                     .onTapGesture {
-                        if let press = self.renderConfig!.press {
+                        if let press = self.renderConfig?.press {
                             self.main.executeAction(press, with: dataItem)
                         }
                     }

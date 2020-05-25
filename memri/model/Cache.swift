@@ -103,19 +103,23 @@ var config = Realm.Configuration(
 
 /// Computes the Realm path /home/<user>/realm.memri and creates the directory if it does not exist.
 /// - Returns: the computed directory
-func getRealmPath() -> String{
-    let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
-    let realmDir = homeDir + "/realm.memri"
-    
-    do {
-        try FileManager.default.createDirectory(atPath:
-            realmDir, withIntermediateDirectories: true, attributes: nil)
+func getRealmPath() throws -> String{
+    if  let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
+        let realmDir = homeDir + "/realm.memri"
+        
+        do {
+            try FileManager.default.createDirectory(atPath:
+                realmDir, withIntermediateDirectories: true, attributes: nil)
+        }
+        catch {
+            print(error)
+        }
+        
+        return realmDir
+        }
+    else {
+        throw "Could not get realm path"
     }
-    catch {
-        print(error)
-    }
-    
-    return realmDir
 }
 
 public class Cache {
@@ -142,14 +146,21 @@ public class Cache {
 
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
-            config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
+            do {
+                config.fileURL = URL(string: "file://\(try getRealmPath())/memri.realm")
+            }
+            catch {
+                // TODO: Error handling
+                print("\(error)")
+            }
         #endif
 
         Realm.Configuration.defaultConfiguration = config
 
+        // TODO: Error handling
         realm = try! Realm()
         
-        print("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL!)")
+        print("Starting realm at \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
         
         podAPI = api
         
@@ -162,13 +173,17 @@ public class Cache {
     /// gets default item from database, and adds them to realm
     public func install() {
         // Load default database from disk
-        let jsonData = try! jsonDataFromFile("default_database")
-        let items:[DataItem] = try! MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
-        
-        try! realm.write {
-            for item in items {
-                realm.add(item, update: .modified)
-            }
+        do{
+            let jsonData = try jsonDataFromFile("default_database")
+            let items:[DataItem] = try MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
+            realmWriteIfAvailable(realm, {
+                for item in items {
+                    realm.add(item, update: .modified)
+                }
+            })
+        }
+        catch {
+            print("Failed to Install: \(error)")
         }
     }
     
@@ -184,7 +199,7 @@ public class Cache {
         
         if let error = error { throw error }
         
-        return items!
+        return items ?? []
     }
     
     
@@ -217,6 +232,7 @@ public class Cache {
                 var returnValue:[DataItem] = []
 
                 for dtype in DataItemFamily.allCases{
+                    // NOTE: Allowed forced cast
                     let objects = realm.objects(dtype.getType() as! Object.Type)
                                         .filter("deleted = false " + (filter ?? ""))
                     for item in objects { returnValue.append(item as! DataItem) }
@@ -233,7 +249,6 @@ public class Cache {
                 // Query format: <type><space><filter-text>
                 let queryType = DataItemFamily.getType(type)
                 let t = queryType() as! Object.Type
-                print(t)
                 
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
@@ -246,7 +261,11 @@ public class Cache {
                 
                 // Construct return array
                 var returnValue:[DataItem] = []
-                for item in result { returnValue.append(item as! DataItem) }
+                for item in result {
+                    if let item = item as? DataItem{
+                        returnValue.append(item as! DataItem)
+                    }
+                }
                 
                 // Done
                 callback(nil, returnValue)
@@ -296,6 +315,7 @@ public class Cache {
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
+                // TODO: Error handling
                 self.scheduleUIUpdate!() { main in
                     return main.cascadingView.resultSet.queryOptions == resultSet.queryOptions
                 }
@@ -315,6 +335,7 @@ public class Cache {
         let type = DataItemFamily(rawValue: type)
         if let type = type {
             let item = DataItemFamily.getType(type)
+            // NOTE: Allowed force unwrapping
             return realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as! T?
         }
         return nil
@@ -329,97 +350,116 @@ public class Cache {
     /// - Returns: cached dataItem
     public func addToCache(_ item:DataItem) throws -> DataItem {
         
-        if let newerItem = try! mergeWithCache(item){
-            return newerItem
+        do {
+            if let newerItem = try mergeWithCache(item){
+                return newerItem
+            }
+            
+            // Add item to realm
+            try realm.write() { realm.add(item, update: .modified) }
+        }
+        catch{
+            print("Could not add to cache: \(error)")
         }
         
-        // Add item to realm
-        try realm.write() { realm.add(item, update: .modified) }
-        
-        bindSyncing(item)
+        bindChangeListeners(item)
         
         return item
     }
     
     private func mergeWithCache(_ item: DataItem) throws -> DataItem?  {
         // Check if this is a new item or an existing one
-        if item.uid.contains("0xNEW") {
-            // Schedule to be created on the pod
-            try realm.write() {
-                item.syncState!.actionNeeded = "create"
-                realm.add(AuditItem(action: "create", appliesTo: [item]))
-            }
-        }
-        else {
-            // Fetch item from the cache to double check
-            if let cachedItem:DataItem = self.getItemById(item.genericType, item.uid) {
-                
-                // Do nothing when the version is not higher then what we already have
-                if !cachedItem.syncState!.isPartiallyLoaded
-                    && item.syncState!.version <= cachedItem.syncState!.version {
-                    return cachedItem
+        if let syncState = item.syncState{
+
+            if item.uid.contains("0xNEW") {
+                // Schedule to be created on the pod
+                try realm.write() {
+                    syncState.actionNeeded = "create"
+                    realm.add(AuditItem(action: "create", appliesTo: [item]))
                 }
-                
-                // Check if there are local changes
-                if cachedItem.syncState!.actionNeeded != "" {
+            }
+            else {
+                // Fetch item from the cache to double check
+                if let cachedItem:DataItem = self.getItemById(item.genericType, item.uid) {
                     
-                    // Try to merge without overwriting local changes
-                    if !item.safeMerge(cachedItem) {
-                        
-                        // Merging failed
-                        throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+                    // Do nothing when the version is not higher then what we already have
+                    if !syncState.isPartiallyLoaded
+                        && syncState.version <= syncState.version {
+                        return cachedItem
                     }
-                }
-                
-                // If the item is partially loaded, then lets not overwrite the database
-                if item.syncState!.isPartiallyLoaded {
                     
-                    // Merge in the properties from cachedItem that are not already set
-                    item.merge(cachedItem, true)
-                }
-            }
-        }
-        return nil
-    }
-    
-    // TODO does this work for subobjects?
-    private func bindSyncing(_ item: DataItem) {
-        // Update the sync state when the item changes
-        rlmTokens.append(item.observe { (objectChange) in
-            if case let .change(propChanges) = objectChange {
-                if item.syncState!.actionNeeded == "" {
-                    
-                    var syncState = item.syncState!
-                    
-                    func doAction(){
+                    // Check if there are local changes
+                    if syncState.actionNeeded != "" {
                         
-                        // Mark item for updating
-                        syncState.actionNeeded = "update"
-                        syncState.changedInThisSession = true
-                        
-                        // Record which field was updated
-                        for prop in propChanges {
-                            if !syncState.updatedFields.contains(prop.name) {
-                                syncState.updatedFields.append(prop.name)
-                            }
+                        // Try to merge without overwriting local changes
+                        if !item.safeMerge(cachedItem) {
+                            
+                            // Merging failed
+                            throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
                         }
                     }
                     
-                    if self.realm.isInWriteTransaction { doAction() }
-                    else { try! self.realm.write { doAction() } }
-                }
-                self.scheduleUIUpdate!{_ in true}
-            }
-        })
-        
-        // Trigger sync.schedule() when the SyncState changes
-        rlmTokens.append(item.syncState!.observe { (objectChange) in
-            if case .change = objectChange {
-                if item.syncState!.actionNeeded != "" {
-                    self.sync.schedule()
+                    // If the item is partially loaded, then lets not overwrite the database
+                    if syncState.isPartiallyLoaded {
+                        
+                        // Merge in the properties from cachedItem that are not already set
+                        item.merge(cachedItem, true)
+                    }
                 }
             }
-        })
+            return nil
+        }
+        else{
+            print("Error: no syncstate available during merge")
+            return nil
+        }
+    }
+    
+    // TODO does this work for subobjects?
+    private func bindChangeListeners(_ item: DataItem) {
+        if let syncState = item.syncState {
+            // Update the sync state when the item changes
+            rlmTokens.append(item.observe { (objectChange) in
+                if case let .change(propChanges) = objectChange {
+                    if syncState.actionNeeded == "" {
+                                                
+                        func doAction(){
+                            
+                            // Mark item for updating
+                            syncState.actionNeeded = "update"
+                            syncState.changedInThisSession = true
+                            
+                            // Record which field was updated
+                            for prop in propChanges {
+                                if !syncState.updatedFields.contains(prop.name) {
+                                    syncState.updatedFields.append(prop.name)
+                                }
+                            }
+                        }
+                        
+                        realmWriteIfAvailable(self.realm, { doAction() } )
+                    }
+                    if let scheduleUIUpdate = self.scheduleUIUpdate{
+                        scheduleUIUpdate{_ in true}
+                    }
+                    else {
+                        print("No scheduleUIUpdate available in bindChangeListeners()")
+                    }
+                }
+            })
+            
+            // Trigger sync.schedule() when the SyncState changes
+            rlmTokens.append(syncState.observe { (objectChange) in
+                if case .change = objectChange {
+                    if syncState.actionNeeded != "" {
+                        self.sync.schedule()
+                    }
+                }
+            })
+        }
+        else {
+            print("Error, no syncState available for item")
+        }
     }
     
     /// sets delete to true in the syncstate, for an array of items
@@ -427,7 +467,7 @@ public class Cache {
     /// - Remark: All methods and properties must throw when deleted = true;
     public func delete(_ item:DataItem) {
         if (!item.deleted) {
-            try! self.realm.write {
+            realmWriteIfAvailable(self.realm) {
                 item.deleted = true;
                 item.syncState!.actionNeeded = "delete"
                 realm.add(AuditItem(action: "delete", appliesTo: [item]))
@@ -439,11 +479,11 @@ public class Cache {
      /// sets delete to true in the syncstate, for an array of items
      /// - Parameter items: items to be deleted
     public func delete(_ items:[DataItem]) {
-        try! self.realm.write {
+        realmWriteIfAvailable(self.realm) {
             for item in items {
                 if (!item.deleted) {
                     item.deleted = true
-                    item.syncState!.actionNeeded = "delete"
+                    item.setSyncStateActionNeeded("delete")
                     realm.add(AuditItem(action: "delete", appliesTo: [item]))
                 }
             }
@@ -454,19 +494,24 @@ public class Cache {
      /// - Remark:Does not copy the id property
      /// - Returns: copied item
     public func duplicate(_ item:DataItem) -> DataItem {
-        let cls = item.getType()
-        let copy = item.getType().init()
-        let primaryKey = cls.primaryKey()
-        for prop in item.objectSchema.properties {
-            // TODO allow generation of uid based on number replaces {uid}
-            // if (item[prop.name] as! String).includes("{uid}")
-            
-            if prop.name != primaryKey{
-                copy[prop.name] = item[prop.name]
+        if let cls = item.getType() {
+            let copy = item.getType()!.init()
+            let primaryKey = cls.primaryKey()
+            for prop in item.objectSchema.properties {
+                // TODO allow generation of uid based on number replaces {uid}
+                // if (item[prop.name] as! String).includes("{uid}")
+                
+                if prop.name != primaryKey{
+                    copy[prop.name] = item[prop.name]
 
+                }
             }
+            return copy
         }
-        return copy
+        else {
+            print("Failled to copy DataItem")
+            return DataItem()
+        }
     }
     
 }
