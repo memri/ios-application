@@ -72,9 +72,11 @@
         }
         openViewByName {
             title: "{$starred} {type.plural()}"
-            name: "filter-starred"
             arguments: {
-                fromTemplate: "all-{type}"
+                name: "filter-starred"
+                viewArguments: {
+                    include: "all-{type}"
+                }
             }
         }
         openViewByName {
@@ -88,8 +90,77 @@ Person {
     title: "{.firstName}"
     defaultRenderer: generalEditor
     
-    include:
-        "defaultButtonsForDataItem" { type: Person }
+    /*include:
+        "defaultButtonsForDataItem" { type: Person }*/
+    
+    editActionButton: toggleEditMode
+    filterButtons: [
+        openView {
+            icon: "increase.indent"
+            title: "{$showtimeline}"
+            
+            arguments: {
+                view: {
+                    defaultRenderer: timeline
+                    
+                    [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
+                }
+            }
+        }
+        showContextPane
+    ]
+    
+    contextButtons: star schedule
+    
+    actionItems: [
+        showOverlay { title: "{$sharewith}" }
+        addToPanel { title: "{$addtolist}" }
+        duplicate { title: "{$duplicate} person" }
+    ]
+    
+    navigateItems: [
+        openView {
+            title: "{$timelineof} person"
+            arguments: {
+                view: {
+                    defaultRenderer: timeline
+                    
+                     [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
+                }
+            }
+        }
+        openViewByName {
+            title: "{$starred} persons"
+            arguments: {
+                name: "filter-starred"
+                viewArguments: {
+                    include: "all-person"
+                }
+            }
+        }
+        openViewByName {
+            title: "{$all} persons"
+            name: "all-person"
+        }
+    ]
+    
+    /* end include */
     
     [renderer = generalEditor] {
          groups {

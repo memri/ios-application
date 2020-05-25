@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-private var register:Void = {
+let registerThumWaterfall = {
     Renderers.register(
         name: "thumbnail.waterfall",
         title: "Waterfall Grid",
@@ -18,7 +18,7 @@ private var register:Void = {
         renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-}()
+}
 
 struct ThumbWaterfallRendererView: View {
     @EnvironmentObject var main: Main

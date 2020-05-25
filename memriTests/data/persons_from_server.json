@@ -1,7 +1,7 @@
 [
     {
         "uid": "0x011",
-        "type": "person",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
@@ -9,7 +9,7 @@
     },
     {
         "uid": "0x012",
-        "type": "person",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
@@ -17,7 +17,7 @@
     },
     {
         "uid": "0x013",
-        "type": "person",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1

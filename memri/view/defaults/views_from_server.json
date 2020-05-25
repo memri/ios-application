@@ -289,7 +289,7 @@
                 "title": "Starred notes",
                 "actionName": "openViewByName",
                 "actionArgs": ["filter-starred", {
-                    "fromTemplate": "all-notes"
+                    "include": "all-notes"
                 }]
             },
             {
@@ -945,7 +945,7 @@
                 "actionName": "openDynamicView",
                 "actionArgs": [{
                     "name": "filter-starred",
-                    "fromTemplate": "all-notes"
+                    "include": "all-notes"
                 }]
             },
             {

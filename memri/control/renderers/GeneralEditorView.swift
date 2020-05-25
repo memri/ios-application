@@ -57,7 +57,7 @@ import RealmSwift
     - Add customer renderer for starred and labels for person
  */
 
-private var register:Void = {
+let registerGeneralEditor = {
     Renderers.register(
         name: "generalEditor",
         title: "Default",
@@ -67,7 +67,7 @@ private var register:Void = {
         renderConfigType: CascadingGeneralEditorConfig.self,
         canDisplayResults: { items -> Bool in items.count == 1 }
     )
-}()
+}
 
 class CascadingGeneralEditorConfig: CascadingRenderConfig {
     var type: String? = "generalEditor"

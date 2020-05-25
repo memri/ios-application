@@ -68,12 +68,12 @@ public class CascadingView: Cascadable, ObservableObject {
     // TODO: REFACTOR: On change clear renderConfig in localCache
     var activeRenderer: String // Set on creation | when changed set on userState
     
-    var backTitle: String? { cascadeProperty("backTitle", nil) }
-    var searchHint: String { cascadeProperty("searchHint", nil) ?? "" }
-    var showLabels: Bool { cascadeProperty("showLabels", true) }
+    var backTitle: String? { cascadeProperty("backTitle") }
+    var searchHint: String { cascadeProperty("searchHint") ?? "" }
+    var showLabels: Bool { cascadeProperty("showLabels") ?? true }
     
-    var actionButton: Action? { cascadeProperty("actionButton", nil) }
-    var editActionButton: Action? { cascadeProperty("editActionButton", nil) }
+    var actionButton: Action? { cascadeProperty("actionButton") }
+    var editActionButton: Action? { cascadeProperty("editActionButton") }
     
     var sortFields: [String] { cascadeList("sortFields") }
     var editButtons: [Action] { cascadeList("editButtons") }
@@ -117,8 +117,8 @@ public class CascadingView: Cascadable, ObservableObject {
             }
         }
         
-        if let RenderConfigType = allRenderers!.allConfigTypes[activeRenderer] {
-            let renderConfig = RenderConfigType.init(cascadeStack, viewArguments)
+        if let RenderConfigType = allRenderers?.allConfigTypes[activeRenderer] {
+            let renderConfig = RenderConfigType.init(stack, viewArguments)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
             return renderConfig
@@ -133,7 +133,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _emptyResultTextTemp: String? = nil
     var emptyResultText: String {
         get {
-            return _emptyResultTextTemp ?? cascadeProperty("emptyResultText", "No items found")
+            return _emptyResultTextTemp ?? cascadeProperty("emptyResultText") ?? "No items found"
         }
         set (newEmptyResultText) {
             if newEmptyResultText == "" { _emptyResultTextTemp = nil }
@@ -144,7 +144,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _titleTemp: String? = nil
     var title: String {
         get {
-            return _titleTemp ?? cascadeProperty("title", "")
+            return _titleTemp ?? cascadeProperty("title") ?? ""
         }
         set (newTitle) {
             if newTitle == "" { _titleTemp = nil }
@@ -155,7 +155,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _subtitleTemp: String? = nil
     var subtitle: String {
         get {
-            return _subtitleTemp ?? cascadeProperty("subtitle", "")
+            return _subtitleTemp ?? cascadeProperty("subtitle") ?? ""
         }
         set (newSubtitle) {
             if newSubtitle == "" { _subtitleTemp = nil }

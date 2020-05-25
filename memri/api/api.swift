@@ -57,19 +57,19 @@ public class Datasource: Object, UniqueString {
 public class CascadingDatasource: Cascadable, UniqueString {
     /// Retrieves the query which is used to load data from the pod
     var query: String? {
-        datasource.query ?? cascadeProperty("query", nil)
+        datasource.query ?? cascadeProperty("query")
     }
     
     /// Retrieves the property that is used to sort on
     var sortProperty: String? {
-        datasource.sortProperty ?? cascadeProperty("sortProperty", nil)
+        datasource.sortProperty ?? cascadeProperty("sortProperty")
     }
     
     /// Retrieves whether the sort direction
     /// false sort descending
     /// true sort ascending
     var sortAscending:Bool? {
-        datasource.sortAscending.value ?? cascadeProperty("sortAscending", nil)
+        datasource.sortAscending.value ?? cascadeProperty("sortAscending")
     }
     
     let datasource:Datasource
@@ -173,12 +173,12 @@ public class PodAPI {
             return
         }
         
-        if query.query!.prefix(6) == "person" {
+        if query.query!.prefix(6) == "Person" {
             callback(nil, try! DataItem.fromJSONFile("persons_from_server"))
             return
         }
         
-        if query.query!.prefix(4) == "note" {
+        if query.query!.prefix(4) == "Note" {
             callback(nil, try! DataItem.fromJSONFile("notes_from_server"))
             return
         }

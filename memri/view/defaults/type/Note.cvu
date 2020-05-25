@@ -55,9 +55,11 @@ Note {
         }
         openViewByName {
             title: "Starred notes"
-            name: "filter-starred"
             arguments: {
-                fromTemplate: "all-notes"
+                name: "filter-starred"
+                viewArguments: {
+                    include: "all-notes"
+                }
             }
         }
         openViewByName {

@@ -9,7 +9,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-private var register:Void = {
+let registerMap = {
     Renderers.register(
         name: "map",
         title: "Default",
@@ -19,13 +19,13 @@ private var register:Void = {
         renderConfigType: CascadingMapConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-}()
+}
 
 class CascadingMapConfig: CascadingRenderConfig {
     var type: String? = "map"
     
-    var longPress: Action? { cascadeProperty("longPress", nil) }
-    var press: Action? { cascadeProperty("press", nil) }
+    var longPress: Action? { cascadeProperty("longPress") }
+    var press: Action? { cascadeProperty("press") }
 }
 
 struct MapRendererView: View {

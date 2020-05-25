@@ -9,11 +9,11 @@ import SwiftUI
 import RealmSwift
     
 public class UIElement : CVUToString {
-    var type: String
+    var type: UIElementFamily
     var children: [UIElement] = []
     var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
     
-    init(_ type: String, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
+    init(_ type: UIElementFamily, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
         self.type = type
         self.children = children ?? self.children
         self.properties = properties
@@ -39,6 +39,8 @@ public class UIElement : CVUToString {
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
+                viewArguments.set(".", item)
+                
                 do { let x:T? = try expr.execute(viewArguments) as? T; return x }
                 catch {
                     // TODO Refactor error handling

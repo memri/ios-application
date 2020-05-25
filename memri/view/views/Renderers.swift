@@ -7,8 +7,8 @@
 import Combine
 import RealmSwift
 import SwiftUI
-import OrderedDictionary
 
+// Potential solution: https://stackoverflow.com/questions/42746981/list-all-subclasses-of-one-class
 var allRenderers:Renderers? = nil
 
 public class Renderers {
@@ -16,21 +16,40 @@ public class Renderers {
     var allViews: [String: AnyView] = [:]
     var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
     
-    class func register(name:String, title:String, order:Int, icon:String = "",
-                        view:AnyView, renderConfigType: CascadingRenderConfig.Type,
-                        canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
+    func register(name:String, title:String, order:Int, icon:String = "",
+                  view:AnyView, renderConfigType: CascadingRenderConfig.Type,
+                  canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
         
-        if allRenderers == nil { allRenderers = Renderers() }
-    
-        allRenderers!.all[name] = FilterPanelRendererButton(
+        self.all[name] = FilterPanelRendererButton(
             name: name,
             order: order,
             title: title,
             icon: icon,
             canDisplayResults: canDisplayResults
         )
-        allRenderers!.allViews[name] = view
-        allRenderers!.allConfigTypes[name] = renderConfigType
+        self.allViews[name] = view
+        self.allConfigTypes[name] = renderConfigType
+    }
+    
+    class func register(name:String, title:String, order:Int, icon:String = "",
+                        view:AnyView, renderConfigType: CascadingRenderConfig.Type,
+                        canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
+        
+        allRenderers?.register(name: name, title: title, order: order, view: view,
+                               renderConfigType: renderConfigType,
+                               canDisplayResults: canDisplayResults)
+    }
+    
+    init() {
+        if allRenderers == nil { allRenderers = self }
+        
+        registerList()
+        registerGeneralEditor()
+        registerThumbnail()
+        registerThumGrid()
+        registerThumWaterfall()
+        registerMap()
+        registerRichText()
     }
     
     var tuples: [(key: String, value: FilterPanelRendererButton)] {
@@ -60,6 +79,10 @@ class FilterPanelRendererButton: Action, ActionExec {
         super.init("setRenderer", values: ["icon":icon, "title":title])
     }
     
+    required init(arguments: [String : Any?]? = nil, values: [String : Any?] = [:]) {
+        fatalError("init(arguments:values:) has not been implemented")
+    }
+    
     func exec(_ main:Main, _ arguments:[String: Any]) {
 //        self.setInactive(objects: Array(self.renderObjects.values))
 //        setActive(object: rendererObject)
@@ -74,8 +97,14 @@ class FilterPanelRendererButton: Action, ActionExec {
 }
 
 public class RenderGroup {
-    var options: [String:Any] = [:]
+    var options: [String:Any?] = [:]
     var body: UIElement? = nil
+    
+    init(_ dict: inout [String:Any?]) {
+        body = (dict["children"] as? [UIElement])?.first
+        dict.removeValue(forKey: "children")
+        options = dict
+    }
 }
 
 protocol CascadingRendererDefaults {
@@ -100,7 +129,7 @@ protocol CascadingRendererDefaults {
 public class CascadingRenderConfig: Cascadable {
     var viewArguments: ViewArguments
     
-    required init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments) {
+    required init(_ cascadeStack: [CVUParsedRendererDefinition], _ viewArguments: ViewArguments) {
         self.viewArguments = viewArguments
         super.init()
         self.cascadeStack = cascadeStack
@@ -108,31 +137,57 @@ public class CascadingRenderConfig: Cascadable {
     
     
     func hasGroup(_ group:String) -> Bool {
-        cascadeProperty(group, nil) != nil
+        cascadeProperty(group) != nil
     }
     
     
-    func getGroupOptions(_ group:String) -> [String:Any] {
-        if let renderGroup:RenderGroup = cascadeProperty(group, nil) {
+    func getGroupOptions(_ group:String) -> [String:Any?] {
+        if let renderGroup = getRenderGroup(group) {
             return renderGroup.options
         }
         return [:]
     }
     
+    private func getRenderGroup(_ group:String) -> RenderGroup? {
+        if let renderGroup = localCache[group] as? RenderGroup {
+            return renderGroup
+        }
+        else if group == "*" && cascadeProperty("*") == nil {
+            if let list:[UIElement] = cascadeProperty("children") {
+                var dict = ["children": list] as [String:Any?]
+                let renderGroup = RenderGroup(&dict)
+                localCache[group] = renderGroup
+                return renderGroup
+            }
+        }
+        else if var dict:[String:Any?] = cascadeProperty(group) {
+            let renderGroup = RenderGroup(&dict)
+            localCache[group] = renderGroup
+            return renderGroup
+        }
+        
+        return nil
+    }
  
     public func render(item:DataItem, group:String = "*",
                        arguments:ViewArguments? = nil) -> UIElementView {
         
-        if let renderGroup:RenderGroup = cascadeProperty(group, nil) {
-            let body = renderGroup.body
-            if let s = self as? CascadingRendererDefaults, let body = body {
-                s.setDefaultValues(body)
+        func doRender(_ renderGroup:RenderGroup) -> UIElementView {
+            if let body = renderGroup.body {
+                if let s = self as? CascadingRendererDefaults {
+                    s.setDefaultValues(body)
+                }
+                
+                return UIElementView(body, item, arguments ?? viewArguments)
             }
-            
-            return UIElementView(body ?? UIElement("Empty"), item, arguments ?? viewArguments)
+            return UIElementView(UIElement(.Empty), item)
+        }
+        
+        if let renderGroup = getRenderGroup(group) {
+            return doRender(renderGroup)
         }
         else {
-            return UIElementView(UIElement("Empty"), item)
+            return UIElementView(UIElement(.Empty), item)
         }
     }
 }

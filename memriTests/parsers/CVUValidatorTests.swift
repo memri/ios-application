@@ -189,7 +189,7 @@ class CVUValidatorTests: XCTestCase {
                     title: "{$starred} {type.plural()}"
                     arguments: {
                         name: "filter-starred"
-                        fromTemplate: "all-{type}"
+                        include: "all-{type}"
                     }
                 }
                 openViewByName {

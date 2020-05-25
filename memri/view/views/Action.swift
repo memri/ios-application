@@ -46,7 +46,10 @@ public class Action : HashableClass, CVUToString {
             self.values["renderAs"] = RenderType(rawValue: x)
         }
     }
-
+    
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+    }
+    
     func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
         let x:Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
         if let x = x as? Expression {
@@ -144,7 +147,7 @@ public enum ActionFamily: String, CaseIterable {
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
         addSelectionToList, closePopup, noop
 
-    func getType() -> AnyObject.Type {
+    func getType() -> Action.Type {
         switch self {
         case .back: return ActionBack.self
         case .addDataItem: return ActionAddDataItem.self
@@ -205,7 +208,7 @@ class ActionBack : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("back", arguments:arguments, values:values)
     }
     
@@ -234,7 +237,7 @@ class ActionAddDataItem : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("addDataItem", arguments:arguments, values:values)
     }
     
@@ -266,7 +269,7 @@ class ActionOpenView : Action, ActionExec {
         "opensView": true
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("openView", arguments:arguments, values:values)
     }
     
@@ -340,7 +343,7 @@ class ActionOpenViewByName : Action, ActionExec {
         "opensView": true
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("openViewByName", arguments:arguments, values:values)
     }
     
@@ -379,7 +382,7 @@ class ActionToggleEditMode : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("toggleEditMode", arguments:arguments, values:values)
     }
     
@@ -398,7 +401,7 @@ class ActionToggleFilterPanel : Action, ActionExec {
         "activeColor": Color(hex: "#6aa84f")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("toggleFilterPanel", arguments:arguments, values:values)
     }
     
@@ -417,7 +420,7 @@ class ActionStar : Action, ActionExec {
         "binding": "{dataItem.starred}"
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("toggleStar", arguments:arguments, values:values)
     }
     
@@ -455,7 +458,7 @@ class ActionShowStarred : Action, ActionExec {
         "activeColor": Color(hex: "#ffdb00")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("showStarred", arguments:arguments, values:values)
     }
 
@@ -487,7 +490,7 @@ class ActionShowContextPane : Action, ActionExec {
         "binding": Expression("currentSession.showContextPane")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("showContextPane", arguments:arguments, values:values)
     }
     
@@ -507,7 +510,7 @@ class ActionShowNavigation : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("showNavigation", arguments:arguments, values:values)
     }
     
@@ -524,7 +527,7 @@ class ActionSchedule : Action, ActionExec {
         "icon": "alarm"
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("schedule", arguments:arguments, values:values)
     }
     
@@ -545,7 +548,7 @@ class ActionShowSessionSwitcher : Action, ActionExec {
         "color": Color(hex: "#CCC")
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("showSessionSwitcher", arguments:arguments, values:values)
     }
     
@@ -562,7 +565,7 @@ class ActionForward : Action, ActionExec {
         "opensView": true,
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("forward", arguments:arguments, values:values)
     }
     
@@ -587,7 +590,7 @@ class ActionForwardToFront : Action, ActionExec {
         "opensView": true,
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("forwardToFront", arguments:arguments, values:values)
     }
     
@@ -608,7 +611,7 @@ class ActionBackAsSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("backAsSession", arguments:arguments, values:values)
     }
     
@@ -643,7 +646,7 @@ class ActionOpenSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("openSession", arguments:arguments, values:values)
     }
     
@@ -689,7 +692,7 @@ class ActionOpenSessionByName : Action, ActionExec {
         "opensView": true,
     ]}
     
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("openSessionByName", arguments:arguments, values:values)
     }
     
@@ -738,7 +741,7 @@ class ActionOpenSessionByName : Action, ActionExec {
 }
 
 class ActionDelete : Action, ActionExec {
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("delete", arguments:arguments, values:values)
     }
     
@@ -773,7 +776,7 @@ class ActionDelete : Action, ActionExec {
     }
 }
 class ActionDuplicate : Action, ActionExec {
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("duplicate", arguments:arguments, values:values)
     }
     
@@ -794,7 +797,7 @@ class ActionDuplicate : Action, ActionExec {
     }
 }
 class ActionClosePopup : Action, ActionExec {
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("closePopup", arguments:arguments, values:values)
     }
     
@@ -808,7 +811,7 @@ class ActionClosePopup : Action, ActionExec {
 }
 
 class ActionSetProperty : Action, ActionExec {
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("setProperty", arguments:arguments, values:values)
     }
     
@@ -833,7 +836,7 @@ class ActionSetProperty : Action, ActionExec {
 }
 
 class ActionNoop : Action, ActionExec {
-    init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init("noop", arguments:arguments, values:values)
     }
     

@@ -157,7 +157,7 @@ public class Views {
         throw "not implemented"
     }
     
-    func getGlobalReference (_ name:String, viewArguments:ViewArguments) -> Any? {
+    func getGlobalReference (_ name:String, viewArguments:ViewArguments) throws -> Any? {
         // Fetch the value of the right property on the right object
         switch name {
         case "main": return main
@@ -168,7 +168,6 @@ public class Views {
         case "sessionView": return main?.currentSession.currentView
         case "view": return main?.cascadingView
         case "dataItem":
-            // TODO Refactor into a variables/arguments object
             if let itemRef:DataItem = viewArguments.get(".") {
                 return itemRef
             }
@@ -176,14 +175,12 @@ public class Views {
                 return item
             }
             else {
-                print("Warning: No item found to get the property off")
+                throw "Exception: Missing object for property getter"
             }
         default:
             if let value:Any = viewArguments.get(name) { return value }
-            print("Warning: Unknown object to get the property off: \(name)")
+            throw "Exception: Unknown object for property getter: \(name)"
         }
-        
-        return nil
     }
     
     func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments) throws -> Any? {
@@ -219,14 +216,17 @@ public class Views {
             if let node = node as? ExprVariableNode {
                 if first {
                     let name = node.name == "__DEFAULT__" ? "dataItem" : node.name
-                    value = getGlobalReference(name, viewArguments:viewArguments)
+                    value = try getGlobalReference(name, viewArguments:viewArguments)
                     first = false
                 }
                 else {
-                    if let value = value as? DataItem {
-                        if value.objectSchema[node.name] == nil {
+                    if let dataItem = value as? DataItem {
+                        if dataItem.objectSchema[node.name] == nil {
                             // TODO Warn
                             return nil
+                        }
+                        else {
+                            value = dataItem[node.name]
                         }
                     }
                     else if let v = value as? RealmSwift.List<Edge> {
@@ -391,13 +391,13 @@ public class Views {
                 return false
             }
             
-            var cascadeStack:[CVUParsedDefinition] = []
+            var cascadeStack:[CVUParsedRendererDefinition] = []
 
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {
                 if let viewDefinition = main.views.fetchDefinitions("\(viewOverride)").first {
                     if viewDefinition.type == "renderer" {
-                        if let parsed = try main.views.parseDefinition(viewDefinition) {
+                        if let parsed = try main.views.parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
                             else {
                                 throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
@@ -436,7 +436,7 @@ public class Views {
                 for name in rendererNames {
                     for key in ["user", "defaults"] {
                         if let viewDefinition = main.views.fetchDefinitions("[renderer = \(name)]", domain:key).first {
-                            if let parsed = try main.views.parseDefinition(viewDefinition) {
+                            if let parsed = try main.views.parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                                 if parsed["children"] != nil { cascadeStack.append(parsed) }
                             }
                         }
@@ -456,8 +456,7 @@ public class Views {
         }
         catch {
             // TODO Refactor: Log error to the user
-            
-            return UIElementView(UIElement("Text", properties: ["text": "Could not render this view"]), dataItem)
+            return UIElementView(UIElement(.Text, properties: ["text": "Could not render this view"]), dataItem)
         }
     }
 }

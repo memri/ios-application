@@ -203,11 +203,11 @@ class CVUParser {
                           lookup: lookup, execFunc: execFunc)
     }
     
-    func parseDict(_ UIElementName:String? = nil) throws -> [String:Any] {
+    func parseDict(_ uiElementName:String? = nil) throws -> [String:Any] {
         var dict = [String:Any]()
         var stack = [Any]()
         
-        let forUIElement = knownUIElements[UIElementName?.lowercased() ?? ""] != nil
+        let forUIElement = knownUIElements[uiElementName?.lowercased() ?? ""] != nil
         var lastKey:String? = nil
         var isArrayMode = false
         
@@ -215,10 +215,10 @@ class CVUParser {
             if stack.count > 0 {
                 if forUIElement, let convert = specialTypedProperties[lastKey!] {
                     if !isArrayMode && stack.count == 1 {
-                        dict[lastKey!] = convert(stack[0], UIElementName!)
+                        dict[lastKey!] = convert(stack[0], uiElementName!)
                     }
                     else if isArrayMode || stack.count > 0 {
-                        dict[lastKey!] = convert(stack, UIElementName!)
+                        dict[lastKey!] = convert(stack, uiElementName!)
                     }
                 }
                 else {
@@ -230,7 +230,7 @@ class CVUParser {
             }
         }
         
-        func addUIElement(_ type:String, _ properties: inout [String:Any]){
+        func addUIElement(_ type:UIElementFamily, _ properties: inout [String:Any]){
             var children = dict["children"] as? [UIElement] ?? [UIElement]()
             let subChildren = properties.removeValue(forKey: "children")
             children.append(UIElement(type,
@@ -352,7 +352,7 @@ class CVUParser {
                     let arguments = options.removeValue(forKey: "arguments") as? [String:Any] ?? [:]
                     if let actionFamily = ActionFamily(rawValue: name) {
                         let ActionType = ActionFamily.getType(actionFamily)()
-                        stack.append(ActionType.init(name, arguments:arguments, values:options))
+                        stack.append(ActionType.init(arguments:arguments, values:options))
                     }
                     else {
                         // TODO ERROR REPORTING
@@ -436,10 +436,10 @@ class CVUParser {
         return result
     }()
     // Only when key is this should it parse the properties
-    let knownUIElements:[String:String] = {
-        var result = [String:String]()
+    let knownUIElements:[String:UIElementFamily] = {
+        var result = [String:UIElementFamily]()
         for name in UIElementFamily.allCases {
-            result[name.rawValue.lowercased()] = name.rawValue
+            result[name.rawValue.lowercased()] = name
         }
         return result
     }()

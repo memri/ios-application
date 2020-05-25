@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-private var register:Void = {
+let registerThumGrid = {
     Renderers.register(
         name: "thumbnail.grid",
         title: "Photo Grid",
@@ -18,7 +18,7 @@ private var register:Void = {
         renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
-}()
+}
 
 struct ThumbGridRendererView: View {
     @EnvironmentObject var main: Main
