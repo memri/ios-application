@@ -136,7 +136,8 @@ class CVUSerializer {
         
         var str = [String]()
         for key in keys {
-            if key == "children" || key == "renderDefinitions" {
+            if key == "children" || key == "renderDefinitions"
+              || key == "sessionDefinitions" || key == "viewDefinitions" {
                 continue
             }
             else if key == "cornerradius" {
@@ -175,6 +176,14 @@ class CVUSerializer {
         if let p = dict["children"] as? [UIElement], p.count > 0 {
             let body = arrayToString(p, depth, tab, withDef:false, extraNewLine:true)
             children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+        }
+        if let p = dict["sessionDefinitions"] as? [CVUParsedSessionDefinition], p.count > 0 {
+            let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
+            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+        }
+        if let p = dict["viewDefinitions"] as? [CVUParsedViewDefinition], p.count > 0 {
+            let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
+            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }
         if let p = dict["renderDefinitions"] as? [CVUParsedRendererDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)

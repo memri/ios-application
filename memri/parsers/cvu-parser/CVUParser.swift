@@ -308,7 +308,7 @@ class CVUParser {
         }
         
         while true {
-//            print(peekCurrentToken())
+            print(peekCurrentToken())
             switch (popCurrentToken()) {
             case let .Bool(v, _, _):
                 stack.append(v)

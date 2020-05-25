@@ -163,6 +163,22 @@ public class Session: DataItem {
         }
     }
     
+    public class func fromCVUDefinition(_ def:CVUParsedSessionDefinition) -> Session {
+        let views = (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
+            .map { SessionView.fromCVUDefinition($0) }
+        
+        return Session(value: [
+            "selector": def.selector ?? "[session]",
+            "name": def["name"] as? String ?? "",
+            "currentViewIndex": def["currentViewIndex"] as? Int ?? 0,
+            "showFilterPanel": def["showFilterPanel"] as? Bool ?? false,
+            "showContextPane": def["showContextPane"] as? Bool ?? false,
+            "editMode": def["editMode"] as? Bool ?? false,
+            "screenshot": def["screenshot"] as? File as Any,
+            "views": views
+        ])
+    }
+    
     public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
         let jsonData = try jsonDataFromFile(file, ext)
         let session:Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)

@@ -918,6 +918,48 @@ class CVUParserTests: XCTestCase {
          }
      }
      
+     This gives a parse error at the [ on line 3
+     .defaultSessions {
+         currentSessionIndex: 0
+         sessionDefinitions: [
+             [session] {
+                     currentViewIndex: 4
+                     viewDefinitions: [
+                         [view] {
+                                 
+                                 queryOptions: {
+                                     query: "label"
+                                 }
+                             }
+                         [view] {
+                                 
+                                 queryOptions: {
+                                     query: "person"
+                                 }
+                             }
+                         [view] {
+                                 
+                                 queryOptions: {
+                                     query: "session"
+                                 }
+                             }
+                         [view] {
+                                 
+                                 queryOptions: {
+                                     query: "audititem"
+                                 }
+                             }
+                         [view] {
+                                 
+                                 queryOptions: {
+                                     query: "note"
+                                 }
+                             }
+                     ]
+                 }
+         ]
+     }
+     
      */
     
     // Test identifier { when its means as a key:object

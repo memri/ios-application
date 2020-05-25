@@ -142,17 +142,30 @@ public class Sessions: DataItem {
     }
     
  
-    public func install(_ realm:Realm) throws {
-        fetchUID(realm)
+    public func install(_ main:Main) throws {
+        fetchUID(main.realm)
         
-        try realm.write {
-            // Load default sessions from the package and store in the database
-            realm.create(CVUStoredDefinition.self, value: [
-                "type": "sessions",
-                "selector": "[sessions = \"\(self.uid)\"]",
-                "definition": try stringFromFile("Sessions", "cvu")
-            ])
+        let storedDef = main.realm.objects(CVUStoredDefinition.self)
+            .filter("selector = '.defaultSessions'").first
+    
+        if let storedDef = storedDef {
+            print(storedDef.definition ?? "")
+            if let parsed = try main.views.parseDefinition(storedDef) {
+                try main.realm.write {
+                    // Load default sessions from the package and store in the database
+                    main.realm.create(Sessions.self, value: [
+                        "selector": "[sessions = '\(self.uid)']",
+                        "name": self.uid,
+                        "currentSessionIndex": parsed["sessionsDefinition"] as? Int ?? 0,
+                        "sessions": (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
+                            .map { Session.fromCVUDefinition($0) }
+                    ])
+                }
+                return
+            }
         }
+        
+        throw "Installation is corrupt. Cannot recover."
     }
     
     public func merge(_ sessions:Sessions) throws {

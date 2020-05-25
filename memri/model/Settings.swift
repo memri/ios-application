@@ -29,7 +29,7 @@ public class Settings {
     
     /// Load all settings from the local realm database
     /// - Parameter callback: function that is called after completing loading the settings
-    public func load(_ callback: () -> Void) {
+    public func load(_ callback: () throws -> Void) throws {
         // TODO: This could probably be optimized, but lets first get familiar with the process
         
         let allSettings = realm.objects(SettingCollection.self)
@@ -48,7 +48,7 @@ public class Settings {
             print("Error: Settings are not initialized")
         }
         
-        callback()
+        try callback()
     }
     
     

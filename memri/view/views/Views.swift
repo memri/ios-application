@@ -41,14 +41,14 @@ public class Views {
         }
     }
  
-    public func load(_ mn:Main, _ callback: () -> Void) throws {
+    public func load(_ mn:Main, _ callback: () throws -> Void) throws {
         // Store main for use within createCascadingView)
         self.main = mn
         
         try setCurrentLanguage(main?.settings.get("user/language") ?? "English")
         
         // Done
-        callback()
+        try callback()
     }
     
     // TODO refactor when implementing settings UI call this when changing the language
@@ -308,9 +308,10 @@ public class Views {
             .map({ (def) -> CVUStoredDefinition in def }) // Convert to normal Array
     }
     
+    // TODO REfactor return list of definitions
     func parseDefinition(_ viewDef:CVUStoredDefinition?) throws -> CVUParsedDefinition? {
         guard let viewDef = viewDef else {
-            throw "Exception: Missing view definition"
+            throw "Exception: Missing CVU definition"
         }
         
         let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")

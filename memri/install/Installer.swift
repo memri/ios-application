@@ -19,7 +19,7 @@ public class Installer {
         
     }
     
-    public func installIfNeeded(_ main:Main, _ callback: () -> Void) throws {
+    public func installIfNeeded(_ main:Main, _ callback: () throws -> Void) throws {
         
         let installLogs = realm.objects(AuditItem.self).filter("action = 'install'")
         
@@ -40,7 +40,7 @@ public class Installer {
             try main.views.install()
             
             // Load default sessions in database
-            try main.sessions.install(main.realm)
+            try main.sessions.install(main)
             
             // Installation complete
             try realm.write {
@@ -52,6 +52,6 @@ public class Installer {
             }
         }
         
-        callback()
+        try callback()
     }
 }

@@ -391,16 +391,16 @@ public class RootMain: Main {
         try self.installer.installIfNeeded(self) {
 
             // Load settings
-            self.settings.load() {
+            try self.settings.load() {
                 
                 // Load NavigationCache (from cache and/or api)
-                self.navigation.load() {
+                try self.navigation.load() {
                 
                     // Load views configuration
-                    try! self.views.load(self) {
+                    try self.views.load(self) {
                     
                         // Load sessions configuration
-                        try! self.sessions.load(realm, cache) {
+                        try self.sessions.load(realm, cache) {
                             
                             // Update view when sessions changes
                             self.cancellable = self.sessions.objectWillChange.sink { (_) in

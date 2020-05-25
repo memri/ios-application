@@ -47,7 +47,7 @@ public class MainNavigation:ObservableObject {
     }
     
  
-    public func load(_ callback: () -> Void) {
+    public func load(_ callback: () throws -> Void) throws {
         // Fetch navigation from realm and sort based on the order property
         let navItems = realm.objects(NavigationItem.self).sorted(byKeyPath: "order")
         
@@ -56,7 +56,7 @@ public class MainNavigation:ObservableObject {
             items.append(item)
         }
         
-        callback()
+        try callback()
     }
  
     public func install() {
