@@ -124,7 +124,7 @@ public class Main: ObservableObject {
         if currentView.datasource == nil {
             if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
                 if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-                    realmWriteIfAvailable(realm) {
+                    try realmWriteIfAvailable(realm) {
                         currentView.datasource = Datasource.fromCVUDefinition(ds)
                     }
                 }
