@@ -225,6 +225,16 @@ class CVUParser {
             throw CVUParseErrors.ExpectedIdentifier(lastToken!)
         }
         
+        // TODO Only allow inside other definition
+        if ["session", "view"].contains(type), case CVUToken.BracketClose = peekCurrentToken() {
+            _ = popCurrentToken()
+            switch type {
+            case "session": return CVUParsedSessionDefinition("[session]")
+            case "view": return CVUParsedViewDefinition("[view]")
+            default: _ = 1 // Can never get here
+            }
+        }
+        
         guard case let CVUToken.Operator(op, _, _) = popCurrentToken() else {
             throw CVUParseErrors.ExpectedCharacter("=", lastToken!)
         }
@@ -298,7 +308,7 @@ class CVUParser {
         }
         
         while true {
-            print(peekCurrentToken())
+//            print(peekCurrentToken())
             switch (popCurrentToken()) {
             case let .Bool(v, _, _):
                 stack.append(v)
@@ -309,16 +319,33 @@ class CVUParser {
                 else {
                     setPropertyValue()
                     
-                    // SELECTOR - currently only supporting renderers
-                    if let selector = try parseBracketsSelector(lastToken) as? CVUParsedRendererDefinition {
+                    // SELECTOR - currently not yet implemented: style, color, language
+                    // TODO remove code duplication
+                    let selector = try parseBracketsSelector(lastToken)
+                    if let selector = selector as? CVUParsedRendererDefinition {
                         var value = dict["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
                         value.append(selector)
                         dict["renderDefinitions"] = value
                         _ = try parseDefinition(selector)
                         lastKey = nil
                     }
+                    else if let selector = selector as? CVUParsedSessionDefinition {
+                        var value = dict["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [CVUParsedSessionDefinition]()
+                        value.append(selector)
+                        dict["sessionDefinitions"] = value
+                        _ = try parseDefinition(selector)
+                        lastKey = nil
+                    }
+                    else if let selector = selector as? CVUParsedViewDefinition {
+                        var value = dict["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [CVUParsedViewDefinition]()
+                        value.append(selector)
+                        dict["viewDefinitions"] = value
+                        _ = try parseDefinition(selector)
+                        lastKey = nil
+                    }
                     else {
                         // TODO other defininitions
+                        print("this inline definition is not yet supported")
                     }
                 }
             case .BracketClose(_, _):

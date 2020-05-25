@@ -75,13 +75,12 @@ Label[]: {
             }
         }
     }
-    actionButton: {
-        actionName: add
-        actionArgs: {
-            type: label
-            name: new label
+    actionButton: addDataItem {
+        arguments: {
+            type: "label"
+            name: "new label"
         }
     }
-    editActionButton: { actionName: toggleEditMode }
-    filterButtons: [ showStarred, toggleFilterPanel ]
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
 }

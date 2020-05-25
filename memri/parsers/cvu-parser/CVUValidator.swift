@@ -152,7 +152,7 @@ class CVUValidator {
             check(definition) { (key, value) in
                 switch key {
                 case "currentSessionIndex": return value is Int
-                case "sessions": return value is [CVUParsedSessionDefinition]
+                case "sessionDefinitions": return value is [CVUParsedSessionDefinition]
                 default: throw "Unknown"
                 }
             }
@@ -162,7 +162,7 @@ class CVUValidator {
                 switch key {
                 case "name": return value is String
                 case "currentViewIndex": return value is Int
-                case "views": return value is [CVUParsedViewDefinition]
+                case "viewDefinitions": return value is [CVUParsedViewDefinition]
                 case "editMode", "showFilterPanel", "showContextPane": return value is Bool
                 case "screenshot": return value is File
                 default: throw "Unknown"
@@ -182,7 +182,9 @@ class CVUValidator {
                 case "actionButton", "editActionButton":
                     if let value = value as? Action { validateAction(value) }
                     else { return false }
-                case "sortFields": return value is [String]
+                case "sortFields":
+                    if let value = value as? [Any] { return value is [String] }
+                    else { return value is String }
                 case "editButtons", "filterButtons", "actionItems",
                      "navigateItems", "contextButtons":
                     if let value = value as? [Any] {

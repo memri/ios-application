@@ -1,33 +1,32 @@
 .defaultSessions {
     currentSessionIndex: 0
-    sessions: {
+    
+    [session] {
         currentViewIndex: 4
-        views: [
-            {
-                queryOptions: {
-                    query: label
-                }
+        [view] {
+            queryOptions: {
+                query: label
             }
-            {
-                queryOptions: {
-                    query: person
-                }
+        }
+        [view] {
+            queryOptions: {
+                query: person
             }
-            {
-                queryOptions: {
-                    query: session
-                }
+        }
+        [view] {
+            queryOptions: {
+                query: session
             }
-            {
-                queryOptions: {
-                    query: audititem
-                }
+        }
+        [view] {
+            queryOptions: {
+                query: audititem
             }
-            {
-                queryOptions: {
-                    query: note
-                }
+        }
+        [view] {
+            queryOptions: {
+                query: note
             }
-        ]
+        }
     }
 }

@@ -8,7 +8,7 @@ AuditItem[] {
     }
     emptyResultText: "There are no log entries here yet"
     sortFields: date
-    defaultrenderer: list
+    defaultRenderer: list
     
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel

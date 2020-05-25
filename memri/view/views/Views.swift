@@ -107,10 +107,13 @@ public class Views {
             }
         }
         catch let error {
-            let error = error as! CVUParseErrors
-            
-            // TODO Fatal error handling
-            throw "Parse Error: \(error.toString(code))"
+            if let error = error as? CVUParseErrors {
+                // TODO Fatal error handling
+                throw "Parse Error: \(error.toString(code))"
+            }
+            else {
+                throw error
+            }
         }
     }
 

@@ -43,6 +43,15 @@ public class Cascadable {
                     result.append(contentsOf: x)
                 }
             }
+            else if let x = def[name] as? T {
+                if !merge {
+                    localCache[name] = [x]
+                    return [x]
+                }
+                else {
+                    result.append(x)
+                }
+            }
         }
         
         localCache[name] = result
