@@ -290,7 +290,9 @@ public class Cache {
             queryIndex[key] = resultSet
             
             // Make sure the new resultset has the right query properties
-            resultSet.queryOptions.merge(queryOptions)
+            resultSet.queryOptions.query = queryOptions.query
+            resultSet.queryOptions.sortProperty = queryOptions.sortProperty
+            resultSet.queryOptions.sortAscending.value = queryOptions.sortAscending.value
             
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in

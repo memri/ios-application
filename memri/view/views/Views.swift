@@ -83,7 +83,7 @@ public class Views {
                 }
                 if validator.errors.count > 0 {
                     // TODO REPORT TO USER
-                    throw "Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
+                    throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
                 }
             }
             

@@ -184,6 +184,7 @@
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2A247B958700EC85C0 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA29247B958700EC85C0 /* UserState.swift */; };
+		8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */; };
 		869CA736243F9AA3009C56FF /* SessionSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869CA735243F9AA3009C56FF /* SessionSwitcher.swift */; };
 		86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D8392437321700F8FAD8 /* Sync.swift */; };
 		86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86A5D83B243B3FFF00F8FAD8 /* Loading.swift */; };
@@ -405,6 +406,7 @@
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8699AA29247B958700EC85C0 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; };
+		8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUParseErrors.swift; sourceTree = "<group>"; };
 		869CA735243F9AA3009C56FF /* SessionSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionSwitcher.swift; sourceTree = "<group>"; };
 		86A5D8392437321700F8FAD8 /* Sync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sync.swift; sourceTree = "<group>"; };
 		86A5D83B243B3FFF00F8FAD8 /* Loading.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loading.swift; sourceTree = "<group>"; };
@@ -975,6 +977,7 @@
 				868EF62524766A8800C0375F /* CVU.swift */,
 				868EF62124766A8800C0375F /* CVULexer.swift */,
 				868EF62424766A8800C0375F /* CVUParsedDefinition.swift */,
+				8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */,
 				868EF62624766A8800C0375F /* CVUParser.swift */,
 				863D0E0B24796C0A00DAB6C8 /* CVUToString.swift */,
 				86DDB35E247AA9D20051A92F /* CVUValidator.swift */,
@@ -1546,6 +1549,7 @@
 				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
 				86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */,
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
+				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,

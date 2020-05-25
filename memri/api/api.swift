@@ -33,36 +33,51 @@ public class QueryOptions: Object, Codable {
     
     init(query:String) {
         super.init()
-        
         self.query = query
-    }
-    
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            query = try decoder.decodeIfPresent("query") ?? query
-            sortProperty = try decoder.decodeIfPresent("sortProperty") ?? sortProperty
-            sortAscending.value = try decoder.decodeIfPresent("sortAscending") ?? sortAscending.value
-            pageCount.value = try decoder.decodeIfPresent("pageCount") ?? pageCount.value
-        }
     }
     
     required init() {
         super.init()
     }
-    
-    public func merge(_ queryOptions:QueryOptions) {
-        self.query = queryOptions.query ?? self.query ?? nil
-        self.sortProperty = queryOptions.sortProperty ?? self.sortProperty ?? nil
-        self.sortAscending.value = queryOptions.sortAscending.value ?? self.sortAscending.value ?? true
-        self.pageCount.value = queryOptions.pageCount.value ?? self.pageCount.value ?? 0
-        self.pageIndex.value = queryOptions.pageIndex.value ?? self.pageIndex.value ?? 0
-    }
 }
 
-class SessionResult:DataItem {
-    @objc var json:String? = nil
+public class CascadingQueryOptions: Object, Codable {
+    /// Retrieves the query which is used to load data from the pod
+    @objc dynamic var query: String? = nil
+    
+    /// Retrieves the property that is used to sort on
+    @objc dynamic var sortProperty: String? = nil
+    
+    /// Retrieves whether the sort direction
+    /// false sort descending
+    /// true sort ascending
+    let sortAscending = RealmOptional<Bool>()
+    /// Retrieves the number of items per page
+    let pageCount = RealmOptional<Int>() // Todo move to ResultSet
+ 
+    let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
+     /// Returns a string representation of the data in QueryOptions that is unique for that data
+     /// Each QueryOptions object with the same data will return the same uniqueString
+    var uniqueString:String {
+        var result:[String] = []
+        
+        result.append((self.query ?? "").sha256())
+        result.append(self.sortProperty ?? "")
+        
+        let sortAsc = self.sortAscending.value ?? true
+        result.append(String(sortAsc))
+            
+        return result.joined(separator: ":")
+    }
+    
+    init(query:String) {
+        super.init()
+        self.query = query
+    }
+    
+    required init() {
+        super.init()
+    }
 }
 
 

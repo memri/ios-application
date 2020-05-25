@@ -45,7 +45,10 @@ public struct SubView : View {
             session.currentViewIndex = 0
             
             self.proxyMain = (main as! RootMain).createProxy(session)
-            self.proxyMain!.updateCascadingView()
+            do { try self.proxyMain!.updateCascadingView() }
+            catch {
+                // TODO Refactor error handling
+            }
         }
         catch {
             // TODO Refactor: error handling
@@ -66,7 +69,10 @@ public struct SubView : View {
         session.currentViewIndex = 0
         
         self.proxyMain = (main as! RootMain).createProxy(session)
-        self.proxyMain!.updateCascadingView()
+        do { try self.proxyMain!.updateCascadingView() }
+        catch {
+            // TODO Refactor error handling
+        }
     }
     
     // TODO refactor: consider inserting Browser here and adding variables instead

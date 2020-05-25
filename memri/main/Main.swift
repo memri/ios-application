@@ -106,68 +106,96 @@ public class Main: ObservableObject {
                 self.scheduledComputeView = false
                 
                 // Update UI
-                self.updateCascadingView()
+                do { try self.updateCascadingView() }
+                catch {
+                    // TODO ERror Handling
+                }
             }
         }
     }
     
-    public func updateCascadingView(){
+    public func updateCascadingView() throws {
         self.maybeLogUpdate()
-        
-        // Fetch the resultset associated with the current view
-        let resultSet = cache.getResultSet(self.sessions.currentSession.currentView.queryOptions!)
-        
-        // If we can guess the type of the result based on the query, let's compute the view
-        if resultSet.determinedType != nil {
-            
-            if type(of: self) == RootMain.self {
-                errorHistory.info("Computing view \(self.sessions.currentView.name ?? "")")
+        return
+        // Fetch queryOptions if not yet parsed yet
+        let currentView = self.sessions.currentView
+        if currentView.queryOptions == nil {
+            if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
+                if let queryOptions = parsedDef["queryOptions"] as? QueryOptions {
+                    realmWriteIfAvailable(realm) {
+                        currentView.queryOptions = queryOptions
+                    }
+                }
+                else {
+                    throw "Exception: Missing queryOptions in session view"
+                }
             }
+            else {
+                throw "Exception: Unable to parse view definition"
+            }
+        }
+        
+        if let queryOptions = currentView.queryOptions {
+            // Fetch the resultset associated with the current view
+            let resultSet = cache.getResultSet(queryOptions)
             
-            do {
-                // Calculate cascaded view
-                let cascadingView = try self.views.createCascadingView() // TODO handle errors better
-            
-                // Update current session
-                self.currentSession = self.sessions.currentSession // TODO filter to a single property
+            // If we can guess the type of the result based on the query, let's compute the view
+            if resultSet.determinedType != nil {
                 
-                // Set the newly computed view
-                self.cascadingView = cascadingView
+                if self is RootMain { // if type(of: self) == RootMain.self {
+                    errorHistory.info("Computing view \(currentView.name ?? "")")
+                }
                 
-                // Load data in the resultset of the computed view
-                try self.cascadingView.resultSet.load { (error) in
+                do {
+                    // Calculate cascaded view
+                    let cascadingView = try self.views.createCascadingView() // TODO handle errors better
+                
+                    // Update current session
+                    self.currentSession = self.sessions.currentSession // TODO filter to a single property
+                    
+                    // Set the newly computed view
+                    self.cascadingView = cascadingView
+                    
+                    // Load data in the resultset of the computed view
+                    try self.cascadingView.resultSet.load { (error) in
+                        if error != nil {
+                            // TODO Refactor: Log warning to user
+                            print("Error: could not load result: \(error!)")
+                        }
+                        else {
+                            maybeLogRead()
+                            
+                            // Update the UI
+                            scheduleUIUpdate{_ in true}
+                        }
+                    }
+                }
+                catch {
+                    // TODO Error handling
+                }
+                
+                // Update the UI
+                scheduleUIUpdate{_ in true}
+            }
+            // Otherwise let's execute the query first
+            else {
+                
+                // Updating the data in the resultset of the session view
+                try! resultSet.load { (error) in
+                    
+                    // Only update when data was retrieved successfully
                     if error != nil {
                         print("Error: could not load result: \(error!)")
                     }
                     else {
-                        maybeLogRead()
-                        // Update the UI
-                        scheduleUIUpdate{_ in true}
+                        // Update the current view based on the new info
+                        scheduleUIUpdate{_ in true} // TODO shouldn't this be setCurrentView??
                     }
                 }
             }
-            catch {
-                // TODO Error handling
-            }
-            
-            // Update the UI
-            scheduleUIUpdate{_ in true}
         }
-        // Otherwise let's execute the query first
         else {
-            
-            // Updating the data in the resultset of the session view
-            try! resultSet.load { (error) in
-                
-                // Only update when data was retrieved successfully
-                if error != nil {
-                    print("Error: could not load result: \(error!)")
-                }
-                else {
-                    // Update the current view based on the new info
-                    scheduleUIUpdate{_ in true} // TODO shouldn't this be setCurrentView??
-                }
-            }
+            throw "Exception: Missing queryOptions in session view"
         }
     }
     
@@ -180,15 +208,17 @@ public class Main: ObservableObject {
     }
     
     private func maybeLogUpdate(){
-        if self.cascadingView.resultSet.singletonItem?.syncState?.changedInThisSession ?? false{
-            if let fields = self.cascadingView.resultSet.singletonItem?.syncState?.updatedFields{
-                realmWriteIfAvailable(realm) {
-                    // TODO serialize
-                    let item = self.cascadingView.resultSet.singletonItem!
-                    self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)), action: "update",
-                                             appliesTo: [item]))
-                    self.cascadingView.resultSet.singletonItem?.syncState?.changedInThisSession = false
-                }
+        if self.cascadingView.main == nil { return }
+        
+        let syncState = self.cascadingView.resultSet.singletonItem?.syncState
+        if let syncState = syncState, syncState.changedInThisSession {
+            let fields = syncState.updatedFields
+            realmWriteIfAvailable(realm) {
+                // TODO serialize
+                let item = self.cascadingView.resultSet.singletonItem!
+                self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)),
+                                         action: "update", appliesTo: [item]))
+                syncState.changedInThisSession = false
             }
         }
     }
@@ -411,7 +441,7 @@ public class RootMain: Main {
                             self.currentSession.currentView.access()
                             
                             // Load current view
-                            self.updateCascadingView()
+                            try self.updateCascadingView()
                         }
                     }
                 }

@@ -105,7 +105,7 @@ public class Sessions: DataItem {
     }
     
  
-    public func load(_ realm:Realm, _ ch:Cache, _ callback: () -> Void) throws {
+    public func load(_ realm:Realm, _ ch:Cache, _ callback: () throws -> Void) throws {
         
         // Determine self.uid
         fetchUID(realm)
@@ -137,7 +137,7 @@ public class Sessions: DataItem {
         }
 
         // Done
-        callback()
+        try callback()
     }
     
  
