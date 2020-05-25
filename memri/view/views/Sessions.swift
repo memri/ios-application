@@ -111,17 +111,16 @@ public class Sessions: DataItem {
         fetchUID(realm)
         
         if self.uid == "" {
-            print("Error: installation has been corrupted")
-            uid = "unknown"
+            throw("Exception: installation has been corrupted. Could not determine uid for sessions.")
         }
         
         // Activate this session to make sure its stored in realm
         if let fromCache = realm.object(ofType: Sessions.self, forPrimaryKey: self.uid) {
             // Sync with the cached version
-            try! self.merge(fromCache)
+            try self.merge(fromCache)
             
             // Turn myself in a managed object by realm
-            try! realm.write { realm.add(self, update: .modified) }
+            try realm.write { realm.add(self, update: .modified) }
             
             // Add listeners to all session objects
             postInit()
@@ -149,11 +148,11 @@ public class Sessions: DataItem {
             .filter("selector = '.defaultSessions'").first
     
         if let storedDef = storedDef {
-            print(storedDef.definition ?? "")
             if let parsed = try main.views.parseDefinition(storedDef) {
                 try main.realm.write {
                     // Load default sessions from the package and store in the database
                     main.realm.create(Sessions.self, value: [
+                        "uid": self.uid,
                         "selector": "[sessions = '\(self.uid)']",
                         "name": self.uid,
                         "currentSessionIndex": parsed["sessionsDefinition"] as? Int ?? 0,
