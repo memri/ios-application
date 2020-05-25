@@ -38,6 +38,7 @@ extension View {
     
     // TODO investigate using ViewModifiers
     func setProperty(_ name:String, _ value:Any) -> AnyView {
+        print(name)
         switch name {
         case "style":
             // TODO Refactor: Implement style sheets
