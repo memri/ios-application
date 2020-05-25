@@ -19,9 +19,6 @@ class SyncState: Object, Codable {
     // Enum: "create", "delete", "update"
     @objc dynamic var actionNeeded:String = ""
     
-    // The last version loaded from the server
-    @objc dynamic var version:Int = 0
-    
     // Which fields to update
     let updatedFields = List<String>()
     
@@ -33,7 +30,6 @@ class SyncState: Object, Codable {
         
         jsonErrorHandling(decoder) {
             isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-            version = try decoder.decodeIfPresent("version") ?? version
         }
     }
     
@@ -142,7 +138,7 @@ class Sync {
         podAPI.query(datasource) { (error, items) in
             if let items = items {
                 
-                if let cache = cache{
+                if let cache = self.cache{
                     
                     // Find resultset that belongs to this query
                     let resultSet = cache.getResultSet(datasource)
@@ -177,7 +173,7 @@ class Sync {
                     resultSet.forceItemsUpdate(items)
                     
                     // We no longer need to process this log item
-                    realmWriteIfAvailable(realm){
+                    realmWriteIfAvailable(self.realm){
                         audititem.setSyncStateActionNeeded("")
                     }
                     // TODO consider deleting the log item
@@ -240,7 +236,7 @@ class Sync {
     ///   - item:
     ///   - callback:
     /// - Throws:
-    public func execute(_ item:DataItem, callback: (_ error:Error?, _ success:Bool) -> Void) throws {
+    public func execute(_ item:DataItem, callback: @escaping (_ error:Error?, _ success:Bool) -> Void) throws {
         if let syncState = item.syncState {
             switch syncState.actionNeeded {
             case "create":
@@ -248,22 +244,38 @@ class Sync {
                     if error != nil { return callback(error, false) }
                     
                     // Set the new id from the server
-                    item.uid = id
+                    if let id = id{
+                        item.uid = id
+                        callback(nil, true)
+                    }
+                    else {
+                        callback(nil, false)
+                    }
                     
-                    callback(nil, true)
                 }
             case "delete":
                 podAPI.remove(item.getString("uid")) { (error, success) -> Void in
                     if (error == nil) {
                         // Remove from local storage
-                        realmWriteIfAvailable(realm){
-                            realm.add(item) // , update: .modified
+                        realmWriteIfAvailable(self.realm){
+                            self.realm.add(item) // , update: .modified
                         }
                     callback(error, success)
                     }
                 }
             case "update":
-                podAPI.update(item, callback)
+                podAPI.update(item) { (error, version:Int?) -> Void in
+                    if let version = version {
+                        item.version = version
+                        item.syncState!.actionNeeded = "" // TODO make sure it hasnt changed??
+                        
+                        callback(nil, true)
+                    }
+                    else {
+                        callback(error, false)
+                    }
+                }
+
             case "fetch":
                 // TODO
                 break

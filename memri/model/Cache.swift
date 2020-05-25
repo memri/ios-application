@@ -384,7 +384,7 @@ public class Cache {
                     
                     // Do nothing when the version is not higher then what we already have
                     if !syncState.isPartiallyLoaded
-                        && syncState.version <= syncState.version {
+                        && item.version <= cachedItem.version {
                         return cachedItem
                     }
                     
