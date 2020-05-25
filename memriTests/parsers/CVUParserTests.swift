@@ -632,7 +632,22 @@ class CVUParserTests: XCTestCase {
         """
         
         XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            VStack {
+                alignment: left
 
+                Text {
+                    font: 12 light
+                }
+
+                Spacer
+
+
+                Text {
+                    maxHeight: 500
+                }
+            }
+        }
         """)
     }
     
@@ -872,24 +887,6 @@ class CVUParserTests: XCTestCase {
 //
 //        XCTFail()
 //    }
-    
-    func testErrorIdentifierInDefinition() throws {
-        let snippet = """
-        [color = red] {
-            light: "#ff0000"
-        }
-        """
-        
-        do {
-            _ = try parse(snippet)
-        }
-        catch let CVUParseErrors.ExpectedString(token) {
-            XCTAssertEqual("\(token)", "\(CVUToken.Identifier("red", 0, 9))")
-            return
-        }
-        
-        XCTFail()
-    }
     
     /*
      FUTURE TESTS:

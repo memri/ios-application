@@ -116,7 +116,7 @@ public class Main: ObservableObject {
     
     public func updateCascadingView() throws {
         self.maybeLogUpdate()
-        return
+        
         // Fetch queryOptions if not yet parsed yet
         let currentView = self.sessions.currentView
         if currentView.queryOptions == nil {
