@@ -18,7 +18,7 @@ public class CVUParsedDefinition : CVUToString {
     }
     
 //    var unparsed:String = ""
-    var parsed:[String:Any] = [:]
+    var parsed:[String:Any?] = [:]
     
     func toCVUString(_ depth:Int, _ tab:String) -> String {
         if selector == #"[renderer = "list"]"# {
@@ -26,8 +26,8 @@ public class CVUParsedDefinition : CVUToString {
         }
         
         let body = CVUSerializer.dictToString(parsed, depth+1, tab, extraNewLine: true) { lhp, rhp in
-            let lv = self.parsed[lhp] as? [String:Any]
-            let rv = self.parsed[rhp] as? [String:Any]
+            let lv = self.parsed[lhp] as? [String:Any?]
+            let rv = self.parsed[rhp] as? [String:Any?]
             
             let leftIsDict = lv != nil
             let rightIsDict = rv != nil
@@ -44,7 +44,7 @@ public class CVUParsedDefinition : CVUToString {
         toCVUString(0, "    ")
     }
     
-    init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any]? = nil) {
+    init(_ selector:String, name:String? = nil, domain:String? = "user", parsed:[String:Any?]? = nil) {
         self.selector = selector
         self.name = name
         self.domain = domain

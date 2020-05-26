@@ -126,7 +126,7 @@ func JSONErrorReporter(_ convert: () throws -> Void) throws {
 
 func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     let path = getCodingPathString(decoder.codingPath)
-    print("Decoding: \(path)")
+//    print("Decoding: \(path)")
     
     do {
         try convert()
