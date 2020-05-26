@@ -13,6 +13,9 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "\(genericType) [\(memriID)]"
     }
     
+    var test:String =  DataItem.generateUUID()
+    /// Boolean whether the DataItem has been deleted
+    
     /// uid of the DataItem set by the pod
     @objc dynamic var uid:Int = 0
     /// memriID of the DataItem

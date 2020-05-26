@@ -41,21 +41,20 @@ struct _RichTextEditor: UIViewRepresentable {
             self.control = control
         }
         
-        func getRtfString(_ attributedText: NSAttributedString) -> String{
-            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
-            let rtfString: String
-            do {
-                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length),
-                                                                documentAttributes: rtfOptions)
-                rtfString = String(decoding: rtfData, as: UTF8.self)
-            }
-            catch {
-                print("Cannot read rtfString from attributedText: \(attributedText)")
-                rtfString = ""
-            }
-
-            return rtfString
-        }
+//        func getRtfString(_ attributedText: NSAttributedString) -> String{
+//            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
+//            let rtfString: String
+//            do {
+//                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length), documentAttributes: rtfOptions)
+//                rtfString = String(decoding: rtfData, as: UTF8.self)
+//            }
+//            catch {
+//                print("Cannot read rtfString from attributedText: \(attributedText)")
+//                rtfString = ""
+//            }
+//
+//            return rtfString
+//        }
         
         func getHTMLString(_ attributedText: NSAttributedString) -> String{
             let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
@@ -75,6 +74,7 @@ struct _RichTextEditor: UIViewRepresentable {
         
         
         func textViewDidChange(_ textView: UITextView) {
+            print(control.dataItem.realm)
             control.dataItem.set("content", textView.attributedText.string)
             control.dataItem.set("htmlContent", textView.attributedText.toHTML())
         }
@@ -173,9 +173,15 @@ struct RichTextRendererView: View {
         = CascadingRichTextEditorConfig([], ViewArguments())
 
     var body: some View {
+        let dataItem = self.main.cascadingView.resultSet.singletonItem
+        print(dataItem?.realm)
+        print(self.main.cascadingView.resultSet.items.count)
         let binding = Binding(
-            get: { self.main.cascadingView.resultSet.singletonItem?.getString("title") ?? "" },
-            set: { self.main.cascadingView.resultSet.singletonItem?.set("title", $0) }
+            get: { dataItem?.getString("title") ?? "" },
+            set: {
+                dataItem?.set("title", $0)
+                print(dataItem?.realm)
+        }
         )
         
         return VStack{
@@ -186,7 +192,7 @@ struct RichTextRendererView: View {
                     .font(.headline)
                     .foregroundColor(.gray)
                     
-                _RichTextEditor(dataItem: main.cascadingView.resultSet.singletonItem!,
+                _RichTextEditor(dataItem: dataItem!,
                                 filterText: $main.cascadingView.filterText)
             }
         }

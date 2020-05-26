@@ -108,8 +108,8 @@ public class CascadingView: Cascadable, ObservableObject {
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
         
-        print(activeRenderer)
-        print(localCache[activeRenderer])
+//        print(activeRenderer)
+//        print(localCache[activeRenderer])
         
         var stack = self.cascadeStack.compactMap {
             ($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])

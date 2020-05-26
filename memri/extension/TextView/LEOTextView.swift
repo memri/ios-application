@@ -281,39 +281,43 @@ open class LEOTextView: UITextView {
     }
     
     open func setAttributedString(_ content: String?, _ htmlContent: String?){
-        if let content = content{
-            self.setAttributedTextFromHtml(content ?? "", htmlContent ?? "")
+        // if content is nil,
+        
+        if content != "", let content = content{
+            self.setAttributedTextFromHtml(content, htmlContent)
         }
         else {
             self.setEmptyAttributedContent(content ?? "")
         }
     }
     
-    open func setAttributedTextFromHtml(_ htmlContent: String, _ contents: String){
-        let htmlData = NSString(string: contents).data(using: String.Encoding.unicode.rawValue)
-        let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
-                NSAttributedString.DocumentType.html]
-        
-        let attributedString: NSMutableAttributedString
-        do {
-            if let htmlData = htmlData{
-                attributedString = try NSMutableAttributedString(data: htmlData, options: options,
-                                                                 documentAttributes: nil)
+    open func setAttributedTextFromHtml(_ content: String, _ htmlContent: String?){
+        if let htmlContent = htmlContent {
+            let htmlData = NSString(string: htmlContent).data(using: String.Encoding.unicode.rawValue)
+            let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
+                    NSAttributedString.DocumentType.html]
+            
+            let attributedString: NSMutableAttributedString
+            do {
+                if let htmlData = htmlData{
+                    attributedString = try NSMutableAttributedString(data: htmlData,
+                                                                     options: options,
+                                                                     documentAttributes: nil)
+                    self.attributedText = attributedString
+                }
+                else {
+                    throw "could not create AttributedString from html"
+                }
             }
-            else {
-                throw "could not create AttributedString from html"
-            }
-        }
-        catch{
-            print("Error: Could not transfer htmlContent to MutableAttributedString")
-            attributedString = NSMutableAttributedString()
-        }
+            catch{
+                print("Error: Could not transfer htmlContent to MutableAttributedString")
+                attributedString = NSMutableAttributedString()
+                self.setEmptyAttributedContent(content)
 
-        if attributedString.string != "" {
-            self.attributedText = attributedString
+            }
         }
         else {
-            self.setEmptyAttributedContent(contents)
+            self.setEmptyAttributedContent(content)
         }
     }
 
