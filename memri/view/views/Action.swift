@@ -757,12 +757,14 @@ class ActionOpenSessionByName : Action, ActionExec {
                 // See if this is a session, if so take the last view
                 if let def = def as? CVUParsedSessionDefinition {
                     let session = Session()
-                    if let viewDefs = def["viewsDefinitions"] as? [CVUParsedViewDefinition] {
-                        let list:[SessionView] = viewDefs.compactMap {
-                            return SessionView(value:[
-                                "viewDefinition": $0,
+                    if let viewDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition] {
+                        var list:[SessionView] = []
+                        
+                        for viewDef in viewDefs {
+                            list.append(SessionView(value: [
+                                "viewDefinition": viewDef,
                                 "viewArguments": viewArguments as Any?
-                            ])
+                            ]))
                         }
                         
                         if list.count == 0 {
