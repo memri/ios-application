@@ -16,7 +16,6 @@ public class Views {
     init(_ rlm:Realm) {
         realm = rlm
     }
-    
  
     public func load(_ mn:Main, _ callback: () -> Void) throws {
         // Store main for use within computeView()
@@ -116,8 +115,7 @@ public class Views {
             
             if compiledView.hasSession {
                 return (try! compiledView.generateSession(variables), nil)
-            }
-            else {
+            }          else {
                 let view = try! compiledView.generateView(variables)
                 return (wrapView ? Session(value: ["views": [view]]) : nil, view)
             }

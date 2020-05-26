@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 
+// TODO https://stackoverflow.com/questions/56479674/set-toggle-color-in-swiftui
 public struct MemriToggleStyle: ToggleStyle {
     let width: CGFloat = 60
 

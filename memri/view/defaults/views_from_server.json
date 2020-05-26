@@ -148,7 +148,7 @@
                                 "text": "{.title}",
                                 "font": [18, "semibold"],
                                 "color": "#333",
-                                "padding": [0, 0, 3, 0]
+                                "padding": [0, 0, 0, 0]
                             },
                             "Text", {
                                 "text": "{.content}",
@@ -681,7 +681,7 @@
                         "picturesOfPerson": [
                             "SubView", {
                                 "for": "group",
-                                "sectionTitle": "Photos of {.computedTitle()}",
+                                "sectionTitle": "Photos of {.computedTitle2()}",
                                 "minHeight": 165,
                                 "view": {
                                     "queryOptions": { "query": "photo AND ANY includes.objectUid = '0x013'" },
@@ -757,7 +757,7 @@
                                 "padding": [10, 36, 5, 36]
                             }, [
                                 "Text", {
-                                    "condition": "{!.labels.count}",
+                                    "condition": "{!.labels.co2unt}",
                                     "text": "no labels yet"
                                 },
                                 "FlowStack", {

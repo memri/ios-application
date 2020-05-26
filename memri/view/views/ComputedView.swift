@@ -11,7 +11,6 @@ import SwiftUI
 
 public class ComputedView: ObservableObject {
 
- 
     var queryOptions: QueryOptions = QueryOptions()
     var resultSet: ResultSet
 

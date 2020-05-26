@@ -283,10 +283,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// update the dateAccessed property to the current date
     public func access() {
-        if let realm = realm, !realm.isInWriteTransaction {
-            try! realm.write { self.dateAccessed = Date() }
-        }
-        else {
+        realmWriteIfAvailable(realm) {
             self.dateAccessed = Date()
         }
     }

@@ -86,7 +86,6 @@ class Sync {
         prioritySyncAll()
     }
     
-    
     /// Schedule a query to sync the resulting DataItems from the pod
     /// - Parameter queryOptions: QueryOptions used to perform the query
     public func syncQuery(_ queryOptions:QueryOptions) {

@@ -41,31 +41,36 @@ struct Application: View {
             }
         
         return GeometryReader { geometry in
-            ZStack(alignment: .leading) {
-                if self.main.showSessionSwitcher {
-                    SessionSwitcher()
-                }
-                else {
-                    Browser()
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                        .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                        .disabled(self.showNavigation ? true : false)
-                        .overlay(
-                            Color.black
-                                .opacity(self.showNavigation ? 0.40 : 0)
+            VStack {
+                ZStack(alignment: .leading) {
+                    if self.main.showSessionSwitcher {
+                        SessionSwitcher()
+                    }
+                    else {
+                        Browser()
+                            .frame(width: geometry.size.width)
+//                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
+                            .disabled(self.showNavigation ? true : false)
+                            .overlay(
+                                Color.black
+                                    .opacity(self.showNavigation ? 0.40 : 0)
+                                    .edgesIgnoringSafeArea(.vertical)
+                                    .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
+                            )
+                        
+                        if self.showNavigation {
+                            Navigation()
+                                .frame(width: geometry.size.width * 0.8)
                                 .edgesIgnoringSafeArea(.vertical)
-                                .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                        )
-                    
-                    if self.showNavigation {
-                        Navigation()
-                            .frame(width: geometry.size.width * 0.8)
-                            .edgesIgnoringSafeArea(.vertical)
-                            .transition(.move(edge: .leading))
+                                .transition(.move(edge: .leading))
+                        }
                     }
                 }
+                .gesture(drag)
+                
+                ErrorConsole()
             }
-            .gesture(drag)
         }
     }
 }
