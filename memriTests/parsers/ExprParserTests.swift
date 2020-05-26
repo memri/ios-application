@@ -122,6 +122,17 @@ class ExprParserTests: XCTestCase {
         XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode(!)])")
     }
     
+    func testStringModeMultipleBlocks() throws {
+        let snippet = "Hello {.firstName} {.lastName}"
+        
+        let lexer = ExprLexer(input: snippet, startInStringMode: true)
+        let tokens = try lexer.tokenize()
+        let parser = ExprParser(tokens)
+        let result = try parser.parse()
+        
+        XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(__DEFAULT__), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(__DEFAULT__), VariableNode(lastName)])])")
+    }
+    
     func testStringModeStartWithExpression() throws {
         let snippet = "{fetchName()} Hello"
         
@@ -264,8 +275,8 @@ class ExprParserTests: XCTestCase {
             let parser = ExprParser(tokens)
             _ = try parser.parse()
         }
-        catch let ExprParseErrors.UnexpectedToken(token) {
-            XCTAssertEqual("\(token)", "\(ExprToken.CurlyBracketOpen(8))")
+        catch let ExprParseErrors.ExpectedExpression(token) {
+            XCTAssertEqual("\(token)", "\(ExprToken.CurlyBracketClose(22))")
             return
         }
         

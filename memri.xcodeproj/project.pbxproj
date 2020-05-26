@@ -444,7 +444,7 @@
 		86CDB481246A4D94007EAE67 /* generalEditor.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = generalEditor.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB483246A58FF007EAE67 /* Person.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = Person.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB486246A61F3007EAE67 /* defaults.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = defaults.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDebugger.swift; sourceTree = "<group>"; };
+		86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDebugger.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
 		86CDB723246D4D4E007EAE67 /* Mixed.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = Mixed.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB725246DB046007EAE67 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIFont.swift; path = memri/extension/NSAttributedString/UIFont.swift; sourceTree = SOURCE_ROOT; };

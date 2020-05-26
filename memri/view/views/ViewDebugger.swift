@@ -200,6 +200,7 @@ struct  ErrorConsole: View {
                                         
                                         Text(notice.displayMessage)
                                             .multilineTextAlignment(.leading)
+                                            .fixedSize(horizontal: false, vertical: true)
                                             .font(.system(size: 14))
                                             .padding(.top, 1)
                                             .foregroundColor(Color(hex: "#333"))

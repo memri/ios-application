@@ -1,4 +1,4 @@
-[session = all-people] {
+[session = all-photos] {
     [view] {
         title: "All Photos"
         [datasource = pod] {

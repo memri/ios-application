@@ -15,5 +15,5 @@ public class CVUStoredDefinition: DataItem {
     @objc dynamic var definition: String? = nil
     @objc dynamic var query: String? = nil
     @objc dynamic var domain: String = "user"
-    override var genericType:String { "ViewDSLDefinition" }
+    override var genericType:String { "CVUStoredDefinition" }
 }

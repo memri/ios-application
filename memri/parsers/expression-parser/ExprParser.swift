@@ -314,7 +314,15 @@ class ExprParser {
         if let firstNode = firstNode { expressions.append(firstNode) }
         
         while true {
-            if case ExprToken.EOF = peekCurrentToken() { break }
+            let nextToken = peekCurrentToken()
+            if case ExprToken.EOF = nextToken { break }
+            if case ExprToken.String = nextToken {
+                expressions.append(try parseString())
+                continue
+            }
+            if case ExprToken.CurlyBracketOpen = nextToken {
+                _ = popCurrentToken()
+            }
             
             expressions.append(try parseExpression())
             

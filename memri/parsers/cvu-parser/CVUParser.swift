@@ -447,7 +447,7 @@ class CVUParser {
     }()
         
     // Same as above to be converted once per dict
-    let frameProperties = ["minwidth":1, "maxwidth":1, "minheight":1, "maxheight":1, "align":1]
+    let frameProperties = ["minWidth":1, "maxWidth":1, "minHeight":1, "maxHeight":1, "align":1]
     // Based on key when its added to the dict (only needed within rendererDefinition / UIElement)
     let specialTypedProperties = [
         "alignment": { (value:Any?, type:String) -> Any? in
@@ -522,17 +522,17 @@ class CVUParser {
             if dict[name] != nil {
 
                 let values:[Any?] = [
-                    dict["minwidth"] as Any?,
-                    dict["maxwidth"] as Any?,
-                    dict["minheight"] as Any?,
-                    dict["maxheight"] as Any?,
+                    dict["minWidth"] as Any?,
+                    dict["maxWidth"] as Any?,
+                    dict["minHeight"] as Any?,
+                    dict["maxHeight"] as Any?,
                     dict["align"] as Any?
                 ]
 
-                dict["minwidth"] = nil
-                dict["maxwidth"] = nil
-                dict["minheight"] = nil
-                dict["maxheight"] = nil
+                dict["minWidth"] = nil
+                dict["maxWidth"] = nil
+                dict["minHeight"] = nil
+                dict["maxHeight"] = nil
                 dict["align"] = nil
 
                 dict["frame"] = values
@@ -540,9 +540,9 @@ class CVUParser {
             }
         }
 
-        if dict["cornerradius"] != nil && dict["border"] != nil {
+        if dict["cornerRadius"] != nil && dict["border"] != nil {
             var value = dict["border"] as? [Any?] ?? []
-            value.append(dict["cornerradius"] ?? 0)
+            value.append(dict["cornerRadius"] ?? 0)
 
             dict["cornerborder"] = value as Any?
             dict["border"] = nil

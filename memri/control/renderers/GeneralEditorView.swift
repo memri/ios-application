@@ -142,17 +142,20 @@ struct GeneralEditorView: View {
             item = DataItem()
         }
         // TODO: Error Handling
-        let renderConfig = self.renderConfig!
+        let renderConfig = self.renderConfig
         let groups = getGroups(item) ?? [:]
         let sortedKeys = getSortedKeys(groups)
         
         return ScrollView {
             VStack (alignment: .leading, spacing: 0) {
-                if groups.count > 0 {
+                if renderConfig == nil {
+                    Text("Unable to render this view")
+                }
+                else if groups.count > 0 {
                     ForEach(sortedKeys, id: \.self) { groupKey in
                         GeneralEditorSection(
                             item: item,
-                            renderConfig: renderConfig,
+                            renderConfig: renderConfig!,
                             groupKey: groupKey,
                             groups: groups)
                     }

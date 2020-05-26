@@ -1,4 +1,4 @@
-[session = all-people] {
+[session = all-sessions] {
     [view] {
         title: "All Sessions"
         [datasource = pod] {
