@@ -38,12 +38,12 @@ public struct TopNavigation: View {
         self.main.executeAction(ActionBackAsSession())
     }
     private func openAllViewsOfSession(){
-        let uid = self.main.currentSession.uid
+        let memriID = self.main.currentSession.memriID
         let view = """
         {
             "title": "Views in current session",
             "datasource": {
-                "query": "SessionView AND session.uid = '\(uid)'",
+                "query": "SessionView AND session.uid = '\(memriID)'",
             }
         }
         """

@@ -316,7 +316,7 @@ class ActionOpenView : Action, ActionExec {
         // Create a new view
         let view = SessionView(value: ["datasource": Datasource(value: [
             // Set the query options to load the item
-            "query": "\(item.genericType) AND uid = '\(item.uid)'"
+            "query": "\(item.genericType) AND memriID = '\(item.memriID)'"
         ])])
     
         // Open the view

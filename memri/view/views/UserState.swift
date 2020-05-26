@@ -8,7 +8,7 @@ import Foundation
 import RealmSwift
 
 public class UserState: Object {
-    @objc dynamic var uid: String = DataItem.generateUUID()
+    @objc dynamic var memriID: String = DataItem.generateUUID()
     @objc dynamic var state:String = ""
     
     var onFirstSave: ((UserState) -> Void)? = nil
@@ -21,7 +21,7 @@ public class UserState: Object {
                 if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
                     let x:DataItem? = realm?.object(
                         ofType: DataItemFamily.getType(type)() as! DataItem.Type,
-                        forPrimaryKey: lookup["uid"] as? String ?? "")
+                        forPrimaryKey: lookup["memriID"] as? String ?? "")
                     return x as? T
                 }
             }
@@ -41,13 +41,13 @@ public class UserState: Object {
         var x = self.asDict()
         
         if let newValue = newValue as? DataItem {
-            x[propName] = ["type": newValue.genericType, "uid": newValue.uid]
+            x[propName] = ["type": newValue.genericType, "memriID": newValue.memriID]
         }
         else {
             x[propName] = newValue
         }
         
-        do { try globalInMemoryObjectCache.set(uid, x) }
+        do { try globalInMemoryObjectCache.set(memriID, x) }
         catch { /* TODO ERROR HANDLIGNN */ }
         
         scheduleWrite()
@@ -56,7 +56,7 @@ public class UserState: Object {
     private func transformToDict() throws -> [String:Any]{
         if state == "" { return [String:Any]() }
         let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
-        try InMemoryObjectCache.set(self.uid, dict as [String:Any])
+        try InMemoryObjectCache.set(self.memriID, dict as [String:Any])
         return dict
     }
     
@@ -83,15 +83,10 @@ public class UserState: Object {
     private func persist() {
         if self.realm == nil { return }
         
-        do {
-            if let x = try InMemoryObjectCache.get(uid) as? [String : Any] {
-                realmWriteIfAvailable(self.realm) {
-                    self["state"] = serialize(AnyCodable(x))
-                }
+        if let x = InMemoryObjectCache.get(memriID) as? [String : Any] {
+            realmWriteIfAvailable(self.realm) {
+                self["state"] = serialize(AnyCodable(x))
             }
-        }
-        catch {
-            // TODO refactor: Log error
         }
     }
     
@@ -109,7 +104,7 @@ public class UserState: Object {
     
     public func asDict() -> [String:Any] {
         var x:[String:Any]?
-        do { x = try InMemoryObjectCache.get(uid) as? [String:Any] } catch { return [:] } // TODO refactor: handle error
+        x = InMemoryObjectCache.get(memriID) as? [String:Any]
         do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO refactor: handle error
         return x ?? [:]
     }
@@ -117,7 +112,7 @@ public class UserState: Object {
     convenience init(_ dict:[String:Any]) {
         self.init()
         
-        do { try InMemoryObjectCache.set(self.uid, dict) }
+        do { try InMemoryObjectCache.set(self.memriID, dict) }
         catch {
             // TODO Refactor error reporting
         }

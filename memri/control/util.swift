@@ -103,6 +103,27 @@ func getCodingPathString(_ codingPath:[CodingKey]) -> String {
 //    }
 //}
 
+func JSONErrorReporter(_ convert: () throws -> Void) throws {
+    do {
+        try convert()
+    }
+    catch DecodingError.dataCorrupted(let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch Swift.DecodingError.keyNotFound(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch Swift.DecodingError.typeMismatch(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch {
+        throw ("JSON Parse Error: \(error)")
+    }
+}
+
 func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     let path = getCodingPathString(decoder.codingPath)
     print("Decoding: \(path)")
@@ -171,7 +192,7 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
             catch {
                 // TODO Error logging
             }
-            let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
+            let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
             edgeList.append(edge)
         }
     }

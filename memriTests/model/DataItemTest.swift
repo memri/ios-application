@@ -23,7 +23,7 @@ class DataItemTest: XCTestCase {
     func testDeserializeDataItem(){
         let data = Data("""
             {
-                "uid": "0x012345",
+                "memriID": "0x012345",
             }
             """.utf8
         )
@@ -33,13 +33,13 @@ class DataItemTest: XCTestCase {
     func testGetString(){
         let data = Data("""
             {
-                "uid": "0x012345",
+                "memriID": "0x012345",
             }
             """.utf8
         )
         let item: DataItem = try! JSONDecoder().decode(DataItem.self, from: data)
         
-        XCTAssertTrue(item.getString("uid") == "0x012345") 
+        XCTAssertTrue(item.getString("memriID") == "0x012345") 
     }
 
     func testExample() throws {

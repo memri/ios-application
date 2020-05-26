@@ -72,7 +72,7 @@ struct PickerPane: View {
                 "datasource": datasource,
                 "title": title,
                 "userState": UserState([
-                    "selection": ["type": self.item.genericType, "uid": self.item.uid]
+                    "selection": ["type": self.item.genericType, "memriID": self.item.memriID]
                 ]),
                 // "editMode": true // TODO REfactor: also allow edit mode toggle on session view
                 // TODO REfactor: allow only 1 or more selected items

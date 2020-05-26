@@ -197,7 +197,7 @@ public class Session: DataItem {
     }
 
     public static func == (lt: Session, rt: Session) -> Bool {
-        return lt.uid == rt.uid
+        return lt.memriID == rt.memriID
     }
 }
 

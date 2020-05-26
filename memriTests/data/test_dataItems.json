@@ -1,6 +1,6 @@
 [
 {
-    "uid": "0x01",
+    "memriID": "0x01",
     "type": "note",
     "predicates": {"owner": "0x01"},
     "properties": {"title": "my first note",
@@ -8,7 +8,7 @@
                   }
 },
 {
-    "uid": "0x02",
+    "memriID": "0x02",
     "type": "note",
     "predicates": {"owner": "0x02"},
     "properties": {"title": "my second note",

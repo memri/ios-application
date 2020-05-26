@@ -117,7 +117,7 @@ Address {
                                 all-items-with-label
                                 {
                                     name: "Soccer team"
-                                    uid: 0x0124
+                                    memriID: 0x0124
                                 }
                             ]
                         }

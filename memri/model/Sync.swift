@@ -244,7 +244,7 @@ class Sync {
                     if error != nil { return callback(error, false) }
                     
                     // Set the new id from the server
-                    if let id = id{
+                    if let id = id {
                         item.uid = id
                         callback(nil, true)
                     }
@@ -254,7 +254,7 @@ class Sync {
                     
                 }
             case "delete":
-                podAPI.remove(item.getString("uid")) { (error, success) -> Void in
+                podAPI.remove(item.getString("memriID")) { (error, success) -> Void in
                     if (error == nil) {
                         // Remove from local storage
                         realmWriteIfAvailable(self.realm){

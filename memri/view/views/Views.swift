@@ -318,7 +318,7 @@ public class Views {
             throw "Exception: Missing CVU definition"
         }
         
-        let cached = try InMemoryObjectCache.get("uid: \(viewDef.uid)")
+        let cached = try InMemoryObjectCache.get("memriID: \(viewDef.memriID)")
         if let cached = cached as? CVU {
             return try cached.parse().first
         }
@@ -327,7 +327,7 @@ public class Views {
                 lookup: lookupValueOfVariables,
                 execFunc: executeFunction
             )
-            try InMemoryObjectCache.set("uid: \(viewDef.uid)", viewDefParser)
+            try InMemoryObjectCache.set("memriID: \(viewDef.memriID)", viewDefParser)
             return try viewDefParser.parse().first
         }
         else {

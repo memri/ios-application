@@ -26,6 +26,16 @@ extension String: Error {
         return match(pattern, options).count > 0
     }
     
+    mutating func replace(_ pattern: String, with: String = "") {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
+            let range = NSMakeRange(0, self.count)
+            self = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: with)
+        } catch {
+            return
+        }
+    }
+    
     // TODO Refactor: optimize regex match
 //    var expressions = [String: NSRegularExpression]()
 //    public extension String {

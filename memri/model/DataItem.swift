@@ -10,11 +10,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// Title computed by implementations of the DataItem class
     var computedTitle:String {
-        return "\(genericType) [\(uid)]"
+        return "\(genericType) [\(memriID)]"
     }
     
-    /// uid of the DataItem
-    @objc dynamic var uid:String = DataItem.generateUUID()
+    /// uid of the DataItem set by the pod
+    @objc dynamic var uid:Int = 0
     /// memriID of the DataItem
     @objc dynamic var memriID:String =  DataItem.generateUUID()
     /// Boolean whether the DataItem has been deleted
@@ -41,7 +41,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// Primary key used in the realm database of this DataItem
     public override static func primaryKey() -> String? {
-        return "uid"
+        return "memriID"
     }
     
     public func cast() -> Self{
@@ -49,7 +49,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
     
     private enum CodingKeys: String, CodingKey {
-        case uid, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
+        case uid, memriID, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
              labels, syncState
     }
         
@@ -83,6 +83,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// @private
     public func superDecode(from decoder: Decoder) throws {
         uid = try decoder.decodeIfPresent("uid") ?? uid
+        memriID = try decoder.decodeIfPresent("memriID") ?? memriID
         starred = try decoder.decodeIfPresent("starred") ?? starred
         deleted = try decoder.decodeIfPresent("deleted") ?? deleted
         version = try decoder.decodeIfPresent("version") ?? version
@@ -105,7 +106,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             
             // TODO how to do this in swift?
             // #IFDEF DEBUG
-            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.genericType):\(self.uid)")
+            print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.genericType):\(self.memriID)")
             // #ENDIF
             
             return ""
@@ -327,14 +328,13 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     ///   - rhs: DataItem 2
     /// - Returns: boolean indicating equality
     public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
-        lhs.uid == rhs.uid
+        lhs.memriID == rhs.memriID
     }
     
     /// Generate a new UUID, which are used by swift to identify objects
     /// - Returns: UUID string with "0xNEW" prepended
     public class func generateUUID() -> String {
-        let counter = UUID().uuidString
-        return "0xNEW\(counter)"
+        return "Memri\(UUID().uuidString)"
     }
     
     /// Reads DataItems from file
@@ -375,18 +375,19 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 }
 
 class Edge: Object {
-    @objc dynamic var objectUid:String = DataItem.generateUUID()
-    @objc dynamic var subjectUid:String = DataItem.generateUUID()
+    @objc dynamic var objectMemriID:String = DataItem.generateUUID()
+    @objc dynamic var subjectMemriID:String = DataItem.generateUUID()
     
     @objc dynamic var objectType:String = "unknown"
     @objc dynamic var subjectType:String = "unknown"
     
     required init() {}
     
-    init(_ subjectUid: String = DataItem.generateUUID(), _ objectUid: String = DataItem.generateUUID(),
+    init(_ subjectMemriID: String = DataItem.generateUUID(),
+         _ objectMemriID: String = DataItem.generateUUID(),
          _ subjectType: String = "unknown", _ objectType: String = "unknown") {
-        self.objectUid = objectUid
-        self.subjectUid = subjectUid
+        self.objectMemriID = objectMemriID
+        self.subjectMemriID = subjectMemriID
         self.objectType = objectType
         self.subjectType = subjectType
     }

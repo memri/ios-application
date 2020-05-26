@@ -184,14 +184,14 @@ struct GeneralEditorSection: View {
                     let type = DataItemFamily.getType(family)() as! Object.Type
                     var objects: [DataItem] = []
                     
-                    for uid in edges.map({$0.objectUid}){
-                        let object = main.realm.object(ofType: type, forPrimaryKey: uid) as? DataItem
+                    for memriID in edges.map({$0.objectMemriID}){
+                        let object = main.realm.object(ofType: type, forPrimaryKey: memriID) as? DataItem
                         if let object = object{
                             objects.append(object)
                         }
                         else {
                             // TODO Error handling
-                            print("Could not find object of type \(type) with uid \(uid)")
+                            print("Could not find object of type \(type) with memriID \(memriID)")
                         }
                     }
                     return objects

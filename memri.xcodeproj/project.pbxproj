@@ -78,7 +78,6 @@
 		5DAFB6112479521D00719160 /* Any.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6102479521D00719160 /* Any.cvu */; };
 		5DAFB6132479523B00719160 /* List.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6122479523B00719160 /* List.cvu */; };
 		5DAFB6152479524500719160 /* Thumbnail.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6142479524500719160 /* Thumbnail.cvu */; };
-		5DAFB6172479524E00719160 /* GeneralEditor.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6162479524E00719160 /* GeneralEditor.cvu */; };
 		5DAFB6192479525900719160 /* AuditItem.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6182479525900719160 /* AuditItem.cvu */; };
 		5DAFB61B2479526100719160 /* Label.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB61A2479526100719160 /* Label.cvu */; };
 		5DAFB61D2479526900719160 /* SessionView.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB61C2479526900719160 /* SessionView.cvu */; };
@@ -322,7 +321,6 @@
 		5DAFB6102479521D00719160 /* Any.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Any.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB6122479523B00719160 /* List.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = List.cvu; sourceTree = "<group>"; };
 		5DAFB6142479524500719160 /* Thumbnail.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Thumbnail.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		5DAFB6162479524E00719160 /* GeneralEditor.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GeneralEditor.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB6182479525900719160 /* AuditItem.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuditItem.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB61A2479526100719160 /* Label.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Label.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB61C2479526900719160 /* SessionView.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SessionView.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
@@ -1101,7 +1099,6 @@
 				86CDB47E246A4570007EAE67 /* Note.cvu */,
 				5DAFB6122479523B00719160 /* List.cvu */,
 				5DAFB6142479524500719160 /* Thumbnail.cvu */,
-				5DAFB6162479524E00719160 /* GeneralEditor.cvu */,
 				5DAFB6182479525900719160 /* AuditItem.cvu */,
 				5DAFB61A2479526100719160 /* Label.cvu */,
 				5DAFB61C2479526900719160 /* SessionView.cvu */,
@@ -1296,7 +1293,6 @@
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
 				5DAFB633247952F500719160 /* UserNote.cvu in Resources */,
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
-				5DAFB6172479524E00719160 /* GeneralEditor.cvu in Resources */,
 				5DAFB6152479524500719160 /* Thumbnail.cvu in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
 				5DAFB6382479533000719160 /* Sessions.cvu in Resources */,

@@ -20,8 +20,8 @@
  
 [renderer = "generalEditor"] {
     sequence: labels starred other dates
-    excluded: deleted syncState uid
-    readOnly: uid
+    excluded: deleted syncState memriID
+    readOnly: memriID
     
     groups {
         dates: dateCreated dateModified dateAccessed changelog
@@ -47,7 +47,7 @@
                         name: "all-items-with-label"
                         arguments: {
                             name: "Soccer team"
-                            uid: 0x0124
+                            memriID: 0x0124
                         }
                     }
                 
@@ -202,7 +202,7 @@ Person {
                     defaultRenderer: thumbnail.grid
                     
                     datasource {
-                        query: "photo AND ANY includes.uid = '0x013'"
+                        query: "photo AND ANY includes.memriID = '0x013'"
                     }
                     
                     [renderer = "thumbnail.grid"] {
@@ -293,7 +293,7 @@ Person {
                             name: "all-items-with-label"
                             arguments: {
                                 name: "Soccer team"
-                                uid: 0x0124
+                                memriID: 0x0124
                             }
                         }
                     

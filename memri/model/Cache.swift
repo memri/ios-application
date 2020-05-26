@@ -329,14 +329,14 @@ public class Cache {
      /// retrieves item from realm by type and uid.
      /// - Parameters:
      ///   - type: realm type
-     ///   - uid: item uid
+     ///   - memriID: item memriID
      /// - Returns: retrieved item. If the item does not exist, returns nil.
-    public func getItemById<T:DataItem>(_ type:String, _ uid: String) -> T? {
+    public func getItemById<T:DataItem>(_ type:String, _ memriID: String) -> T? {
         let type = DataItemFamily(rawValue: type)
         if let type = type {
             let item = DataItemFamily.getType(type)
             // NOTE: Allowed force unwrapping
-            return realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as! T?
+            return realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID) as! T?
         }
         return nil
     }
@@ -371,7 +371,7 @@ public class Cache {
         // Check if this is a new item or an existing one
         if let syncState = item.syncState{
 
-            if item.uid.contains("0xNEW") {
+            if item.uid == 0 {
                 // Schedule to be created on the pod
                 try realm.write() {
                     syncState.actionNeeded = "create"
@@ -380,7 +380,7 @@ public class Cache {
             }
             else {
                 // Fetch item from the cache to double check
-                if let cachedItem:DataItem = self.getItemById(item.genericType, item.uid) {
+                if let cachedItem:DataItem = self.getItemById(item.genericType, item.memriID) {
                     
                     // Do nothing when the version is not higher then what we already have
                     if !syncState.isPartiallyLoaded
@@ -395,7 +395,7 @@ public class Cache {
                         if !item.safeMerge(cachedItem) {
                             
                             // Merging failed
-                            throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+                            throw "Exception: Sync conflict with item.memriID \(cachedItem.memriID)"
                         }
                     }
                     

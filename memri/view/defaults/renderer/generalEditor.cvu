@@ -1,7 +1,7 @@
 [renderer = generalEditor] {
     sequence: labels starred other dates
-    excluded: deleted syncState uid
-    readOnly: uid
+    excluded: deleted syncState memriID uid
+    readOnly: uid memriID
     
     groups {
         dates: dateCreated dateModified dateAccessed changelog
@@ -31,7 +31,7 @@
                         name: "all-items-with-label"
                         arguments: {
                             name: "Soccer team"
-                            uid: 0x0124
+                            memriID: 0x0124
                         }
                     }
                 

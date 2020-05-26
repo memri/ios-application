@@ -85,7 +85,7 @@ public class PodAPI {
             // TODO Refactor: this will change when edges are implemented
             if depth == MAXDEPTH {
                 isPartiallyLoaded = true
-                result["uid"] = dataItem.uid
+                result["memriID"] = dataItem.memriID
             }
             else {
                 for prop in properties {
@@ -130,13 +130,13 @@ public class PodAPI {
     
     /// Retrieves a single data item from the pod
     /// - Parameters:
-    ///   - uid: The uid of the data item to retrieve
+    ///   - memriID: The memriID of the data item to retrieve
     ///   - callback: Function that is called when the task is completed either with a result, or an error
     /// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
-    public func get(_ uid:String,
+    public func get(_ memriID:String,
                     _ callback: @escaping (_ error: Error?, _ item: DataItem?) -> Void) -> Void {
         
-        self.http(path: "items/\(uid)") { error, data in
+        self.http(path: "items/\(memriID)") { error, data in
             if let data = data {
                 // TODO Refactor: Error handling
                 let result:[DataItem]? = try? MemriJSONDecoder
@@ -155,10 +155,10 @@ public class PodAPI {
     ///   - item: The data item to create on the pod
     ///   - callback: Function that is called when the task is completed either with the new uid, or an error
     public func create(_ item: DataItem,
-                       _ callback: @escaping (_ error: Error?, _ memriID: String?) -> Void) -> Void {
+                       _ callback: @escaping (_ error: Error?, _ uid: Int?) -> Void) -> Void {
         
         self.http(.POST, path: "items", body: toJSON(item, removeUID:true)) { error, data in
-            callback(error, data != nil ? String(data: data!, encoding: .utf8) ?? "" : nil)
+            callback(error, data != nil ? Int(String(data: data!, encoding: .utf8) ?? "") : nil)
         }
     }
     
@@ -169,20 +169,20 @@ public class PodAPI {
     public func update(_ item:DataItem,
                        _ callback: @escaping (_ error: Error?, _ version: Int?) -> Void) -> Void {
                        
-        self.http(.PUT, path: "items/\(item.uid)", body: toJSON(item)) { error, data in
+        self.http(.PUT, path: "items/\(item.memriID)", body: toJSON(item)) { error, data in
             callback(error, (data != nil ? Int(String(data: data!, encoding: .utf8) ?? "") : nil))
         }
     }
     
     /// Marks a data item as deleted on the pod.
     /// - Parameters:
-    ///   - uid: The uid of the data item to remove
+    ///   - memriID: The memriID of the data item to remove
     ///   - callback: Function that is called when the task is completed either with a result, or  an error
     /// - Remark: Note that data items that are marked as deleted are by default not returned when querying
-    public func remove(_ uid:String,
+    public func remove(_ memriID:String,
                        _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
         
-        self.http(.DELETE, path: "items/\(uid)") { error, data in
+        self.http(.DELETE, path: "items/\(memriID)") { error, data in
             callback(error, error == nil)
         }
     }
@@ -195,36 +195,47 @@ public class PodAPI {
     public func query(_ queryOptions:Datasource,
                       _ callback: @escaping (_ error:Error?, _ result:[DataItem]?) -> Void) -> Void {
         
-        if queryOptions.query!.test(#"^-\d+"#) { // test for uid that is negative
-            callback("nothing to do", nil)
-            return
-        }
+        // TODO Can no longer detect whether the data item is synced
+//        if queryOptions.query!.test(#"^-\d+"#) { // test for uid that is negative
+//            callback("nothing to do", nil)
+//            return
+//        }
         
         var data:Data? = nil
         
-        let matches = queryOptions.query!.match(#"^(\w+) AND uid = ([-\d]+)$"#)
+        let matches = queryOptions.query!.match(#"^(\w+) AND memriID = ([-\d]+)$"#)
         if matches.count == 3 {
-            let type = matches[1]
-            let uid = matches[2]
+            let type = matches[1].lowercased()
+            let memriID = matches[2]
             
             data = """
                 {
-                  items(func: type(\(type))) @filter(uid(\(uid))) @recurse(depth:2) {
-                    uid
+                  items(func: type(\(type))) @filter(memriID(\(memriID))) {
                     type : dgraph.type
-                    expand(\(type))
+                    expand(_all_) {
+                      type : dgraph.type
+                      expand(_all_) {
+                        memriID
+                        type : dgraph.type
+                      }
+                    }
                   }
                 }
             """.data(using: .utf8)
         }
         else {
-            let type = queryOptions.query!.split(separator: " ").first ?? ""
+            let type = queryOptions.query!.split(separator: " ").first?.lowercased() ?? ""
             data = """
                 {
-                  items(func: type(\(type))) @recurse(depth:2) {
-                    uid
+                  items(func: type(\(type))) {
                     type : dgraph.type
-                    expand(\(type))
+                    expand(_all_) {
+                      type : dgraph.type
+                      expand(_all_) {
+                        memriID
+                        type : dgraph.type
+                      }
+                    }
                   }
                 }
             """.data(using: .utf8)
@@ -232,13 +243,30 @@ public class PodAPI {
         
         self.http(.POST, path: "all", body: data) { error, data in
             if let data = data {
-                // TODO Refactor: Error handling
-                let items:[DataItem]? = try? MemriJSONDecoder
-                    .decode(family: DataItemFamily.self, from: data)
-                
-                callback(nil, items)
+                do {
+                    var str = String(data: data, encoding: .utf8) ?? ""
+                    str.replace(#""memriID":(\d+)"#, with: "\"memriID\":\"$1\"")
+                    str.replace(#","type":"dataitem""#, with: "")
+                    str.replace(#""type":"label""#, with: #""type":"Label""#)
+                    str.replace(#""type":"note""#, with: #""type":"Note""#)
+                    str.replace(#""type":"person""#, with: #""type":"Person""#)
+                    str.replace(#""type":"log""#, with: #""type":"Log""#)
+                    
+                    var items:[DataItem]?
+                    try JSONErrorReporter() {
+                        items = try MemriJSONDecoder
+                            .decode(family: DataItemFamily.self, from: str.data(using: .utf8)!)
+                    }
+                    
+                    callback(nil, items)
+                }
+                catch let error {
+                    errorHistory.error("Could not load data from pod: \n\(error)")
+                    callback(error, nil)
+                }
             }
             else {
+                errorHistory.error("Could not load data from pod: \n\(error ?? "")")
                 callback(error, nil)
             }
         }

@@ -47,7 +47,7 @@ public class Sessions: DataItem {
     public convenience init(_ realm:Realm) {
         self.init()
         
-        fetchUID(realm)
+        fetchMemriID(realm)
         
         self.postInit()
     }
@@ -73,17 +73,17 @@ public class Sessions: DataItem {
         }
     }
     
-    private func fetchUID(_ realm:Realm){
-        // When the uid is not yet set
-        if self.uid.contains("0xNEW") {
+    private func fetchMemriID(_ realm:Realm){
+        // When the memriID is not yet set
+        if self.memriID.starts(with: "Memri") {
             
             // Fetch device name
             let setting = realm.objects(Setting.self).filter("key = 'device/name'").first
             if let setting = setting {
                 
-                // Set it as the uid
-                if let uid: String = unserialize(setting.json) {
-                    self.uid = uid
+                // Set it as the memriID
+                if let memriID: String = unserialize(setting.json) {
+                    self.memriID = memriID
                 }
                 else {
                     print("Cannot unserialize settings.json")
@@ -111,15 +111,15 @@ public class Sessions: DataItem {
  
     public func load(_ realm:Realm, _ ch:Cache, _ callback: () throws -> Void) throws {
         
-        // Determine self.uid
-        fetchUID(realm)
+        // Determine self.memriID
+        fetchMemriID(realm)
         
-        if self.uid == "" {
-            throw("Exception: installation has been corrupted. Could not determine uid for sessions.")
+        if self.memriID == "" {
+            throw("Exception: installation has been corrupted. Could not determine memriID for sessions.")
         }
         
         // Activate this session to make sure its stored in realm
-        if let fromCache = realm.object(ofType: Sessions.self, forPrimaryKey: self.uid) {
+        if let fromCache = realm.object(ofType: Sessions.self, forPrimaryKey: self.memriID) {
             // Sync with the cached version
             try self.merge(fromCache)
             
@@ -146,7 +146,7 @@ public class Sessions: DataItem {
     
  
     public func install(_ main:Main) throws {
-        fetchUID(main.realm)
+        fetchMemriID(main.realm)
         
         let storedDef = main.realm.objects(CVUStoredDefinition.self)
             .filter("selector = '[sessions = defaultSessions]'").first
@@ -156,9 +156,9 @@ public class Sessions: DataItem {
                 try main.realm.write {
                     // Load default sessions from the package and store in the database
                     main.realm.create(Sessions.self, value: [
-                        "uid": self.uid,
-                        "selector": "[sessions = '\(self.uid)']",
-                        "name": self.uid,
+                        "memriID": self.memriID,
+                        "selector": "[sessions = '\(self.memriID)']",
+                        "name": self.memriID,
                         "currentSessionIndex": Int(parsed["sessionsDefinition"] as? Double ?? 0),
                         "sessions": (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
                             .map { Session.fromCVUDefinition($0) }

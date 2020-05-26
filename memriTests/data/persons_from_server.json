@@ -1,6 +1,6 @@
 [
     {
-        "uid": "0x011",
+        "memriID": "0x011",
         "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
@@ -8,7 +8,7 @@
         }
     },
     {
-        "uid": "0x012",
+        "memriID": "0x012",
         "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
@@ -16,7 +16,7 @@
         }
     },
     {
-        "uid": "0x013",
+        "memriID": "0x013",
         "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,

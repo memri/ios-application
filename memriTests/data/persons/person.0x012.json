@@ -1,5 +1,5 @@
 [{
-    "uid": "0x012",
+    "memriID": "0x012",
     "type": "person",
     "firstName": "Bob",
     "lastName": "Brown",
@@ -9,7 +9,7 @@
         {
             "name": "Soccer team",
             "color": "#83ac06",
-            "uid": "0x0124"
+            "memriID": "0x0124"
         },
         { "name": "Friends from University", "color": "#ffd966" }
     ],

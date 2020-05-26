@@ -28,6 +28,7 @@ struct FilterPanel: View {
         if let item = self.main.cascadingView.resultSet.items.first {
             var excludeList = self.main.cascadingView.sortFields
             excludeList.append(self.main.cascadingView.datasource.sortProperty ?? "")
+            excludeList.append("memriID")
             excludeList.append("uid")
             excludeList.append("deleted")
             
