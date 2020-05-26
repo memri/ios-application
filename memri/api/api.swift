@@ -211,10 +211,13 @@ public class PodAPI {
             data = """
                 {
                   items(func: type(\(type))) @filter(memriID(\(memriID))) {
+                    uid
                     type : dgraph.type
                     expand(_all_) {
+                      uid
                       type : dgraph.type
                       expand(_all_) {
+                        uid
                         memriID
                         type : dgraph.type
                       }
@@ -228,10 +231,13 @@ public class PodAPI {
             data = """
                 {
                   items(func: type(\(type))) {
+                    uid
                     type : dgraph.type
                     expand(_all_) {
+                      uid
                       type : dgraph.type
                       expand(_all_) {
+                        uid
                         memriID
                         type : dgraph.type
                       }
@@ -251,6 +257,14 @@ public class PodAPI {
                     str.replace(#""type":"note""#, with: #""type":"Note""#)
                     str.replace(#""type":"person""#, with: #""type":"Person""#)
                     str.replace(#""type":"log""#, with: #""type":"Log""#)
+                    
+                    
+//                    str.replace(#"(?<=[a-Z0-9]+)""#, with: " ")
+//                    str.replace(#""0x"#, with: "")
+
+
+//                    str.replace("0x", with: "")
+                    
                     
                     var items:[DataItem]?
                     try JSONErrorReporter() {

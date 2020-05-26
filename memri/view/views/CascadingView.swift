@@ -217,6 +217,17 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
+    var searchMatchText: String {
+        get {
+            return userState.get("searchMatchText") ?? ""
+        }
+        set(newValue) {
+            userState.set("searchMatchText", newValue)
+        }
+    }
+
+
+    
     init(_ sessionView:SessionView,
          _ cascadeStack:[CVUParsedDefinition],
          _ activeRenderer:String
