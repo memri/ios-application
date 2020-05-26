@@ -44,8 +44,12 @@ public class UIElement : CVUToString {
                 do { let x:T? = try expr.execForReturnType(viewArguments); return x }
                 catch {
                     // TODO Refactor error handling
-                    errorHistory.error("Could note compute \(propName) with arguments " +
-                                       "\(viewArguments). \(error)")
+                    errorHistory.error("Could note compute \(propName)\n"
+                        + "Arguments: [\(viewArguments.asDict().keys.joined(separator: ", "))]\n"
+                        + (expr.startInStringMode
+                            ? "Expression: \"\(expr.code)\"\n"
+                            : "Expression: \(expr.code)\n")
+                        + "Error: \(error)")
                     return nil
                 }
             }
@@ -54,6 +58,7 @@ public class UIElement : CVUToString {
         }
         else {
             // TODO REfactor: WARN
+//            errorHistory.info("Property \(propName) not defined for \(type.rawValue)")
         }
         
         return nil
