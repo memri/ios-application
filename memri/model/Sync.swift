@@ -154,8 +154,6 @@ class Sync {
                             if cachedItem.syncState?.actionNeeded != "deleted" {
                                 // Add item to result
                                 result.append(cachedItem)
-                                
-                                print(cachedItem.realm)
                             }
                             // Ignore items marked for deletion
                         }

@@ -176,7 +176,9 @@ struct ErrorConsole: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(Color(hex: "#999"))
                         .padding(10)
-                        Button(action: { self.history.showErrorConsole = false }) {
+                        Button(action: {
+                            self.history.showErrorConsole = false
+                        }) {
                             Image(systemName: "xmark")
                         }
                         .font(.system(size: 12))
@@ -190,12 +192,14 @@ struct ErrorConsole: View {
                         VStack (spacing:0) {
                             ForEach (errorHistory.log, id: \.self) { notice in
                                 VStack (spacing: 0 ){
-                                    HStack (alignment: .center, spacing: 4) {
+                                    HStack (alignment: .top, spacing: 4) {
                                         Image(systemName: notice.type.icon)
-                                        .font(.system(size: 14))
+                                            .padding(.top, 4)
+                                            .font(.system(size: 14))
                                             .foregroundColor(notice.type.color)
                                         
                                         Text(notice.displayMessage)
+                                            .multilineTextAlignment(.leading)
                                             .font(.system(size: 14))
                                             .padding(.top, 1)
                                             .foregroundColor(Color(hex: "#333"))

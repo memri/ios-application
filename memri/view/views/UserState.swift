@@ -88,8 +88,6 @@ public class UserState: Object {
         
         if let x = InMemoryObjectCache.get(memriID) as? [String : Any?] {
             realmWriteIfAvailable(self.realm) {
-                print(self.memriID)
-                print(x)
                 self["state"] = serialize(AnyCodable(x))
             }
         }
