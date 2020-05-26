@@ -25,6 +25,9 @@ class SyncState: Object, Codable {
     // Which fields to update
     let updatedFields = List<String>()
     
+    //
+    @objc dynamic var changedInThisSession = false
+    
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
@@ -89,20 +92,20 @@ class Sync {
         // TODO if this query was executed recently, considering postponing action
         
         // Store query in a log item
-        let logitem = LogItem()
+        let audititem = AuditItem()
         let data = try! MemriJSONEncoder.encode(queryOptions)
-        logitem.contents = String(data: data, encoding: .utf8) ?? ""
-        logitem.action = "query"
-        logitem.date = Date()
+        audititem.contents = String(data: data, encoding: .utf8) ?? ""
+        audititem.action = "query"
+        audititem.date = Date()
         
         // Set syncstate to "fetch" in order to get priority treatment for querying
-        logitem.syncState?.actionNeeded = "fetch"
+        audititem.syncState?.actionNeeded = "fetch"
         
         // Add to realm
-        try! realm.write { realm.add(logitem) }
+        try! realm.write { realm.add(audititem) }
         
         // Execute query with priority
-        prioritySync(queryOptions, logitem)
+        prioritySync(queryOptions, audititem)
     }
     
     private func prioritySyncAll() {
@@ -122,7 +125,7 @@ class Sync {
         }
     }
     
-    private func prioritySync(_ queryOptions:QueryOptions, _ logitem:LogItem) {
+    private func prioritySync(_ queryOptions:QueryOptions, _ audititem:AuditItem) {
         
         print("Syncing from pod with query: \(queryOptions.query!)")
         
@@ -160,7 +163,7 @@ class Sync {
                 resultSet.forceItemsUpdate(items)
                 
                 // We no longer need to process this log item
-                try! realm.write { logitem.syncState!.actionNeeded = "" }
+                try! realm.write { audititem.syncState!.actionNeeded = "" }
                 // TODO consider deleting the log item
             }
             else {

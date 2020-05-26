@@ -179,6 +179,7 @@
 		86CDB487246A61F3007EAE67 /* defaults.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB486246A61F3007EAE67 /* defaults.ml */; };
 		86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */; };
 		86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */; };
+		86CDB726246DB047007EAE67 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB725246DB046007EAE67 /* UIFont.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C818E610241D365F0051E653 /* Shapes.swift in Sources */ = {isa = PBXBuildFile; fileRef = C818E60F241D365F0051E653 /* Shapes.swift */; };
@@ -366,6 +367,7 @@
 		86CDB486246A61F3007EAE67 /* defaults.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = defaults.ml; sourceTree = "<group>"; };
 		86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDebugger.swift; sourceTree = "<group>"; };
 		86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
+		86CDB725246DB046007EAE67 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIFont.swift; path = memri/extension/NSAttributedString/UIFont.swift; sourceTree = SOURCE_ROOT; };
 		980D4DE8C9576CFA4D2381F4 /* Pods-memriTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.debug.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.debug.xcconfig"; sourceTree = "<group>"; };
 		BCCEE8B1F884BC6A1E5D05EA /* Pods_memri_memriUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_memri_memriUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
@@ -516,6 +518,7 @@
 		5D301F70245C386300183BD2 /* NSAttributedString */ = {
 			isa = PBXGroup;
 			children = (
+				86CDB725246DB046007EAE67 /* UIFont.swift */,
 				86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */,
 			);
 			name = NSAttributedString;
@@ -1080,7 +1083,7 @@
 					New,
 				);
 				LastSwiftUpdateCheck = 1130;
-				LastUpgradeCheck = 1130;
+				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = memri;
 				TargetAttributes = {
 					5D599BB623F2B77500F218A0 = {
@@ -1199,10 +1202,7 @@
 				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */,
-				86229DCC243508B00013750A /* default_settings.json in Resources */,
-				5DC1692C2409453200367905 /* empty_sessions.json in Resources */,
 				866F87D92456AD76000E5FAB /* person.0x013.json in Resources */,
-				5D3EE57824476FFB00562AAC /* note.0x05.json in Resources */,
 				865646182422B6A700D071B4 /* notes_from_server.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1342,6 +1342,7 @@
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */,
 				86CDB487246A61F3007EAE67 /* defaults.ml in Sources */,
+				86CDB726246DB047007EAE67 /* UIFont.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,

@@ -31,7 +31,7 @@
     {
         "type": "item",
         "title": "log",
-        "view": "all-logitems"
+        "view": "all-audititems"
     },
     {
         "type": "item",

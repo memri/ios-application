@@ -16,15 +16,13 @@ class LEOTextStorage: NSTextStorage {
 
     var isChangeCharacters: Bool = false
 
-    // Each dictionary in array. Key: location of NSRange, value: FontType
-    var returnKeyDeleteEffectRanges: [[Int: LEOInputFontMode]] = []
-
     // MARK: - Must override
     override var string: String {
         return currentString.string
     }
 
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key : Any] {
+        
         return currentString.attributes(at: location, effectiveRange: range)
     }
     
@@ -46,13 +44,12 @@ class LEOTextStorage: NSTextStorage {
         default:
             return nil
         }
-        return nil
     }
     func getPrefixLength(_ objectLine: String) -> Int{
         // is it an empty
         switch LEOTextUtil.paragraphType(objectLine) {
         case .numberedList:
-            var number = Int(objectLine.components(separatedBy: ".")[0])
+            let number = Int(objectLine.components(separatedBy: ".")[0])
             if number == nil {return 0}
             return "\(number!). ".length()
         case .bulletedList, .dashedList:
@@ -80,7 +77,7 @@ class LEOTextStorage: NSTextStorage {
         var addNewListItem = false
         
         // TODO: this is super hacky, but for some reason the location of the range is broken when a backspace is passed
-        var searchLoc = LEOTextUtil.isBackspace(str) && range.length == 1 ? range.location + 1 : range.location
+        let searchLoc = LEOTextUtil.isBackspace(str) && range.length == 1 ? range.location + 1 : range.location
         let (currentLine, indexInLine) = LEOTextUtil.objectLineAndIndexForString(self.string,
                                                                                 location: searchLoc)
 
@@ -224,7 +221,7 @@ class LEOTextStorage: NSTextStorage {
     override func processEditing() {
         if isChangeCharacters && editedRange.length > 0 {
             isChangeCharacters = false
-            performReplacementsForRange(editedRange, mode: textView.inputFontMode)
+            performReplacementsForRange(editedRange, styles: textView.inputStyles)
         }
 
         super.processEditing()
@@ -251,54 +248,28 @@ class LEOTextStorage: NSTextStorage {
 
         return LEOTextUtil.paragraphType(objectLine)
     }
-    
-    func turnOffUnderline(_ range: NSRange){
-//        safeRemoveAttributed
-        safeAddAttributes([.underlineStyle: 0], range: range)
-    }
 
-    func performReplacementsForRange(_ range: NSRange, mode: LEOInputFontMode) {
+    func performReplacementsForRange(_ range: NSRange, styles: InputStyles) {
         
         if range.length > 0 {
-            // Add addition attributes.
-//            var attrValue: UIFont!
-//            print(range)
-
-            switch mode {
-            case .normal:
-                safeAddAttributes([NSAttributedString.Key.font : textView.normalFont], range: range)
-//                turnOffUnderline(range)
-//                safeAddAttributes([.underlineStyle: 0], range: range)
-                break
-            case .bold:
-                safeAddAttributes([NSAttributedString.Key.font : textView.boldFont], range: range)
-//                turnOffUnderline(range)
-                break
-            case .italic:
-                safeAddAttributes([NSAttributedString.Key.font : textView.italicFont], range: range)
-//                turnOffUnderline(range)
-                break
-            case .underline:
-                safeAddAttributes([.underlineStyle: NSUnderlineStyle.single.rawValue], range: range)
-            case .title:
-                safeAddAttributes([NSAttributedString.Key.font : textView.titleFont], range: range)
-                break
-            }
-
+            // add font, this has to be done separately because bold and italic are wrapping in a single attribute
+            
+            let attributes = styles.getAttributes()
+            safeAddAttributes(attributes, range: range)
         }
     }
 
     // MARK: - Undo & Redo support
 
-    func undoSupportChangeWithRange(_ range: NSRange, toMode targetMode: Int, currentMode: Int) {
+    func undoSupportChangeWithRange(_ range: NSRange, addStyle: InputStyle, currentStyles: InputStyles) {
         textView.undoManager?.registerUndo(withTarget: self, handler: { (type) in
-            self.undoSupportChangeWithRange(range, toMode: targetMode, currentMode: currentMode)
+            self.undoSupportChangeWithRange(range, addStyle: addStyle, currentStyles: currentStyles)
         })
 
         if textView.undoManager!.isUndoing {
-            performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: currentMode)!)
+            performReplacementsForRange(range, styles: currentStyles)
         } else {
-            performReplacementsForRange(range, mode: LEOInputFontMode(rawValue: targetMode)!)
+            performReplacementsForRange(range, styles: InputStyles(styles: [addStyle]))
         }
     }
 

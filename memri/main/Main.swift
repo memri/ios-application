@@ -114,6 +114,8 @@ public class Main: ObservableObject {
     }
     
     public func setComputedView(){
+        self.maybeLogUpdate()
+        
         // Fetch the resultset associated with the current view
         let resultSet = cache.getResultSet(self.sessions.currentSession.currentView.queryOptions!)
         
@@ -139,6 +141,7 @@ public class Main: ObservableObject {
                     print("Error: could not load result: \(error!)")
                 }
                 else {
+                    maybeLogRead()
                     // Update the UI
                     scheduleUIUpdate{_ in true}
                 }
@@ -160,6 +163,28 @@ public class Main: ObservableObject {
                 else {
                     // Update the current view based on the new info
                     scheduleUIUpdate{_ in true} // TODO shouldn't this be setCurrentView??
+                }
+            }
+        }
+    }
+    
+    private func maybeLogRead(){
+        if let item = self.computedView.resultSet.singletonItem{
+            realmWriteIfAvailable(realm) {
+                self.realm.add(AuditItem(action: "read", appliesTo: [item]))
+            }
+        }
+    }
+    
+    private func maybeLogUpdate(){
+        if self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession ?? false{
+            if let fields = self.computedView.resultSet.singletonItem?.syncState?.updatedFields{
+                realmWriteIfAvailable(realm) {
+                    // TODO serialize
+                    let item = self.computedView.resultSet.singletonItem!
+                    self.realm.add(AuditItem(contents: serialize(AnyCodable(Array(fields))), action: "update",
+                                             appliesTo: [item]))
+                    self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession = false
                 }
             }
         }

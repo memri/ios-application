@@ -25,8 +25,8 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var dateModified:Date? = Date()
     /// Last access date of the DataItem
     @objc dynamic var dateAccessed:Date? = nil
-    /// Array LogItems describing the log history of the DataItem
-    let changelog = List<LogItem>()
+    /// Array AuditItems describing the log history of the DataItem
+    let changelog = List<AuditItem>()
     /// Labels assigned to / associated with this DataItem
     let labels = List<memri.Label>()
     /// Object descirbing syncing information about this object like loading state, versioning, etc.
@@ -543,3 +543,38 @@ public class ResultSet: ObservableObject {
         }
     }
 }
+
+
+class Edge: Object {
+    @objc dynamic var objectUid:String = DataItem.generateUUID()
+    @objc dynamic var subjectUid:String = DataItem.generateUUID()
+    
+    @objc dynamic var objectType:String = "unknown"
+    @objc dynamic var subjectType:String = "unknown"
+    
+    required init() {}
+    
+    init(_ subjectUid: String = DataItem.generateUUID(), _ objectUid: String = DataItem.generateUUID(),
+         _ subjectType: String = "unknown", _ objectType: String = "unknown") {
+        self.objectUid = objectUid
+        self.subjectUid = subjectUid
+        self.objectType = objectType
+        self.subjectType = subjectType
+    }
+    
+    
+    
+    // maybe we dont need this
+//    @objc dynamic var objectType:String = DataItem.generateUUID()
+//    @objc dynamic var subectType:String = DataItem.generateUUID()
+    
+    /// Deserializes DataItem from json decoder
+    /// - Parameter decoder: Decoder object
+    /// - Throws: Decoding error
+//    required public convenience init(from decoder: Decoder) throws{
+//        self.init()
+//        objectUid = try decoder.decodeIfPresent("objectUid") ?? objectUid
+//        subjectUid = try decoder.decodeIfPresent("subjectUid") ?? subjectUid
+//    }
+}
+
