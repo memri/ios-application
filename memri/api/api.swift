@@ -30,6 +30,7 @@ public class PodAPI {
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
         let baseUrl = URL(string: Settings.get("user/pod/host") ?? "")!
             .appendingPathComponent("v1")
+            .appendingPathComponent(path)
         
         // TODO when the backend sends the correct caching headers
         // this can be changed: .reloadIgnoringCacheData
@@ -49,7 +50,7 @@ public class PodAPI {
         let base64LoginString = loginData.base64EncodedString()
         
         var urlRequest = URLRequest(
-            url: baseUrl.appendingPathComponent(path),
+            url: baseUrl,
             cachePolicy: .reloadIgnoringCacheData,
             timeoutInterval: .greatestFiniteMagnitude)
         urlRequest.httpMethod = method.rawValue
@@ -59,7 +60,6 @@ public class PodAPI {
         urlRequest.allowsExpensiveNetworkAccess = true
         urlRequest.allowsConstrainedNetworkAccess = true
         urlRequest.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
-
         
         let task = session.dataTask(with: urlRequest) { data, response, error  in
             if let error = error {
@@ -68,7 +68,8 @@ public class PodAPI {
             else if let httpResponse = response as? HTTPURLResponse {
                 if httpResponse.statusCode > 399 {
                     let httpError = HTTPError.ClientError(httpResponse.statusCode,
-                        String(data: data ?? Data(), encoding: .utf8) ?? "")
+                        "URL: \(baseUrl.absoluteString)\nBody:"
+                            + (String(data: data ?? Data(), encoding: .utf8) ?? ""))
                     callback(httpError, data)
                     return
                 }
@@ -223,7 +224,7 @@ public class PodAPI {
         
         let matches = queryOptions.query!.match(#"^(\w+) AND memriID = ([-\d]+)$"#)
         if matches.count == 3 {
-            let type = matches[1].lowercased()
+            let type = matches[1]
             let memriID = matches[2]
             
             data = """
@@ -245,7 +246,7 @@ public class PodAPI {
             """.data(using: .utf8)
         }
         else {
-            let type = queryOptions.query!.split(separator: " ").first?.lowercased() ?? ""
+            let type = queryOptions.query!.split(separator: " ").first ?? ""
             data = """
                 {
                   items(func: type(\(type))) {
@@ -266,7 +267,11 @@ public class PodAPI {
         }
         
         self.http(.POST, path: "all", body: data) { error, data in
-            if let data = data {
+            if let error = error {
+                errorHistory.error("Could not load data from pod: \n\(error)")
+                callback(error, nil)
+            }
+            else if let data = data {
                 do {
                     var str = String(data: data, encoding: .utf8) ?? ""
                     str.replace(#""memriID":(\d+)"#, with: "\"memriID\":\"$1\"")
@@ -294,10 +299,6 @@ public class PodAPI {
                     errorHistory.error("Could not load data from pod: \n\(error)")
                     callback(error, nil)
                 }
-            }
-            else {
-                errorHistory.error("Could not load data from pod: \n\(error ?? "")")
-                callback(error, nil)
             }
         }
         
