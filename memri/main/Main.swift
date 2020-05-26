@@ -178,7 +178,7 @@ public class Main: ObservableObject {
                 realmWriteIfAvailable(realm) {
                     // TODO serialize
                     let item = self.computedView.resultSet.singletonItem!
-                    self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)), action: "update",
+                    self.realm.add(AuditItem(contents: serialize(AnyCodable(Array(fields))), action: "update",
                                              appliesTo: [item]))
                     self.computedView.resultSet.singletonItem?.syncState?.changedInThisSession = false
                 }
