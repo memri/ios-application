@@ -762,7 +762,9 @@ class ActionOpenSessionByName : Action, ActionExec {
                         
                         for viewDef in viewDefs {
                             list.append(SessionView(value: [
-                                "viewDefinition": viewDef,
+                                "viewDefinition": CVUStoredDefinition(
+                                    value: ["definition": viewDef.toCVUString(0, "    ")]
+                                ),
                                 "viewArguments": viewArguments as Any?
                             ]))
                         }
