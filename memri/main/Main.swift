@@ -139,6 +139,7 @@ public class Main: ObservableObject {
         
         if let datasource = currentView.datasource {
             // Fetch the resultset associated with the current view
+            print(datasource)
             let resultSet = cache.getResultSet(datasource)
             
             // If we can guess the type of the result based on the query, let's compute the view

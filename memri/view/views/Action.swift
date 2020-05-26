@@ -357,6 +357,7 @@ class ActionOpenView : Action, ActionExec {
         let dataItem = arguments["dataItem"] as? DataItem
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
+        
         // if let selection = selection, selection.count > 0 { self.openView(main, selection) }
         if let sessionView = arguments["view"] as? SessionView {
             self.openView(main, view: sessionView, with: viewArguments)
@@ -392,12 +393,13 @@ class ActionOpenViewByName : Action, ActionExec {
         
         if let name = arguments["name"] as? String {
             // Fetch a dynamic view based on its name
-            let def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(name)").first)
+            let fetchedDef = main.views.fetchDefinitions(".\(name)").first
+            let def = try main.views.parseDefinition(fetchedDef)
             
             guard let viewDef = def else { throw "Exception: Missing view" }
-
+            print(def)
             let view = SessionView(value: [
-                "viewDefinition": viewDef,
+                "viewDefinition": fetchedDef,
                 "viewArguments": viewArguments,
                 "datasource": viewDef["datasource"] // TODO Refactor
             ])
@@ -456,7 +458,7 @@ class ActionToggleFilterPanel : Action, ActionExec {
 class ActionStar : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "star.fill",
-        "binding": "{dataItem.starred}"
+        "binding": Expression("dataItem.starred")
     ]}
     
     required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -492,7 +494,7 @@ class ActionStar : Action, ActionExec {
 class ActionShowStarred : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "star.fill",
-        "binding": "showStarred",
+        "binding": Expression("view.userState.showStarred"),
         "opensView": true,
         "activeColor": Color(hex: "#ffdb00")
     ]}
@@ -504,7 +506,7 @@ class ActionShowStarred : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws {
         do {
             if let binding = self.binding, try binding.isTrue() {
-                try ActionOpenView.exec(main, ["viewArguments": "filter-starred"])
+                try ActionOpenViewByName.exec(main, ["name": "filter-starred"])
                 // Open named view 'showStarred'
                 // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
             }

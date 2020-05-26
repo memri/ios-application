@@ -53,10 +53,25 @@ public class Datasource: Object, UniqueString {
         super.init()
     }
     
-    public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition) -> Datasource {
+
+    
+    public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition,
+                                        _ viewArguments: ViewArguments) throws -> Datasource {
+        
+//        func maybeExecute(expression: String) {
+//            
+//        }
+        
+        var query: String?
+        if let expr = def["query"] as? Expression{
+            query = try expr.execForReturnType(viewArguments) ?? ""
+        }
+        else {
+            query = def["query"] as? String ?? ""
+        }
         return Datasource(value: [
             "selector": def.selector ?? "[datasource]",
-            "query": def["query"] as? String ?? "" as Any,
+            "query": query,
             "sortProperty": def["sortProperty"] as? String ?? "",
             "sortAscending": def["sortAscending"] as? Bool ?? true
         ])

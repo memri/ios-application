@@ -58,13 +58,24 @@ public class Expression : CVUToString {
             var sequence = node.sequence
             if let lastProperty = sequence.popLast() as? ExprVariableNode {
                 let lookupNode = ExprLookupNode(sequence: sequence)
-                if let obj = try self.lookup(lookupNode, ViewArguments()) as? Object, let main = main {
+                print(lookupNode)
+                let lookupValue = try self.lookup(lookupNode, ViewArguments())
+                if let obj = try lookupValue as? Object, let main = main {
                     realmWriteIfAvailable(main.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
                     }
                     return
                 }
+                // TODO FIX: Implement LookUpAble
+                else if let obj = try lookupValue as? Main, let main = main{
+                    realmWriteIfAvailable(main.realm) {
+                        obj[lastProperty.name] =
+                            !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                    }
+                    return
+                }
+                
             }
         }
             
