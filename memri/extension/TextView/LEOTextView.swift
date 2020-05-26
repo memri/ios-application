@@ -268,6 +268,41 @@ open class LEOTextView: UITextView {
 
         setAttributesWithJSONString(jsonString)
     }
+    
+    open func setEmptyAttributedContent(_ plainContent: String){
+        let escapedContent = plainContent.replacingOccurrences(of: "\n", with: "\\n")
+        let attributedContent = """
+        {
+        "text": "\(escapedContent)",
+        "attributes": []
+        }
+        """
+        self.setAttributeTextWithJSONString(attributedContent)
+    }
+    
+    open func setAttributedString(_ content: String?, _ htmlContent: String?){
+        if let content = content{
+            self.setAttributedTextFromHtml(content ?? "", htmlContent ?? "")
+        }
+        else {
+            self.setEmptyAttributedContent(content ?? "")
+        }
+    }
+    
+    open func setAttributedTextFromHtml(_ htmlContent: String, _ contents: String){
+        let htmlData = NSString(string: contents).data(using: String.Encoding.unicode.rawValue)
+        let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
+                NSAttributedString.DocumentType.html]
+        let attributedString = try? NSMutableAttributedString(data: htmlData ?? Data(),
+                                                                  options: options,
+                                                                  documentAttributes: nil)
+        if attributedString?.string != "" {
+            self.attributedText = attributedString
+        }
+        else {
+            self.setEmptyAttributedContent(contents)
+        }
+    }
 
     open func setAttributesWithJSONString(_ jsonString: String) {
         let attributes = LEOTextView.attributesWithJSONString(jsonString)

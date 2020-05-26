@@ -300,7 +300,7 @@ class ActionAddDataItem : Action, ActionExec {
 }
 
 
-class ActionOpenView : Action, ActionExec {
+    class ActionOpenView : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
         "opensView": true

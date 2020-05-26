@@ -54,9 +54,26 @@ struct _RichTextEditor: UIViewRepresentable {
             return rtfString
         }
         
+        func getHTMLString(_ attributedText: NSAttributedString) -> String{
+            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
+            let rtfString: String
+            do {
+                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length),
+                                                                documentAttributes: rtfOptions)
+                
+                rtfString = String(decoding: rtfData, as: UTF8.self)
+            }
+            catch {
+                print("Cannot read rtfString from attributedText: \(attributedText)")
+                rtfString = ""
+            }
+            return rtfString
+        }
+        
+        
         func textViewDidChange(_ textView: UITextView) {
             control.dataItem.set("content", textView.attributedText.string)
-            control.dataItem.set("rtfContent", getRtfString(textView.attributedText))
+            control.dataItem.set("htmlContent", textView.attributedText.toHTML())
             
         }
     }
@@ -81,12 +98,10 @@ struct _RichTextEditor: UIViewRepresentable {
         
         let textView = LEOTextView(frame: bounds,
                                    textContainer: NSTextContainer())
-                
-        if let rtfContent = self.dataItem["rtfContent"] as? String{
-            textView.setAttributedTextFromRtf(rtfContent)
-        }else{
-            textView.setAttributeTextWithJSONString(emptyAttributedContent())
-        }
+        
+        textView.setAttributedString(self.dataItem["content"] as? String,
+                                     self.dataItem["htmlContent"] as? String)
+        
         
         textView.isScrollEnabled = true
         textView.contentInset = UIEdgeInsets(top: 5,left: 5, bottom: 5, right: 5)

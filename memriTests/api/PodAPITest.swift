@@ -65,7 +65,7 @@ class PodAPITest: XCTestCase {
             XCTAssertNotNil(memriID)
             XCTAssertNil(error)
             
-            self.testPodAPI.get(memriID!) { error, dataItem in
+            self.testPodAPI.get(memriID as! String) { error, dataItem in
                 
                 XCTAssertNotNil(dataItem)
                 XCTAssertNil(error)
