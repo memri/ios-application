@@ -142,17 +142,20 @@ class Sync {
                     
                     // Find resultset that belongs to this query
                     let resultSet = cache.getResultSet(datasource)
+//                    if resultSet.count == 1 { return }
                     
                     // The result that we'll add to resultset
                     var result:[DataItem] = []
                     
                     for item in items {
                         // TODO handle sync errors
-                        do{
+                        do {
                             let cachedItem = try cache.addToCache(item)
                             if cachedItem.syncState?.actionNeeded != "deleted" {
                                 // Add item to result
                                 result.append(cachedItem)
+                                
+                                print(cachedItem.realm)
                             }
                             // Ignore items marked for deletion
                         }
@@ -170,7 +173,7 @@ class Sync {
                     }
                     
                     // Update resultset with the new results
-                    resultSet.forceItemsUpdate(items)
+                    resultSet.forceItemsUpdate(result)
                     
                     // We no longer need to process this log item
                     realmWriteIfAvailable(self.realm){

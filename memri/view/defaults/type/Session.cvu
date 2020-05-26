@@ -1,8 +1,12 @@
-/*
-    Session[labels.count > 0]
-    [renderer = list]
-    Session[]
-*/
+[session = all-people] {
+    [view] {
+        title: "All Sessions"
+        [datasource = pod] {
+            query: "Session"
+        }
+    }
+}
+
 Session {
     name: "all-sessions"
     title: "All Sessions"

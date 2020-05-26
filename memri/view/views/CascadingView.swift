@@ -58,16 +58,21 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     var resultSet: ResultSet {
-        if let x = localCache["resultSet"] as? ResultSet { return x }
+        if let x = localCache["resultSet"] as? ResultSet {
+            print("RESULT: \(x.items.count)")
+            return x
+        }
         
         // Update search result to match the query
         // NOTE: allowed force unwrap
-        
         let resultSet = main!.cache.getResultSet(self.datasource.flattened())
         localCache["resultSet"] = resultSet
 
         // Filter the results
-        filterText = userState.get("filterText") ?? ""
+        let ft = userState.get("filterText") ?? ""
+        if resultSet.filterText != ft {
+            filterText = ft
+        }
         
         return resultSet
         
@@ -116,7 +121,9 @@ public class CascadingView: Cascadable, ObservableObject {
                 .filter { $0.name == activeRenderer }.first
         }
         
-        let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \(activeRenderer)]")
+        let renderDSLDefinitions = main!.views
+            .fetchDefinitions(name:activeRenderer, type:"renderer")
+        
         for def in renderDSLDefinitions {
             do {
                 if let parsedRenderDef = try main?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
@@ -370,7 +377,9 @@ public class CascadingView: Cascadable, ObservableObject {
             }
             
             for needle in needles {
-                if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
+                if let sessionViewDef = main.views
+                    .fetchDefinitions(selector:needle, domain:key).first {
+                    
                     parse(sessionViewDef, key)
                 }
                 else if key != "user" {

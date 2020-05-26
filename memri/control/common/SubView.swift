@@ -26,7 +26,8 @@ public struct SubView : View {
         self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
         
         do {
-            var def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(viewName)").first)
+            var def = try main.views
+                .parseDefinition(main.views.fetchDefinitions(name:viewName, type:"view").first)
             if def is CVUParsedSessionDefinition {
                 if let list = def?["views"] as? [CVUParsedViewDefinition] { def = list.first }
             }

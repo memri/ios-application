@@ -1,3 +1,12 @@
+[session = all-countries] {
+    [view] {
+        title: "All Countries"
+        [datasource = pod] {
+            query: "Country"
+        }
+    }
+}
+
 Country[] {
     name: all-countries
     defaultRenderer: list

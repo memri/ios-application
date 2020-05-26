@@ -91,11 +91,15 @@ public class Views {
             for def in parsedDefinitions {
                 var values = [
                     "selector": def.selector,
+                    "name": def.name,
                     "domain": "defaults", // TODO Refactor, is it default or defaults
                     "definition": def.description
                 ]
                 
-                if def is CVUParsedViewDefinition { values["type"] = "view" }
+                if def is CVUParsedViewDefinition {
+                    values["type"] = "view"
+//                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
+                }
                 else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
                 else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
                 else if def is CVUParsedStyleDefinition { values["type"] = "style" }
@@ -322,14 +326,20 @@ public class Views {
         return x as Any?
     }
     
-    public func fetchDefinitions(_ selector:String = "", type:String? = nil,
-                                   domain:String? = nil) -> [CVUStoredDefinition] {
+    public func fetchDefinitions(selector:String? = nil, name:String? = nil, type:String? = nil,
+                                 query:String? = nil, domain:String? = nil) -> [CVUStoredDefinition] {
         
-        let filter = (type != nil ? "type = '\(type ?? "")'" : "selector = '\(selector)'")
-            + (domain != nil  ? "and domain = '\(domain ?? "empty")'" : "")
+        var filter:[String] = []
+        if let selector = selector { filter.append("selector = '\(selector)'") }
+        else {
+            if let type = type { filter.append("type = '\(type)'") }
+            if let name = name { filter.append("name = '\(name)'") }
+            if let query = query { filter.append("query = '\(query)'") }
+            if let domain = domain { filter.append("domain = '\(domain)'") }
+        }
         
         return main!.realm.objects(CVUStoredDefinition.self)
-            .filter(filter)
+            .filter(filter.joined(separator: " AND "))
             .map({ (def) -> CVUStoredDefinition in def }) // Convert to normal Array
     }
     
@@ -435,9 +445,11 @@ public class Views {
 
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {
-                if let viewDefinition = main.views.fetchDefinitions("\(viewOverride)").first {
+                if let viewDefinition = main.views.fetchDefinitions(selector: viewOverride).first {
                     if viewDefinition.type == "renderer" {
-                        if let parsed = try main.views.parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                        if let parsed = try main.views
+                            .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                            
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
                             else {
                                 throw "Exception: Specified view does not contain any UI elements: \(viewOverride)"
@@ -463,7 +475,9 @@ public class Views {
                 outerLoop: for needle in ["\(dataItem.genericType)[]", "*[]"] {
                     for key in ["user", "defaults"] {
                         
-                        if let viewDefinition = main.views.fetchDefinitions(needle, domain:key).first {
+                        if let viewDefinition = main.views
+                            .fetchDefinitions(selector: needle, domain:key).first {
+                            
                             if try searchForRenderer(in: viewDefinition) { break outerLoop }
                         }
                     }
@@ -475,8 +489,12 @@ public class Views {
             if cascadeStack.count == 0 {
                 for name in rendererNames {
                     for key in ["user", "defaults"] {
-                        if let viewDefinition = main.views.fetchDefinitions("[renderer = \(name)]", domain:key).first {
-                            if let parsed = try main.views.parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                        if let viewDefinition = main.views
+                            .fetchDefinitions(name:name, type: "renderer", domain:key).first {
+                            
+                            if let parsed = try main.views
+                                .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
+                                
                                 if parsed["children"] != nil { cascadeStack.append(parsed) }
                             }
                         }

@@ -393,11 +393,11 @@ class ActionOpenViewByName : Action, ActionExec {
         
         if let name = arguments["name"] as? String {
             // Fetch a dynamic view based on its name
-            let fetchedDef = main.views.fetchDefinitions(".\(name)").first
+            let fetchedDef = main.views.fetchDefinitions(name:name, type:"view").first
             let def = try main.views.parseDefinition(fetchedDef)
             
             guard let viewDef = def else { throw "Exception: Missing view" }
-            print(def)
+            
             let view = SessionView(value: [
                 "viewDefinition": fetchedDef,
                 "viewArguments": viewArguments,
@@ -749,7 +749,8 @@ class ActionOpenSessionByName : Action, ActionExec {
         if let name = arguments["name"] as? String {
             do {
                 // Fetch and parse view from the database
-                let def = try main.views.parseDefinition(main.views.fetchDefinitions(".\(name)").first)
+                let def = try main.views
+                    .parseDefinition(main.views.fetchDefinitions(name:name, type:"session").first)
                 
                 // See if this is a session, if so take the last view
                 if let def = def as? CVUParsedSessionDefinition {

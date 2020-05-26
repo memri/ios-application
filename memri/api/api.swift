@@ -222,14 +222,16 @@ public class PodAPI {
         
         var data:Data? = nil
         
-        let matches = queryOptions.query!.match(#"^(\w+) AND memriID = ([-\d]+)$"#)
+        let matches = queryOptions.query!.match(#"^(\w+) AND memriID = '(.+)'$"#)
         if matches.count == 3 {
             let type = matches[1]
             let memriID = matches[2]
             
+            print("Requesting single \(type) with memriID \(memriID)")
+            
             data = """
                 {
-                  items(func: type(\(type))) @filter(memriID(\(memriID))) {
+                  items(func: type(\(type))) @filter(eq(memriID, \(memriID))) {
                     uid
                     type : dgraph.type
                     expand(_all_) {
@@ -247,6 +249,9 @@ public class PodAPI {
         }
         else {
             let type = queryOptions.query!.split(separator: " ").first ?? ""
+            
+            print("Requesting query result of \(type): \(queryOptions.query ?? "")")
+            
             data = """
                 {
                   items(func: type(\(type))) {

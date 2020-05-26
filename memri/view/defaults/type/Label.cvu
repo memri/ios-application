@@ -1,3 +1,12 @@
+[session = all-labels] {
+    [view] {
+        title: "All Labels"
+        [datasource = pod] {
+            query: "Label"
+        }
+    }
+}
+
 Label[]: {
     name: "all-labels"
     title: "All Labels"

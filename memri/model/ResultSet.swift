@@ -144,11 +144,10 @@ public class ResultSet: ObservableObject {
     /// Force update the items property, recompute the counts and reapply filters
     /// - Parameter result: the new items
     func forceItemsUpdate(_ result:[DataItem]) {
-        
         // Set data and count
         items = result
         count = items.count
-
+        
         // Resapply filter
         if _unfilteredItems != nil {
             _unfilteredItems = nil

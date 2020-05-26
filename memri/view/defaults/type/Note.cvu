@@ -1,3 +1,12 @@
+[session = all-notes] {
+    [view] {
+        title: "All Notes"
+        [datasource = pod] {
+            query: "Note"
+        }
+    }
+}
+
 Note {
     title: "{.title}"
     defaultRenderer: richTextEditor

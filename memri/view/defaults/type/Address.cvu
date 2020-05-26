@@ -1,3 +1,12 @@
+[session = all-addresses] {
+    [view] {
+        title: "All Addresses"
+        [datasource = pod] {
+            query: "Address"
+        }
+    }
+}
+
 Address[] {
     defaultRenderer: list
     filterButtons: [ showStarred toggleFilterPanel ]

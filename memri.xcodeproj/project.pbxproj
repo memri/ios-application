@@ -381,7 +381,7 @@
 		86677DEA242A6751007A4782 /* CacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTest.swift; sourceTree = "<group>"; };
 		866F87C2245354B5000E5FAB /* PickerPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPane.swift; sourceTree = "<group>"; };
 		866F87C524536626000E5FAB /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
-		866F87C8245434A1000E5FAB /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; };
+		866F87C8245434A1000E5FAB /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		866F87D52456AD76000E5FAB /* person.0x013.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x013.json; sourceTree = "<group>"; };
 		866F87D62456AD76000E5FAB /* person.0x012.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x012.json; sourceTree = "<group>"; };
 		866F87D72456AD76000E5FAB /* person.0x011.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x011.json; sourceTree = "<group>"; };

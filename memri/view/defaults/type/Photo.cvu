@@ -1,6 +1,14 @@
+[session = all-people] {
+    [view] {
+        title: "All Photos"
+        [datasource = pod] {
+            query: "Photo"
+        }
+    }
+}
+
 Photo {
-    name: "all-photos"
-    title: "All Photos"
+    title: "Photos"
     defaultRenderer: thumbnail
      [datasource = pod] {
         query: "photo"
