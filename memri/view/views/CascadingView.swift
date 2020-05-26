@@ -39,7 +39,9 @@ public class CascadingView: Cascadable, ObservableObject {
     
     var userState: UserState {
         sessionView.userState ?? UserState(onFirstSave: { args in
-            realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
+            realmWriteIfAvailable(self.sessionView.realm) {
+                self.sessionView.userState = args
+            }
         })
     }
         
@@ -198,7 +200,9 @@ public class CascadingView: Cascadable, ObservableObject {
             }
             
             // Store the new value
-            userState.set("filterText", newFilter)
+            if (userState.get("filterText") ?? "") != newFilter {
+                userState.set("filterText", newFilter)
+            }
             
             // If this is a multi item result set
             if self.resultSet.isList {

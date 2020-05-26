@@ -39,7 +39,7 @@ public class UIElement : CVUToString {
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
-                viewArguments.set(".", item)
+                viewArguments.set(".", item) // TODO Optimization This is called a billion times. Find a better place for this
                 
                 do { let x:T? = try expr.execForReturnType(viewArguments); return x }
                 catch {

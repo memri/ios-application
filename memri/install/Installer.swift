@@ -37,6 +37,7 @@ public class Installer {
             main.settings.install()
             
             // Load default views in database
+            main.views.main = main
             try main.views.install()
             
             // Load default sessions in database

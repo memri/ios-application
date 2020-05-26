@@ -229,6 +229,9 @@ public class Views {
                             value = dataItem[node.name]
                         }
                     }
+                    else if let v = value as? String {
+                        throw "Not implemented"
+                    }
                     else if let v = value as? RealmSwift.List<Edge> {
                         switch node.name {
                         case "count": value = v.count
@@ -242,18 +245,22 @@ public class Views {
                             break
                         }
                     }
-                    else {
-                        if let v = value as? CascadingView {
-                            value = v[node.name]
+                    else if let v = value as? Main {
+                        value = v[node.name]
+                    }
+                    else if let v = value as? UserState {
+                        throw "Not implemented"
+                    }
+                    else if let v = value as? CascadingView {
+                        value = v[node.name]
+                    }
+                    else if let v = value as? Object {
+                        if v.objectSchema[node.name] == nil {
+                            // TODO error handling
+                            throw "No variable with name \(node.name)"
                         }
-                        else if let v = value as? Object {
-                            if v.objectSchema[node.name] == nil {
-                                // TODO error handling
-                                throw "No variable with name \(node.name)"
-                            }
-                            else {
-                                value = v[node.name] // How to handle errors?
-                            }
+                        else {
+                            value = v[node.name] // How to handle errors?
                         }
                     }
                 }
