@@ -76,7 +76,7 @@ Note[] {
     defaultRenderer: list
     sortFields: title dateModified dateAccessed dateCreated
     
-     [datasource = pod] {
+    [datasource = pod] {
         query: "note"
         sortProperty: dateModified
         sortAscending: false
@@ -86,8 +86,8 @@ Note[] {
         addDataItem {
             arguments {
                 template {
-                    type: note
-                    title: Untitled Note
+                    type: Note
+                    title: "Untitled Note"
                 }
             }
         }
@@ -117,7 +117,7 @@ Note[] {
                 text: "{.dateModified}"
                 font: 11 regular
                 color: #888
-                padding: 8050
+                padding: 8 0 5 0
             }
             Rectangle {
                 minHeight: 1

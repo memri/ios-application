@@ -80,6 +80,7 @@ struct ActionButtonView: View {
                     .padding(.vertical, 5)
                     .foregroundColor(action.computeColor(state: isActive))
                     .background(action.computeBackgroundColor(state: isActive))
+//                    .border(Color.red, width: 1)
             }
             
             if title != nil && action.getBool("showTitle") {

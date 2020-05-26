@@ -124,7 +124,7 @@ public class Main: ObservableObject {
         if currentView.datasource == nil {
             if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
                 if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-                    try realmWriteIfAvailable(realm) {
+                    realmWriteIfAvailable(realm) {
                         currentView.datasource = Datasource.fromCVUDefinition(ds)
                     }
                 }
@@ -145,7 +145,8 @@ public class Main: ObservableObject {
             if resultSet.determinedType != nil {
                 
                 if self is RootMain { // if type(of: self) == RootMain.self {
-                    errorHistory.info("Computing view \(currentView.name ?? "")")
+                    errorHistory.info("Computing view "
+                        + (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
                 }
                 
                 do {
@@ -172,10 +173,10 @@ public class Main: ObservableObject {
                         }
                     }
                 }
-                catch {
+                catch let error {
                     // TODO Error handling
                     // TODO User Error handling
-                    print("ERROR: MAIN NOT DEFINED")
+                    errorHistory.error("\(error)")
                 }
                 
                 // Update the UI
@@ -391,6 +392,8 @@ public class RootMain: Main {
             navigation: MainNavigation(realm),
             renderers: Renderers()
         )
+        
+        self.cascadingView.main = self
         
         let takeScreenShot = {
             // Make sure to record a screenshot prior to session switching

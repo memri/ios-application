@@ -143,8 +143,9 @@ extension Main {
         do {
             try executeActionThrows(action, with: dataItem)
         }
-        catch {
+        catch let error {
             // TODO Log error to the user
+            errorHistory.error("\(error)")
         }
     }
     
@@ -153,9 +154,9 @@ extension Main {
             do {
                 try executeActionThrows(action, with: dataItem)
             }
-            catch {
+            catch let error {
                 // TODO Log error to the user
-                
+                errorHistory.error("\(error)")
                 break
             }
         }

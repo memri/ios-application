@@ -21,7 +21,7 @@
         }
         [view] {
             [datasource = pod] {
-                query: Audititem
+                query: AuditItem
             }
         }
         [view] {

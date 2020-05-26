@@ -38,16 +38,15 @@ extension View {
     
     // TODO investigate using ViewModifiers
     func setProperty(_ name:String, _ value:Any) -> AnyView {
-        print(name)
         switch name {
         case "style":
             // TODO Refactor: Implement style sheets
             break
         case "shadow":
             if let value = value as? [Any] {
-                if let c = value[0] as? String, let r = value[1] as? CGFloat,
+                if let c = value[0] as? Color, let r = value[1] as? CGFloat,
                     let x = value[2] as? CGFloat, let y = value[3] as? CGFloat{
-                    return AnyView(self.shadow(color: Color(hex: c), radius: r, x: x, y: y))
+                    return AnyView(self.shadow(color: c, radius: r, x: x, y: y))
                 }
                 else {
                     print("Exception: Invalid values for shadow")
@@ -77,24 +76,21 @@ extension View {
                 return AnyView(self.opacity(Double(value)))
             }
         case "color":
-            if let value = value as? String {
-                return AnyView(self.foregroundColor(value.first == "#"
-                    ? Color(hex: value) : Color(value))) //TODO named colors do not work
+            if let color = value as? Color {
+                return AnyView(self.foregroundColor(color)) //TODO named colors do not work
             }
         case "background":
-            if let value = value as? String {
-                return AnyView(self.background(value.first == "#"
-                    ? Color(hex: value) : Color(value))) //TODO named colors do not work
+            if let color = value as? Color {
+                return AnyView(self.background(color)) //TODO named colors do not work
             }
         case "rowbackground":
-            if let value = value as? String {
-                return AnyView(self.listRowBackground(value.first == "#"
-                    ? Color(hex: value) : Color(value))) //TODO named colors do not work
+            if let color = value as? Color {
+                return AnyView(self.listRowBackground(color)) //TODO named colors do not work
             }
         case "border":
             if let value = value as? [Any] {
-                if let color = value[0] as? String {
-                    return AnyView(self.border(Color(hex:color), width: value[1] as? CGFloat ?? 1.0))
+                if let color = value[0] as? Color {
+                    return AnyView(self.border(color, width: value[1] as? CGFloat ?? 1.0))
                 }
             }
         case "offset":

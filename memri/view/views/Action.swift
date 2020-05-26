@@ -11,8 +11,12 @@ public class Action : HashableClass, CVUToString {
     var name:ActionFamily = .noop
     var arguments: [String: Any?] = [:]
     
-    var binding:Expression? { (values["binding"] ?? defaultValues["binding"]) as? Expression }
-    var argumentTypes:[String: AnyObject.Type] = [:]
+    var binding:Expression? {
+        (values["binding"] ?? defaultValues["binding"]) as? Expression
+    }
+    var argumentTypes:[String: Any.Type] {
+        defaultValues["argumentTypes"] as? [String: Any.Type] ?? [:]
+    }
     
     var defaultValues:[String:Any] { [:] }
     let baseValues:[String:Any] = [
@@ -120,16 +124,18 @@ public class Action : HashableClass, CVUToString {
     
     public func computeColor(state:Bool) -> Color {
         if self.getBool("hasState") {
-            if state { return self.get("activeColor") ?? globalColors.byName("activeColor") }
-            else { return self.get("inactiveColor") ?? globalColors.byName("inactiveColor") }
+            if state { return self.get("activeColor") ?? self.getColor("color")}
+            else { return self.get("inactiveColor") ?? self.getColor("color")}
         }
-        else { return self.getColor("color") }
+        else {
+            return self.getColor("color")
+        }
     }
     
     public func computeBackgroundColor(state:Bool) -> Color{
         if self.getBool("hasState") {
-            if state { return self.get("activeBackgroundColor") ?? globalColors.byName("activeBackgroundColor") }
-            else { return self.get("inactiveBackgroundColor") ?? globalColors.byName("inactiveBackgroundColor") }
+            if state { return self.get("activeBackgroundColor") ?? self.getColor("backgroundolor")}
+            else { return self.get("inactiveBackgroundColor") ?? self.getColor("backgroundolor")}
         }
         else { return self.getColor("backgroundColor") }
     }
@@ -231,7 +237,7 @@ class ActionBack : Action, ActionExec {
 class ActionAddDataItem : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "plus",
-        "argumentTypes": ["dataItem": DataItemFamily.self],
+        "argumentTypes": ["template": DataItemFamily.self],
         "opensView": true,
         "color": Color(hex: "#6aa84f"),
         "inactiveColor": Color(hex: "#434343")
@@ -242,7 +248,7 @@ class ActionAddDataItem : Action, ActionExec {
     }
     
     func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        if let dataItem = arguments["dataItem"] as? DataItem {
+        if let dataItem = arguments["template"] as? DataItem {
             // Copy template
             let copy = main.cache.duplicate(dataItem)
             
