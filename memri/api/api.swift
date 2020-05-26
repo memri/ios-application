@@ -32,6 +32,22 @@ public class PodAPI {
         
         // TODO when the backend sends the correct caching headers
         // this can be changed: .reloadIgnoringCacheData
+        
+//        guard let username: String = Settings.get("user/general/login/username"),
+//            let password: String = Settings.get("user/general/login/password") else {
+//            // TODO: User error handling
+//            print("ERROR: Could not find login credentials, so could not authenticate to pod")
+//            return
+//        }
+//
+//        let loginString = "\(username):\(password)"
+//
+//        guard let loginData = loginString.data(using: String.Encoding.utf8) else {
+//            return
+//        }
+//        let base64LoginString = loginData.base64EncodedString()
+        let p = self.baseUrl.appendingPathComponent(path)
+        
         var urlRequest = URLRequest(
             url: self.baseUrl.appendingPathComponent(path),
             cachePolicy: .reloadIgnoringCacheData,
@@ -42,6 +58,8 @@ public class PodAPI {
         urlRequest.allowsCellularAccess = true
         urlRequest.allowsExpensiveNetworkAccess = true
         urlRequest.allowsConstrainedNetworkAccess = true
+//        urlRequest.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+
         
         let task = session.dataTask(with: urlRequest) { data, response, error  in
             if let error = error {
