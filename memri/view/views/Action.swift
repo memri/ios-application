@@ -505,7 +505,7 @@ class ActionShowStarred : Action, ActionExec {
 
     func exec(_ arguments:[String: Any]) throws {
         do {
-            if let binding = self.binding, try binding.isTrue() {
+            if let binding = self.binding, try !binding.isTrue() {
                 try ActionOpenViewByName.exec(main, ["name": "filter-starred"])
                 // Open named view 'showStarred'
                 // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
@@ -774,9 +774,9 @@ class ActionOpenSessionByName : Action, ActionExec {
                           "cannot be casted as CVUParsedSessionDefinition"
                 }
             }
-            catch {
+            catch let error {
                 // TODO: Log error, Error handling
-                print("COULD NOT OPEN SESSION")
+                print("COULD NOT OPEN SESSION \(error)")
                 throw "Cannot execute ActionOpenSessionByName: \(error)"
 
             }
@@ -788,7 +788,7 @@ class ActionOpenSessionByName : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenSession(main).exec(arguments)
+        try ActionOpenSessionByName(main).exec(arguments)
     }
 }
 

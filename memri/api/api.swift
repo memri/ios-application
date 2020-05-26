@@ -7,7 +7,6 @@ import RealmSwift
 /// executing actions
 public class PodAPI {
     var key: String
-    var baseUrl = URL(string: "http://localhost:3030/v1/")!
     
     /// Specifies used http methods
     enum HTTPMethod: String {
@@ -29,11 +28,12 @@ public class PodAPI {
                       _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void) {
         
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
+        let baseUrl = URL(string: globalSettings?.get("user/pod/host") ?? "")!
         
         // TODO when the backend sends the correct caching headers
         // this can be changed: .reloadIgnoringCacheData
         var urlRequest = URLRequest(
-            url: self.baseUrl.appendingPathComponent(path),
+            url: baseUrl.appendingPathComponent(path),
             cachePolicy: .reloadIgnoringCacheData,
             timeoutInterval: .greatestFiniteMagnitude)
         urlRequest.httpMethod = method.rawValue

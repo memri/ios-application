@@ -11,7 +11,7 @@ import Foundation
 public class Cascadable {
     var viewArguments: ViewArguments
     var cascadeStack: [CVUParsedDefinition]
-    var localCache = [String:Any]()
+    var localCache = [String:Any?]()
     
     func cascadeProperty<T>(_ name:String) -> T? {
         if let expr = localCache[name] as? Expression {

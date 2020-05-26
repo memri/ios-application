@@ -38,8 +38,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     var userState: UserState {
-        sessionView.userState ?? UserState(onFirstSave: { args in
-            realmWriteIfAvailable(self.sessionView.realm) {
+        sessionView.userState ?? UserState(onFirstSave: { args in            realmWriteIfAvailable(self.sessionView.realm) {
                 self.sessionView.userState = args
             }
         })
