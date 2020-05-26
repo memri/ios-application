@@ -29,13 +29,13 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(ActionForward())
+        self.main.executeAction(ActionForward(main))
     }
     private func toFront(){
-        self.main.executeAction(ActionForwardToFront())
+        self.main.executeAction(ActionForwardToFront(main))
     }
     private func backAsSession(){
-        self.main.executeAction(ActionBackAsSession())
+        self.main.executeAction(ActionBackAsSession(main))
     }
     private func openAllViewsOfSession(){
         let memriID = self.main.currentSession.memriID
@@ -88,7 +88,7 @@ public struct TopNavigation: View {
     }
         
     public var body: some View {
-        let backButton = main.currentSession.backButton
+        let backButton = main.currentSession.hasHistory ? ActionBack(main) : nil
         let main = self.main
         
         return ZStack {
@@ -107,7 +107,7 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        ActionButton(action: ActionShowNavigation())
+                        ActionButton(action: ActionShowNavigation(main))
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
@@ -115,7 +115,7 @@ public struct TopNavigation: View {
 //                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
                         Button(action: {
-                            main.executeAction(ActionClosePopup())
+                            main.executeAction(ActionClosePopup(main))
                         }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
@@ -137,7 +137,7 @@ public struct TopNavigation: View {
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .foregroundColor(backButton!.computeColor(state: false))
+                                .foregroundColor(backButton!.color)
                         }
                         .font(Font.system(size: 19, weight: .semibold))
                         .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
@@ -185,7 +185,7 @@ public struct TopNavigation: View {
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        ActionButton(action: ActionShowSessionSwitcher())
+                        ActionButton(action: ActionShowSessionSwitcher(main))
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }

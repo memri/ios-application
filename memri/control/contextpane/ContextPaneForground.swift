@@ -11,13 +11,13 @@ import SwiftUI
 struct ContextPaneForground: View {
     @EnvironmentObject var main: Main
     
-    var addLabelAction = ActionNoop()
-    var openLabelViewAction = ActionNoop()
     var paddingLeft:CGFloat = 25
 
     var body: some View {
         let main = self.main
         let labels = main.cascadingView.resultSet.singletonItem?.labels ?? List<Label>()
+        
+        let addLabelAction = ActionNoop(main)
         
         return VStack(alignment: .leading) {
             VStack (alignment: .leading) {
@@ -112,7 +112,7 @@ struct ContextPaneForground: View {
             VStack(alignment: .leading, spacing: 10){
                 ForEach (labels) { labelItem in
                     Button(action:{
-                        main.executeAction(self.openLabelViewAction, with: labelItem)
+                        main.executeAction(addLabelAction, with: labelItem)
                     }) {
                         Text(labelItem.name)
                             .foregroundColor(.black)
@@ -127,9 +127,9 @@ struct ContextPaneForground: View {
                     .padding(.horizontal, self.paddingLeft)
                 }
                 Button(action:{
-                    main.executeAction(self.addLabelAction)
+                    main.executeAction(ActionNoop(main))
                 }) {
-                    Text(self.addLabelAction.getString("title"))
+                    Text(addLabelAction.getString("title"))
                         .foregroundColor(.black)
                         .opacity(0.6)
                         .font(.system(size: 20, weight: .regular, design: .default))

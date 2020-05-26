@@ -42,8 +42,9 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        ActionButton(action: ActionBack())
-            .environmentObject(RootMain(name: "", key: "").mockBoot())
+        let main = RootMain(name: "", key: "").mockBoot()
+        return ActionButton(action: ActionBack(main))
+            .environmentObject(main)
     }
 }
 
@@ -52,17 +53,6 @@ struct ActionButtonView: View {
     
     var action: Action
     var execute: (() -> Void)? = nil
-    
-    var isActive: Bool {
-        if action.getBool("hasState"), let binding = action.binding {
-            do { return try binding.isTrue() }
-            catch {
-                // TODO error handling
-                print("Could not read boolean value from binding \(binding)")
-            }
-        }
-        return false
-    }
     
     var body: some View {
         let icon = action.getString("icon")
@@ -78,8 +68,8 @@ struct ActionButtonView: View {
                     .fixedSize()
                     .padding(.horizontal, 5)
                     .padding(.vertical, 5)
-                    .foregroundColor(action.computeColor(state: isActive))
-                    .background(action.computeBackgroundColor(state: isActive))
+                    .foregroundColor(action.color)
+                    .background(action.backgroundColor)
 //                    .border(Color.red, width: 1)
             }
             

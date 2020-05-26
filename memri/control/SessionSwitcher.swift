@@ -124,7 +124,7 @@ struct SessionSwitcher: View {
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
             HStack(alignment: .top, spacing: 10) {
-                ActionButton(action: ActionShowSessionSwitcher())
+                ActionButton(action: ActionShowSessionSwitcher(main))
                     .fixedSize()
                     .font(Font.system(size: 20, weight: .medium))
                     .rotationEffect(.degrees(90))

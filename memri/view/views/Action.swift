@@ -12,8 +12,15 @@ public class Action : HashableClass, CVUToString {
     var arguments: [String: Any?] = [:]
     
     var binding:Expression? {
-        (values["binding"] ?? defaultValues["binding"]) as? Expression
+        if let expr = (values["binding"] ?? defaultValues["binding"]) as? Expression {
+            expr.lookup = main.views.lookupValueOfVariables
+            expr.execFunc = main.views.executeFunction
+            expr.main = main
+            return expr
+        }
+        return nil
     }
+    
     var argumentTypes:[String: Any.Type] {
         defaultValues["argumentTypes"] as? [String: Any.Type] ?? [:]
     }
@@ -23,7 +30,6 @@ public class Action : HashableClass, CVUToString {
         "icon": "exclamationmark.triangle",
         "renderAs": RenderType.button,
         "showTitle": false,
-        "hasState": false,
         "opensView": false,
         "color": Color(hex: "#999999"),
         "backgroundColor": Color.white,
@@ -33,11 +39,44 @@ public class Action : HashableClass, CVUToString {
     ]
     var values:[String:Any?] = [:]
     
+    let main:Main
+    
+    func isActive() -> Bool? {
+        if let binding = binding {
+            do { return try binding.isTrue() }
+            catch {
+                // TODO error handling
+                errorHistory.warn("Could not read boolean value from binding \(binding)")
+            }
+        }
+        return nil
+    }
+    
+    var color: Color {
+        if let active = isActive() {
+            if active { return self.get("activeColor") ?? self.getColor("color")}
+            else { return self.get("inactiveColor") ?? self.getColor("color")}
+        }
+        else {
+            return self.getColor("color")
+        }
+    }
+    
+    var backgroundColor: Color {
+        if let active = isActive() {
+            if active { return self.get("activeBackgroundColor") ?? self.getColor("backgroundolor")}
+            else { return self.get("inactiveBackgroundColor") ?? self.getColor("backgroundolor")}
+        }
+        else { return self.getColor("backgroundColor") }
+    }
+    
     public var description: String {
         toCVUString(0, "    ")
     }
     
-    init(_ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+    init(_ main:Main, _ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+        self.main = main
+        
         super.init()
         
         if let actionName = ActionFamily(rawValue: name) { self.name = actionName }
@@ -51,15 +90,20 @@ public class Action : HashableClass, CVUToString {
         }
     }
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+        self.main = main
     }
     
     func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
         let x:Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
-        if let x = x as? Expression {
+        if let expr = x as? Expression {
             do {
-                let y:T? = try x.execForReturnType(viewArguments)
-                return y
+                expr.lookup = main.views.lookupValueOfVariables
+                expr.execFunc = main.views.executeFunction
+                expr.main = main
+                
+                let value:T? = try expr.execForReturnType(viewArguments)
+                return value
             }
             catch {
                 // TODO Refactor: Error reporting
@@ -124,24 +168,6 @@ public class Action : HashableClass, CVUToString {
 //    class func execWithoutThrow(_ main:Main, ) {
 //        
 //    }
-    
-    public func computeColor(state:Bool) -> Color {
-        if self.getBool("hasState") {
-            if state { return self.get("activeColor") ?? self.getColor("color")}
-            else { return self.get("inactiveColor") ?? self.getColor("color")}
-        }
-        else {
-            return self.getColor("color")
-        }
-    }
-    
-    public func computeBackgroundColor(state:Bool) -> Color{
-        if self.getBool("hasState") {
-            if state { return self.get("activeBackgroundColor") ?? self.getColor("backgroundolor")}
-            else { return self.get("inactiveBackgroundColor") ?? self.getColor("backgroundolor")}
-        }
-        else { return self.getColor("backgroundColor") }
-    }
 }
 
 public enum RenderType: String{
@@ -185,7 +211,7 @@ public enum ActionFamily: String, CaseIterable {
 }
 
 public enum ActionProperties : String, CaseIterable {
-    case name, arguments, binding, icon, renderAs, showTitle, hasState, opensView, color,
+    case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
          backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
     
     func validate(_ key:String, _ value:Any?) -> Bool {
@@ -197,7 +223,7 @@ public enum ActionProperties : String, CaseIterable {
         case .arguments: return value is [Any?] // TODO do better by implementing something similar to executeAction
         case .renderAs: return value is RenderType
         case .title, .showTitle, .icon: return value is String
-        case .hasState, .opensView: return value is Bool
+        case .opensView: return value is Bool
         case .color, .backgroundColor, .inactiveColor, .activeBackgroundColor, .inactiveBackgroundColor:
             return value is Color
         default: return false
@@ -206,7 +232,7 @@ public enum ActionProperties : String, CaseIterable {
 }
 
 protocol ActionExec {
-    func exec(_ main:Main, _ arguments:[String: Any]) throws
+    func exec(_ arguments:[String: Any]) throws
 }
 
 class ActionBack : Action, ActionExec {
@@ -217,11 +243,11 @@ class ActionBack : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("back", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "back", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let session = main.currentSession
         
         if session.currentViewIndex == 0 {
@@ -234,7 +260,7 @@ class ActionBack : Action, ActionExec {
     }
     
     class func exec(_ main:Main, arguments:[String: Any]) throws {
-        try ActionBack().exec(main, arguments)
+        try ActionBack(main).exec(arguments)
     }
 }
 class ActionAddDataItem : Action, ActionExec {
@@ -246,11 +272,11 @@ class ActionAddDataItem : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("addDataItem", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "addDataItem", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         if let dataItem = arguments["template"] as? DataItem {
             // Copy template
             let copy = main.cache.duplicate(dataItem)
@@ -269,7 +295,7 @@ class ActionAddDataItem : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionAddDataItem().exec(main, arguments)
+        try ActionAddDataItem(main).exec(arguments)
     }
 }
 
@@ -280,8 +306,8 @@ class ActionOpenView : Action, ActionExec {
         "opensView": true
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("openView", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "openView", arguments:arguments, values:values)
     }
     
     func openView(_ main: Main, view: SessionView, with arguments: ViewArguments? = nil){
@@ -326,7 +352,7 @@ class ActionOpenView : Action, ActionExec {
         self.openView(main, view:view, with: arguments)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
 //        let selection = main.cascadingView.userState.get("selection") as? [DataItem]
         let dataItem = arguments["dataItem"] as? DataItem
         let viewArguments = arguments["viewArguments"] as? ViewArguments
@@ -348,7 +374,7 @@ class ActionOpenView : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenView().exec(main, arguments)
+        try ActionOpenView(main).exec(arguments)
     }
 }
 class ActionOpenViewByName : Action, ActionExec {
@@ -357,11 +383,11 @@ class ActionOpenViewByName : Action, ActionExec {
         "opensView": true
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("openViewByName", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "openViewByName", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
         if let name = arguments["name"] as? String {
@@ -376,7 +402,7 @@ class ActionOpenViewByName : Action, ActionExec {
                 "datasource": viewDef["datasource"] // TODO Refactor
             ])
             
-            ActionOpenView().openView(main, view:view)
+            ActionOpenView(main).openView(main, view:view)
         }
         else {
             // TODO Error Handling
@@ -385,62 +411,59 @@ class ActionOpenViewByName : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenViewByName().exec(main, arguments)
+        try ActionOpenViewByName(main).exec(arguments)
     }
 }
 class ActionToggleEditMode : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "pencil",
-        "hasState": true,
         "binding": Expression("currentSession.editMode"),
         "activeColor": Color(hex: "#6aa84f"),
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("toggleEditMode", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "toggleEditMode", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionToggleEditMode().exec(main, arguments)
+        try ActionToggleEditMode(main).exec(arguments)
     }
 }
 class ActionToggleFilterPanel : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "rhombus.fill",
-        "hasState": true,
         "binding": Expression("currentSession.showFilterPanel"),
         "activeColor": Color(hex: "#6aa84f")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("toggleFilterPanel", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "toggleFilterPanel", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionToggleFilterPanel().exec(main, arguments)
+        try ActionToggleFilterPanel(main).exec(arguments)
     }
 }
 class ActionStar : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "star.fill",
-        "hasState": true,
         "binding": "{dataItem.starred}"
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("toggleStar", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "toggleStar", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         if let item = arguments["dataItem"] as? DataItem {
             var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
             let toValue = !item.starred
@@ -469,17 +492,16 @@ class ActionStar : Action, ActionExec {
 class ActionShowStarred : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "star.fill",
-        "hasState": true,
         "binding": "showStarred",
         "opensView": true,
         "activeColor": Color(hex: "#ffdb00")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("showStarred", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "showStarred", arguments:arguments, values:values)
     }
 
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         do {
             if let binding = self.binding, try binding.isTrue() {
                 try ActionOpenView.exec(main, ["viewArguments": "filter-starred"])
@@ -498,41 +520,39 @@ class ActionShowStarred : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionShowStarred().exec(main, arguments)
+        try ActionShowStarred(main).exec(arguments)
     }
 }
 class ActionShowContextPane : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "ellipsis",
-        "hasState": true,
         "binding": Expression("currentSession.showContextPane")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("showContextPane", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "showContextPane", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionShowContextPane().exec(main, arguments)
+        try ActionShowContextPane(main).exec(arguments)
     }
 }
 class ActionShowNavigation : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "line.horizontal.3",
-        "hasState": true,
         "binding": Expression("main.showNavigation"),
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("showNavigation", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "showNavigation", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
@@ -545,11 +565,11 @@ class ActionSchedule : Action, ActionExec {
         "icon": "alarm"
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("schedule", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "schedule", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
 //        ActionSchedule.exec(main, arguments:arguments)
     }
     
@@ -561,16 +581,15 @@ class ActionSchedule : Action, ActionExec {
 class ActionShowSessionSwitcher : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "ellipsis",
-        "hasState": true,
         "binding": Expression("main.showSessionSwitcher"),
         "color": Color(hex: "#CCC")
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("showSessionSwitcher", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "showSessionSwitcher", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
 //        ActionShowSessionSwitcher.exec(main, arguments:arguments)
     }
     
@@ -583,11 +602,11 @@ class ActionForward : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("forward", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "forward", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let session = main.currentSession
         
         if session.currentViewIndex == session.views.count - 1 {
@@ -600,7 +619,7 @@ class ActionForward : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionForward().exec(main, arguments)
+        try ActionForward(main).exec(arguments)
     }
 }
 class ActionForwardToFront : Action, ActionExec {
@@ -608,11 +627,11 @@ class ActionForwardToFront : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("forwardToFront", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "forwardToFront", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let session = main.currentSession
         realmWriteIfAvailable(main.cache.realm, {
             session.currentViewIndex = session.views.count - 1
@@ -629,11 +648,11 @@ class ActionBackAsSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("backAsSession", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "backAsSession", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let session = main.currentSession
         
         if session.currentViewIndex == 0 {
@@ -665,8 +684,8 @@ class ActionOpenSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("openSession", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "openSession", arguments:arguments, values:values)
     }
     
     func openSession(_ main: Main, _ session:Session) {
@@ -691,7 +710,7 @@ class ActionOpenSession : Action, ActionExec {
     
     ///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
     /////  reorders it on top
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         if let item = arguments["session"]{
             if let session = item as? Session {
                 self.openSession(main, session)
@@ -718,11 +737,11 @@ class ActionOpenSessionByName : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("openSessionByName", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "openSessionByName", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
         if let name = arguments["name"] as? String {
@@ -745,7 +764,7 @@ class ActionOpenSessionByName : Action, ActionExec {
                     session["views"] = list
                     
                     // Open the view
-                    ActionOpenSession().openSession(main, session)
+                    ActionOpenSession(main).openSession(main, session)
                 }
                 else {
                     // TODO Error handling
@@ -767,16 +786,16 @@ class ActionOpenSessionByName : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenSession().exec(main, arguments)
+        try ActionOpenSession(main).exec(arguments)
     }
 }
 
 class ActionDelete : Action, ActionExec {
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("delete", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "delete", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
 //
 //        // TODO this should happen automatically in ResultSet
 //        //        self.main.items.remove(atOffsets: indexSet)
@@ -803,15 +822,15 @@ class ActionDelete : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionDelete().exec(main, arguments)
+        try ActionDelete(main).exec(arguments)
     }
 }
 class ActionDuplicate : Action, ActionExec {
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("duplicate", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "duplicate", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         if let selection:[DataItem] = main.cascadingView.userState.get("selection"), selection.count > 0 {
             try selection.forEach{ item in try ActionAddDataItem.exec(main, ["dataItem": item]) }
         }
@@ -829,25 +848,25 @@ class ActionDuplicate : Action, ActionExec {
     }
 }
 class ActionClosePopup : Action, ActionExec {
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("closePopup", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "closePopup", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         (main.closeStack.removeLast())()
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionClosePopup().exec(main, arguments)
+        try ActionClosePopup(main).exec(arguments)
     }
 }
 
 class ActionSetProperty : Action, ActionExec {
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("setProperty", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "setProperty", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
             if let propName = arguments["property"] as? String {
                 if let dataItem = arguments["dataItem"] {
@@ -864,21 +883,21 @@ class ActionSetProperty : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionSetProperty().exec(main, arguments)
+        try ActionSetProperty(main).exec(arguments)
     }
 }
 
 class ActionNoop : Action, ActionExec {
-    required init(arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init("noop", arguments:arguments, values:values)
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "noop", arguments:arguments, values:values)
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) throws {
+    func exec(_ arguments:[String: Any]) throws {
         // do nothing
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionClosePopup.exec(main, arguments)
+        try ActionClosePopup(main).exec(arguments)
     }
 }
 

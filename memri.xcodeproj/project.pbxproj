@@ -387,10 +387,10 @@
 		868EF62124766A8800C0375F /* CVULexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVULexer.swift; sourceTree = "<group>"; };
 		868EF62324766A8800C0375F /* example.view */ = {isa = PBXFileReference; lastKnownFileType = archive.rsrc; path = example.view; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		868EF62424766A8800C0375F /* CVUParsedDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParsedDefinition.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		868EF62524766A8800C0375F /* CVU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVU.swift; sourceTree = "<group>"; };
+		868EF62524766A8800C0375F /* CVU.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVU.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF62624766A8800C0375F /* CVUParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVUParser.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF62924766A8800C0375F /* ExprParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprParser.swift; sourceTree = "<group>"; };
-		868EF62A24766A8800C0375F /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; };
+		868EF62A24766A8800C0375F /* Expression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Expression.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF62B24766A8800C0375F /* ExprInterpreter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprInterpreter.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		868EF62C24766A8800C0375F /* ExprLexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprLexer.swift; sourceTree = "<group>"; };
 		868EF62D24766A8800C0375F /* ExprNodes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExprNodes.swift; sourceTree = "<group>"; wrapsLines = 0; };

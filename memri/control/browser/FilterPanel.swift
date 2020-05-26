@@ -59,16 +59,24 @@ struct FilterPanel: View {
     }
     
     private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
-        return self.main.renderers.tuples.filter{(key, renderer) -> Bool in
-            return !key.contains(".") && renderer.canDisplayResults(self.main.items)
-        }
+        return self.main.renderers.tuples
+            .map { ($0.0, $0.1(main)) }
+            .filter { (key, renderer) -> Bool in
+                !key.contains(".") && renderer.canDisplayResults(self.main.items)
+            }
     }
     
     private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
         if let currentCategory = self.main.cascadingView.activeRenderer.split(separator: ".").first {
-            return self.main.renderers.all.filter { (key, renderer) -> Bool in
-                return renderer.rendererName.split(separator: ".").first == currentCategory
-            }.sorted(by: { $0.1.order < $1.1.order })
+            return self.main.renderers.all
+                .map({ (arg0) -> (String, FilterPanelRendererButton) in
+                    let (key, value) = arg0
+                    return (key, value(main))
+                })
+                .filter { (key, renderer) -> Bool in
+                    renderer.rendererName.split(separator: ".").first == currentCategory
+                }
+                .sorted(by: { $0.1.order < $1.1.order })
         }
         return []
     }

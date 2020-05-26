@@ -79,14 +79,22 @@ struct PickerPane: View {
                 "renderDescriptions": [
                     CVUParsedRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
-                            ActionSetProperty(arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
-                            ActionClosePopup()
+                            ActionSetProperty(main,
+                                              arguments: [
+                                                "sourceDataItem": self.propDataItem,
+                                                "property": self.propName
+                                              ]),
+                            ActionClosePopup(main)
                         ]]
                     ),
                     CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
-                            ActionSetProperty(arguments: ["sourceDataItem": self.propDataItem, "property": self.propName]),
-                            ActionClosePopup()
+                            ActionSetProperty(main,
+                                              arguments: [
+                                                "sourceDataItem": self.propDataItem,
+                                                "property": self.propName
+                                              ]),
+                            ActionClosePopup(main)
                         ]]
                     )
                 ]

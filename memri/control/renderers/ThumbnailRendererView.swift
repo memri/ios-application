@@ -72,7 +72,7 @@ struct ThumbnailRendererView: View {
         ASCollectionViewSection (id: 0, data: main.items) { dataItem, state in
             ZStack (alignment: .bottomTrailing) {
                 // TODO: Error handling
-                self.renderConfig!.render(item: dataItem)
+                self.renderConfig?.render(item: dataItem)
                     .onTapGesture {
                         if let press = self.renderConfig?.press {
                             self.main.executeAction(press, with: dataItem)

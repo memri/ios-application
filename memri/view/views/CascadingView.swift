@@ -72,8 +72,21 @@ public class CascadingView: Cascadable, ObservableObject {
         
     } // TODO: Refactor set when datasource changes ??
     
-    // TODO: REFACTOR: On change clear renderConfig in localCache
-    var activeRenderer: String // Set on creation | when changed set on userState
+    var activeRenderer: String {
+        get {
+            if let userState = sessionView.userState {
+                if let s:String = userState.get("activeRenderer") { return s }
+            }
+            if let s:String = cascadeProperty("defaultRenderer") { return s }
+            
+            errorHistory.error("Exception: Unable to determine the active renderer. Missing defaultRenderer in view?")
+            return ""
+        }
+        set (value) {
+            localCache.removeValue(forKey: value) // Remove renderConfig reference
+            userState.set("activeRenderer", value)
+        }
+    }
     
     var backTitle: String? { cascadeProperty("backTitle") }
     var searchHint: String { cascadeProperty("searchHint") ?? "" }
@@ -93,6 +106,9 @@ public class CascadingView: Cascadable, ObservableObject {
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
+        
+        print(activeRenderer)
+        print(localCache[activeRenderer])
         
         var stack = self.cascadeStack.compactMap {
             ($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
@@ -218,11 +234,9 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     init(_ sessionView:SessionView,
-         _ cascadeStack:[CVUParsedDefinition],
-         _ activeRenderer:String
+         _ cascadeStack:[CVUParsedDefinition]
     ){
         self.sessionView = sessionView
-        self.activeRenderer = activeRenderer
         super.init(cascadeStack, ViewArguments())
     }
     
@@ -328,7 +342,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         
         // Create a new view
-        let c = CascadingView(sessionView, cascadeStack, activeRenderer ?? "")
+        let c = CascadingView(sessionView, cascadeStack)
         c.main = main
         return c
     }

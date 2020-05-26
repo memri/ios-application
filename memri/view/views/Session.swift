@@ -45,13 +45,8 @@ public class Session: DataItem {
     private var rlmTokens: [NotificationToken] = []
     private var cancellables: [AnyCancellable] = []
     
-    var backButton: Action? {
-        if self.currentViewIndex > 0 {
-            return ActionBack()
-        }
-        else {
-            return nil
-        }
+    var hasHistory: Bool {
+        self.currentViewIndex > 0
     }
     
     public var currentView: SessionView {

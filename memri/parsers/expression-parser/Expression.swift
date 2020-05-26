@@ -12,8 +12,10 @@ import RealmSwift
 public class Expression : CVUToString {
     let code: String
     let startInStringMode: Bool
-    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
-    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+    var lookup: (ExprLookupNode, ViewArguments) throws -> Any
+    var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+    
+    var main:Main? = nil
     
     private var interpreter:ExprInterpreter? = nil
     private var parsed = false
@@ -50,22 +52,28 @@ public class Expression : CVUToString {
     }
     
     public func toggleBool() throws {
+        if !parsed { try parse() }
+        
         if let node = ast as? ExprLookupNode {
             var sequence = node.sequence
             if let lastProperty = sequence.popLast() as? ExprVariableNode {
                 let lookupNode = ExprLookupNode(sequence: sequence)
-                if let obj = try self.lookup(lookupNode, ViewArguments()) as? Object {
-                    obj[lastProperty.name] =
-                        !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                if let obj = try self.lookup(lookupNode, ViewArguments()) as? Object, let main = main {
+                    realmWriteIfAvailable(main.realm) {
+                        obj[lastProperty.name] =
+                            !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                    }
                     return
                 }
             }
         }
             
-        throw "Exception: unable to toggle expression. Perhaps expression is not a pure lookup?"
+        throw "Exception: Unable to toggle expression. Perhaps expression is not a pure lookup?"
     }
     
     public func getTypeOfDataItem() throws -> (PropertyType, DataItem, String){
+        if !parsed { try parse() }
+        
         if let node = ast as? ExprLookupNode {
             var sequence = node.sequence
             if let lastProperty = sequence.popLast() as? ExprVariableNode {
@@ -78,13 +86,14 @@ public class Expression : CVUToString {
             }
         }
             
-        throw "Exception: unable to fetch type of property referenced in expression. Perhaps expression is not a pure lookup?"
+        throw "Exception: Unable to fetch type of property referenced in expression. Perhaps expression is not a pure lookup?"
     }
     
     private func parse() throws {
         let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
         let parser = ExprParser(try lexer.tokenize())
         ast = try parser.parse()
+        
         // TODO: Error handlign
         if let ast = ast {
             interpreter = ExprInterpreter(ast, lookup, execFunc)

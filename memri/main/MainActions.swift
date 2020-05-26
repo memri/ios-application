@@ -112,7 +112,7 @@ extension Main {
         
         if action.getBool("opensView") {
             if let action = action as? ActionExec {
-                try action.exec(self, args)
+                try action.exec(args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")
@@ -120,17 +120,13 @@ extension Main {
         }
         else {
             
-            // Track state of the action and toggle the state variable based on actionStateName
-            // TODO Refactor: it should be the new way of doing selection
-            let list:[DataItem]? = cascadingView.userState.get("selection")
-            if list?.count == 0
-                && action.getBool("hasState"), let binding = action.binding {
-                
+            // Track state of the action and toggle the state variable
+            if let binding = action.binding {
                 try binding.toggleBool()
             }
             
             if let action = action as? ActionExec {
-                try action.exec(self, args)
+                try action.exec(args)
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")

@@ -42,6 +42,7 @@ public class ResultSet: ObservableObject {
     /// Boolean indicating whether the resultset is a collection of items or a single item
     var isList: Bool {
         // TODO change this to be a proper query parser
+        // TODO this is called very often, needs caching
         
         let (typeName, filter) = cache.parseQuery((self.datasource.query ?? ""))
         

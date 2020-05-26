@@ -391,7 +391,7 @@ public class RootMain: Main {
             installer: Installer(realm),
             sessions: Sessions(realm),
             views: Views(realm),
-            cascadingView: CascadingView(SessionView(), [], ""),
+            cascadingView: CascadingView(SessionView(), []),
             navigation: MainNavigation(realm),
             renderers: Renderers()
         )

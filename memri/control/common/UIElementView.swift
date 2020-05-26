@@ -340,7 +340,7 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .SecureField {
                 }
                 else if from.type == .Action {
-                    ActionButton(action: get("press") ?? ActionNoop())
+                    ActionButton(action: get("press") ?? ActionNoop(main))
                         .setProperties(from.properties, self.item, main)
                 }
                 else if from.type == .MemriButton {

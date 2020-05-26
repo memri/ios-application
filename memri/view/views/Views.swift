@@ -72,7 +72,7 @@ public class Views {
         let code = getDefaultViewContents()
         
         do {
-            let cvu = CVU(code, lookup: lookupValueOfVariables, execFunc: executeFunction)
+            let cvu = CVU(code, main!, lookup: lookupValueOfVariables, execFunc: executeFunction)
             let parsedDefinitions = try cvu.parse() // TODO this could be optimized
             
             let validator = CVUValidator()
@@ -318,12 +318,12 @@ public class Views {
             throw "Exception: Missing CVU definition"
         }
         
-        let cached = try InMemoryObjectCache.get("memriID: \(viewDef.memriID)")
+        let cached = InMemoryObjectCache.get("memriID: \(viewDef.memriID)")
         if let cached = cached as? CVU {
             return try cached.parse().first
         }
         else if let definition = viewDef.definition {
-            let viewDefParser = CVU(definition,
+            let viewDefParser = CVU(definition, main!,
                 lookup: lookupValueOfVariables,
                 execFunc: executeFunction
             )

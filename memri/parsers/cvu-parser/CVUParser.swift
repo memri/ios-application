@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 class CVUParser {
+    let main: Main
     let tokens: [CVUToken]
     var index = 0
     var lastToken:CVUToken? = nil
@@ -17,10 +18,11 @@ class CVUParser {
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
 
-    init(_ tokens: [CVUToken],
+    init(_ tokens: [CVUToken], _ main:Main,
          lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
          execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
+        self.main = main
         self.tokens = tokens
         self.lookup = lookup
         self.execFunc = execFunc
@@ -352,7 +354,7 @@ class CVUParser {
                     let arguments = options.removeValue(forKey: "arguments") as? [String:Any] ?? [:]
                     if let actionFamily = ActionFamily(rawValue: name) {
                         let ActionType = ActionFamily.getType(actionFamily)()
-                        stack.append(ActionType.init(arguments:arguments, values:options))
+                        stack.append(ActionType.init(main, arguments:arguments, values:options))
                     }
                     else {
                         // TODO ERROR REPORTING

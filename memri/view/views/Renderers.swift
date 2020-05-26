@@ -12,7 +12,7 @@ import SwiftUI
 var allRenderers:Renderers? = nil
 
 public class Renderers {
-    var all: [String: FilterPanelRendererButton] = [:]
+    var all: [String: (Main) -> FilterPanelRendererButton] = [:]
     var allViews: [String: AnyView] = [:]
     var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
     
@@ -20,13 +20,13 @@ public class Renderers {
                   view:AnyView, renderConfigType: CascadingRenderConfig.Type,
                   canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
         
-        self.all[name] = FilterPanelRendererButton(
+        self.all[name] = { main in FilterPanelRendererButton(main,
             name: name,
             order: order,
             title: title,
             icon: icon,
             canDisplayResults: canDisplayResults
-        )
+        ) }
         self.allViews[name] = view
         self.allConfigTypes[name] = renderConfigType
     }
@@ -35,7 +35,7 @@ public class Renderers {
                         view:AnyView, renderConfigType: CascadingRenderConfig.Type,
                         canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
         
-        allRenderers?.register(name: name, title: title, order: order, view: view,
+        allRenderers?.register(name: name, title: title, order: order, icon:icon, view: view,
                                renderConfigType: renderConfigType,
                                canDisplayResults: canDisplayResults)
     }
@@ -52,14 +52,13 @@ public class Renderers {
         registerRichText()
     }
     
-    var tuples: [(key: String, value: FilterPanelRendererButton)] {
+    var tuples: [(key: String, value: (Main) -> FilterPanelRendererButton)] {
         return all.sorted{$0.key < $1.key}
     }
 }
 
 class FilterPanelRendererButton: Action, ActionExec {
     private var defaults:[String:Any] {[
-        "hasState": true,
         "activeColor": Color(hex: "#6aa84f"),
         "activeBackgroundColor": Color(hex: "#eee"),
         "title": "Unnamed Renderer"
@@ -69,30 +68,30 @@ class FilterPanelRendererButton: Action, ActionExec {
     var canDisplayResults: (_ items: [DataItem]) -> Bool
     var rendererName: String
     
-    required init(name:String, order:Int, title:String, icon:String,
+    required init(_ main:Main, name:String, order:Int, title:String, icon:String,
                   canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
         
         self.rendererName = name
         self.order = order
         self.canDisplayResults = canDisplayResults
         
-        super.init("setRenderer", values: ["icon":icon, "title":title])
+        super.init(main, "setRenderer", values: ["icon":icon, "title":title])
     }
     
-    required init(arguments: [String : Any?]? = nil, values: [String : Any?] = [:]) {
+    required init(_ main:Main, arguments: [String : Any?]? = nil, values: [String : Any?] = [:]) {
         fatalError("init(arguments:values:) has not been implemented")
     }
     
-    func exec(_ main:Main, _ arguments:[String: Any]) {
-//        self.setInactive(objects: Array(self.renderObjects.values))
-//        setActive(object: rendererObject)
-        let session = main.currentSession
+    override func isActive() -> Bool? {
+        main.cascadingView.activeRenderer == self.rendererName
+    }
+    
+    func exec(_ arguments:[String: Any]) {
         realmWriteIfAvailable(main.cache.realm, {
-            // TODO: Implement
             main.cascadingView.activeRenderer = self.rendererName
         })
         
-        main.scheduleCascadingViewUpdate()
+        main.scheduleUIUpdate(){ _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
     }
 }
 
