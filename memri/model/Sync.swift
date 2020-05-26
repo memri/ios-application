@@ -165,7 +165,7 @@ class Sync {
                     // Find added items
                     // TODO this could be skipped by re-executing resultSet.load()
                     for item in resultSet.items {
-                        if item.syncState?.actionNeeded == "created" {
+                        if item.syncState?.actionNeeded == "create" {
                             result.append(item)
                         }
                     }

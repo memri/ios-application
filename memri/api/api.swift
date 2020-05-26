@@ -279,17 +279,6 @@ public class PodAPI {
             else if let data = data {
                 do {
                     var str = String(data: data, encoding: .utf8) ?? ""
-                    str.replace(#""memriID":(\d+)"#, with: "\"memriID\":\"$1\"")
-                    str.replace(#","type":"dataitem""#, with: "")
-                    str.replace(#""type":"label""#, with: #""type":"Label""#)
-                    str.replace(#""type":"note""#, with: #""type":"Note""#)
-                    str.replace(#""type":"person""#, with: #""type":"Person""#)
-                    str.replace(#""type":"log""#, with: #""type":"Log""#)
-                    
-                    
-//                    str.replace(#"(?<=[a-Z0-9]+)""#, with: " ")
-//                    str.replace(#""0x"#, with: "")
-//                    str.replace("0x", with: "")
                     
                     
                     var items:[DataItem]?

@@ -148,7 +148,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 
 
 class Note:DataItem {
-    @objc dynamic var title:String? = nil
+    @objc dynamic var title:String? = ""
     @objc dynamic var content:String? = nil
     @objc dynamic var htmlContent:String? = nil
 

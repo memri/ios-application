@@ -74,7 +74,6 @@ struct _RichTextEditor: UIViewRepresentable {
         
         
         func textViewDidChange(_ textView: UITextView) {
-            print(control.dataItem.realm)
             control.dataItem.set("content", textView.attributedText.string)
             control.dataItem.set("htmlContent", textView.attributedText.toHTML())
         }
@@ -181,7 +180,7 @@ struct RichTextRendererView: View {
             set: {
                 dataItem?.set("title", $0)
                 print(dataItem?.realm)
-        }
+            }
         )
         
         return VStack{
