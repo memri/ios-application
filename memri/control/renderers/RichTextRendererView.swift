@@ -180,7 +180,7 @@ struct RichTextRendererView: View {
             set: {
                 dataItem?.set("title", $0)
                 print(dataItem?.realm)
-        }
+            }
         )
         
         return VStack{

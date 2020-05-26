@@ -58,11 +58,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     var resultSet: ResultSet {
-        
-        if let x = localCache["resultSet"] as? ResultSet {
-            print("RESULT: \(x.items.count)")
-            return x
-        }
+        if let x = localCache["resultSet"] as? ResultSet { return x }
         
         // Update search result to match the query
         // NOTE: allowed force unwrap
@@ -113,9 +109,6 @@ public class CascadingView: Cascadable, ObservableObject {
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
-        
-//        print(activeRenderer)
-//        print(localCache[activeRenderer])
         
         var stack = self.cascadeStack.compactMap {
             ($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
