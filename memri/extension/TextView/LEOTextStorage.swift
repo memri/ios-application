@@ -22,6 +22,7 @@ class LEOTextStorage: NSTextStorage {
     }
 
     override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [NSAttributedString.Key : Any] {
+        
         return currentString.attributes(at: location, effectiveRange: range)
     }
     

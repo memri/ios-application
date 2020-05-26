@@ -6,7 +6,7 @@ target 'memri' do
   use_frameworks!
 
   # Pods for memri
-  pod 'RealmSwift'
+  pod 'RealmSwift', '~> 4.4.1'
 
   target 'memriTests' do
     inherit! :search_paths
