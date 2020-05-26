@@ -371,6 +371,7 @@ public class CascadingView: Cascadable, ObservableObject {
             }
             
             for needle in needles {
+                
                 if let sessionViewDef = main.views
                     .fetchDefinitions(selector:needle, domain:key).first {
                     

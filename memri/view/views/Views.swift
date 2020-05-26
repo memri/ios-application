@@ -335,8 +335,9 @@ public class Views {
             if let type = type { filter.append("type = '\(type)'") }
             if let name = name { filter.append("name = '\(name)'") }
             if let query = query { filter.append("query = '\(query)'") }
-            if let domain = domain { filter.append("domain = '\(domain)'") }
         }
+
+        if let domain = domain { filter.append("domain = '\(domain)'") }
         
         return main!.realm.objects(CVUStoredDefinition.self)
             .filter(filter.joined(separator: " AND "))
