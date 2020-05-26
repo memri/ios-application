@@ -184,11 +184,12 @@ public class Views {
     }
     
     func lookupValueOfVariables (lookup: ExprLookupNode, viewArguments:ViewArguments) throws -> Any? {
-        return try lookupValueOfVariables (
+        let x = try lookupValueOfVariables (
             lookup: lookup,
             viewArguments:viewArguments,
             isFunction:false
         )
+        return x
     }
     
     func lookupValueOfVariables (lookup: ExprLookupNode,
@@ -230,7 +231,16 @@ public class Views {
                         }
                     }
                     else if let v = value as? String {
-                        throw "Not implemented"
+                        switch node.name {
+                        case "uppercased": value = v.uppercased()
+                        case "lowercased": value = v.lowercased()
+                        case "camelCaseToWords": value = v.camelCaseToWords()
+                        case "plural": value = v + "s" // TODO
+                        case "firstUppercased": value = v.capitalizingFirstLetter()
+                        default:
+                            // TODO Warn
+                            break
+                        }
                     }
                     else if let v = value as? RealmSwift.List<Edge> {
                         switch node.name {
@@ -249,11 +259,15 @@ public class Views {
                         value = v[node.name]
                     }
                     else if let v = value as? UserState {
-                        throw "Not implemented"
+                        value = v.get(node.name)
                     }
                     else if let v = value as? CascadingView {
                         value = v[node.name]
                     }
+                    else if let v = value as? CascadingDatasource {
+                        value = v[node.name]
+                    }
+                    // CascadingRenderer??
                     else if let v = value as? Object {
                         if v.objectSchema[node.name] == nil {
                             // TODO error handling
@@ -298,14 +312,14 @@ public class Views {
         return value
     }
     
-    func executeFunction(lookup: ExprLookupNode, args:[Any], viewArguments:ViewArguments) throws -> Any {
+    func executeFunction(lookup: ExprLookupNode, args:[Any?], viewArguments:ViewArguments) throws -> Any? {
         let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
-        if let f = f as? ([Any]) -> Any {
-            return f(args) as Any
+        if let f = f as? ([Any?]) -> Any? {
+            return f(args) as Any?
         }
         
         let x:String? = nil
-        return x as Any
+        return x as Any?
     }
     
     public func fetchDefinitions(_ selector:String = "", type:String? = nil,

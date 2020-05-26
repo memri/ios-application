@@ -14,10 +14,10 @@ public class UserState: Object {
     var onFirstSave: ((UserState) -> Void)? = nil
     
     func get<T>(_ propName:String) -> T? {
-        let x = self.asDict()
+        let dict = self.asDict()
         
         if T.self == DataItem.self {
-            if let lookup = x[propName] as? [String:Any] {
+            if let lookup = dict[propName] as? [String:Any?] {
                 if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
                     let x:DataItem? = realm?.object(
                         ofType: DataItemFamily.getType(type)() as! DataItem.Type,
@@ -28,11 +28,14 @@ public class UserState: Object {
             
             return nil
         }
+        else if dict[propName] == nil {
+            return nil
+        }
         
-        return x[propName] as? T
+        return dict[propName] as? T
     }
     
-    func set<T>(_ propName:String, _ newValue:T) {
+    func set<T>(_ propName:String, _ newValue:T?) {
         if let event = onFirstSave {
             event(self)
             onFirstSave = nil
@@ -53,10 +56,10 @@ public class UserState: Object {
         scheduleWrite()
     }
     
-    private func transformToDict() throws -> [String:Any]{
-        if state == "" { return [String:Any]() }
-        let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
-        try InMemoryObjectCache.set(self.memriID, dict as [String:Any])
+    private func transformToDict() throws -> [String:Any?]{
+        if state == "" { return [String:Any?]() }
+        let dict:[String:AnyDecodable?] = unserialize(state) ?? [:]
+        try InMemoryObjectCache.set(self.memriID, dict as [String:Any?])
         return dict
     }
     
@@ -83,7 +86,7 @@ public class UserState: Object {
     private func persist() {
         if self.realm == nil { return }
         
-        if let x = InMemoryObjectCache.get(memriID) as? [String : Any] {
+        if let x = InMemoryObjectCache.get(memriID) as? [String : Any?] {
             realmWriteIfAvailable(self.realm) {
                 print(self.memriID)
                 print(x)
@@ -104,9 +107,9 @@ public class UserState: Object {
         return x
     }
     
-    public func asDict() -> [String:Any] {
-        var x:[String:Any]?
-        x = InMemoryObjectCache.get(memriID) as? [String:Any]
+    public func asDict() -> [String:Any?] {
+        var x:[String:Any?]?
+        x = InMemoryObjectCache.get(memriID) as? [String:Any?]
         do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO refactor: handle error
         return x ?? [:]
     }

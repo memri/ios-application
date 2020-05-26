@@ -15,7 +15,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var name: String { return sessionView.name ?? "" } // by copy??
     
     /// The session view that is being cascaded
-    private let sessionView: SessionView
+    let sessionView: SessionView
     
     var datasource: CascadingDatasource {
         if let x = localCache["datasource"] as? CascadingDatasource { return x }
@@ -237,25 +237,51 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    init(_ sessionView:SessionView,
-         _ cascadeStack:[CVUParsedDefinition]
-    ){
+    init (_ sessionView:SessionView,
+          _ cascadeStack:[CVUParsedDefinition]
+    ) {
         self.sessionView = sessionView
         super.init(cascadeStack, ViewArguments())
     }
     
-    subscript(propName:String) -> Any {
+    subscript(propName:String) -> Any? {
         get {
-            let type: Mirror = Mirror(reflecting:self)
-
-            for child in type.children {
-                if child.label == name || child.label == "_" + name {
-                    return child.value
-                }
+            switch (propName) {
+            case "name": return name
+            case "sessionView": return sessionView
+            case "datasource": return datasource
+            case "userState": return userState
+            case "viewArguments": return viewArguments
+            case "resultSet": return resultSet
+            case "activeRenderer": return activeRenderer
+            case "backTitle": return backTitle
+            case "searchHint": return searchHint
+            case "showLabels": return showLabels
+            case "actionButton": return actionButton
+            case "editActionButton": return editActionButton
+            case "sortFields": return sortFields
+            case "editButtons": return editButtons
+            case "filterButtons": return filterButtons
+            case "actionItems": return actionItems
+            case "navigateItems": return navigateItems
+            case "contextButtons": return contextButtons
+            case "renderConfig": return renderConfig
+            case "emptyResultText": return emptyResultText
+            case "title": return title
+            case "subtitle": return subtitle
+            case "filterText": return filterText
+            default: return nil
             }
-            
-            let x:String? = nil
-            return x as Any
+        }
+        set (value) {
+            switch (propName) {
+            case "activeRenderer": activeRenderer = value as? String ?? ""
+            case "emptyResultText": emptyResultText = value as? String ?? ""
+            case "title": title = value as? String ?? ""
+            case "subtitle": subtitle = value as? String ?? ""
+            case "filterText": filterText = value as? String ?? ""
+            default: return
+            }
         }
     }
     
@@ -327,10 +353,14 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         
         // Find views based on datatype
-        for needle in needles {
-            for key in ["user", "session", "defaults"] {
-                if key == "session" { parse(sessionView.viewDefinition, key) }
-                else if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
+        for key in ["user", "session", "defaults"] {
+            if key == "session" {
+                parse(sessionView.viewDefinition, key)
+                continue
+            }
+            
+            for needle in needles {
+                if let sessionViewDef = main.views.fetchDefinitions(needle, domain:key).first {
                     parse(sessionViewDef, key)
                 }
                 else if key != "user" {
@@ -342,6 +372,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         if activeRenderer == nil {
             // TODO Error Logging
+            print(cascadeStack)
             throw "Exception: could not determine the active renderer for this view"
         }
         
