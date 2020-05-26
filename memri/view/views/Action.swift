@@ -57,7 +57,10 @@ public class Action : HashableClass, CVUToString {
     func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
         let x:Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
         if let x = x as? Expression {
-            do { return try x.execute(viewArguments) as? T }
+            do {
+                let y:T? = try x.execForReturnType(viewArguments)
+                return y
+            }
             catch {
                 // TODO Refactor: Error reporting
                 return nil

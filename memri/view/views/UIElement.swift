@@ -41,7 +41,7 @@ public class UIElement : CVUToString {
             if let expr = propValue as? Expression {
                 viewArguments.set(".", item)
                 
-                do { let x:T? = try expr.execute(viewArguments) as? T; return x }
+                do { let x:T? = try expr.execForReturnType(viewArguments); return x }
                 catch {
                     // TODO Refactor error handling
                     errorHistory.error("Could note compute \(propName) with arguments " +

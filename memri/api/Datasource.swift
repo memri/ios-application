@@ -105,10 +105,12 @@ public class CascadingDatasource: Cascadable, UniqueString {
         ])
     }
     
-    required init(_ cascadeStack: [CVUParsedDefinition], _ datasource:Datasource) {
+    init(_ cascadeStack: [CVUParsedDatasourceDefinition],
+         _ viewArguments: ViewArguments,
+         _ datasource:Datasource) {
+        
         self.datasource = datasource
-        super.init()
-        self.cascadeStack = cascadeStack
+        super.init(cascadeStack, viewArguments)
     }
 }
 

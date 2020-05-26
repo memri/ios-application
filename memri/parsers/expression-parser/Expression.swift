@@ -100,6 +100,20 @@ public class Expression : CVUToString {
         try parse()
     }
     
+    public func execForReturnType<T>(_ args:ViewArguments? = nil) throws -> T? {
+        if !parsed { try parse() }
+        let value =  try interpreter?.execute(args ?? ViewArguments())
+        
+        if value == nil { return nil }
+        if let value = value as? T { return value }
+        if T.self == Bool.self { return ExprInterpreter.evaluateBoolean(value) as? T }
+        if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
+        if T.self == Int.self { return ExprInterpreter.evaluateNumber(value) as? T }
+        if T.self == String.self { return ExprInterpreter.evaluateString(value) as? T }
+        
+        return nil
+    }
+    
     public func execute(_ args:ViewArguments? = nil) throws -> Any? {
         if !parsed { try parse() }
         

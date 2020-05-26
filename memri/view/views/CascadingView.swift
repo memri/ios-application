@@ -25,7 +25,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 $0["datasourceDefinition"] as? CVUParsedDatasourceDefinition
             }
             
-            let datasource = CascadingDatasource(stack, ds)
+            let datasource = CascadingDatasource(stack, self.viewArguments, ds)
             localCache["datasource"] = datasource
             return datasource
         }
@@ -33,7 +33,7 @@ public class CascadingView: Cascadable, ObservableObject {
             // Missing datasource on sessionview, that should never happen (I think)
             // TODO ERROR REPORTING
             
-            return CascadingDatasource([], Datasource())
+            return CascadingDatasource([], ViewArguments(), Datasource())
         }
     }
     
@@ -44,11 +44,16 @@ public class CascadingView: Cascadable, ObservableObject {
     }
         
     // TODO let this cascade when the use case for it arrises
-    var viewArguments: ViewArguments {
-        sessionView.viewArguments ?? ViewArguments(onFirstSave: { args in
-            realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
-        })
-        // cascadeProperty("viewArguments", )
+    override var viewArguments: ViewArguments {
+        get {
+            sessionView.viewArguments ?? ViewArguments(onFirstSave: { args in
+                realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
+            })
+            // cascadeProperty("viewArguments", )
+        }
+        set (value) {
+            // Do Nothing
+        }
     }
     
     var resultSet: ResultSet {
@@ -218,8 +223,7 @@ public class CascadingView: Cascadable, ObservableObject {
     ){
         self.sessionView = sessionView
         self.activeRenderer = activeRenderer
-        super.init()
-        self.cascadeStack = cascadeStack
+        super.init(cascadeStack, ViewArguments())
     }
     
     subscript(propName:String) -> Any {

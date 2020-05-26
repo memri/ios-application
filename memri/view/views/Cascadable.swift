@@ -9,14 +9,26 @@
 import Foundation
 
 public class Cascadable {
-    var cascadeStack = [CVUParsedDefinition]()
+    var viewArguments: ViewArguments
+    var cascadeStack: [CVUParsedDefinition]
     var localCache = [String:Any]()
     
-    // TODO execute x when Expression
     func cascadeProperty<T>(_ name:String) -> T? {
+        if let expr = localCache[name] as? Expression {
+            do { return try expr.execForReturnType(viewArguments) }
+            catch let error {
+                errorHistory.error("\(error)")
+                return nil
+            }
+        }
+        
         if let x = localCache[name] as? T { return x }
         
         for def in cascadeStack {
+            if let expr = def[name] as? Expression {
+                localCache[name] = expr
+                return cascadeProperty(name)
+            }
             if let x = def[name] as? T {
                 localCache[name] = x
                 return x
@@ -72,5 +84,10 @@ public class Cascadable {
         
         localCache[name] = result
         return result
+    }
+    
+    init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments) {
+        self.viewArguments = viewArguments
+        self.cascadeStack = cascadeStack
     }
 }

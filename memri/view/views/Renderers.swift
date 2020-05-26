@@ -127,19 +127,14 @@ protocol CascadingRendererDefaults {
 //    }
 
 public class CascadingRenderConfig: Cascadable {
-    var viewArguments: ViewArguments
     
     required init(_ cascadeStack: [CVUParsedRendererDefinition], _ viewArguments: ViewArguments) {
-        self.viewArguments = viewArguments
-        super.init()
-        self.cascadeStack = cascadeStack
+        super.init(cascadeStack, viewArguments)
     }
-    
     
     func hasGroup(_ group:String) -> Bool {
         cascadeProperty(group) != nil
     }
-    
     
     func getGroupOptions(_ group:String) -> [String:Any?] {
         if let renderGroup = getRenderGroup(group) {
