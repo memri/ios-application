@@ -12,8 +12,8 @@ import RealmSwift
 public class Expression : CVUToString {
     let code: String
     let startInStringMode: Bool
-    var lookup: (ExprLookupNode, ViewArguments) throws -> Any
-    var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+    var lookup: (ExprLookupNode, ViewArguments) throws -> Any?
+    var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
     
     var main:Main? = nil
     
@@ -37,8 +37,8 @@ public class Expression : CVUToString {
     }
     
     init(_ code:String, startInStringMode:Bool,
-           lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
-           execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
+           lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
+           execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
         
         self.code = code
         self.startInStringMode = startInStringMode
@@ -47,8 +47,8 @@ public class Expression : CVUToString {
     }
     
     public func isTrue() throws -> Bool {
-        let x = try self.execute()
-        return ExprInterpreter.evaluateBoolean(x)
+        let x:Bool? = try self.execForReturnType()
+        return x ?? false
     }
     
     public func toggleBool() throws {
@@ -58,9 +58,9 @@ public class Expression : CVUToString {
             var sequence = node.sequence
             if let lastProperty = sequence.popLast() as? ExprVariableNode {
                 let lookupNode = ExprLookupNode(sequence: sequence)
-                print(lookupNode)
                 let lookupValue = try self.lookup(lookupNode, ViewArguments())
-                if let obj = try lookupValue as? Object, let main = main {
+                
+                if let obj = lookupValue as? Object, let main = main {
                     realmWriteIfAvailable(main.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
@@ -68,10 +68,17 @@ public class Expression : CVUToString {
                     return
                 }
                 // TODO FIX: Implement LookUpAble
-                else if let obj = try lookupValue as? Main, let main = main{
+                else if let obj = lookupValue as? Main, let main = main{
                     realmWriteIfAvailable(main.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                    }
+                    return
+                }
+                else if let obj = lookupValue as? UserState, let main = main{
+                    realmWriteIfAvailable(main.realm) {
+                        obj.set(lastProperty.name,
+                                !ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
                     }
                     return
                 }

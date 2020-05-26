@@ -1,8 +1,6 @@
 //
 //  Compiler.swift
-//  memri-parser
 //
-//  Created by Ruben Daniels on 5/14/20.
 //  Copyright © 2020 Memri. All rights reserved.
 //
 
@@ -10,13 +8,13 @@ import Foundation
 
 class ExprInterpreter {
     let ast: ExprNode
-    let lookup: (ExprLookupNode, ViewArguments) throws -> Any
-    let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+    let lookup: (ExprLookupNode, ViewArguments) throws -> Any?
+    let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
     var stack: [Any] = []
     
     init(_ ast: ExprNode,
-         _ lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
-         _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
+         _ lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
+         _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
         
         self.ast = ast
         self.lookup = lookup
@@ -112,7 +110,7 @@ class ExprInterpreter {
         else if let expr = expr as? ExprStringModeNode {
             var result = [String]()
             for expr in expr.expressions {
-                result.append(try execSingle(expr, args) as? String ?? "[Error]")
+                result.append(try execSingle(expr, args) as? String ?? "[Expression Error]")
             }
             return result.joined()
         }
@@ -128,7 +126,8 @@ class ExprInterpreter {
             return IP.evaluateNumber(result)
         }
         else if let expr = expr as? ExprLookupNode {
-            return try lookup(expr, args)
+            let x = try lookup(expr, args)
+            return x
         }
         else if let expr = expr as? ExprCallNode {
             let fArgs:[Any] = try expr.arguments.map { return try execSingle($0, args) as Any }

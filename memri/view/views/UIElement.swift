@@ -11,9 +11,9 @@ import RealmSwift
 public class UIElement : CVUToString {
     var type: UIElementFamily
     var children: [UIElement] = []
-    var properties: [String:Any] = [:] // TODO ViewParserDefinitionContext
+    var properties: [String:Any?] = [:] // TODO ViewParserDefinitionContext
     
-    init(_ type: UIElementFamily, children: [UIElement]? = nil, properties: [String:Any] = [:]) {
+    init(_ type: UIElementFamily, children: [UIElement]? = nil, properties: [String:Any?] = [:]) {
         self.type = type
         self.children = children ?? self.children
         self.properties = properties
@@ -129,7 +129,7 @@ public enum UIElementProperties : String, CaseIterable {
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
-    func validate(_ key:String, _ value:Any) -> Bool {
+    func validate(_ key:String, _ value:Any?) -> Bool {
         if value is Expression { return true }
         
         let prop = UIElementProperties(rawValue: key)
@@ -146,37 +146,37 @@ public enum UIElementProperties : String, CaseIterable {
         case .image: return value is File || value is String
         case .press: return value is Action || value is [Action]
         case .list: return value is [DataItem]
-        case .view: return value is CVUParsedDefinition || value is [String:Any]
-        case .arguments: return value is [String:Any]
+        case .view: return value is CVUParsedDefinition || value is [String:Any?]
+        case .arguments: return value is [String:Any?]
         case .location: return value is Location
         case .address: return value is Address
         case .value: return true
         case .datasource: return value is Datasource
         case .color, .background, .rowbackground: return value is Color
         case .font:
-            if let list = value as? [Any] {
+            if let list = value as? [Any?] {
                 return list[0] is CGFloat || list[0] is CGFloat && list[1] is Font.Weight
             }
             else { return value is CGFloat }
         case .padding, .margin:
-            if let list = value as? [Any] {
+            if let list = value as? [Any?] {
                 return list[0] is CGFloat && list[1] is CGFloat
                     && list[2] is CGFloat && list[3] is CGFloat
             }
             else { return value is CGFloat }
         case .border:
-            if let list = value as? [Any] {
+            if let list = value as? [Any?] {
                 return list[0] is Color && list[1] is CGFloat
             }
             else { return false }
         case .shadow:
-            if let list = value as? [Any] {
+            if let list = value as? [Any?] {
                 return list[0] is Color && list[1] is CGFloat
                     && list[2] is CGFloat && list[3] is CGFloat
             }
             else { return false }
         case .offset:
-            if let list = value as? [Any] {
+            if let list = value as? [Any?] {
                 return list[0] is CGFloat && list[1] is CGFloat
             }
             else { return false }

@@ -15,12 +15,12 @@ class CVUParser {
     var index = 0
     var lastToken:CVUToken? = nil
     
-    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
-    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+    private let lookup: (ExprLookupNode, ViewArguments) throws -> Any?
+    private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
 
     init(_ tokens: [CVUToken], _ main:Main,
-         lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
-         execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
+         lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
+         execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
         
         self.main = main
         self.tokens = tokens
@@ -205,9 +205,9 @@ class CVUParser {
                           lookup: lookup, execFunc: execFunc)
     }
     
-    func parseDict(_ uiElementName:String? = nil) throws -> [String:Any] {
-        var dict = [String:Any]()
-        var stack = [Any]()
+    func parseDict(_ uiElementName:String? = nil) throws -> [String:Any?] {
+        var dict = [String:Any?]()
+        var stack = [Any?]()
         
         let forUIElement = knownUIElements[uiElementName?.lowercased() ?? ""] != nil
         var lastKey:String? = nil
@@ -232,7 +232,7 @@ class CVUParser {
             }
         }
         
-        func addUIElement(_ type:UIElementFamily, _ properties: inout [String:Any]){
+        func addUIElement(_ type:UIElementFamily, _ properties: inout [String:Any?]){
             var children = dict["children"] as? [UIElement] ?? [UIElement]()
             let subChildren = properties.removeValue(forKey: "children")
             children.append(UIElement(type,
@@ -317,7 +317,7 @@ class CVUParser {
                     }
                     else {
                         if let type = knownUIElements[value.lowercased()] {
-                            var properties:[String:Any] = [:]
+                            var properties:[String:Any?] = [:]
                             if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
                                 _ = popCurrentToken()
                                 properties = try parseDict(value)
@@ -450,7 +450,7 @@ class CVUParser {
     let frameProperties = ["minwidth":1, "maxwidth":1, "minheight":1, "maxheight":1, "align":1]
     // Based on key when its added to the dict (only needed within rendererDefinition / UIElement)
     let specialTypedProperties = [
-        "alignment": { (value:Any, type:String) -> Any in
+        "alignment": { (value:Any?, type:String) -> Any? in
             switch value as? String {
             case "left": return HorizontalAlignment.leading
             case "top": return VerticalAlignment.top
@@ -465,7 +465,7 @@ class CVUParser {
                 return value // TODO Test if this crashes the view renderer
             }
         },
-        "align": { (value:Any, type:String) -> Any in
+        "align": { (value:Any?, type:String) -> Any? in
             switch value as? String{
             case "left": return Alignment.leading
             case "top": return Alignment.top
@@ -480,7 +480,7 @@ class CVUParser {
                 return value // TODO Test if this crashes the view renderer
             }
         },
-        "textalign": { (value:Any, type:String) -> Any in
+        "textalign": { (value:Any?, type:String) -> Any? in
             switch value as? String {
             case "left": return TextAlignment.leading
             case "center": return TextAlignment.center
@@ -489,8 +489,8 @@ class CVUParser {
                 return value // TODO Test if this crashes the view renderer
             }
         },
-        "font": { (input:Any, type:String) -> Any in
-            if var value = input as? [Any] {
+        "font": { (input:Any?, type:String) -> Any? in
+            if var value = input as? [Any?] {
                 if let _ = value[0] as? CGFloat {
                     if value.count == 1 {
                         value.append(Font.Weight.regular)
@@ -517,7 +517,7 @@ class CVUParser {
         }
     ]
     
-    func processCompoundProperties(_ dict: inout [String:Any]) {
+    func processCompoundProperties(_ dict: inout [String:Any?]) {
         for (name,_) in frameProperties {
             if dict[name] != nil {
 
@@ -541,10 +541,10 @@ class CVUParser {
         }
 
         if dict["cornerradius"] != nil && dict["border"] != nil {
-            var value = dict["border"] as? [Any] ?? []
+            var value = dict["border"] as? [Any?] ?? []
             value.append(dict["cornerradius"] ?? 0)
 
-            dict["cornerborder"] = value as Any
+            dict["cornerborder"] = value as Any?
             dict["border"] = nil
         }
     }

@@ -53,8 +53,6 @@ public class Datasource: Object, UniqueString {
         super.init()
     }
     
-
-    
     public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition,
                                         _ viewArguments: ViewArguments?) throws -> Datasource {
         
@@ -123,6 +121,25 @@ public class CascadingDatasource: Cascadable, UniqueString {
         
         self.datasource = datasource
         super.init(cascadeStack, viewArguments)
+    }
+    
+    subscript(propName:String) -> Any? {
+        get {
+            switch (propName) {
+            case "query": return query
+            case "sortProperty": return sortProperty
+            case "sortAscending": return sortAscending
+            default: return nil
+            }
+        }
+        set (value) {
+            switch (propName) {
+            case "query": return datasource.query = value as? String ?? ""
+            case "sortProperty": return datasource.sortProperty = value as? String ?? ""
+            case "sortAscending": return datasource.sortAscending.value = value as? Bool ?? true
+            default: return
+            }
+        }
     }
 }
 
