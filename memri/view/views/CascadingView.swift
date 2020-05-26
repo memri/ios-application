@@ -58,6 +58,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     var resultSet: ResultSet {
+        
         if let x = localCache["resultSet"] as? ResultSet {
             print("RESULT: \(x.items.count)")
             return x
