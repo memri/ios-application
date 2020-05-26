@@ -56,6 +56,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         // Update search result to match the query
         // NOTE: allowed force unwrap
+        
         let resultSet = main!.cache.getResultSet(self.datasource.flattened())
         localCache["resultSet"] = resultSet
 

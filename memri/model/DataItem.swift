@@ -15,8 +15,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// uid of the DataItem
     @objc dynamic var uid:String = DataItem.generateUUID()
+    /// memriID of the DataItem
+    @objc dynamic var memriID:String =  DataItem.generateUUID()
     /// Boolean whether the DataItem has been deleted
     @objc dynamic var deleted:Bool = false
+    /// The last version loaded from the server
+    @objc dynamic var version:Int = 0
     /// Boolean whether the DataItem has been starred
     @objc dynamic var starred:Bool = false
     /// Creation date of the DataItem
@@ -81,6 +85,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         uid = try decoder.decodeIfPresent("uid") ?? uid
         starred = try decoder.decodeIfPresent("starred") ?? starred
         deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+        version = try decoder.decodeIfPresent("version") ?? version
         syncState = try decoder.decodeIfPresent("syncState") ?? syncState
         
         dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
@@ -237,7 +242,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
             if syncState.actionNeeded == "delete" { return true }
             
             // Do not update when the version is not higher then what we already have
-            if syncState.version <= syncState.version { return true }
+            if item.version <= self.version { return true }
             
             // Make sure to not overwrite properties that have been changed
             let updatedFields = syncState.updatedFields

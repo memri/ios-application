@@ -145,7 +145,7 @@ class CacheTest: XCTestCase {
         let cls = item!.getType()
 
         for prop in item!.objectSchema.properties{
-            if prop.name != cls.primaryKey(){
+            if prop.name != cls!.primaryKey(){
                 _ = item!.isEqualProperty(prop.name, copy)
             }
         }   
