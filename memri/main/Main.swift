@@ -125,7 +125,10 @@ public class Main: ObservableObject {
             if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
                 if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
                     realmWriteIfAvailable(realm) {
-                        currentView.datasource = Datasource.fromCVUDefinition(ds)
+                        // TODO this is at the wrong moment. Should be done after cascading
+                        
+                        currentView.datasource =
+                            try Datasource.fromCVUDefinition(ds, currentView.viewArguments)
                     }
                 }
                 else {

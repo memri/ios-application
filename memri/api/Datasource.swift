@@ -56,24 +56,21 @@ public class Datasource: Object, UniqueString {
 
     
     public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition,
-                                        _ viewArguments: ViewArguments) throws -> Datasource {
+                                        _ viewArguments: ViewArguments?) throws -> Datasource {
         
-//        func maybeExecute(expression: String) {
-//            
-//        }
+        func getValue<T>(_ name:String) throws -> T? {
+            if let expr = def[name] as? Expression{
+                let x:T? = try expr.execForReturnType(viewArguments)
+                return x
+            }
+            return def[name] as? T
+        }
         
-        var query: String?
-        if let expr = def["query"] as? Expression{
-            query = try expr.execForReturnType(viewArguments) ?? ""
-        }
-        else {
-            query = def["query"] as? String ?? ""
-        }
         return Datasource(value: [
             "selector": def.selector ?? "[datasource]",
-            "query": query,
-            "sortProperty": def["sortProperty"] as? String ?? "",
-            "sortAscending": def["sortAscending"] as? Bool ?? true
+            "query": try getValue("query") ?? "",
+            "sortProperty": try getValue("sortProperty") ?? "",
+            "sortAscending": try getValue("sortAscending") ?? true
         ])
     }
 }

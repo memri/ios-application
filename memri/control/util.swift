@@ -207,17 +207,22 @@ func negateAny(_ value:Any) -> Bool {
     return false
 }
 
-func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() -> Void) {
+func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     // TODO Refactor, Error Handling , _ error:(error) -> Void  ??
-    if let realm = realm {
-        if !realm.isInWriteTransaction {
-            try! realm.write { doWrite() }
+    do {
+        if let realm = realm {
+            if !realm.isInWriteTransaction {
+                try! realm.write { try doWrite() }
+            }
+            else {
+                try doWrite()
+            }
         }
         else {
-            doWrite()
+            try doWrite()
         }
     }
-    else {
-        doWrite()
+    catch let error {
+        errorHistory.error("Realm Error: \(error)")
     }
 }
