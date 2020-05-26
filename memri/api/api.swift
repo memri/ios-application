@@ -280,7 +280,6 @@ public class PodAPI {
                 do {
                     var str = String(data: data, encoding: .utf8) ?? ""
                     
-                    
                     var items:[DataItem]?
                     try JSONErrorReporter() {
                         items = try MemriJSONDecoder

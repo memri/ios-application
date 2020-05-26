@@ -2,7 +2,7 @@
     "/general/gui/showEditButton": false,
     "/general/gui/showDateAgo": true,
     "/formatting/date": "yyyy/MM/dd HH:mm",
-    "/pod/host": "http://localhost:3030",
-    "/pod/username": "example",
-    "/pod/password": "secret"
+    "/pod/host": "http://64.225.81.232:80",
+    "/pod/username": "polis",
+    "/pod/password": "#6spoT?9J8$h"
 }

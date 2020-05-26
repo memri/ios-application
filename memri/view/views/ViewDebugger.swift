@@ -149,7 +149,7 @@ class ErrorHistory: ObservableObject {
 // Intentionally global
 var errorHistory = ErrorHistory()
 
-struct ErrorConsole: View {
+struct  ErrorConsole: View {
     @EnvironmentObject var main: Main
     
     @ObservedObject var history = errorHistory

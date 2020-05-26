@@ -10,6 +10,10 @@ import Combine
 
 let _keyBoardResponder = KeyboardResponder()
 
+import SwiftUI
+import Combine
+
+
 struct Browser: View {
     @EnvironmentObject var main: Main
     @ObservedObject var keyboardResponder = _keyBoardResponder
@@ -25,6 +29,7 @@ struct Browser: View {
 //                }.fullHeight()
                 Search()
                     .offset(y: min(0, -keyboardResponder.currentHeight+20))
+//                .KeyboardAwarePadding()
             }.fullHeight()
             
             ContextPane()
