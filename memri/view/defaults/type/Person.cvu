@@ -387,7 +387,7 @@ Person[] {
                         text: "Brother"
                         font: 14 regular
                         color: #888
-                        padding: 0050
+                        padding: 0 0 5 0 
                     }
                 }
             }
