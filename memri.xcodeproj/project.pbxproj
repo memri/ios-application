@@ -76,8 +76,8 @@
 		5D9637B9244DBC400053EB84 /* OrderedDictionary in Frameworks */ = {isa = PBXBuildFile; productRef = 5D9637B8244DBC400053EB84 /* OrderedDictionary */; };
 		5D98DBD9243B598100046F3E /* MainActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D98DBD8243B598100046F3E /* MainActions.swift */; };
 		5DAFB6112479521D00719160 /* Any.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6102479521D00719160 /* Any.cvu */; };
-		5DAFB6132479523B00719160 /* List.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6122479523B00719160 /* List.cvu */; };
-		5DAFB6152479524500719160 /* Thumbnail.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6142479524500719160 /* Thumbnail.cvu */; };
+		5DAFB6132479523B00719160 /* list.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6122479523B00719160 /* list.cvu */; };
+		5DAFB6152479524500719160 /* thumbnail.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6142479524500719160 /* thumbnail.cvu */; };
 		5DAFB6192479525900719160 /* AuditItem.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6182479525900719160 /* AuditItem.cvu */; };
 		5DAFB61B2479526100719160 /* Label.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB61A2479526100719160 /* Label.cvu */; };
 		5DAFB61D2479526900719160 /* SessionView.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB61C2479526900719160 /* SessionView.cvu */; };
@@ -87,7 +87,7 @@
 		5DAFB6262479529900719160 /* Filter-starred.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6252479529900719160 /* Filter-starred.cvu */; };
 		5DAFB628247952A800719160 /* Choose-item-by-query.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB627247952A800719160 /* Choose-item-by-query.cvu */; };
 		5DAFB630247952D300719160 /* All-items-with-label.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB62F247952D300719160 /* All-items-with-label.cvu */; };
-		5DAFB633247952F500719160 /* UserNote.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB632247952F500719160 /* UserNote.cvu */; };
+		5DAFB633247952F500719160 /* UserNote.cvu-disabled in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB632247952F500719160 /* UserNote.cvu-disabled */; };
 		5DAFB6382479533000719160 /* Sessions.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5DAFB6372479533000719160 /* Sessions.cvu */; };
 		5DAFB63A24796E1C00719160 /* CombineViewFilesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */; };
 		5DB3466324585246008FE8A9 /* FileTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB3466124585246008FE8A9 /* FileTest.swift */; };
@@ -319,8 +319,8 @@
 		5D90464E243616B000632492 /* color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = color.swift; sourceTree = "<group>"; };
 		5D98DBD8243B598100046F3E /* MainActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainActions.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5DAFB6102479521D00719160 /* Any.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Any.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		5DAFB6122479523B00719160 /* List.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = List.cvu; sourceTree = "<group>"; };
-		5DAFB6142479524500719160 /* Thumbnail.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Thumbnail.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		5DAFB6122479523B00719160 /* list.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = list.cvu; sourceTree = "<group>"; };
+		5DAFB6142479524500719160 /* thumbnail.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = thumbnail.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB6182479525900719160 /* AuditItem.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuditItem.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB61A2479526100719160 /* Label.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Label.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB61C2479526900719160 /* SessionView.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SessionView.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
@@ -330,7 +330,7 @@
 		5DAFB6252479529900719160 /* Filter-starred.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Filter-starred.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB627247952A800719160 /* Choose-item-by-query.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Choose-item-by-query.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB62F247952D300719160 /* All-items-with-label.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "All-items-with-label.cvu"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		5DAFB632247952F500719160 /* UserNote.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserNote.cvu; sourceTree = "<group>"; };
+		5DAFB632247952F500719160 /* UserNote.cvu-disabled */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "UserNote.cvu-disabled"; sourceTree = "<group>"; };
 		5DAFB6372479533000719160 /* Sessions.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Sessions.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5DAFB63924796E1C00719160 /* CombineViewFilesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineViewFilesTest.swift; sourceTree = "<group>"; };
 		5DB3466124585246008FE8A9 /* FileTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTest.swift; sourceTree = "<group>"; };
@@ -809,7 +809,7 @@
 		5DAFB631247952DF00719160 /* user */ = {
 			isa = PBXGroup;
 			children = (
-				5DAFB632247952F500719160 /* UserNote.cvu */,
+				5DAFB632247952F500719160 /* UserNote.cvu-disabled */,
 			);
 			path = user;
 			sourceTree = "<group>";
@@ -1097,8 +1097,6 @@
 				86CDB4782469CB6F007EAE67 /* Session.json */,
 				86CDB47A2469CC60007EAE67 /* Session.cvu */,
 				86CDB47E246A4570007EAE67 /* Note.cvu */,
-				5DAFB6122479523B00719160 /* List.cvu */,
-				5DAFB6142479524500719160 /* Thumbnail.cvu */,
 				5DAFB6182479525900719160 /* AuditItem.cvu */,
 				5DAFB61A2479526100719160 /* Label.cvu */,
 				5DAFB61C2479526900719160 /* SessionView.cvu */,
@@ -1116,6 +1114,8 @@
 			isa = PBXGroup;
 			children = (
 				86CDB481246A4D94007EAE67 /* generalEditor.cvu */,
+				5DAFB6142479524500719160 /* thumbnail.cvu */,
+				5DAFB6122479523B00719160 /* list.cvu */,
 			);
 			path = renderer;
 			sourceTree = "<group>";
@@ -1285,15 +1285,15 @@
 				5DAFB61F2479526F00719160 /* Country.cvu in Resources */,
 				866F87DC2456AD76000E5FAB /* person.0x011.json in Resources */,
 				86CDB4722469C45B007EAE67 /* named_sessions.json in Resources */,
-				5DAFB6132479523B00719160 /* List.cvu in Resources */,
+				5DAFB6132479523B00719160 /* list.cvu in Resources */,
 				5D4C71EA2445E07B00DF09E8 /* persons_from_server.json in Resources */,
 				865646332423A7D500D071B4 /* views_from_server.json in Resources */,
 				5DAFB6212479527600719160 /* Address.cvu in Resources */,
 				5DAFB628247952A800719160 /* Choose-item-by-query.cvu in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
-				5DAFB633247952F500719160 /* UserNote.cvu in Resources */,
+				5DAFB633247952F500719160 /* UserNote.cvu-disabled in Resources */,
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
-				5DAFB6152479524500719160 /* Thumbnail.cvu in Resources */,
+				5DAFB6152479524500719160 /* thumbnail.cvu in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
 				5DAFB6382479533000719160 /* Sessions.cvu in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,

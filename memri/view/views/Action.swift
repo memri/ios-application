@@ -390,7 +390,7 @@ class ActionOpenViewByName : Action, ActionExec {
 }
 class ActionToggleEditMode : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "icon": "rhombus.fill",
+        "icon": "pencil",
         "hasState": true,
         "binding": Expression("currentSession.editMode"),
         "activeColor": Color(hex: "#6aa84f"),
@@ -411,6 +411,7 @@ class ActionToggleEditMode : Action, ActionExec {
 }
 class ActionToggleFilterPanel : Action, ActionExec {
     override var defaultValues:[String:Any] {[
+        "icon": "rhombus.fill",
         "hasState": true,
         "binding": Expression("currentSession.showFilterPanel"),
         "activeColor": Color(hex: "#6aa84f")

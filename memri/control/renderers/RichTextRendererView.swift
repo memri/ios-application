@@ -16,7 +16,7 @@ let registerRichText = {
         title: "Default",
         order: 0,
         icon: "pencil",
-        view: AnyView(MapRendererView()),
+        view: AnyView(RichTextRendererView()),
         renderConfigType: CascadingRichTextEditorConfig.self,
         canDisplayResults: { items -> Bool in
             items.count > 0 && items.count == 1 && items[0] is Note
@@ -122,9 +122,8 @@ struct RichTextRendererView: View {
 
     var body: some View {
         let binding = Binding(
-            // NOTE: Allowed for unwrapping
-            get: { self.main.cascadingView.resultSet.singletonItem!.getString("title") },
-            set: { self.main.cascadingView.resultSet.singletonItem!.set("title", $0) }
+            get: { self.main.cascadingView.resultSet.singletonItem?.getString("title") ?? "" },
+            set: { self.main.cascadingView.resultSet.singletonItem?.set("title", $0) }
         )
         
         return VStack{

@@ -99,7 +99,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 .filter { $0.name == activeRenderer }.first
         }
         
-        let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \"\(activeRenderer)\"]")
+        let renderDSLDefinitions = main!.views.fetchDefinitions("[renderer = \(activeRenderer)]")
         for def in renderDSLDefinitions {
             do {
                 if let parsedRenderDef = try main?.views.parseDefinition(def) as? CVUParsedRendererDefinition {

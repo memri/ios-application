@@ -26,7 +26,8 @@ public class ResultSet: ObservableObject {
     private var _filterText: String = ""
     private var _unfilteredItems: [DataItem]? = nil
  
-    /// Computes a string representation of the resultset
+    /// Computes the type of the data items being requested via the query
+    /// Returns "mixed" when data items of multiple types can be returned
     var determinedType: String? {
         // TODO implement (more) proper query language (and parser)
         

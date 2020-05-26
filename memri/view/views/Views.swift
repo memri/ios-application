@@ -79,10 +79,10 @@ public class Views {
             if !validator.validate(parsedDefinitions) {
                 validator.debug()
                 if validator.warnings.count > 0 {
-                    // TODO REPORT TO USER
+                    for message in validator.warnings { errorHistory.warn(message) }
                 }
                 if validator.errors.count > 0 {
-                    // TODO REPORT TO USER
+                    for message in validator.errors { errorHistory.error(message) }
                     throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
                 }
             }
@@ -328,11 +328,29 @@ public class Views {
                 execFunc: executeFunction
             )
             try InMemoryObjectCache.set("memriID: \(viewDef.memriID)", viewDefParser)
-            return try viewDefParser.parse().first
+            
+            if let firstDefinition = try viewDefParser.parse().first {
+                // TODO potentially turn this off to optimize
+                let validator = CVUValidator()
+                if !validator.validate([firstDefinition]) {
+                    validator.debug()
+                    if validator.warnings.count > 0 {
+                        for message in validator.warnings { errorHistory.warn(message) }
+                    }
+                    if validator.errors.count > 0 {
+                        for message in validator.errors { errorHistory.error(message) }
+                        throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
+                    }
+                }
+                
+                return firstDefinition
+            }
         }
         else {
             throw "Exception: Missing view definition"
         }
+        
+        return nil
     }
     
     public func createCascadingView(_ sessionView:SessionView? = nil) throws -> CascadingView {
