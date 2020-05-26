@@ -85,7 +85,7 @@ struct ListRendererView: View {
 //
 //                        }
 //                    }
-                    TableView(main: self.main, canReorder: false)
+                    TableView<DataItem,GUIElementInstance>(main: self.main, canReorder: false)
                     .environment(\.editMode, $main.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
