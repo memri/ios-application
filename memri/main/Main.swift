@@ -226,7 +226,7 @@ public class Main: ObservableObject {
             realmWriteIfAvailable(realm) {
                 // TODO serialize
                 if let item = self.cascadingView.resultSet.singletonItem{
-                    self.realm.add(AuditItem(contents: serialize(AnyCodable(fields)),
+                    self.realm.add(AuditItem(contents: serialize(AnyCodable(Array(fields))),
                                              action: "update", appliesTo: [item]))
                     syncState.changedInThisSession = false
                 }

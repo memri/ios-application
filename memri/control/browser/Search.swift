@@ -18,6 +18,7 @@ struct Search: View {
             HStack{
                 TextField(main.cascadingView.searchHint,
                           text: $main.cascadingView.filterText)
+                Text(main.cascadingView.searchMatchText)
                 
                 ForEach(main.cascadingView.filterButtons, id: \.self){ filterButton in
                     ActionButton(action: filterButton)

@@ -293,10 +293,23 @@ open class LEOTextView: UITextView {
         let htmlData = NSString(string: contents).data(using: String.Encoding.unicode.rawValue)
         let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
                 NSAttributedString.DocumentType.html]
-        let attributedString = try? NSMutableAttributedString(data: htmlData ?? Data(),
-                                                                  options: options,
-                                                                  documentAttributes: nil)
-        if attributedString?.string != "" {
+        
+        let attributedString: NSMutableAttributedString
+        do {
+            if let htmlData = htmlData{
+                attributedString = try NSMutableAttributedString(data: htmlData, options: options,
+                                                                 documentAttributes: nil)
+            }
+            else {
+                throw "could not create AttributedString from html"
+            }
+        }
+        catch{
+            print("Error: Could not transfer htmlContent to MutableAttributedString")
+            attributedString = NSMutableAttributedString()
+        }
+
+        if attributedString.string != "" {
             self.attributedText = attributedString
         }
         else {
