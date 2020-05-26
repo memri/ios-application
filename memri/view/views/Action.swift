@@ -164,10 +164,12 @@ public class Action : HashableClass, CVUToString {
             : "\(name)"
     }
     
-//    // TODO call without exec
-//    class func execWithoutThrow(_ main:Main, ) {
-//        
-//    }
+    class func execWithoutThrow(exec:() throws -> Void) {
+        do { try exec() }
+        catch let error {
+            errorHistory.error("Could not execute action: \(error)")
+        }
+    }
 }
 
 public enum RenderType: String{
@@ -260,7 +262,7 @@ class ActionBack : Action, ActionExec {
     }
     
     class func exec(_ main:Main, arguments:[String: Any]) throws {
-        try ActionBack(main).exec(arguments)
+        execWithoutThrow { try ActionBack(main).exec(arguments) }
     }
 }
 class ActionAddDataItem : Action, ActionExec {
@@ -295,7 +297,7 @@ class ActionAddDataItem : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionAddDataItem(main).exec(arguments)
+        execWithoutThrow { try ActionAddDataItem(main).exec(arguments) }
     }
 }
 
@@ -375,7 +377,7 @@ class ActionAddDataItem : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenView(main).exec(arguments)
+        execWithoutThrow { try ActionOpenView(main).exec(arguments) }
     }
 }
 class ActionOpenViewByName : Action, ActionExec {
@@ -413,7 +415,7 @@ class ActionOpenViewByName : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenViewByName(main).exec(arguments)
+        execWithoutThrow { try ActionOpenViewByName(main).exec(arguments) }
     }
 }
 class ActionToggleEditMode : Action, ActionExec {
@@ -433,7 +435,7 @@ class ActionToggleEditMode : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionToggleEditMode(main).exec(arguments)
+        execWithoutThrow { try ActionToggleEditMode(main).exec(arguments) }
     }
 }
 class ActionToggleFilterPanel : Action, ActionExec {
@@ -452,7 +454,7 @@ class ActionToggleFilterPanel : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionToggleFilterPanel(main).exec(arguments)
+        execWithoutThrow { try ActionToggleFilterPanel(main).exec(arguments) }
     }
 }
 class ActionStar : Action, ActionExec {
@@ -488,7 +490,7 @@ class ActionStar : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionStar.exec(main, arguments)
+        execWithoutThrow { try ActionStar.exec(main, arguments) }
     }
 }
 class ActionShowStarred : Action, ActionExec {
@@ -522,7 +524,7 @@ class ActionShowStarred : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionShowStarred(main).exec(arguments)
+        execWithoutThrow { try ActionShowStarred(main).exec(arguments) }
     }
 }
 class ActionShowContextPane : Action, ActionExec {
@@ -540,7 +542,7 @@ class ActionShowContextPane : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionShowContextPane(main).exec(arguments)
+        execWithoutThrow { try ActionShowContextPane(main).exec(arguments) }
     }
 }
 class ActionShowNavigation : Action, ActionExec {
@@ -559,7 +561,7 @@ class ActionShowNavigation : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionShowNavigation.exec(main, arguments)
+        execWithoutThrow { try ActionShowNavigation.exec(main, arguments) }
     }
 }
 class ActionSchedule : Action, ActionExec {
@@ -621,7 +623,7 @@ class ActionForward : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionForward(main).exec(arguments)
+        execWithoutThrow { try ActionForward(main).exec(arguments) }
     }
 }
 class ActionForwardToFront : Action, ActionExec {
@@ -642,7 +644,7 @@ class ActionForwardToFront : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionForwardToFront.exec(main, arguments)
+        execWithoutThrow { try ActionForwardToFront.exec(main, arguments) }
     }
 }
 class ActionBackAsSession : Action, ActionExec {
@@ -676,7 +678,7 @@ class ActionBackAsSession : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionBackAsSession.exec(main, arguments)
+        execWithoutThrow { try ActionBackAsSession.exec(main, arguments) }
     }
 }
 
@@ -729,7 +731,7 @@ class ActionOpenSession : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenSession.exec(main, arguments)
+        execWithoutThrow { try ActionOpenSession.exec(main, arguments) }
     }
 }
 // TODO How to deal with viewArguments in sessions
@@ -755,30 +757,38 @@ class ActionOpenSessionByName : Action, ActionExec {
                 // See if this is a session, if so take the last view
                 if let def = def as? CVUParsedSessionDefinition {
                     let session = Session()
-                    let list:[SessionView] = (def["views"] as? [[String:Any]])?.compactMap {
-                        let viewDef = CVUParsedViewDefinition(DataItem.generateUUID())
-                        viewDef.parsed = $0
+                    if let viewDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition] {
+                        var list:[SessionView] = []
                         
-                        return SessionView(value:[
-                            "viewDefinition": viewDef,
-                            "viewArguments": viewArguments as Any
-                        ])
-                    } ?? []
-                    session["views"] = list
+                        for viewDef in viewDefs {
+                            list.append(SessionView(value: [
+                                "viewDefinition": viewDef,
+                                "viewArguments": viewArguments as Any?
+                            ]))
+                        }
+                        
+                        if list.count == 0 {
+                            throw "Exception: Session \(name) has no views."
+                        }
+                        
+                        session["views"] = list
+                    }
+                    else {
+                        throw "Exception: Session \(name) has no views."
+                    }
                     
                     // Open the view
                     ActionOpenSession(main).openSession(main, session)
                 }
                 else {
                     // TODO Error handling
-                    throw "Cannot execute ActionOpenSessionByName: session with name \(name) " +
+                    throw "Exception: Cannot open session with name \(name) " +
                           "cannot be casted as CVUParsedSessionDefinition"
                 }
             }
             catch let error {
                 // TODO: Log error, Error handling
-                print("COULD NOT OPEN SESSION \(error)")
-                throw "Cannot execute ActionOpenSessionByName: \(error)"
+                throw "Exception: Cannot open session by name \(name): \(error)"
 
             }
         }
@@ -789,7 +799,7 @@ class ActionOpenSessionByName : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionOpenSessionByName(main).exec(arguments)
+        execWithoutThrow { try ActionOpenSessionByName(main).exec(arguments) }
     }
 }
 
@@ -825,7 +835,7 @@ class ActionDelete : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionDelete(main).exec(arguments)
+        execWithoutThrow { try ActionDelete(main).exec(arguments) }
     }
 }
 class ActionDuplicate : Action, ActionExec {
@@ -847,7 +857,7 @@ class ActionDuplicate : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionDuplicate.exec(main, arguments)
+        execWithoutThrow { try ActionDuplicate.exec(main, arguments) }
     }
 }
 class ActionClosePopup : Action, ActionExec {
@@ -860,7 +870,7 @@ class ActionClosePopup : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionClosePopup(main).exec(arguments)
+        execWithoutThrow { try ActionClosePopup(main).exec(arguments) }
     }
 }
 
@@ -886,7 +896,7 @@ class ActionSetProperty : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionSetProperty(main).exec(arguments)
+        execWithoutThrow { try ActionSetProperty(main).exec(arguments) }
     }
 }
 
@@ -900,7 +910,7 @@ class ActionNoop : Action, ActionExec {
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
-        try ActionClosePopup(main).exec(arguments)
+        execWithoutThrow { try ActionClosePopup(main).exec(arguments) }
     }
 }
 

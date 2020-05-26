@@ -43,13 +43,13 @@ class ExprInterpreter {
         else { return .nan }
     }
     
-    class func evaluateString(_ x:Any?) -> String {
+    class func evaluateString(_ x:Any?, _ defaultValue:String = "") -> String {
         if let x = x as? Bool { return x ? "true" : "false" }
         else if let x = x as? Int { return String(x) }
         else if let x = x as? Double { return String(x) }
         else if let x = x as? String { return x }
-        else if x == nil { return "" }
-        else { return "" }
+        else if x == nil { return defaultValue }
+        else { return defaultValue }
     }
     
     func compare(_ a:Any?, _ b:Any?) -> Bool {
@@ -110,7 +110,7 @@ class ExprInterpreter {
         else if let expr = expr as? ExprStringModeNode {
             var result = [String]()
             for expr in expr.expressions {
-                result.append(try execSingle(expr, args) as? String ?? "[Expression Error]")
+                result.append(IP.evaluateString(try execSingle(expr, args), ""))
             }
             return result.joined()
         }
