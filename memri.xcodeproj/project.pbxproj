@@ -51,6 +51,9 @@
 		5D44D5292458581A004796BA /* testfile.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5D44D5282458581A004796BA /* testfile.txt */; };
 		5D44D52A24585E0B004796BA /* testfile.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5D44D5282458581A004796BA /* testfile.txt */; };
 		5D44D52C24589E7E004796BA /* NavigationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D44D52B24589E7E004796BA /* NavigationTest.swift */; };
+		5D4768E0247D24B800008CA2 /* exampleNote.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4768DF247D24B700008CA2 /* exampleNote.html */; };
+		5D4768E4247D274800008CA2 /* HTMLNoteTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4768E3247D274800008CA2 /* HTMLNoteTest.swift */; };
+		5D4768E5247D28F800008CA2 /* exampleNote.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4768DF247D24B700008CA2 /* exampleNote.html */; };
 		5D487F22244073DF00B50202 /* UIElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D487F21244073DF00B50202 /* UIElementView.swift */; };
 		5D487F242440772100B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
 		5D487F252440772D00B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
@@ -291,6 +294,8 @@
 		5D42A8F6245AF1ED0093D85F /* DataItemTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemTest.swift; sourceTree = "<group>"; };
 		5D44D5282458581A004796BA /* testfile.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = testfile.txt; sourceTree = "<group>"; };
 		5D44D52B24589E7E004796BA /* NavigationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
+		5D4768DF247D24B700008CA2 /* exampleNote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = exampleNote.html; sourceTree = "<group>"; };
+		5D4768E3247D274800008CA2 /* HTMLNoteTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLNoteTest.swift; sourceTree = "<group>"; };
 		5D487F21244073DF00B50202 /* UIElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElementView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D487F232440772100B50202 /* list_item_component.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = list_item_component.json; sourceTree = "<group>"; };
 		5D487F262440776700B50202 /* ItemRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ItemRendererTest.swift; path = memriTests/data/ItemRendererTest.swift; sourceTree = SOURCE_ROOT; };
@@ -542,6 +547,7 @@
 				86677DEA242A6751007A4782 /* CacheTest.swift */,
 				5DB66FB62431DEB0007736D6 /* realmTest.swift */,
 				5D42A8F6245AF1ED0093D85F /* DataItemTest.swift */,
+				5D4768E3247D274800008CA2 /* HTMLNoteTest.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -632,6 +638,7 @@
 		5D3EE56F24476FFB00562AAC /* notes */ = {
 			isa = PBXGroup;
 			children = (
+				5D4768DF247D24B700008CA2 /* exampleNote.html */,
 				5D3EE57024476FFB00562AAC /* note.0x02.json */,
 				5D3EE57124476FFB00562AAC /* note.0x03.json */,
 				5D3EE57224476FFB00562AAC /* note.0x04.json */,
@@ -1302,6 +1309,7 @@
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
 				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
 				8699AA32247BCF3E00EC85C0 /* Person.cvu in Resources */,
+				5D4768E5247D28F800008CA2 /* exampleNote.html in Resources */,
 				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
 				86229DCD243509F60013750A /* default_settings.json in Resources */,
 				86CDB4762469C542007EAE67 /* template_views.json in Resources */,
@@ -1336,6 +1344,7 @@
 				5D3EE57924476FFB00562AAC /* note.0x01.json in Resources */,
 				86A5D848243EC46700F8FAD8 /* named_views.json in Resources */,
 				861439F52435AF8C008D6B5B /* test_sessions.json in Resources */,
+				5D4768E0247D24B800008CA2 /* exampleNote.html in Resources */,
 				5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */,
 				5D4C71E92445E07500DF09E8 /* persons_from_server.json in Resources */,
 				5D3EE57624476FFB00562AAC /* note.0x03.json in Resources */,
@@ -1597,6 +1606,7 @@
 				5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */,
 				5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */,
 				5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */,
+				5D4768E4247D274800008CA2 /* HTMLNoteTest.swift in Sources */,
 				5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */,
 				5DB66FB52431DD41007736D6 /* mainTest.swift in Sources */,
 				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,

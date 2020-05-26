@@ -8,13 +8,14 @@
 import SwiftUI
 import Combine
 
+let _keyBoardResponder = KeyboardResponder()
+
 struct Browser: View {
     @EnvironmentObject var main: Main
-    
-    @ObservedObject var keyboardResponder = KeyboardResponder()
+    @ObservedObject var keyboardResponder = _keyBoardResponder
     
     var body: some View {
-        ZStack {
+        return ZStack {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
 //                Loading(isShowing: .constant(self.main.cascadingView.resultSet.isLoading)) {

@@ -150,7 +150,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 class Note:DataItem {
     @objc dynamic var title:String? = nil
     @objc dynamic var content:String? = nil
-    @objc dynamic var rtfContent:String? = nil
+    @objc dynamic var htmlContent:String? = nil
 
 
     override var genericType:String { "Note" }
@@ -173,7 +173,7 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
-            rtfContent = try decoder.decodeIfPresent("rtfContent") ?? rtfContent
+            htmlContent = try decoder.decodeIfPresent("htmlContent") ?? htmlContent
             
             try self.superDecode(from: decoder)
         }

@@ -67,3 +67,22 @@ extension String {
         return NSString(string: self).length
     }
 }
+
+extension NSAttributedString {
+    func toHTML() -> String {
+        do {
+            let htmlData = try self.data(from: NSRange(location: 0, length: self.length), documentAttributes:[.documentType: NSAttributedString.DocumentType.html]);
+            let string = String.init(data: htmlData, encoding: String.Encoding.utf8)
+            if let string = string {
+                return string
+            }
+            else {
+                 print("could not vert NSAttributedString to html")
+                return ""
+            }
+        } catch {
+            print("Error, could not vert NSAttributedString to html:", error)
+            return ""
+        }
+    }
+}
