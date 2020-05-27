@@ -84,7 +84,7 @@ public class UIElement : CVUToString {
     
     func processText(_ text: String) -> String{
         var outText = text
-        let maxChar:CGFloat? = get("maxchar")
+        let maxChar:CGFloat? = get("maxChar")
         
         outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
         outText = maxChar != nil ? String(outText.prefix(Int(maxChar!))) : outText

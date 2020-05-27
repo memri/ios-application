@@ -212,6 +212,8 @@ func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     do {
         if let realm = realm {
             if !realm.isInWriteTransaction {
+                // TODO: Error handling (this can happen for instance if you pass a
+                // non existing property string to dataItem.set())
                 try! realm.write { try doWrite() }
             }
             else {
