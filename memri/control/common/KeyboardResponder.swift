@@ -26,7 +26,7 @@ class KeyboardResponder: ObservableObject {
     //5.1. Update the currentHeight variable when the keyboards gets toggled
     @objc func keyBoardWillShow(notification: Notification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            withAnimation(.easeOut(duration: 0.31)) {
+            withAnimation(.easeOut(duration: 0.31)) {                
                currentHeight = keyboardSize.height
             }
         }

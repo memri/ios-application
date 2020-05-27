@@ -167,6 +167,18 @@
 		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
 		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
 		86CDB46C24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */; };
+		86CDB4702469C3E9007EAE67 /* default_user_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB46F2469C3E9007EAE67 /* default_user_views.json */; };
+		86CDB4722469C45B007EAE67 /* named_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB4712469C45B007EAE67 /* named_sessions.json */; };
+		86CDB4742469C49F007EAE67 /* macro_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB4732469C49F007EAE67 /* macro_views.json */; };
+		86CDB4762469C542007EAE67 /* template_views.json in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB4752469C542007EAE67 /* template_views.json */; };
+		86CDB4792469CB6F007EAE67 /* Session.json in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB4782469CB6F007EAE67 /* Session.json */; };
+		86CDB47B2469CC60007EAE67 /* Session.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB47A2469CC60007EAE67 /* Session.ml */; };
+		86CDB47F246A4570007EAE67 /* Note.ml in Resources */ = {isa = PBXBuildFile; fileRef = 86CDB47E246A4570007EAE67 /* Note.ml */; };
+		86CDB482246A4D94007EAE67 /* generalEditor.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB481246A4D94007EAE67 /* generalEditor.ml */; };
+		86CDB484246A58FF007EAE67 /* Person.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB483246A58FF007EAE67 /* Person.ml */; };
+		86CDB487246A61F3007EAE67 /* defaults.ml in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB486246A61F3007EAE67 /* defaults.ml */; };
+		86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */; };
+		86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */; };
 		86CDB726246DB047007EAE67 /* UIFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB725246DB046007EAE67 /* UIFont.swift */; };
 		8CBEA6BB0A9C4E4C4F6B473B /* Pods_memri.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9294EE72A09A45C734EDB229 /* Pods_memri.framework */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
@@ -344,6 +356,18 @@
 		86C3A7362452BF65006D4F55 /* MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriButton.swift; sourceTree = "<group>"; };
 		86C3A7382452FFD4006D4F55 /* default_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_database.json; sourceTree = "<group>"; };
 		86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSAttributedString+SafeReplace.swift"; path = "memri/extension/NSAttributedString/NSAttributedString+SafeReplace.swift"; sourceTree = SOURCE_ROOT; };
+		86CDB46F2469C3E9007EAE67 /* default_user_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_user_views.json; sourceTree = "<group>"; };
+		86CDB4712469C45B007EAE67 /* named_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_sessions.json; sourceTree = "<group>"; };
+		86CDB4732469C49F007EAE67 /* macro_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = macro_views.json; sourceTree = "<group>"; };
+		86CDB4752469C542007EAE67 /* template_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = template_views.json; sourceTree = "<group>"; };
+		86CDB4782469CB6F007EAE67 /* Session.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Session.json; sourceTree = "<group>"; };
+		86CDB47A2469CC60007EAE67 /* Session.ml */ = {isa = PBXFileReference; explicitFileType = text.css; path = Session.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		86CDB47E246A4570007EAE67 /* Note.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Note.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		86CDB481246A4D94007EAE67 /* generalEditor.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = generalEditor.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		86CDB483246A58FF007EAE67 /* Person.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = Person.ml; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		86CDB486246A61F3007EAE67 /* defaults.ml */ = {isa = PBXFileReference; lastKnownFileType = text; path = defaults.ml; sourceTree = "<group>"; };
+		86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDebugger.swift; sourceTree = "<group>"; };
+		86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomScrollView.swift; sourceTree = "<group>"; };
 		86CDB725246DB046007EAE67 /* UIFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UIFont.swift; path = memri/extension/NSAttributedString/UIFont.swift; sourceTree = SOURCE_ROOT; };
 		88A3D1B48C538AE0A7C3A87F /* Pods-memriTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memriTests.release.xcconfig"; path = "Target Support Files/Pods-memriTests/Pods-memriTests.release.xcconfig"; sourceTree = "<group>"; };
 		91511B7A14041F5E7728D157 /* Pods-memri-memriUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-memri-memriUITests.release.xcconfig"; path = "Target Support Files/Pods-memri-memriUITests/Pods-memri-memriUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -421,15 +445,9 @@
 				5DC1692B2409453200367905 /* empty_sessions.json */,
 				861439F42435AF8C008D6B5B /* test_sessions.json */,
 				5D0A28B7240677EE00398B17 /* test_dataItems.json */,
-				86A5D847243EC46700F8FAD8 /* named_views.json */,
 				865646172422B6A700D071B4 /* notes_from_server.json */,
 				5D4C71E82445E07500DF09E8 /* persons_from_server.json */,
-				86C3A7382452FFD4006D4F55 /* default_database.json */,
-				865646322423A7D500D071B4 /* views_from_server.json */,
-				5D78D06A242500A500F7BD3B /* default_navigation.json */,
 				862A934E24435372005E06A6 /* default_navigation_full.json */,
-				865646152422B68A00D071B4 /* default_sessions.json */,
-				86229DCB243508B00013750A /* default_settings.json */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -601,6 +619,7 @@
 		5D493FDC23FC15D10034692B /* view */ = {
 			isa = PBXGroup;
 			children = (
+				86CDB46E2469C1F0007EAE67 /* defaults */,
 				5DB8EC0024598EAC0028FD2E /* views */,
 				5D81A07C243343AF006E1FA9 /* action */,
 				5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */,
@@ -745,6 +764,12 @@
 				5DB8EC0124598ED80028FD2E /* SessionView.swift */,
 				C8333E92247724FC00DDAFBA /* TableView.swift */,
 				5D38DE18240577BA00FF9B70 /* Views.swift */,
+				5D38DE18240577BA00FF9B70 /* Views.swift */,
+				5DB8EC0124598ED80028FD2E /* SessionView.swift */,
+				5DB8EC0324598FA30028FD2E /* ComputedView.swift */,
+				5DB8EC0524598FCC0028FD2E /* DynamicView.swift */,
+				5DB8EC072459900A0028FD2E /* CompiledView.swift */,
+				86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */,
 			);
 			path = views;
 			sourceTree = "<group>";
@@ -763,6 +788,7 @@
 		5DD1E9B623FD812C007BDF7B /* model */ = {
 			isa = PBXGroup;
 			children = (
+				86CDB46D2469C1E4007EAE67 /* defaults */,
 				863CDB6F2441E680000D7AC0 /* extensions */,
 				869789E924344A530003756B /* schema.swift */,
 				5D38DE162405776B00FF9B70 /* model.swift */,
@@ -858,6 +884,7 @@
 				866F87C2245354B5000E5FAB /* PickerPane.swift */,
 				866F87C524536626000E5FAB /* MapView.swift */,
 				86B7A6772457F28A00292E81 /* KeyboardResponder.swift */,
+				86CDB48C246B13BC007EAE67 /* CustomScrollView.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -904,6 +931,60 @@
 				86B7A6752457404C00292E81 /* MapRendererView.swift */,
 			);
 			path = map;
+			sourceTree = "<group>";
+		};
+		86CDB46D2469C1E4007EAE67 /* defaults */ = {
+			isa = PBXGroup;
+			children = (
+				86C3A7382452FFD4006D4F55 /* default_database.json */,
+				5D78D06A242500A500F7BD3B /* default_navigation.json */,
+				865646152422B68A00D071B4 /* default_sessions.json */,
+				86229DCB243508B00013750A /* default_settings.json */,
+			);
+			path = defaults;
+			sourceTree = "<group>";
+		};
+		86CDB46E2469C1F0007EAE67 /* defaults */ = {
+			isa = PBXGroup;
+			children = (
+				86CDB485246A61D5007EAE67 /* styles */,
+				86CDB480246A4D81007EAE67 /* renderer */,
+				86CDB4772469CB57007EAE67 /* type */,
+				865646322423A7D500D071B4 /* views_from_server.json */,
+				86A5D847243EC46700F8FAD8 /* named_views.json */,
+				86CDB4712469C45B007EAE67 /* named_sessions.json */,
+				86CDB46F2469C3E9007EAE67 /* default_user_views.json */,
+				86CDB4732469C49F007EAE67 /* macro_views.json */,
+				86CDB4752469C542007EAE67 /* template_views.json */,
+			);
+			path = defaults;
+			sourceTree = "<group>";
+		};
+		86CDB4772469CB57007EAE67 /* type */ = {
+			isa = PBXGroup;
+			children = (
+				86CDB4782469CB6F007EAE67 /* Session.json */,
+				86CDB47A2469CC60007EAE67 /* Session.ml */,
+				86CDB47E246A4570007EAE67 /* Note.ml */,
+				86CDB483246A58FF007EAE67 /* Person.ml */,
+			);
+			path = type;
+			sourceTree = "<group>";
+		};
+		86CDB480246A4D81007EAE67 /* renderer */ = {
+			isa = PBXGroup;
+			children = (
+				86CDB481246A4D94007EAE67 /* generalEditor.ml */,
+			);
+			path = renderer;
+			sourceTree = "<group>";
+		};
+		86CDB485246A61D5007EAE67 /* styles */ = {
+			isa = PBXGroup;
+			children = (
+				86CDB486246A61F3007EAE67 /* defaults.ml */,
+			);
+			path = styles;
 			sourceTree = "<group>";
 		};
 		C818E60B241C3D640051E653 /* Utilities */ = {
@@ -1066,11 +1147,13 @@
 				5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */,
 				5D3EE57B2447701A00562AAC /* note.0x03.json in Resources */,
 				5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */,
+				86CDB4742469C49F007EAE67 /* macro_views.json in Resources */,
 				C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */,
 				5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */,
 				8656461A24238BB000D071B4 /* notes_from_server.json in Resources */,
 				866F87DA2456AD76000E5FAB /* person.0x012.json in Resources */,
 				866F87DC2456AD76000E5FAB /* person.0x011.json in Resources */,
+				86CDB4722469C45B007EAE67 /* named_sessions.json in Resources */,
 				5D4C71EA2445E07B00DF09E8 /* persons_from_server.json in Resources */,
 				865646332423A7D500D071B4 /* views_from_server.json in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
@@ -1078,15 +1161,19 @@
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
+				86CDB4792469CB6F007EAE67 /* Session.json in Resources */,
 				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
 				5DD17B5A241252D90018A8F1 /* add_action.json in Resources */,
 				86229DCD243509F60013750A /* default_settings.json in Resources */,
+				86CDB4762469C542007EAE67 /* template_views.json in Resources */,
 				5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */,
+				86CDB47F246A4570007EAE67 /* Note.ml in Resources */,
 				86A5D849243EE8DE00F8FAD8 /* named_views.json in Resources */,
 				5D599BC123F2B77700F218A0 /* Assets.xcassets in Resources */,
 				866F87B4245302A4000E5FAB /* default_database.json in Resources */,
 				5D44D52A24585E0B004796BA /* testfile.txt in Resources */,
 				5D3EE57D2447701F00562AAC /* note.0x05.json in Resources */,
+				86CDB4702469C3E9007EAE67 /* default_user_views.json in Resources */,
 				866F87D82456AD76000E5FAB /* person.0x013.json in Resources */,
 				5D3EE57C2447701F00562AAC /* note.0x04.json in Resources */,
 				5DC1692D240945D200367905 /* empty_sessions.json in Resources */,
@@ -1262,6 +1349,7 @@
 				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				5D301F6B245C37EE00183BD2 /* LEOTextUtil.swift in Sources */,
+				86CDB487246A61F3007EAE67 /* defaults.ml in Sources */,
 				86CDB726246DB047007EAE67 /* UIFont.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
@@ -1276,6 +1364,8 @@
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				C818E610241D365F0051E653 /* Shapes.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
+				86CDB482246A4D94007EAE67 /* generalEditor.ml in Sources */,
+				86CDB47B2469CC60007EAE67 /* Session.ml in Sources */,
 				869789EE2434CC750003756B /* Settings.swift in Sources */,
 				863CDB712441E69F000D7AC0 /* File.swift in Sources */,
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
@@ -1283,6 +1373,7 @@
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				86A5D846243CED0E00F8FAD8 /* RichTextRenderer.swift in Sources */,
 				5D228B062432385300464506 /* Action.swift in Sources */,
+				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
 				5D301F6F245C37EE00183BD2 /* LEOTextView+Toolbar.swift in Sources */,
 				86A5D83F243CEB6700F8FAD8 /* ListRenderer.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
@@ -1307,6 +1398,7 @@
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				5D2492FB2434E75A00BCE8DD /* RendererTemplates.swift in Sources */,
 				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
+				86CDB484246A58FF007EAE67 /* Person.ml in Sources */,
 				5D301F6A245C37EE00183BD2 /* LEOTextView.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */,
@@ -1315,6 +1407,7 @@
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				5D301F6C245C37EE00183BD2 /* LEOTextStorage.swift in Sources */,
+				86CDB48D246B13BC007EAE67 /* CustomScrollView.swift in Sources */,
 				866F87EA24572512000E5FAB /* ThumbGridRenderer.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				86B7A6742457402C00292E81 /* MapRenderer.swift in Sources */,
