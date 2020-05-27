@@ -86,7 +86,7 @@ Note[] {
     sortFields: title dateModified dateAccessed dateCreated
     
     [datasource = pod] {
-        query: "note"
+        query: "Note"
         sortProperty: dateModified
         sortAscending: false
     }

@@ -175,7 +175,7 @@ Person {
          groups {
              profilePicture: profilePicture
              names: firstName lastName
-             picturesOfPerson:
+             picturesOfPerson: picturesOfPerson
          }
         
          sequence: profilePicture labels names picturesOfPerson phoneNumbers relations addresses websites companies diets medicalConditions publicKeys onlineProfiles other dates
@@ -195,7 +195,7 @@ Person {
                     defaultRenderer: thumbnail.grid
                     
                      [datasource = pod] {
-                        query: "Photo AND ANY includes.memriID = '0x013'"
+                        query: "Photo AND ANY includes.memriID = '{.memriID}'"
                     }
                     
                     [renderer = thumbnail.grid] {
@@ -387,7 +387,7 @@ Person[] {
                         text: "Brother"
                         font: 14 regular
                         color: #888
-                        padding: 0 0 5 0 
+                        padding: 0 0 5 0
                     }
                 }
             }

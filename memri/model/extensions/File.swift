@@ -155,7 +155,8 @@ class File:DataItem {
 
                 // Return data
                 return data
-            } else{
+            }
+            else {
                 return nil
             }
         }
@@ -173,7 +174,8 @@ class File:DataItem {
                 }else{
                     return nil
                 }
-            }else{
+            }
+            else {
                 print("Warning: Could not read file \(path)")
                 return nil
             }
