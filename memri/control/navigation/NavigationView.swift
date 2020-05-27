@@ -13,13 +13,7 @@ struct Navigation: View {
     @ObservedObject var keyboardResponder = KeyboardResponder()
     
     @State var showSettings: Bool = false
-    
-    public func hide(){
-        withAnimation {
-            self.main.showNavigation = false
-        }
-    }
-    
+        
     var body: some View {
         VStack{
             HStack (spacing: 20) {
@@ -57,32 +51,47 @@ struct Navigation: View {
             .frame(minHeight: 95)
             .background(Color(hex:"#492f6c"))
             
-            ScrollView(.vertical) {
-                VStack (spacing:0) {
-                    ForEach(self.main.navigation.getItems(), id: \.self){
-                        self.item($0)
-                    }
-                }
-            }
+            TableView<NavigationItem, AnyView>(main: self.main)
             .padding(.top, 10)
+
+//            ScrollView(.vertical) {
+//                VStack (spacing:0) {
+//                    ForEach(self.main.navigation.getItems(), id: \.self){
+//                        self.item($0)
+//                    }
+//                }
+//            }
+//            .padding(.top, 10)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(hex: "543184"))
         .padding(.bottom, keyboardResponder.currentHeight)
     }
 
-    func item(_ navigationItem: NavigationItem) -> AnyView{
-        switch navigationItem.type{
-        case "item":
-            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
-        case "heading":
-            return AnyView(NavigationHeadingView(title: navigationItem.title))
-        case "line":
-            return AnyView(NavigationLineView())
-        default:
-            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
-        }
-    }
+//
+// TODO -   This functionality (below) has been temporaily moved to TableView and it should remain here
+//          so this is a refactoring task
+
+//
+//    public func hide(){
+//        withAnimation {
+//            self.main.showNavigation = false
+//        }
+//    }
+
+//    func item(_ navigationItem: NavigationItem) -> AnyView{
+//        switch navigationItem.type{
+//        case "item":
+//            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
+//        case "heading":
+//            return AnyView(NavigationHeadingView(title: navigationItem.title))
+//        case "line":
+//            return AnyView(NavigationLineView())
+//        default:
+//            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
+//        }
+//    }
+    
 }
 
 struct NavigationItemView: View{

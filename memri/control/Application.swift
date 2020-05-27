@@ -71,6 +71,10 @@ struct Application: View {
                 
                 ErrorConsole()
             }
+//
+// TODO - Ruben - Commented out so TableView receives swipe gestures
+//
+//            .gesture(drag)
         }
     }
 }
