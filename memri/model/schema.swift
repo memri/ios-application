@@ -149,8 +149,10 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 
 class Note:DataItem {
     @objc dynamic var title:String? = ""
+    /// HTML
     @objc dynamic var content:String? = nil
-    @objc dynamic var htmlContent:String? = nil
+    /// Text string
+    @objc dynamic var textContent:String? = nil
 
 
     override var genericType:String { "Note" }
@@ -173,9 +175,13 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
-            htmlContent = try decoder.decodeIfPresent("htmlContent") ?? htmlContent
-            
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             try self.superDecode(from: decoder)
+            if let htmlContent = content, textContent == nil || textContent == "" {
+                self.textContent = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
+                                                                    options: .regularExpression,
+                                                                    range: nil)
+            }
         }
     }
 }

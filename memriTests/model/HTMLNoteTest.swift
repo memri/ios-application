@@ -19,7 +19,7 @@ class HTMLNoteTest: XCTestCase {
     }
 
     func testExample() throws {
-        var filePath = Bundle.main.url(forResource: "exampleNote", withExtension: "html")
+        var filePath = Bundle.main.url(forResource: "exampleNote2", withExtension: "html")
         let contents = try! String(contentsOf: filePath!)
         
         let htmlData = NSString(string: contents).data(using: String.Encoding.unicode.rawValue)

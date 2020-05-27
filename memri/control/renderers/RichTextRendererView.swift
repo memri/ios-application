@@ -74,8 +74,8 @@ struct _RichTextEditor: UIViewRepresentable {
         
         
         func textViewDidChange(_ textView: UITextView) {
-            control.dataItem.set("content", textView.attributedText.string)
-            control.dataItem.set("htmlContent", textView.attributedText.toHTML())
+            control.dataItem.set("content", textView.attributedText.toHTML())
+            control.dataItem.set("textContent", textView.attributedText.string)
         }
     }
     
@@ -101,7 +101,7 @@ struct _RichTextEditor: UIViewRepresentable {
                                    textContainer: NSTextContainer())
         
         textView.setAttributedString(self.dataItem["content"] as? String,
-                                     self.dataItem["htmlContent"] as? String)
+                                     self.dataItem["textContent"] as? String)
         
         
         textView.isScrollEnabled = true
