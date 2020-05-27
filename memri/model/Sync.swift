@@ -133,20 +133,19 @@ class Sync {
     private func prioritySync(_ datasource:Datasource, _ audititem:AuditItem) {
         
         print("Syncing from pod with query: \(datasource.query ?? "")")
-        
         // Call out to the pod with the query
         podAPI.query(datasource) { (error, items) in
             if let items = items {
-                
+
                 if let cache = self.cache{
-                    
+
                     // Find resultset that belongs to this query
                     let resultSet = cache.getResultSet(datasource)
 //                    if resultSet.count == 1 { return }
-                    
+
                     // The result that we'll add to resultset
                     var result:[DataItem] = []
-                    
+
                     for item in items {
                         // TODO handle sync errors
                         do {
@@ -161,7 +160,7 @@ class Sync {
                             print("\(error)")
                         }
                     }
-                    
+
                     // Find added items
                     // TODO this could be skipped by re-executing resultSet.load()
                     for item in resultSet.items {
@@ -169,10 +168,10 @@ class Sync {
                             result.append(item)
                         }
                     }
-                    
+
                     // Update resultset with the new results
                     resultSet.forceItemsUpdate(result)
-                    
+
                     // We no longer need to process this log item
                     realmWriteIfAvailable(self.realm){
                         audititem.setSyncStateActionNeeded("")

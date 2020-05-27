@@ -10,10 +10,6 @@ import Combine
 
 let _keyBoardResponder = KeyboardResponder()
 
-import SwiftUI
-import Combine
-
-
 struct Browser: View {
     @EnvironmentObject var main: Main
     @ObservedObject var keyboardResponder = _keyBoardResponder

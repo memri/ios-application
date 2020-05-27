@@ -83,25 +83,30 @@ struct ListRendererView: View {
             else {
                 NavigationView{
                     // TODO REfactor: why are there 2px between each list row?
-                    SwiftUI.List {
-                        ForEach(main.items) { dataItem in
-                            Button (action:{
-                                if let press = renderConfig?.press {
-                                    main.executeAction(press, with: dataItem)
-                                }
-                            }) {
-                                // TODO: Error handling
-                                return renderConfig!.render(item: dataItem)
-                            }
-                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
-                        }
-                        .onDelete{ indexSet in
-                            main.executeAction(ActionDelete(main))
-                        }
-                    }
-                    .environment(\.editMode, $main.currentSession.isEditMode)
-                    .navigationBarTitle("")
-                    .navigationBarHidden(true)
+//                    SwiftUI.List {
+//                        ForEach(main.items) { dataItem in
+//                            Button (action:{
+//                                if let press = renderConfig?.press {
+//                                    main.executeAction(press, with: dataItem)
+//                                }
+//                            }) {
+//                                // TODO: Error handling
+//                                return renderConfig!.render(item: dataItem)
+//                            }
+//                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
+//                        }
+//                        .onDelete{ indexSet in
+//                            main.executeAction(ActionDelete(main))
+//                        }
+//                    }
+//                    .environment(\.editMode, $main.currentSession.isEditMode)
+//                    .navigationBarTitle("")
+//                    .navigationBarHidden(true)
+                    TableView<DataItem,UIElementView>(main: self.main, canReorder: false)
+                     .environment(\.editMode, $main.currentSession.isEditMode)
+                     .navigationBarTitle("")
+                     .navigationBarHidden(true)
+
                 }
             }
         }
