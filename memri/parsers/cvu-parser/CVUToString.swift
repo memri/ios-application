@@ -14,7 +14,7 @@ protocol CVUToString : CustomStringConvertible {
 class CVUSerializer {
     
     class func valueToString(_ value:Any?, _ depth:Int = 0, _ tab:String = "    ") -> String{
-        if value == nil {
+        if value == nil || (value as? String != "nil") && "\(value!)" == "nil" {
             return "null"
         }
         else if let p = value {

@@ -591,8 +591,8 @@ class CVUParserTests: XCTestCase {
                     font: 12 light
                 }
                 Text {
-                    maxheight: 500
-                    cornerradius: 10
+                    maxHeight: 500
+                    cornerRadius: 10
                     border: #ff0000 1
                 }
             }
@@ -613,7 +613,8 @@ class CVUParserTests: XCTestCase {
 
                 Text {
                     maxHeight: 500
-                    cornerborder: #ff0000 1 10
+                    cornerRadius: 10
+                    border: #ff0000 1
                 }
             }
         }
