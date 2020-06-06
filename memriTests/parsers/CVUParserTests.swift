@@ -19,7 +19,8 @@ class CVUParserTests: XCTestCase {
     private func parse(_ snippet:String) throws -> [CVUParsedDefinition] {
         let lexer = CVULexer(input: snippet)
         let tokens = try lexer.tokenize()
-        let parser = CVUParser(tokens, <#Main#>, lookup: {_,_ in}, execFunc: {_,_,_ in})
+        let parser = CVUParser(tokens, RootMain(name: "", key: "").mockBoot(),
+                               lookup: {_,_ in}, execFunc: {_,_,_ in})
         let x = try parser.parse()
         return x
     }
@@ -34,7 +35,7 @@ class CVUParserTests: XCTestCase {
     
     func testColorDefinition() throws {
         let snippet = """
-        [color = "background"] {
+        [color = background] {
             dark: #ff0000
             light: #330000
         }
@@ -45,14 +46,14 @@ class CVUParserTests: XCTestCase {
     
     func testStyleDefinition() throws {
         let snippet = """
-        [style = "my-label-text"] {
+        [style = my-label-text] {
             color: highlight
             border: background 1
         }
         """
         
         XCTAssertEqual(try parseToCVUString(snippet), """
-        [style = "my-label-text"] {
+        [style = my-label-text] {
             border: "background" 1
             color: "highlight"
         }
@@ -61,13 +62,13 @@ class CVUParserTests: XCTestCase {
     
     func testRendererDefinition() throws {
         let snippet = """
-        [renderer = "generalEditor"] {
+        [renderer = generalEditor] {
             sequence: labels starred other dates
         }
         """
         
         XCTAssertEqual(try parseToCVUString(snippet), """
-        [renderer = "generalEditor"] {
+        [renderer = generalEditor] {
             sequence: "labels" "starred" "other" "dates"
         }
         """)
@@ -75,7 +76,7 @@ class CVUParserTests: XCTestCase {
     
     func testLanguageDefinition() throws {
         let snippet = """
-        [language = "Dutch"] {
+        [language = Dutch] {
             addtolist: "Voeg toe aan lijst..."
             sharewith: "Deel met..."
         }
@@ -116,24 +117,24 @@ class CVUParserTests: XCTestCase {
     
     func testMultipleDefinitions() throws {
         let snippet = """
-        [color = "background"] {
+        [color = background] {
             dark: #ff0000
             light: #330000
         }
 
-        [style = "my-label-text"] {
+        [style = my-label-text] {
             border: background 1
             color: highlight
         }
         """
         
         XCTAssertEqual(try parseToCVUString(snippet), """
-        [color = "background"] {
+        [color = background] {
             dark: #ff0000
             light: #330000
         }
 
-        [style = "my-label-text"] {
+        [style = my-label-text] {
             border: "background" 1
             color: "highlight"
         }
@@ -215,7 +216,7 @@ class CVUParserTests: XCTestCase {
     
     func testEscapedStringProperty() throws {
         let snippet = """
-        [language = "Dutch"] {
+        [language = Dutch] {
             sharewith: "Deel \\"met..."
         }
         """
@@ -225,7 +226,7 @@ class CVUParserTests: XCTestCase {
     
     func testMixedQuoteTypeProperty() throws {
         let snippet = """
-        [language = "Dutch"] {
+        [language = Dutch] {
             addtolist: "Voeg 'toe' aan lijst..."
         }
         """
@@ -295,7 +296,7 @@ class CVUParserTests: XCTestCase {
     func testNestedRendererDefinition() throws {
         let snippet = """
         Person {
-            [renderer = "timeline"] {
+            [renderer = timeline] {
                 timeProperty: dateCreated
             }
         }
@@ -303,7 +304,7 @@ class CVUParserTests: XCTestCase {
         
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            [renderer = "timeline"] {
+            [renderer = timeline] {
                 timeProperty: "dateCreated"
             }
         }
@@ -314,7 +315,7 @@ class CVUParserTests: XCTestCase {
         let snippet = """
         Person {
             key: 10
-            [renderer = "timeline"] {
+            [renderer = timeline] {
                 timeProperty: dateCreated
             }
         }
@@ -324,7 +325,7 @@ class CVUParserTests: XCTestCase {
         Person {
             key: 10
 
-            [renderer = "timeline"] {
+            [renderer = timeline] {
                 timeProperty: "dateCreated"
             }
         }
@@ -656,14 +657,14 @@ class CVUParserTests: XCTestCase {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
 
-        let viewDef = CVU(code,
+        let viewDef = CVU(code, RootMain(name: "", key: "").mockBoot(),
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
         
         let codeClone = toCVUString(try viewDef.parse())
 //        print(codeClone) // .prefix(1500))
 
-        let viewDefClone = CVU(codeClone,
+        let viewDefClone = CVU(codeClone, RootMain(name: "", key: "").mockBoot(),
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
 

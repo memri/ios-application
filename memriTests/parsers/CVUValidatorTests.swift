@@ -18,7 +18,8 @@ class CVUValidatorTests: XCTestCase {
     private func parse(_ snippet:String) throws -> [CVUParsedDefinition] {
         let lexer = CVULexer(input: snippet)
         let tokens = try lexer.tokenize()
-        let parser = CVUParser(tokens, lookup: {_,_ in}, execFunc: {_,_,_ in})
+        let parser = CVUParser(tokens, RootMain(name: "", key: "").mockBoot(),
+                               lookup: {_,_ in}, execFunc: {_,_,_ in})
         let x = try parser.parse()
         return x
     }
@@ -158,7 +159,7 @@ class CVUValidatorTests: XCTestCase {
         _ = validator.validate(parsed)
         
         XCTAssertEqual(validator.errors.count, 1)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertEqual(validator.warnings.count, 1)
     }
     
     func testActionProperties() throws {
@@ -216,7 +217,7 @@ class CVUValidatorTests: XCTestCase {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
 
-        let viewDef = CVU(code,
+        let viewDef = CVU(code, RootMain(name: "", key: "").mockBoot(),
             lookup: { lookup, viewArgs in return 10 },
             execFunc: { lookup, args, viewArgs in return 20 })
 
@@ -228,7 +229,7 @@ class CVUValidatorTests: XCTestCase {
         validator.debug()
         
         XCTAssertEqual(validator.errors.count, 0)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertEqual(validator.warnings.count, 1)
     }
     
 
