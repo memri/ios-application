@@ -71,6 +71,14 @@ class ExprParserTests: XCTestCase {
         XCTAssertEqual(result.description, "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar), VariableNode(foo)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere)])))")
     }
     
+    func testDotLookup() throws {
+        let snippet = "."
+        
+        let result = try parse(snippet)
+        
+        XCTAssertEqual(result.description, "LookupNode([VariableNode(__DEFAULT__)])")
+    }
+    
     func testMinusPlusModifier() throws {
         let snippet = "-5 + -(5+10) - +'5'"
         

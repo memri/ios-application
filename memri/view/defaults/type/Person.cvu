@@ -195,7 +195,7 @@ Person {
                     defaultRenderer: thumbnail.grid
                     
                     [datasource = pod] {
-                        query: "Photo AND ANY includes.memriID = '{.memriID}'"
+                        query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
                     }
                     
                     [renderer = thumbnail.grid] {
