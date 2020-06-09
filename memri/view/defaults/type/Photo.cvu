@@ -29,3 +29,28 @@ Photo {
         }
     }
 }
+
+Photo[]: {
+    title: "All Photos"
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
+    emptyResultText: "There are no photos here yet"
+
+    [datasource = pod] {
+        query: "Photo"
+        sortProperty: dateModified
+        sortAscending: false
+    }
+
+    defaultRenderer: thumbnail
+
+    [renderer = thumbnail] {
+        itemInset: 1
+        edgeInset: 0 0 0 0
+        
+        Image {
+            image: {{.file}}
+            resizable: fill
+        }
+    }
+}

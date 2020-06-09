@@ -379,7 +379,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else if key != "user" {
                     // TODO Warn logging
-                    print("Could not find definition for \(needle) in domain:\(key)")
+                    print("Could not find definition for '\(needle)' in domain '\(key)'")
                 }
             }
         }
