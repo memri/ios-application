@@ -239,7 +239,8 @@ struct GeneralEditorSection: View {
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
-        renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool != false
+        if !renderConfig.hasGroup(groupKey) { return false }
+        return renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool != false
     }
     
 //    func getType(_ groupKey:String) -> String {

@@ -22,16 +22,18 @@ public class Cascadable {
             }
         }
         
-        if let x = localCache[name] as? T { return x }
+        if localCache[name] != nil {
+            return localCache[name] as? T
+        }
         
         for def in cascadeStack {
             if let expr = def[name] as? Expression {
                 localCache[name] = expr
-                return cascadeProperty(name)
+                return cascadeProperty(name) as T?
             }
-            if let x = def[name] as? T {
-                localCache[name] = x
-                return x
+            if def[name] != nil {
+                localCache[name] = def[name]
+                return def[name] as? T
             }
         }
         

@@ -1,6 +1,6 @@
 [renderer = generalEditor] {
     sequence: labels starred other dates
-    excluded: deleted syncState memriID uid
+    excluded: version deleted syncState memriID uid
     readOnly: uid memriID
     
     groups {

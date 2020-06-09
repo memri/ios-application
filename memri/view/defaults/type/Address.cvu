@@ -99,7 +99,7 @@ Address {
         sequence: location labels address other dates
         
         location: {
-            for: group
+            foreach: false
             sectionTitle: ""
             
             Map {
@@ -111,7 +111,7 @@ Address {
         
         labels: {
             VSTack {
-                for: group
+                foreach: false
                 sectionTitle: ""
                 padding: 10 36 5 36
                 
@@ -122,16 +122,17 @@ Address {
                 FlowStack {
                     list: {{.labels}}
                     
-                    button {
+                    Button {
                         press: openViewByName {
-                            arguments: [
-                                all-items-with-label
-                                {
+                            arguments {
+                                name: all-items-with-label
+                                viewArguments: {
                                     name: "Soccer team"
                                     memriID: 0x0124
                                 }
-                            ]
+                            }
                         }
+                        
                         VStack {
                             background: {{.color}}
                             cornerRadius: 5
@@ -147,10 +148,11 @@ Address {
                 }
             }
         }
+        
         country: {
             VStack {
                 Text {
-                    text: {{.country.name}}
+                    text: "{.country.name}"
                     show: {{readOnly}}
                 }
                 Picker {
