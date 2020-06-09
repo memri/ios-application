@@ -90,6 +90,9 @@ extension View {
                 if let color = value[0] as? Color {
                     return AnyView(self.border(color, width: value[1] as? CGFloat ?? 1.0))
                 }
+                else {
+                    print("FIX BORDER HANDLING2")
+                }
             }
             else {
                 print("FIX BORDER HANDLING")
@@ -108,10 +111,10 @@ extension View {
             }
         case "cornerborder":
             if let value = value as? [Any?] {
-                if let color = value[0] as? String {
+                if let color = value[0] as? Color {
                     return AnyView(self.overlay(
                         RoundedRectangle(cornerRadius: value[2] as? CGFloat ?? 1.0)
-                            .stroke(Color(hex: color), lineWidth: value[1] as? CGFloat ?? 1.0)
+                            .stroke(color, lineWidth: value[1] as? CGFloat ?? 1.0)
                             .padding(1)
                     ))
                 }
@@ -126,8 +129,9 @@ extension View {
                     alignment: value[4] as? Alignment ?? .top))
             }
         case "font":
+            var font:Font
+            
             if let value = value as? [Any] {
-                var font:Font
                 if let name = value[0] as? String {
                     font = .custom(name, size: value[1] as? CGFloat ?? 12.0)
                 }
@@ -136,11 +140,19 @@ extension View {
                                    weight: value[1] as? Font.Weight ?? Font.Weight.regular,
                                    design: .default)
                 }
-                return AnyView(self.font(font))
+                
+            }
+            else if let value = value as? CGFloat {
+                font = .system(size: value)
+            }
+            else if let value = value as? Font.Weight {
+                font = .system(size: 12, weight: value)
             }
             else {
-                print("FIX FONT HANDLING")
+                return AnyView(self)
             }
+            
+            return AnyView(self.font(font))
         case "textalign":
             if let value = value as? TextAlignment {
                 return AnyView(self.multilineTextAlignment(value))

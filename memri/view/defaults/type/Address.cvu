@@ -15,21 +15,24 @@ Address[] {
         HStack {
             Text {
                 text: "{.computedTitle()}"
-                font: [16]
+                font: 16
                 padding: 0 0 10 0
+                border: #ff0000 1
             }
             Spacer
             Map {
-                address: "{dataItem}"
+                test: 1090
+                address: {{.}}
                 maxWidth: 150
                 minHeight: 150
                 maxHeight: 150
                 cornerRadius: 10
-                border: "#DDD" 1
+                border: #DDD 1
                 margin: 0 0 10 0
             }
         }
     }
+    
     [renderer = generalEditor]{
         EditorRow {
             title: "{.type}"
@@ -39,17 +42,17 @@ Address[] {
                 show: {{readOnly}}
                 Text {
                     text: "{.computedTitle()}"
-                    font: [16]
+                    font: 16
                     padding: 0 0 10 0
                 }
                 Spacer
                 Map{
-                    address: "{.}"
+                    address: {{.}}
                     maxWidth: 150
                     minHeight: 150
                     maxHeight: 150
                     cornerRadius: 10
-                    border: "#DDD" 1
+                    border: #DDD 1
                     margin: 0 0 10 0
                 }
             }
@@ -69,7 +72,7 @@ Address[] {
                     }
                     Picker {
                         empty: Country
-                        value: "{.country}"
+                        value: {{.country}}
                         defaultValue: "{me.address[primary = true].country}"
                         [datasource = pod] {
                             query: "country"
@@ -156,6 +159,7 @@ Address {
                     value: {{.country}}
                     defaultValue: {{me.address[primary = true].country}}
                     show: {{!readOnly}}
+                    
                     [datasource = pod] {
                         query: "country"
                         sortProperty: name
