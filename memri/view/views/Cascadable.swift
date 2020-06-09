@@ -78,16 +78,33 @@ public class Cascadable {
         
         var result = defaultDict
         
-        for def in cascadeStack {
-            if let x = def[name] as? [String:T] {
-                result.merge(x)
+        if forceArray {
+            for def in cascadeStack {
+                if let x = def[name] as? [String:Any?] {
+                    for (key, value) in x {
+                        if let value = value as? T {
+                            result[key] = value
+                        }
+                        else if let value = [value] as? T {
+                            result[key] = value
+                        }
+                        else {
+                            // TODO WARN
+                        }
+                    }
+                }
+                else {
+                    // TODO WARN
+                }
             }
         }
-        
-        if forceArray {
-            for (key, value) in result {
-                if value as? [Any] == nil {
-                    result[key] = [value] as? T
+        else {
+            for def in cascadeStack {
+                if let x = def[name] as? [String:T] {
+                    result.merge(x)
+                }
+                else {
+                    // TODO WARN
                 }
             }
         }

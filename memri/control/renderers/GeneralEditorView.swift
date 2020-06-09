@@ -70,7 +70,9 @@ let registerGeneralEditor = {
 class CascadingGeneralEditorConfig: CascadingRenderConfig {
     var type: String? = "generalEditor"
     
-    var groups: [String:[String]] { cascadeDict("groups", forceArray: true) }
+    var groups: [String:[String]] {
+        cascadeDict("groups", forceArray: true)
+    }
     
     var readOnly: [String] { cascadeList("readOnly") }
     var excluded: [String] { cascadeList("excluded") }
@@ -109,6 +111,8 @@ struct GeneralEditorView: View {
         }.forEach({
             filteredGroups[$0] = groups[$0] ?? [$0]
         })
+        
+        print(alreadyUsed)
         
         return filteredGroups.count > 0 ? filteredGroups : nil
     }
