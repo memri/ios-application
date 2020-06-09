@@ -194,7 +194,7 @@ Person {
                 view {
                     defaultRenderer: thumbnail.grid
                     
-                     [datasource = pod] {
+                    [datasource = pod] {
                         query: "Photo AND ANY includes.memriID = '{.memriID}'"
                     }
                     
@@ -260,7 +260,6 @@ Person {
                         }
                     }
                 }
-                
             }
         }
         

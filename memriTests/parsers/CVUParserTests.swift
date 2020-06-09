@@ -653,7 +653,6 @@ class CVUParserTests: XCTestCase {
         """)
     }
     
-    
     func testSerialization() throws {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
@@ -674,6 +673,37 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(codeClone, codeCloneClone)
     }
     
+    func testNestedViews() throws {
+        let snippet = """
+        Person {
+            [renderer = generalEditor] {
+                
+                picturesOfPerson: {
+                    sectionTitle: "Photos of {.computedTitle()}"
+                    foreach: false
+
+                    SubView {
+                        view: {
+                            defaultRenderer: "thumbnail.grid"
+
+                            [datasource = pod] {
+                                query: "Photo AND ANY includes.memriID = '{.memriID}'"
+                            }
+
+                            [renderer = thumbnail.grid] {
+                                columns: 5
+                                itemInset: 0
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
+
     func testErrorMissingCurlBracketClose() throws {
         let snippet = """
         Person {

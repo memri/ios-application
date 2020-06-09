@@ -132,7 +132,8 @@ public class CascadingRenderConfig: Cascadable {
     }
     
     func hasGroup(_ group:String) -> Bool {
-        cascadeProperty(group) != nil
+        let x:Any? = cascadeProperty(group)
+        return x != nil
     }
     
     func getGroupOptions(_ group:String) -> [String:Any?] {

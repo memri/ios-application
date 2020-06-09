@@ -315,11 +315,18 @@ public struct UIElementView: SwiftUI.View {
                         SubView(
                             main: self.main,
                             view: {
-                                let x:SessionView? = get("view")
-                                if let x = x  {
-                                    return x
-                                } else{
+                                // TODO create view form the parsed definition
+                                // Find out why datasource is not parsed
+                                
+                                if let parsed:[String:Any?] = get("view") {
+                                    let parsedViewDef = CVUParsedViewDefinition(DataItem.generateUUID())
+                                    parsedViewDef.parsed = parsed
+                                    let sessionView = SessionView.fromCVUDefinition(parsedViewDef)
+                                    return sessionView
+                                }
+                                else {
                                     print("Failed to make subview (not defined), creating empty one instead")
+                                    errorHistory.error("Failed to make subview (not defined), creating empty one instead")
                                     return SessionView()
                                 }
                             }(),
@@ -381,6 +388,9 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .Divider {
                     Divider()
                         .setProperties(from.properties, self.item, main)
+                }
+                else if from.type == .Empty {
+                    EmptyView()
                 }
                 else {
                     logWarning("Warning: Unknown UI element type '\(from.type)'")

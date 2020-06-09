@@ -184,7 +184,7 @@ struct GeneralEditorSection: View {
         if let edges = edges{
             if edges.count > 0 {
                 let objectClassName = edges[0].objectType
-                if let family = DataItemFamily(rawValue: objectClassName.lowercased()){
+                if let family = DataItemFamily(rawValue: objectClassName){
                     // NOTE: Allowed force unwrapping
                     let type = DataItemFamily.getType(family)() as! Object.Type
                     var objects: [DataItem] = []
@@ -203,8 +203,8 @@ struct GeneralEditorSection: View {
                 }
                 else{
                     // TODO user warning
-                    // TODO error handling
-                    print("Could not find family \(objectClassName) for dataItem \(item)")
+                    errorHistory.error("Unknown type \(objectClassName) for dataItem \(item.memriID)")
+                    print("Unknown type \(objectClassName) for dataItem \(item.memriID)")
                 }
 
             }
@@ -224,11 +224,11 @@ struct GeneralEditorSection: View {
                     _ item:DataItem)-> ViewArguments {
         
         ViewArguments(renderConfig.viewArguments.asDict().merging([
-            "readonly": { !self.main.currentSession.editMode },
-            "sectiontitle": { groupKey.camelCaseToWords().uppercased() },
-            "displayname": { name.camelCaseToWords().capitalizingFirstLetter() },
-            "name": { name },
-            ".": { value ?? item[name] as Any }
+            "readonly": !self.main.currentSession.editMode,
+            "sectiontitle": groupKey.camelCaseToWords().uppercased(),
+            "displayname": name.camelCaseToWords().capitalizingFirstLetter(),
+            "name": name,
+            ".": value
         ], uniquingKeysWith: { current, new in new }))
     }
     
@@ -241,7 +241,7 @@ struct GeneralEditorSection: View {
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
-        renderConfig.getGroupOptions(groupKey)["for"] as? String == "group"
+        renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool != false
     }
     
 //    func getType(_ groupKey:String) -> String {
@@ -263,7 +263,7 @@ struct GeneralEditorSection: View {
                         "actionName": "addSelectionToList",
                         "actionArgs": "", // [self.item, groupKey],
                         "title": "Add Selected",
-                        ".": item
+                        "dataItem": item
                     ]
                 ],
                 values: [
@@ -346,7 +346,8 @@ struct GeneralEditorSection: View {
                                 self.renderConfig.render(
                                     item: self.item,
                                     group: self.groupKey,
-                                    arguments: self.getViewArguments(self.groupKey, groupElement, nil, self.item)
+                                    arguments: self.getViewArguments(self.groupKey, groupElement,
+                                                                     nil, self.item)
                                 )
                             }
                         }
@@ -363,7 +364,8 @@ struct GeneralEditorSection: View {
                                 ItemCell(
                                     item: item,
                                     rendererNames: ["generalEditor"],
-                                    arguments: self.getViewArguments(self.groupKey, self.groupKey, item, self.item)
+                                    arguments: self.getViewArguments(self.groupKey, self.groupKey,
+                                                                     item, self.item)
                                 )
                             }
                         }
@@ -388,7 +390,7 @@ struct GeneralEditorSection: View {
                             readOnly: !editMode || renderConfig.readOnly.contains(prop),
                             isLast: properties.last == prop,
                             renderConfig: renderConfig,
-                            arguments: self.getViewArguments("", prop, nil, self.item)
+                            arguments: self.getViewArguments("", prop, self.item[prop], self.item)
                         )
                     }
                     Divider()

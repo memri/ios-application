@@ -21,10 +21,6 @@ public class CVUParsedDefinition : CVUToString {
     var parsed:[String:Any?] = [:]
     
     func toCVUString(_ depth:Int, _ tab:String) -> String {
-        if selector == #"[renderer = "list"]"# {
-            
-        }
-        
         let body = CVUSerializer.dictToString(parsed, depth+1, tab, extraNewLine: true) { lhp, rhp in
             let lv = self.parsed[lhp] as? [String:Any?]
             let rv = self.parsed[rhp] as? [String:Any?]

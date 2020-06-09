@@ -172,30 +172,30 @@ class CVUSerializer {
         }
         
         var children:String = ""
-        var definitions:String = ""
+        var definitions:[String] = []
         if let p = dict["children"] as? [UIElement], p.count > 0 {
             let body = arrayToString(p, depth, tab, withDef:false, extraNewLine:true)
             children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
         }
         if let p = dict["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-            let body = p.toCVUString(depth - 1, tab)
-            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+            let body = p.toCVUString(depth, tab)
+            definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
         }
         if let p = dict["sessionDefinitions"] as? [CVUParsedSessionDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
-            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+            definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
         }
         if let p = dict["viewDefinitions"] as? [CVUParsedViewDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
-            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+            definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
         }
         if let p = dict["renderDefinitions"] as? [CVUParsedRendererDefinition], p.count > 0 {
             let body = arrayToString(p, depth - 1, tab, withDef:false, extraNewLine:true)
-            definitions = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+            definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
         }
         
         return withDef
-            ? "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)\n\(tabsEnd)}"
-            : "\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions)"
+            ? "{\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions.joined())\n\(tabsEnd)}"
+            : "\(str.joined(separator: "\n\(tabs)"))\(children)\(definitions.joined())"
     }
 }

@@ -91,6 +91,9 @@ extension View {
                     return AnyView(self.border(color, width: value[1] as? CGFloat ?? 1.0))
                 }
             }
+            else {
+                print("FIX BORDER HANDLING")
+            }
         case "offset":
             if let value = value as? [CGFloat] {
                 return AnyView(self.offset(x: value[0], y: value[1]))
@@ -134,6 +137,9 @@ extension View {
                                    design: .default)
                 }
                 return AnyView(self.font(font))
+            }
+            else {
+                print("FIX FONT HANDLING")
             }
         case "textalign":
             if let value = value as? TextAlignment {
