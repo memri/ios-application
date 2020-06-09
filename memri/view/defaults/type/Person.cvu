@@ -96,7 +96,7 @@
 }
 
 Person {
-    title: "{.firstName}"
+    title: "{.firstName} {.lastName}"
     defaultRenderer: generalEditor
     
     /*include:
@@ -182,7 +182,7 @@ Person {
         
          /*excluded: profilePicture labels names picturesOfPerson phoneNumbers*/
         
-        readOnly:
+        /*readOnly:*/
         
         picturesOfPerson {
             foreach: false

@@ -1,8 +1,6 @@
 //
 //  view.swift
-//  memri
 //
-//  Created by Ruben Daniels on 5/18/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -14,14 +12,14 @@ private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
-    func setProperties(_ properties:[String:Any], _ item:DataItem, _ main:Main) -> AnyView {
+    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:Main) -> AnyView {
         var view:AnyView = AnyView(self)
         
         for name in ViewPropertyOrder {
             if var value = properties[name] {
                 
                 if let expr = value as? Expression {
-                    do { value = try expr.execute(main.cascadingView.viewArguments) as Any }
+                    do { value = try expr.execute(main.cascadingView.viewArguments) as Any? }
                     catch {
                         // TODO refactor: Error handling
                         print("Could not set property. Executing expression \(expr) failed")
@@ -37,7 +35,7 @@ extension View {
     }
     
     // TODO investigate using ViewModifiers
-    func setProperty(_ name:String, _ value:Any) -> AnyView {
+    func setProperty(_ name:String, _ value:Any?) -> AnyView {
         switch name {
         case "style":
             // TODO Refactor: Implement style sheets
@@ -88,7 +86,7 @@ extension View {
                 return AnyView(self.listRowBackground(color)) //TODO named colors do not work
             }
         case "border":
-            if let value = value as? [Any] {
+            if let value = value as? [Any?] {
                 if let color = value[0] as? Color {
                     return AnyView(self.border(color, width: value[1] as? CGFloat ?? 1.0))
                 }
@@ -106,7 +104,7 @@ extension View {
                 return AnyView(self.cornerRadius(value))
             }
         case "cornerborder":
-            if let value = value as? [Any] {
+            if let value = value as? [Any?] {
                 if let color = value[0] as? String {
                     return AnyView(self.overlay(
                         RoundedRectangle(cornerRadius: value[2] as? CGFloat ?? 1.0)
@@ -116,7 +114,7 @@ extension View {
                 }
             }
         case "frame":
-            if let value = value as? [Any] {
+            if let value = value as? [Any?] {
                 return AnyView(self.frame(
                     minWidth: value[0] as? CGFloat ?? .none,
                     maxWidth: value[1] as? CGFloat ?? .greatestFiniteMagnitude,

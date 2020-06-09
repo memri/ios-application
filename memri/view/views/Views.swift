@@ -109,8 +109,11 @@ public class Views {
                 else if def is CVUParsedSessionDefinition { values["type"] = "session" }
                 else { throw "Exception: unknown definition" }
                 
+                values["memriID"] = "defaults:" + (def.selector ?? "unknown")
+                
                 // Store definition
-                try realm.write { realm.create(CVUStoredDefinition.self, value: values) }
+                try realm.write { realm.create(CVUStoredDefinition.self,
+                                               value: values, update: .modified) }
             }
         }
         catch let error {

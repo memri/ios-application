@@ -449,6 +449,12 @@ public class RootMain: Main {
                 try self.navigation.load() {
                 
                     // Load views configuration
+                    #if targetEnvironment(simulator)
+                        // Reload for easy adjusting
+                        self.views.main = self
+                        try self.views.install()
+                    #endif
+                    
                     try self.views.load(self) {
                     
                         // Load sessions configuration

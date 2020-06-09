@@ -1,8 +1,6 @@
 //
 //  GeneralEditorView.swift
-//  memri
 //
-//  Created by Koen van der Veen on 14/04/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -72,7 +70,7 @@ let registerGeneralEditor = {
 class CascadingGeneralEditorConfig: CascadingRenderConfig {
     var type: String? = "generalEditor"
     
-    var groups: [String:[String]] { cascadeDict("groups") }
+    var groups: [String:[String]] { cascadeDict("groups", forceArray: true) }
     
     var readOnly: [String] { cascadeList("readOnly") }
     var excluded: [String] { cascadeList("excluded") }

@@ -71,7 +71,9 @@ public class Cascadable {
     }
     
     
-    func cascadeDict<T>(_ name:String, _ defaultDict:[String:T] = [:]) -> [String:T] {
+    func cascadeDict<T>(_ name:String, _ defaultDict:[String:T] = [:],
+                        forceArray:Bool = false) -> [String:T] {
+        
         if let x = localCache[name] as? [String:T] { return x }
         
         var result = defaultDict
@@ -79,6 +81,14 @@ public class Cascadable {
         for def in cascadeStack {
             if let x = def[name] as? [String:T] {
                 result.merge(x)
+            }
+        }
+        
+        if forceArray {
+            for (key, value) in result {
+                if value as? [Any] == nil {
+                    result[key] = [value] as? T
+                }
             }
         }
         
