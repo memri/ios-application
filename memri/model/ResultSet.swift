@@ -105,6 +105,7 @@ public class ResultSet: ObservableObject {
             updateUI()
         
             // Execute the query
+            print("SOURCEQUERY: \(datasource.query)")
             cache.query(datasource) { (error, result) -> Void in
                 if let result = result {
                     

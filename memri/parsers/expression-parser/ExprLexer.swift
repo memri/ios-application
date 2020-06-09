@@ -106,19 +106,20 @@ public class ExprLexer {
             if token != nil { tokens.append(token!) }
         }
         
-        var i = -1
+        var i = -1, startChar:Character? = nil
         try input.forEach { c in
             i += 1
             
             if isMode.rawValue >= Mode.string.rawValue {
                 if isMode == .string
-                  && (c == "'" || c == "\"" || startInStringMode && c == "{") {
+                  && (c == startChar || startInStringMode && c == "{") {
                     if keyword.count > 0 || i > 0 || c != "{" {
                         addToken(.String(keyword.joined(), i))
                     }
                     if c == "{" { addToken(.CurlyBracketOpen(i)) }
                     keyword = []
                     isMode = .idle
+                    startChar = nil
                     return
                 }
                 
@@ -152,6 +153,7 @@ public class ExprLexer {
             case ",": addToken(.Comma(i))
             case "'", "\"":
                 isMode = .string
+                startChar = c
             case ".":
                 if isMode == .number { keyword.append(String(c)) }
                 else { addToken(.Period(i)) }

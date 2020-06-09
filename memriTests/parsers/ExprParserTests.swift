@@ -130,6 +130,8 @@ class ExprParserTests: XCTestCase {
         let parser = ExprParser(tokens)
         let result = try parser.parse()
         
+        print(result.description)
+        
         XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(__DEFAULT__), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(__DEFAULT__), VariableNode(lastName)])])")
     }
     
@@ -141,7 +143,20 @@ class ExprParserTests: XCTestCase {
         let parser = ExprParser(tokens)
         let result = try parser.parse()
         
+        print(result.description)
+        
         XCTAssertEqual(result.description, "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode( Hello)])")
+    }
+    
+    func testStringModeWithQuote() throws {
+        let snippet = "Photo AND ANY includes.memriID = '{.memriID}'"
+        
+        let lexer = ExprLexer(input: snippet, startInStringMode: true)
+        let tokens = try lexer.tokenize()
+        let parser = ExprParser(tokens)
+        let result = try parser.parse()
+        print(result.description)
+        XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Photo AND ANY includes.memriID = '), LookupNode([VariableNode(__DEFAULT__), VariableNode(memriID)]), StringNode(')])")
     }
     
     func testExample() throws {

@@ -112,8 +112,6 @@ struct GeneralEditorView: View {
             filteredGroups[$0] = groups[$0] ?? [$0]
         })
         
-        print(alreadyUsed)
-        
         return filteredGroups.count > 0 ? filteredGroups : nil
     }
     

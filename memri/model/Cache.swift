@@ -249,7 +249,7 @@ public class Cache {
                 // Query format: <type><space><filter-text>
                 let queryType = DataItemFamily.getType(type)
 //                let t = queryType() as! Object.Type
-                
+                print(filter)
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
                 
