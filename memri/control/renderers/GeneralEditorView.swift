@@ -222,9 +222,9 @@ struct GeneralEditorSection: View {
                     _ item:DataItem)-> ViewArguments {
         
         ViewArguments(renderConfig.viewArguments.asDict().merging([
-            "readonly": !self.main.currentSession.editMode,
-            "sectiontitle": groupKey.camelCaseToWords().uppercased(),
-            "displayname": name.camelCaseToWords().capitalizingFirstLetter(),
+            "readOnly": !self.main.currentSession.editMode,
+            "sectionTitle": groupKey.camelCaseToWords().uppercased(),
+            "displayName": name.camelCaseToWords().capitalizingFirstLetter(),
             "name": name,
             ".": value
         ], uniquingKeysWith: { current, new in new }))

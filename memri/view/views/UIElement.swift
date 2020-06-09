@@ -42,13 +42,7 @@ public class UIElement : CVUToString {
                 viewArguments.set(".", item) // TODO Optimization This is called a billion times. Find a better place for this
                 
                 do { let x:T? = try expr.execForReturnType(viewArguments); return x }
-                catch {
-                    do {
-                        let x:T? = try expr.execForReturnType(viewArguments)
-                    }catch {
-                        
-                    }
-                    
+                catch let error {
                     // TODO Refactor error handling
                     errorHistory.error("Could note compute \(propName)\n"
                         + "Arguments: [\(viewArguments.asDict().keys.joined(separator: ", "))]\n"
