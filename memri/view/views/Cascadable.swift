@@ -42,7 +42,7 @@ public class Cascadable {
     
     
     // TODO support deleting items
-    func cascadeList<T>(_ name:String, _ merge:Bool = true) -> [T] {
+    func cascadeList<T>(_ name:String, merge:Bool = true) -> [T] {
         if let x = localCache[name] as? [T] { return x }
         
         var result = [T]()

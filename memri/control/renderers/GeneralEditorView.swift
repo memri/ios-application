@@ -76,7 +76,7 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
     
     var readOnly: [String] { cascadeList("readOnly") }
     var excluded: [String] { cascadeList("excluded") }
-    var sequence: [String] { cascadeList("sequence") }
+    var sequence: [String] { cascadeList("sequence", merge:false) }
     
     public func allGroupValues() -> [String] {
         groups.values.flatMap{ Array($0) }
@@ -231,7 +231,7 @@ struct GeneralEditorSection: View {
     }
     
     func hasSectionTitle(_ groupKey:String) -> Bool {
-        renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String == ""
+        renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String != ""
     }
     
     func getSectionTitle(_ groupKey:String) -> String? {
@@ -240,7 +240,7 @@ struct GeneralEditorSection: View {
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {
         if !renderConfig.hasGroup(groupKey) { return false }
-        return renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool != false
+        return renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool == false
     }
     
 //    func getType(_ groupKey:String) -> String {
@@ -317,84 +317,82 @@ struct GeneralEditorSection: View {
         let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
         let showDividers = self.getSectionTitle(groupKey) != ""
         
-        return Group {
-            Section (header: self.getHeader(groupContainsNodes)){
-                // Render using a view specified renderer
-                if renderConfig.hasGroup(groupKey) {
-                    if showDividers { Divider() }
-                    
-                    if self.isDescriptionForGroup(groupKey) {
-                        renderConfig.render(
-                            item: item,
-                            group: groupKey,
-                            arguments: self.getViewArguments(self.groupKey, groupKey, nil, self.item)
-                        )
+        return Section (header: self.getHeader(groupContainsNodes)){
+            // Render using a view specified renderer
+            if renderConfig.hasGroup(groupKey) {
+                if showDividers { Divider() }
+                
+                if self.isDescriptionForGroup(groupKey) {
+                    renderConfig.render(
+                        item: item,
+                        group: groupKey,
+                        arguments: self.getViewArguments(self.groupKey, groupKey, nil, self.item)
+                    )
+                }
+                else {
+                    if groupContainsNodes {
+                        ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
+                            self.renderConfig.render(
+                                item: otherItem,
+                                group: self.groupKey,
+                                arguments: self.getViewArguments(self.groupKey, "", otherItem, otherItem))
+                        }
                     }
                     else {
-                        if groupContainsNodes {
-                            ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
-                                self.renderConfig.render(
-                                    item: otherItem,
-                                    group: self.groupKey,
-                                    arguments: self.getViewArguments(self.groupKey, "", otherItem, otherItem))
-                            }
-                        }
-                        else {
-                            // TODO: Error handling
-                            ForEach(groups[groupKey] ?? [], id:\.self) { groupElement in
-                                self.renderConfig.render(
-                                    item: self.item,
-                                    group: self.groupKey,
-                                    arguments: self.getViewArguments(self.groupKey, groupElement,
-                                                                     nil, self.item)
-                                )
-                            }
+                        // TODO: Error handling
+                        ForEach(groups[groupKey] ?? [], id:\.self) { groupElement in
+                            self.renderConfig.render(
+                                item: self.item,
+                                group: self.groupKey,
+                                arguments: self.getViewArguments(self.groupKey, groupElement,
+                                                                 nil, self.item)
+                            )
                         }
                     }
-                    
-                    if showDividers { Divider() }
                 }
-                // Render lists with their default renderer
-                else if groupContainsNodes {
-                    Divider()
-                    ScrollView {
-                        VStack (alignment: .leading, spacing: 0) {
-                            ForEach(getArray(item, groupKey), id:\.id) { item in
-                                ItemCell(
-                                    item: item,
-                                    rendererNames: ["generalEditor"],
-                                    arguments: self.getViewArguments(self.groupKey, self.groupKey,
-                                                                     item, self.item)
-                                )
-                            }
+                
+                if showDividers { Divider() }
+            }
+            // Render lists with their default renderer
+            else if groupContainsNodes {
+                Divider()
+                ScrollView {
+                    VStack (alignment: .leading, spacing: 0) {
+                        ForEach(getArray(item, groupKey), id:\.id) { item in
+                            ItemCell(
+                                item: item,
+                                rendererNames: ["generalEditor"],
+                                arguments: self.getViewArguments(self.groupKey, self.groupKey,
+                                                                 item, self.item)
+                            )
                         }
+                    }
 //                        .padding(.top, 10)
-                    }
-                    .frame(maxHeight: 1000)
-                    .fixedSize(horizontal: false, vertical: true)
-                    
-                    Divider()
                 }
-                // Render groups with the default render row
-                else {
-                    Divider()
-                    ForEach(properties, id: \.self){ prop in
-                        
-                        // TODO: Refactor: rows that are single links to an item
-                        
-                        DefaultGeneralEditorRow(
-                            main: self._main,
-                            item: self.item,
-                            prop: prop,
-                            readOnly: !editMode || renderConfig.readOnly.contains(prop),
-                            isLast: properties.last == prop,
-                            renderConfig: renderConfig,
-                            arguments: self.getViewArguments("", prop, self.item[prop], self.item)
-                        )
-                    }
-                    Divider()
+                .frame(maxHeight: 1000)
+                .fixedSize(horizontal: false, vertical: true)
+                
+                Divider()
+            }
+            // Render groups with the default render row
+            else {
+                Divider()
+                ForEach(properties, id: \.self){ prop in
                     
+                    // TODO: Refactor: rows that are single links to an item
+                    
+                    DefaultGeneralEditorRow(
+                        main: self._main,
+                        item: self.item,
+                        prop: prop,
+                        readOnly: !editMode || renderConfig.readOnly.contains(prop),
+                        isLast: properties.last == prop,
+                        renderConfig: renderConfig,
+                        arguments: self.getViewArguments("", prop, self.item[prop], self.item)
+                    )
                 }
+                Divider()
+                
             }
         }
     }

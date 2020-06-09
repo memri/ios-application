@@ -41,6 +41,8 @@ public class UIElement : CVUToString {
             if let expr = propValue as? Expression {
                 viewArguments.set(".", item) // TODO Optimization This is called a billion times. Find a better place for this
                 
+                // This returns a List<???> instead of [DataItem]. Solution
+                // might be to convert to Array via DataItemFamily
                 do { let x:T? = try expr.execForReturnType(viewArguments); return x }
                 catch let error {
                     // TODO Refactor error handling

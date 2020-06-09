@@ -15,6 +15,7 @@
     
     labels {
         foreach: false
+        sectionTitle: ""
         
         EditorRow {
             title: "{displayName}"

@@ -110,6 +110,8 @@ Address {
         }
         
         labels: {
+            foreach: false
+            
             VSTack {
                 foreach: false
                 sectionTitle: ""
