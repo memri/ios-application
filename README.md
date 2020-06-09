@@ -5,6 +5,9 @@ Can't wait? Cool! Reach out to us via our [Slack](https://app.slack.com/client/T
 
 
 ## Installation
+```pod install```
+
+### formatter
 ```brew install nshipster/formulae/swift-format```
 
 ```[sudo] gem install jazzy```
