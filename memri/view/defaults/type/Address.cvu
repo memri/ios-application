@@ -1,6 +1,7 @@
 [session = all-addresses] {
     [view] {
         title: "All Addresses"
+        
         [datasource = pod] {
             query: "Address"
         }
@@ -9,7 +10,7 @@
 
 Address[] {
     defaultRenderer: list
-    filterButtons: [ showStarred toggleFilterPanel ]
+    filterButtons: showStarred toggleFilterPanel
 
     [renderer = list]{
         HStack {
@@ -17,11 +18,9 @@ Address[] {
                 text: "{.computedTitle()}"
                 font: 16
                 padding: 0 0 10 0
-                border: #ff0000 1
             }
             Spacer
             Map {
-                test: 1090
                 address: {{.}}
                 maxWidth: 150
                 minHeight: 150

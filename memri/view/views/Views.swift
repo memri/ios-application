@@ -213,12 +213,13 @@ public class Views {
             i += 1
             
             if isFunction && i == lookup.sequence.count {
-                value = (value as? DataItem)?.functions
+                value = (value as? DataItem)?.functions[(node as? ExprVariableNode)?.name ?? ""]
                 if value == nil {
                     // TODO parse [blah]
                     let message = "Exception: Invalid function call. Could not find"
                     throw "\(message) \((node as? ExprVariableNode)?.name ?? "")"
                 }
+                break
             }
             
             if let node = node as? ExprVariableNode {
@@ -321,7 +322,7 @@ public class Views {
     
     func executeFunction(lookup: ExprLookupNode, args:[Any?], viewArguments:ViewArguments) throws -> Any? {
         let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
-        if let f = f as? ([Any?]) -> Any? {
+        if let f = f as? ([Any?]?) -> Any {
             return f(args) as Any?
         }
         

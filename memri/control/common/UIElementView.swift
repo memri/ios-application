@@ -378,7 +378,7 @@ public struct UIElementView: SwiftUI.View {
                         .setProperties(from.properties, self.item, main)
                 }
                 else if from.type == .RoundedRectangle {
-                    RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
+                    RoundedRectangle(cornerRadius: get("cornerRadius") ?? 5)
                         .setProperties(from.properties, self.item, main)
                 }
                 else if from.type == .Spacer {
@@ -453,7 +453,7 @@ public struct UIElementView: SwiftUI.View {
                             set: { let _ = $0 }
                         ), // ??
                         placeholder: self.get("hint") ?? "",
-                        textAlignment: self.get("textalign") ?? TextView.TextAlignment.left,
+                        textAlignment: self.get("textAlign") ?? TextView.TextAlignment.left,
                         font: UIFont.systemFont(ofSize: 16, weight: .regular),
                         textColor: Color(hex:"#223322").uiColor(),
                         autocorrection: TextView.Autocorrection.no

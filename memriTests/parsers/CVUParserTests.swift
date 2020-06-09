@@ -587,7 +587,7 @@ class CVUParserTests: XCTestCase {
                 
                 Text {
                     align: top
-                    textalign: center
+                    textAlign: center
                     font: 12 light
                 }
                 Text {
@@ -606,7 +606,7 @@ class CVUParserTests: XCTestCase {
                 alignment: left
 
                 Text {
-                    textalign: center
+                    textAlign: center
                     align: top
                     font: 12 light
                 }

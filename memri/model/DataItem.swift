@@ -40,7 +40,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     @objc dynamic var syncState:SyncState? = SyncState()
     
  
-    var functions:[String: (_ args:[Any]?) -> String] = [:]
+    var functions:[String: (_ args:[Any?]?) -> Any] = [:]
     
     /// Primary key used in the realm database of this DataItem
     public override static func primaryKey() -> String? {

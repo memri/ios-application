@@ -128,9 +128,9 @@ public enum UIElementFamily : String, CaseIterable {
 }
 
 public enum UIElementProperties : String, CaseIterable {
-    case resizable, show, alignment, align, textalign, spacing, title, text, image, nopadding,
+    case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerradius, hint, value, datasource, defaultValue, empty, style,
+         address, systemname, cornerRadius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -145,8 +145,8 @@ public enum UIElementProperties : String, CaseIterable {
             return value is Bool
         case .alignment: return value is VerticalAlignment || value is HorizontalAlignment
         case .align: return value is Alignment
-        case .textalign: return value is TextAlignment
-        case .spacing, .cornerradius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity, .zindex:
+        case .textAlign: return value is TextAlignment
+        case .spacing, .cornerRadius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity, .zindex:
             return value is CGFloat
         case .image: return value is File || value is String
         case .press: return value is Action || value is [Action]

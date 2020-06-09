@@ -142,12 +142,12 @@ class CVUValidatorTests: XCTestCase {
 
                 Text {
                     align: top
-                    textalign: center
+                    textAlign: center
                     font: 12 light
                 }
                 Text {
                     maxheight: 500
-                    cornerradius: 10
+                    cornerRadius: 10
                     border: #ff0000 1
                 }
             }

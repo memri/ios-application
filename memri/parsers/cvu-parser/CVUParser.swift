@@ -480,7 +480,7 @@ class CVUParser {
                 return value // TODO Test if this crashes the view renderer
             }
         },
-        "textalign": { (value:Any?, type:String) -> Any? in
+        "textAlign": { (value:Any?, type:String) -> Any? in
             switch value as? String {
             case "left": return TextAlignment.leading
             case "center": return TextAlignment.center

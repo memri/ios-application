@@ -140,10 +140,10 @@ class CVUSerializer {
               || key == "sessionDefinitions" || key == "viewDefinitions" {
                 continue
             }
-            else if key == "cornerradius" {
+            else if key == "cornerborder" {
                 if var value = dict[key] as? [Any] {
                     let radius = value.popLast()
-                    str.append("cornerradius: \(valueToString(radius, depth, tab))")
+                    str.append("cornerRadius: \(valueToString(radius, depth, tab))")
                     str.append("border: \(valueToString(value, depth, tab))")
                 }
                 else {

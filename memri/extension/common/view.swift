@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 
 private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "background",
-    "textalign", "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow",
+    "textAlign", "rowbackground", "cornerRadius", "cornerborder", "border", "margin", "shadow",
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
@@ -105,9 +105,12 @@ extension View {
             if let value = value as? CGFloat {
                 return AnyView(self.zIndex(Double(value)))
             }
-        case "cornerradius":
+        case "cornerRadius":
             if let value = value as? CGFloat {
                 return AnyView(self.cornerRadius(value))
+            }
+            else {
+                
             }
         case "cornerborder":
             if let value = value as? [Any?] {
@@ -153,7 +156,7 @@ extension View {
             }
             
             return AnyView(self.font(font))
-        case "textalign":
+        case "textAlign":
             if let value = value as? TextAlignment {
                 return AnyView(self.multilineTextAlignment(value))
             }
