@@ -12,14 +12,22 @@ private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
-    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:Main) -> AnyView {
+    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:Main,
+                       _ viewArguments:ViewArguments) -> AnyView {
+        
         var view:AnyView = AnyView(self)
+        
+        if properties.count == 0 {
+            return view
+        }
         
         for name in ViewPropertyOrder {
             if var value = properties[name] {
                 
                 if let expr = value as? Expression {
-                    do { value = try expr.execute(main.cascadingView.viewArguments) as Any? }
+                    do {
+                        value = try expr.execute(viewArguments ?? main.cascadingView.viewArguments) as Any?
+                    }
                     catch {
                         // TODO refactor: Error handling
                         print("Could not set property. Executing expression \(expr) failed")
@@ -77,13 +85,22 @@ extension View {
             if let color = value as? Color {
                 return AnyView(self.foregroundColor(color)) //TODO named colors do not work
             }
+            else if let color = value as? String {
+                return AnyView(self.foregroundColor(Color(hex: color))) //TODO named colors do not work
+            }
         case "background":
             if let color = value as? Color {
                 return AnyView(self.background(color)) //TODO named colors do not work
             }
+            else if let color = value as? String {
+                return AnyView(self.background(Color(hex: color))) //TODO named colors do not work
+            }
         case "rowbackground":
             if let color = value as? Color {
                 return AnyView(self.listRowBackground(color)) //TODO named colors do not work
+            }
+            else if let color = value as? String {
+                return AnyView(self.listRowBackground(Color(hex: color))) //TODO named colors do not work
             }
         case "border":
             if let value = value as? [Any?] {

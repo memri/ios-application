@@ -115,7 +115,7 @@ Address {
             VSTack {
                 foreach: false
                 sectionTitle: ""
-                padding: 10 36 5 36
+                padding: 10 36 10 36
                 
                 Text {
                     show: {{!.labels.count}}
@@ -140,7 +140,7 @@ Address {
                             cornerRadius: 5
                             
                             Text {
-                                text: "{.name}"
+                                text: "{.computedTitle()}"
                                 font: 16 semibold
                                 color: #fff
                                 padding: 5 8 5 8

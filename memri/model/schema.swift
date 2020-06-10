@@ -81,30 +81,28 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     func getCollection(_ object:Any) -> [DataItem] {
         var collection:[DataItem] = []
         
-        switch self {
-        case .typeNote: (object as? List<Note>)?.forEach{ collection.append($0) }
-        case .typeLabel: (object as? List<Label>)?.forEach{ collection.append($0) }
-        case .typePhoto: (object as? List<Photo>)?.forEach{ collection.append($0) }
-        case .typeVideo: (object as? List<Video>)?.forEach{ collection.append($0) }
-        case .typeAudio: (object as? List<Audio>)?.forEach{ collection.append($0) }
-        case .typeFile: (object as? List<File>)?.forEach{ collection.append($0) }
-        case .typePerson: (object as? List<Person>)?.forEach{ collection.append($0) }
-        case .typeAuditItem: (object as? List<AuditItem>)?.forEach{ collection.append($0) }
-        case .typeSessions: (object as? List<Sessions>)?.forEach{ collection.append($0) }
-        case .typePhoneNumber: (object as? List<PhoneNumber>)?.forEach{ collection.append($0) }
-        case .typeWebsite: (object as? List<Website>)?.forEach{ collection.append($0) }
-        case .typeLocation: (object as? List<Location>)?.forEach{ collection.append($0) }
-        case .typeAddress: (object as? List<Address>)?.forEach{ collection.append($0) }
-        case .typeCountry: (object as? List<Country>)?.forEach{ collection.append($0) }
-        case .typeCompany: (object as? List<Company>)?.forEach{ collection.append($0) }
-        case .typePublicKey: (object as? List<PublicKey>)?.forEach{ collection.append($0) }
-        case .typeOnlineProfile: (object as? List<OnlineProfile>)?.forEach{ collection.append($0) }
-        case .typeDiet: (object as? List<Diet>)?.forEach{ collection.append($0) }
-        case .typeMedicalCondition: (object as? List<MedicalCondition>)?.forEach{ collection.append($0) }
-        case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
-        case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
-        case .typeStoredCVUDefinition: (object as? List<CVUStoredDefinition>)?.forEach{ collection.append($0) }
-        }
+        if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
         
         return collection
     }

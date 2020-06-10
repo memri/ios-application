@@ -41,9 +41,37 @@ public class UIElement : CVUToString {
             if let expr = propValue as? Expression {
                 viewArguments.set(".", item) // TODO Optimization This is called a billion times. Find a better place for this
                 
-                // This returns a List<???> instead of [DataItem]. Solution
-                // might be to convert to Array via DataItemFamily
-                do { let x:T? = try expr.execForReturnType(viewArguments); return x }
+                do {
+                    if T.self == [DataItem].self {
+                        let x = try expr.execute(viewArguments);
+                        
+                        var result = [DataItem]()
+                        if let list = x as? List<Edge> {
+                            let realm = try! Realm()
+                            
+                            for edge in list {
+                                if let family = DataItemFamily(rawValue: edge.objectType) {
+                                    result.append(realm.object(
+                                        ofType: family.getType() as! Object.Type,
+                                        forPrimaryKey: edge.objectMemriID) as! DataItem)
+                                }
+                            }
+                        }
+                        else {
+                            if let family = DataItemFamily(rawValue: "Note") {
+                                result = family.getCollection(x as Any)
+                            }
+                            else {
+                                // TODO Warn??
+                            }
+                        }
+                        
+                        return (result as! T)
+                    }
+                    else {
+                        let x:T? = try expr.execForReturnType(viewArguments); return x
+                    }
+                }
                 catch let error {
                     // TODO Refactor error handling
                     errorHistory.error("Could note compute \(propName)\n"
