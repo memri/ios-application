@@ -682,6 +682,8 @@ class ActionBackAsSession : Action, ActionExec {
     }
 }
 
+
+
 class ActionOpenSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["session": Session.self, "viewArguments": [String:Any]?.self],
@@ -862,6 +864,37 @@ class ActionDuplicate : Action, ActionExec {
         execWithoutThrow { try ActionDuplicate.exec(main, arguments) }
     }
 }
+
+
+class ActionImport : Action, ActionExec {
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "import", arguments:arguments, values:values)
+    }
+    
+    func exec(_ arguments:[String: Any]) throws -> Void {
+        // TODO: parse options
+        
+        if let importer = arguments["importer"] as? DataItem{
+            
+            let importerInstance = ImporterInstance()
+            if let importerInstance = try main.cache.addToCache(importerInstance) as? ImporterInstance {
+                main.podAPI.runImport(importerInstance.memriID){ error, succes in
+                    if let error = error{
+                        print("Cannot execute actionImport: \(error)")
+                    }
+                }
+            }
+            else {
+                print("Cannot execute actionImport: Could not create ImporterInstance from importer")
+            }
+        }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionImport.exec(main, arguments) }
+    }
+}
+
 class ActionClosePopup : Action, ActionExec {
     required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(main, "closePopup", arguments:arguments, values:values)

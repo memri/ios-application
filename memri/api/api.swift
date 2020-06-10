@@ -297,6 +297,21 @@ public class PodAPI {
         
     }
     
+    /// Runs an importer on the pod
+    /// - Parameters:
+    ///   - memriID: The memriID of the data item to remove
+    ///   - callback: Function that is called when the task is completed either with a result, or  an error
+    /// - Remark: Note that data items that are marked as deleted are by default not returned when querying
+    public func runImport(_ memriID:String,
+                       _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
+        
+        self.http(.PUT, path: "import/\(memriID)") { error, data in
+            callback(error, error == nil)
+        }
+    }
+    
+    
+    
 //    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
 //
 //    public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}

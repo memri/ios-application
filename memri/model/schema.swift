@@ -37,6 +37,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case typeSession = "Session"
     case typeSessionView = "SessionView"
     case typeStoredCVUDefinition = "ViewDSLDefinition"
+    case typeImporter = "Importer"
+    case typeIndexer = "Indexer"
 
     static var discriminator: Discriminator = .type
     
@@ -64,6 +66,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeSession: return Color(hex: "#93c47d")
         case .typeSessionView: return Color(hex: "#93c47d")
         case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
+        case .typeImporter: return Color(hex: "#93c47d")
+        case .typeIndexer: return Color(hex: "#93c47d")
         }
     }
     
@@ -104,6 +108,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
         case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
         case .typeStoredCVUDefinition: (object as? List<CVUStoredDefinition>)?.forEach{ collection.append($0) }
+        case .typeImporter: (object as? List<Importer>)?.forEach{ collection.append($0) }
+        case .typeIndexer:(object as? List<Indexer>)?.forEach{ collection.append($0) }
         }
         
         return collection
@@ -133,6 +139,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeSession: return Session.self
         case .typeSessionView: return SessionView.self
         case .typeStoredCVUDefinition: return CVUStoredDefinition.self
+        case .typeImporter: return Importer.self
+        case .typeIndexer: return Indexer.self
         }
     }
 }
@@ -714,4 +722,83 @@ class Audio:DataItem {
             try self.superDecode(from: decoder)
         }
     }
+}
+
+class Importer:DataItem{
+    override var genericType:String { "Importer" }
+    @objc dynamic var name:String = ""
+    @objc dynamic var datatype:String = "unknown"
+    
+    let runs = List<Edge>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            datatype = try decoder.decodeIfPresent("datatype") ?? datatype
+            
+            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+
+class ImporterInstance:DataItem{
+    override var genericType:String { "ImporterInstance" }
+    @objc dynamic var name:String = ""
+    @objc dynamic var datatype:String = "unknown"
+    
+//    let runs = List<Importer>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            datatype = try decoder.decodeIfPresent("datatype") ?? datatype
+//            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+
+class Indexer:DataItem{
+    override var genericType:String { "Indexer" }
+    @objc dynamic var name:String = ""
+    @objc dynamic var indexerDescription:String = ""
+    @objc dynamic var query:String = ""
+    
+    let runs = List<Edge>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+            
+            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+    
 }

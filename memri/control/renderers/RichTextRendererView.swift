@@ -41,21 +41,6 @@ struct _RichTextEditor: UIViewRepresentable {
             self.control = control
         }
         
-//        func getRtfString(_ attributedText: NSAttributedString) -> String{
-//            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
-//            let rtfString: String
-//            do {
-//                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length), documentAttributes: rtfOptions)
-//                rtfString = String(decoding: rtfData, as: UTF8.self)
-//            }
-//            catch {
-//                print("Cannot read rtfString from attributedText: \(attributedText)")
-//                rtfString = ""
-//            }
-//
-//            return rtfString
-//        }
-        
         func getHTMLString(_ attributedText: NSAttributedString) -> String{
             let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
             let rtfString: String
@@ -173,8 +158,6 @@ struct RichTextRendererView: View {
 
     var body: some View {
         let dataItem = self.main.cascadingView.resultSet.singletonItem
-        print(dataItem?.realm)
-        print(self.main.cascadingView.resultSet.items.count)
         let binding = Binding(
             get: { dataItem?.getString("title") ?? "" },
             set: {

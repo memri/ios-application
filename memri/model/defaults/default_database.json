@@ -1,5 +1,20 @@
 [
     {
+        "type": "Importer",
+        "name": "iCloud notes",
+        "datatype": "Note"
+    },
+    {
+        "type": "Importer",
+        "name": "Evernote notes",
+        "datatype": "Note"
+    },
+    {
+        "type": "Indexer",
+        "name": "Geolocation indexer",
+        "indexerDescription": "Enriches datatypes with geographic coordinates with their corresponding cities en countries"
+    },
+    {
         "type": "Photo",
         "width": 250,
         "height": 250,

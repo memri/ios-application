@@ -81,7 +81,6 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                NavigationView{
                     // TODO REfactor: why are there 2px between each list row?
 //                    SwiftUI.List {
 //                        ForEach(main.items) { dataItem in
@@ -106,8 +105,6 @@ struct ListRendererView: View {
                      .environment(\.editMode, $main.currentSession.isEditMode)
                      .navigationBarTitle("")
                      .navigationBarHidden(true)
-
-                }
             }
         }
     }

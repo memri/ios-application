@@ -45,6 +45,16 @@
     },
     {
         "type": "item",
+        "title": "importers",
+        "view": "all-importers"
+    },
+    {
+        "type": "item",
+        "title": "indexers",
+        "view": "all-indexers"
+    },
+    {
+        "type": "item",
         "title": "views",
         "view": "all-sessionviews"
     },
