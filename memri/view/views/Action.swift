@@ -33,6 +33,7 @@ public class Action : HashableClass, CVUToString {
         "opensView": false,
         "color": Color(hex: "#999999"),
         "backgroundColor": Color.white,
+        "activeColor": Color(hex: "#ffdb00"),
         "inactiveColor": Color(hex: "#999999"),
         "activeBackgroundColor": Color.white,
         "inactiveBackgroundColor": Color.white
@@ -464,29 +465,30 @@ class ActionStar : Action, ActionExec {
     ]}
     
     required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "toggleStar", arguments:arguments, values:values)
+        super.init(main, "star", arguments:arguments, values:values)
     }
     
+    // TODO selection handling for binding
     func exec(_ arguments:[String: Any]) throws {
-        if let item = arguments["dataItem"] as? DataItem {
-            var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
-            let toValue = !item.starred
-            
-            if !selection.contains(item) {
-                selection.append(item)
-            }
-            
-            realmWriteIfAvailable(main.cache.realm, {
-                for item in selection { item.starred = toValue }
-            })
-
-            // TODO if starring is ever allowed in a list resultset view,
-            // it won't be updated as of now
-        }
-        else {
-            // TODO Error handling
-            throw "Cannot execute ActionStar, missing dataItem in arguments."
-        }
+//        if let item = arguments["dataItem"] as? DataItem {
+//            var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
+//            let toValue = !item.starred
+//
+//            if !selection.contains(item) {
+//                selection.append(item)
+//            }
+//
+//            realmWriteIfAvailable(main.cache.realm, {
+//                for item in selection { item.starred = toValue }
+//            })
+//
+//            // TODO if starring is ever allowed in a list resultset view,
+//            // it won't be updated as of now
+//        }
+//        else {
+//            // TODO Error handling
+//            throw "Cannot execute ActionStar, missing dataItem in arguments."
+//        }
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {

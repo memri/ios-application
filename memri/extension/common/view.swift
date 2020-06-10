@@ -26,7 +26,7 @@ extension View {
                 
                 if let expr = value as? Expression {
                     do {
-                        value = try expr.execute(viewArguments ?? main.cascadingView.viewArguments) as Any?
+                        value = try expr.execute(viewArguments) as Any?
                     }
                     catch {
                         // TODO refactor: Error handling

@@ -138,6 +138,7 @@ Address {
                         VStack {
                             background: {{.color}}
                             cornerRadius: 5
+                            stop222: true
                             
                             Text {
                                 text: "{.computedTitle()}"

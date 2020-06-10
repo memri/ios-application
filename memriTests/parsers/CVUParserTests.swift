@@ -703,35 +703,20 @@ class CVUParserTests: XCTestCase {
         
         XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
-//    
-//    func testTest() throws {
-//        let snippet = """
-//        Person {
-//            [renderer = list]{
-//                HStack {
-//                    Text {
-//                        text: "{.computedTitle()}"
-//                        font: 16
-//                        padding: 0 0 10 0
-//                        border: #ff0000 1
-//                    }
-//                    Spacer
-//                    Map {
-//                        address: {{.}}
-//                        maxWidth: 150
-//                        minHeight: 150
-//                        maxHeight: 150
-//                        cornerRadius: 10
-//                        border: #DDD 13
-//                        margin: 0 0 10 0
-//                    }
-//                }
-//            }
-//        }
-//        """
-//        
-//        XCTAssertEqual(try parseToCVUString(snippet), snippet)
-//    }
+
+    func testActionStar() throws {
+        let snippet = """
+        Person {
+            [renderer = list] {
+                Action {
+                    press: star
+                }
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
 
     func testErrorMissingCurlBracketClose() throws {
         let snippet = """

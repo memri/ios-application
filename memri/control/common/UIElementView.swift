@@ -117,6 +117,8 @@ public struct UIElementView: SwiftUI.View {
         self.from = gui
         self.item = dataItem
         self.viewArguments = viewArguments ?? ViewArguments()
+        
+        self.viewArguments.set(".", dataItem)
     }
     
     public func has(_ propName:String) -> Bool {
@@ -157,6 +159,11 @@ public struct UIElementView: SwiftUI.View {
         Group {
             if (!has("show") || get("show") == true) {
                 if from.type == .VStack {
+                    if get("stop222") ?? false {
+                        if get("stop222") ?? false {
+                        }
+                    }
+                    
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
@@ -350,7 +357,7 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .SecureField {
                 }
                 else if from.type == .Action {
-                    ActionButton(action: get("press") ?? ActionNoop(main))
+                    ActionButton(action: get("press") ?? Action(main, "noop"))
                         .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .MemriButton {

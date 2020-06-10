@@ -123,6 +123,9 @@ extension Main {
             // Track state of the action and toggle the state variable
             if let binding = action.binding {
                 try binding.toggleBool()
+                
+                // TODO this should be removed and fixed more generally
+                self.scheduleUIUpdate() { _ in true }
             }
             
             if let action = action as? ActionExec {

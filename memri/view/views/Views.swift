@@ -232,6 +232,8 @@ public class Views {
                     if let dataItem = value as? DataItem {
                         if dataItem.objectSchema[node.name] == nil {
                             // TODO Warn
+                            print("Invalid property access '\(node.name)'")
+                            errorHistory.warn("Invalid property access '\(node.name)'")
                             return nil
                         }
                         else {
