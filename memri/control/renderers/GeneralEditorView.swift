@@ -105,7 +105,7 @@ struct GeneralEditorView: View {
         }
         
         (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
-            return (objectSchema[$0] == nil || objectSchema[$0]!.objectClassName != nil)
+            return (groups[$0] != nil || objectSchema[$0]?.objectClassName != nil)
                 && !(renderConfig?.excluded.contains($0) ?? false)
                 && !alreadyUsed.contains($0)
         }.forEach({
@@ -219,7 +219,7 @@ struct GeneralEditorSection: View {
     }
     
     func getViewArguments(_ groupKey:String, _ name:String, _ value:Any?,
-                    _ item:DataItem)-> ViewArguments {
+                          _ item:DataItem)-> ViewArguments {
         
         return ViewArguments(renderConfig.viewArguments.asDict().merging([
             "readOnly": !self.main.currentSession.editMode,
@@ -317,7 +317,7 @@ struct GeneralEditorSection: View {
         let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
         let showDividers = self.getSectionTitle(groupKey) != ""
         
-        return Section (header: self.getHeader(groupContainsNodes)){
+        return Section (header: self.getHeader(groupContainsNodes)) {
             // Render using a view specified renderer
             if renderConfig.hasGroup(groupKey) {
                 if showDividers { Divider() }
@@ -392,7 +392,6 @@ struct GeneralEditorSection: View {
                     )
                 }
                 Divider()
-                
             }
         }
     }

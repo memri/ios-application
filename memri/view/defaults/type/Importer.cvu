@@ -94,6 +94,7 @@ Importer[] {
                 template {
                     type: ImporterInstance
                     name: {{.name}}
+                    importer: {{.}}
                 }
             }
         }

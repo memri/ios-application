@@ -70,12 +70,16 @@ ImporterInstance {
             name: "all-importer-instances"
         }
     ]
+    
     [renderer = generalEditor] {
-        excluded: version starred dateCreated dateModified dateAccessed changeLog
         groups:  {
             run: run
+            name: name
         }
-        sequence: run
+        
+        sequence: name run importer labels other dates
+        excluded: version dateCreated dateModified dateAccessed changeLog
+        readOnly: name
 
         run {
             foreach: false
@@ -92,6 +96,7 @@ ImporterInstance {
                     VStack {
                         cornerRadius: 5
                         background: #70ba6c
+                        margin: 5 5 5 30
 
                         Text {
                             text: "RUN"
