@@ -63,11 +63,11 @@ Address[] {
                     hierarchy: address
                 }
                 VStack {
-                    Textfield { hint: Street, value: "{.street}", rows: 2 }
-                    Textfield { hint: City, value: "{.city}" }
+                    Textfield { hint: Street, value: {{.street}}, rows: 2 }
+                    Textfield { hint: City, value: {{.city}} }
                     HStack {
-                        Textfield { hint: "State", value: "{.state}" }
-                        Textfield { hint: "Zip", value: "{.postalCode}" }
+                        Textfield { hint: "State", value: {{.state}} }
+                        Textfield { hint: "Zip", value: {{.postalCode}} }
                     }
                     Picker {
                         empty: Country
