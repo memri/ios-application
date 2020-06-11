@@ -17,7 +17,7 @@ struct BrowseSetting: Identifiable {
 }
 
 struct FilterPanel: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
@@ -25,9 +25,9 @@ struct FilterPanel: View {
     private func allOtherFields() -> [String] {
         var list:[String] = []
         
-        if let item = self.main.cascadingView.resultSet.items.first {
-            var excludeList = self.main.cascadingView.sortFields
-            excludeList.append(self.main.cascadingView.datasource.sortProperty ?? "")
+        if let item = self.context.cascadingView.resultSet.items.first {
+            var excludeList = self.context.cascadingView.sortFields
+            excludeList.append(self.context.cascadingView.datasource.sortProperty ?? "")
             excludeList.append("memriID")
             excludeList.append("uid")
             excludeList.append("deleted")
@@ -44,34 +44,34 @@ struct FilterPanel: View {
     }
     
     private func toggleAscending() {
-        realmWriteIfAvailable(self.main.realm) {
-            self.main.currentSession.currentView.datasource?.sortAscending.value
-                = !(self.main.cascadingView.datasource.sortAscending ?? true)
+        realmWriteIfAvailable(self.context.realm) {
+            self.context.currentSession.currentView.datasource?.sortAscending.value
+                = !(self.context.cascadingView.datasource.sortAscending ?? true)
         }
-        self.main.scheduleCascadingViewUpdate()
+        self.context.scheduleCascadingViewUpdate()
     }
     
     private func changeOrderProperty(_ fieldName:String) {
-        realmWriteIfAvailable(self.main.realm) {
-            self.main.currentSession.currentView.datasource?.sortProperty = fieldName
+        realmWriteIfAvailable(self.context.realm) {
+            self.context.currentSession.currentView.datasource?.sortProperty = fieldName
         }
-        self.main.scheduleCascadingViewUpdate()
+        self.context.scheduleCascadingViewUpdate()
     }
     
     private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
-        return self.main.renderers.tuples
-            .map { ($0.0, $0.1(main)) }
+        return self.context.renderers.tuples
+            .map { ($0.0, $0.1(context)) }
             .filter { (key, renderer) -> Bool in
-                !key.contains(".") && renderer.canDisplayResults(self.main.items)
+                !key.contains(".") && renderer.canDisplayResults(self.context.items)
             }
     }
     
     private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
-        if let currentCategory = self.main.cascadingView.activeRenderer.split(separator: ".").first {
-            return self.main.renderers.all
+        if let currentCategory = self.context.cascadingView.activeRenderer.split(separator: ".").first {
+            return self.context.renderers.all
                 .map({ (arg0) -> (String, FilterPanelRendererButton) in
                     let (key, value) = arg0
-                    return (key, value(main))
+                    return (key, value(context))
                 })
                 .filter { (key, renderer) -> Bool in
                     renderer.rendererName.split(separator: ".").first == currentCategory
@@ -82,19 +82,19 @@ struct FilterPanel: View {
     }
     
     private func isActive(_ renderer:FilterPanelRendererButton) -> Bool {
-        self.main.cascadingView.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
+        self.context.cascadingView.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
     }
     
     var body: some View {
-        let main = self.main
-        let cascadingView = self.main.cascadingView
+        let context = self.context
+        let cascadingView = self.context.cascadingView
         
         return HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
                     ForEach(rendererCategories(), id: \.0) { (key, renderer) in
                         
-                        Button(action: { main.executeAction(renderer) } ) {
+                        Button(action: { context.executeAction(renderer) } ) {
                             Image(systemName: renderer.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
@@ -118,7 +118,7 @@ struct FilterPanel: View {
                     VStack(alignment: .leading, spacing: 0){
                         ForEach(renderersAvailable(), id:\.0) { (key, renderer) in
                             Group {
-                                Button(action:{ main.executeAction(renderer) }) {
+                                Button(action:{ context.executeAction(renderer) }) {
                                     if cascadingView.activeRenderer == renderer.rendererName {
                                         Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#6aa84f"))

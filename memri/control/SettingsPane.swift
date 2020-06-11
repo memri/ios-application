@@ -10,18 +10,18 @@ import Foundation
 import SwiftUI
 
 struct SettingsPane: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     private func getBinding<T:Decodable>(_ path:String) -> Binding<T> {
         return Binding<T>(
             get: { () -> T in
                 // TODO: Error handling
-                let x:T = self.main.settings.get(path)!
+                let x:T = self.context.settings.get(path)!
                 return x
             },
             set: {
-                self.main.settings.set(path, AnyCodable($0))
+                self.context.settings.set(path, AnyCodable($0))
             }
         )
     }

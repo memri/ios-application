@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContextPaneBackground: View {
     
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
 
     var body: some View {
         Color.gray

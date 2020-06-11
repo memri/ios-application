@@ -20,10 +20,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-        let main = RootContext(name: "Memri GUI", key: "ABCDEF")
-        let application = Application().environmentObject(main as MemriContext)
+        let context = RootContext(name: "Memri GUI", key: "ABCDEF")
+        let application = Application().environmentObject(context as MemriContext)
 
-        do { try main.boot() }
+        do { try context.boot() }
         catch let error {
             // TODO Error Handling (show fatal error on screen)
             print(error)

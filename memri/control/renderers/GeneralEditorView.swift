@@ -85,12 +85,12 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
 
 
 struct GeneralEditorView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var name: String = "generalEditor"
     
     var renderConfig: CascadingGeneralEditorConfig? {
-        self.main.cascadingView.renderConfig as? CascadingGeneralEditorConfig
+        self.context.cascadingView.renderConfig as? CascadingGeneralEditorConfig
     }
     
     func getGroups(_ item:DataItem) -> [String:[String]]? {
@@ -134,8 +134,8 @@ struct GeneralEditorView: View {
     
     var body: some View {
         let item: DataItem
-        if main.cascadingView.resultSet.singletonItem != nil{
-            item = main.cascadingView.resultSet.singletonItem!
+        if context.cascadingView.resultSet.singletonItem != nil{
+            item = context.cascadingView.resultSet.singletonItem!
         }
         else {
             print("Cannot load DataItem, creating empty")
@@ -167,7 +167,7 @@ struct GeneralEditorView: View {
 }
 
 struct GeneralEditorSection: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
 
     var item: DataItem
     var renderConfig: CascadingGeneralEditorConfig
@@ -188,7 +188,7 @@ struct GeneralEditorSection: View {
                     var objects: [DataItem] = []
                     
                     for memriID in edges.map({$0.objectMemriID}){
-                        let object = main.realm.object(ofType: type, forPrimaryKey: memriID) as? DataItem
+                        let object = context.realm.object(ofType: type, forPrimaryKey: memriID) as? DataItem
                         if let object = object{
                             objects.append(object)
                         }
@@ -222,7 +222,7 @@ struct GeneralEditorSection: View {
                           _ item:DataItem)-> ViewArguments {
         
         return ViewArguments(renderConfig.viewArguments.asDict().merging([
-            "readOnly": !self.main.currentSession.editMode,
+            "readOnly": !self.context.currentSession.editMode,
             "sectionTitle": groupKey.camelCaseToWords().uppercased(),
             "displayName": name.camelCaseToWords().capitalizingFirstLetter(),
             "name": name,
@@ -248,12 +248,12 @@ struct GeneralEditorSection: View {
 //    }
     
     func getHeader(_ isArray: Bool) -> some View {
-        let editMode = self.main.currentSession.editMode
+        let editMode = self.context.currentSession.editMode
         let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let action = isArray && editMode && !readOnly
-            ? ActionOpenViewByName(main,
+            ? ActionOpenViewByName(context,
                 arguments: [
                     "name": "choose-item-by-query",
                     "arguments": [
@@ -310,7 +310,7 @@ struct GeneralEditorSection: View {
 
     var body: some View {
         let renderConfig = self.renderConfig
-        let editMode = self.main.currentSession.editMode
+        let editMode = self.context.currentSession.editMode
         let properties = groupKey == "other"
             ? self.getProperties(item)
             : self.groups[self.groupKey] ?? []
@@ -382,7 +382,7 @@ struct GeneralEditorSection: View {
                     // TODO: Refactor: rows that are single links to an item
                     
                     DefaultGeneralEditorRow(
-                        main: self._main,
+                        context: self._context,
                         item: self.item,
                         prop: prop,
                         readOnly: !editMode || renderConfig.readOnly.contains(prop),
@@ -398,7 +398,7 @@ struct GeneralEditorSection: View {
 }
 
 struct DefaultGeneralEditorRow: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var item: DataItem
     var prop: String
@@ -429,7 +429,7 @@ struct DefaultGeneralEditorRow: View {
                     }
                     else if propType == .object {
                         if self.item[self.prop] is DataItem {
-                            MemriButton(main:self._main, item:self.item[self.prop] as! DataItem)
+                            MemriButton(context:self._context, item:self.item[self.prop] as! DataItem)
                         }
                         else {
                             defaultRow()
@@ -475,7 +475,7 @@ struct DefaultGeneralEditorRow: View {
             get: { self.item[self.prop] as? Bool ?? false },
             set: { _ in
                 self.item.toggle(self.prop)
-                self.main.objectWillChange.send()
+                self.context.objectWillChange.send()
             }
         )
         
@@ -494,7 +494,7 @@ struct DefaultGeneralEditorRow: View {
             get: { self.item[self.prop] as? Int ?? 0 },
             set: {
                 self.item.set(self.prop, $0)
-                self.main.objectWillChange.send()
+                self.context.objectWillChange.send()
             }
         )
         
@@ -508,7 +508,7 @@ struct DefaultGeneralEditorRow: View {
             get: { self.item[self.prop] as? Double ?? 0 },
             set: {
                 self.item.set(self.prop, $0)
-                self.main.objectWillChange.send()
+                self.context.objectWillChange.send()
             }
         )
         
@@ -522,7 +522,7 @@ struct DefaultGeneralEditorRow: View {
             get: { self.item[self.prop] as? Date ?? Date() },
             set: {
                 self.item.set(self.prop, $0)
-                self.main.objectWillChange.send()
+                self.context.objectWillChange.send()
             }
         )
         
@@ -588,7 +588,7 @@ private struct GeneralEditorHeader: ViewModifier {
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootContext(name: "", key: "").mockBoot()
+        let context = RootContext(name: "", key: "").mockBoot()
         
         return ZStack {
             VStack(alignment: .center, spacing: 0) {
@@ -598,6 +598,6 @@ struct GeneralEditorView_Previews: PreviewProvider {
             }.fullHeight()
             
             ContextPane()
-        }.environmentObject(main)
+        }.environmentObject(context)
     }
 }

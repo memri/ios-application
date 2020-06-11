@@ -11,15 +11,15 @@ import Combine
 let _keyBoardResponder = KeyboardResponder()
 
 struct Browser: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     @ObservedObject var keyboardResponder = _keyBoardResponder
     
     var body: some View {
         return ZStack {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
-//                Loading(isShowing: .constant(self.main.cascadingView.resultSet.isLoading)) {
-                    allRenderers?.allViews[self.main.cascadingView.activeRenderer]
+//                Loading(isShowing: .constant(self.context.cascadingView.resultSet.isLoading)) {
+                    allRenderers?.allViews[self.context.cascadingView.activeRenderer]
                         .fullHeight()
                         .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()

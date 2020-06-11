@@ -47,12 +47,12 @@ class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
 }
 
 struct ListRendererView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     let name = "list"
     
     var renderConfig: CascadingListConfig? {
-        self.main.cascadingView.renderConfig as? CascadingListConfig
+        self.context.cascadingView.renderConfig as? CascadingListConfig
     }
     
     init() {
@@ -61,16 +61,16 @@ struct ListRendererView: View {
     
     var body: some View {
         let renderConfig = self.renderConfig
-        let main = self.main
+        let context = self.context
         
         return VStack{
             if renderConfig == nil {
                 Text("Unable to render this view")
             }
-            else if main.cascadingView.resultSet.count == 0 {
+            else if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(main.cascadingView.emptyResultText)
+                    Text(context.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)
@@ -84,10 +84,10 @@ struct ListRendererView: View {
                     // TODO REfactor: why are there 2px between each list row?
                 NavigationView {
                     SwiftUI.List {
-                        ForEach(main.items) { dataItem in
+                        ForEach(context.items) { dataItem in
                             Button (action:{
                                 if let press = renderConfig?.press {
-                                    main.executeAction(press, with: dataItem)
+                                    context.executeAction(press, with: dataItem)
                                 }
                             }) {
                                 // TODO: Error handling
@@ -96,14 +96,14 @@ struct ListRendererView: View {
                             .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
                         }
                         .onDelete{ indexSet in
-                            main.executeAction(ActionDelete(main))
+                            context.executeAction(ActionDelete(context))
                         }
                     }
-                    .environment(\.editMode, $main.currentSession.isEditMode)
+                    .environment(\.editMode, $context.currentSession.isEditMode)
                     .navigationBarTitle("")
                     .navigationBarHidden(true)
-//                    TableView<DataItem,UIElementView>(main: self.main, canReorder: false)
-//                     .environment(\.editMode, $main.currentSession.isEditMode)
+//                    TableView<DataItem,UIElementView>(context: self.context, canReorder: false)
+//                     .environment(\.editMode, $context.currentSession.isEditMode)
 //                     .navigationBarTitle("")
 //                     .navigationBarHidden(true)
                 }

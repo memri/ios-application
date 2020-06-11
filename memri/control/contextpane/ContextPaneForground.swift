@@ -9,31 +9,31 @@
 import SwiftUI
 
 struct ContextPaneForground: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var paddingLeft:CGFloat = 25
 
     var body: some View {
-        let main = self.main
-        let labels = main.cascadingView.resultSet.singletonItem?.labels ?? List<Label>()
+        let context = self.context
+        let labels = context.cascadingView.resultSet.singletonItem?.labels ?? List<Label>()
         
-        let addLabelAction = ActionNoop(main)
+        let addLabelAction = ActionNoop(context)
         
         return VStack(alignment: .leading) {
             VStack (alignment: .leading) {
-                Text(main.cascadingView.title) // TODO make this generic
+                Text(context.cascadingView.title) // TODO make this generic
                     .font(.system(size: 23, weight: .regular, design: .default))
                     .fontWeight(.bold)
                     .opacity(0.75)
                     .padding(.horizontal, paddingLeft)
                     .padding(.vertical, 5)
-                Text(main.cascadingView.subtitle)
+                Text(context.cascadingView.subtitle)
                     .font(.body)
                     .opacity(0.75)
                     .padding(.horizontal, paddingLeft)
                 
                 HStack {
-                    ForEach (main.cascadingView.contextButtons, id:\.self) { actionItem in
+                    ForEach (context.cascadingView.contextButtons, id:\.self) { actionItem in
                         ActionButton(action: actionItem)
                     }
                 }
@@ -60,9 +60,9 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0){
-                ForEach (main.cascadingView.actionItems, id:\.self) { actionItem in
+                ForEach (context.cascadingView.actionItems, id:\.self) { actionItem in
                     Button(action:{
-                        main.executeAction(actionItem)
+                        context.executeAction(actionItem)
                     }) {
                         Text(actionItem.getString("title"))
                             .foregroundColor(.black)
@@ -85,9 +85,9 @@ struct ContextPaneForground: View {
             .padding(.top, 15)
             .padding(.bottom, 10)
             VStack(alignment: .leading, spacing: 0){
-                ForEach (main.cascadingView.navigateItems, id:\.self) { navigateItem in
+                ForEach (context.cascadingView.navigateItems, id:\.self) { navigateItem in
                     Button(action:{
-                        main.executeAction(navigateItem)
+                        context.executeAction(navigateItem)
                     }) {
                         Text(LocalizedStringKey(navigateItem.getString("title")))
                             .foregroundColor(.black)
@@ -112,7 +112,7 @@ struct ContextPaneForground: View {
             VStack(alignment: .leading, spacing: 10){
                 ForEach (labels) { labelItem in
                     Button(action:{
-                        main.executeAction(addLabelAction, with: labelItem)
+                        context.executeAction(addLabelAction, with: labelItem)
                     }) {
                         Text(labelItem.name)
                             .foregroundColor(.black)
@@ -127,7 +127,7 @@ struct ContextPaneForground: View {
                     .padding(.horizontal, self.paddingLeft)
                 }
                 Button(action:{
-                    main.executeAction(ActionNoop(main))
+                    context.executeAction(ActionNoop(context))
                 }) {
                     Text(addLabelAction.getString("title"))
                         .foregroundColor(.black)

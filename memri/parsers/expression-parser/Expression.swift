@@ -15,7 +15,7 @@ public class Expression : CVUToString {
     var lookup: (ExprLookupNode, ViewArguments) throws -> Any?
     var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
     
-    var main:MemriContext? = nil
+    var context:MemriContext? = nil
     
     private var interpreter:ExprInterpreter? = nil
     private var parsed = false
@@ -60,23 +60,23 @@ public class Expression : CVUToString {
                 let lookupNode = ExprLookupNode(sequence: sequence)
                 let lookupValue = try self.lookup(lookupNode, ViewArguments())
                 
-                if let obj = lookupValue as? Object, let main = main {
-                    realmWriteIfAvailable(main.realm) {
+                if let obj = lookupValue as? Object, let context = context {
+                    realmWriteIfAvailable(context.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
                     }
                     return
                 }
                 // TODO FIX: Implement LookUpAble
-                else if let obj = lookupValue as? MemriContext, let main = main{
-                    realmWriteIfAvailable(main.realm) {
+                else if let obj = lookupValue as? MemriContext, let context = context{
+                    realmWriteIfAvailable(context.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
                     }
                     return
                 }
-                else if let obj = lookupValue as? UserState, let main = main{
-                    realmWriteIfAvailable(main.realm) {
+                else if let obj = lookupValue as? UserState, let context = context{
+                    realmWriteIfAvailable(context.realm) {
                         obj.set(lastProperty.name,
                                 !ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
                     }

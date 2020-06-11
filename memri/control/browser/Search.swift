@@ -10,17 +10,17 @@ import SwiftUI
 import Combine
 
 struct Search: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
 
     var body: some View {
         VStack{
             Divider().background(Color(hex: "#efefef"))
             HStack{
-                TextField(main.cascadingView.searchHint,
-                          text: $main.cascadingView.filterText)
-                Text(main.cascadingView.searchMatchText)
+                TextField(context.cascadingView.searchHint,
+                          text: $context.cascadingView.filterText)
+                Text(context.cascadingView.searchMatchText)
                 
-                ForEach(main.cascadingView.filterButtons, id: \.self){ filterButton in
+                ForEach(context.cascadingView.filterButtons, id: \.self){ filterButton in
                     ActionButton(action: filterButton)
                         .font(Font.system(size: 20, weight: .medium))
                 }
@@ -29,7 +29,7 @@ struct Search: View {
             .padding(.top, 5)
             .padding(.bottom, 5)
             
-            if self.main.currentSession.showFilterPanel {
+            if self.context.currentSession.showFilterPanel {
                 FilterPanel()
             }
         }

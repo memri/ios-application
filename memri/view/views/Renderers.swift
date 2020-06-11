@@ -20,7 +20,7 @@ public class Renderers {
                   view:AnyView, renderConfigType: CascadingRenderConfig.Type,
                   canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
         
-        self.all[name] = { main in FilterPanelRendererButton(main,
+        self.all[name] = { context in FilterPanelRendererButton(context,
             name: name,
             order: order,
             title: title,
@@ -68,30 +68,30 @@ class FilterPanelRendererButton: Action, ActionExec {
     var canDisplayResults: (_ items: [DataItem]) -> Bool
     var rendererName: String
     
-    required init(_ main:MemriContext, name:String, order:Int, title:String, icon:String,
+    required init(_ context:MemriContext, name:String, order:Int, title:String, icon:String,
                   canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
         
         self.rendererName = name
         self.order = order
         self.canDisplayResults = canDisplayResults
         
-        super.init(main, "setRenderer", values: ["icon":icon, "title":title])
+        super.init(context, "setRenderer", values: ["icon":icon, "title":title])
     }
     
-    required init(_ main:MemriContext, arguments: [String : Any?]? = nil, values: [String : Any?] = [:]) {
+    required init(_ context:MemriContext, arguments: [String : Any?]? = nil, values: [String : Any?] = [:]) {
         fatalError("init(arguments:values:) has not been implemented")
     }
     
     override func isActive() -> Bool? {
-        main.cascadingView.activeRenderer == self.rendererName
+        context.cascadingView.activeRenderer == self.rendererName
     }
     
     func exec(_ arguments:[String: Any]) {
-        realmWriteIfAvailable(main.cache.realm, {
-            main.cascadingView.activeRenderer = self.rendererName
+        realmWriteIfAvailable(context.cache.realm, {
+            context.cascadingView.activeRenderer = self.rendererName
         })
         
-        main.scheduleUIUpdate(){ _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
+        context.scheduleUIUpdate(){ _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
     }
 }
 

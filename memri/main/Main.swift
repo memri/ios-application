@@ -73,7 +73,7 @@ public class MemriContext: ObservableObject {
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
-    func scheduleUIUpdate(_ check:(_ main:MemriContext) -> Bool){
+    func scheduleUIUpdate(_ check:(_ context:MemriContext) -> Bool){
         // Don't schedule when we are already scheduled
         if !scheduled && check(self) {
             
@@ -217,7 +217,7 @@ public class MemriContext: ObservableObject {
     }
     
     private func maybeLogUpdate(){
-        if self.cascadingView.main == nil { return }
+        if self.cascadingView.context == nil { return }
         
         let syncState = self.cascadingView.resultSet.singletonItem?.syncState
         if let syncState = syncState, syncState.changedInThisSession {
@@ -290,7 +290,7 @@ public class MemriContext: ObservableObject {
                 scheduleUIUpdate{_ in true}
             }
             else {
-                print("Cannot set property \(propName), does not exist on main")
+                print("Cannot set property \(propName), does not exist on context")
             }
         }
     }
@@ -337,32 +337,32 @@ public class MemriContext: ObservableObject {
         self.renderers = renderers
         
         // TODO: FIX
-        self.cascadingView.main = self
+        self.cascadingView.context = self
     }
 }
 
 public class SubContext: MemriContext {
     
-    init(name:String, _ main:MemriContext, _ session:Session) {
-        let views = Views(main.realm)
+    init(name:String, _ context:MemriContext, _ session:Session) {
+        let views = Views(context.realm)
         
         super.init(
             name: name,
-            podAPI: main.podAPI,
-            cache: main.cache,
-            realm: main.realm,
-            settings: main.settings,
-            installer: main.installer,
-            sessions: Sessions(main.realm),
+            podAPI: context.podAPI,
+            cache: context.cache,
+            realm: context.realm,
+            settings: context.settings,
+            installer: context.installer,
+            sessions: Sessions(context.realm),
             views: views,
-            cascadingView: main.cascadingView,
-            navigation: main.navigation,
-            renderers: main.renderers
+            cascadingView: context.cascadingView,
+            navigation: context.navigation,
+            renderers: context.renderers
         )
         
-        self.closeStack = main.closeStack
+        self.closeStack = context.closeStack
         
-        views.main = self
+        views.context = self
         
         // For now sessions is unmanaged. TODO: Refactor: we may want to change this.
         sessions.sessions.append(session)
@@ -399,7 +399,7 @@ public class RootContext: MemriContext {
             renderers: Renderers()
         )
         
-        self.cascadingView.main = self
+        self.cascadingView.context = self
         
         let takeScreenShot = {
             // Make sure to record a screenshot prior to session switching
@@ -450,7 +450,7 @@ public class RootContext: MemriContext {
                 
                     #if targetEnvironment(simulator)
                         // Reload for easy adjusting
-                        self.views.main = self
+                        self.views.context = self
                         try self.views.install()
                     #endif
                     

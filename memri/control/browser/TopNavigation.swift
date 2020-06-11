@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct TopNavigation: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     @State private var showingBackActions = false
     @State private var showingTitleActions = false
@@ -29,16 +29,16 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(ActionForward(main))
+        self.context.executeAction(ActionForward(context))
     }
     private func toFront(){
-        self.main.executeAction(ActionForwardToFront(main))
+        self.context.executeAction(ActionForwardToFront(context))
     }
     private func backAsSession(){
-        self.main.executeAction(ActionBackAsSession(main))
+        self.context.executeAction(ActionBackAsSession(context))
     }
     private func openAllViewsOfSession(){
-        let memriID = self.main.currentSession.memriID
+        let memriID = self.context.currentSession.memriID
         let view = """
         {
             "title": "Views in current session",
@@ -49,13 +49,13 @@ public struct TopNavigation: View {
         """
         
         // TODO 
-        do { try ActionOpenView.exec(main, ["view": view]) }
+        do { try ActionOpenView.exec(context, ["view": view]) }
         catch {}
     }
     
     private func createTitleActionSheet() -> ActionSheet {
         var buttons:[ActionSheet.Button] = []
-        let isNamed = self.main.currentSession.currentView.name != nil
+        let isNamed = self.context.currentSession.currentView.name != nil
         
         // TODO or copyFromView
         buttons.append(isNamed
@@ -88,14 +88,14 @@ public struct TopNavigation: View {
     }
         
     public var body: some View {
-        let backButton = main.currentSession.hasHistory ? ActionBack(main) : nil
-        let main = self.main
+        let backButton = context.currentSession.hasHistory ? ActionBack(context) : nil
+        let context = self.context
         
         return ZStack {
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack {
                 Button(action: { self.showingTitleActions = true }) {
-                    Text(main.cascadingView.title)
+                    Text(context.cascadingView.title)
                         .font(.headline)
                         .foregroundColor(Color(hex: "#333"))
                 }
@@ -107,7 +107,7 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        ActionButton(action: ActionShowNavigation(main))
+                        ActionButton(action: ActionShowNavigation(context))
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
@@ -115,7 +115,7 @@ public struct TopNavigation: View {
 //                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
                         Button(action: {
-                            main.executeAction(ActionClosePopup(main))
+                            context.executeAction(ActionClosePopup(context))
                         }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
@@ -130,7 +130,7 @@ public struct TopNavigation: View {
                         Button(action: {
                             if !self.showingBackActions {
                                 // NOTE: Allowed force unwrap (logic)
-                                main.executeAction(backButton!)
+                                context.executeAction(backButton!)
                             }
                         }) {
                             Image(systemName: backButton!.getString("icon"))
@@ -176,16 +176,16 @@ public struct TopNavigation: View {
                     Spacer()
                     
                     // TODO this should not be a setting but a user defined view that works on all
-                    if main.item != nil || main.settings.getBool("user/general/gui/showEditButton") != false {
-                        ActionButton(action: main.cascadingView.editActionButton)
+                    if context.item != nil || context.settings.getBool("user/general/gui/showEditButton") != false {
+                        ActionButton(action: context.cascadingView.editActionButton)
                             .font(Font.system(size: 19, weight: .semibold))
                     }
                     
-                    ActionButton(action: main.cascadingView.actionButton)
+                    ActionButton(action: context.cascadingView.actionButton)
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        ActionButton(action: ActionShowSessionSwitcher(main))
+                        ActionButton(action: ActionShowSessionSwitcher(context))
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }

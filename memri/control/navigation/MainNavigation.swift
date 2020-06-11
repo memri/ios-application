@@ -30,7 +30,7 @@ public class MainNavigation:ObservableObject {
         }
     }
     
-    public var scheduleUIUpdate: ((_ check:(_ main:MemriContext) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ context:MemriContext) -> Bool) -> Void)? = nil
     
     private var realm:Realm
     

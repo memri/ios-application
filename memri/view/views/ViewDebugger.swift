@@ -154,7 +154,7 @@ class ErrorHistory: ObservableObject {
 var errorHistory = ErrorHistory()
 
 struct  ErrorConsole: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     @ObservedObject var history = errorHistory
     

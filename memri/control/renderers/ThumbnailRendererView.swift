@@ -33,12 +33,12 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
 }
 
 struct ThumbnailRendererView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var name: String="thumbnail"
     
     var renderConfig: CascadingThumbnailConfig? {
-        self.main.cascadingView.renderConfig as? CascadingThumbnailConfig
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig
     }
     
     var layout: ASCollectionLayout<Int> {
@@ -69,14 +69,14 @@ struct ThumbnailRendererView: View {
     }
     
     var section: ASCollectionViewSection<Int> {
-        ASCollectionViewSection (id: 0, data: main.items) { dataItem, state in
+        ASCollectionViewSection (id: 0, data: context.items) { dataItem, state in
             ZStack (alignment: .bottomTrailing) {
                 // TODO: Error handling
                 self.renderConfig?.render(item: dataItem)
-                    .environmentObject(self.main)
+                    .environmentObject(self.context)
                     .onTapGesture {
                         if let press = self.renderConfig?.press {
-                            self.main.executeAction(press, with: dataItem)
+                            self.context.executeAction(press, with: dataItem)
                         }
                     }
 
@@ -102,10 +102,10 @@ struct ThumbnailRendererView: View {
             if renderConfig == nil {
                 Text("Unable to render this view")
             }
-            else if main.cascadingView.resultSet.count == 0 {
+            else if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.cascadingView.emptyResultText)
+                    Text(self.context.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)
@@ -128,7 +128,7 @@ struct ThumbnailRendererView: View {
     }
     
     func onTap(action: Action, dataItem: DataItem){
-        main.executeAction(action, with: dataItem)
+        context.executeAction(action, with: dataItem)
     }
 }
 

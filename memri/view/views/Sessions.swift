@@ -145,17 +145,17 @@ public class Sessions: DataItem {
     }
     
  
-    public func install(_ main:MemriContext) throws {
-        fetchMemriID(main.realm)
+    public func install(_ context:MemriContext) throws {
+        fetchMemriID(context.realm)
         
-        let storedDef = main.realm.objects(CVUStoredDefinition.self)
+        let storedDef = context.realm.objects(CVUStoredDefinition.self)
             .filter("selector = '[sessions = defaultSessions]'").first
     
         if let storedDef = storedDef {
-            if let parsed = try main.views.parseDefinition(storedDef) {
-                try main.realm.write {
+            if let parsed = try context.views.parseDefinition(storedDef) {
+                try context.realm.write {
                     // Load default sessions from the package and store in the database
-                    main.realm.create(Sessions.self, value: [
+                    context.realm.create(Sessions.self, value: [
                         "memriID": self.memriID,
                         "selector": "[sessions = '\(self.memriID)']",
                         "name": self.memriID,

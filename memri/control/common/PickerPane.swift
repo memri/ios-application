@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct Picker: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     let item: DataItem
     let selected: DataItem?
@@ -43,14 +43,14 @@ struct Picker: View {
                 propName: self.propName,
                 selected: self.selected,
                 datasource: self.datasource
-            ).environmentObject(self.main)
+            ).environmentObject(self.context)
         }
         .generalEditorInput()
     }
 }
 
 struct PickerPane: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     let item: DataItem
@@ -61,13 +61,13 @@ struct PickerPane: View {
     let datasource: Datasource
     
     var body: some View {
-        self.main.closeStack.append {
+        self.context.closeStack.append {
             self.presentationMode.wrappedValue.dismiss()
         }
         
         // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
         return SubView(
-            main: self.main,
+            context: self.context,
             view: SessionView(value: [
                 "datasource": datasource,
                 "title": title,
@@ -79,22 +79,22 @@ struct PickerPane: View {
                 "renderDescriptions": [
                     CVUParsedRendererDefinition(#"[renderer = "list"]"#,
                         parsed: ["press": [
-                            ActionSetProperty(main,
+                            ActionSetProperty(context,
                                               arguments: [
                                                 "sourceDataItem": self.propDataItem,
                                                 "property": self.propName
                                               ]),
-                            ActionClosePopup(main)
+                            ActionClosePopup(context)
                         ]]
                     ),
                     CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
                         parsed: ["press": [
-                            ActionSetProperty(main,
+                            ActionSetProperty(context,
                                               arguments: [
                                                 "sourceDataItem": self.propDataItem,
                                                 "property": self.propName
                                               ]),
-                            ActionClosePopup(main)
+                            ActionClosePopup(context)
                         ]]
                     )
                 ]

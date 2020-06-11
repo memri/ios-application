@@ -29,7 +29,7 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
 }
 
 struct _RichTextEditor: UIViewRepresentable {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     @ObservedObject public var dataItem: DataItem
     
     let filterText: Binding<String>
@@ -109,10 +109,11 @@ struct _RichTextEditor: UIViewRepresentable {
         // TODO: we should probably only do this when the filterText changed
         removeAllHighlighting(&LEOTextView)
         
-        if main.cascadingView.filterText != ""{
+        if self.context.cascadingView.filterText != ""{
             search(LEOTextView)
-        }else{
-            self.main.cascadingView.searchMatchText = ""
+        }
+        else{
+            self.context.cascadingView.searchMatchText = ""
         }
         
         // TODO: This is currently necessary to trigger a UI update *when the filterText
@@ -123,14 +124,14 @@ struct _RichTextEditor: UIViewRepresentable {
     
     
     func search(_ textView: LEOTextView){
-        let regex = try! NSRegularExpression(pattern: main.cascadingView.filterText,
+        let regex = try! NSRegularExpression(pattern: context.cascadingView.filterText,
                                              options: .caseInsensitive)
         let searchString = textView.nck_textStorage.currentString.string
 
         let searchRange = NSRange(location: 0, length: searchString.utf16.count)
         let matches = regex.matches(in: searchString,range: searchRange) as [NSTextCheckingResult]
         
-        self.main.cascadingView.searchMatchText = "(" + String(matches.count) + ") matches"
+        self.context.cascadingView.searchMatchText = "(" + String(matches.count) + ") matches"
         
         // TODO: set cursor to new position: this is probably challenging as it has to defocus from
         // the searcharea. We could do something like this
@@ -151,13 +152,13 @@ struct _RichTextEditor: UIViewRepresentable {
 }
 
 struct RichTextRendererView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var renderConfig: CascadingRichTextEditorConfig
         = CascadingRichTextEditorConfig([], ViewArguments())
 
     var body: some View {
-        let dataItem = self.main.cascadingView.resultSet.singletonItem
+        let dataItem = self.context.cascadingView.resultSet.singletonItem
         let binding = Binding(
             get: { dataItem?.getString("title") ?? "" },
             set: {
@@ -167,7 +168,7 @@ struct RichTextRendererView: View {
         )
         
         return VStack{
-            if main.cascadingView.resultSet.singletonItem != nil {
+            if context.cascadingView.resultSet.singletonItem != nil {
                 TextField("Daily Note", text: binding)
                     .padding(.horizontal, 10)
                     .padding(.top, 20)
@@ -175,7 +176,7 @@ struct RichTextRendererView: View {
                     .foregroundColor(.gray)
                     
                 _RichTextEditor(dataItem: dataItem!,
-                                filterText: $main.cascadingView.filterText)
+                                filterText: $context.cascadingView.filterText)
             }
         }
     }

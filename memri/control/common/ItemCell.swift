@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 public struct ItemCell: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     let item: DataItem
     let rendererNames: [String]
@@ -17,6 +17,6 @@ public struct ItemCell: View {
 //    let viewOverride: String // TODO Refactor: implement viewoverride
     
     public var body: some View {
-        main.views.renderItemCell(with: item, search: rendererNames, use: arguments)
+        context.views.renderItemCell(with: item, search: rendererNames, use: arguments)
     }
 }

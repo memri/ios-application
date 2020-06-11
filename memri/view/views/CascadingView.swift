@@ -62,7 +62,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         // Update search result to match the query
         // NOTE: allowed force unwrap
-        let resultSet = main!.cache.getResultSet(self.datasource.flattened())
+        let resultSet = context!.cache.getResultSet(self.datasource.flattened())
         localCache["resultSet"] = resultSet
 
         // Filter the results
@@ -105,7 +105,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-    var main:MemriContext?
+    var context:MemriContext?
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
@@ -115,12 +115,12 @@ public class CascadingView: Cascadable, ObservableObject {
                 .filter { $0.name == activeRenderer }.first
         }
         
-        let renderDSLDefinitions = main!.views
+        let renderDSLDefinitions = context!.views
             .fetchDefinitions(name:activeRenderer, type:"renderer")
         
         for def in renderDSLDefinitions {
             do {
-                if let parsedRenderDef = try main?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
+                if let parsedRenderDef = try context?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
                     if parsedRenderDef.domain == "user" {
                         let insertPoint:Int = {
                             for i in 0..<stack.count { if stack[i].domain == "view" { return i } }
@@ -296,7 +296,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    public class func fromSessionView(_ sessionView:SessionView, in main:MemriContext) throws -> CascadingView {
+    public class func fromSessionView(_ sessionView:SessionView, in context:MemriContext) throws -> CascadingView {
         var cascadeStack:[CVUParsedDefinition] = []
         var isList = true
         var type = ""
@@ -305,7 +305,7 @@ public class CascadingView: Cascadable, ObservableObject {
         if let datasource = sessionView.datasource {
             
             // Look up the associated result set
-            let resultSet = main.cache.getResultSet(datasource)
+            let resultSet = context.cache.getResultSet(datasource)
             
             // Determine whether this is a list or a single item resultset
             isList = resultSet.isList
@@ -342,7 +342,7 @@ public class CascadingView: Cascadable, ObservableObject {
                     throw "Exception: missing view definition"
                 }
                 
-                if let parsedDef = try main.views.parseDefinition(def) {
+                if let parsedDef = try context.views.parseDefinition(def) {
                     parsedDef.domain = domain
                     
                     if activeRenderer == nil, let d = parsedDef["defaultRenderer"] {
@@ -372,7 +372,7 @@ public class CascadingView: Cascadable, ObservableObject {
             
             for needle in needles {
                 
-                if let sessionViewDef = main.views
+                if let sessionViewDef = context.views
                     .fetchDefinitions(selector:needle, domain:key).first {
                     
                     parse(sessionViewDef, key)
@@ -392,7 +392,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         // Create a new view
         let c = CascadingView(sessionView, cascadeStack)
-        c.main = main
+        c.context = context
         return c
     }
     

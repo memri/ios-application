@@ -3,7 +3,7 @@ import MapKit
 import RealmSwift
 
 struct MapView: UIViewRepresentable {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var location: Location? = nil
     var address: Address? = nil

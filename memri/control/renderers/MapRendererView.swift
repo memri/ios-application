@@ -29,18 +29,18 @@ class CascadingMapConfig: CascadingRenderConfig {
 }
 
 struct MapRendererView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     let name = "map"
     
     var renderConfig: CascadingMapConfig? {
-        self.main.cascadingView.renderConfig as? CascadingMapConfig
+        self.context.cascadingView.renderConfig as? CascadingMapConfig
     }
     
     var body: some View {
         return VStack {
-//            if main.cascadingView.resultSet.count == 0 {
-            MapView(locations: nil, addresses: main.items as? [Address]) // TODO Refactor: this is very not generic
+//            if context.cascadingView.resultSet.count == 0 {
+            MapView(locations: nil, addresses: context.items as? [Address]) // TODO Refactor: this is very not generic
         }
     }
 }

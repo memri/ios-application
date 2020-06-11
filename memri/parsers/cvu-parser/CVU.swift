@@ -10,16 +10,16 @@ import Foundation
 
 public class CVU {
     let code: String
-    let main: MemriContext
+    let context: MemriContext
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
     private var parsed: [CVUParsedDefinition]? = nil
     
-    init(_ code:String, _ main: MemriContext,
+    init(_ code:String, _ context: MemriContext,
            lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
            execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
         
-        self.main = main
+        self.context = context
         self.code = code
         self.lookup = lookup
         self.execFunc = execFunc
@@ -31,7 +31,7 @@ public class CVU {
         }
         else {
             let lexer = CVULexer(input: code)
-            let parser = CVUParser(try lexer.tokenize(), main, lookup:lookup, execFunc:execFunc)
+            let parser = CVUParser(try lexer.tokenize(), context, lookup:lookup, execFunc:execFunc)
             parsed = try parser.parse()
             return parsed ?? []
         }

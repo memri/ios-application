@@ -15,11 +15,11 @@ public class Installer {
         realm = rlm
     }
     
-    public func install(_ main:MemriContext) {
+    public func install(_ context:MemriContext) {
         
     }
     
-    public func installIfNeeded(_ main:MemriContext, _ callback: () throws -> Void) throws {
+    public func installIfNeeded(_ context:MemriContext, _ callback: () throws -> Void) throws {
         
         let installLogs = realm.objects(AuditItem.self).filter("action = 'install'")
         
@@ -28,20 +28,20 @@ public class Installer {
             print("Installing defaults in the database")
             
             // Load default navigation items in database
-            main.navigation.install()
+            context.navigation.install()
             
             // Load default objects in database
-            main.cache.install()
+            context.cache.install()
             
             // Load default settings in database
-            main.settings.install()
+            context.settings.install()
             
             // Load default views in database
-            main.views.main = main
-            try main.views.install()
+            context.views.context = context
+            try context.views.install()
             
             // Load default sessions in database
-            try main.sessions.install(main)
+            try context.sessions.install(context)
             
             // Installation complete
             try realm.write {

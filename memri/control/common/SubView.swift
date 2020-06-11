@@ -10,7 +10,7 @@ import SwiftUI
 
 // TODO Refactor: optimize this for performance
 public struct SubView : View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var proxyMain: MemriContext? = nil
     var toolbar: Bool = true
@@ -20,14 +20,14 @@ public struct SubView : View {
     // There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
-    public init (main:MemriContext, viewName: String, dataItem: DataItem, args:ViewArguments){
+    public init (context:MemriContext, viewName: String, dataItem: DataItem, args:ViewArguments){
         self.toolbar = args["toolbar"] as? Bool ?? toolbar
         self.searchbar = args["searchbar"] as? Bool ?? searchbar
         self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
         
         do {
-            var def = try main.views
-                .parseDefinition(main.views.fetchDefinitions(name:viewName, type:"view").first)
+            var def = try context.views
+                .parseDefinition(context.views.fetchDefinitions(name:viewName, type:"view").first)
             if def is CVUParsedSessionDefinition {
                 if let list = def?["views"] as? [CVUParsedViewDefinition] { def = list.first }
             }
@@ -46,7 +46,7 @@ public struct SubView : View {
             session.currentViewIndex = 0
             
             // NOTE: Allowed force unwrap
-            self.proxyMain = (main as! RootContext).createSubContext(session)
+            self.proxyMain = (context as! RootContext).createSubContext(session)
             do { try self.proxyMain!.updateCascadingView() }
             catch {
                 // TODO Refactor error handling
@@ -59,7 +59,7 @@ public struct SubView : View {
         }
     }
     
-    public init (main: MemriContext, view: SessionView, dataItem: DataItem, args:ViewArguments){
+    public init (context: MemriContext, view: SessionView, dataItem: DataItem, args:ViewArguments){
         self.toolbar = args.get("toolbar") ?? toolbar
         self.searchbar = args.get("searchbar") ?? searchbar
         self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
@@ -73,7 +73,7 @@ public struct SubView : View {
         session.currentViewIndex = 0
         
         // NOTE: Allowed force unwrap
-        self.proxyMain = (main as! RootContext).createSubContext(session)
+        self.proxyMain = (context as! RootContext).createSubContext(session)
         do { try self.proxyMain!.updateCascadingView() }
         catch {
             // TODO Refactor error handling

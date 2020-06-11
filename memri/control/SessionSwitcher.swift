@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SessionSwitcher: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     let items: [CGFloat] = [0,1,2,3,4,5,6,7,8,9]
 
     
@@ -110,21 +110,21 @@ struct SessionSwitcher: View {
     }
     
     private func getRelativePosition(_ i:CGFloat, _ geometry: GeometryProxy) -> CGFloat {
-        let normalizedPosition = i / CGFloat(self.main.sessions.sessions.count)
-        let maxGlobalOffset = CGFloat(self.main.sessions.sessions.count) * self.height
+        let normalizedPosition = i / CGFloat(self.context.sessions.sessions.count)
+        let maxGlobalOffset = CGFloat(self.context.sessions.sessions.count) * self.height
         let normalizedGlobalState = min(1, max(0, self.globalOffset / maxGlobalOffset))
         let translatedRelativePosition = normalizedGlobalState + (normalizedPosition / 2)
         return translatedRelativePosition / 2.0
     }
     
     private func hide(){
-        self.main.showSessionSwitcher = false
+        self.context.showSessionSwitcher = false
     }
     
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .trailing, vertical: .top)) {
             HStack(alignment: .top, spacing: 10) {
-                ActionButton(action: ActionShowSessionSwitcher(main))
+                ActionButton(action: ActionShowSessionSwitcher(context))
                     .fixedSize()
                     .font(Font.system(size: 20, weight: .medium))
                     .rotationEffect(.degrees(90))
@@ -147,9 +147,9 @@ struct SessionSwitcher: View {
                     .resizable(resizingMode: .tile)
                     .edgesIgnoringSafeArea(.vertical)
                 
-                ForEach(0..<self.main.sessions.sessions.count, id: \.self) { i in
+                ForEach(0..<self.context.sessions.sessions.count, id: \.self) { i in
                     { () -> Image in
-                        let session = self.main.sessions.sessions[i]
+                        let session = self.context.sessions.sessions[i]
                         if let screenShot = session.screenshot,
                            let uiImage = screenShot.asUIImage {
                             return Image(uiImage: uiImage)
@@ -170,9 +170,9 @@ struct SessionSwitcher: View {
                         .zIndex(Double(0))
 //                            .opacity(0.7)
                         .onTapGesture {
-                            let session = self.main.sessions.sessions[i]
+                            let session = self.context.sessions.sessions[i]
                             //TODO 
-                            do { try ActionOpenSession.exec(self.main, ["session": session]) }
+                            do { try ActionOpenSession.exec(self.context, ["session": session]) }
                             catch {}
                             self.hide()
                         }
@@ -184,12 +184,12 @@ struct SessionSwitcher: View {
             DragGesture()
                 .onChanged { gesture in
                     self.offset = gesture.translation
-                    let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
+                    let maxGlobalOffset:CGFloat = CGFloat(self.context.sessions.sessions.count) * self.height / 2
                     self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
                 }
 
                 .onEnded { _ in
-                    let maxGlobalOffset:CGFloat = CGFloat(self.main.sessions.sessions.count) * self.height / 2
+                    let maxGlobalOffset:CGFloat = CGFloat(self.context.sessions.sessions.count) * self.height / 2
                     self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
                     self.lastGlobalOffset = self.globalOffset
                 }

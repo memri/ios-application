@@ -9,7 +9,7 @@ public class Views {
     let languages = Languages()
     
     private var realm:Realm
-    var main:MemriContext? = nil
+    var context:MemriContext? = nil
 
     init(_ rlm:Realm) {
         realm = rlm
@@ -42,10 +42,10 @@ public class Views {
     }
  
     public func load(_ mn:MemriContext, _ callback: () throws -> Void) throws {
-        // Store main for use within createCascadingView)
-        self.main = mn
+        // Store context for use within createCascadingView)
+        self.context = mn
         
-        try setCurrentLanguage(main?.settings.get("user/language") ?? "English")
+        try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
         
         // Done
         try callback()
@@ -72,7 +72,7 @@ public class Views {
         let code = getDefaultViewContents()
         
         do {
-            let cvu = CVU(code, main!, lookup: lookupValueOfVariables, execFunc: executeFunction)
+            let cvu = CVU(code, context!, lookup: lookupValueOfVariables, execFunc: executeFunction)
             let parsedDefinitions = try cvu.parse() // TODO this could be optimized
             
             let validator = CVUValidator()
@@ -167,18 +167,18 @@ public class Views {
     func getGlobalReference (_ name:String, viewArguments:ViewArguments) throws -> Any? {
         // Fetch the value of the right property on the right object
         switch name {
-        case "main": return main
-        case "sessions": return main?.sessions
+        case "context": return context
+        case "sessions": return context?.sessions
         case "currentSession": fallthrough
-        case "session": return main?.currentSession
-        case "cascadingView": return main?.cascadingView
-        case "sessionView": return main?.currentSession.currentView
-        case "view": return main?.cascadingView
+        case "session": return context?.currentSession
+        case "cascadingView": return context?.cascadingView
+        case "sessionView": return context?.currentSession.currentView
+        case "view": return context?.cascadingView
         case "dataItem":
             if let itemRef:DataItem = viewArguments.get(".") {
                 return itemRef
             }
-            else if let item = main?.cascadingView.resultSet.singletonItem {
+            else if let item = context?.cascadingView.resultSet.singletonItem {
                 return item
             }
             else {
@@ -353,7 +353,7 @@ public class Views {
 
         if let domain = domain { filter.append("domain = '\(domain)'") }
         
-        return main!.realm.objects(CVUStoredDefinition.self)
+        return context!.realm.objects(CVUStoredDefinition.self)
             .filter(filter.joined(separator: " AND "))
             .map({ (def) -> CVUStoredDefinition in def }) // Convert to normal Array
     }
@@ -369,7 +369,7 @@ public class Views {
             return try cached.parse().first
         }
         else if let definition = viewDef.definition {
-            let viewDefParser = CVU(definition, main!,
+            let viewDefParser = CVU(definition, context!,
                 lookup: lookupValueOfVariables,
                 execFunc: executeFunction
             )
@@ -400,30 +400,30 @@ public class Views {
     }
     
     public func createCascadingView(_ sessionView:SessionView? = nil) throws -> CascadingView {
-        guard let main = self.main else {
+        guard let context = self.context else {
             throw "Exception: MemriContext is not defined in views"
         }
 
         let viewFromSession = sessionView == nil
-            ? main.sessions.currentSession.currentView
+            ? context.sessions.currentSession.currentView
             : sessionView!
         
-        let cascadingView = try CascadingView.fromSessionView(viewFromSession, in: main)
+        let cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
         
-        // TODO REFACTOR: move these to a better place (main??)
+        // TODO REFACTOR: move these to a better place (context??)
         
         // turn off editMode when navigating
-        if main.sessions.currentSession.editMode == true {
+        if context.sessions.currentSession.editMode == true {
             realmWriteIfAvailable(realm) {
-                main.sessions.currentSession.editMode = false
+                context.sessions.currentSession.editMode = false
             }
         }
         
         // hide filterpanel if view doesnt have a button to open it
-        if main.sessions.currentSession.showFilterPanel {
+        if context.sessions.currentSession.showFilterPanel {
             if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
                 realmWriteIfAvailable(realm) {
-                    main.sessions.currentSession.showFilterPanel = false
+                    context.sessions.currentSession.showFilterPanel = false
                 }
             }
         }
@@ -436,12 +436,12 @@ public class Views {
                                inView viewOverride: String? = nil,
                                use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
         do {
-            guard let main = self.main else {
+            guard let context = self.context else {
                 throw "Exception: MemriContext is not defined in views"
             }
             
             func searchForRenderer(in viewDefinition:CVUStoredDefinition) throws -> Bool {
-                let parsed = try main.views.parseDefinition(viewDefinition)
+                let parsed = try context.views.parseDefinition(viewDefinition)
                 for def in parsed?["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
                     for name in rendererNames {
                         
@@ -462,9 +462,9 @@ public class Views {
 
             // If there is a view override, find it, otherwise
             if let viewOverride = viewOverride {
-                if let viewDefinition = main.views.fetchDefinitions(selector: viewOverride).first {
+                if let viewDefinition = context.views.fetchDefinitions(selector: viewOverride).first {
                     if viewDefinition.type == "renderer" {
-                        if let parsed = try main.views
+                        if let parsed = try context.views
                             .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                             
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
@@ -492,7 +492,7 @@ public class Views {
                 outerLoop: for needle in ["\(dataItem.genericType)[]", "*[]"] {
                     for key in ["user", "defaults"] {
                         
-                        if let viewDefinition = main.views
+                        if let viewDefinition = context.views
                             .fetchDefinitions(selector: needle, domain:key).first {
                             
                             if try searchForRenderer(in: viewDefinition) { break outerLoop }
@@ -506,10 +506,10 @@ public class Views {
             if cascadeStack.count == 0 {
                 for name in rendererNames {
                     for key in ["user", "defaults"] {
-                        if let viewDefinition = main.views
+                        if let viewDefinition = context.views
                             .fetchDefinitions(name:name, type: "renderer", domain:key).first {
                             
-                            if let parsed = try main.views
+                            if let parsed = try context.views
                                 .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                                 
                                 if parsed["children"] != nil { cascadeStack.append(parsed) }

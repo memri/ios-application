@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ActionButton: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var action: Action?
 
@@ -27,12 +27,12 @@ struct ActionButton: View {
     
     func getAction() -> AnyView{
         // NOTE: Allowed force unwrappings (logic)
-        switch self.action?.getRenderAs(main.cascadingView.viewArguments) {
+        switch self.action?.getRenderAs(context.cascadingView.viewArguments) {
         case .popup:
             return AnyView(ActionPopupButton(action: self.action!))
         case .button:
             return AnyView(ActionButtonView(action: self.action!) {
-                self.main.executeAction(self.action!)
+                self.context.executeAction(self.action!)
             })
         default:
             return AnyView(ActionButtonView(action: self.action!))
@@ -42,14 +42,14 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootContext(name: "", key: "").mockBoot()
-        return ActionButton(action: ActionBack(main))
-            .environmentObject(main)
+        let context = RootContext(name: "", key: "").mockBoot()
+        return ActionButton(action: ActionBack(context))
+            .environmentObject(context)
     }
 }
 
 struct ActionButtonView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var action: Action
     var execute: (() -> Void)? = nil
@@ -84,7 +84,7 @@ struct ActionButtonView: View {
 }
 
 struct ActionPopupButton: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var action: Action
     
@@ -95,20 +95,20 @@ struct ActionPopupButton: View {
             self.isShowing = true
         })
         .sheet(isPresented: $isShowing) {
-            ActionPopup(action: self.action).environmentObject(self.main)
+            ActionPopup(action: self.action).environmentObject(self.context)
         }
     }
 }
 
 struct ActionPopup: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var action: Action
     
     var body: some View {
         // TODO refactor: this list item needs to be removed when we close the popup in any way
-        self.main.closeStack.append {
+        self.context.closeStack.append {
             self.presentationMode.wrappedValue.dismiss()
         }
         
@@ -124,7 +124,7 @@ struct ActionPopup: View {
         if action.name == .openView {
             if let view = action.arguments["view"] as? SessionView {
                 return SubView(
-                    main: self.main,
+                    context: self.context,
                     view: view, // TODO refactor: consider adding .closePopup to all press actions
                     dataItem: dataItem,
                     args: args
@@ -137,7 +137,7 @@ struct ActionPopup: View {
         else  if action.name == .openViewByName {
             if let viewName = action.arguments["name"] as? String {
                 return SubView(
-                    main: self.main,
+                    context: self.context,
                     viewName: viewName,
                     dataItem: dataItem,
                     args: args
@@ -150,7 +150,7 @@ struct ActionPopup: View {
         
         // We should never get here. This is just to ease the compiler
         return SubView(
-            main: self.main,
+            context: self.context,
             viewName: "catch-all-view",
             dataItem: dataItem,
             args: args

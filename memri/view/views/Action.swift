@@ -13,9 +13,9 @@ public class Action : HashableClass, CVUToString {
     
     var binding:Expression? {
         if let expr = (values["binding"] ?? defaultValues["binding"]) as? Expression {
-            expr.lookup = main.views.lookupValueOfVariables
-            expr.execFunc = main.views.executeFunction
-            expr.main = main
+            expr.lookup = context.views.lookupValueOfVariables
+            expr.execFunc = context.views.executeFunction
+            expr.context = context
             return expr
         }
         return nil
@@ -40,7 +40,7 @@ public class Action : HashableClass, CVUToString {
     ]
     var values:[String:Any?] = [:]
     
-    let main:MemriContext
+    let context:MemriContext
     
     func isActive() -> Bool? {
         if let binding = binding {
@@ -75,8 +75,8 @@ public class Action : HashableClass, CVUToString {
         toCVUString(0, "    ")
     }
     
-    init(_ main:MemriContext, _ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
-        self.main = main
+    init(_ context:MemriContext, _ name:String, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+        self.context = context
         
         super.init()
         
@@ -91,17 +91,17 @@ public class Action : HashableClass, CVUToString {
         }
     }
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
-        self.main = main
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]) {
+        self.context = context
     }
     
     func get<T>(_ key:String, _ viewArguments:ViewArguments? = nil) -> T? {
         let x:Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
         if let expr = x as? Expression {
             do {
-                expr.lookup = main.views.lookupValueOfVariables
-                expr.execFunc = main.views.executeFunction
-                expr.main = main
+                expr.lookup = context.views.lookupValueOfVariables
+                expr.execFunc = context.views.executeFunction
+                expr.context = context
                 
                 let value:T? = try expr.execForReturnType(viewArguments)
                 return value
@@ -246,24 +246,24 @@ class ActionBack : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "back", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "back", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        let session = main.currentSession
+        let session = context.currentSession
         
         if session.currentViewIndex == 0 {
             print("Warn: Can't go back. Already at earliest view in session")
         }
         else {
-            realmWriteIfAvailable(main.realm, { session.currentViewIndex -= 1 })
-            main.scheduleCascadingViewUpdate()
+            realmWriteIfAvailable(context.realm, { session.currentViewIndex -= 1 })
+            context.scheduleCascadingViewUpdate()
         }
     }
     
-    class func exec(_ main:MemriContext, arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionBack(main).exec(arguments) }
+    class func exec(_ context:MemriContext, arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionBack(context).exec(arguments) }
     }
 }
 class ActionAddDataItem : Action, ActionExec {
@@ -275,20 +275,20 @@ class ActionAddDataItem : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "addDataItem", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "addDataItem", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         if let dataItem = arguments["template"] as? DataItem {
             // Copy template
-            let copy = main.cache.duplicate(dataItem)
+            let copy = context.cache.duplicate(dataItem)
             
             // Add the new item to the cache
-            _ = try main.cache.addToCache(copy)
+            _ = try context.cache.addToCache(copy)
             
             // Open view with the now managed copy
-            try ActionOpenView.exec(main, ["dataItem": copy])
+            try ActionOpenView.exec(context, ["dataItem": copy])
         }
         else {
             // TODO Error handling
@@ -297,8 +297,8 @@ class ActionAddDataItem : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionAddDataItem(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionAddDataItem(context).exec(arguments) }
     }
 }
 
@@ -309,12 +309,12 @@ class ActionOpenView : Action, ActionExec {
         "opensView": true
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "openView", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "openView", arguments:arguments, values:values)
     }
     
-    func openView(_ main: MemriContext, view: SessionView, with arguments: ViewArguments? = nil){
-        let session = main.currentSession
+    func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil){
+        let session = context.currentSession
         
         // Toggle a state value, for instance the starred button in the view (via dataItem.starred)
         if let binding = self.binding {
@@ -341,10 +341,10 @@ class ActionOpenView : Action, ActionExec {
         view.access()
     
         // Recompute view
-        main.scheduleCascadingViewUpdate()
+        context.scheduleCascadingViewUpdate()
     }
     
-    private func openView(_ main: MemriContext, _ item: DataItem, with arguments: ViewArguments? = nil){
+    private func openView(_ context: MemriContext, _ item: DataItem, with arguments: ViewArguments? = nil){
         // Create a new view
         let view = SessionView(value: ["datasource": Datasource(value: [
             // Set the query options to load the item
@@ -352,24 +352,24 @@ class ActionOpenView : Action, ActionExec {
         ])])
     
         // Open the view
-        self.openView(main, view:view, with: arguments)
+        self.openView(context, view:view, with: arguments)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-//        let selection = main.cascadingView.userState.get("selection") as? [DataItem]
+//        let selection = context.cascadingView.userState.get("selection") as? [DataItem]
         let dataItem = arguments["dataItem"] as? DataItem
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
         
-        // if let selection = selection, selection.count > 0 { self.openView(main, selection) }
+        // if let selection = selection, selection.count > 0 { self.openView(context, selection) }
         if let sessionView = arguments["view"] as? SessionView {
-            self.openView(main, view: sessionView, with: viewArguments)
+            self.openView(context, view: sessionView, with: viewArguments)
         }
         else if let item = dataItem as? SessionView {
-            self.openView(main, view: item, with: viewArguments)
+            self.openView(context, view: item, with: viewArguments)
         }
         else if let item = dataItem {
-            self.openView(main, item, with: viewArguments)
+            self.openView(context, item, with: viewArguments)
         }
         else {
             // TODO Error handling
@@ -377,8 +377,8 @@ class ActionOpenView : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionOpenView(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionOpenView(context).exec(arguments) }
     }
 }
 class ActionOpenViewByName : Action, ActionExec {
@@ -387,8 +387,8 @@ class ActionOpenViewByName : Action, ActionExec {
         "opensView": true
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "openViewByName", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "openViewByName", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
@@ -396,8 +396,8 @@ class ActionOpenViewByName : Action, ActionExec {
         
         if let name = arguments["name"] as? String {
             // Fetch a dynamic view based on its name
-            let fetchedDef = main.views.fetchDefinitions(name:name, type:"view").first
-            let def = try main.views.parseDefinition(fetchedDef)
+            let fetchedDef = context.views.fetchDefinitions(name:name, type:"view").first
+            let def = try context.views.parseDefinition(fetchedDef)
             
             guard let viewDef = def else { throw "Exception: Missing view" }
             
@@ -407,7 +407,7 @@ class ActionOpenViewByName : Action, ActionExec {
                 "datasource": viewDef["datasource"] // TODO Refactor
             ])
             
-            ActionOpenView(main).openView(main, view:view)
+            ActionOpenView(context).openView(context, view:view)
         }
         else {
             // TODO Error Handling
@@ -415,8 +415,8 @@ class ActionOpenViewByName : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionOpenViewByName(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionOpenViewByName(context).exec(arguments) }
     }
 }
 class ActionToggleEditMode : Action, ActionExec {
@@ -427,16 +427,16 @@ class ActionToggleEditMode : Action, ActionExec {
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "toggleEditMode", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "toggleEditMode", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionToggleEditMode(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionToggleEditMode(context).exec(arguments) }
     }
 }
 class ActionToggleFilterPanel : Action, ActionExec {
@@ -446,16 +446,16 @@ class ActionToggleFilterPanel : Action, ActionExec {
         "activeColor": Color(hex: "#6aa84f")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "toggleFilterPanel", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "toggleFilterPanel", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionToggleFilterPanel(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionToggleFilterPanel(context).exec(arguments) }
     }
 }
 class ActionStar : Action, ActionExec {
@@ -464,21 +464,21 @@ class ActionStar : Action, ActionExec {
         "binding": Expression("dataItem.starred")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "star", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "star", arguments:arguments, values:values)
     }
     
     // TODO selection handling for binding
     func exec(_ arguments:[String: Any]) throws {
 //        if let item = arguments["dataItem"] as? DataItem {
-//            var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
+//            var selection:[DataItem] = context.cascadingView.userState.get("selection") ?? []
 //            let toValue = !item.starred
 //
 //            if !selection.contains(item) {
 //                selection.append(item)
 //            }
 //
-//            realmWriteIfAvailable(main.cache.realm, {
+//            realmWriteIfAvailable(context.cache.realm, {
 //                for item in selection { item.starred = toValue }
 //            })
 //
@@ -491,8 +491,8 @@ class ActionStar : Action, ActionExec {
 //        }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionStar.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionStar.exec(context, arguments) }
     }
 }
 class ActionShowStarred : Action, ActionExec {
@@ -503,20 +503,20 @@ class ActionShowStarred : Action, ActionExec {
         "activeColor": Color(hex: "#ffdb00")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "showStarred", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "showStarred", arguments:arguments, values:values)
     }
 
     func exec(_ arguments:[String: Any]) throws {
         do {
             if let binding = self.binding, try !binding.isTrue() {
-                try ActionOpenViewByName.exec(main, ["name": "filter-starred"])
+                try ActionOpenViewByName.exec(context, ["name": "filter-starred"])
                 // Open named view 'showStarred'
                 // openView("filter-starred", ["stateName": starButton.actionStateName as Any])
             }
             else {
                 // Go back to the previous view
-                try ActionBack.exec(main, arguments: [:])
+                try ActionBack.exec(context, arguments: [:])
             }
         }
         catch {
@@ -525,8 +525,8 @@ class ActionShowStarred : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionShowStarred(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionShowStarred(context).exec(arguments) }
     }
 }
 class ActionShowContextPane : Action, ActionExec {
@@ -535,35 +535,35 @@ class ActionShowContextPane : Action, ActionExec {
         "binding": Expression("currentSession.showContextPane")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "showContextPane", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "showContextPane", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionShowContextPane(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionShowContextPane(context).exec(arguments) }
     }
 }
 class ActionShowNavigation : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "line.horizontal.3",
-        "binding": Expression("main.showNavigation"),
+        "binding": Expression("context.showNavigation"),
         "inactiveColor": Color(hex: "#434343")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "showNavigation", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "showNavigation", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         // Do Nothing
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionShowNavigation.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionShowNavigation.exec(context, arguments) }
     }
 }
 class ActionSchedule : Action, ActionExec {
@@ -571,15 +571,15 @@ class ActionSchedule : Action, ActionExec {
         "icon": "alarm"
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "schedule", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "schedule", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-//        ActionSchedule.exec(main, arguments:arguments)
+//        ActionSchedule.exec(context, arguments:arguments)
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
         
     }
 }
@@ -587,19 +587,19 @@ class ActionSchedule : Action, ActionExec {
 class ActionShowSessionSwitcher : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "ellipsis",
-        "binding": Expression("main.showSessionSwitcher"),
+        "binding": Expression("context.showSessionSwitcher"),
         "color": Color(hex: "#CCC")
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "showSessionSwitcher", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "showSessionSwitcher", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-//        ActionShowSessionSwitcher.exec(main, arguments:arguments)
+//        ActionShowSessionSwitcher.exec(context, arguments:arguments)
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
         // Do Nothing
     }
 }
@@ -608,24 +608,24 @@ class ActionForward : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "forward", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "forward", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        let session = main.currentSession
+        let session = context.currentSession
         
         if session.currentViewIndex == session.views.count - 1 {
             print("Warn: Can't go forward. Already at last view in session")
         }
         else {
-            realmWriteIfAvailable(main.cache.realm, { session.currentViewIndex += 1 })
-            main.scheduleCascadingViewUpdate()
+            realmWriteIfAvailable(context.cache.realm, { session.currentViewIndex += 1 })
+            context.scheduleCascadingViewUpdate()
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionForward(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionForward(context).exec(arguments) }
     }
 }
 class ActionForwardToFront : Action, ActionExec {
@@ -633,20 +633,20 @@ class ActionForwardToFront : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "forwardToFront", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "forwardToFront", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        let session = main.currentSession
-        realmWriteIfAvailable(main.cache.realm, {
+        let session = context.currentSession
+        realmWriteIfAvailable(context.cache.realm, {
             session.currentViewIndex = session.views.count - 1
         })
-        main.scheduleCascadingViewUpdate()
+        context.scheduleCascadingViewUpdate()
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionForwardToFront.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionForwardToFront.exec(context, arguments) }
     }
 }
 class ActionBackAsSession : Action, ActionExec {
@@ -654,23 +654,23 @@ class ActionBackAsSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "backAsSession", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "backAsSession", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        let session = main.currentSession
+        let session = context.currentSession
         
         if session.currentViewIndex == 0 {
             throw "Warn: Can't go back. Already at earliest view in session"
         }
         else {
-            if let duplicateSession = main.cache.duplicate(session as DataItem) as? Session {
-                realmWriteIfAvailable(main.cache.realm, {
+            if let duplicateSession = context.cache.duplicate(session as DataItem) as? Session {
+                realmWriteIfAvailable(context.cache.realm, {
                     duplicateSession.currentViewIndex -= 1
                 })
                 
-                try ActionOpenSession.exec(main, ["session": duplicateSession])
+                try ActionOpenSession.exec(context, ["session": duplicateSession])
             }
             else {
                 // TODO Error handling
@@ -679,8 +679,8 @@ class ActionBackAsSession : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionBackAsSession.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionBackAsSession.exec(context, arguments) }
     }
 }
 
@@ -690,21 +690,21 @@ class ActionOpenSession : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "openSession", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "openSession", arguments:arguments, values:values)
     }
     
-    func openSession(_ main: MemriContext, _ session:Session) {
-        let sessions = main.sessions // TODO generalize
+    func openSession(_ context: MemriContext, _ session:Session) {
+        let sessions = context.sessions // TODO generalize
     
         // Add view to session and set it as current
         sessions.setCurrentSession(session)
     
         // Recompute view
-        main.scheduleCascadingViewUpdate()
+        context.scheduleCascadingViewUpdate()
     }
     
-//    func openSession(_ main: MemriContext, _ name:String, _ variables:[String:Any]? = nil) throws {
+//    func openSession(_ context: MemriContext, _ name:String, _ variables:[String:Any]? = nil) throws {
 //
 //        // TODO: This should not fetch the session from named sessions
 //        //       but instead load a sessionview that loads the named sessions by
@@ -719,7 +719,7 @@ class ActionOpenSession : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws {
         if let item = arguments["session"]{
             if let session = item as? Session {
-                self.openSession(main, session)
+                self.openSession(context, session)
             }
             else{
                 // TODO Error handling
@@ -728,7 +728,7 @@ class ActionOpenSession : Action, ActionExec {
         }
         else {
             if let session = arguments["dataItem"] as? Session {
-                self.openSession(main, session)
+                self.openSession(context, session)
             }
             
             // TODO Error handling
@@ -736,8 +736,8 @@ class ActionOpenSession : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionOpenSession.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionOpenSession.exec(context, arguments) }
     }
 }
 // TODO How to deal with viewArguments in sessions
@@ -747,8 +747,8 @@ class ActionOpenSessionByName : Action, ActionExec {
         "opensView": true,
     ]}
     
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "openSessionByName", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "openSessionByName", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
@@ -757,8 +757,8 @@ class ActionOpenSessionByName : Action, ActionExec {
         if let name = arguments["name"] as? String {
             do {
                 // Fetch and parse view from the database
-                let def = try main.views
-                    .parseDefinition(main.views.fetchDefinitions(name:name, type:"session").first)
+                let def = try context.views
+                    .parseDefinition(context.views.fetchDefinitions(name:name, type:"session").first)
                 
                 // See if this is a session, if so take the last view
                 if let def = def as? CVUParsedSessionDefinition {
@@ -786,7 +786,7 @@ class ActionOpenSessionByName : Action, ActionExec {
                     }
                     
                     // Open the view
-                    ActionOpenSession(main).openSession(main, session)
+                    ActionOpenSession(context).openSession(context, session)
                 }
                 else {
                     // TODO Error handling
@@ -806,57 +806,57 @@ class ActionOpenSessionByName : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionOpenSessionByName(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionOpenSessionByName(context).exec(arguments) }
     }
 }
 
 class ActionDelete : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "delete", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "delete", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
 //
 //        // TODO this should happen automatically in ResultSet
-//        //        self.main.items.remove(atOffsets: indexSet)
+//        //        self.context.items.remove(atOffsets: indexSet)
 //        let indexSet = arguments["indices"] as? IndexSet
 //        if let indexSet = indexSet{
 //            var items:[DataItem] = []
 //            for i in indexSet {
-//                let item = main.items[i]
+//                let item = context.items[i]
 //                items.append(item)
 //            }
 //        }
         
-        if let selection:[DataItem] = main.cascadingView.userState.get("selection"), selection.count > 0 {
-            main.cache.delete(selection)
-            main.scheduleUIUpdate{_ in true}
+        if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+            context.cache.delete(selection)
+            context.scheduleUIUpdate{_ in true}
         }
         else if let dataItem = arguments["dataItem"] as? DataItem {
-            main.cache.delete(dataItem)
-            main.scheduleUIUpdate{_ in true}
+            context.cache.delete(dataItem)
+            context.scheduleUIUpdate{_ in true}
         }
         else {
             // TODO Erorr handling
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionDelete(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionDelete(context).exec(arguments) }
     }
 }
 class ActionDuplicate : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "duplicate", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "duplicate", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        if let selection:[DataItem] = main.cascadingView.userState.get("selection"), selection.count > 0 {
-            try selection.forEach{ item in try ActionAddDataItem.exec(main, ["dataItem": item]) }
+        if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+            try selection.forEach{ item in try ActionAddDataItem.exec(context, ["dataItem": item]) }
         }
         else if let item = arguments["dataItem"] as? DataItem {
-            try ActionAddDataItem.exec(main, ["dataItem": item])
+            try ActionAddDataItem.exec(context, ["dataItem": item])
         }
         else {
             // TODO Error handling
@@ -864,23 +864,23 @@ class ActionDuplicate : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionDuplicate.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionDuplicate.exec(context, arguments) }
     }
 }
 
 class ActionImport : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "import", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "import", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
         if let importerInstance = arguments["importerInstance"] as? ImporterInstance{
-            let cachedImporterInstance = try main.cache.addToCache(importerInstance)
+            let cachedImporterInstance = try context.cache.addToCache(importerInstance)
             
-            main.podAPI.runImport(cachedImporterInstance.memriID){ error, succes in
+            context.podAPI.runImport(cachedImporterInstance.memriID){ error, succes in
                 if let error = error{
                     print("Cannot execute actionImport: \(error)")
                 }
@@ -888,24 +888,24 @@ class ActionImport : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionImport.exec(context, arguments) }
     }
 }
 
 
 class ActionIndex : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "index", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "index", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
         if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance{
-            let cachedIndexerInstance = try main.cache.addToCache(indexerInstance)
+            let cachedIndexerInstance = try context.cache.addToCache(indexerInstance)
             
-            main.podAPI.runIndex(cachedIndexerInstance.memriID){ error, succes in
+            context.podAPI.runIndex(cachedIndexerInstance.memriID){ error, succes in
                 if let error = error{
                     print("Cannot execute actionIndex: \(error)")
                 }
@@ -913,28 +913,28 @@ class ActionIndex : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(main, arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionImport.exec(context, arguments) }
     }
 }
 
 class ActionClosePopup : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "closePopup", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "closePopup", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        (main.closeStack.removeLast())()
+        (context.closeStack.removeLast())()
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionClosePopup(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
     }
 }
 
 class ActionSetProperty : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "setProperty", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "setProperty", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
@@ -942,7 +942,7 @@ class ActionSetProperty : Action, ActionExec {
             if let propName = arguments["property"] as? String {
                 if let dataItem = arguments["dataItem"] {
                     sourceDataItem.set(propName, dataItem) // TODO also add to a list
-                    main.scheduleUIUpdate{_ in true}
+                    context.scheduleUIUpdate{_ in true}
                     return
                 }
             }
@@ -953,22 +953,22 @@ class ActionSetProperty : Action, ActionExec {
         }
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionSetProperty(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
     }
 }
 
 class ActionNoop : Action, ActionExec {
-    required init(_ main:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "noop", arguments:arguments, values:values)
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "noop", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
         // do nothing
     }
     
-    class func exec(_ main:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionClosePopup(main).exec(arguments) }
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
     }
 }
 

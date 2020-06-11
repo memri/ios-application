@@ -137,7 +137,7 @@ public class Cache {
     
     
      //TODO: document
-    public var scheduleUIUpdate: ((_ check:(_ main:MemriContext) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ context:MemriContext) -> Bool) -> Void)? = nil
     
     
     /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
@@ -316,8 +316,8 @@ public class Cache {
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
                 // TODO: Error handling
-                self.scheduleUIUpdate!() { main in
-                    return main.cascadingView.resultSet.datasource == resultSet.datasource
+                self.scheduleUIUpdate!() { context in
+                    return context.cascadingView.resultSet.datasource == resultSet.datasource
                 }
             })
             

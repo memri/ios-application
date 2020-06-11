@@ -22,20 +22,20 @@ extension View {
 }
 
 struct Application: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     @State var showNavigation = false
     
     var body: some View {
         // NOTE: Allowed force unwrapping
-        (main as! RootContext).initNavigation(self.$showNavigation)
+        (context as! RootContext).initNavigation(self.$showNavigation)
         
         let drag = DragGesture()
             .onEnded {
                 if self.showNavigation {
                     if $0.translation.width < -100 {
                         withAnimation {
-                            self.main.showNavigation = false
+                            self.context.showNavigation = false
                         }
                     }
                 }
@@ -44,7 +44,7 @@ struct Application: View {
         return GeometryReader { geometry in
             VStack {
                 ZStack(alignment: .leading) {
-                    if self.main.showSessionSwitcher {
+                    if self.context.showSessionSwitcher {
                         SessionSwitcher()
                     }
                     else {
@@ -82,7 +82,7 @@ struct Application: View {
 
 struct Application_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootContext(name: "", key: "").mockBoot()
-        return Application().environmentObject(main)
+        let context = RootContext(name: "", key: "").mockBoot()
+        return Application().environmentObject(context)
     }
 }

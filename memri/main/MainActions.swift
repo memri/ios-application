@@ -11,7 +11,7 @@ extension MemriContext {
     
     /*
        TODO: pass options to openView and eventually to where computeView is called
-             add options to cascadingView before it is assigned to main
+             add options to cascadingView before it is assigned to context
              add variable support to compiledView parser and variable lookup
     
              also include openSession below, this requires variables to be on session
@@ -205,7 +205,7 @@ extension MemriContext {
 //
 //        // Toggle the right property on the right object
 //        switch objectToUpdate {
-//        case "main":
+//        case "context":
 //            self[propToUpdate] = !(self[propToUpdate] as! Bool)
 //        case "sessions":
 //            self.sessions[propToUpdate] = !(self.sessions[propToUpdate] as! Bool)
@@ -246,7 +246,7 @@ extension MemriContext {
 //
 //    // Toggle the right property on the right object
 //    switch objectToQuery {
-//    case "main":
+//    case "context":
 //        return self[propToQuery] as? Bool ?? false // TODO REfactor: Error handling
 //    case "sessions":
 //        return self.sessions[propToQuery] as? Bool ?? false // TODO REfactor: Error handling

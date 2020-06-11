@@ -21,7 +21,7 @@ let registerThumGrid = {
 }
 
 struct ThumbGridRendererView: View {
-    @EnvironmentObject var main: MemriContext
+    @EnvironmentObject var context: MemriContext
     
     var name: String = "thumbnail_grid"
     
@@ -34,7 +34,7 @@ struct ThumbGridRendererView: View {
 //    }
     
     var renderConfig: CascadingThumbnailConfig? {
-        self.main.cascadingView.renderConfig as? CascadingThumbnailConfig
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig
     }
     
     var layout: ASCollectionLayout<Int> {
@@ -77,15 +77,15 @@ struct ThumbGridRendererView: View {
     }
     
     var section: ASCollectionViewSection<Int>{
-        ASCollectionViewSection(id: 0, data: main.items, selectedItems: $selectedItems) { dataItem, state in
+        ASCollectionViewSection(id: 0, data: context.items, selectedItems: $selectedItems) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
                     // TODO: Error handling
                     self.renderConfig!.render(item: dataItem)
-                        .environmentObject(self.main)
+                        .environmentObject(self.context)
                         .onTapGesture {
                             if let press = self.renderConfig?.press {
-                                self.main.executeAction(press, with: dataItem)
+                                self.context.executeAction(press, with: dataItem)
                             }
                         }
                         .frame(width: geom.size.width, height: geom.size.height)
@@ -114,10 +114,10 @@ struct ThumbGridRendererView: View {
             if renderConfig == nil {
                 Text("Unable to render this view")
             }
-            else if main.cascadingView.resultSet.count == 0 {
+            else if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
-                    Text(self.main.cascadingView.emptyResultText)
+                    Text(self.context.cascadingView.emptyResultText)
                         .multilineTextAlignment(.center)
                         .font(.system(size: 16, weight: .regular, design: .default))
                         .opacity(0.7)
@@ -162,7 +162,7 @@ struct ThumbGridRendererView: View {
     }
     
     func onTap(Action: Action, dataItem: DataItem){
-        main.executeAction(Action, with: dataItem)
+        context.executeAction(Action, with: dataItem)
     }
 }
 
