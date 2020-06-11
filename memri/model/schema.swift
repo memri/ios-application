@@ -738,6 +738,10 @@ class Importer:DataItem{
     
     let runs = List<Edge>()
     
+    override var computedTitle:String {
+        return name
+    }
+    
     required init () {
         super.init()
     }
@@ -762,8 +766,7 @@ class ImporterInstance:DataItem{
     override var genericType:String { "ImporterInstance" }
     @objc dynamic var name:String = "unknown importer run"
     @objc dynamic var datatype:String = "unknown"
-
-    let importer = List<Edge>()
+    @objc dynamic var importer:Importer? = nil
     
 //    let runs = List<Importer>() // e.g. person, object, recipe, etc
     
@@ -777,7 +780,7 @@ class ImporterInstance:DataItem{
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             datatype = try decoder.decodeIfPresent("datatype") ?? datatype
-            decodeEdges(decoder, "importer", DataItem.self, self.importer, self)
+            importer = try decoder.decodeIfPresent("importer") ?? importer
             
             try self.superDecode(from: decoder)
         }

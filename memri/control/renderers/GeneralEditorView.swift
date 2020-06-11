@@ -105,7 +105,7 @@ struct GeneralEditorView: View {
         }
         
         (Array(groups.keys) + objectSchema.properties.map{ $0.name }).filter {
-            return (groups[$0] != nil || objectSchema[$0]?.objectClassName != nil)
+            return (groups[$0] != nil || objectSchema[$0]?.isArray ?? false)
                 && !(renderConfig?.excluded.contains($0) ?? false)
                 && !alreadyUsed.contains($0)
         }.forEach({
@@ -214,7 +214,7 @@ struct GeneralEditorSection: View {
         return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
                 && !self.renderConfig.allGroupValues().contains($0.name)
-                && $0.objectClassName == nil
+                && !$0.isArray
         }.map({$0.name})
     }
     
@@ -427,7 +427,14 @@ struct DefaultGeneralEditorRow: View {
                     if [.string, .bool, .date, .int, .double].contains(propType){
                         defaultRow(self.item.getString(self.prop))
                     }
-                    else if propType == .object { defaultRow(self.item.computedTitle) }
+                    else if propType == .object {
+                        if self.item[self.prop] is DataItem {
+                            MemriButton(main:self._main, item:self.item[self.prop] as! DataItem)
+                        }
+                        else {
+                            defaultRow()
+                        }
+                    }
                     else { defaultRow() }
                 }
                 else {
