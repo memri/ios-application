@@ -3,7 +3,7 @@ import MapKit
 import RealmSwift
 
 struct MapView: UIViewRepresentable {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     var location: Location? = nil
     var address: Address? = nil
@@ -70,21 +70,24 @@ struct MapView: UIViewRepresentable {
         let locations = self.locations ?? self.addresses?.map({ $0.location }).filter({ $0 != nil })
         
         var dLat:[Double] = [100,0], dLong:[Double] = [100,0]
-        for location in locations! {
-            let coordinate = CLLocationCoordinate2D(
-                latitude: location!.latitude.value!, // TODO Refactor error handling?
-                longitude: location!.longitude.value!
-            )
-            
-            dLat[0] = min(dLat[0], coordinate.latitude)
-            dLat[1] = max(dLat[1], coordinate.latitude)
-            
-            dLong[0] = min(dLong[0], coordinate.longitude)
-            dLong[1] = max(dLong[1], coordinate.longitude)
-            
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinate
-            view.addAnnotation(annotation)
+        if let locations = locations{
+            for location in locations {
+                if let lat = location?.latitude.value, let long = location?.longitude.value{
+                    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+                    
+                    dLat[0] = min(dLat[0], coordinate.latitude)
+                    dLat[1] = max(dLat[1], coordinate.latitude)
+                    
+                    dLong[0] = min(dLong[0], coordinate.longitude)
+                    dLong[1] = max(dLong[1], coordinate.longitude)
+                    
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = coordinate
+                    view.addAnnotation(annotation)
+                } else{
+                    errorHistory.warn("incomplete location \(String(describing: location)) (lat or long missing)")
+                }
+            }
         }
         
         let region = MKCoordinateRegion(
@@ -108,18 +111,20 @@ struct MapView: UIViewRepresentable {
         
         let span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         
-        let coordinate = CLLocationCoordinate2D(
-            latitude: location.latitude.value!, // TODO Refactor error handling?
-            longitude: location.longitude.value!
-        )
-        
-        let region = MKCoordinateRegion(center: coordinate, span: span)
+        if let lat = location.latitude.value, let long = location.longitude.value {
+            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: long)
+            
+            let region = MKCoordinateRegion(center: coordinate, span: span)
 
-        let annotation = MKPointAnnotation()
-        annotation.coordinate = coordinate
-        view.addAnnotation(annotation)
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            view.addAnnotation(annotation)
 
-        view.setRegion(region, animated: true)
+            view.setRegion(region, animated: true)
+        }
+        else {
+            print("Cannot make coordinate in setRegion, lat or long missing")
+        }
     }
 }
 
@@ -139,14 +144,13 @@ extension Address {
 
             // TODO Refactor: currently just picking the first one
             if let first = response.mapItems.first {
-                try! self.realm!.write { // TODO refactor: error handling
+                realmWriteIfAvailable(self.realm) {
                     let coordinate = first.placemark.coordinate
                     self.location = Location(value: [
                         "longitude": coordinate.longitude,
                         "latitude": coordinate.latitude
                     ])
                 }
-                
                 callback(nil)
             }
             else {

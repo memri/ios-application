@@ -3,30 +3,19 @@ import Foundation
 import SwiftUI
 import PlaygroundSupport
 
-//
-//let description: String = """
-//{
-//    "x": ["a", "b"],
-//    "y": ["a", "b"],
-//    "z": ["a", "b"],
-//    "w": ["a", "b"],
-//}
-//"""
-//
-//class KV: Decodable{
-//    
-//    
-//    
-//    public required init(from decoder: Decoder){
-//        let container = try decoder.container(keyedBy: CodingKeys.self)
-//
-//    }
-//    
-//}
-//
-//
-//let x = try! JSONDecoder().decode(KeyValuePairs<String, [String]>.self, from: description.data(using: .utf8)!)
-//print("a")
-//for (item, val) in x{
-//    print(item)
-//}
+
+
+extension String {
+    mutating func replace(_ pattern: String, with: String = "") {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: NSRegularExpression.Options.caseInsensitive)
+            let range = NSMakeRange(0, self.count)
+            self = regex.stringByReplacingMatches(in: self, options: [], range: range, withTemplate: with)
+        } catch {
+            return
+        }
+    }
+}
+
+var x = "a b 9 d 1"
+x.replace(#"(\d)"#, with: "-$1")

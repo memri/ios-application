@@ -7,7 +7,6 @@
 
 import Foundation
 import RealmSwift
-import CryptoKit
 import SwiftUI
 
 //func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{
@@ -18,100 +17,6 @@ import SwiftUI
 
 // Run formatter: swift-format . --configuration .swift-format.json
 
-extension String: Error {
-    func sha256() -> String {
-        // Convert the string to data
-        let data = self.data(using: .utf8)!
-
-        // Hash the data
-        let digest = SHA256.hash(data: data)
-
-        // Return the hash string 
-        return digest.compactMap { String(format: "%02x", $0) }.joined()
-    }
-    
-    func test(_ pattern:String, _ options:String = "i") -> Bool {
-        return match(pattern, options).count > 0
-    }
-    
-    // let pattern = #"\{([^\.]+).(.*)\}"#
-    func match(_ pattern:String, _ options:String = "i") -> [String] {
-        var nsOptions:NSRegularExpression.Options = NSRegularExpression.Options()
-        for chr in options {
-            if chr == "i" { nsOptions.update(with: .caseInsensitive) }
-        }
-        
-        let regex = try! NSRegularExpression(pattern: pattern, options: nsOptions)
-        var matches:[String] = []
-        
-        // Weird complex way to execute a regex
-        let nsrange = NSRange(self.startIndex..<self.endIndex, in: self)
-        regex.enumerateMatches(in: self, options: [], range: nsrange) { (match, _, stop) in
-            guard let match = match else { return }
-
-            for i in 0..<match.numberOfRanges {
-                let rangeObject = Range(match.range(at: i), in: self)!
-                matches.append(String(self[rangeObject]))
-            }
-        }
-        
-        return matches
-    }
-    
-    func substr(_ startIndex:Int, _ length:Int? = nil) -> String {
-        let start = startIndex < 0
-            ? self.index(self.endIndex, offsetBy: startIndex)
-            : self.index(self.startIndex, offsetBy: startIndex)
-        
-        let end = length == nil
-            ? self.endIndex
-            : length! < 0
-                ? self.index(self.startIndex, offsetBy: startIndex + length!)
-                : self.index(self.endIndex, offsetBy: length!)
-        
-        let range = start..<end
-
-        return String(self[range])
-    }
-    
-    func replace(_ target: String, _ withString: String) -> String
-    {
-        return self.replacingOccurrences(of: target, with: withString, options: NSString.CompareOptions.regularExpression, range: nil)
-    }
-}
-
-extension Collection {
-
-    /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript (safe index: Index) -> Element? {
-        return indices.contains(index) ? self[index] : nil
-    }
-}
-
-extension Date {
-    
-    
-    var timeDelta: String? {
-        let formatter = DateComponentsFormatter()
-        formatter.unitsStyle = .full
-        formatter.maximumUnitCount = 1
-        formatter.allowedUnits = [.year, .month, .day, .hour, .minute, .second]
-
-        guard let deltaString = formatter.string(from: self, to: Date()) else {
-             return nil
-        }
-        return deltaString
-    }
-    
-   var timestampString: String? {
-        guard let timeString = timeDelta else {
-             return nil
-        }
-            let formatString = NSLocalizedString("%@ ago", comment: "")
-            return String(format: formatString, timeString)
-       }
-}
-
 let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder) in
     var encoder = JSONEncoder()
     encoder.dateEncodingStrategy = .iso8601
@@ -121,27 +26,46 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder
     return (encoder, decoder)
 }()
 
-func unserialize<T:Decodable>(_ s:String) -> T {
-    let data = s.data(using: .utf8)!
-    let output:T = try! MemriJSONDecoder.decode(T.self, from: data)
-    return output as T
+func unserialize<T:Decodable>(_ s:String) -> T? {
+    do {
+        // NOTE: Allowed forced unwrapping
+        let data = s.data(using: .utf8)!
+        let output:T = try MemriJSONDecoder.decode(T.self, from: data)
+        return output as T
+    }
+    catch{
+        return nil
+    }
 }
 
 func serialize(_ a:AnyCodable) -> String {
-    let data = try! MemriJSONEncoder.encode(a)
-    let string = String(data: data, encoding: .utf8)!
-    return string
+    do {
+        // NOTE: Allowed force unwrap
+        let data = try MemriJSONEncoder.encode(a)
+        let string = String(data: data, encoding: .utf8)!
+        return string
+    }
+    catch {
+        print("Failed to encode \(a)")
+        return ""
+    }
 }
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
     print("Reading from file \(file).\(ext)")
     let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
-    let jsonString = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
-    return jsonString
+    if let fileURL = fileURL{
+        let jsonString = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
+        return jsonString
+    }
+    else {
+        throw "Cannot read from \(file) with ext \(ext), path does not result in valid url"
+    }
 }
 
 func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
     let jsonString = try stringFromFile(file, ext)
+    // NOTE: Allowed force unwrap
     let jsonData = jsonString.data(using: .utf8)!
     return jsonData
 }
@@ -179,9 +103,30 @@ func getCodingPathString(_ codingPath:[CodingKey]) -> String {
 //    }
 //}
 
+func JSONErrorReporter(_ convert: () throws -> Void) throws {
+    do {
+        try convert()
+    }
+    catch DecodingError.dataCorrupted(let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch Swift.DecodingError.keyNotFound(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch Swift.DecodingError.typeMismatch(_, let context) {
+        let path = getCodingPathString(context.codingPath)
+        throw ("JSON Parse Error at \(path)\nError: \(context.debugDescription)")
+    }
+    catch {
+        throw ("JSON Parse Error: \(error)")
+    }
+}
+
 func jsonErrorHandling(_ decoder: Decoder, _ convert: () throws -> Void) {
     let path = getCodingPathString(decoder.codingPath)
-    print("Decoding: \(path)")
+//    print("Decoding: \(path)")
     
     do {
         try convert()
@@ -225,11 +170,15 @@ func serializeJSON(_ encode:(_ encoder:JSONEncoder) throws -> Data) -> String? {
 }
 
 func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSwift.List<T>) {
-    let parsed:[T]? = try! decoder.decodeIfPresent(key)
-    if let parsed = parsed {
-        for item in parsed {
-            list.append(item)
+    do {
+        if let parsed:[T] = try decoder.decodeIfPresent(key) {
+            for item in parsed {
+                list.append(item)
+            }
         }
+    }
+    catch {
+        print("Failed to decode into list \(error)")
     }
 }
 
@@ -239,8 +188,11 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
     let objects:[T]? = try! decoder.decodeIfPresent(key)
     if let objects = objects {
         for object in objects {
-            try! globalCache!.addToCache(object)
-            let edge = Edge(subject.uid, object.uid, subject.genericType, object.genericType)
+            do { _ = try globalCache?.addToCache(object) }
+            catch {
+                // TODO Error logging
+            }
+            let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
             edgeList.append(edge)
         }
     }
@@ -255,12 +207,24 @@ func negateAny(_ value:Any) -> Bool {
     return false
 }
 
-func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() -> Void) {
+func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     // TODO Refactor, Error Handling , _ error:(error) -> Void  ??
-    if let realm = realm, !realm.isInWriteTransaction {
-        try! realm.write { doWrite() }
+    do {
+        if let realm = realm {
+            if !realm.isInWriteTransaction {
+                // TODO: Error handling (this can happen for instance if you pass a
+                // non existing property string to dataItem.set())
+                try! realm.write { try doWrite() }
+            }
+            else {
+                try doWrite()
+            }
+        }
+        else {
+            try doWrite()
+        }
     }
-    else {
-        doWrite()
+    catch let error {
+        errorHistory.error("Realm Error: \(error)")
     }
 }

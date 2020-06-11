@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct TopNavigation: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     @State private var showingBackActions = false
     @State private var showingTitleActions = false
@@ -29,31 +29,33 @@ public struct TopNavigation: View {
     }
     
     private func forward(){
-        self.main.executeAction(ActionDescription(actionName:.forward))
+        self.context.executeAction(ActionForward(context))
     }
     private func toFront(){
-        self.main.executeAction(ActionDescription(actionName:.forwardToFront))
+        self.context.executeAction(ActionForwardToFront(context))
     }
     private func backAsSession(){
-        self.main.executeAction(ActionDescription(actionName:.backAsSession))
+        self.context.executeAction(ActionBackAsSession(context))
     }
     private func openAllViewsOfSession(){
-        let uid = self.main.currentSession.uid
+        let memriID = self.context.currentSession.memriID
         let view = """
         {
             "title": "Views in current session",
-            "queryOptions": {
-                "query": "sessionview AND session.uid = '\(uid)'",
+            "datasource": {
+                "query": "SessionView AND session.uid = '\(memriID)'",
             }
         }
         """
         
-        self.main.openView(view)
+        // TODO 
+        do { try ActionOpenView.exec(context, ["view": view]) }
+        catch {}
     }
     
     private func createTitleActionSheet() -> ActionSheet {
         var buttons:[ActionSheet.Button] = []
-        let isNamed = self.main.currentSession.currentView.name != nil
+        let isNamed = self.context.currentSession.currentView.name != nil
         
         // TODO or copyFromView
         buttons.append(isNamed
@@ -86,13 +88,14 @@ public struct TopNavigation: View {
     }
         
     public var body: some View {
-        let backButton = main.currentSession.backButton
+        let backButton = context.currentSession.hasHistory ? ActionBack(context) : nil
+        let context = self.context
         
         return ZStack {
             // we place the title *over* the rest of the topnav, to center it horizontally
             HStack {
                 Button(action: { self.showingTitleActions = true }) {
-                    Text(main.computedView.title)
+                    Text(context.cascadingView.title)
                         .font(.headline)
                         .foregroundColor(Color(hex: "#333"))
                 }
@@ -104,14 +107,16 @@ public struct TopNavigation: View {
                 HStack(alignment: .top, spacing: 10) {
                     
                     if !inSubView {
-                        Action(action: ActionDescription(actionName: .showNavigation))
+                        ActionButton(action: ActionShowNavigation(context))
                             .font(Font.system(size: 20, weight: .semibold))
                     }
                     else if showCloseButton {
                         // TODO Refactor: Properly support text labels
-//                        Action(action: ActionDescription(actionName: .closePopup))
+//                        Action(action: Action(actionName: .closePopup))
 //                            .font(Font.system(size: 20, weight: .semibold))
-                        Button(action: { self.main.executeAction(ActionDescription(actionName: .closePopup)) }) {
+                        Button(action: {
+                            context.executeAction(ActionClosePopup(context))
+                        }) {
                             Text("Close")
                                 .font(.system(size: 16, weight: .regular))
                                 .padding(.horizontal, 5)
@@ -124,14 +129,15 @@ public struct TopNavigation: View {
                     if backButton != nil{
                         Button(action: {
                             if !self.showingBackActions {
-                                self.main.executeAction(backButton!)
+                                // NOTE: Allowed force unwrap (logic)
+                                context.executeAction(backButton!)
                             }
                         }) {
-                            Image(systemName: backButton!.icon)
+                            Image(systemName: backButton!.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .foregroundColor(Color(backButton!.computeColor(state: false)))
+                                .foregroundColor(backButton!.color)
                         }
                         .font(Font.system(size: 19, weight: .semibold))
                         .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
@@ -170,16 +176,16 @@ public struct TopNavigation: View {
                     Spacer()
                     
                     // TODO this should not be a setting but a user defined view that works on all
-                    if self.main.item != nil || self.main.settings.getBool("user/general/gui/showEditButton") != false {
-                        Action(action: main.computedView.editActionButton)
+                    if context.item != nil || context.settings.getBool("user/general/gui/showEditButton") != false {
+                        ActionButton(action: context.cascadingView.editActionButton)
                             .font(Font.system(size: 19, weight: .semibold))
                     }
                     
-                    Action(action: main.computedView.actionButton)
+                    ActionButton(action: context.cascadingView.actionButton)
                         .font(Font.system(size: 22, weight: .semibold))
                     
                     if !inSubView {
-                        Action(action: ActionDescription(actionName: .showSessionSwitcher))
+                        ActionButton(action: ActionShowSessionSwitcher(context))
                             .font(Font.system(size: 20, weight: .medium))
                             .rotationEffect(.degrees(90))
                     }
@@ -201,6 +207,6 @@ public struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(RootMain(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

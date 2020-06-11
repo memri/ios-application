@@ -10,11 +10,12 @@ import Foundation
 import SwiftUI
 
 public struct MemriButton : View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     let item: DataItem
     
     public var body: some View {
+        // NOTE: Allowed force unwrap
         let family = DataItemFamily(rawValue: item.genericType)!
         var type = item.objectSchema["type"] == nil ? item.genericType : item.getString("type")
         if type == "" { type = item.genericType }

@@ -35,7 +35,7 @@ class CacheTest: XCTestCase {
     }
     
     func testEmptyQuery() {
-        testCache.query(QueryOptions(query: "")){error, items in
+        testCache.query(Datasource(query: "")){error, items in
             XCTAssertEqual(items, nil)
         }
     }
@@ -44,7 +44,7 @@ class CacheTest: XCTestCase {
         testCache.install()
         
         for dtype in DataItemFamily.allCases{
-            testCache.query(QueryOptions(query: dtype.rawValue)){error, items in
+            testCache.query(Datasource(query: dtype.rawValue)){error, items in
                 if let result = items{
                     XCTAssertTrue(result.allSatisfy{item in item.genericType == dtype.rawValue })
                 }else{
@@ -76,12 +76,44 @@ class CacheTest: XCTestCase {
     func testGetResultSet(){
         testCache.install()
         // TODO: not sure what this should test yet
-        let result = testCache.getResultSet(QueryOptions(query: "*"))
+        let _ = testCache.getResultSet(Datasource(query: "*"))
     }
     
     func testAddToCache(){
         let note = Note()
-        let cachedNote = try! testCache.addToCache(note)
+        let _ = try! testCache.addToCache(note)
+        // TODO: what to test here
+    }
+    
+    func testAddToCacheConflicts(){
+        testCache.install()
+        // TODO: FIX
+//        let item: Country = testCache.getItemById("country", "Aruba")
+//        let cachedNote = try! testCache.addToCache(note)
+//        item.set("starred", true)
+//
+//        let item2: Country = testCache.getItemById("country", "Aruba")
+//        // versionnumber 1 higher
+//        item2.uid = note1.uid
+//        item2.syncstate = item1.syncstate +1
+//        item2.set("content", somthing else")
+//        item2.set("starred", true)
+//        item2.set("starred", true)
+//
+//        let cachedNote = try! testCache.addToCache(note2)
+//
+//
+//
+//
+//
+//        // 1) has to be cached not partiallyloaded, should have actionNeeded,
+//        // and safeMerge is not possible
+//
+//        // should conflict when local and server is changed
+//
+//        let note = Note()
+//        let cachedNote = try! testCache.addToCache(note)
+        
         // TODO: what to test here
     }
     
@@ -113,8 +145,8 @@ class CacheTest: XCTestCase {
         let cls = item!.getType()
 
         for prop in item!.objectSchema.properties{
-            if prop.name != cls.primaryKey(){
-                item!.isEqualProperty(prop.name, copy)
+            if prop.name != cls!.primaryKey(){
+                _ = item!.isEqualProperty(prop.name, copy)
             }
         }   
     }

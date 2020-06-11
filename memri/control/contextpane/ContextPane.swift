@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContextPane: View {
 
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
 
     private let forgroundPercentageWidth: CGFloat = 0.75
     
@@ -18,7 +18,7 @@ struct ContextPane: View {
 
     var body: some View {
         ZStack {
-            if self.main.currentSession.showContextPane {
+            if self.context.currentSession.showContextPane {
                 ContextPaneBackground()
                     .opacity(0.60)
                     .edgesIgnoringSafeArea(.vertical)
@@ -26,8 +26,8 @@ struct ContextPane: View {
                     .animation(.easeOut(duration: 0.6))
                     .gesture(TapGesture()
                         .onEnded{ value in
-                            try! self.main.realm.write {
-                                self.main.currentSession.showContextPane.toggle()
+                            realmWriteIfAvailable(self.context.realm) {
+                                self.context.currentSession.showContextPane.toggle()
                             }
                         })
             
@@ -40,8 +40,8 @@ struct ContextPane: View {
                             self.dragOffset = value.translation
                         })
                         .onEnded{ value in
-                            try! self.main.realm.write {
-                                self.main.currentSession.showContextPane.toggle()
+                            realmWriteIfAvailable(self.context.realm) {
+                                self.context.currentSession.showContextPane.toggle()
                             }
                         })
                     .transition(.move(edge: .trailing))
@@ -53,6 +53,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ContextPane().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

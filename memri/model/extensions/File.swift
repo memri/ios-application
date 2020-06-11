@@ -12,7 +12,7 @@ import RealmSwift
 
 class File:DataItem {
     @objc dynamic var uri:String = ""
-    override var genericType:String { "file" }
+    override var genericType:String { "File" }
     
     let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
     
@@ -28,51 +28,63 @@ class File:DataItem {
             
             decodeIntoList(decoder, "usedBy", self.usedBy)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
     
     public var asUIImage:UIImage? {
-        if let x:UIImage = read() { return x }
+        do { if let x:UIImage = try read() { return x } }
+        catch {
+            // TODO: User error handling
+            // TODO Refactor: error handling
+            errorHistory.error("Could not read image in path: \(uri)")
+        }
         return nil
     }
 
     public var asString:String? {
-        if let x:String = read() { return x }
+        do { if let x:String = try read() { return x } }
+        catch {
+            // TODO: User error handling
+            // TODO Refactor: error handling
+        }
         return nil
     }
     
     public var asData:Data? {
-        if let x:Data = read() { return x }
+        do { if let x:Data = try read() { return x } }
+        catch {
+            // TODO: User error handling
+            // TODO Refactor: error handling
+        }
         return nil
     }
     
-    public func read<T>() -> T? {
-        var cachedData:T? = try! fileCache.read(self.uri)
+    public func read<T>() throws -> T?{
+        var cachedData:T? = try InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
         let data = self.readData()
-        if data != nil {
+        if let data = data {
+            // NOTE: Allowed forced casting, because we check for types
             if T.self == UIImage.self {
-                cachedData = (UIImage(data: data!) as! T)
+                cachedData = (UIImage(data: data) as! T)
             }
             else if T.self == String.self {
-                cachedData = (String(data: data!, encoding: .utf8) as! T)
+                cachedData = (String(data: data, encoding: .utf8) as! T)
             }
             else if T.self == Data.self {
-                cachedData = (data! as! T)
+                cachedData = (data as! T)
             }
             else {
-                print("Warn: Could not parse \(self.uri)")
-                return nil
+                throw "Could not parse \(self.uri)"
             }
-            
-            try! fileCache.add(self.uri, cachedData!)
+            // NOTE: Allowed forced unwrapping, because variable must have value by now
+            try InMemoryObjectCache.set(self.uri, cachedData!)
             return cachedData
         }
         else {
-            print("Warn: Could not read data from \(self.uri)")
-            return nil
+            throw "Could not read data from \(self.uri)"
         }
     }
     
@@ -80,6 +92,7 @@ class File:DataItem {
         do {
             var data:Data?
             
+            // NOTE: allowed forced casting, because type has been checked
             if T.self == UIImage.self {
                 data = (value as! UIImage).pngData()
                 if data == nil { throw "Exception: Could not write \(self.uri) as PNG" }
@@ -94,12 +107,11 @@ class File:DataItem {
             else {
                 throw "Exception: Could not parse the type to write to \(self.uri)"
             }
-            
+            // NOTE: Allowed forced unwrapping, should have value here
             try self.writeData(data!)
-            try! fileCache.add(self.uri, value)
+            try InMemoryObjectCache.set(self.uri, value)
         }
         catch let error {
-
             throw "\(error)"
         }
     }
@@ -143,7 +155,8 @@ class File:DataItem {
 
                 // Return data
                 return data
-            } else{
+            }
+            else {
                 return nil
             }
         }
@@ -161,7 +174,8 @@ class File:DataItem {
                 }else{
                     return nil
                 }
-            }else{
+            }
+            else {
                 print("Warning: Could not read file \(path)")
                 return nil
             }
@@ -171,58 +185,27 @@ class File:DataItem {
     
     // TODO where to save these files properly?
     public class func generateFilePath() -> String {
-        let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]!
-        let url = URL(fileURLWithPath: homeDir)
-                    .appendingPathComponent(".memri.cache/File", isDirectory:true)
-        
-        do {
-            try FileManager.default.createDirectory(atPath: url.relativePath,
-                                                    withIntermediateDirectories: true,
-                                                    attributes: nil)
-        }
-        catch {
-            print(error)
-        }
-        
-        let fileName = UUID().uuidString
-        return url.appendingPathComponent(fileName).relativePath
-    }
-}
-
-public class FileCache {
-    private var stringCache:[String:String] = [:]
-    private var uiImageCache:[String:UIImage] = [:]
-    private var dataCache:[String:Data] = [:]
-    
-    public func add<T>(_ key:String, _ value:T) throws {
-        if T.self == UIImage.self {
-            uiImageCache[key] = (value as! UIImage)
-        }
-        else if T.self == String.self {
-            stringCache[key] = (value as! String)
-        }
-        else if T.self == Data.self {
-            dataCache[key] = (value as! Data)
+        let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"]
+        if let homeDir = homeDir {
+            let url = URL(fileURLWithPath: homeDir)
+                        .appendingPathComponent(".memri.cache/File", isDirectory:true)
+            
+            do {
+                try FileManager.default.createDirectory(atPath: url.relativePath,
+                                                        withIntermediateDirectories: true,
+                                                        attributes: nil)
+            }
+            catch {
+                print(error)
+            }
+            
+            let fileName = UUID().uuidString
+            return url.appendingPathComponent(fileName).relativePath
         }
         else {
-            throw "Exception: Could not parse the type to write to \(key)"
-        }
-    }
-    
-    public func read<T>(_ key:String) throws -> T? {
-        if T.self == UIImage.self {
-            return uiImageCache[key] as? T
-        }
-        else if T.self == String.self {
-            return stringCache[key] as? T
-        }
-        else if T.self == Data.self {
-            return dataCache[key] as? T
-        }
-        else {
-            throw "Exception: Could not parse the type to read from \(key)"
+            // TODO: Error handling
+            print("Cannot generate filePath")
+            return ""
         }
     }
 }
-
-var fileCache = FileCache()

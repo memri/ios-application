@@ -9,14 +9,15 @@ import Foundation
 import SwiftUI
 
 struct Picker: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     let item: DataItem
     let selected: DataItem?
     let title: String
     let emptyValue: String
+    let propDataItem: DataItem
     let propName: String
-    let queryOptions: QueryOptions
+    let datasource: Datasource
     
     @State var isShowing = false
     
@@ -38,64 +39,68 @@ struct Picker: View {
             PickerPane(
                 item: self.item,
                 title: self.title,
+                propDataItem: self.propDataItem,
                 propName: self.propName,
                 selected: self.selected,
-                queryOptions: self.queryOptions
-            ).environmentObject(self.main)
+                datasource: self.datasource
+            ).environmentObject(self.context)
         }
         .generalEditorInput()
     }
 }
 
 struct PickerPane: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     let item: DataItem
     let title: String
+    let propDataItem: DataItem
     let propName: String
     let selected: DataItem?
-    let queryOptions: QueryOptions
+    let datasource: Datasource
     
     var body: some View {
-        self.main.closeStack.append {
+        self.context.closeStack.append {
             self.presentationMode.wrappedValue.dismiss()
         }
         
         // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
         return SubView(
-            main: self.main,
+            context: self.context,
             view: SessionView(value: [
-                "queryOptions": queryOptions,
+                "datasource": datasource,
                 "title": title,
+                "userState": UserState([
+                    "selection": ["type": self.item.genericType, "memriID": self.item.memriID]
+                ]),
                 // "editMode": true // TODO REfactor: also allow edit mode toggle on session view
                 // TODO REfactor: allow only 1 or more selected items
-                "renderConfigs": RenderConfigs(value: [
-                    // TODO:refactor use "*" for all renderConfigs
-                    "list": ListConfig(value: [
-                        // TODO Refactor: Allow for multiple actions to an action description
-                        //                Then add a .setProperty which takes a type, uid and
-                        //                propName to set the property with the value from selection
-                        //                in order to reimplement:
-                        //
-                        //                            try! self.main.realm.write {
-                        //                                self.item[self.propName] = dataItem
-                        //                            }
-                        //                            self.main.scheduleUIUpdate{_ in true}
-                        //
-                        "press": ActionDescription(actionName: .closePopup)
-                        // TODO: refactor enable selection
-//                        "selection": [DataItemReference(dataItem: self.item)]
-                    ]),
-                    "thumbnail": ThumbnailConfig(value: [
-                        "press": ActionDescription(actionName: .closePopup)
-                    ])
-                ])
+                "renderDescriptions": [
+                    CVUParsedRendererDefinition(#"[renderer = "list"]"#,
+                        parsed: ["press": [
+                            ActionSetProperty(context,
+                                              arguments: [
+                                                "sourceDataItem": self.propDataItem,
+                                                "property": self.propName
+                                              ]),
+                            ActionClosePopup(context)
+                        ]]
+                    ),
+                    CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
+                        parsed: ["press": [
+                            ActionSetProperty(context,
+                                              arguments: [
+                                                "sourceDataItem": self.propDataItem,
+                                                "property": self.propName
+                                              ]),
+                            ActionClosePopup(context)
+                        ]]
+                    )
+                ]
             ]),
-            context: self.item,
-            variables: [
-                "showCloseButton": true
-            ] // TODO: Refactor: optional?
+            dataItem: self.item,
+            args: ViewArguments(["showCloseButton": true])
         )
     }
 }

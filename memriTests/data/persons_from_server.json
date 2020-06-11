@@ -1,23 +1,23 @@
 [
     {
-        "uid": "0x011",
-        "type": "person",
+        "memriID": "0x011",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
         }
     },
     {
-        "uid": "0x012",
-        "type": "person",
+        "memriID": "0x012",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1
         }
     },
     {
-        "uid": "0x013",
-        "type": "person",
+        "memriID": "0x013",
+        "type": "Person",
         "syncState": {
             "isPartiallyLoaded": true,
             "version": 1

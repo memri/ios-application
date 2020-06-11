@@ -1,5 +1,5 @@
 [{
-    "uid": "0x013",
+    "memriID": "0x013",
     "type": "person",
     "firstName": "Eve",
     "lastName": "Eagle",
@@ -8,7 +8,7 @@
     "height": 185,
     "shoulderWidth": 42,
     "armLength": 73,
-    "relations": [{"uid":"0x011"},{"uid":"0x012"}],
+    "relations": [{"memriID":"0x011"},{"memriID":"0x012"}],
     "phoneNumbers": [ {"number": "0654271340"} ],
     "websites": [
         {
@@ -75,7 +75,7 @@
         {
             "name": "Soccer team",
             "color": "#83ac06",
-            "uid": "0x0124"            
+            "memriID": "0x0124"
         },
         { "name": "Friends from University", "color": "#ffd966" }
     ],

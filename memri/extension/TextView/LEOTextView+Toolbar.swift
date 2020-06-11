@@ -169,7 +169,12 @@ extension LEOTextView {
                 UIView.animate(withDuration: duration, animations: {
                     var toolbarFrame = toolbar!.frame
                     // TODO: CHANGE HOW THIS IS COMPUTED, THE 25 IS CURRENTLY SUPER HACKY
-                    toolbarFrame.origin.y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 15)
+                    let y = self.superview!.frame.height - (keyboardEnd.height + toolbarHeight - 15)
+                    
+                    print(self.superview!.frame.height)
+//                    print(y)
+//                    print(y)
+                    toolbarFrame.origin.y = y
                     toolbar!.frame = toolbarFrame
                 }, completion: nil)
             }

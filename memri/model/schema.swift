@@ -11,58 +11,67 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-typealias List = RealmSwift.List
+public typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum DataItemFamily: String, ClassFamily, CaseIterable {
-    case note = "note"
-    case label = "label"
-    case photo = "photo"
-    case video = "video"
-    case audio = "audio"
-    case file = "file"
-    case person = "person"
-    case audititem = "audititem"
-    case sessions = "sessions"
-    case phonenumber = "phonenumber"
-    case website = "website"
-    case location = "location"
-    case address = "address"
-    case country = "country"
-    case company = "company"
-    case publickey = "publickey"
-    case onlineprofile = "onlineprofile"
-    case diet = "diet"
-    case medicalcondition = "medicalcondition"
-    case session = "session"
-    case sessionview = "sessionview"
-//    case dynamicview = "dynamicview"
+    case typeNote = "Note"
+    case typeLabel = "Label"
+    case typePhoto = "Photo"
+    case typeVideo = "Video"
+    case typeAudio = "Audio"
+    case typeFile = "File"
+    case typePerson = "Person"
+    case typeAuditItem = "AuditItem"
+    case typeSessions = "Sessions"
+    case typePhoneNumber = "PhoneNumber"
+    case typeWebsite = "Website"
+    case typeLocation = "Location"
+    case typeAddress = "Address"
+    case typeCountry = "Country"
+    case typeCompany = "Company"
+    case typePublicKey = "PublicKey"
+    case typeOnlineProfile = "OnlineProfile"
+    case typeDiet = "Diet"
+    case typeMedicalCondition = "MedicalCondition"
+    case typeSession = "Session"
+    case typeSessionView = "SessionView"
+    case typeStoredCVUDefinition = "ViewDSLDefinition"
+    case typeImporter = "Importer"
+    case typeIndexer = "Indexer"
+    case typeImporterInstance = "ImporterInstance"
+    case typeIndexerInstance = "IndexerInstance"
 
     static var discriminator: Discriminator = .type
     
     var backgroundColor: Color {
         switch self{
-        case .note: return Color(hex: "#93c47d")
-        case .label: return Color(hex: "#93c47d")
-        case .file: return Color(hex: "#93c47d")
-        case .photo: return Color(hex: "#93c47d")
-        case .video: return Color(hex: "#93c47d")
-        case .audio: return Color(hex: "#93c47d")
-        case .person: return Color(hex: "#3a5eb2")
-        case .audititem: return Color(hex: "#93c47d")
-        case .sessions: return Color(hex: "#93c47d")
-        case .phonenumber: return Color(hex: "#eccf23")
-        case .website: return Color(hex: "#3d57e2")
-        case .location: return Color(hex: "#93c47d")
-        case .address: return Color(hex: "#93c47d")
-        case .country: return Color(hex: "#93c47d")
-        case .company: return Color(hex: "#93c47d")
-        case .publickey: return Color(hex: "#93c47d")
-        case .onlineprofile: return Color(hex: "#93c47d")
-        case .diet: return Color(hex: "#37af1c")
-        case .medicalcondition: return Color(hex: "#3dc8e2")
-        case .session: return Color(hex: "#93c47d")
-        case .sessionview: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
+        case .typeLabel: return Color(hex: "#93c47d")
+        case .typePhoto: return Color(hex: "#93c47d")
+        case .typeVideo: return Color(hex: "#93c47d")
+        case .typeAudio: return Color(hex: "#93c47d")
+        case .typeFile: return Color(hex: "#93c47d")
+        case .typePerson: return Color(hex: "#3a5eb2")
+        case .typeAuditItem: return Color(hex: "#93c47d")
+        case .typeSessions: return Color(hex: "#93c47d")
+        case .typePhoneNumber: return Color(hex: "#eccf23")
+        case .typeWebsite: return Color(hex: "#3d57e2")
+        case .typeLocation: return Color(hex: "#93c47d")
+        case .typeAddress: return Color(hex: "#93c47d")
+        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeCompany: return Color(hex: "#93c47d")
+        case .typePublicKey: return Color(hex: "#93c47d")
+        case .typeOnlineProfile: return Color(hex: "#93c47d")
+        case .typeDiet: return Color(hex: "#37af1c")
+        case .typeMedicalCondition: return Color(hex: "#3dc8e2")
+        case .typeSession: return Color(hex: "#93c47d")
+        case .typeSessionView: return Color(hex: "#93c47d")
+        case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
+        case .typeImporter: return Color(hex: "#93c47d")
+        case .typeIndexer: return Color(hex: "#93c47d")
+        case .typeImporterInstance: return Color(hex: "#93c47d")
+        case .typeIndexerInstance: return Color(hex: "#93c47d")
         }
     }
     
@@ -80,103 +89,64 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     func getCollection(_ object:Any) -> [DataItem] {
         var collection:[DataItem] = []
         
-        switch self {
-        case .note:
-            (object as! RealmSwift.List<Note>).forEach{ collection.append($0) }
-        case .label:
-            (object as! RealmSwift.List<Label>).forEach{ collection.append($0) }
-        case .file:
-            (object as! RealmSwift.List<File>).forEach{ collection.append($0) }
-        case .photo:
-            (object as! RealmSwift.List<Photo>).forEach{ collection.append($0) }
-        case .video:
-            (object as! RealmSwift.List<Video>).forEach{ collection.append($0) }
-        case .audio:
-            (object as! RealmSwift.List<Audio>).forEach{ collection.append($0) }
-        case .person:
-            (object as! RealmSwift.List<Person>).forEach{ collection.append($0) }
-        case .audititem:
-            (object as! RealmSwift.List<AuditItem>).forEach{ collection.append($0) }
-        case .phonenumber:
-            (object as! RealmSwift.List<PhoneNumber>).forEach{ collection.append($0) }
-        case .website:
-            (object as! RealmSwift.List<Website>).forEach{ collection.append($0) }
-        case .location:
-            (object as! RealmSwift.List<Location>).forEach{ collection.append($0) }
-        case .address:
-            (object as! RealmSwift.List<Address>).forEach{ collection.append($0) }
-        case .country:
-            (object as! RealmSwift.List<Country>).forEach{ collection.append($0) }
-        case .company:
-            (object as! RealmSwift.List<Company>).forEach{ collection.append($0) }
-        case .publickey:
-            (object as! RealmSwift.List<PublicKey>).forEach{ collection.append($0) }
-        case .onlineprofile:
-            (object as! RealmSwift.List<OnlineProfile>).forEach{ collection.append($0) }
-        case .diet:
-            (object as! RealmSwift.List<Diet>).forEach{ collection.append($0) }
-        case .medicalcondition:
-            (object as! RealmSwift.List<MedicalCondition>).forEach{ collection.append($0) }
-        case .sessions:
-            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
-        case .session:
-            (object as! RealmSwift.List<Session>).forEach{ collection.append($0) }
-        case .sessionview:
-            (object as! RealmSwift.List<SessionView>).forEach{ collection.append($0) }
-//        case .dynamicview:
-//            break
-            //(object as! RealmSwift.List<DynamicView>).forEach{ collection.append($0) }
-        }
-        
+        if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Importer> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
+
         return collection
     }
     
     func getType() -> AnyObject.Type {
         switch self {
-        case .note:
-            return Note.self
-        case .audititem:
-            return AuditItem.self
-        case .label:
-            return Label.self
-        case .file:
-            return File.self
-        case .photo:
-            return Photo.self
-        case .video:
-            return Video.self
-        case .audio:
-            return Audio.self
-        case .person:
-            return Person.self
-        case .phonenumber:
-            return PhoneNumber.self
-        case .website:
-            return Website.self
-        case .location:
-            return Location.self
-        case .address:
-            return Address.self
-        case .country:
-            return Country.self
-        case .company:
-            return Company.self
-        case .publickey:
-            return PublicKey.self
-        case .onlineprofile:
-            return OnlineProfile.self
-        case .diet:
-            return Diet.self
-        case .medicalcondition:
-            return MedicalCondition.self
-        case .sessions:
-            return Sessions.self
-        case .session:
-            return Session.self
-        case .sessionview:
-            return SessionView.self
-//        case .dynamicview:
-//            return DynamicView.self
+        case .typeNote: return Note.self
+        case .typeLabel: return Label.self
+        case .typePhoto: return Photo.self
+        case .typeVideo: return Video.self
+        case .typeAudio: return Audio.self
+        case .typeFile: return File.self
+        case .typePerson: return Person.self
+        case .typeAuditItem: return AuditItem.self
+        case .typeSessions: return Sessions.self
+        case .typePhoneNumber: return PhoneNumber.self
+        case .typeWebsite: return Website.self
+        case .typeLocation: return Location.self
+        case .typeAddress: return Address.self
+        case .typeCountry: return Country.self
+        case .typeCompany: return Company.self
+        case .typePublicKey: return PublicKey.self
+        case .typeOnlineProfile: return OnlineProfile.self
+        case .typeDiet: return Diet.self
+        case .typeMedicalCondition: return MedicalCondition.self
+        case .typeSession: return Session.self
+        case .typeSessionView: return SessionView.self
+        case .typeStoredCVUDefinition: return CVUStoredDefinition.self
+        case .typeImporter: return Importer.self
+        case .typeIndexer: return Indexer.self
+        case .typeImporterInstance: return ImporterInstance.self
+        case .typeIndexerInstance: return IndexerInstance.self
         }
     }
 }
@@ -192,12 +162,14 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 
 
 class Note:DataItem {
-    @objc dynamic var title:String? = nil
+    @objc dynamic var title:String? = ""
+    /// HTML
     @objc dynamic var content:String? = nil
-    @objc dynamic var rtfContent:String? = nil
+    /// Text string
+    @objc dynamic var textContent:String? = nil
 
 
-    override var genericType:String { "note" }
+    override var genericType:String { "Note" }
     
     let writtenBy = List<Edge>()
     let sharedWith = List<Edge>()
@@ -217,15 +189,19 @@ class Note:DataItem {
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
-            rtfContent = try decoder.decodeIfPresent("rtfContent") ?? rtfContent
-            
-            try! self.superDecode(from: decoder)
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            try self.superDecode(from: decoder)
+            if let htmlContent = content, textContent == nil || textContent == "" {
+                self.textContent = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
+                                                                    options: .regularExpression,
+                                                                    range: nil)
+            }
         }
     }
 }
 
 class PhoneNumber:DataItem{
-    override var genericType:String { "phonenumber" }
+    override var genericType:String { "PhoneNumber" }
     // mobile/landline
     @objc dynamic var type:String? = nil
     @objc dynamic var number:String? = nil
@@ -245,13 +221,13 @@ class PhoneNumber:DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             number = try decoder.decodeIfPresent("number") ?? number
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Website:DataItem{
-    override var genericType:String { "website" }
+    override var genericType:String { "Website" }
     // blog portifolio website
     @objc dynamic var type:String? = nil
     @objc dynamic var url:String? = nil
@@ -271,13 +247,13 @@ class Website:DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             url = try decoder.decodeIfPresent("url") ?? url
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Location:DataItem{
-    override var genericType:String { "location" }
+    override var genericType:String { "Location" }
     
     let latitude = RealmOptional<Double>()
     let longitude = RealmOptional<Double>()
@@ -293,13 +269,13 @@ class Location:DataItem{
             latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
             longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Country:DataItem {
-    override var genericType:String { "country" }
+    override var genericType:String { "Country" }
     
     @objc dynamic var name:String? = nil
     @objc dynamic var flag:File? = nil // or Image ??
@@ -321,13 +297,13 @@ class Country:DataItem {
             flag = try decoder.decodeIfPresent("flag") ?? flag
             location = try decoder.decodeIfPresent("location") ?? location
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Address:DataItem {
-    override var genericType:String { "address" }
+    override var genericType:String { "Address" }
     
     @objc dynamic var type:String? = nil
     @objc dynamic var country:Country? = nil
@@ -364,13 +340,13 @@ class Address:DataItem {
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
             location = try decoder.decodeIfPresent("location") ?? location
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Company: DataItem{
-    override var genericType:String { "company" }
+    override var genericType:String { "Company" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
@@ -389,13 +365,13 @@ class Company: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class PublicKey: DataItem{
-    override var genericType:String { "publickey" }
+    override var genericType:String { "PublicKey" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     @objc dynamic var key:String? = nil
@@ -412,13 +388,13 @@ class PublicKey: DataItem{
             name = try decoder.decodeIfPresent("name") ?? name
             key = try decoder.decodeIfPresent("key") ?? key
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class OnlineProfile: DataItem{
-    override var genericType:String { "onlineprofile" }
+    override var genericType:String { "OnlineProfile" }
     @objc dynamic var type:String? = nil
     @objc dynamic var handle:String? = nil
     
@@ -437,13 +413,13 @@ class OnlineProfile: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             handle = try decoder.decodeIfPresent("handle") ?? handle
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class Diet: DataItem{
-    override var genericType:String { "diet" }
+    override var genericType:String { "Diet" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     let additions = List<String>()
@@ -465,13 +441,13 @@ class Diet: DataItem{
             
             decodeIntoList(decoder, "additions", self.additions)
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
 
 class MedicalCondition: DataItem{
-    override var genericType:String { "medicalcondition" }
+    override var genericType:String { "MedicalCondition" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     
@@ -490,7 +466,7 @@ class MedicalCondition: DataItem{
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
 
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -506,7 +482,7 @@ class Person:DataItem {
     let armLength = RealmOptional<Double>()
 
     let age = RealmOptional<Double>()
-    override var genericType:String { "person" }
+    override var genericType:String { "Person" }
     @objc dynamic var profilePicture:File? = nil
     
     let relations = List<Edge>()
@@ -558,7 +534,7 @@ class Person:DataItem {
             decodeEdges(decoder, "diets",  Diet.self, self.diets, self)
             decodeEdges(decoder, "medicalConditions", MedicalCondition.self, self.medicalConditions, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -568,7 +544,7 @@ class AuditItem:DataItem {
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
-    override var genericType:String { "audititem" }
+    override var genericType:String { "AuditItem" }
     
     override var computedTitle:String {
         return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
@@ -588,7 +564,7 @@ class AuditItem:DataItem {
         self.action = action ?? self.action
                 
         if let appliesTo = appliesTo{
-            let edges = appliesTo.map{ Edge(self.uid, $0.uid, self.genericType, $0.genericType) }
+            let edges = appliesTo.map{ Edge(self.memriID, $0.memriID, self.genericType, $0.genericType) }
             
             let edgeName = "appliesTo"
             
@@ -611,7 +587,7 @@ class AuditItem:DataItem {
             
             decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -620,7 +596,7 @@ class Label:DataItem {
     @objc dynamic var name:String = ""
     @objc dynamic var comment:String? = nil
     @objc dynamic var color:String? = nil
-    override var genericType:String { "label" }
+    override var genericType:String { "Label" }
     
     override var computedTitle:String {
         return name
@@ -643,7 +619,7 @@ class Label:DataItem {
             decodeEdges(decoder, "includes", DataItem.self, self.appliesTo, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -654,7 +630,7 @@ class Photo:DataItem {
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
-    override var genericType:String { "photo" }
+    override var genericType:String { "Photo" }
     
     override var computedTitle:String {
         return name
@@ -678,7 +654,7 @@ class Photo:DataItem {
             decodeEdges(decoder, "includes", Person.self, self.includes, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -690,7 +666,7 @@ class Video:DataItem {
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
-    override var genericType:String { "video" }
+    override var genericType:String { "Video" }
     
     override var computedTitle:String {
         return name
@@ -715,7 +691,7 @@ class Video:DataItem {
             decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
 
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
 }
@@ -726,7 +702,7 @@ class Audio:DataItem {
     @objc dynamic var file:File? = nil
     let bitrate = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
-    override var genericType:String { "video" }
+    override var genericType:String { "Audio" }
     
     override var computedTitle:String {
         return name
@@ -749,7 +725,121 @@ class Audio:DataItem {
             
             decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
             
-            try! self.superDecode(from: decoder)
+            try self.superDecode(from: decoder)
         }
     }
+}
+
+class Importer:DataItem{
+    override var genericType:String { "Importer" }
+    @objc dynamic var name:String = ""
+    @objc dynamic var datatype:String = "unknown"
+    @objc dynamic var icon:String = ""
+    
+    let runs = List<Edge>()
+    
+    override var computedTitle:String {
+        return name
+    }
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            datatype = try decoder.decodeIfPresent("datatype") ?? datatype
+            icon = try decoder.decodeIfPresent("icon") ?? icon
+            
+            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+
+class ImporterInstance:DataItem{
+    override var genericType:String { "ImporterInstance" }
+    @objc dynamic var name:String = "unknown importer run"
+    @objc dynamic var datatype:String = "unknown"
+    @objc dynamic var importer:Importer? = nil
+    
+//    let runs = List<Importer>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            datatype = try decoder.decodeIfPresent("datatype") ?? datatype
+            importer = try decoder.decodeIfPresent("importer") ?? importer
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+
+class Indexer:DataItem{
+    override var genericType:String { "Indexer" }
+    @objc dynamic var name:String = ""
+    @objc dynamic var indexerDescription:String = ""
+    @objc dynamic var query:String = ""
+    
+    let runs = List<Edge>() // e.g. person, object, recipe, etc
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+            
+            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+    
+}
+
+class IndexerInstance:DataItem{
+    override var genericType:String { "IndexerInstance" }
+    @objc dynamic var name:String = "unknown indexer instance"
+    @objc dynamic var indexerDescription:String = ""
+    @objc dynamic var query:String = ""
+
+    let indexer = List<Edge>()
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+            
+            decodeEdges(decoder, "indexer", DataItem.self, self.indexer, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+    
 }

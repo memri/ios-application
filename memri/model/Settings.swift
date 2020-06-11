@@ -29,7 +29,7 @@ public class Settings {
     
     /// Load all settings from the local realm database
     /// - Parameter callback: function that is called after completing loading the settings
-    public func load(_ callback: () -> Void) {
+    public func load(_ callback: () throws -> Void) throws {
         // TODO: This could probably be optimized, but lets first get familiar with the process
         
         let allSettings = realm.objects(SettingCollection.self)
@@ -48,7 +48,7 @@ public class Settings {
             print("Error: Settings are not initialized")
         }
         
-        callback()
+        try callback()
     }
     
     
@@ -71,10 +71,15 @@ public class Settings {
         }
         
         // Load default settings from disk
-        let jsonData = try! jsonDataFromFile("default_settings")
-        let values = try! MemriJSONDecoder.decode([String:AnyCodable].self, from: jsonData)
-        for (key, value) in values {
-            defaults.set(key, value)
+        do {
+            let jsonData = try jsonDataFromFile("default_settings")
+            let values = try MemriJSONDecoder.decode([String:AnyCodable].self, from: jsonData)
+            for (key, value) in values {
+                defaults.set(key, value)
+            }
+        }
+        catch {
+            print("Failed to install settings: \(error)")
         }
         
         device.set("/name", "iphone")
@@ -87,13 +92,18 @@ public class Settings {
     public func get<T:Decodable>(_ path:String) -> T? {
         let (collection, query) = parse(path)
         
-        if let value:T = collection!.get(query) {
-            return value
+        if let collection = collection {
+            if let value:T = collection.get(query) {
+                return value
+            }
+            else if let value:T = defaults.get(query) {
+                return value
+            }
+            return nil
         }
-        else if let value:T = defaults.get(query) {
-            return value
+        else {
+            return nil
         }
-        return nil
     }
     
     /// get settings from path as String
@@ -152,7 +162,12 @@ public class Settings {
             codableValue = AnyCodable(value)
         }
         
-        collection!.set(query, codableValue!)
+        if let collection = collection {
+            collection.set(query, codableValue!)
+        }
+        else {
+            print("failed to set setting with path \(path) and value \(value)")
+        }
     }
     
     
@@ -160,14 +175,19 @@ public class Settings {
     /// - Parameter path: global setting path
     /// - Returns: setting value
     public class func get<T:Decodable>(_ path:String) -> T? {
-        return globalSettings!.get(path)
+        return globalSettings?.get(path)
     }
     
     /// Get *global* setting value for given path
     /// - Parameter path: global setting path
     ///   - value: setting value for the given path
     public class func set(_ path:String, _ value:Any) {
-        return globalSettings!.set(path, value)
+        if let globalSettings = globalSettings {
+            return globalSettings.set(path, value)
+        }
+        else {
+            print("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
+        }
     }
 }
 
@@ -195,7 +215,7 @@ class SettingCollection:Object {
         
         let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
-            let output:T = unserialize(item.json)
+            let output:T? = unserialize(item.json)
             return output
         }
         else {
@@ -219,14 +239,24 @@ class SettingCollection:Object {
         
         func saveState(){
             let s = Setting(value: ["key": key, "json": serialize(value)])
-            self.realm!.add(s, update: .modified)
+            realmWriteIfAvailable(realm) {
+                if let realm = realm {
+                    realm.add(s, update: .modified)
+                }
+            }
             if settings.index(of: s) == nil { settings.append(s) }
             
-            syncState!.actionNeeded = "update"
+            if let syncState = syncState {
+                syncState.actionNeeded = "update"
+            }
+            else{
+                print("No syncState available for settings")
+            }
         }
         
-        if self.realm!.isInWriteTransaction { saveState() }
-        else { try! self.realm!.write { saveState() } }
+        realmWriteIfAvailable(realm) {
+            saveState()
+        }
     }
 }
 

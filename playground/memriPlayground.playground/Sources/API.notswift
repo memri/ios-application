@@ -331,27 +331,27 @@ public class SessionView: ObservableObject { // @TODO should this be a struct?
     /**
      * Actions that is used to instantiate the button in the top navigation
      */
-    public var actionButton: ActionDescription
+    public var actionButton: Action
     /**
      * Actions that is used to instantiate the button in the top navigation in edit mode
      */
-    public var editActionButton: ActionDescription
+    public var editActionButton: Action
     /**
      * List of actions that are used to instantiate the buttons in the search box
      */
-    public var filterButtons: [ActionDescription]
+    public var filterButtons: [Action]
     /**
      * List of actions that are used in the top of the context pane
      */
-    public var contextButtons: [ActionDescription]
+    public var contextButtons: [Action]
     /**
      * List of actions that are used in the action section of the context pane
      */
-    public var actionItems: [ActionDescription]
+    public var actionItems: [Action]
     /**
      * List of actions that are used in the navigation section of the context pane
      */
-    public var navigateItems: [ActionDescription]
+    public var navigateItems: [Action]
     /**
      * The active renderer for this view
      */
@@ -395,7 +395,7 @@ public class SessionView: ObservableObject { // @TODO should this be a struct?
     @Published public var browsingMode: String
 
 }
-public struct ActionDescription {
+public struct Action {
     public var icon: String
     public var title: String
 
@@ -487,12 +487,12 @@ public class ScheduleOptions {
     /**
      * The action to perform when the event is triggered
      */
-    public var action: [ActionDescription]
+    public var action: [Action]
     /**
      * A natural language description of the scheduled action
      * e.g. "Remind me to get milk"
      */
-    public var actionDescription: String
+    public var Action: String
     /**
      * A description of the type of schedule
      * e.g. "Reminder"
@@ -519,11 +519,11 @@ public class ListRenderConfig: RenderConfig {
     /**
      * The button or buttons displayed when the user slides a list item to the left
      */
-    public var slideLeftActions: [ActionDescription]
+    public var slideLeftActions: [Action]
     /**
      * The button or buttons displayed when the user slides a list item to the right
      */
-    public var slideRightActions: [ActionDescription]
+    public var slideRightActions: [Action]
     /**
      * The type of list rendering
      * Options: 
@@ -534,11 +534,11 @@ public class ListRenderConfig: RenderConfig {
     /**
      * Action to execute when the user presses on a list item
      */
-    public var press: ActionDescription
+    public var press: Action
     /**
      * Action to execute when the user long presses on a list item
      */
-    public var longPress: ActionDescription
+    public var longPress: Action
 }
 public class ThumbnailRenderConfig: RenderConfig {} // @TODO
 public class CalendarRenderConfig: RenderConfig {} // @TODO
@@ -612,7 +612,7 @@ class Application: View, Event {
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:ActionDescription, _ data:DataItem) -> Bool {}
+    public func executeAction(_ action:Action, _ data:DataItem) -> Bool {}
 }
 
 struct ScrollState {
@@ -746,11 +746,11 @@ public class TopNavigation: View, Event {
     /**
      * Sets the action button in the top navigation
      */
-    public var actionButton: ActionDescription
+    public var actionButton: Action
     /**
      * Sets the action button displayed during edit mode in the top navigation
      */
-    public var editActionButton: ActionDescription
+    public var editActionButton: Action
     /**
      * Trigger the rename UI to show that enables a user to set the name of a view
      */
@@ -779,15 +779,15 @@ public protocol Renderer {
      * The render modes add to the modes available under the category
      * e.g. under the list category, one may add an alphabetic list view
      */
-    public var renderModes: [ActionDescription]
+    public var renderModes: [Action]
     /**
      * A set of actions that let's the user configure an aspect of the renderer
      */
-    public var options1: [ActionDescription]
+    public var options1: [Action]
     /**
      * A set of actions that let's the user configure an aspect of the renderer
      */
-    public var options2: [ActionDescription]
+    public var options2: [Action]
     /**
      * Toggle the UI into edit mode
      */
@@ -893,7 +893,7 @@ public class Search: View {
     /**
      * The buttons displayed in the search panel
      */
-    public var buttons: [ActionDescription]
+    public var buttons: [Action]
     
     var filterPanel: FilterPanel
 
@@ -948,15 +948,15 @@ public class ContextPane: View {
     /**
      * Sets/retrieves the buttons to be displayed in the top of the context pane
      */
-    public var buttons: ActionDescription[]
+    public var buttons: Action[]
     /**
      * Sets/retrieves the text buttons in the action section of the context pane
      */
-    public var actions: ActionDescription[]
+    public var actions: Action[]
     /**
      * Sets/retrieves the text buttons in the navigation section of the context pane
      */
-    public var navigate: ActionDescription[]
+    public var navigate: Action[]
     /**
      * Sets/retrieves whether the label section is hidden
      */

@@ -12,16 +12,16 @@ private let cellIdentifier = "aTableViewCell"
 
 struct TableView<Item, Content: View>: UIViewControllerRepresentable where Item: AnyObject {
     
-    public var main: Main!
+    public var context: MemriContext!
     public var canDelete: Bool!
     public var canReorder: Bool!
     public var editMode: EditMode
     
-    init(main: Main, canDelete: Bool? = true, canReorder: Bool? = true) {
-        self.main = main
+    init(context: MemriContext, canDelete: Bool? = true, canReorder: Bool? = true) {
+        self.context = context
         self.canDelete = canDelete
         self.canReorder = canReorder
-        self.editMode = main.currentSession.isEditMode
+        self.editMode = context.currentSession.isEditMode
     }
 
     func makeCoordinator() -> Coordinator<Item,Content> {
@@ -62,8 +62,8 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
     }
     
     let name = "list"
-    public var renderConfig: ListConfig {
-        return self.parent.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+    public var renderConfig: CascadingListConfig? {
+        self.parent.context.cascadingView.renderConfig as? CascadingListConfig
     }
     
     func item(_ navigationItem: NavigationItem) -> AnyView{
@@ -81,7 +81,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
 
     func hide(){
         withAnimation {
-            self.parent.main.showNavigation = false
+            self.parent.context.showNavigation = false
         }
     }
 
@@ -95,9 +95,9 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if Item.self == DataItem.self {
-            return self.parent.main.items.count
+            return self.parent.context.items.count
         } else if Item.self == NavigationItem.self {
-            return self.parent.main.navigation.getItems().count
+            return self.parent.context.navigation.getItems().count
         } else {
             fatalError("Object type not recognized")
         }
@@ -109,11 +109,11 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
         
         print("indexPath.row = \(indexPath.row)")
         if Item.self == DataItem.self {
-            let dataItem = self.parent.main.items[indexPath.row]
-            let guiView = self.renderConfig.render(item: dataItem)
+            let dataItem = self.parent.context.items[indexPath.row]
+            let guiView = self.renderConfig?.render(item: dataItem)
             cell.host(guiView as! Content, parent: self.tableViewController)
         } else if Item.self == NavigationItem.self {
-            let navigationItem = self.parent.main.navigation.getItems()[indexPath.row]
+            let navigationItem = self.parent.context.navigation.getItems()[indexPath.row]
             let guiView = self.item(navigationItem)
             cell.host(guiView as! Content, parent: self.tableViewController)
         } else {
@@ -129,9 +129,9 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt: IndexPath) {
         if Item.self == DataItem.self {
-            let dataItem = self.parent.main.items[didSelectRowAt.row]
-            if let press = self.renderConfig.press {
-                self.parent.main.executeAction(press, dataItem)
+            let dataItem = self.parent.context.items[didSelectRowAt.row]
+            if let press = self.renderConfig?.press {
+                self.parent.context.executeAction(press, with: dataItem)
             }
         }
     }
@@ -150,20 +150,18 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
 
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
         if Item.self == DataItem.self {
-            let itemMoving = self.parent.main.items[sourceIndexPath.row]
-            self.parent.main.items.remove(at: sourceIndexPath.row)
-            self.parent.main.items.insert(itemMoving, at: destinationIndexPath.row)
+            let itemMoving = self.parent.context.items[sourceIndexPath.row]
+            self.parent.context.items.remove(at: sourceIndexPath.row)
+            self.parent.context.items.insert(itemMoving, at: destinationIndexPath.row)
         } else if Item.self == NavigationItem.self {
-            let itemMoving = self.parent.main.navigation.getItems()[sourceIndexPath.row]
-            self.parent.main.navigation.items.remove(at: sourceIndexPath.row)
-            self.parent.main.navigation.items.insert(itemMoving, at: destinationIndexPath.row)
+            let itemMoving = self.parent.context.navigation.getItems()[sourceIndexPath.row]
+            self.parent.context.navigation.items.remove(at: sourceIndexPath.row)
+            self.parent.context.navigation.items.insert(itemMoving, at: destinationIndexPath.row)
         } else {
             fatalError("Object type not recognized")
         }
     }
-    
-    let deleteItemAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
-    
+        
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == UITableViewCell.EditingStyle.delete {
         } else if editingStyle == UITableViewCell.EditingStyle.insert {}
@@ -196,7 +194,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
         let share = UIContextualAction(style: .normal, title:  "Share", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
             print("Share Button Tapped")
             //
-            // TODO: Call action on main
+            // TODO: Call action on context
             //
             success(true)
         })
@@ -208,7 +206,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
         let favorite = UIContextualAction(style: .normal, title:  "Favorite", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
             print("Favorite Button Tapped")
             //
-            // TODO: Call action on main
+            // TODO: Call action on context
             //
             success(true)
         })
@@ -221,7 +219,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
         let delete = UIContextualAction(style: .destructive, title:  "Delete", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
             print("Delete Button Tapped")
             if Item.self == DataItem.self {
-                self.parent.main.executeAction(self.deleteItemAction, self.parent.main.items[itemAtRow.row])
+                self.parent.context.executeAction( Action(self.parent.context, "delete"), with: self.parent.context.items[itemAtRow.row])
                 self.tableViewController.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
             } else if Item.self == NavigationItem.self {
                 //
@@ -287,21 +285,21 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 
 //struct TableView: UIViewControllerRepresentable {
 //
-//    public var main: Main!
+//    public var context: MemriContext!
 //    public var canDelete: Bool!
 //    public var canReorder: Bool!
 //    public var editMode: EditMode
 //
 //    let name = "list"
 //    public var renderConfig: ListConfig {
-//        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
+//        return self.context.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
 //    }
 //
-//    init(main: Main, canDelete: Bool? = true, canReorder: Bool? = true) {
-//        self.main = main
+//    init(context: MemriContext, canDelete: Bool? = true, canReorder: Bool? = true) {
+//        self.context = context
 //        self.canDelete = canDelete
 //        self.canReorder = canReorder
-//        self.editMode = main.currentSession.isEditMode
+//        self.editMode = context.currentSession.isEditMode
 //    }
 //
 //    func makeCoordinator() -> Coordinator {
@@ -347,14 +345,14 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //    }
 //
 //    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        self.parent.main.items.count
+//        self.parent.context.items.count
 //    }
 //
 //    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
 //        let cell = tableView
 //            .dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HostingTableViewCell<GUIElementInstance>
 //
-//        let dataItem = self.parent.main.items[indexPath.row]
+//        let dataItem = self.parent.context.items[indexPath.row]
 //        let guiView = self.parent.renderConfig.render(item: dataItem)
 //        cell.host(guiView, parent: self.tableViewController)
 //
@@ -366,9 +364,9 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //    //
 //
 //    func tableView(_ tableView: UITableView, didSelectRowAt: IndexPath) {
-//        let dataItem = self.parent.main.items[didSelectRowAt.row]
+//        let dataItem = self.parent.context.items[didSelectRowAt.row]
 //        if let press = self.parent.renderConfig.press {
-//            self.parent.main.executeAction(press, dataItem)
+//            self.parent.context.executeAction(press, dataItem)
 //        }
 //    }
 //
@@ -385,9 +383,9 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //    }
 //
 //    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-//        let itemMoving = self.parent.main.items[sourceIndexPath.row]
-//        self.parent.main.items.remove(at: sourceIndexPath.row)
-//        self.parent.main.items.insert(itemMoving, at: destinationIndexPath.row)
+//        let itemMoving = self.parent.context.items[sourceIndexPath.row]
+//        self.parent.context.items.remove(at: sourceIndexPath.row)
+//        self.parent.context.items.insert(itemMoving, at: destinationIndexPath.row)
 //    }
 //
 //    let deleteItemAction = ActionDescription(icon: "", title: "", actionName: .delete, actionArgs: [], actionType: .none)
@@ -424,7 +422,7 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //        let share = UIContextualAction(style: .normal, title:  "Share", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
 //            print("Share Button Tapped")
 //            //
-//            // TODO: Call action on main
+//            // TODO: Call action on context
 //            //
 //            success(true)
 //        })
@@ -445,7 +443,7 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //        let itemAtRow = indexPath
 //        let delete = UIContextualAction(style: .destructive, title:  "Delete", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
 //            print("Delete Button Tapped")
-//            self.parent.main.executeAction(self.deleteItemAction, self.parent.main.items[itemAtRow.row])
+//            self.parent.context.executeAction(self.deleteItemAction, self.parent.context.items[itemAtRow.row])
 //            self.tableViewController.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
 //            success(true)
 //        })

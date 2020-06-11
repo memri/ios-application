@@ -9,14 +9,14 @@ import Foundation
 import SwiftUI
 
 public struct ItemCell: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     let item: DataItem
     let rendererNames: [String]
-    let variables: [String: () -> Any]
+    let arguments: ViewArguments
 //    let viewOverride: String // TODO Refactor: implement viewoverride
     
     public var body: some View {
-        try! main.views.renderItemCell(item, rendererNames, nil, variables)
+        context.views.renderItemCell(with: item, search: rendererNames, use: arguments)
     }
 }

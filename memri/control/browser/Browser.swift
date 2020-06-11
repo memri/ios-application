@@ -11,19 +11,21 @@ import Combine
 let _keyBoardResponder = KeyboardResponder()
 
 struct Browser: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     @ObservedObject var keyboardResponder = _keyBoardResponder
     
     var body: some View {
         return ZStack {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
-//                Loading(isShowing: .constant(self.main.computedView.resultSet.isLoading)) {
-                    self.main.currentRendererView.fullHeight()
+//                Loading(isShowing: .constant(self.context.cascadingView.resultSet.isLoading)) {
+                    allRenderers?.allViews[self.context.cascadingView.activeRenderer]
+                        .fullHeight()
                         .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()
                 Search()
                     .offset(y: min(0, -keyboardResponder.currentHeight+20))
+//                .KeyboardAwarePadding()
             }.fullHeight()
             
             ContextPane()
@@ -33,6 +35,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(RootMain(name: "", key: "").mockBoot())
+        Browser().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

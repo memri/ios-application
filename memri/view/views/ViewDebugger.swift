@@ -66,7 +66,7 @@ class InfoState: Hashable {
     var displayMessage: String = ""
     var messageCount: Int = 1
     var type: InfoType = .info
-//    var computedView: ComputedView
+//    var cascadingView: ComputedView
     
     init (displayMessage m:String) {
         displayMessage = m
@@ -96,7 +96,7 @@ class ErrorHistory: ObservableObject {
     
     var log = [InfoState]()
     
-    func info(_ message:String/*, _ computedView:ComputedView*/){
+    func info(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -104,12 +104,12 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(InfoState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
     }
     
-    func warn(_ message:String/*, _ computedView:ComputedView*/){
+    func warn(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -117,14 +117,16 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(WarnState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
         
-        showErrorConsole = true
+        if Settings.get("device/debug/autoShowErrorConsole") ?? false {
+            showErrorConsole = true
+        }
     }
     
-    func error(_ message:String/*, _ computedView:ComputedView*/){
+    func error(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
             log[log.count - 1].messageCount += 1
@@ -132,11 +134,13 @@ class ErrorHistory: ObservableObject {
         else {
             log.append(ErrorState(
                 displayMessage: message
-    //            computedView: computedView
+    //            cascadingView: cascadingView
             ))
         }
         
-        showErrorConsole = true
+        if Settings.get("device/debug/autoShowErrorConsole") ?? false {
+            showErrorConsole = true
+        }
     }
     
     func clear(){
@@ -149,8 +153,8 @@ class ErrorHistory: ObservableObject {
 // Intentionally global
 var errorHistory = ErrorHistory()
 
-struct ErrorConsole: View {
-    @EnvironmentObject var main: Main
+struct  ErrorConsole: View {
+    @EnvironmentObject var context: MemriContext
     
     @ObservedObject var history = errorHistory
     
@@ -176,7 +180,9 @@ struct ErrorConsole: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(Color(hex: "#999"))
                         .padding(10)
-                        Button(action: { self.history.showErrorConsole = false }) {
+                        Button(action: {
+                            self.history.showErrorConsole = false
+                        }) {
                             Image(systemName: "xmark")
                         }
                         .font(.system(size: 12))
@@ -190,12 +196,15 @@ struct ErrorConsole: View {
                         VStack (spacing:0) {
                             ForEach (errorHistory.log, id: \.self) { notice in
                                 VStack (spacing: 0 ){
-                                    HStack (alignment: .center, spacing: 4) {
+                                    HStack (alignment: .top, spacing: 4) {
                                         Image(systemName: notice.type.icon)
-                                        .font(.system(size: 14))
+                                            .padding(.top, 4)
+                                            .font(.system(size: 14))
                                             .foregroundColor(notice.type.color)
                                         
                                         Text(notice.displayMessage)
+                                            .multilineTextAlignment(.leading)
+                                            .fixedSize(horizontal: false, vertical: true)
                                             .font(.system(size: 14))
                                             .padding(.top, 1)
                                             .foregroundColor(Color(hex: "#333"))
@@ -235,6 +244,6 @@ struct ErrorConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
     static var previews: some View {
-        ErrorConsole().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ErrorConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

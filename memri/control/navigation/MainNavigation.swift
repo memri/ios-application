@@ -25,11 +25,12 @@ public class MainNavigation:ObservableObject {
         set (newFilter) {
             Settings.set("device/navigation/filterText", newFilter)
             
+            // NOTE: Allowed forced unwrapping
             scheduleUIUpdate!{_ in true}
         }
     }
     
-    public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ context:MemriContext) -> Bool) -> Void)? = nil
     
     private var realm:Realm
     
@@ -47,7 +48,7 @@ public class MainNavigation:ObservableObject {
     }
     
  
-    public func load(_ callback: () -> Void) {
+    public func load(_ callback: () throws -> Void) throws {
         // Fetch navigation from realm and sort based on the order property
         let navItems = realm.objects(NavigationItem.self).sorted(byKeyPath: "order")
         
@@ -56,21 +57,25 @@ public class MainNavigation:ObservableObject {
             items.append(item)
         }
         
-        callback()
+        try callback()
     }
  
     public func install() {
         // Load default navigation items from pacakge
-        let jsonData = try! jsonDataFromFile("default_navigation")
-        items = try! MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
-        
-        try! realm.write {
-        
-            // Store default items in realm
-            for item in items {
-                print(item.title)
-                realm.add(item)
+        do {
+            let jsonData = try jsonDataFromFile("default_navigation")
+            items = try MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
+            
+            realmWriteIfAvailable(realm) {
+                for item in items {
+                    print(item.title)
+                    realm.add(item)
+                }
+                
             }
+        }
+        catch {
+            print("Failed to install MainNavigation")
         }
     }
 }

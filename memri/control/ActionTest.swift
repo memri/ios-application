@@ -19,15 +19,11 @@ class actionTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testActionDescription() throws {
-        let actionDescription = ActionDescription(actionName: .back)
-        XCTAssertTrue(actionDescription.icon == "chevron.left")
+    func testAction() throws {
+//        let action = ActionBack()
+//        XCTAssertTrue(action.getString("icon") == "chevron.left")
     }
     
-    func testAction() throws {
-        let action: ActionName = .add
-    }
-
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

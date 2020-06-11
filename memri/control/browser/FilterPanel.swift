@@ -17,7 +17,7 @@ struct BrowseSetting: Identifiable {
 }
 
 struct FilterPanel: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
@@ -25,9 +25,10 @@ struct FilterPanel: View {
     private func allOtherFields() -> [String] {
         var list:[String] = []
         
-        if let item = self.main.computedView.resultSet.items.first {
-            var excludeList = self.main.computedView.sortFields
-            excludeList.append(self.main.computedView.queryOptions.sortProperty ?? "")
+        if let item = self.context.cascadingView.resultSet.items.first {
+            var excludeList = self.context.cascadingView.sortFields
+            excludeList.append(self.context.cascadingView.datasource.sortProperty ?? "")
+            excludeList.append("memriID")
             excludeList.append("uid")
             excludeList.append("deleted")
             
@@ -43,57 +44,68 @@ struct FilterPanel: View {
     }
     
     private func toggleAscending() {
-        try! self.main.realm.write {
-            self.main.currentSession.currentView.queryOptions?.sortAscending.value
-                = !(self.main.computedView.queryOptions.sortAscending.value ?? true)
+        realmWriteIfAvailable(self.context.realm) {
+            self.context.currentSession.currentView.datasource?.sortAscending.value
+                = !(self.context.cascadingView.datasource.sortAscending ?? true)
         }
-        self.main.scheduleComputeView()
+        self.context.scheduleCascadingViewUpdate()
     }
     
     private func changeOrderProperty(_ fieldName:String) {
-        try! self.main.realm.write {
-            self.main.currentSession.currentView.queryOptions?.sortProperty = fieldName
+        realmWriteIfAvailable(self.context.realm) {
+            self.context.currentSession.currentView.datasource?.sortProperty = fieldName
         }
-        self.main.scheduleComputeView()
+        self.context.scheduleCascadingViewUpdate()
     }
     
-    private func rendererCategories() -> [(String, Renderer)] {
-        return self.main.renderers.tuples.filter{(key, renderer) -> Bool in
-            return !key.contains(".") && renderer.canDisplayResultSet(items: self.main.items)
-        }
+    private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
+        return self.context.renderers.tuples
+            .map { ($0.0, $0.1(context)) }
+            .filter { (key, renderer) -> Bool in
+                !key.contains(".") && renderer.canDisplayResults(self.context.items)
+            }
     }
     
-    private func renderersAvailable() -> [(String, Renderer)] {
-        if let currentCategory = self.main.computedView.rendererName.split(separator: ".").first {
-            return self.main.renderers.all.filter { (key, renderer) -> Bool in
-                return renderer.name.split(separator: ".").first == currentCategory
-            }.sorted(by: { $0.1.order < $1.1.order })
+    private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
+        if let currentCategory = self.context.cascadingView.activeRenderer.split(separator: ".").first {
+            return self.context.renderers.all
+                .map({ (arg0) -> (String, FilterPanelRendererButton) in
+                    let (key, value) = arg0
+                    return (key, value(context))
+                })
+                .filter { (key, renderer) -> Bool in
+                    renderer.rendererName.split(separator: ".").first == currentCategory
+                }
+                .sorted(by: { $0.1.order < $1.1.order })
         }
         return []
     }
     
-    private func isActive(_ renderer:Renderer) -> Bool {
-        return self.main.computedView.rendererName.split(separator: ".").first! == renderer.name
+    private func isActive(_ renderer:FilterPanelRendererButton) -> Bool {
+        self.context.cascadingView.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
     }
     
     var body: some View {
-        HStack(alignment: .top, spacing: 0){
+        let context = self.context
+        let cascadingView = self.context.cascadingView
+        
+        return HStack(alignment: .top, spacing: 0){
             VStack(alignment: .leading, spacing: 0){
                 HStack(alignment: .top, spacing: 3) {
-                    ForEach(rendererCategories(), id: \.0) { (key, renderer:Renderer) in
+                    ForEach(rendererCategories(), id: \.0) { (key, renderer) in
                         
-                        Button(action: {self.main.executeAction(renderer)} ) {
-                            Image(systemName: renderer.icon)
+                        Button(action: { context.executeAction(renderer) } ) {
+                            Image(systemName: renderer.getString("icon"))
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
                                 .frame(width: 40, height: 40, alignment: .center)
-                                .foregroundColor(Color(self.isActive(renderer)
-                                    ? renderer.activeColor!
-                                    : renderer.inactiveColor!))
-                                .background(Color(self.isActive(renderer)
-                                    ? renderer.activeBackgroundColor!
-                                    : renderer.inactiveBackgroundColor!))
+                                .foregroundColor(self.isActive(renderer)
+                                    ? renderer.getColor("activeColor")
+                                    : renderer.getColor("inactiveColor"))
+                                .background(self.isActive(renderer)
+                                    ? renderer.getColor("activeBackgroundColor")
+                                    : renderer.getColor("inactiveBackgroundColor"))
                         }
                     }
                 }
@@ -104,18 +116,18 @@ struct FilterPanel: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0){
-                        ForEach(renderersAvailable(), id:\.0) { (key, renderer:Renderer) in
+                        ForEach(renderersAvailable(), id:\.0) { (key, renderer) in
                             Group {
-                                Button(action:{ self.main.executeAction(renderer) }) {
-                                    if self.main.computedView.rendererName == renderer.name {
-                                        Text(renderer.title ?? "Unnamed Renderer")
+                                Button(action:{ context.executeAction(renderer) }) {
+                                    if cascadingView.activeRenderer == renderer.rendererName {
+                                        Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
                                             .font(.system(size: 16))
                                             .padding(.vertical, 12)
                                     }
                                     else {
-                                        Text(renderer.title ?? "Unnamed Renderer")
+                                        Text(LocalizedStringKey(renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#434343"))
                                             .fontWeight(.regular)
                                             .font(.system(size: 16))
@@ -145,16 +157,16 @@ struct FilterPanel: View {
                         .padding(.bottom, 6)
                         .foregroundColor(Color(hex: "#434343"))
                     
-                    if (self.main.computedView.queryOptions.sortProperty != nil) {
+                    if (cascadingView.datasource.sortProperty != nil) {
                         Button(action:{ self.toggleAscending() }) {
-                            Text(self.main.computedView.queryOptions.sortProperty!)
+                            Text(cascadingView.datasource.sortProperty ?? "")
                                 .foregroundColor(Color(hex: "#6aa84f"))
                                 .font(.system(size: 16, weight: .semibold, design: .default))
                                 .padding(.vertical, 2)
                                 .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                             
                             // descending: "arrow.down"
-                            Image(systemName: self.main.computedView.queryOptions.sortAscending.value == false
+                            Image(systemName: cascadingView.datasource.sortAscending == false
                                 ? "arrow.down"
                                 : "arrow.up")
                                 .resizable()
@@ -168,8 +180,8 @@ struct FilterPanel: View {
                             .foregroundColor(Color(hex: "#efefef"))
                     }
                     
-                    ForEach(self.main.computedView.sortFields.filter {
-                        return self.main.computedView.queryOptions.sortProperty != $0
+                    ForEach(cascadingView.sortFields.filter {
+                        return cascadingView.datasource.sortProperty != $0
                     }, id:\.self) { fieldName in
                         Group {
                             Button(action:{ self.changeOrderProperty(fieldName) }) {
@@ -217,6 +229,6 @@ struct FilterPanel: View {
 
 struct FilterPanel_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanel().environmentObject(RootMain(name: "", key: "").mockBoot())
+        FilterPanel().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

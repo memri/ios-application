@@ -7,6 +7,7 @@
 
 import UIKit
 import SwiftUI
+import Darwin
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -19,20 +20,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
         // Create the SwiftUI view that provides the window contents.
-        
-        let main = RootMain(name: "Memri GUI", key: "ABCDEF")
-        let application = Application().environmentObject(main as Main)
+        let context = RootContext(name: "Memri GUI", key: "ABCDEF")
+        let application = Application().environmentObject(context as MemriContext)
 
-//        var application: Application = Application(, browser: browser as! ModifiedContent<Browser, _EnvironmentKeyWritingModifier<Optional<Sessions>>>)
-//            .environmentObject(SessionViewStack( NavigationItem(view: AnyView(HomeView()))))
-//        var browser = application.browserPane
-//        var sessions = Sessions()
-//        var browser: some View = Browser().environmentObject(sessions)
-        
-        let _ = main.boot() { (error, success) in
-            print("Booted")
+        do { try context.boot() }
+        catch let error {
+            // TODO Error Handling (show fatal error on screen)
+            print(error)
+            exit(1)
         }
-
+        
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             let window = UIWindow(windowScene: windowScene)

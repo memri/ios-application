@@ -22,7 +22,7 @@ class realmTest: XCTestCase {
 
     func testRealmCreate() {
         #if targetEnvironment(simulator)
-            config.fileURL = URL(string: "file://\(getRealmPath())/memri.realm")
+            config.fileURL = URL(string: "file://\(try! getRealmPath())/memri.realm")
         #endif
         
         Realm.Configuration.defaultConfiguration = config

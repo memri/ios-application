@@ -5,7 +5,7 @@
             "all-notes",
             {
                 "title": "Shopping Notes",
-                "queryOptions": {
+                "datasource": {
                     "query": "note AND title BEGINSWITH[c] 'shopping'"
                 }
             }
@@ -17,7 +17,7 @@
         "views": [
             {
                 "title": "All People",
-                "queryOptions": {
+                "datasource": {
                     "query": "person"
                 }
             }
@@ -29,7 +29,7 @@
         "views": [
             {
                 "title": "All Photos",
-                "queryOptions": {
+                "datasource": {
                     "query": "photo"
                 }
             }
@@ -41,7 +41,7 @@
         "views": [
             {
                 "title": "All Addresses",
-                "queryOptions": {
+                "datasource": {
                     "query": "address"
                 }
             }
@@ -51,7 +51,7 @@
     {
         "name": "all-items-with-label",
         "title": "Items with label {name}",
-        "queryOptions": {
+        "datasource": {
             "query": "* AND ANY labels.uid = '{uid}'"
         },
         "rendererName": "list",

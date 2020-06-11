@@ -268,6 +268,59 @@ open class LEOTextView: UITextView {
 
         setAttributesWithJSONString(jsonString)
     }
+    
+    open func setEmptyAttributedContent(_ plainContent: String){
+        let escapedContent = plainContent.replacingOccurrences(of: "\n", with: "\\n")
+        let attributedContent = """
+        {
+        "text": "\(escapedContent)",
+        "attributes": []
+        }
+        """
+        self.setAttributeTextWithJSONString(attributedContent)
+    }
+    
+    open func setAttributedString(_ content: String?, _ textContent: String?){
+        // if content is nil,
+        
+        if content != "", let content = content{
+            self.setAttributedTextFromHtml(content, textContent)
+        }
+        else {
+            self.setEmptyAttributedContent(textContent ?? "")
+        }
+    }
+    
+    open func setAttributedTextFromHtml(_ htmlContent: String, _ textContent: String?){
+//        if let htmlContent = content {
+        let htmlData = NSString(string: htmlContent).data(using: String.Encoding.unicode.rawValue)
+        let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
+                NSAttributedString.DocumentType.html]
+        
+        let attributedString: NSMutableAttributedString
+        do {
+            if let htmlData = htmlData{
+                print(htmlContent)
+                attributedString = try NSMutableAttributedString(data: htmlData,
+                                                                 options: options,
+                                                                 documentAttributes: nil)
+                self.attributedText = attributedString
+            }
+            else {
+                throw "could not create AttributedString from html"
+            }
+        }
+        catch{
+            print("Error: Could not transfer htmlContent to MutableAttributedString")
+            attributedString = NSMutableAttributedString()
+            self.setEmptyAttributedContent(textContent ?? "")
+
+        }
+//        }
+//        else {
+//            self.setEmptyAttributedContent(content)
+//        }
+    }
 
     open func setAttributesWithJSONString(_ jsonString: String) {
         let attributes = LEOTextView.attributesWithJSONString(jsonString)

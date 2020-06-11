@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Navigation: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     @ObservedObject var keyboardResponder = KeyboardResponder()
     
@@ -24,10 +24,10 @@ struct Navigation: View {
                         .font(Font.system(size: 22, weight: .semibold))
                         .foregroundColor(Color(hex:"#d9d2e9"))
                 }.sheet(isPresented: self.$showSettings) {
-                    SettingsPane().environmentObject(self.main)
+                    SettingsPane().environmentObject(self.context)
                 }
                 
-                TextField("Jump to...", text: $main.navigation.filterText)
+                TextField("Jump to...", text: $context.navigation.filterText)
                     .padding(5)
                     .padding(.horizontal, 5)
                     .foregroundColor(Color(hex:"#8a66bc"))
@@ -51,12 +51,12 @@ struct Navigation: View {
             .frame(minHeight: 95)
             .background(Color(hex:"#492f6c"))
             
-            TableView<NavigationItem, AnyView>(main: self.main)
+            TableView<NavigationItem, AnyView>(context: self.context)
             .padding(.top, 10)
 
 //            ScrollView(.vertical) {
 //                VStack (spacing:0) {
-//                    ForEach(self.main.navigation.getItems(), id: \.self){
+//                    ForEach(self.context.navigation.getItems(), id: \.self){
 //                        self.item($0)
 //                    }
 //                }
@@ -75,7 +75,7 @@ struct Navigation: View {
 //
 //    public func hide(){
 //        withAnimation {
-//            self.main.showNavigation = false
+//            self.context.showNavigation = false
 //        }
 //    }
 
@@ -95,7 +95,7 @@ struct Navigation: View {
 }
 
 struct NavigationItemView: View{
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var context: MemriContext
     
     var item: NavigationItem
     
@@ -112,7 +112,9 @@ struct NavigationItemView: View{
         }
         .onTapGesture {
             if let viewName = self.item.view {
-                self.main.openSession(viewName)
+                // TODO 
+                do { try ActionOpenSessionByName.exec(self.context, ["name": viewName]) }
+                catch{}
                 
                 self.hide()
             }
@@ -145,6 +147,6 @@ struct NavigationLineView: View{
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation().environmentObject(RootMain(name: "", key: "").mockBoot())
+        Navigation().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }
