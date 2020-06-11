@@ -735,6 +735,7 @@ class Importer:DataItem{
     @objc dynamic var name:String = ""
     @objc dynamic var datatype:String = "unknown"
     @objc dynamic var icon:String = ""
+    @objc dynamic var bundleImage:String = ""
     
     let runs = List<Edge>()
     
@@ -753,6 +754,7 @@ class Importer:DataItem{
             name = try decoder.decodeIfPresent("name") ?? name
             datatype = try decoder.decodeIfPresent("datatype") ?? datatype
             icon = try decoder.decodeIfPresent("icon") ?? icon
+            bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
             
             decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
             
@@ -793,6 +795,8 @@ class Indexer:DataItem{
     @objc dynamic var name:String = ""
     @objc dynamic var indexerDescription:String = ""
     @objc dynamic var query:String = ""
+    @objc dynamic var icon:String = ""
+    @objc dynamic var bundleImage:String = ""
     
     let runs = List<Edge>() // e.g. person, object, recipe, etc
     
@@ -807,6 +811,8 @@ class Indexer:DataItem{
             name = try decoder.decodeIfPresent("name") ?? name
             query = try decoder.decodeIfPresent("query") ?? query
             indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+            icon = try decoder.decodeIfPresent("icon") ?? icon
+            bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
             
             decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
             
@@ -819,10 +825,9 @@ class Indexer:DataItem{
 class IndexerInstance:DataItem{
     override var genericType:String { "IndexerInstance" }
     @objc dynamic var name:String = "unknown indexer instance"
-    @objc dynamic var indexerDescription:String = ""
     @objc dynamic var query:String = ""
 
-    let indexer = List<Edge>()
+    @objc dynamic var indexer:Indexer? = nil
     
     required init () {
         super.init()
@@ -834,10 +839,9 @@ class IndexerInstance:DataItem{
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             query = try decoder.decodeIfPresent("query") ?? query
-            indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
-            
-            decodeEdges(decoder, "indexer", DataItem.self, self.indexer, self)
-            
+
+            indexer = try decoder.decodeIfPresent("indexer") ?? indexer
+
             try self.superDecode(from: decoder)
         }
     }

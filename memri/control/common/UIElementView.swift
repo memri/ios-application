@@ -137,6 +137,13 @@ public struct UIElementView: SwiftUI.View {
         return UIImage()
     }
     
+    public func getBundleImage() -> Image{
+        if let name: String = get("bundleimage"){
+            return Image(name)
+        }
+        return Image(systemName: "exclamationmark.bubble")
+    }
+    
     public func getList(_ propName:String) -> [DataItem] {
         let x:[DataItem]? = get("list")
         return x ?? []
@@ -364,6 +371,12 @@ public struct UIElementView: SwiftUI.View {
                         Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, context, self.viewArguments)
+                    }
+                    else if has("bundleimage"){
+                        getBundleImage()
+                            .renderingMode(.original)
+                            .if(from.has("resizable")) { self.resize($0) }
+                            .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                     else { // assuming image property
                         Image(uiImage: getImage("image"))
