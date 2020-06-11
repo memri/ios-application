@@ -582,43 +582,24 @@ class CVUParserTests: XCTestCase {
         let snippet = """
         Person {
             VStack {
-                alignment: left
                 font: 14
+                alignment: left
                 
                 Text {
-                    align: top
                     textAlign: center
+                    align: top
                     font: 12 light
                 }
                 Text {
                     maxHeight: 500
-                    cornerRadius: 10
                     border: #ff0000 1
+                    cornerRadius: 10
                 }
             }
         }
         """
         
-        XCTAssertEqual(try parseToCVUString(snippet), """
-        Person {
-            VStack {
-                font: 14
-                alignment: left
-
-                Text {
-                    textAlign: center
-                    align: top
-                    font: 12 light
-                }
-
-                Text {
-                    maxHeight: 500
-                    cornerRadius: 10
-                    border: #ff0000 1
-                }
-            }
-        }
-        """)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testUIElementWithoutProperties() throws {
@@ -633,24 +614,7 @@ class CVUParserTests: XCTestCase {
         }
         """
         
-        XCTAssertEqual(try parseToCVUString(snippet), """
-        Person {
-            VStack {
-                alignment: left
-
-                Text {
-                    font: 12 light
-                }
-
-                Spacer
-
-
-                Text {
-                    maxHeight: 500
-                }
-            }
-        }
-        """)
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
     func testSerialization() throws {
@@ -725,7 +689,7 @@ class CVUParserTests: XCTestCase {
                 press: addDataItem {
                     arguments: {
                         template: {
-                            type: ImporterInstance
+                            type: "ImporterInstance"
                             name: {{.name}}
                         }
                     }

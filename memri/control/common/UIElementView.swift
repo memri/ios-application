@@ -376,7 +376,7 @@ public struct UIElementView: SwiftUI.View {
                         getBundleImage()
                             .renderingMode(.original)
                             .if(from.has("resizable")) { self.resize($0) }
-                            .setProperties(from.properties, self.item, main, self.viewArguments)
+                            .setProperties(from.properties, self.item, context, self.viewArguments)
                     }
                     else { // assuming image property
                         Image(uiImage: getImage("image"))
