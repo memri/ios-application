@@ -1,13 +1,13 @@
-[session = all-indexers] {
+[session = all-indexer-instances] {
     [view] {
-        title: "All Indexers"
+        title: "All IndexerInstances"
         [datasource = pod] {
-            query: "Indexer"
+            query: "IndexerInstance"
         }
     }
 }
 
-Indexer {
+IndexerInstance {
     title: "{.name}"
     defaultRenderer: generalEditor
     editActionButton: toggleEditMode
@@ -39,7 +39,7 @@ Indexer {
     
     navigateItems: [
         openView {
-            title: "Timeline of this indexer"
+            title: "Timeline of this indexer run"
             arguments {
                 view: {
                     defaultRenderer: timeline
@@ -57,48 +57,83 @@ Indexer {
             }
         }
         openViewByName {
-            title: "Starred indexer"
+            title: "Starred indexer runs"
             arguments: {
                 name: "filter-starred"
                 viewArguments: {
-                    include: "all-indexers"
+                    include: "all-notes"
                 }
             }
         }
         openViewByName {
-            title: "All indexers"
-            name: "all-indexers"
+            title: "All indexer runs"
+            name: "all-indexer-instances"
         }
     ]
+    [renderer = generalEditor] {
+        excluded: version starred dateCreated dateModified dateAccessed changeLog
+        groups:  {
+            run: run
+        }
+        sequence: run
+        
+        run {
+            foreach: false
+            sectionTitle: ""
+            
+            HStack {
+                Button {
+                    padding: 0 0 0 32
+                    press: index {
+                        arguments {
+                            indexerInstance: {{.}}
+                        }
+                    }
+                    
+                    VStack {
+                        cornerRadius: 5
+                        background: #70ba6c
+
+                        Text {
+                            text: "RUN"
+                            font: 16 semibold
+                            color: #fff
+                            padding: 5 8 5 8
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
-Indexer[] {
-    name: "all-indexers"
-    title: "All Indexers"
-    emptyResultText: "There are no Indexers"
-    defaultRenderer: list
-    sortFields: name dateModified dateAccessed dateCreated
+IndexerInstance[] {
+    name: "all-indexer-instances"
+    title: "All IndexerInstances"
+    emptyResultText: "There are no IndexerInstances"
+    defaultRenderer: thumbnail
+    sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
-        query: "Indexer"
+        query: "IndexerInstance"
         sortProperty: dateModified
         sortAscending: false
     }
 
-    editActionButton: toggleEditMode
-    filterButtons: showStarred toggleFilterPanel
-
-    [renderer = list] {
-        press:
-            addDataItem {
-                arguments {
-                    template {
-                        type: IndexerInstance
-                        name: {{.name}}
-                    }
+    actionButton:
+        addDataItem {
+            arguments {
+                template {
+                    type: IndexerInstanceInstance
+                    name: {{.name}}
                 }
             }
-        
+        }
+
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
+    
+    [renderer = thumbnail] {
         VStack {
             alignment: left
             rowInset: 12 20 -12 20
@@ -109,34 +144,12 @@ Indexer[] {
                 color: #333
                 padding: 0 0 3 0
             }
-            HStack {
-                Text {
-                    text: "{.indexerDescription}"
-                    removeWhiteSpace: true
-                    maxChar: 100
-                    color: #555
-                    font: 14 regular
-                    padding: 0 20 0 0
-                }
-                
-                Button {
-                    press: import {
-                        arguments: {
-                            importer: {{.}}
-                        }
-                    }
-
-                    VStack {
-                        background: #a1bdc9
-                        cornerradius: 8
-                        Text {
-                            text: "INFO"
-                            font: 16 semibold
-                            color: #fff
-                            padding: 5 8 5 8
-                        }
-                    }
-                }
+            Text {
+                text: "{.datatype}"
+                removeWhiteSpace: true
+                maxChar: 100
+                color: #555
+                font: 14 regular
             }
             Text {
                 text: "{.dateModified}"

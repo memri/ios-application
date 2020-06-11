@@ -379,14 +379,14 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else if key != "user" {
                     // TODO Warn logging
-                    print("Could not find definition for \(needle) in domain:\(key)")
+                    errorHistory.warn("Could not find definition for '\(needle)' in domain '\(key)'")
+                    print("Could not find definition for '\(needle)' in domain '\(key)'")
                 }
             }
         }
         
         if activeRenderer == nil {
             // TODO Error Logging
-            print(cascadeStack)
             throw "Exception: could not determine the active renderer for this view"
         }
         

@@ -60,11 +60,11 @@ public struct SubView : View {
     }
     
     public init (main: Main, view: SessionView, dataItem: DataItem, args:ViewArguments){
-        self.toolbar = args["toolbar"] as? Bool ?? toolbar
-        self.searchbar = args["searchbar"] as? Bool ?? searchbar
-        self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
+        self.toolbar = args.get("toolbar") ?? toolbar
+        self.searchbar = args.get("searchbar") ?? searchbar
+        self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
         
-        args["."] = dataItem
+        args.set(".", dataItem)
         
         view.viewArguments = args
         

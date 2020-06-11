@@ -62,19 +62,46 @@ extension Main {
                 }
                 else if action.argumentTypes[argName] == DataItemFamily.self {
                     // TODO refactor: move to function
-                    if let stringType = dict["type"] as? String,
-                       let family = DataItemFamily(rawValue: stringType) {
-                        
-                        if let ItemType = DataItemFamily.getType(family)() as? Object.Type {
-                            if let type = ItemType.init() as? DataItem{
-                                finalValue = type
+                    if let stringType = dict["type"] as? String {
+                        if let family = DataItemFamily(rawValue: stringType) {
+                            if let ItemType = DataItemFamily.getType(family)() as? Object.Type {
+                                var initArgs = dict
+                                initArgs.removeValue(forKey: "type")
+
+                                if let item = ItemType.init() as? DataItem{
+                                    // TODO: fill item
+                                    for prop in item.objectSchema.properties {
+                                        if prop.name != ItemType.primaryKey(),
+                                            let inputValue = initArgs[prop.name] {
+                                            let propValue: Any
+
+                                            if let expr = inputValue as? Expression {
+                                                // TODO: refactor
+                                                let viewArgs = ViewArguments(cascadingView.viewArguments.asDict())
+                                                viewArgs.set(".", dataItem)
+                                                propValue = try expr.execute(viewArgs) as Any
+                                            }
+                                            else {
+                                                propValue = inputValue
+                                            }
+                                            
+                                            item.set(prop.name, propValue)
+//                                            item[prop.name] = initArgs[prop.name]
+                                        }
+                                    }
+                                    
+                                    finalValue = item
+                                }
+                                else {
+                                    throw "Cannot cast type \(ItemType) to DataItem"
+                                }
                             }
                             else {
-                                throw "Cannot cast type \(ItemType) to DataItem"
+                                throw "Cannot find family \(stringType)"
                             }
                         }
                         else {
-                            throw "Cannot find family \(stringType)"
+                            throw "Cannot find find family \(stringType)"
                         }
                     }
                 }
@@ -123,6 +150,9 @@ extension Main {
             // Track state of the action and toggle the state variable
             if let binding = action.binding {
                 try binding.toggleBool()
+                
+                // TODO this should be removed and fixed more generally
+                self.scheduleUIUpdate() { _ in true }
             }
             
             if let action = action as? ActionExec {

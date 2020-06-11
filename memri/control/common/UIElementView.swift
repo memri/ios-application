@@ -117,6 +117,8 @@ public struct UIElementView: SwiftUI.View {
         self.from = gui
         self.item = dataItem
         self.viewArguments = viewArguments ?? ViewArguments()
+        
+        self.viewArguments.set(".", dataItem)
     }
     
     public func has(_ propName:String) -> Bool {
@@ -157,12 +159,17 @@ public struct UIElementView: SwiftUI.View {
         Group {
             if (!has("show") || get("show") == true) {
                 if from.type == .VStack {
+                    if get("stop222") ?? false {
+                        if get("stop222") ?? false {
+                        }
+                    }
+                    
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item, main)
+                    .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .HStack {
                     HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
@@ -170,13 +177,13 @@ public struct UIElementView: SwiftUI.View {
                     }
                     .clipped()
                     .animation(nil)
-                    .setProperties(from.properties, self.item, main)
+                    .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .ZStack {
                     ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                         .clipped()
                         .animation(nil)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .EditorSection {
                     if self.has("title") {
@@ -189,7 +196,7 @@ public struct UIElementView: SwiftUI.View {
                         }
                         .clipped()
                         .animation(nil)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                     else {
                         VStack(spacing: 0){
@@ -197,7 +204,7 @@ public struct UIElementView: SwiftUI.View {
                         }
                         .clipped()
                         .animation(nil)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                 }
                 else if from.type == .EditorRow {
@@ -221,7 +228,7 @@ public struct UIElementView: SwiftUI.View {
                         .padding(.trailing, self.get("nopadding") != true ? 36 : 0)
                         .clipped()
                         .animation(nil)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                         .background(self.get("$readonly") ?? false
                             ? Color(hex:"#f9f9f9")
                             : Color(hex:"#f7fcf5"))
@@ -267,16 +274,19 @@ public struct UIElementView: SwiftUI.View {
                     }) {
                         self.renderChildren
                     }
-                    .setProperties(from.properties, self.item, main)
+                    .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .FlowStack {
                     FlowStack(getList("list")) { listItem in
                         ForEach(0..<self.from.children.count){ index in
-                            UIElementView(self.from.children[index], listItem)
+                            UIElementView(self.from.children[index], listItem, self.viewArguments)
+//                                          ViewArguments(self.viewArguments.asDict().merging([".": listItem],
+//                                                                                            uniquingKeysWith: { current, new in new })))
+                                .environmentObject(self.main)
                         }
                     }
                     .animation(nil)
-                    .setProperties(from.properties, self.item, main)
+                    .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Text {
                     Text(from.processText(get("text") ?? "[nil]"))
@@ -285,11 +295,11 @@ public struct UIElementView: SwiftUI.View {
                         .if(from.getBool("underline")){ $0.underline() }
                         .if(from.getBool("strikethrough")){ $0.strikethrough() }
                         .fixedSize(horizontal: false, vertical: true)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Textfield {
                     self.renderTextfield()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .ItemCell {
                     // TODO Refactor fix this
@@ -299,7 +309,7 @@ public struct UIElementView: SwiftUI.View {
     //                    variables: [] // get("variables") // TODO Refactor fix this
     //                )
     //                .environmentObject(self.main)
-    //                .setProperties(from.properties, self.item, main)
+    //                .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .SubView {
                     if has("viewName") {
@@ -309,78 +319,88 @@ public struct UIElementView: SwiftUI.View {
                             dataItem: self.item,
                             args: ViewArguments(get("arguments") ?? [:] as [String:Any])
                         )
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                     else {
                         SubView(
                             main: self.main,
                             view: {
-                                let x:SessionView? = get("view")
-                                if let x = x  {
-                                    return x
-                                } else{
+                                // TODO create view form the parsed definition
+                                // Find out why datasource is not parsed
+                                
+                                if let parsed:[String:Any?] = get("view") {
+                                    let parsedViewDef = CVUParsedViewDefinition(DataItem.generateUUID())
+                                    parsedViewDef.parsed = parsed
+                                    let sessionView = SessionView.fromCVUDefinition(parsedViewDef)
+                                    return sessionView
+                                }
+                                else {
                                     print("Failed to make subview (not defined), creating empty one instead")
+                                    errorHistory.error("Failed to make subview (not defined), creating empty one instead")
                                     return SessionView()
                                 }
                             }(),
                             dataItem: self.item,
                             args: ViewArguments(get("arguments") ?? [:] as [String:Any])
                         )
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                 }
                 else if from.type == .Map {
                     MapView(location: get("location"), address: get("address"))
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Picker {
                     self.renderPicker()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .SecureField {
                 }
                 else if from.type == .Action {
-                    ActionButton(action: get("press") ?? ActionNoop(main))
-                        .setProperties(from.properties, self.item, main)
+                    ActionButton(action: get("press") ?? Action(main, "noop"))
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .MemriButton {
                     MemriButton(item: self.item)
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Image {
                     if has("systemname") {
                         Image(systemName: get("systemname") ?? "exclamationmark.bubble")
                             .if(from.has("resizable")) { self.resize($0) }
-                            .setProperties(from.properties, self.item, main)
+                            .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                     else { // assuming image property
                         Image(uiImage: getImage("image"))
                             .renderingMode(.original)
                             .if(from.has("resizable")) { self.resize($0) }
-                            .setProperties(from.properties, self.item, main)
+                            .setProperties(from.properties, self.item, main, self.viewArguments)
                     }
                 }
                 else if from.type == .Circle {
                 }
                 else if from.type == .HorizontalLine {
                     HorizontalLine()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Rectangle {
                     Rectangle()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .RoundedRectangle {
-                    RoundedRectangle(cornerRadius: get("cornerradius") ?? 5)
-                        .setProperties(from.properties, self.item, main)
+                    RoundedRectangle(cornerRadius: get("cornerRadius") ?? 5)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Spacer {
                     Spacer()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .Divider {
                     Divider()
-                        .setProperties(from.properties, self.item, main)
+                        .setProperties(from.properties, self.item, main, self.viewArguments)
+                }
+                else if from.type == .Empty {
+                    EmptyView()
                 }
                 else {
                     logWarning("Warning: Unknown UI element type '\(from.type)'")
@@ -443,7 +463,7 @@ public struct UIElementView: SwiftUI.View {
                             set: { let _ = $0 }
                         ), // ??
                         placeholder: self.get("hint") ?? "",
-                        textAlignment: self.get("textalign") ?? TextView.TextAlignment.left,
+                        textAlignment: self.get("textAlign") ?? TextView.TextAlignment.left,
                         font: UIFont.systemFont(ofSize: 16, weight: .regular),
                         textColor: Color(hex:"#223322").uiColor(),
                         autocorrection: TextView.Autocorrection.no

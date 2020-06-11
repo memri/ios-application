@@ -448,6 +448,12 @@ public class RootMain: Main {
                 // Load NavigationCache (from cache and/or api)
                 try self.navigation.load() {
                 
+                    #if targetEnvironment(simulator)
+                        // Reload for easy adjusting
+                        self.views.main = self
+                        try self.views.install()
+                    #endif
+                    
                     // Load views configuration
                     try self.views.load(self) {
                     

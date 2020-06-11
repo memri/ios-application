@@ -2,7 +2,8 @@
     {
         "type": "Importer",
         "name": "iCloud notes",
-        "datatype": "Note"
+        "datatype": "Note",
+        "icon": "cloud"
     },
     {
         "type": "Importer",

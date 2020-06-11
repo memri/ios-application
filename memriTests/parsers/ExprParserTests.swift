@@ -71,6 +71,14 @@ class ExprParserTests: XCTestCase {
         XCTAssertEqual(result.description, "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar), VariableNode(foo)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere)])))")
     }
     
+    func testDotLookup() throws {
+        let snippet = "."
+        
+        let result = try parse(snippet)
+        
+        XCTAssertEqual(result.description, "LookupNode([VariableNode(__DEFAULT__)])")
+    }
+    
     func testMinusPlusModifier() throws {
         let snippet = "-5 + -(5+10) - +'5'"
         
@@ -130,6 +138,8 @@ class ExprParserTests: XCTestCase {
         let parser = ExprParser(tokens)
         let result = try parser.parse()
         
+        print(result.description)
+        
         XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(__DEFAULT__), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(__DEFAULT__), VariableNode(lastName)])])")
     }
     
@@ -141,7 +151,20 @@ class ExprParserTests: XCTestCase {
         let parser = ExprParser(tokens)
         let result = try parser.parse()
         
+        print(result.description)
+        
         XCTAssertEqual(result.description, "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode( Hello)])")
+    }
+    
+    func testStringModeWithQuote() throws {
+        let snippet = "Photo AND ANY includes.memriID = '{.memriID}'"
+        
+        let lexer = ExprLexer(input: snippet, startInStringMode: true)
+        let tokens = try lexer.tokenize()
+        let parser = ExprParser(tokens)
+        let result = try parser.parse()
+        print(result.description)
+        XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Photo AND ANY includes.memriID = '), LookupNode([VariableNode(__DEFAULT__), VariableNode(memriID)]), StringNode(')])")
     }
     
     func testExample() throws {

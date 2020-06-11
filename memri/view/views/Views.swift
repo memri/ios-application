@@ -109,8 +109,11 @@ public class Views {
                 else if def is CVUParsedSessionDefinition { values["type"] = "session" }
                 else { throw "Exception: unknown definition" }
                 
+                values["memriID"] = "defaults:" + (def.selector ?? "unknown")
+                
                 // Store definition
-                try realm.write { realm.create(CVUStoredDefinition.self, value: values) }
+                try realm.write { realm.create(CVUStoredDefinition.self,
+                                               value: values, update: .modified) }
             }
         }
         catch let error {
@@ -210,12 +213,13 @@ public class Views {
             i += 1
             
             if isFunction && i == lookup.sequence.count {
-                value = (value as? DataItem)?.functions
+                value = (value as? DataItem)?.functions[(node as? ExprVariableNode)?.name ?? ""]
                 if value == nil {
                     // TODO parse [blah]
                     let message = "Exception: Invalid function call. Could not find"
                     throw "\(message) \((node as? ExprVariableNode)?.name ?? "")"
                 }
+                break
             }
             
             if let node = node as? ExprVariableNode {
@@ -228,6 +232,8 @@ public class Views {
                     if let dataItem = value as? DataItem {
                         if dataItem.objectSchema[node.name] == nil {
                             // TODO Warn
+                            print("Invalid property access '\(node.name)'")
+                            errorHistory.warn("Invalid property access '\(node.name)'")
                             return nil
                         }
                         else {
@@ -318,7 +324,7 @@ public class Views {
     
     func executeFunction(lookup: ExprLookupNode, args:[Any?], viewArguments:ViewArguments) throws -> Any? {
         let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
-        if let f = f as? ([Any?]) -> Any? {
+        if let f = f as? ([Any?]?) -> Any {
             return f(args) as Any?
         }
         

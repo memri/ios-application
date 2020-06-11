@@ -1,6 +1,6 @@
 [renderer = generalEditor] {
     sequence: labels starred other dates
-    excluded: deleted syncState memriID uid
+    excluded: version deleted syncState memriID uid
     readOnly: uid memriID
     
     groups {
@@ -15,6 +15,7 @@
     
     labels {
         foreach: false
+        sectionTitle: ""
         
         EditorRow {
             title: "{displayName}"
@@ -57,7 +58,7 @@
         
         Text {
             alignment: center
-            textalign: center
+            textAlign: center
             text: "{.describeChangelog()}"
             padding: 30 40 40 40
             color: #999

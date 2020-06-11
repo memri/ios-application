@@ -72,6 +72,37 @@ ImporterInstance {
     ]
     [renderer = generalEditor] {
         excluded: version starred dateCreated dateModified dateAccessed changeLog
+        groups:  {
+            run: run
+        }
+        sequence: run
+
+        run {
+            foreach: false
+            sectionTitle: ""
+            
+            HStack {
+                Button {
+                    press: import {
+                        arguments {
+                            importerInstance: {{.}}
+                        }
+                    }
+                    
+                    VStack {
+                        cornerRadius: 5
+                        background: #70ba6c
+
+                        Text {
+                            text: "RUN"
+                            font: 16 semibold
+                            color: #fff
+                            padding: 5 8 5 8
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

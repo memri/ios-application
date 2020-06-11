@@ -22,16 +22,18 @@ public class Cascadable {
             }
         }
         
-        if let x = localCache[name] as? T { return x }
+        if localCache[name] != nil {
+            return localCache[name] as? T
+        }
         
         for def in cascadeStack {
             if let expr = def[name] as? Expression {
                 localCache[name] = expr
-                return cascadeProperty(name)
+                return cascadeProperty(name) as T?
             }
-            if let x = def[name] as? T {
-                localCache[name] = x
-                return x
+            if def[name] != nil {
+                localCache[name] = def[name]
+                return def[name] as? T
             }
         }
         
@@ -40,7 +42,7 @@ public class Cascadable {
     
     
     // TODO support deleting items
-    func cascadeList<T>(_ name:String, _ merge:Bool = true) -> [T] {
+    func cascadeList<T>(_ name:String, merge:Bool = true) -> [T] {
         if let x = localCache[name] as? [T] { return x }
         
         var result = [T]()
@@ -71,14 +73,41 @@ public class Cascadable {
     }
     
     
-    func cascadeDict<T>(_ name:String, _ defaultDict:[String:T] = [:]) -> [String:T] {
+    func cascadeDict<T>(_ name:String, _ defaultDict:[String:T] = [:],
+                        forceArray:Bool = false) -> [String:T] {
+        
         if let x = localCache[name] as? [String:T] { return x }
         
         var result = defaultDict
         
-        for def in cascadeStack {
-            if let x = def[name] as? [String:T] {
-                result.merge(x)
+        if forceArray {
+            for def in cascadeStack {
+                if let x = def[name] as? [String:Any?] {
+                    for (key, value) in x {
+                        if let value = value as? T {
+                            result[key] = value
+                        }
+                        else if let value = [value] as? T {
+                            result[key] = value
+                        }
+                        else {
+                            // TODO WARN
+                        }
+                    }
+                }
+                else {
+                    // TODO WARN
+                }
+            }
+        }
+        else {
+            for def in cascadeStack {
+                if let x = def[name] as? [String:T] {
+                    result.merge(x)
+                }
+                else {
+                    // TODO WARN
+                }
             }
         }
         

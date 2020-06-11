@@ -301,11 +301,22 @@ public class PodAPI {
     /// - Parameters:
     ///   - memriID: The memriID of the data item to remove
     ///   - callback: Function that is called when the task is completed either with a result, or  an error
-    /// - Remark: Note that data items that are marked as deleted are by default not returned when querying
     public func runImport(_ memriID:String,
                        _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
         
         self.http(.PUT, path: "import/\(memriID)") { error, data in
+            callback(error, error == nil)
+        }
+    }
+
+    /// Runs an indexer on the pod
+    /// - Parameters:
+    ///   - memriID: The memriID of the data item to remove
+    ///   - callback: Function that is called when the task is completed either with a result, or  an error
+    public func runIndex(_ memriID:String,
+                          _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
+        
+        self.http(.PUT, path: "index/\(memriID)") { error, data in
             callback(error, error == nil)
         }
     }

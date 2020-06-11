@@ -96,7 +96,7 @@
 }
 
 Person {
-    title: "{.firstName}"
+    title: "{.firstName} {.lastName}"
     defaultRenderer: generalEditor
     
     /*include:
@@ -182,7 +182,7 @@ Person {
         
          /*excluded: profilePicture labels names picturesOfPerson phoneNumbers*/
         
-        readOnly:
+        /*readOnly:*/
         
         picturesOfPerson {
             foreach: false
@@ -194,8 +194,8 @@ Person {
                 view {
                     defaultRenderer: thumbnail.grid
                     
-                     [datasource = pod] {
-                        query: "Photo AND ANY includes.memriID = '{.memriID}'"
+                    [datasource = pod] {
+                        query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
                     }
                     
                     [renderer = thumbnail.grid] {
@@ -260,7 +260,6 @@ Person {
                         }
                     }
                 }
-                
             }
         }
         
@@ -384,7 +383,7 @@ Person[] {
                         padding: 0 0 3 0
                     }
                     Text {
-                        text: "Brother"
+                        text: "{relationships[target = me].edgeLabel}"
                         font: 14 regular
                         color: #888
                         padding: 0 0 5 0

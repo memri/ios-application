@@ -248,7 +248,7 @@ public class Cache {
                 // Query based on a simple format:
                 // Query format: <type><space><filter-text>
                 let queryType = DataItemFamily.getType(type)
-                let t = queryType() as! Object.Type
+//                let t = queryType() as! Object.Type
                 
                 var result = realm.objects(queryType() as! Object.Type)
                     .filter("deleted = false " + (filter ?? ""))
@@ -263,7 +263,7 @@ public class Cache {
                 var returnValue:[DataItem] = []
                 for item in result {
                     if let item = item as? DataItem{
-                        returnValue.append(item as! DataItem)
+                        returnValue.append(item)
                     }
                 }
                 

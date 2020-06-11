@@ -105,7 +105,7 @@
                             "for": "group",
                             "sectionTitle": "",
                             "alignment": "center",
-                            "textalign": "center",
+                            "textAlign": "center",
                             "text": "{.describeChangelog()}",
                             "padding": [30, 40, 40, 40],
                             "color": "#999",

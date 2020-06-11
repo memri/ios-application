@@ -207,6 +207,9 @@ class ExprParser {
             if case let ExprToken.Identifier(name, _) = popCurrentToken() {
                 sequence.append(ExprVariableNode(name: name))
             }
+            else if case ExprToken.EOF = lastToken! {
+                return ExprLookupNode(sequence: sequence)
+            }
             else {
                 throw ExprParseErrors.ExpectedIdentifier
             }

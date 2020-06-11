@@ -41,8 +41,38 @@ public class UIElement : CVUToString {
             if let expr = propValue as? Expression {
                 viewArguments.set(".", item) // TODO Optimization This is called a billion times. Find a better place for this
                 
-                do { let x:T? = try expr.execForReturnType(viewArguments); return x }
-                catch {
+                do {
+                    if T.self == [DataItem].self {
+                        let x = try expr.execute(viewArguments);
+                        
+                        var result = [DataItem]()
+                        if let list = x as? List<Edge> {
+                            let realm = try! Realm()
+                            
+                            for edge in list {
+                                if let family = DataItemFamily(rawValue: edge.objectType) {
+                                    result.append(realm.object(
+                                        ofType: family.getType() as! Object.Type,
+                                        forPrimaryKey: edge.objectMemriID) as! DataItem)
+                                }
+                            }
+                        }
+                        else {
+                            if let family = DataItemFamily(rawValue: "Note") {
+                                result = family.getCollection(x as Any)
+                            }
+                            else {
+                                // TODO Warn??
+                            }
+                        }
+                        
+                        return (result as! T)
+                    }
+                    else {
+                        let x:T? = try expr.execForReturnType(viewArguments); return x
+                    }
+                }
+                catch let error {
                     // TODO Refactor error handling
                     errorHistory.error("Could note compute \(propName)\n"
                         + "Arguments: [\(viewArguments.asDict().keys.joined(separator: ", "))]\n"
@@ -53,7 +83,7 @@ public class UIElement : CVUToString {
                     return nil
                 }
             }
-            
+            print(T.self)
             return (propValue as? T)
         }
         else {
@@ -128,9 +158,9 @@ public enum UIElementFamily : String, CaseIterable {
 }
 
 public enum UIElementProperties : String, CaseIterable {
-    case resizable, show, alignment, align, textalign, spacing, title, text, image, nopadding,
+    case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerradius, hint, value, datasource, defaultValue, empty, style,
+         address, systemname, cornerRadius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -145,8 +175,8 @@ public enum UIElementProperties : String, CaseIterable {
             return value is Bool
         case .alignment: return value is VerticalAlignment || value is HorizontalAlignment
         case .align: return value is Alignment
-        case .textalign: return value is TextAlignment
-        case .spacing, .cornerradius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity, .zindex:
+        case .textAlign: return value is TextAlignment
+        case .spacing, .cornerRadius, .minWidth, .maxWidth, .minHeight, .maxHeight, .blur, .opacity, .zindex:
             return value is CGFloat
         case .image: return value is File || value is String
         case .press: return value is Action || value is [Action]

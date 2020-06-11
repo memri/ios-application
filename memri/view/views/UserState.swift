@@ -19,7 +19,8 @@ public class UserState: Object {
         if T.self == DataItem.self {
             if let lookup = dict[propName] as? [String:Any?] {
                 if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
-                    let x:DataItem? = realm?.object(
+                    let realm = try! Realm() // TODO Fix
+                    let x:DataItem? = realm.object(
                         ofType: DataItemFamily.getType(type)() as! DataItem.Type,
                         forPrimaryKey: lookup["memriID"] as? String ?? "")
                     return x as? T

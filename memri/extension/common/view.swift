@@ -1,8 +1,6 @@
 //
 //  view.swift
-//  memri
 //
-//  Created by Ruben Daniels on 5/18/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -10,18 +8,26 @@ import Foundation
 import SwiftUI
 
 private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "background",
-    "textalign", "rowbackground", "cornerradius", "cornerborder", "border", "margin", "shadow",
+    "textAlign", "rowbackground", "cornerRadius", "cornerborder", "border", "margin", "shadow",
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
-    func setProperties(_ properties:[String:Any], _ item:DataItem, _ main:Main) -> AnyView {
+    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:Main,
+                       _ viewArguments:ViewArguments) -> AnyView {
+        
         var view:AnyView = AnyView(self)
+        
+        if properties.count == 0 {
+            return view
+        }
         
         for name in ViewPropertyOrder {
             if var value = properties[name] {
                 
                 if let expr = value as? Expression {
-                    do { value = try expr.execute(main.cascadingView.viewArguments) as Any }
+                    do {
+                        value = try expr.execute(viewArguments) as Any?
+                    }
                     catch {
                         // TODO refactor: Error handling
                         print("Could not set property. Executing expression \(expr) failed")
@@ -37,7 +43,7 @@ extension View {
     }
     
     // TODO investigate using ViewModifiers
-    func setProperty(_ name:String, _ value:Any) -> AnyView {
+    func setProperty(_ name:String, _ value:Any?) -> AnyView {
         switch name {
         case "style":
             // TODO Refactor: Implement style sheets
@@ -79,19 +85,34 @@ extension View {
             if let color = value as? Color {
                 return AnyView(self.foregroundColor(color)) //TODO named colors do not work
             }
+            else if let color = value as? String {
+                return AnyView(self.foregroundColor(Color(hex: color))) //TODO named colors do not work
+            }
         case "background":
             if let color = value as? Color {
                 return AnyView(self.background(color)) //TODO named colors do not work
+            }
+            else if let color = value as? String {
+                return AnyView(self.background(Color(hex: color))) //TODO named colors do not work
             }
         case "rowbackground":
             if let color = value as? Color {
                 return AnyView(self.listRowBackground(color)) //TODO named colors do not work
             }
+            else if let color = value as? String {
+                return AnyView(self.listRowBackground(Color(hex: color))) //TODO named colors do not work
+            }
         case "border":
-            if let value = value as? [Any] {
+            if let value = value as? [Any?] {
                 if let color = value[0] as? Color {
                     return AnyView(self.border(color, width: value[1] as? CGFloat ?? 1.0))
                 }
+                else {
+                    print("FIX BORDER HANDLING2")
+                }
+            }
+            else {
+                print("FIX BORDER HANDLING")
             }
         case "offset":
             if let value = value as? [CGFloat] {
@@ -101,22 +122,25 @@ extension View {
             if let value = value as? CGFloat {
                 return AnyView(self.zIndex(Double(value)))
             }
-        case "cornerradius":
+        case "cornerRadius":
             if let value = value as? CGFloat {
                 return AnyView(self.cornerRadius(value))
             }
+            else {
+                
+            }
         case "cornerborder":
-            if let value = value as? [Any] {
-                if let color = value[0] as? String {
+            if let value = value as? [Any?] {
+                if let color = value[0] as? Color {
                     return AnyView(self.overlay(
                         RoundedRectangle(cornerRadius: value[2] as? CGFloat ?? 1.0)
-                            .stroke(Color(hex: color), lineWidth: value[1] as? CGFloat ?? 1.0)
+                            .stroke(color, lineWidth: value[1] as? CGFloat ?? 1.0)
                             .padding(1)
                     ))
                 }
             }
         case "frame":
-            if let value = value as? [Any] {
+            if let value = value as? [Any?] {
                 return AnyView(self.frame(
                     minWidth: value[0] as? CGFloat ?? .none,
                     maxWidth: value[1] as? CGFloat ?? .greatestFiniteMagnitude,
@@ -125,8 +149,9 @@ extension View {
                     alignment: value[4] as? Alignment ?? .top))
             }
         case "font":
+            var font:Font
+            
             if let value = value as? [Any] {
-                var font:Font
                 if let name = value[0] as? String {
                     font = .custom(name, size: value[1] as? CGFloat ?? 12.0)
                 }
@@ -135,9 +160,20 @@ extension View {
                                    weight: value[1] as? Font.Weight ?? Font.Weight.regular,
                                    design: .default)
                 }
-                return AnyView(self.font(font))
+                
             }
-        case "textalign":
+            else if let value = value as? CGFloat {
+                font = .system(size: value)
+            }
+            else if let value = value as? Font.Weight {
+                font = .system(size: 12, weight: value)
+            }
+            else {
+                return AnyView(self)
+            }
+            
+            return AnyView(self.font(font))
+        case "textAlign":
             if let value = value as? TextAlignment {
                 return AnyView(self.multilineTextAlignment(value))
             }

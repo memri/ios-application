@@ -85,16 +85,6 @@ Importer[] {
         sortAscending: false
     }
     
-    actionButton:
-        addDataItem {
-            arguments {
-                template {
-                    type: ImporterInstance
-                    name: {{.name}}
-                }
-            }
-        }
-
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
     
@@ -111,6 +101,11 @@ Importer[] {
         VStack {
             alignment: left
             rowInset: 12 20 -12 20
+            
+            Image {
+                systemname: "{.icon}"
+                color: #2480d6
+            }
             
             Text {
                 text: "{.name}"

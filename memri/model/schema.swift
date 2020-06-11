@@ -39,6 +39,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case typeStoredCVUDefinition = "ViewDSLDefinition"
     case typeImporter = "Importer"
     case typeIndexer = "Indexer"
+    case typeImporterInstance = "ImporterInstance"
+    case typeIndexerInstance = "IndexerInstance"
 
     static var discriminator: Discriminator = .type
     
@@ -68,6 +70,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
         case .typeImporter: return Color(hex: "#93c47d")
         case .typeIndexer: return Color(hex: "#93c47d")
+        case .typeImporterInstance: return Color(hex: "#93c47d")
+        case .typeIndexerInstance: return Color(hex: "#93c47d")
         }
     }
     
@@ -85,33 +89,33 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     func getCollection(_ object:Any) -> [DataItem] {
         var collection:[DataItem] = []
         
-        switch self {
-        case .typeNote: (object as? List<Note>)?.forEach{ collection.append($0) }
-        case .typeLabel: (object as? List<Label>)?.forEach{ collection.append($0) }
-        case .typePhoto: (object as? List<Photo>)?.forEach{ collection.append($0) }
-        case .typeVideo: (object as? List<Video>)?.forEach{ collection.append($0) }
-        case .typeAudio: (object as? List<Audio>)?.forEach{ collection.append($0) }
-        case .typeFile: (object as? List<File>)?.forEach{ collection.append($0) }
-        case .typePerson: (object as? List<Person>)?.forEach{ collection.append($0) }
-        case .typeAuditItem: (object as? List<AuditItem>)?.forEach{ collection.append($0) }
-        case .typeSessions: (object as? List<Sessions>)?.forEach{ collection.append($0) }
-        case .typePhoneNumber: (object as? List<PhoneNumber>)?.forEach{ collection.append($0) }
-        case .typeWebsite: (object as? List<Website>)?.forEach{ collection.append($0) }
-        case .typeLocation: (object as? List<Location>)?.forEach{ collection.append($0) }
-        case .typeAddress: (object as? List<Address>)?.forEach{ collection.append($0) }
-        case .typeCountry: (object as? List<Country>)?.forEach{ collection.append($0) }
-        case .typeCompany: (object as? List<Company>)?.forEach{ collection.append($0) }
-        case .typePublicKey: (object as? List<PublicKey>)?.forEach{ collection.append($0) }
-        case .typeOnlineProfile: (object as? List<OnlineProfile>)?.forEach{ collection.append($0) }
-        case .typeDiet: (object as? List<Diet>)?.forEach{ collection.append($0) }
-        case .typeMedicalCondition: (object as? List<MedicalCondition>)?.forEach{ collection.append($0) }
-        case .typeSession: (object as? List<Session>)?.forEach{ collection.append($0) }
-        case .typeSessionView: (object as? List<SessionView>)?.forEach{ collection.append($0) }
-        case .typeStoredCVUDefinition: (object as? List<CVUStoredDefinition>)?.forEach{ collection.append($0) }
-        case .typeImporter: (object as? List<Importer>)?.forEach{ collection.append($0) }
-        case .typeIndexer:(object as? List<Indexer>)?.forEach{ collection.append($0) }
-        }
-        
+        if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Importer> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
+        else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
+
         return collection
     }
     
@@ -141,6 +145,8 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeStoredCVUDefinition: return CVUStoredDefinition.self
         case .typeImporter: return Importer.self
         case .typeIndexer: return Indexer.self
+        case .typeImporterInstance: return ImporterInstance.self
+        case .typeIndexerInstance: return IndexerInstance.self
         }
     }
 }
@@ -728,8 +734,9 @@ class Importer:DataItem{
     override var genericType:String { "Importer" }
     @objc dynamic var name:String = ""
     @objc dynamic var datatype:String = "unknown"
+    @objc dynamic var icon:String = ""
     
-    let runs = List<Edge>() // e.g. person, object, recipe, etc
+    let runs = List<Edge>()
     
     required init () {
         super.init()
@@ -741,6 +748,7 @@ class Importer:DataItem{
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             datatype = try decoder.decodeIfPresent("datatype") ?? datatype
+            icon = try decoder.decodeIfPresent("icon") ?? icon
             
             decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
             
@@ -752,8 +760,10 @@ class Importer:DataItem{
 
 class ImporterInstance:DataItem{
     override var genericType:String { "ImporterInstance" }
-    @objc dynamic var name:String = ""
+    @objc dynamic var name:String = "unknown importer run"
     @objc dynamic var datatype:String = "unknown"
+
+    let importer = List<Edge>()
     
 //    let runs = List<Importer>() // e.g. person, object, recipe, etc
     
@@ -767,7 +777,7 @@ class ImporterInstance:DataItem{
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             datatype = try decoder.decodeIfPresent("datatype") ?? datatype
-//            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            decodeEdges(decoder, "importer", DataItem.self, self.importer, self)
             
             try self.superDecode(from: decoder)
         }
@@ -796,6 +806,34 @@ class Indexer:DataItem{
             indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
             
             decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+    
+}
+
+class IndexerInstance:DataItem{
+    override var genericType:String { "IndexerInstance" }
+    @objc dynamic var name:String = "unknown indexer instance"
+    @objc dynamic var indexerDescription:String = ""
+    @objc dynamic var query:String = ""
+
+    let indexer = List<Edge>()
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+            
+            decodeEdges(decoder, "indexer", DataItem.self, self.indexer, self)
             
             try self.superDecode(from: decoder)
         }

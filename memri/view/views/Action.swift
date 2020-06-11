@@ -33,6 +33,7 @@ public class Action : HashableClass, CVUToString {
         "opensView": false,
         "color": Color(hex: "#999999"),
         "backgroundColor": Color.white,
+        "activeColor": Color(hex: "#ffdb00"),
         "inactiveColor": Color(hex: "#999999"),
         "activeBackgroundColor": Color.white,
         "inactiveBackgroundColor": Color.white
@@ -464,29 +465,30 @@ class ActionStar : Action, ActionExec {
     ]}
     
     required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(main, "toggleStar", arguments:arguments, values:values)
+        super.init(main, "star", arguments:arguments, values:values)
     }
     
+    // TODO selection handling for binding
     func exec(_ arguments:[String: Any]) throws {
-        if let item = arguments["dataItem"] as? DataItem {
-            var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
-            let toValue = !item.starred
-            
-            if !selection.contains(item) {
-                selection.append(item)
-            }
-            
-            realmWriteIfAvailable(main.cache.realm, {
-                for item in selection { item.starred = toValue }
-            })
-
-            // TODO if starring is ever allowed in a list resultset view,
-            // it won't be updated as of now
-        }
-        else {
-            // TODO Error handling
-            throw "Cannot execute ActionStar, missing dataItem in arguments."
-        }
+//        if let item = arguments["dataItem"] as? DataItem {
+//            var selection:[DataItem] = main.cascadingView.userState.get("selection") ?? []
+//            let toValue = !item.starred
+//
+//            if !selection.contains(item) {
+//                selection.append(item)
+//            }
+//
+//            realmWriteIfAvailable(main.cache.realm, {
+//                for item in selection { item.starred = toValue }
+//            })
+//
+//            // TODO if starring is ever allowed in a list resultset view,
+//            // it won't be updated as of now
+//        }
+//        else {
+//            // TODO Error handling
+//            throw "Cannot execute ActionStar, missing dataItem in arguments."
+//        }
     }
     
     class func exec(_ main:Main, _ arguments:[String: Any]) throws {
@@ -865,7 +867,6 @@ class ActionDuplicate : Action, ActionExec {
     }
 }
 
-
 class ActionImport : Action, ActionExec {
     required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(main, "import", arguments:arguments, values:values)
@@ -874,18 +875,38 @@ class ActionImport : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
-        if let importer = arguments["importer"] as? DataItem{
+        if let importerInstance = arguments["importerInstance"] as? ImporterInstance{
+            let cachedImporterInstance = try main.cache.addToCache(importerInstance)
             
-            let importerInstance = ImporterInstance()
-            if let importerInstance = try main.cache.addToCache(importerInstance) as? ImporterInstance {
-                main.podAPI.runImport(importerInstance.memriID){ error, succes in
-                    if let error = error{
-                        print("Cannot execute actionImport: \(error)")
-                    }
+            main.podAPI.runImport(cachedImporterInstance.memriID){ error, succes in
+                if let error = error{
+                    print("Cannot execute actionImport: \(error)")
                 }
             }
-            else {
-                print("Cannot execute actionImport: Could not create ImporterInstance from importer")
+        }
+    }
+    
+    class func exec(_ main:Main, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionImport.exec(main, arguments) }
+    }
+}
+
+
+class ActionIndex : Action, ActionExec {
+    required init(_ main:Main, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(main, "index", arguments:arguments, values:values)
+    }
+    
+    func exec(_ arguments:[String: Any]) throws -> Void {
+        // TODO: parse options
+        
+        if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance{
+            let cachedIndexerInstance = try main.cache.addToCache(indexerInstance)
+            
+            main.podAPI.runIndex(cachedIndexerInstance.memriID){ error, succes in
+                if let error = error{
+                    print("Cannot execute actionIndex: \(error)")
+                }
             }
         }
     }

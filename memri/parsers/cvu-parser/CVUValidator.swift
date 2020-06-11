@@ -99,7 +99,7 @@ class CVUValidator {
                 else if key == "cornerborder" {
                     if let list = value as? [Any] {
                         validate(prop, "border", [list[0], list[1]])
-                        validate(prop, "cornerradius", list[2])
+                        validate(prop, "cornerRadius", list[2])
                         continue
                     }
                 }
@@ -123,7 +123,7 @@ class CVUValidator {
         for (key, value) in action.values {
             if let prop = ActionProperties(rawValue: key) {
                 if !prop.validate(key, value) {
-                    errors.append("Invalid property value '\(valueToTruncatedString(value ?? "nil"))' for '\(key)' at action \(action.name.rawValue).")
+                    errors.append("Invalid property value '\(valueToTruncatedString(value ?? "null"))' for '\(key)' at action \(action.name.rawValue).")
                 }
             }
             else {
