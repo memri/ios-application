@@ -177,8 +177,8 @@ extension View {
             if let value = value as? TextAlignment {
                 return AnyView(self.multilineTextAlignment(value))
             }
-        case "minwidth", "minheight", "align", "maxwidth", "maxheight", "spacing", "alignment", "text", "maxchar", "removewhitespace", "bold":
-            break
+//        case "minWidth", "minHeight", "align", "maxWidth", "maxHeight", "spacing", "alignment", "text", "maxchar", "removewhitespace", "bold":
+//            break
         default:
             print("NOT IMPLEMENTED PROPERTY: \(name)")
         }

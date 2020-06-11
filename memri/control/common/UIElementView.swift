@@ -159,11 +159,6 @@ public struct UIElementView: SwiftUI.View {
         Group {
             if (!has("show") || get("show") == true) {
                 if from.type == .VStack {
-                    if get("stop222") ?? false {
-                        if get("stop222") ?? false {
-                        }
-                    }
-                    
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }

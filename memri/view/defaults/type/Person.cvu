@@ -184,33 +184,6 @@ Person {
         
         /*readOnly:*/
         
-        picturesOfPerson {
-            foreach: false
-            sectionTitle: "Photos of {.computedTitle()}"
-        
-            SubView {
-                minHeight: 165
-                
-                view {
-                    defaultRenderer: thumbnail.grid
-                    
-                    [datasource = pod] {
-                        query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
-                    }
-                    
-                    [renderer = thumbnail.grid] {
-                        columns: 5
-                        itemInset: 0
-                    }
-                }
-                arguments: {
-                    toolbar: false
-                    searchbar: false
-                    readonly: true
-                }
-            }
-        }
-        
         profilePicture {
             sectionTitle: ""
         
@@ -218,7 +191,7 @@ Person {
                 alignment: center
             
                 Image {
-                    image: {{.}}
+                    image: {{.profilePicture}}
                     border: #ccc 1
                     resizable: fill
                     minHeight: 250
@@ -236,7 +209,7 @@ Person {
                     align: center
                 
                     Image {
-                        image: {{.}}
+                        image: {{.profilePicture}}
                         resizable: fill
                     }
                     
@@ -244,6 +217,7 @@ Person {
                         align: center
                         maxWidth: 140
                         maxHeight: 140
+                        stop222: true
                         show: {{!readOnly}}
                     
                         Button {
@@ -259,6 +233,33 @@ Person {
                             Text { text: "Edit" }
                         }
                     }
+                }
+            }
+        }
+        
+        picturesOfPerson {
+            foreach: false
+            sectionTitle: "Photos of {.computedTitle()}"
+        
+            SubView {
+                minHeight: 165
+                
+                view {
+                    defaultRenderer: thumbnail.grid
+                    
+                    [datasource = pod] {
+                        query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
+                    }
+                    
+                    [renderer = thumbnail] {
+                        columns: 5
+                        itemInset: 0
+                    }
+                }
+                arguments: {
+                    toolbar: false
+                    searchbar: false
+                    readonly: true
                 }
             }
         }

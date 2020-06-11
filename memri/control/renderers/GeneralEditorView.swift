@@ -221,7 +221,7 @@ struct GeneralEditorSection: View {
     func getViewArguments(_ groupKey:String, _ name:String, _ value:Any?,
                     _ item:DataItem)-> ViewArguments {
         
-        ViewArguments(renderConfig.viewArguments.asDict().merging([
+        return ViewArguments(renderConfig.viewArguments.asDict().merging([
             "readOnly": !self.main.currentSession.editMode,
             "sectionTitle": groupKey.camelCaseToWords().uppercased(),
             "displayName": name.camelCaseToWords().capitalizingFirstLetter(),

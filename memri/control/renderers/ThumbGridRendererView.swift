@@ -14,7 +14,7 @@ let registerThumGrid = {
         title: "Photo Grid",
         order: 20,
         icon: "square.grid.3x2.fill",
-        view: AnyView(ThumbnailRendererView()),
+        view: AnyView(ThumbGridRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,
         canDisplayResults: { items -> Bool in true }
     )

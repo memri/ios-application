@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-// Move to integrate with some of the sessions features so that Sessions can be nested
+// TODO: Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
  
     let languages = Languages()
@@ -439,9 +439,11 @@ public class Views {
                         
                         // TODO: Should this first search for the first renderer everywhere
                         //       before trying the second renderer?
-                        if let renderDef = def[name] as? CVUParsedRendererDefinition, renderDef["children"] != nil {
-                            cascadeStack.append(renderDef)
-                            return true
+                        if def.name == name {
+                            if def["children"] != nil {
+                                cascadeStack.append(def)
+                                return true
+                            }
                         }
                     }
                 }
@@ -519,9 +521,12 @@ public class Views {
             // Return the rendered UIElements in a UIElementView
             return cascadingRenderConfig.render(item: dataItem)
         }
-        catch {
+        catch let error {
+            errorHistory.error("Unable to render ItemCell: \(error)")
+            
             // TODO Refactor: Log error to the user
-            return UIElementView(UIElement(.Text, properties: ["text": "Could not render this view"]), dataItem)
+            return UIElementView(UIElement(.Text,
+                properties: ["text": "Could not render this view"]), dataItem)
         }
     }
 }

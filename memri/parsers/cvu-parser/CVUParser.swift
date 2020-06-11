@@ -457,8 +457,8 @@ class CVUParser {
             case "right": return HorizontalAlignment.trailing
             case "bottom": return VerticalAlignment.bottom
             case "center":
-                if type == "zstack" { return Alignment.center }
-                return type == "vstack"
+                if type == "ZStack" { return Alignment.center }
+                return type == "VStack"
                     ? HorizontalAlignment.center
                     : VerticalAlignment.center
             default:
