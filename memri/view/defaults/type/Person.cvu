@@ -184,6 +184,58 @@ Person {
         
         /*readOnly:*/
         
+        profilePicture {
+            sectionTitle: ""
+        
+            ZStack {
+                alignment: center
+            
+                Image {
+                    image: {{.profilePicture}}
+                    border: #ccc 1
+                    resizable: fill
+                    minHeight: 250
+                    maxHeight: 250
+                    opacity: 0.6
+                    align: center
+                }
+                
+                ZStack {
+                    border: #fff 27
+                    padding: 12
+                    maxWidth: 140
+                    maxHeight: 140
+                    cornerRadius: 100
+                    align: center
+                
+                    Image {
+                        image: {{.profilePicture}}
+                        resizable: fill
+                    }
+                    
+                    HSTack {
+                        align: center
+                        maxWidth: 140
+                        maxHeight: 140
+                        show: {{!readOnly}}
+                    
+                        Button {
+                            press: add
+                            cornerRadius: 25
+                            maxWidth: 50
+                            maxHeight: 50
+                            background: #eee
+                            color: #434343
+                            align: center
+                            font: 14 regular
+                        
+                            Text { text: "Edit" }
+                        }
+                    }
+                }
+            }
+        }
+        
         picturesOfPerson {
             foreach: false
             sectionTitle: "Photos of {.computedTitle()}"
@@ -207,58 +259,6 @@ Person {
                     toolbar: false
                     searchbar: false
                     readonly: true
-                }
-            }
-        }
-        
-        profilePicture {
-            sectionTitle: ""
-        
-            ZStack {
-                alignment: center
-            
-                Image {
-                    image: {{.}}
-                    border: #ccc 1
-                    resizable: fill
-                    minHeight: 250
-                    maxHeight: 250
-                    opacity: 0.6
-                    align: center
-                }
-                
-                ZStack {
-                    border: #fff 27
-                    padding: 12
-                    maxWidth: 140
-                    maxHeight: 140
-                    cornerRadius: 100
-                    align: center
-                
-                    Image {
-                        image: {{.}}
-                        resizable: fill
-                    }
-                    
-                    HSTack {
-                        align: center
-                        maxWidth: 140
-                        maxHeight: 140
-                        show: {{!readOnly}}
-                    
-                        Button {
-                            press: add
-                            cornerRadius: 25
-                            maxWidth: 50
-                            maxHeight: 50
-                            background: #eee
-                            color: #434343
-                            align: center
-                            font: 14 regular
-                        
-                            Text { text: "Edit" }
-                        }
-                    }
                 }
             }
         }

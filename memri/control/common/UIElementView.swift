@@ -159,11 +159,6 @@ public struct UIElementView: SwiftUI.View {
         Group {
             if (!has("show") || get("show") == true) {
                 if from.type == .VStack {
-                    if get("stop222") ?? false {
-                        if get("stop222") ?? false {
-                        }
-                    }
-                    
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
@@ -180,6 +175,11 @@ public struct UIElementView: SwiftUI.View {
                     .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .ZStack {
+//                    if get("stop222") ?? false {
+//                        if get("stop222") ?? false {
+//                        }
+//                    }
+                    
                     ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                         .clipped()
                         .animation(nil)
