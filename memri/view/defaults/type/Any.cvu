@@ -1,6 +1,7 @@
 [session = *] {
     [view] {
         title: "Everything"
+        
         [datasource = pod] {
             query: "*"
         }
@@ -20,15 +21,18 @@
         EditorRow {
             spacing: 5
             padding: 10 0 10 0
+            
             HStack {
                 alignment: center
+                
                 MemriButton
                 Spacer
                 Button{
                     press: archive
                     show: {{!readOnly}}
+                    
                     Image {
-                        systemName: bolt.horizontal.circle.fill
+                        systemName: "bolt.horizontal.circle.fill"
                         color: #ff0000
                     }
                 }

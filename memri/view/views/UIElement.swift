@@ -83,7 +83,6 @@ public class UIElement : CVUToString {
                     return nil
                 }
             }
-            print(T.self)
             return (propValue as? T)
         }
         else {

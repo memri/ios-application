@@ -175,11 +175,6 @@ public struct UIElementView: SwiftUI.View {
                     .setProperties(from.properties, self.item, main, self.viewArguments)
                 }
                 else if from.type == .ZStack {
-//                    if get("stop222") ?? false {
-//                        if get("stop222") ?? false {
-//                        }
-//                    }
-                    
                     ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
                         .clipped()
                         .animation(nil)
