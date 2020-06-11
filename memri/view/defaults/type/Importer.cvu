@@ -107,6 +107,11 @@ Importer[] {
                 color: #2480d6
             }
             
+            Image {
+                image: "evernote-og.png"
+                color: #2480d6
+            }
+            
             Text {
                 text: "{.name}"
                 font: 18 semibold

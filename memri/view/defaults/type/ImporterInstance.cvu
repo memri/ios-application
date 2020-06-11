@@ -74,8 +74,9 @@ ImporterInstance {
         excluded: version starred dateCreated dateModified dateAccessed changeLog
         groups:  {
             run: run
+            name: name
         }
-        sequence: run
+        sequence: name run
 
         run {
             foreach: false
