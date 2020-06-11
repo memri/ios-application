@@ -64,6 +64,8 @@ class Sync {
     private var syncing: Bool = false
     private var backgroundSyncing: Bool = false
     
+    private var recentQueries = [String:Bool]()
+    
     /// Initialization of the cache
     /// - Parameters:
     ///   - api: api Object
@@ -133,56 +135,63 @@ class Sync {
     private func prioritySync(_ datasource:Datasource, _ audititem:AuditItem) {
         
         print("Syncing from pod with query: \(datasource.query ?? "")")
-        // Call out to the pod with the query
-        podAPI.query(datasource) { (error, items) in
-            if let items = items {
+        
+        // Only execute queries once per session until we fix syncing
+        if recentQueries[datasource.uniqueString] != true {
+            
+            // Call out to the pod with the query
+            podAPI.query(datasource) { (error, items) in
+                if let items = items {
 
-                if let cache = self.cache{
+                    if let cache = self.cache {
+                        
+                        self.recentQueries[datasource.uniqueString] = true
 
-                    // Find resultset that belongs to this query
-                    let resultSet = cache.getResultSet(datasource)
-//                    if resultSet.count == 1 { return }
+                        // Find resultset that belongs to this query
+                        let resultSet = cache.getResultSet(datasource)
+    //                    if resultSet.count == 1 { return }
 
-                    // The result that we'll add to resultset
-                    var result:[DataItem] = []
+                        // The result that we'll add to resultset
+                        var result:[DataItem] = []
 
-                    for item in items {
-                        // TODO handle sync errors
-                        do {
-                            let cachedItem = try cache.addToCache(item)
-                            if cachedItem.syncState?.actionNeeded != "deleted" {
-                                // Add item to result
-                                result.append(cachedItem)
+                        for item in items {
+                            // TODO handle sync errors
+                            do {
+                                let cachedItem = try cache.addToCache(item)
+                                if cachedItem.syncState?.actionNeeded != "deleted" {
+                                    // Add item to result
+                                    result.append(cachedItem)
+                                }
+                                // Ignore items marked for deletion
                             }
-                            // Ignore items marked for deletion
+                            catch {
+                                print("\(error)")
+                            }
                         }
-                        catch {
-                            print("\(error)")
+
+                        // Find added items
+                        // TODO this could be skipped by re-executing resultSet.load()
+                        for item in resultSet.items {
+                            if item.syncState?.actionNeeded == "create" {
+                                result.append(item)
+                            }
                         }
+
+                        // Update resultset with the new results
+                        resultSet.forceItemsUpdate(result)
+
+                        // We no longer need to process this log item
+                        realmWriteIfAvailable(self.realm){
+                            audititem.setSyncStateActionNeeded("")
+                        }
+                        // TODO consider deleting the log item
                     }
 
-                    // Find added items
-                    // TODO this could be skipped by re-executing resultSet.load()
-                    for item in resultSet.items {
-                        if item.syncState?.actionNeeded == "create" {
-                            result.append(item)
-                        }
-                    }
-
-                    // Update resultset with the new results
-                    resultSet.forceItemsUpdate(result)
-
-                    // We no longer need to process this log item
-                    realmWriteIfAvailable(self.realm){
-                        audititem.setSyncStateActionNeeded("")
-                    }
-                    // TODO consider deleting the log item
                 }
-
-            }
-            else {
-                // Ignore errors (we'll retry next time)
-                // TODO consider resorting so that it is not retried too often
+                else {
+                    // Ignore errors (we'll retry next time)
+                    // TODO consider resorting so that it is not retried too often
+                }
             }
         }
     }
