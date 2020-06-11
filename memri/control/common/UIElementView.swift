@@ -224,7 +224,7 @@ public struct UIElementView: SwiftUI.View {
                         .clipped()
                         .animation(nil)
                         .setProperties(from.properties, self.item, main, self.viewArguments)
-                        .background(self.get("$readonly") ?? false
+                        .background(self.get("readOnly") ?? viewArguments.get("readOnly") ?? false
                             ? Color(hex:"#f9f9f9")
                             : Color(hex:"#f7fcf5"))
 

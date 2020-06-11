@@ -77,7 +77,7 @@ ImporterInstance {
             name: name
         }
         
-        sequence: name run importer labels other dates
+        sequence: run name importer labels other dates
         excluded: version dateCreated dateModified dateAccessed changeLog
         readOnly: name
 
@@ -85,27 +85,34 @@ ImporterInstance {
             foreach: false
             sectionTitle: ""
             
-            HStack {
-                Button {
-                    press: import {
-                        arguments {
-                            importerInstance: {{.}}
-                        }
-                    }
+            VStack {
+                HStack {
+                    align: left
+                    background: #f9f9f9
+                    maxWidth: 1000
                     
-                    VStack {
-                        cornerRadius: 5
-                        background: #70ba6c
-                        margin: 5 5 5 30
+                    Button {
+                        press: import {
+                            arguments {
+                                importerInstance: {{.}}
+                            }
+                        }
+                        
+                        VStack {
+                            cornerRadius: 5
+                            background: #70ba6c
+                            margin: 5 5 5 35
 
-                        Text {
-                            text: "RUN"
-                            font: 16 semibold
-                            color: #fff
-                            padding: 5 8 5 8
+                            Text {
+                                text: "RUN"
+                                font: 16 semibold
+                                color: #fff
+                                padding: 5 8 5 8
+                            }
                         }
                     }
                 }
+                Divider
             }
         }
     }
