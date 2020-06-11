@@ -57,6 +57,7 @@ struct ThumbWaterfallRendererView: View {
                 GeometryReader { geom in
                     // TODO: Error handling
                     self.renderConfig!.render(item: dataItem)
+                        .environmentObject(self.main)
                         .onTapGesture {
                             if let press = self.renderConfig?.press {
                                 self.main.executeAction(press, with: dataItem)

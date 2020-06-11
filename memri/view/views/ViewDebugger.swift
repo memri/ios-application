@@ -121,7 +121,9 @@ class ErrorHistory: ObservableObject {
             ))
         }
         
-        showErrorConsole = true
+        if Settings.get("device/debug/autoShowErrorConsole") ?? false {
+            showErrorConsole = true
+        }
     }
     
     func error(_ message:String/*, _ cascadingView:ComputedView*/){
@@ -136,7 +138,9 @@ class ErrorHistory: ObservableObject {
             ))
         }
         
-        showErrorConsole = true
+        if Settings.get("device/debug/autoShowErrorConsole") ?? false {
+            showErrorConsole = true
+        }
     }
     
     func clear(){

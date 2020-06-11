@@ -303,7 +303,7 @@ class ActionAddDataItem : Action, ActionExec {
 }
 
 
-    class ActionOpenView : Action, ActionExec {
+class ActionOpenView : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
         "opensView": true
@@ -684,8 +684,6 @@ class ActionBackAsSession : Action, ActionExec {
     }
 }
 
-
-
 class ActionOpenSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["session": Session.self, "viewArguments": [String:Any]?.self],
@@ -729,6 +727,10 @@ class ActionOpenSession : Action, ActionExec {
             }
         }
         else {
+            if let session = arguments["dataItem"] as? Session {
+                self.openSession(main, session)
+            }
+            
             // TODO Error handling
             throw "Cannot execute openSession, no session passed"
         }
