@@ -17,7 +17,7 @@ struct BrowseSetting: Identifiable {
 }
 
 struct FilterPanel: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     @State var browseSettings = [BrowseSetting(name: "Default", selected: true),
                                  BrowseSetting(name: "Year-Month-Day view", selected: false)]
@@ -229,6 +229,6 @@ struct FilterPanel: View {
 
 struct FilterPanel_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanel().environmentObject(RootMain(name: "", key: "").mockBoot())
+        FilterPanel().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

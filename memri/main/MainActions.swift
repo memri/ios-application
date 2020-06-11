@@ -7,7 +7,7 @@
 import Foundation
 import RealmSwift
 
-extension Main {
+extension MemriContext {
     
     /*
        TODO: pass options to openView and eventually to where computeView is called

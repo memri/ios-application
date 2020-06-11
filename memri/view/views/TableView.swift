@@ -12,12 +12,12 @@ private let cellIdentifier = "aTableViewCell"
 
 struct TableView<Item, Content: View>: UIViewControllerRepresentable where Item: AnyObject {
     
-    public var main: Main!
+    public var main: MemriContext!
     public var canDelete: Bool!
     public var canReorder: Bool!
     public var editMode: EditMode
     
-    init(main: Main, canDelete: Bool? = true, canReorder: Bool? = true) {
+    init(main: MemriContext, canDelete: Bool? = true, canReorder: Bool? = true) {
         self.main = main
         self.canDelete = canDelete
         self.canReorder = canReorder
@@ -285,7 +285,7 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 
 //struct TableView: UIViewControllerRepresentable {
 //
-//    public var main: Main!
+//    public var main: MemriContext!
 //    public var canDelete: Bool!
 //    public var canReorder: Bool!
 //    public var editMode: EditMode
@@ -295,7 +295,7 @@ class HostingTableViewCell<Content: View>: UITableViewCell {
 //        return self.main.computedView.renderConfigs[name] as? ListConfig ?? ListConfig()
 //    }
 //
-//    init(main: Main, canDelete: Bool? = true, canReorder: Bool? = true) {
+//    init(main: MemriContext, canDelete: Bool? = true, canReorder: Bool? = true) {
 //        self.main = main
 //        self.canDelete = canDelete
 //        self.canReorder = canReorder

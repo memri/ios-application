@@ -105,7 +105,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var navigateItems: [Action] { cascadeList("navigateItems") }
     var contextButtons: [Action] { cascadeList("contextButtons") }
     
-    var main:Main?
+    var main:MemriContext?
     
     var renderConfig: CascadingRenderConfig? {
         if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
@@ -296,7 +296,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    public class func fromSessionView(_ sessionView:SessionView, in main:Main) throws -> CascadingView {
+    public class func fromSessionView(_ sessionView:SessionView, in main:MemriContext) throws -> CascadingView {
         var cascadeStack:[CVUParsedDefinition] = []
         var isList = true
         var type = ""

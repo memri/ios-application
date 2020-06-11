@@ -129,7 +129,7 @@ public class Sessions: DataItem {
             // Add listeners to all session objects
             postInit()
             
-            // Notify Main of any changes
+            // Notify MemriContext of any changes
             rlmTokens.append(self.observe({ (objectChange) in
                 if case .change = objectChange {
                     self.objectWillChange.send()
@@ -145,7 +145,7 @@ public class Sessions: DataItem {
     }
     
  
-    public func install(_ main:Main) throws {
+    public func install(_ main:MemriContext) throws {
         fetchMemriID(main.realm)
         
         let storedDef = main.realm.objects(CVUStoredDefinition.self)

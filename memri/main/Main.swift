@@ -22,7 +22,7 @@ import RealmSwift
 var globalCache:Cache? = nil
 
 
-public class Main: ObservableObject {
+public class MemriContext: ObservableObject {
  
     public var name: String = ""
     /// The current session that is active in the application
@@ -73,7 +73,7 @@ public class Main: ObservableObject {
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
-    func scheduleUIUpdate(_ check:(_ main:Main) -> Bool){
+    func scheduleUIUpdate(_ check:(_ main:MemriContext) -> Bool){
         // Don't schedule when we are already scheduled
         if !scheduled && check(self) {
             
@@ -147,7 +147,7 @@ public class Main: ObservableObject {
             // If we can guess the type of the result based on the query, let's compute the view
             if resultSet.determinedType != nil {
                 
-                if self is RootMain { // if type(of: self) == RootMain.self {
+                if self is RootContext { // if type(of: self) == RootMain.self {
                     errorHistory.info("Computing view "
                         + (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
                 }
@@ -341,9 +341,9 @@ public class Main: ObservableObject {
     }
 }
 
-public class ProxyMain: Main {
+public class SubContext: MemriContext {
     
-    init(name:String, _ main:Main, _ session:Session) {
+    init(name:String, _ main:MemriContext, _ session:Session) {
         let views = Views(main.realm)
         
         super.init(
@@ -373,7 +373,7 @@ public class ProxyMain: Main {
 
 /// Represents the entire application user interface. One can imagine in the future there being multiple applications, each aimed at a
 ///  different way to represent the data. For instance an application that is focussed on voice-first instead of gui-first.
-public class RootMain: Main {
+public class RootContext: MemriContext {
     private var cancellable: AnyCancellable? = nil
     
     // TODO Refactor: Should installer be moved to rootmain?
@@ -434,8 +434,8 @@ public class RootMain: Main {
         }
     }
     
-    public func createProxy(_ session:Session) -> Main {
-        return ProxyMain(name: "Proxy", self, session)
+    public func createSubContext(_ session:Session) -> MemriContext {
+        return SubContext(name: "Proxy", self, session)
     }
     
     public func boot() throws {
@@ -477,7 +477,7 @@ public class RootMain: Main {
         }
     }
     
-    public func mockBoot() -> Main {
+    public func mockBoot() -> MemriContext {
         do {
             try self.boot()
             return self

@@ -22,13 +22,13 @@ extension View {
 }
 
 struct Application: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     @State var showNavigation = false
     
     var body: some View {
         // NOTE: Allowed force unwrapping
-        (main as! RootMain).initNavigation(self.$showNavigation)
+        (main as! RootContext).initNavigation(self.$showNavigation)
         
         let drag = DragGesture()
             .onEnded {
@@ -82,7 +82,7 @@ struct Application: View {
 
 struct Application_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootMain(name: "", key: "").mockBoot()
+        let main = RootContext(name: "", key: "").mockBoot()
         return Application().environmentObject(main)
     }
 }

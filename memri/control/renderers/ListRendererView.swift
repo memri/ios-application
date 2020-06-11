@@ -47,7 +47,7 @@ class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
 }
 
 struct ListRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let name = "list"
     
@@ -114,6 +114,6 @@ struct ListRendererView: View {
 
 struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

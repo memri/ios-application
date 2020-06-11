@@ -11,7 +11,7 @@ import Combine
 let _keyBoardResponder = KeyboardResponder()
 
 struct Browser: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     @ObservedObject var keyboardResponder = _keyBoardResponder
     
     var body: some View {
@@ -35,6 +35,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(RootMain(name: "", key: "").mockBoot())
+        Browser().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

@@ -60,7 +60,7 @@ class LEOTextStorage: NSTextStorage {
         }
     }
     
-    /// Main function that is called when an input is generated from the UI
+    /// MemriContext function that is called when an input is generated from the UI
     /// - Parameters:
     ///   - range: place to replace the characters
     ///   - str: string to insert

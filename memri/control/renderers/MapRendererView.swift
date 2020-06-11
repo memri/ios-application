@@ -29,7 +29,7 @@ class CascadingMapConfig: CascadingRenderConfig {
 }
 
 struct MapRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let name = "map"
     
@@ -47,6 +47,6 @@ struct MapRendererView: View {
 
 struct MapRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        MapRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        MapRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

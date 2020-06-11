@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct Picker: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let item: DataItem
     let selected: DataItem?
@@ -50,7 +50,7 @@ struct Picker: View {
 }
 
 struct PickerPane: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     let item: DataItem

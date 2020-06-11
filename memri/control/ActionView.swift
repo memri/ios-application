@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ActionButton: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var action: Action?
 
@@ -42,14 +42,14 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootMain(name: "", key: "").mockBoot()
+        let main = RootContext(name: "", key: "").mockBoot()
         return ActionButton(action: ActionBack(main))
             .environmentObject(main)
     }
 }
 
 struct ActionButtonView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var action: Action
     var execute: (() -> Void)? = nil
@@ -84,7 +84,7 @@ struct ActionButtonView: View {
 }
 
 struct ActionPopupButton: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var action: Action
     
@@ -101,7 +101,7 @@ struct ActionPopupButton: View {
 }
 
 struct ActionPopup: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     var action: Action

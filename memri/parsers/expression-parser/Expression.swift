@@ -15,7 +15,7 @@ public class Expression : CVUToString {
     var lookup: (ExprLookupNode, ViewArguments) throws -> Any?
     var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
     
-    var main:Main? = nil
+    var main:MemriContext? = nil
     
     private var interpreter:ExprInterpreter? = nil
     private var parsed = false
@@ -68,7 +68,7 @@ public class Expression : CVUToString {
                     return
                 }
                 // TODO FIX: Implement LookUpAble
-                else if let obj = lookupValue as? Main, let main = main{
+                else if let obj = lookupValue as? MemriContext, let main = main{
                     realmWriteIfAvailable(main.realm) {
                         obj[lastProperty.name] =
                             !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])

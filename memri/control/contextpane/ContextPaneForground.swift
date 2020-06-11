@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct ContextPaneForground: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var paddingLeft:CGFloat = 25
 
@@ -147,6 +147,6 @@ struct ContextPaneForground: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPaneForground().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ContextPaneForground().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

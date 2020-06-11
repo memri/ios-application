@@ -9,7 +9,7 @@ public class Views {
     let languages = Languages()
     
     private var realm:Realm
-    var main:Main? = nil
+    var main:MemriContext? = nil
 
     init(_ rlm:Realm) {
         realm = rlm
@@ -41,7 +41,7 @@ public class Views {
         }
     }
  
-    public func load(_ mn:Main, _ callback: () throws -> Void) throws {
+    public func load(_ mn:MemriContext, _ callback: () throws -> Void) throws {
         // Store main for use within createCascadingView)
         self.main = mn
         
@@ -273,7 +273,7 @@ public class Views {
                             break
                         }
                     }
-                    else if let v = value as? Main {
+                    else if let v = value as? MemriContext {
                         value = v[node.name]
                     }
                     else if let v = value as? UserState {
@@ -401,7 +401,7 @@ public class Views {
     
     public func createCascadingView(_ sessionView:SessionView? = nil) throws -> CascadingView {
         guard let main = self.main else {
-            throw "Exception: Main is not defined in views"
+            throw "Exception: MemriContext is not defined in views"
         }
 
         let viewFromSession = sessionView == nil
@@ -437,7 +437,7 @@ public class Views {
                                use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
         do {
             guard let main = self.main else {
-                throw "Exception: Main is not defined in views"
+                throw "Exception: MemriContext is not defined in views"
             }
             
             func searchForRenderer(in viewDefinition:CVUStoredDefinition) throws -> Bool {

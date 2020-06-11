@@ -107,7 +107,7 @@ import TextView
  */
 
 public struct UIElementView: SwiftUI.View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let from:UIElement
     let item:DataItem

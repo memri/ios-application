@@ -85,7 +85,7 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
 
 
 struct GeneralEditorView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var name: String = "generalEditor"
     
@@ -167,7 +167,7 @@ struct GeneralEditorView: View {
 }
 
 struct GeneralEditorSection: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
 
     var item: DataItem
     var renderConfig: CascadingGeneralEditorConfig
@@ -398,7 +398,7 @@ struct GeneralEditorSection: View {
 }
 
 struct DefaultGeneralEditorRow: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var item: DataItem
     var prop: String
@@ -588,7 +588,7 @@ private struct GeneralEditorHeader: ViewModifier {
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        let main = RootMain(name: "", key: "").mockBoot()
+        let main = RootContext(name: "", key: "").mockBoot()
         
         return ZStack {
             VStack(alignment: .center, spacing: 0) {

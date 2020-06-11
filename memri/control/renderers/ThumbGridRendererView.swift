@@ -21,7 +21,7 @@ let registerThumGrid = {
 }
 
 struct ThumbGridRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var name: String = "thumbnail_grid"
     
@@ -168,6 +168,6 @@ struct ThumbGridRendererView: View {
 
 struct ThumbGridRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

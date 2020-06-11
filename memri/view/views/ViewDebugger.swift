@@ -154,7 +154,7 @@ class ErrorHistory: ObservableObject {
 var errorHistory = ErrorHistory()
 
 struct  ErrorConsole: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     @ObservedObject var history = errorHistory
     
@@ -244,6 +244,6 @@ struct  ErrorConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
     static var previews: some View {
-        ErrorConsole().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ErrorConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

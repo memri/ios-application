@@ -15,11 +15,11 @@ public class Installer {
         realm = rlm
     }
     
-    public func install(_ main:Main) {
+    public func install(_ main:MemriContext) {
         
     }
     
-    public func installIfNeeded(_ main:Main, _ callback: () throws -> Void) throws {
+    public func installIfNeeded(_ main:MemriContext, _ callback: () throws -> Void) throws {
         
         let installLogs = realm.objects(AuditItem.self).filter("action = 'install'")
         

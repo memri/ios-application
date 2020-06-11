@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 class CVUParser {
-    let main: Main
+    let main: MemriContext
     let tokens: [CVUToken]
     var index = 0
     var lastToken:CVUToken? = nil
@@ -18,7 +18,7 @@ class CVUParser {
     private let lookup: (ExprLookupNode, ViewArguments) throws -> Any?
     private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
 
-    init(_ tokens: [CVUToken], _ main:Main,
+    init(_ tokens: [CVUToken], _ main:MemriContext,
          lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
          execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
         

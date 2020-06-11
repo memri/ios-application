@@ -29,7 +29,7 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
 }
 
 struct _RichTextEditor: UIViewRepresentable {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     @ObservedObject public var dataItem: DataItem
     
     let filterText: Binding<String>
@@ -151,7 +151,7 @@ struct _RichTextEditor: UIViewRepresentable {
 }
 
 struct RichTextRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var renderConfig: CascadingRichTextEditorConfig
         = CascadingRichTextEditorConfig([], ViewArguments())
@@ -183,6 +183,6 @@ struct RichTextRendererView: View {
 
 struct RichTextRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        RichTextRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

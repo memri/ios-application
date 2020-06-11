@@ -21,7 +21,7 @@ let registerThumWaterfall = {
 }
 
 struct ThumbWaterfallRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var name: String = "thumbnail_waterfall"
     
@@ -145,7 +145,7 @@ struct ThumbWaterfallRendererView: View {
 
 struct ThumbWaterfallRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }
 

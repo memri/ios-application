@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 public struct ItemCell: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let item: DataItem
     let rendererNames: [String]

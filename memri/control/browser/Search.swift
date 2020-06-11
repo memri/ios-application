@@ -10,7 +10,7 @@ import SwiftUI
 import Combine
 
 struct Search: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
 
     var body: some View {
         VStack{
@@ -39,6 +39,6 @@ struct Search: View {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(RootMain(name: "", key: "").mockBoot())
+        Search().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

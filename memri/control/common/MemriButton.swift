@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 public struct MemriButton : View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     let item: DataItem
     

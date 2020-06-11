@@ -33,7 +33,7 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
 }
 
 struct ThumbnailRendererView: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var name: String="thumbnail"
     
@@ -134,6 +134,6 @@ struct ThumbnailRendererView: View {
 
 struct ThumbnailRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRendererView().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

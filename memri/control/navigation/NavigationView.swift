@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct Navigation: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     @ObservedObject var keyboardResponder = KeyboardResponder()
     
@@ -95,7 +95,7 @@ struct Navigation: View {
 }
 
 struct NavigationItemView: View{
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     var item: NavigationItem
     
@@ -147,6 +147,6 @@ struct NavigationLineView: View{
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation().environmentObject(RootMain(name: "", key: "").mockBoot())
+        Navigation().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

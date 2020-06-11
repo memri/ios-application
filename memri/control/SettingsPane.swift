@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct SettingsPane: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
     private func getBinding<T:Decodable>(_ path:String) -> Binding<T> {

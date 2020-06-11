@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ContextPane: View {
 
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
 
     private let forgroundPercentageWidth: CGFloat = 0.75
     
@@ -53,6 +53,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane().environmentObject(RootMain(name: "", key: "").mockBoot())
+        ContextPane().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

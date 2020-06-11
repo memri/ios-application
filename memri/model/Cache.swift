@@ -137,7 +137,7 @@ public class Cache {
     
     
      //TODO: document
-    public var scheduleUIUpdate: ((_ check:(_ main:Main) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((_ check:(_ main:MemriContext) -> Bool) -> Void)? = nil
     
     
     /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.

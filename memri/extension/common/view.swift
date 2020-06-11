@@ -12,7 +12,7 @@ private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
-    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:Main,
+    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ main:MemriContext,
                        _ viewArguments:ViewArguments) -> AnyView {
         
         var view:AnyView = AnyView(self)

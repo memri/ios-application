@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SessionSwitcher: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     let items: [CGFloat] = [0,1,2,3,4,5,6,7,8,9]
 
     
@@ -199,6 +199,6 @@ struct SessionSwitcher: View {
 
 struct SessionSwitcher_Previews: PreviewProvider {
     static var previews: some View {
-        SessionSwitcher().environmentObject(RootMain(name: "", key: "").mockBoot())
+        SessionSwitcher().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

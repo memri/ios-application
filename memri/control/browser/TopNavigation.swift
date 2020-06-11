@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct TopNavigation: View {
-    @EnvironmentObject var main: Main
+    @EnvironmentObject var main: MemriContext
     
     @State private var showingBackActions = false
     @State private var showingTitleActions = false
@@ -207,6 +207,6 @@ public struct TopNavigation: View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(RootMain(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }
