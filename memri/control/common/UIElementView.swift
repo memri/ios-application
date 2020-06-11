@@ -137,6 +137,13 @@ public struct UIElementView: SwiftUI.View {
         return UIImage()
     }
     
+    public func getBundleImage() -> Image{
+        if let name: String = get("bundleimage"){
+            return Image(name)
+        }
+        return Image(systemName: "exclamationmark.bubble")
+    }
+    
     public func getList(_ propName:String) -> [DataItem] {
         let x:[DataItem]? = get("list")
         return x ?? []
@@ -224,7 +231,7 @@ public struct UIElementView: SwiftUI.View {
                         .clipped()
                         .animation(nil)
                         .setProperties(from.properties, self.item, main, self.viewArguments)
-                        .background(self.get("$readonly") ?? false
+                        .background(self.get("readOnly") ?? viewArguments.get("readOnly") ?? false
                             ? Color(hex:"#f9f9f9")
                             : Color(hex:"#f7fcf5"))
 
@@ -362,6 +369,12 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .Image {
                     if has("systemname") {
                         Image(systemName: get("systemname") ?? "exclamationmark.bubble")
+                            .if(from.has("resizable")) { self.resize($0) }
+                            .setProperties(from.properties, self.item, main, self.viewArguments)
+                    }
+                    else if has("bundleimage"){
+                        getBundleImage()
+                            .renderingMode(.original)
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, main, self.viewArguments)
                     }

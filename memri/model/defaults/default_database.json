@@ -8,12 +8,14 @@
     {
         "type": "Importer",
         "name": "Evernote notes",
-        "datatype": "Note"
+        "datatype": "Note",
+        "bundleImage": "evernote-icon"
     },
     {
         "type": "Indexer",
         "name": "Geolocation indexer",
-        "indexerDescription": "Enriches datatypes with geographic coordinates with their corresponding cities en countries"
+        "indexerDescription": "Enriches datatypes with geographic coordinates with their corresponding cities and countries",
+        "icon": "mappin.and.ellipse"
     },
     {
         "type": "Photo",

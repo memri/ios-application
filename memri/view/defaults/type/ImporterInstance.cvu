@@ -8,7 +8,7 @@
 }
 
 ImporterInstance {
-    title: "{.name}"
+    title: "{.name} importer run"
     defaultRenderer: generalEditor
     editActionButton: toggleEditMode
     filterButtons: [
@@ -70,38 +70,78 @@ ImporterInstance {
             name: "all-importer-instances"
         }
     ]
+    
     [renderer = generalEditor] {
-        excluded: version starred dateCreated dateModified dateAccessed changeLog
         groups:  {
+            iconHeading: iconHeading
             run: run
             name: name
         }
-        sequence: name run
+
+        sequence: iconHeading name run labels other dates
+        excluded: version dateCreated dateModified dateAccessed changeLog
+        readOnly: name
+        
+        iconHeading {
+            sectionTitle: ""
+            
+            HStack{
+                align: center
+                padding: 8 0 0 0
+                
+                Image {
+                    align: center
+                    resizable: fill
+                    show: {{.importer.icon}}
+                    systemname: {{.importer.icon}}
+                    color: #2480d6
+                    maxWidth: 100
+                    maxHeight: 100
+                }
+                
+                Image {
+                    align: center
+                    show: {{!.importer.icon and .importer.bundleImage}}
+                    bundleimage: {{.importer.bundleImage}}
+                    color: #2480d6
+                    resizable: fill
+                    minWidth: 100
+                    minHeight: 100
+                    maxWidth: 100
+                    maxHeight: 100
+                }
+            }
+        }
 
         run {
             foreach: false
             sectionTitle: ""
             
-            HStack {
-                Button {
-                    press: import {
-                        arguments {
-                            importerInstance: {{.}}
-                        }
-                    }
+            VStack {
+                HStack {
+                    align: left
+                    background: #f9f9f9
                     
-                    VStack {
-                        cornerRadius: 5
-                        background: #70ba6c
-
+                    Button {
+                        margin: 5 5 5 35
+                        
+                        press: import {
+                            arguments {
+                                importerInstance: {{.}}
+                            }
+                        }
+                        
                         Text {
-                            text: "RUN"
+                            text: "START RUN"
                             font: 16 semibold
                             color: #fff
                             padding: 5 8 5 8
+                            cornerRadius: 5
+                            background: #70ba6c
                         }
                     }
                 }
+                Divider
             }
         }
     }

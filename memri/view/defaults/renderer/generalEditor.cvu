@@ -15,14 +15,13 @@
     
     labels {
         foreach: false
-        sectionTitle: ""
         
         EditorRow {
-            title: "{displayName}"
-            
             Text {
                 show: {{!.labels.count}}
-                text: no labels yet
+                text: "No labels yet"
+                padding: 10 0 5 0
+                color: #777
             }
             FlowStack {
                 list: {{.labels}}

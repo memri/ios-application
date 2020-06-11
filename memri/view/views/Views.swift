@@ -265,6 +265,14 @@ public class Views {
                             break
                         }
                     }
+                    else if let v = value as? RealmSwift.ListBase {
+                        switch node.name {
+                        case "count": value = v.count
+                        default:
+                            // TODO Warn
+                            break
+                        }
+                    }
                     else if let v = value as? Main {
                         value = v[node.name]
                     }

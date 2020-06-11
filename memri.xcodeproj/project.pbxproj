@@ -44,7 +44,6 @@
 		5D3EE57C2447701F00562AAC /* note.0x04.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57224476FFB00562AAC /* note.0x04.json */; };
 		5D3EE57D2447701F00562AAC /* note.0x05.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57324476FFB00562AAC /* note.0x05.json */; };
 		5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57424476FFB00562AAC /* note.0x01.json */; };
-		5D411840249219C9007D4F2F /* evernote-og.png in Resources */ = {isa = PBXBuildFile; fileRef = 5D41183F249219C9007D4F2F /* evernote-og.png */; };
 		5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D414AD7242B875F00A3DDFA /* FilterPanel.swift */; };
 		5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4231AA247C2D7100CD1933 /* Datasource.swift */; };
 		5D42A8F7245AF1ED0093D85F /* DataItemTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8F6245AF1ED0093D85F /* DataItemTest.swift */; };
@@ -301,7 +300,6 @@
 		5D3EE57224476FFB00562AAC /* note.0x04.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x04.json; sourceTree = "<group>"; };
 		5D3EE57324476FFB00562AAC /* note.0x05.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x05.json; sourceTree = "<group>"; };
 		5D3EE57424476FFB00562AAC /* note.0x01.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x01.json; sourceTree = "<group>"; };
-		5D41183F249219C9007D4F2F /* evernote-og.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "evernote-og.png"; sourceTree = "<group>"; };
 		5D414AD7242B875F00A3DDFA /* FilterPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPanel.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D4231AA247C2D7100CD1933 /* Datasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Datasource.swift; sourceTree = "<group>"; };
 		5D42A8F6245AF1ED0093D85F /* DataItemTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItemTest.swift; sourceTree = "<group>"; };
@@ -676,14 +674,6 @@
 			path = playground;
 			sourceTree = "<group>";
 		};
-		5D41183E24921970007D4F2F /* images */ = {
-			isa = PBXGroup;
-			children = (
-				5D41183F249219C9007D4F2F /* evernote-og.png */,
-			);
-			path = images;
-			sourceTree = "<group>";
-		};
 		5D414AD6242B4E4700A3DDFA /* contextpane */ = {
 			isa = PBXGroup;
 			children = (
@@ -739,7 +729,6 @@
 		5D599BAE23F2B77500F218A0 = {
 			isa = PBXGroup;
 			children = (
-				5D41183E24921970007D4F2F /* images */,
 				5D406F2223F5667C00F98616 /* playground */,
 				5D599BB923F2B77500F218A0 /* memri */,
 				5D599BD023F2B77700F218A0 /* memriTests */,
@@ -1318,7 +1307,6 @@
 				5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */,
 				5DAFB6192479525900719160 /* AuditItem.cvu in Resources */,
 				5D3EE57B2447701A00562AAC /* note.0x03.json in Resources */,
-				5D411840249219C9007D4F2F /* evernote-og.png in Resources */,
 				5DAFB6262479529900719160 /* Filter-starred.cvu in Resources */,
 				5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */,
 				86CDB4742469C49F007EAE67 /* macro_views.json in Resources */,
