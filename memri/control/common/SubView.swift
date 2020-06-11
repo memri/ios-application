@@ -21,25 +21,30 @@ public struct SubView : View {
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
     public init (context:MemriContext, viewName: String, dataItem: DataItem, args:ViewArguments){
-        self.toolbar = args["toolbar"] as? Bool ?? toolbar
-        self.searchbar = args["searchbar"] as? Bool ?? searchbar
-        self.showCloseButton = args["showCloseButton"] as? Bool ?? showCloseButton
+        self.toolbar = args.get("toolbar") ?? toolbar
+        self.searchbar = args.get("searchbar") ?? searchbar
+        self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
         
         do {
-            var def = try context.views
-                .parseDefinition(context.views.fetchDefinitions(name:viewName, type:"view").first)
+            let storedDef = context.views.fetchDefinitions(name:viewName, type:"view").first
+            var def = try context.views.parseDefinition(storedDef)
             if def is CVUParsedSessionDefinition {
                 if let list = def?["views"] as? [CVUParsedViewDefinition] { def = list.first }
             }
             guard let viewDef = def else { throw "Exception: Missing view" }
             
-            args["."] = dataItem
+            args.set(".", dataItem)
             
-            let view = SessionView(value: [
-                "viewDefinition": viewDef,
-                "viewArguments": args,
-                "datasource": viewDef["datasourceDefinition"] // TODO Refactor
-            ])
+            var values = [
+                "viewDefinition": storedDef,
+                "viewArguments": args
+            ]
+            
+            if let sourceDef = viewDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
+                values["datasource"] = try Datasource.fromCVUDefinition(sourceDef)
+            }
+            
+            let view = SessionView(value: values)
         
             let session = Session()
             session.views.append(view)
@@ -53,8 +58,9 @@ public struct SubView : View {
                 throw "Cannot update CascadingView \(self): \(error)"
             }
         }
-        catch {
+        catch let error {
             // TODO Refactor: error handling
+            print("Error: cannot init subview: \(error)")
             errorHistory.error("Error: cannot init subview: \(error)")
         }
     }
@@ -77,6 +83,7 @@ public struct SubView : View {
         do { try self.proxyMain!.updateCascadingView() }
         catch {
             // TODO Refactor error handling
+            print("Error: cannot init subview, failed to update CascadingView: \(error)")
             errorHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
         }
     }

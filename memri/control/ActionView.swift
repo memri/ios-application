@@ -113,12 +113,12 @@ struct ActionPopup: View {
         }
         
         let args = action.arguments["viewArguments"] as? ViewArguments ?? ViewArguments()
-        args["showCloseButton"] = true
+        args.set("showCloseButton", true)
         
         // TODO is this still needed? Need test cases
         // TODO this is now set back on variables["."] there is something wrong in the architecture
         //      that is causing this
-        let dataItem = args["."] as? DataItem ?? DataItem() // TODO Refactor: Error handling
+        let dataItem = args.get(".") ?? DataItem() // TODO Refactor: Error handling
         
         // TODO scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
         if action.name == .openView {

@@ -451,7 +451,10 @@ public struct UIElementView: SwiftUI.View {
         let rows:CGFloat = self.get("rows") ?? 2
         
         return Group {
-            if type != PropertyType.string {
+            if propName == "" {
+                Text("Invalid property value set on TextField")
+            }
+            else if type != PropertyType.string {
                 TextField(LocalizedStringKey(self.get("hint") ?? ""), value: Binding<Any>(
                     get: { dataItem[propName] as Any},
                     set: { dataItem.set(propName, $0) }

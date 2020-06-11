@@ -54,7 +54,7 @@ public class Datasource: Object, UniqueString {
     }
     
     public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition,
-                                        _ viewArguments: ViewArguments?) throws -> Datasource {
+                                        _ viewArguments: ViewArguments? = nil) throws -> Datasource {
         
         func getValue<T>(_ name:String) throws -> T? {
             if let expr = def[name] as? Expression{
