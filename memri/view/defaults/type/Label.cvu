@@ -10,13 +10,23 @@
 Label[]: {
     name: "all-labels"
     title: "All Labels"
+    emptyResultText: "You have not added any labels yet"
+    defaultRenderer: thumbnail
+    
+    actionButton: addDataItem {
+        arguments: {
+            type: "label"
+            name: "new label"
+        }
+    }
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
+    
     [datasource = pod] {
         query: "label"
         sortProperty: dateCreated
         sortAscending: true
     }
-    emptyResultText: "You have not added any labels yet"
-    defaultRenderer: thumbnail
     
     [renderer = list]{
         VStack {
@@ -84,12 +94,4 @@ Label[]: {
             }
         }
     }
-    actionButton: addDataItem {
-        arguments: {
-            type: "label"
-            name: "new label"
-        }
-    }
-    editActionButton: toggleEditMode
-    filterButtons: showStarred toggleFilterPanel
 }

@@ -7,7 +7,7 @@
     }
 }
 
-Session {
+Session[] {
     name: "all-sessions"
     title: "All Sessions"
     emptyResultText: "There are no sessions here yet"

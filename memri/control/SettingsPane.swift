@@ -96,6 +96,18 @@ struct SettingsPane: View {
                 }) {
                     Text("Internationalization")
                 }
+                
+                NavigationLink(destination: Form {
+                    Section(
+                        header: Text("Debug")
+                    ) {
+                        Toggle(isOn: getBinding("/device/debug/autoShowErrorConsole")) {
+                            Text("Automatically pop up the debug console")
+                        }
+                    }
+                }) {
+                    Text("Debug")
+                }
             }
             .navigationBarItems(leading:
                 Button(action:{ self.presentationMode.wrappedValue.dismiss()}) {
