@@ -15,8 +15,17 @@
         "repositoryURL": "https://github.com/apptekstudios/ASCollectionView",
         "state": {
           "branch": "master",
-          "revision": "91d85a3aec1bdc88fb285b3908ba036ba9d1dd09",
+          "revision": "4550cd5b5cfc3f437f8ff838939c6be21edfe992",
           "version": null
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/ra1028/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "14c66681e12a38b81045f44c6c29724a0d4b0e72",
+          "version": "1.1.5"
         }
       },
       {
@@ -42,7 +51,7 @@
         "repositoryURL": "https://github.com/kenmueller/TextView",
         "state": {
           "branch": "master",
-          "revision": "b6f475e8e0f6caa4249395190b03e66ba826e54b",
+          "revision": "e326e89963278684647ffaca9aa2cc6720b9cbf6",
           "version": null
         }
       }

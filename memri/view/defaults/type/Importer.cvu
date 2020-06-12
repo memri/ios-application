@@ -106,6 +106,8 @@ Importer[] {
             VStack{
                 maxWidth: 60
                 maxHeight: 60
+                padding: 20 0 0 0
+                
                 Image {
                     show: {{.icon}}
                     systemname: {{.icon}}

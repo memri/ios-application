@@ -87,7 +87,7 @@ ImporterInstance {
             
             HStack{
                 align: center
-                padding: 8 0 0 0
+                padding: 30 0 0 0
                 
                 Image {
                     align: center

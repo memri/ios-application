@@ -1,5 +1,5 @@
 .choose-item-by-query{
-    title: {{ title or "Choose a {type}" }}
+    title: {{ title }} /*or "Choose a {type}" }}*/
     editMode: true
     
     [datasource = pod] {

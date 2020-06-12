@@ -54,12 +54,18 @@ public class Datasource: Object, UniqueString {
     }
     
     public class func fromCVUDefinition(_ def:CVUParsedDatasourceDefinition,
-                                        _ viewArguments: ViewArguments? = nil) throws -> Datasource {
+                                        _ viewArguments: ViewArguments?) throws -> Datasource {
         
         func getValue<T>(_ name:String) throws -> T? {
             if let expr = def[name] as? Expression{
-                let x:T? = try expr.execForReturnType(viewArguments)
-                return x
+                do {
+                    let x:T? = try expr.execForReturnType(viewArguments)
+                    return x
+                }
+                catch let error {
+                    errorHistory.warn("\(error)")
+                    return nil
+                }
             }
             return def[name] as? T
         }

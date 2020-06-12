@@ -183,7 +183,7 @@ public enum ActionFamily: String, CaseIterable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        addSelectionToList, closePopup, noop
+        addSelectionToList, closePopup, setProperty, multiAction, noop
 
     func getType() -> Action.Type {
         switch self {
@@ -207,6 +207,9 @@ public enum ActionFamily: String, CaseIterable {
         case .openSession: return ActionOpenSession.self
         case .openSessionByName: return ActionOpenSessionByName.self
         case .closePopup: return ActionClosePopup.self
+        case .addSelectionToList: return ActionAddSelectionToList.self
+        case .setProperty: return ActionSetProperty.self
+        case .multiAction: return ActionMultiAction.self
         case .noop: fallthrough
         default: return ActionNoop.self
         }
@@ -686,7 +689,7 @@ class ActionBackAsSession : Action, ActionExec {
 
 class ActionOpenSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["session": Session.self, "viewArguments": [String:Any]?.self],
+        "argumentTypes": ["session": Session.self, "viewArguments": ViewArguments?.self],
         "opensView": true,
     ]}
     
@@ -743,7 +746,7 @@ class ActionOpenSession : Action, ActionExec {
 // TODO How to deal with viewArguments in sessions
 class ActionOpenSessionByName : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["name": String.self, "viewArguments": [String:Any]?.self],
+        "argumentTypes": ["name": String.self, "viewArguments": ViewArguments?.self],
         "opensView": true,
     ]}
     
@@ -932,6 +935,33 @@ class ActionClosePopup : Action, ActionExec {
     }
 }
 
+class ActionAddSelectionToList : Action, ActionExec {
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "addSelectionToList", arguments:arguments, values:values)
+    }
+    
+    // TODO
+    func exec(_ arguments:[String: Any]) throws {
+//        if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
+//            if let propName = arguments["property"] as? String {
+//                if let dataItem = arguments["dataItem"] {
+//                    sourceDataItem.set(propName, dataItem) // TODO also add to a list
+//                    context.scheduleUIUpdate{_ in true}
+//                    return
+//                }
+//            }
+//        }
+//        else{
+//            // TODO error handling
+//            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
+//        }
+    }
+    
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
+    }
+}
+
 class ActionSetProperty : Action, ActionExec {
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(context, "setProperty", arguments:arguments, values:values)
@@ -951,6 +981,37 @@ class ActionSetProperty : Action, ActionExec {
             // TODO error handling
             throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
         }
+    }
+    
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
+    }
+}
+
+class ActionMultiAction : Action, ActionExec {
+    override var defaultValues:[String:Any] {[
+        "argumentTypes": ["actions": [Action].self],
+        "opensView": true
+    ]}
+    
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "multiAction", arguments:arguments, values:values)
+    }
+    
+    func exec(_ arguments:[String: Any]) throws {
+//        if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
+//            if let propName = arguments["property"] as? String {
+//                if let dataItem = arguments["dataItem"] {
+//                    sourceDataItem.set(propName, dataItem) // TODO also add to a list
+//                    context.scheduleUIUpdate{_ in true}
+//                    return
+//                }
+//            }
+//        }
+//        else{
+//            // TODO error handling
+//            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
+//        }
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
