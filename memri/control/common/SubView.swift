@@ -41,7 +41,7 @@ public struct SubView : View {
             ]
             
             if let sourceDef = viewDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-                values["datasource"] = try Datasource.fromCVUDefinition(sourceDef)
+                values["datasource"] = try Datasource.fromCVUDefinition(sourceDef, args)
             }
             
             let view = SessionView(value: values)
