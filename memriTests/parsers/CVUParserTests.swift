@@ -266,8 +266,8 @@ class CVUParserTests: XCTestCase {
         let snippet = """
         Person {
             sequence: [
-                showOverlay { title: "{$sharewith}" }
-                addToPanel { title: "{$addtolist}" }
+                openViewByName { title: "{$sharewith}" }
+                toggleEditMode { title: "{$addtolist}" }
                 duplicate { title: "{$duplicate} {type}" }
             ]
 
@@ -279,10 +279,10 @@ class CVUParserTests: XCTestCase {
         Person {
             key: "value"
             sequence: [
-                showOverlay {
+                openViewByName {
                     title: "{$sharewith}"
                 }
-                addToPanel {
+                toggleEditMode {
                     title: "{$addtolist}"
                 }
                 duplicate {
@@ -584,12 +584,13 @@ class CVUParserTests: XCTestCase {
             VStack {
                 font: 14
                 alignment: left
-                
+
                 Text {
                     textAlign: center
                     align: top
                     font: 12 light
                 }
+
                 Text {
                     maxHeight: 500
                     border: #ff0000 1
@@ -598,6 +599,8 @@ class CVUParserTests: XCTestCase {
             }
         }
         """
+        
+        print(try parseToCVUString(snippet))
         
         XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
