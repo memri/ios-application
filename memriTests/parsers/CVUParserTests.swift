@@ -614,7 +614,24 @@ class CVUParserTests: XCTestCase {
         }
         """
         
-        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            VStack {
+                alignment: left
+
+                Text {
+                    font: 12 light
+                }
+
+                Spacer
+
+
+                Text {
+                    maxheight: 500
+                }
+            }
+        }
+        """)
     }
     
     func testSerialization() throws {
@@ -701,6 +718,25 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
+    func testMultipleActions() throws {
+        let snippet = """
+        Person {
+            [renderer = list] {
+                press: [
+                    addSelectionToList {
+                        arguments: {
+                            property: {{property}}
+                            dataItem: {{dataItem}}
+                        }
+                    }
+                    closePopup
+                ]
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
     
 
     func testErrorMissingCurlBracketClose() throws {

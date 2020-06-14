@@ -249,21 +249,21 @@ struct GeneralEditorSection: View {
     
     func getHeader(_ isArray: Bool) -> some View {
         let editMode = self.context.currentSession.editMode
-        let className = (self.item.objectSchema[groupKey]?.objectClassName ?? "").lowercased()
+        let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         
         let action = isArray && editMode && !readOnly
             ? ActionOpenViewByName(context,
                 arguments: [
                     "name": "choose-item-by-query",
-                    "arguments": [
+                    "viewArguments": ViewArguments([
                         "query": className,
                         "type": className,
                         "actionName": "addSelectionToList",
                         "actionArgs": "", // [self.item, groupKey],
-                        "title": "Add Selected",
+                        "title": "Choose a \(className)",
                         "dataItem": item
-                    ]
+                    ])
                 ],
                 values: [
                     "icon": "plus",

@@ -41,8 +41,7 @@ extension MemriContext {
              Ephemeral views are removed from session when one navigates away from them.
     */
     
-    private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
-        // Build arguments dict
+    private func buildArguments(_ action:Action, _ dataItem:DataItem?) throws -> [String: Any] {
         var args = [String: Any]()
         for (argName, inputValue) in action.arguments {
             var argValue: Any?
@@ -136,6 +135,13 @@ extension MemriContext {
         
         // Last element of arguments array is the context data item
         args["dataItem"] = dataItem ?? cascadingView.resultSet.singletonItem as Any
+        
+        return args
+    }
+    
+    private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
+        // Build arguments dict
+        let args = try buildArguments(action, dataItem)
         
         if action.getBool("opensView") {
             if let action = action as? ActionExec {
