@@ -600,8 +600,6 @@ class CVUParserTests: XCTestCase {
         }
         """
         
-        print(try parseToCVUString(snippet))
-        
         XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
