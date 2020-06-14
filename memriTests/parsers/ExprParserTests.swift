@@ -296,6 +296,7 @@ class ExprParserTests: XCTestCase {
             let lexer = ExprLexer(input: snippet, startInStringMode: true)
             let tokens = try lexer.tokenize()
             let parser = ExprParser(tokens)
+            print(try parser.parse())
             _ = try parser.parse()
         }
         catch let ExprParseErrors.ExpectedExpression(token) {
