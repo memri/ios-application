@@ -112,7 +112,7 @@ public class ExprLexer {
             
             if isMode.rawValue >= Mode.string.rawValue {
                 if isMode == .string
-                  && (c == startChar || startInStringMode && c == "{") {
+                  && (c == startChar || startChar == nil && startInStringMode && c == "{") {
                     if keyword.count > 0 || i > 0 || c != "{" {
                         addToken(.String(keyword.joined(), i))
                     }
