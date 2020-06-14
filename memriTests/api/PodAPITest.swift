@@ -47,8 +47,8 @@ class PodAPITest: XCTestCase {
         let item = DataItem()
         let expectation = self.expectation(description: "create")
         
-        testPodAPI.create(item) { error, memriID in
-            XCTAssertNotNil(memriID)
+        testPodAPI.create(item) { error, uid in
+            XCTAssertNotNil(uid)
             XCTAssertNil(error)
             expectation.fulfill()
         }
@@ -56,16 +56,16 @@ class PodAPITest: XCTestCase {
     }
     
     func testPodGet() {
-        let item = DataItem()
+        let item = Note()
         let expectationCreate = self.expectation(description: "Create2")
         let expectationGet = self.expectation(description: "Get2")
 
         
-        testPodAPI.create(item) { error, memriID in
-            XCTAssertNotNil(memriID)
+        testPodAPI.create(item) { error, uid in
+            XCTAssertNotNil(uid)
             XCTAssertNil(error)
             
-            self.testPodAPI.get(memriID as! String) { error, dataItem in
+            self.testPodAPI.get(item.memriID) { error, dataItem in
                 
                 XCTAssertNotNil(dataItem)
                 XCTAssertNil(error)
