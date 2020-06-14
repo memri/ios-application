@@ -37,17 +37,6 @@ class SyncState: Object, Codable {
         super.init()
     }
 }
-/*
- Sync notes:
-    - It probably needs a hook for MemriContext to update the view when data that is being displayed is updated
-        - How does MemriContext know which data is displayed?
-        - Because the cascadingView.resultSet would be updated
-        - Perhaps it's best to put an event on the resultSet??
-    - It should also ask the server if there are any changes since the last check time
-    - It should also periodically look at the updated sync states and update the related objects
-        - This could be optimized by storing the type and uid of the data item in the syncstate
- */
-
 
 /// Based on a query, Sync checks whether it still has the latest version of the resulting DataItems. It does this asynchronous and in the
 /// background, items are updated automatically.
