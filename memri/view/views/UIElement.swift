@@ -108,7 +108,7 @@ public class UIElement : CVUToString {
         var outText = text
         let maxChar:CGFloat? = get("maxChar")
         
-        outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
+        outText = get("removeWhiteSpace") ?? false ? removeWhiteSpace(text: text) : text
         outText = maxChar != nil ? String(outText.prefix(Int(maxChar ?? 0))) : outText
         
         return outText
