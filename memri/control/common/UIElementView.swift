@@ -215,6 +215,10 @@ public struct UIElementView: SwiftUI.View {
                     self.renderTextfield()
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
+                else if from.type == .RichTextfield {
+                    self.renderRichTextfield()
+                        .setProperties(from.properties, self.item, context, self.viewArguments)
+                }
                 else if from.type == .ItemCell {
                     // TODO Refactor fix this
     //                ItemCell(
@@ -356,6 +360,27 @@ public struct UIElementView: SwiftUI.View {
     func logWarning(_ message:String) -> some View {
         print (message)
         return EmptyView()
+    }
+    
+    func renderRichTextfield() -> some View {
+        let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
+        
+        return Group {
+            if propName == "" {
+                Text("Invalid property value set on TextField")
+            }
+            else {
+//                let binding = Binding<String>(
+//                    get: { dataItem.getString(propName) },
+//                    set: { dataItem.set(propName, $0) }
+//                )
+                
+//                self.get("hint") ?? ""
+                
+                _RichTextEditor(dataItem: dataItem, filterText: $context.cascadingView.filterText)
+                    .generalEditorInput()
+            }
+        }
     }
     
     func renderTextfield() -> some View {

@@ -142,6 +142,7 @@ class File:DataItem {
     
     private func readData() -> Data? {
         let path = getPath()
+        if path == "" { return nil } // TODO reporting??
 
 //        let databuffer = FileManager.default.contents(atPath: path)
         
@@ -161,7 +162,7 @@ class File:DataItem {
             }
         }
         
-        if let data = readFromPath(path){
+        if let data = readFromPath(path) {
             return data
         }
         else {

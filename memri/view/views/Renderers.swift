@@ -43,6 +43,7 @@ public class Renderers {
     init() {
         if allRenderers == nil { allRenderers = self }
         
+        registerCustom()
         registerList()
         registerGeneralEditor()
         registerThumbnail()
