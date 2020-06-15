@@ -259,8 +259,8 @@ struct GeneralEditorSection: View {
                     "viewArguments": ViewArguments([
                         "query": className,
                         "type": className,
-                        "actionName": "addSelectionToList",
-                        "actionArgs": "", // [self.item, groupKey],
+                        "subject": item,
+                        "property": groupKey,
                         "title": "Choose a \(className)",
                         "dataItem": item
                     ])

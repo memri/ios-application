@@ -93,13 +93,15 @@ public class UIElement : CVUToString {
         return nil
     }
     
-    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, DataItem, String) {
+    public func getType(_ propName:String, _ item:DataItem,
+                        _ viewArguments:ViewArguments) -> (PropertyType, DataItem, String) {
+        
         if let prop = properties[propName] {
             let propValue = prop
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
-                do { return try expr.getTypeOfDataItem() }
+                do { return try expr.getTypeOfDataItem(viewArguments) }
                 catch {
                     // TODO Refactor: Error Handling
                     errorHistory.error("could not get type of \(item)")

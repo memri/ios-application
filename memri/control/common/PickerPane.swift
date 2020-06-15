@@ -70,37 +70,43 @@ struct PickerPane: View {
             context: self.context,
             view: SessionView(value: [
                 "datasource": datasource,
-                "title": title,
                 "userState": UserState([
-                    "selection": ["type": self.item.genericType, "memriID": self.item.memriID]
+                    "selection": [["type": item.genericType, "memriID": item.memriID]]
                 ]),
                 // "editMode": true // TODO REfactor: also allow edit mode toggle on session view
                 // TODO REfactor: allow only 1 or more selected items
-                "renderDescriptions": [
-                    CVUParsedRendererDefinition(#"[renderer = "list"]"#,
-                        parsed: ["press": [
-                            ActionSetProperty(context,
-                                              arguments: [
-                                                "sourceDataItem": self.propDataItem,
-                                                "property": self.propName
-                                              ]),
-                            ActionClosePopup(context)
-                        ]]
-                    ),
-                    CVUParsedRendererDefinition(#"[renderer = "thumbnail"]"#,
-                        parsed: ["press": [
-                            ActionSetProperty(context,
-                                              arguments: [
-                                                "sourceDataItem": self.propDataItem,
-                                                "property": self.propName
-                                              ]),
-                            ActionClosePopup(context)
-                        ]]
-                    )
-                ]
+                "viewDefinition": CVUStoredDefinition(value: ["definition": """
+                    [view] {
+                        title: "\(title)"
+                        
+                        [renderer = list] {
+                            press: [
+                                setProperty {
+                                    arguments {
+                                        subject: {{subject}}
+                                        property: \(propName)
+                                    }
+                                }
+                                closePopup
+                            ]
+                        }
+                        
+                        [renderer = thumbnail] {
+                            press: [
+                                setProperty {
+                                    arguments {
+                                        subject: {{subject}}
+                                        property: \(propName)
+                                    }
+                                }
+                                closePopup
+                            ]
+                        }
+                    }
+                """])
             ]),
             dataItem: self.item,
-            args: ViewArguments(["showCloseButton": true])
+            args: ViewArguments(["showCloseButton": true, "subject": propDataItem])
         )
     }
 }

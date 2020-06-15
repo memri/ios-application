@@ -40,7 +40,7 @@ public class Action : HashableClass, CVUToString {
     ]
     var values:[String:Any?] = [:]
     
-    let context:MemriContext
+    var context:MemriContext
     
     func isActive() -> Bool? {
         if let binding = binding {
@@ -689,7 +689,7 @@ class ActionBackAsSession : Action, ActionExec {
 
 class ActionOpenSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["session": Session.self, "viewArguments": ViewArguments?.self],
+        "argumentTypes": ["session": Session.self, "viewArguments": ViewArguments.self],
         "opensView": true,
     ]}
     
@@ -746,7 +746,7 @@ class ActionOpenSession : Action, ActionExec {
 // TODO How to deal with viewArguments in sessions
 class ActionOpenSessionByName : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["name": String.self, "viewArguments": ViewArguments?.self],
+        "argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
         "opensView": true,
     ]}
     
@@ -936,25 +936,50 @@ class ActionClosePopup : Action, ActionExec {
 }
 
 class ActionAddSelectionToList : Action, ActionExec {
+    override var defaultValues:[String:Any] {[
+        "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
+    ]}
+    
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(context, "addSelectionToList", arguments:arguments, values:values)
     }
     
-    // TODO
     func exec(_ arguments:[String: Any]) throws {
-//        if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
-//            if let propName = arguments["property"] as? String {
-//                if let dataItem = arguments["dataItem"] {
-//                    sourceDataItem.set(propName, dataItem) // TODO also add to a list
-//                    context.scheduleUIUpdate{_ in true}
-//                    return
-//                }
-//            }
-//        }
-//        else{
-//            // TODO error handling
-//            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
-//        }
+        do {
+            if let subject = arguments["subject"] as? DataItem {
+                if let propertyName = arguments["property"] as? String {
+                    if let selected = arguments["dataItem"] as? DataItem {
+                        // Check that the property exists to avoid hard crash
+                        if subject.objectSchema[propertyName] == nil {
+                            throw "Exception: Invalid property access of \(propertyName) for \(subject)"
+                        }
+                        
+                        // Get list and append
+                        let family = DataItemFamily(rawValue: selected.genericType)
+                        var list = family?.getCollection(subject[propertyName] as Any)
+                        
+                        list?.append(selected)
+                    
+                        subject.set(propertyName, list as Any)
+                        
+                        return
+                    }
+                    else {
+                        throw "Exception: selected data item is not passed"
+                    }
+                }
+                else {
+                    throw "Exception: property is not set to a string"
+                }
+            }
+            else {
+                throw "Exception: subject is not set"
+            }
+        }
+        catch let error {
+            // TODO error handling
+            throw error
+        }
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
@@ -963,23 +988,43 @@ class ActionAddSelectionToList : Action, ActionExec {
 }
 
 class ActionSetProperty : Action, ActionExec {
+    override var defaultValues:[String:Any] {[
+        "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
+    ]}
+    
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(context, "setProperty", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
-            if let propName = arguments["property"] as? String {
-                if let dataItem = arguments["dataItem"] {
-                    sourceDataItem.set(propName, dataItem) // TODO also add to a list
-                    context.scheduleUIUpdate{_ in true}
-                    return
+        do {
+            if let subject = arguments["subject"] as? DataItem {
+                if let propertyName = arguments["property"] as? String {
+                    if let selected = arguments["dataItem"] as? DataItem {
+                        // Check that the property exists to avoid hard crash
+                        if subject.objectSchema[propertyName] == nil {
+                            throw "Exception: Invalid property access of \(propertyName) for \(selected)"
+                        }
+                        
+                        subject.set(propertyName, selected)
+                        
+                        return
+                    }
+                    else {
+                        throw "Exception: selected data item is not passed"
+                    }
+                }
+                else {
+                    throw "Exception: property is not set to a string"
                 }
             }
+            else {
+                throw "Exception: subject is not set"
+            }
         }
-        else{
+        catch let error {
             // TODO error handling
-            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
+            throw error
         }
     }
     
@@ -999,19 +1044,15 @@ class ActionMultiAction : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-//        if let sourceDataItem = arguments["sourceDataItem"] as? DataItem {
-//            if let propName = arguments["property"] as? String {
-//                if let dataItem = arguments["dataItem"] {
-//                    sourceDataItem.set(propName, dataItem) // TODO also add to a list
-//                    context.scheduleUIUpdate{_ in true}
-//                    return
-//                }
-//            }
-//        }
-//        else{
-//            // TODO error handling
-//            throw "Cannot execute ActionSetProperty: no sourceDataItem passed in arguments"
-//        }
+        if let actions = arguments["actions"] as? [Action] {
+            for action in actions {
+                self.context.executeAction(action, with: arguments["dataItem"] as? DataItem)
+            }
+        }
+        else {
+            // TODO error handling
+            throw "Cannot execute ActionMultiAction: no actions passed in arguments"
+        }
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {

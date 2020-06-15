@@ -80,7 +80,9 @@ public struct SubView : View {
         
         // NOTE: Allowed force unwrap
         self.proxyMain = (context as! RootContext).createSubContext(session)
-        do { try self.proxyMain!.updateCascadingView() }
+        do {
+            try self.proxyMain!.updateCascadingView()
+        }
         catch {
             // TODO Refactor error handling
             print("Error: cannot init subview, failed to update CascadingView: \(error)")

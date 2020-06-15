@@ -447,7 +447,7 @@ public struct UIElementView: SwiftUI.View {
     }
     
     func renderTextfield() -> some View {
-        let (type, dataItem, propName) = from.getType("value", self.item)
+        let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
         let rows:CGFloat = self.get("rows") ?? 2
         
         return Group {
@@ -497,22 +497,18 @@ public struct UIElementView: SwiftUI.View {
     
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
-        let (_, propDataItem, propName) = from.getType("value", self.item)
-        let datasource:[String:Any] = self.get("datasource") ?? [:] // TODO refactor error handling
+        let (_, propDataItem, propName) = from.getType("value", self.item, self.viewArguments)
+        let datasourceDef = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition
         let emptyValue = self.get("empty") ?? "Pick a value"
         
         return Picker(
             item: self.item,
             selected: dataItem ?? self.get("defaultValue"),
-            title: "Select a \(emptyValue)",
+            title: self.get("title") ?? "Select a \(emptyValue)",
             emptyValue: emptyValue,
             propDataItem: propDataItem,
             propName: propName,
-            datasource: Datasource(value: [
-                "query": datasource["query"],
-                "sortProperty": datasource["sortProperty"],
-                "sortAscending": datasource["sortAscending"]
-            ])
+            datasource: try! Datasource.fromCVUDefinition(datasourceDef!, self.viewArguments)
         )
     }
     

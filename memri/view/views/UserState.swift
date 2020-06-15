@@ -16,18 +16,14 @@ public class UserState: Object {
     func get<T>(_ propName:String) -> T? {
         let dict = self.asDict()
         
-        if T.self == DataItem.self {
-            if let lookup = dict[propName] as? [String:Any?] {
-                if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
-                    let realm = try! Realm() // TODO Fix
-                    let x:DataItem? = realm.object(
-                        ofType: DataItemFamily.getType(type)() as! DataItem.Type,
-                        forPrimaryKey: lookup["memriID"] as? String ?? "")
-                    return x as? T
-                }
+        if let lookup = dict[propName] as? [String:Any?], lookup["memriID"] != nil {
+            if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
+                let realm = try! Realm() // TODO Fix
+                let x:DataItem? = realm.object(
+                    ofType: DataItemFamily.getType(type)() as! DataItem.Type,
+                    forPrimaryKey: lookup["memriID"] as? String ?? "")
+                return x as? T
             }
-            
-            return nil
         }
         else if dict[propName] == nil {
             return nil
