@@ -104,6 +104,10 @@ class Sync {
         }
     }
     
+    public func clearSyncCache(){
+        recentQueries = [:]
+    }
+    
     private func prioritySyncAll() {
         //
         if !backgroundSyncing {

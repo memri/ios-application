@@ -77,6 +77,17 @@ struct SettingsPane: View {
                                     .frame(width: 100, alignment: .leading)
                                 SecureField("Password", text: getBinding("/user/pod/password"))
                             }
+                            HStack {
+                                Button (action: {
+                                    if let datasource = self.context.cascadingView.sessionView.datasource {
+                                        self.context.cache.sync.clearSyncCache()
+                                        self.context.cache.sync.syncQuery(datasource)
+                                    }
+                                }) {
+                                    Text("Connect")
+                                }
+                            }
+                            .padding(.top, 10)
                         }
                     }
                 }) {
