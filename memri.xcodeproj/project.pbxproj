@@ -141,7 +141,6 @@
 		861439F62435AF91008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
 		86229DCC243508B00013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		86229DCD243509F60013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
-		862A934F24435372005E06A6 /* default_navigation_full.json in Sources */ = {isa = PBXBuildFile; fileRef = 862A934E24435372005E06A6 /* default_navigation_full.json */; };
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
 		863D0E0424794D8C00DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
 		863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63A24766AA100C0375F /* ExprParserTests.swift */; };
@@ -212,7 +211,6 @@
 		86B7A6782457F28A00292E81 /* KeyboardResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B7A6772457F28A00292E81 /* KeyboardResponder.swift */; };
 		86C3A73524518763006D4F55 /* ItemCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A73424518763006D4F55 /* ItemCell.swift */; };
 		86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7362452BF65006D4F55 /* MemriButton.swift */; };
-		86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
 		86C6D894246EC0AC001B87D0 /* Definitions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C6D893246EC0AC001B87D0 /* Definitions.swift */; };
 		86C6D896246EC33A001B87D0 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86C6D895246EC33A001B87D0 /* Session.swift */; };
 		86CDB46C24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CDB46B24698DB7007EAE67 /* NSAttributedString+SafeReplace.swift */; };
@@ -1636,7 +1634,6 @@
 				5D42A8F7245AF1ED0093D85F /* DataItemTest.swift in Sources */,
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,
-				862A934F24435372005E06A6 /* default_navigation_full.json in Sources */,
 				5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */,
 				5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */,
 				5D78D06E242512FB00F7BD3B /* NavigationTest.swift in Sources */,
@@ -1646,7 +1643,6 @@
 				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,
 				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
 				5DB8EC0B24599A080028FD2E /* ComputedViewTest.swift in Sources */,
-				86C3A73A2452FFD4006D4F55 /* default_database.json in Sources */,
 				5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

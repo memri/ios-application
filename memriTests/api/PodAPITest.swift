@@ -52,7 +52,7 @@ class PodAPITest: XCTestCase {
             XCTAssertNil(error)
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testPodGet() {
@@ -79,7 +79,7 @@ class PodAPITest: XCTestCase {
         
         
         
-        waitForExpectations(timeout: 1, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     
