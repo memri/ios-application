@@ -7,33 +7,6 @@
 import Foundation
 import SwiftUI
 
-/*
- TODO:
-    - datasource (cascading, etc)
-    - case insensitive fields for definition
-    - include
-    - when looking for an array but there is only one element, wrap it in an array (while cascading)
-        - or when a known field do this during parsing
-    - support for array of actions in a single trigger (e.g. press)
-*/
-
-    
-    // TODO REFACTOR: Move to parser
-//    public func validate() throws {
-//        if self.rendererName == "" { throw("Property 'rendererName' is not defined in this view") }
-//
-//        let renderProps = self.renderConfigs.objectSchema.properties
-//        if renderProps.filter({ (property) in property.name == self.rendererName }).count == 0 {
-////            throw("Missing renderConfig for \(self.rendererName) in this view")
-//            print("Warn: Missing renderConfig for \(self.rendererName) in this view")
-//        }
-//
-//        if self.datasource.query == "" { throw("No query is defined for this view") }
-//        if self.actionButton == nil && self.editActionButton == nil {
-//            print("Warn: Missing action button in this view")
-//        }
-//    }
-
 class CVUValidator {
     // Based on keyword when its added to the dict
     let knownActions:[String:String] = {

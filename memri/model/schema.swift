@@ -36,7 +36,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case typeMedicalCondition = "MedicalCondition"
     case typeSession = "Session"
     case typeSessionView = "SessionView"
-    case typeStoredCVUDefinition = "ViewDSLDefinition"
+    case typeCVUStoredDefinition = "CVUStoredDefinition"
     case typeImporter = "Importer"
     case typeIndexer = "Indexer"
     case typeImporterInstance = "ImporterInstance"
@@ -67,7 +67,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return Color(hex: "#3dc8e2")
         case .typeSession: return Color(hex: "#93c47d")
         case .typeSessionView: return Color(hex: "#93c47d")
-        case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
+        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
         case .typeImporter: return Color(hex: "#93c47d")
         case .typeIndexer: return Color(hex: "#93c47d")
         case .typeImporterInstance: return Color(hex: "#93c47d")
@@ -142,7 +142,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return MedicalCondition.self
         case .typeSession: return Session.self
         case .typeSessionView: return SessionView.self
-        case .typeStoredCVUDefinition: return CVUStoredDefinition.self
+        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
         case .typeImporter: return Importer.self
         case .typeIndexer: return Indexer.self
         case .typeImporterInstance: return ImporterInstance.self

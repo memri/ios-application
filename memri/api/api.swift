@@ -83,10 +83,37 @@ public class PodAPI {
     
     private func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         let className = item.objectSchema[prop]?.objectClassName
-        // TODO TEMP FIX
-        let family = DataItemFamily(rawValue: className!)!
-//        let family = DataItemFamily(rawValue: className!.lowercased())!
-        return family.getCollection(item[prop] as Any)
+        
+        if className == "Edge" {
+            let realm = try! Realm()
+            var result = [DataItem]()
+            
+            if let list = item[prop] as? List<Edge> {
+                for edge in list {
+                    if let family = DataItemFamily(rawValue: edge.objectType) {
+                        let item = realm.object(ofType: family.getType() as! Object.Type,
+                                                forPrimaryKey: edge.objectMemriID)
+                        result.append(item as! DataItem)
+                    }
+                }
+                
+                return result
+            }
+            else {
+                // TODO error
+                return []
+            }
+        }
+        else if className == "DataItem" {
+            // Unsupported
+            return []
+        }
+        else {
+            // TODO TEMP FIX
+            let family = DataItemFamily(rawValue: className!)!
+    //        let family = DataItemFamily(rawValue: className!.lowercased())!
+            return family.getCollection(item[prop] as Any)
+        }
     }
     
     private let MAXDEPTH = 2
