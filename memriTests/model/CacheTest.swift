@@ -31,7 +31,7 @@ class CacheTest: XCTestCase {
     
     func testGetItem(){
         testCache.install()
-        XCTAssertEqual(testCache.getItemById("Country", "Aruba")?.getString("name"), "Aruba")
+        XCTAssertEqual(getDataItem("Country", "Aruba")?.getString("name"), "Aruba")
     }
     
     func testEmptyQuery() {
