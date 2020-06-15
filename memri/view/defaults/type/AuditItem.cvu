@@ -8,19 +8,19 @@
 }
 
 AuditItem[] {
-    name: "all-audititems"
     title: "All Log Entries"
-     [datasource = pod] {
-        query: "audititem"
-        sortProperty: date
-        sortAscending: false
-    }
     emptyResultText: "There are no log entries here yet"
     sortFields: date
     defaultRenderer: list
     
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
+    
+    [datasource = pod] {
+        query: "audititem"
+        sortProperty: date
+        sortAscending: false
+    }
     
     [renderer = list]{
         VStack {
