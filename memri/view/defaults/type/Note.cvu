@@ -9,7 +9,7 @@
 
 Note {
     title: "{.title}"
-    defaultRenderer: richTextEditor
+    defaultRenderer: custom /*richTextEditor*/
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
@@ -76,6 +76,29 @@ Note {
             name: "all-notes"
         }
     ]
+    
+    [renderer = custom] {
+        VStack {
+            padding: 10
+            spacing: 5
+
+            Textfield {
+                value: {{.title}}
+                hint: "Enter a title"
+/*                color: lightInputText*/
+                maxHeight: 50
+                border: #ff0 0
+                font: 14 semibold
+            }
+            RichTextfield {
+                value: {{.textContent}}
+/*                color: inputText*/
+                border: #ff0 0
+                padding: 0
+                font: 12 regular
+            }
+        }
+    }
 }
 
 Note[] {

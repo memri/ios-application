@@ -217,7 +217,6 @@ Person {
                         align: center
                         maxWidth: 140
                         maxHeight: 140
-                        stop222: true
                         show: {{!readOnly}}
                     
                         Button {
