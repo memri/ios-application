@@ -1,4 +1,4 @@
-.choose-item-by-query{
+.choose-item-by-query {
     title: {{ title }} /*or "Choose a {type}" }}*/
     editMode: true
     
@@ -19,7 +19,7 @@
         press: [
             addSelectionToList {
                 arguments {
-                    dataItem: {{dataItem}}
+                    subject: {{subject}}
                     property: {{property}}
                 }
             }

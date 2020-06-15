@@ -13,19 +13,52 @@ public class Cascadable {
     var cascadeStack: [CVUParsedDefinition]
     var localCache = [String:Any?]()
     
-    func cascadeProperty<T>(_ name:String) -> T? {
-        if let expr = localCache[name] as? Expression {
-            do { return try expr.execForReturnType(viewArguments) }
-            catch let error {
-                errorHistory.error("\(error)")
-                return nil
+    private func execExpression<T>(_ expr:Expression) -> T? {
+        do {
+            let x:Any? = try expr.execForReturnType(viewArguments)
+            let value:T? = transformActionArray(x)
+            if value == nil { return nil }
+            else { return value }
+        }
+        catch let error {
+            errorHistory.error("\(error)")
+            return nil
+        }
+    }
+    
+    private func transformActionArray<T>(_ value:Any?) -> T? {
+        var result:[Any?] = []
+        if let inspect = value as? [Any?] {
+            for v in inspect {
+                if let expr = v as? Expression {
+                    let x:Any? = execExpression(expr)
+                    result.append(x)
+                }
+                else {
+                    result.append(v)
+                }
             }
         }
         
-        if localCache[name] != nil {
-            return localCache[name] as? T
+        if result.count > 0 {
+            if let value = result as? [Action], T.self == Action.self {
+                return (ActionMultiAction(value[0].context, arguments: ["actions": value]) as? T)
+            }
+            
+            return result as? T
+        }
+        else { return value as? T }
+    }
+    
+    func cascadeProperty<T>(_ name:String) -> T? {
+        if let expr = localCache[name] as? Expression {
+            return execExpression(expr)
         }
         
+        if localCache[name] != nil {
+            return transformActionArray(localCache[name])
+        }
+
         for def in cascadeStack {
             if let expr = def[name] as? Expression {
                 localCache[name] = expr
@@ -33,12 +66,13 @@ public class Cascadable {
             }
             if def[name] != nil {
                 localCache[name] = def[name]
-                return def[name] as? T
+                return transformActionArray(def[name])
             }
         }
-        
+
         return nil
     }
+
     
     
     // TODO support deleting items

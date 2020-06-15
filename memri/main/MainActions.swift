@@ -54,8 +54,13 @@ extension MemriContext {
                 argValue = inputValue
             }
             
-            var finalValue:Any = ""
-            if let dict = argValue as? [String: Any] {
+            var finalValue:Any? = ""
+            
+            // TODO add cases for argValue = DataItem, ViewArgument
+            if let dataItem = argValue as? DataItem {
+                finalValue = dataItem
+            }
+            else if let dict = argValue as? [String: Any] {
                 if action.argumentTypes[argName] == ViewArguments.self {
                     finalValue = ViewArguments(dict)
                 }
@@ -126,8 +131,15 @@ extension MemriContext {
             else if action.argumentTypes[argName] == Double.self {
                 finalValue = ExprInterpreter.evaluateNumber(argValue)
             }
+            else if action.argumentTypes[argName] == [Action].self {
+                finalValue = argValue ?? []
+            }
+            // TODO are nil values allowed?
+            else if argValue == nil {
+                finalValue = nil
+            }
             else {
-                throw "Does not recognize argumentType \(argName)"
+                throw "Does not recognize argumentType \(argName):\(action.argumentTypes[argName] ?? Void.self)"
             }
             
             args[argName] = finalValue
@@ -142,6 +154,10 @@ extension MemriContext {
     private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil) throws {
         // Build arguments dict
         let args = try buildArguments(action, dataItem)
+        
+        // TODO security implications down the line. How can we prevent leakage? Caching needs to be
+        //      per context
+        action.context = self
         
         if action.getBool("opensView") {
             if let action = action as? ActionExec {

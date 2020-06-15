@@ -349,6 +349,7 @@ public class CascadingView: Cascadable, ObservableObject {
                         if let d = d as? String { activeRenderer = d }
                         else {
                             // TODO ERror logging
+                            errorHistory.error("Could not fnd default renderer")
                         }
                     }
                     
@@ -356,10 +357,17 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else {
                     // TODO Error logging
+                    errorHistory.error("Could not parse definition")
                 }
             }
-            catch {
+            catch let error {
                 // TODO Error logging
+                if let error = error as? CVUParseErrors {
+                    errorHistory.error("\(error.toString(def?.definition ?? ""))")
+                }
+                else {
+                    errorHistory.error("\(error)")
+                }
             }
         }
         
