@@ -405,7 +405,8 @@ struct DefaultGeneralEditorRow: View {
                     }
                     else if propType == .object {
                         if self.item[self.prop] is DataItem {
-                            MemriButton(context:self._context, item:self.item[self.prop] as! DataItem)
+                            MemriButton(context: self._context,
+                                        item: self.item[self.prop] as! DataItem)
                         }
                         else {
                             defaultRow()

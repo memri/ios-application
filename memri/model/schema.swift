@@ -116,30 +116,29 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
         else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
         else if let list = object as? List<Edge> {
-            let realm = try! Realm()
-            
-            for edge in list {
-                let objectType = edge.objectType
-                let objectId = edge.objectMemriID
-                
-                if let family = DataItemFamily(rawValue: objectType),
-                   let type = family.getType() as? Object.Type {
+            withRealm { realm -> Void in
+                for edge in list {
+                    let objectType = edge.objectType
+                    let objectId = edge.objectMemriID
                     
-                    if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? DataItem {
-                        collection.append(item)
+                    if let family = DataItemFamily(rawValue: objectType),
+                       let type = family.getType() as? Object.Type {
+                        
+                        if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? DataItem {
+                            collection.append(item)
+                        }
+                        else {
+                            // TODO Error handling
+                            errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
+                            print("Could not find object of type \(type) with memriID \(objectId)")
+                        }
                     }
                     else {
-                        // TODO Error handling
+                        // TODO user warning
                         errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-                        print("Could not find object of type \(type) with memriID \(objectId)")
+                        print("Unknown type \(objectType) for dataItem \(objectId)")
                     }
                 }
-                else {
-                    // TODO user warning
-                    errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-                    print("Unknown type \(objectType) for dataItem \(objectId)")
-                }
-
             }
         }
 

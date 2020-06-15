@@ -25,7 +25,11 @@ enum CVUParseErrors:Error {
         
         func loc(_ parts:[Any]) -> String {
             if parts[2] as? String == "" { return "at the end of the file" }
-            else { return "at line:\(parts[2] as! Int + 1) and character:\(parts[3] as! Int + 1)" }
+            else {
+                let line = (parts[2] as? Int ?? -2) + 1
+                let char = (parts[3] as? Int ?? -2) + 1
+                return "at line:\(line) and character:\(char)"
+            }
         }
         func displayToken(_ parts:[Any]) -> String {
             "\(parts[0])" + ((parts[1] as? String ?? "x") != "" ? "('\(parts[1])')" : "")

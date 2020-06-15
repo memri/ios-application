@@ -47,13 +47,9 @@ public class UIElement : CVUToString {
                         
                         var result = [DataItem]()
                         if let list = x as? List<Edge> {
-                            let realm = try! Realm()
-                            
                             for edge in list {
-                                if let family = DataItemFamily(rawValue: edge.objectType) {
-                                    result.append(realm.object(
-                                        ofType: family.getType() as! Object.Type,
-                                        forPrimaryKey: edge.objectMemriID) as! DataItem)
+                                if let d = getDataItem(edge) {
+                                    result.append(d)
                                 }
                             }
                         }

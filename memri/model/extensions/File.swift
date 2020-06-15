@@ -61,7 +61,7 @@ class File:DataItem {
     }
     
     public func read<T>() throws -> T?{
-        var cachedData:T? = try InMemoryObjectCache.get(self.uri) as? T
+        var cachedData:T? = InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
         let data = self.readData()

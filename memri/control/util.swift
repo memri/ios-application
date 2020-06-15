@@ -185,16 +185,21 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
 
 func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
                              _ edgeList:RealmSwift.List<Edge>, _ subject: DataItem) {
-    let objects:[T]? = try! decoder.decodeIfPresent(key)
-    if let objects = objects {
-        for object in objects {
-            do { _ = try globalCache?.addToCache(object) }
-            catch {
-                // TODO Error logging
+    do {
+        let objects:[T]? = try decoder.decodeIfPresent(key)
+        if let objects = objects {
+            for object in objects {
+                do { _ = try globalCache?.addToCache(object) }
+                catch {
+                    // TODO Error logging
+                }
+                let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
+                edgeList.append(edge)
             }
-            let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
-            edgeList.append(edge)
         }
+    }
+    catch let error {
+        errorHistory.error("\(error)")
     }
 }
 
@@ -218,4 +223,51 @@ func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     catch let error {
         errorHistory.error("Realm Error: \(error)")
     }
+}
+
+func withRealm(_ doThis:(_ realm:Realm) -> Void){
+    do {
+        let realm = try Realm()
+        doThis(realm)
+    }
+    catch let error {
+        errorHistory.error("\(error)")
+    }
+}
+
+func withRealm(_ doThis:(_ realm:Realm) -> Any?) -> Any? {
+    do {
+        let realm = try Realm()
+        return doThis(realm)
+    }
+    catch let error {
+        errorHistory.error("\(error)")
+    }
+    return nil
+}
+
+/// retrieves item from realm by type and uid.
+/// - Parameters:
+///   - type: realm type
+///   - memriID: item memriID
+/// - Returns: retrieved item. If the item does not exist, returns nil.
+func getDataItem(_ type:String, _ memriID: String) -> DataItem? {
+    let type = DataItemFamily(rawValue: type)
+    if let type = type {
+        let item = DataItemFamily.getType(type)
+        return withRealm { realm in
+            realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID)
+        } as? DataItem
+    }
+    return nil
+}
+
+func getDataItem(_ edge:Edge) -> DataItem? {
+    if let family = DataItemFamily(rawValue: edge.objectType) {
+        return withRealm { realm in
+            realm.object(ofType: family.getType() as! Object.Type,
+                         forPrimaryKey: edge.objectMemriID)
+        } as? DataItem
+    }
+    return nil
 }

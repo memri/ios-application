@@ -85,15 +85,12 @@ public class PodAPI {
         let className = item.objectSchema[prop]?.objectClassName
         
         if className == "Edge" {
-            let realm = try! Realm()
             var result = [DataItem]()
             
             if let list = item[prop] as? List<Edge> {
                 for edge in list {
-                    if let family = DataItemFamily(rawValue: edge.objectType) {
-                        let item = realm.object(ofType: family.getType() as! Object.Type,
-                                                forPrimaryKey: edge.objectMemriID)
-                        result.append(item as! DataItem)
+                    if let d = getDataItem(edge) {
+                        result.append(d)
                     }
                 }
                 
@@ -171,7 +168,13 @@ public class PodAPI {
         }
         
         // TODO refactor: error handling
-        return try! MemriJSONEncoder.encode(AnyCodable(recur(dataItem, 1)))
+        do {
+            return try MemriJSONEncoder.encode(AnyCodable(recur(dataItem, 1)))
+        }
+        catch let error {
+            errorHistory.error("Exception while communicating with the pod: \(error)")
+            return Data()
+        }
     }
     
     /// Retrieves a single data item from the pod
