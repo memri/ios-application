@@ -9,7 +9,7 @@
 
 Note {
     title: "{.title}"
-    defaultRenderer: custom /*richTextEditor*/
+    defaultRenderer: richTextEditor
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
