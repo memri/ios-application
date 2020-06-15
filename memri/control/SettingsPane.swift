@@ -17,8 +17,19 @@ struct SettingsPane: View {
         return Binding<T>(
             get: { () -> T in
                 // TODO: Error handling
-                let x:T = self.context.settings.get(path)!
-                return x
+                if let x:T = self.context.settings.get(path) {
+                    return x
+                }
+                else {
+                    errorHistory.warn("Could not get setting \(path)")
+                    
+                    if T.self == String.self { return "" as! T }
+                    if T.self == Double.self { return 0 as! T }
+                    if T.self == Int.self { return 0 as! T }
+                    if T.self == Bool.self { return false as! T }
+                }
+                
+                return 0 as! T // Should never get here
             },
             set: {
                 self.context.settings.set(path, AnyCodable($0))

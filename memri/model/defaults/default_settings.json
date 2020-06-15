@@ -5,5 +5,5 @@
     "/pod/host": "http://0.0.0.0:3030",
     "/pod/username": "",
     "/pod/password": "",
-    "/debug/autoShowErrorConsole": true
+    "/debug/autoShowErrorConsole": false
 }

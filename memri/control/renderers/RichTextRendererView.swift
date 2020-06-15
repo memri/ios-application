@@ -124,24 +124,30 @@ struct _RichTextEditor: UIViewRepresentable {
     
     
     func search(_ textView: LEOTextView){
-        let regex = try! NSRegularExpression(pattern: context.cascadingView.filterText,
-                                             options: .caseInsensitive)
-        let searchString = textView.nck_textStorage.currentString.string
-
-        let searchRange = NSRange(location: 0, length: searchString.utf16.count)
-        let matches = regex.matches(in: searchString,range: searchRange) as [NSTextCheckingResult]
+        do {
+            let regex = try NSRegularExpression(pattern: context.cascadingView.filterText,
+                                                options: .caseInsensitive)
         
-        self.context.cascadingView.searchMatchText = "(" + String(matches.count) + ") matches"
-        
-        // TODO: set cursor to new position: this is probably challenging as it has to defocus from
-        // the searcharea. We could do something like this
-//        if let newPosition = textView.position(from: matches[0], offset: 0) {
-//           textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
-//        }
-                
-        for match in matches {
-            textView.nck_textStorage.safeAddAttributes([.backgroundColor: UIColor.systemGray3],
-                                                          range: match.range)
+            let searchString = textView.nck_textStorage.currentString.string
+            let searchRange = NSRange(location: 0, length: searchString.utf16.count)
+            let matches = regex.matches(in: searchString,range: searchRange) as [NSTextCheckingResult]
+            
+            self.context.cascadingView.searchMatchText = "(" + String(matches.count) + ") matches"
+            
+            // TODO: set cursor to new position: this is probably challenging as it has to defocus from
+            // the searcharea. We could do something like this
+    //        if let newPosition = textView.position(from: matches[0], offset: 0) {
+    //           textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
+    //        }
+                    
+            for match in matches {
+                textView.nck_textStorage.safeAddAttributes([.backgroundColor: UIColor.systemGray3],
+                                                              range: match.range)
+            }
+        }
+        catch let error {
+            errorHistory.warn("Regex error: \(error)")
+            return
         }
     }
     func makeCoordinator() -> _RichTextEditor.Coordinator {
@@ -163,7 +169,6 @@ struct RichTextRendererView: View {
             get: { dataItem?.getString("title") ?? "" },
             set: {
                 dataItem?.set("title", $0)
-                print(dataItem?.realm)
             }
         )
         

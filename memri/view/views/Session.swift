@@ -151,9 +151,8 @@ public class Session: DataItem {
                 }
             }
             
-            // NOTE: Allowed force unwrapping
             do {
-                try self.screenshot!.write(uiImage)
+                try self.screenshot?.write(uiImage)
             }
             catch let error {
                 print(error)
@@ -253,14 +252,16 @@ public class Session: DataItem {
 
 extension UIView {
 
-    func takeScreenShot() -> UIImage {
+    func takeScreenShot() -> UIImage? {
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
-
         drawHierarchy(in: self.bounds, afterScreenUpdates: true)
 
         // NOTE: Allowed force unwrap
-        let image = UIGraphicsGetImageFromCurrentImageContext()!
-        UIGraphicsEndImageContext()
-        return image
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            UIGraphicsEndImageContext()
+            return image
+        }
+        
+        return nil
     }
 }

@@ -85,66 +85,6 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     func getPrimaryKey() -> String {
         return self.getType().primaryKey() ?? ""
     }
-
-    func getCollection(_ object:Any) -> [DataItem] {
-        var collection:[DataItem] = []
-        
-        if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Importer> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Edge> {
-            let realm = try! Realm()
-            
-            for edge in list {
-                let objectType = edge.objectType
-                let objectId = edge.objectMemriID
-                
-                if let family = DataItemFamily(rawValue: objectType),
-                   let type = family.getType() as? Object.Type {
-                    
-                    if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? DataItem {
-                        collection.append(item)
-                    }
-                    else {
-                        // TODO Error handling
-                        errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-                        print("Could not find object of type \(type) with memriID \(objectId)")
-                    }
-                }
-                else {
-                    // TODO user warning
-                    errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-                    print("Unknown type \(objectType) for dataItem \(objectId)")
-                }
-
-            }
-        }
-
-        return collection
-    }
     
     func getType() -> AnyObject.Type {
         switch self {

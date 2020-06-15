@@ -28,8 +28,7 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder
 
 func unserialize<T:Decodable>(_ s:String) -> T? {
     do {
-        // NOTE: Allowed forced unwrapping
-        let data = s.data(using: .utf8)!
+        let data = s.data(using: .utf8) ?? Data()
         let output:T = try MemriJSONDecoder.decode(T.self, from: data)
         return output as T
     }
@@ -40,9 +39,8 @@ func unserialize<T:Decodable>(_ s:String) -> T? {
 
 func serialize(_ a:AnyCodable) -> String {
     do {
-        // NOTE: Allowed force unwrap
         let data = try MemriJSONEncoder.encode(a)
-        let string = String(data: data, encoding: .utf8)!
+        let string = String(data: data, encoding: .utf8) ?? ""
         return string
     }
     catch {
@@ -65,8 +63,7 @@ func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{
 
 func jsonDataFromFile(_ file: String, _ ext:String = "json") throws -> Data{
     let jsonString = try stringFromFile(file, ext)
-    // NOTE: Allowed force unwrap
-    let jsonData = jsonString.data(using: .utf8)!
+    let jsonData = jsonString.data(using: .utf8) ?? Data()
     return jsonData
 }
 
@@ -185,16 +182,21 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
 
 func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
                              _ edgeList:RealmSwift.List<Edge>, _ subject: DataItem) {
-    let objects:[T]? = try! decoder.decodeIfPresent(key)
-    if let objects = objects {
-        for object in objects {
-            do { _ = try globalCache?.addToCache(object) }
-            catch {
-                // TODO Error logging
+    do {
+        let objects:[T]? = try decoder.decodeIfPresent(key)
+        if let objects = objects {
+            for object in objects {
+                do { _ = try globalCache?.addToCache(object) }
+                catch {
+                    // TODO Error logging
+                }
+                let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
+                edgeList.append(edge)
             }
-            let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
-            edgeList.append(edge)
         }
+    }
+    catch let error {
+        errorHistory.error("\(error)")
     }
 }
 
@@ -218,4 +220,110 @@ func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     catch let error {
         errorHistory.error("Realm Error: \(error)")
     }
+}
+
+func withRealm(_ doThis:(_ realm:Realm) -> Void) {
+    do {
+        let realm = try Realm()
+        doThis(realm)
+    }
+    catch let error {
+        errorHistory.error("\(error)")
+    }
+}
+
+func withRealm(_ doThis:(_ realm:Realm) -> Any?) -> Any? {
+    do {
+        let realm = try Realm()
+        return doThis(realm)
+    }
+    catch let error {
+        errorHistory.error("\(error)")
+    }
+    return nil
+}
+
+/// retrieves item from realm by type and uid.
+/// - Parameters:
+///   - type: realm type
+///   - memriID: item memriID
+/// - Returns: retrieved item. If the item does not exist, returns nil.
+func getDataItem(_ type:String, _ memriID: String) -> DataItem? {
+    let type = DataItemFamily(rawValue: type)
+    if let type = type {
+        let item = DataItemFamily.getType(type)
+        return withRealm { realm in
+            realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID)
+        } as? DataItem
+    }
+    return nil
+}
+
+func getDataItem(_ edge:Edge) -> DataItem? {
+    if let family = DataItemFamily(rawValue: edge.objectType) {
+        return withRealm { realm in
+            realm.object(ofType: family.getType() as! Object.Type,
+                         forPrimaryKey: edge.objectMemriID)
+        } as? DataItem
+    }
+    return nil
+}
+
+func dataItemListToArray(_ object:Any) -> [DataItem] {
+    var collection:[DataItem] = []
+    
+    if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Importer> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
+    else if let list = object as? List<Edge> {
+        withRealm { realm -> Void in
+            for edge in list {
+                let objectType = edge.objectType
+                let objectId = edge.objectMemriID
+                
+                if let family = DataItemFamily(rawValue: objectType),
+                   let type = family.getType() as? Object.Type {
+                    
+                    if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? DataItem {
+                        collection.append(item)
+                    }
+                    else {
+                        // TODO Error handling
+                        errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
+                        print("Could not find object of type \(type) with memriID \(objectId)")
+                    }
+                }
+                else {
+                    // TODO user warning
+                    errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
+                    print("Unknown type \(objectType) for dataItem \(objectId)")
+                }
+            }
+        }
+    }
+
+    return collection
 }

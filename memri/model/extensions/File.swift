@@ -60,21 +60,21 @@ class File:DataItem {
         return nil
     }
     
-    public func read<T>() throws -> T?{
-        var cachedData:T? = try InMemoryObjectCache.get(self.uri) as? T
+    public func read<T>() throws -> T? {
+        var cachedData:T? = InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
         let data = self.readData()
         if let data = data {
             // NOTE: Allowed forced casting, because we check for types
             if T.self == UIImage.self {
-                cachedData = (UIImage(data: data) as! T)
+                cachedData = UIImage(data: data) as? T
             }
             else if T.self == String.self {
-                cachedData = (String(data: data, encoding: .utf8) as! T)
+                cachedData = String(data: data, encoding: .utf8) as? T
             }
             else if T.self == Data.self {
-                cachedData = (data as! T)
+                cachedData = data as? T
             }
             else {
                 throw "Could not parse \(self.uri)"
@@ -94,15 +94,15 @@ class File:DataItem {
             
             // NOTE: allowed forced casting, because type has been checked
             if T.self == UIImage.self {
-                data = (value as! UIImage).pngData()
+                data = (value as? UIImage)?.pngData()
                 if data == nil { throw "Exception: Could not write \(self.uri) as PNG" }
             }
             else if T.self == String.self {
-                data = (value as! String).data(using: .utf8)
+                data = (value as? String)?.data(using: .utf8)
                 if data == nil { throw "Exception: Could not write \(self.uri) as UTF8 String" }
             }
             else if T.self == Data.self {
-                data = (value as! Data)
+                data = (value as? Data)
             }
             else {
                 throw "Exception: Could not parse the type to write to \(self.uri)"

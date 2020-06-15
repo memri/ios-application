@@ -47,23 +47,14 @@ public class UIElement : CVUToString {
                         
                         var result = [DataItem]()
                         if let list = x as? List<Edge> {
-                            let realm = try! Realm()
-                            
                             for edge in list {
-                                if let family = DataItemFamily(rawValue: edge.objectType) {
-                                    result.append(realm.object(
-                                        ofType: family.getType() as! Object.Type,
-                                        forPrimaryKey: edge.objectMemriID) as! DataItem)
+                                if let d = getDataItem(edge) {
+                                    result.append(d)
                                 }
                             }
                         }
                         else {
-                            if let family = DataItemFamily(rawValue: "Note") {
-                                result = family.getCollection(x as Any)
-                            }
-                            else {
-                                // TODO Warn??
-                            }
+                            result = dataItemListToArray(x as Any)
                         }
                         
                         return (result as! T)
@@ -117,8 +108,8 @@ public class UIElement : CVUToString {
         var outText = text
         let maxChar:CGFloat? = get("maxChar")
         
-        outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
-        outText = maxChar != nil ? String(outText.prefix(Int(maxChar!))) : outText
+        outText = get("removeWhiteSpace") ?? false ? removeWhiteSpace(text: text) : text
+        outText = maxChar != nil ? String(outText.prefix(Int(maxChar ?? 0))) : outText
         
         return outText
     }

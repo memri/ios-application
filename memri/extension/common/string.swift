@@ -73,8 +73,9 @@ extension String: Error {
                 guard let match = match else { return }
 
                 for i in 0..<match.numberOfRanges {
-                    let rangeObject = Range(match.range(at: i), in: self)!
-                    matches.append(String(self[rangeObject]))
+                    if let rangeObject = Range(match.range(at: i), in: self) {
+                        matches.append(String(self[rangeObject]))
+                    }
                 }
             }
             

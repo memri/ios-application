@@ -250,22 +250,6 @@ public class Cache {
         }
     }
     
-    
-     /// retrieves item from realm by type and uid.
-     /// - Parameters:
-     ///   - type: realm type
-     ///   - memriID: item memriID
-     /// - Returns: retrieved item. If the item does not exist, returns nil.
-    public func getItemById<T:DataItem>(_ type:String, _ memriID: String) -> T? {
-        let type = DataItemFamily(rawValue: type)
-        if let type = type {
-            let item = DataItemFamily.getType(type)
-            // NOTE: Allowed force unwrapping
-            return realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID) as! T?
-        }
-        return nil
-    }
-    
     /// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
     /// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
     /// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
@@ -305,7 +289,7 @@ public class Cache {
             }
             else {
                 // Fetch item from the cache to double check
-                if let cachedItem:DataItem = self.getItemById(item.genericType, item.memriID) {
+                if let cachedItem:DataItem = getDataItem(item.genericType, item.memriID) {
                     
                     // Do nothing when the version is not higher then what we already have
                     if !syncState.isPartiallyLoaded
@@ -394,7 +378,7 @@ public class Cache {
         if (!item.deleted) {
             realmWriteIfAvailable(self.realm) {
                 item.deleted = true;
-                item.syncState!.actionNeeded = "delete"
+                item.syncState?.actionNeeded = "delete"
                 realm.add(AuditItem(action: "delete", appliesTo: [item]))
             }
         }
@@ -418,25 +402,24 @@ public class Cache {
      /// - Parameter item: item to be duplicated
      /// - Remark:Does not copy the id property
      /// - Returns: copied item
-    public func duplicate(_ item:DataItem) -> DataItem {
+    public func duplicate(_ item:DataItem) throws -> DataItem {
         if let cls = item.getType() {
-            let copy = item.getType()!.init()
-            let primaryKey = cls.primaryKey()
-            for prop in item.objectSchema.properties {
-                // TODO allow generation of uid based on number replaces {uid}
-                // if (item[prop.name] as! String).includes("{uid}")
-                
-                if prop.name != primaryKey{
-                    copy[prop.name] = item[prop.name]
+            if let copy = item.getType()?.init() {
+                let primaryKey = cls.primaryKey()
+                for prop in item.objectSchema.properties {
+                    // TODO allow generation of uid based on number replaces {uid}
+                    // if (item[prop.name] as! String).includes("{uid}")
+                    
+                    if prop.name != primaryKey{
+                        copy[prop.name] = item[prop.name]
 
+                    }
                 }
+                return copy
             }
-            return copy
         }
-        else {
-            print("Failled to copy DataItem")
-            return DataItem()
-        }
+        
+        throw "Exception: Could not copy \(item.genericType)"
     }
     
 }

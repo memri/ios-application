@@ -162,8 +162,8 @@ public class Settings {
             codableValue = AnyCodable(value)
         }
         
-        if let collection = collection {
-            collection.set(query, codableValue!)
+        if let collection = collection, let codableValue = codableValue {
+            collection.set(query, codableValue)
         }
         else {
             print("failed to set setting with path \(path) and value \(value)")

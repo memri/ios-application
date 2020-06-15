@@ -17,13 +17,9 @@ public class UserState: Object {
         let dict = self.asDict()
         
         if let lookup = dict[propName] as? [String:Any?], lookup["memriID"] != nil {
-            if let type = DataItemFamily(rawValue: lookup["type"] as? String ?? "") {
-                let realm = try! Realm() // TODO Fix
-                let x:DataItem? = realm.object(
-                    ofType: DataItemFamily.getType(type)() as! DataItem.Type,
-                    forPrimaryKey: lookup["memriID"] as? String ?? "")
-                return x as? T
-            }
+            let x:DataItem? = getDataItem(lookup["type"] as? String ?? "",
+                                          lookup["memriID"] as? String ?? "")
+            return x as? T
         }
         else if dict[propName] == nil {
             return nil

@@ -31,7 +31,7 @@ class CacheTest: XCTestCase {
     
     func testGetItem(){
         testCache.install()
-        XCTAssertEqual(testCache.getItemById("Country", "Aruba")?.getString("name"), "Aruba")
+        XCTAssertEqual(getDataItem("Country", "Aruba")?.getString("name"), "Aruba")
     }
     
     func testEmptyQuery() {
@@ -120,29 +120,29 @@ class CacheTest: XCTestCase {
     
     func testDelete(){
         testCache.install()
-        let item = testCache.getItemById("Country", "Aruba")
+        let item = getDataItem("Country", "Aruba")
         testCache.delete(item!)
-        let item2 = testCache.getItemById("Country", "Aruba")
+        let item2 = getDataItem("Country", "Aruba")
         XCTAssertTrue(item2?.deleted == true || item2 == nil)
     }
     
     func testDeleteMulti(){
         testCache.install()
-        let items = [testCache.getItemById("Country", "Aruba")!,
-                     testCache.getItemById("Country", "Antarctica")!]
+        let items = [getDataItem("Country", "Aruba")!,
+                     getDataItem("Country", "Antarctica")!]
         
         testCache.delete(items)
         
-        let items2 = [testCache.getItemById("Country", "Aruba"),
-                      testCache.getItemById("Country", "Antarctica")]
+        let items2 = [getDataItem("Country", "Aruba"),
+                      getDataItem("Country", "Antarctica")]
         
         XCTAssertTrue(items2.allSatisfy{$0?.deleted == true || $0 == nil})
     }
     
     func testDuplicate(){
         testCache.install()
-        let item = testCache.getItemById("Country", "Aruba")
-        let copy = testCache.duplicate(item!)
+        let item = getDataItem("Country", "Aruba")
+        let copy = try! testCache.duplicate(item!)
         let cls = item!.getType()
 
         for prop in item!.objectSchema.properties{

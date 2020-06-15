@@ -410,8 +410,19 @@ public struct UIElementView: SwiftUI.View {
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
         let (_, propDataItem, propName) = from.getType("value", self.item, self.viewArguments)
-        let datasourceDef = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition
         let emptyValue = self.get("empty") ?? "Pick a value"
+        
+        var datasource:Datasource
+        if let def = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
+            do { datasource = try Datasource.fromCVUDefinition(def, self.viewArguments) }
+            catch let error {
+                errorHistory.warn("\(error)")
+                datasource = Datasource()
+            }
+        }
+        else {
+            datasource = Datasource()
+        }
         
         return Picker(
             item: self.item,
@@ -420,7 +431,7 @@ public struct UIElementView: SwiftUI.View {
             emptyValue: emptyValue,
             propDataItem: propDataItem,
             propName: propName,
-            datasource: try! Datasource.fromCVUDefinition(datasourceDef!, self.viewArguments)
+            datasource: datasource
         )
     }
     
