@@ -16,7 +16,99 @@ struct GeneralEditorSection: View {
     var renderConfig: CascadingGeneralEditorConfig
     var groupKey: String
     var groups:[String:[String]]
-    
+
+    var body: some View {
+        let renderConfig = self.renderConfig
+        let editMode = self.context.currentSession.editMode
+        let properties = groupKey == "other"
+            ? self.getProperties(item)
+            : self.groups[self.groupKey] ?? []
+        let groupIsList = item.objectSchema[groupKey]?.isArray ?? false
+        let showDividers = self.getSectionTitle(groupKey) != ""
+        let listHasItems = groupIsList && (item[groupKey] as? ListBase)?.count ?? 0 > 0
+        
+        return Section (header: self.getHeader(groupIsList, listHasItems)) {
+            if groupIsList && !listHasItems && !editMode {
+                EmptyView()
+            }
+            // Render using a view specified renderer
+            else if renderConfig.hasGroup(groupKey) {
+                if showDividers { Divider() }
+                
+                if self.isDescriptionForGroup(groupKey) {
+                    renderConfig.render(
+                        item: item,
+                        group: groupKey,
+                        arguments: self.getViewArguments(self.groupKey, groupKey, nil, self.item)
+                    )
+                }
+                else {
+                    if groupIsList {
+                        ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
+                            self.renderConfig.render(
+                                item: otherItem,
+                                group: self.groupKey,
+                                arguments: self.getViewArguments(self.groupKey, "", otherItem, otherItem))
+                        }
+                    }
+                    else {
+                        // TODO: Error handling
+                        ForEach(groups[groupKey] ?? [], id:\.self) { groupElement in
+                            self.renderConfig.render(
+                                item: self.item,
+                                group: self.groupKey,
+                                arguments: self.getViewArguments(self.groupKey, groupElement,
+                                                                 nil, self.item)
+                            )
+                        }
+                    }
+                }
+                
+                if showDividers { Divider() }
+            }
+            // Render lists with their default renderer
+            else if groupIsList {
+                Divider()
+                ScrollView {
+                    VStack (alignment: .leading, spacing: 0) {
+                        ForEach(getArray(item, groupKey), id:\.id) { item in
+                            ItemCell(
+                                item: item,
+                                rendererNames: ["generalEditor"],
+                                arguments: self.getViewArguments(self.groupKey, self.groupKey,
+                                                                 item, self.item)
+                            )
+                        }
+                    }
+//                        .padding(.top, 10)
+                }
+                .frame(maxHeight: 1000)
+                .fixedSize(horizontal: false, vertical: true)
+                
+                Divider()
+            }
+            // Render groups with the default render row
+            else {
+                Divider()
+                ForEach(properties, id: \.self){ prop in
+                    
+                    // TODO: Refactor: rows that are single links to an item
+                    
+                    DefaultGeneralEditorRow(
+                        context: self._context,
+                        item: self.item,
+                        prop: prop,
+                        readOnly: !editMode || renderConfig.readOnly.contains(prop),
+                        isLast: properties.last == prop,
+                        renderConfig: renderConfig,
+                        arguments: self.getViewArguments("", prop, self.item[prop], self.item)
+                    )
+                }
+                Divider()
+            }
+        }
+    }
+
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         dataItemListToArray(item[prop] ?? [])
     }
@@ -121,97 +213,5 @@ struct GeneralEditorSection: View {
                     .padding(.bottom, 10)
             }
         }.padding(.trailing, 20)
-    }
-
-    var body: some View {
-        let renderConfig = self.renderConfig
-        let editMode = self.context.currentSession.editMode
-        let properties = groupKey == "other"
-            ? self.getProperties(item)
-            : self.groups[self.groupKey] ?? []
-        let groupIsList = item.objectSchema[groupKey]?.isArray ?? false
-        let showDividers = self.getSectionTitle(groupKey) != ""
-        let listHasItems = groupIsList && (item[groupKey] as? ListBase)?.count ?? 0 > 0
-        
-        return Section (header: self.getHeader(groupIsList, listHasItems)) {
-            if groupIsList && !listHasItems && !editMode {
-                EmptyView()
-            }
-            // Render using a view specified renderer
-            else if renderConfig.hasGroup(groupKey) {
-                if showDividers { Divider() }
-                
-                if self.isDescriptionForGroup(groupKey) {
-                    renderConfig.render(
-                        item: item,
-                        group: groupKey,
-                        arguments: self.getViewArguments(self.groupKey, groupKey, nil, self.item)
-                    )
-                }
-                else {
-                    if groupIsList {
-                        ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
-                            self.renderConfig.render(
-                                item: otherItem,
-                                group: self.groupKey,
-                                arguments: self.getViewArguments(self.groupKey, "", otherItem, otherItem))
-                        }
-                    }
-                    else {
-                        // TODO: Error handling
-                        ForEach(groups[groupKey] ?? [], id:\.self) { groupElement in
-                            self.renderConfig.render(
-                                item: self.item,
-                                group: self.groupKey,
-                                arguments: self.getViewArguments(self.groupKey, groupElement,
-                                                                 nil, self.item)
-                            )
-                        }
-                    }
-                }
-                
-                if showDividers { Divider() }
-            }
-            // Render lists with their default renderer
-            else if groupIsList {
-                Divider()
-                ScrollView {
-                    VStack (alignment: .leading, spacing: 0) {
-                        ForEach(getArray(item, groupKey), id:\.id) { item in
-                            ItemCell(
-                                item: item,
-                                rendererNames: ["generalEditor"],
-                                arguments: self.getViewArguments(self.groupKey, self.groupKey,
-                                                                 item, self.item)
-                            )
-                        }
-                    }
-//                        .padding(.top, 10)
-                }
-                .frame(maxHeight: 1000)
-                .fixedSize(horizontal: false, vertical: true)
-                
-                Divider()
-            }
-            // Render groups with the default render row
-            else {
-                Divider()
-                ForEach(properties, id: \.self){ prop in
-                    
-                    // TODO: Refactor: rows that are single links to an item
-                    
-                    DefaultGeneralEditorRow(
-                        context: self._context,
-                        item: self.item,
-                        prop: prop,
-                        readOnly: !editMode || renderConfig.readOnly.contains(prop),
-                        isLast: properties.last == prop,
-                        renderConfig: renderConfig,
-                        arguments: self.getViewArguments("", prop, self.item[prop], self.item)
-                    )
-                }
-                Divider()
-            }
-        }
     }
 }

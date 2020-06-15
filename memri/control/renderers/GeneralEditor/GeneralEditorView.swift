@@ -45,6 +45,39 @@ struct GeneralEditorView: View {
         self.context.cascadingView.renderConfig as? CascadingGeneralEditorConfig
     }
     
+    var body: some View {
+        var item: DataItem
+        if let dataItem = context.cascadingView.resultSet.singletonItem {
+            item = dataItem
+        }
+        else {
+            print("Cannot load DataItem, creating empty")
+            item = DataItem()
+        }
+        // TODO: Error Handling
+        let renderConfig = self.renderConfig
+        let groups = getGroups(item) ?? [:]
+        let sortedKeys = getSortedKeys(groups)
+        
+        return ScrollView {
+            VStack (alignment: .leading, spacing: 0) {
+                if renderConfig == nil {
+                    Text("Unable to render this view")
+                }
+                else if groups.count > 0 {
+                    ForEach(sortedKeys, id: \.self) { groupKey in
+                        GeneralEditorSection(
+                            item: item,
+                            renderConfig: renderConfig!,
+                            groupKey: groupKey,
+                            groups: groups)
+                    }
+                }
+            }
+            .frame(maxWidth:.infinity, maxHeight: .infinity)
+        }
+    }
+    
     func getGroups(_ item:DataItem) -> [String:[String]]? {
         let renderConfig = self.renderConfig
         let groups = renderConfig?.groups ?? [:]
@@ -82,39 +115,6 @@ struct GeneralEditorView: View {
         }
         
         return keys
-    }
-    
-    var body: some View {
-        var item: DataItem
-        if let dataItem = context.cascadingView.resultSet.singletonItem {
-            item = dataItem
-        }
-        else {
-            print("Cannot load DataItem, creating empty")
-            item = DataItem()
-        }
-        // TODO: Error Handling
-        let renderConfig = self.renderConfig
-        let groups = getGroups(item) ?? [:]
-        let sortedKeys = getSortedKeys(groups)
-        
-        return ScrollView {
-            VStack (alignment: .leading, spacing: 0) {
-                if renderConfig == nil {
-                    Text("Unable to render this view")
-                }
-                else if groups.count > 0 {
-                    ForEach(sortedKeys, id: \.self) { groupKey in
-                        GeneralEditorSection(
-                            item: item,
-                            renderConfig: renderConfig!,
-                            groupKey: groupKey,
-                            groups: groups)
-                    }
-                }
-            }
-            .frame(maxWidth:.infinity, maxHeight: .infinity)
-        }
     }
 }
 
