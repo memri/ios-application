@@ -110,13 +110,13 @@ Importer[] {
                 
                 Image {
                     show: {{.icon}}
-                    systemname: {{.icon}}
+                    systemName: {{.icon}}
                     color: #2480d6
                 }
     
                 Image {
                     show: {{!.icon and .bundleImage}}
-                    bundleimage: {{.bundleImage}}
+                    bundleImage: {{.bundleImage}}
                     color: #2480d6
                     resizable: fit
                     minWidth: 50

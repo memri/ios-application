@@ -81,7 +81,7 @@ struct PickerPane: View {
                         
                         [renderer = list] {
                             press: [
-                                setProperty {
+                                link {
                                     arguments {
                                         subject: {{subject}}
                                         property: \(propName)
@@ -93,7 +93,7 @@ struct PickerPane: View {
                         
                         [renderer = thumbnail] {
                             press: [
-                                setProperty {
+                                link {
                                     arguments {
                                         subject: {{subject}}
                                         property: \(propName)

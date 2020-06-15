@@ -175,39 +175,7 @@ struct GeneralEditorSection: View {
     var groups:[String:[String]]
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
-        
-        //TODO: Better error handling
-        //TODO: Move to DataItem?
-        let edges = item[prop] as? RealmSwift.List<Edge>
-        if let edges = edges{
-            if edges.count > 0 {
-                let objectClassName = edges[0].objectType
-                if let family = DataItemFamily(rawValue: objectClassName){
-                    // NOTE: Allowed force unwrapping
-                    let type = DataItemFamily.getType(family)() as! Object.Type
-                    var objects: [DataItem] = []
-                    
-                    for memriID in edges.map({$0.objectMemriID}){
-                        let object = context.realm.object(ofType: type, forPrimaryKey: memriID) as? DataItem
-                        if let object = object{
-                            objects.append(object)
-                        }
-                        else {
-                            // TODO Error handling
-                            print("Could not find object of type \(type) with memriID \(memriID)")
-                        }
-                    }
-                    return objects
-                }
-                else{
-                    // TODO user warning
-                    errorHistory.error("Unknown type \(objectClassName) for dataItem \(item.memriID)")
-                    print("Unknown type \(objectClassName) for dataItem \(item.memriID)")
-                }
-
-            }
-        }
-        return []
+        return DataItemFamily(rawValue: "Note")?.getCollection(item[prop] ?? []) ?? []
     }
     
     func getProperties(_ item:DataItem) -> [String]{
@@ -222,6 +190,7 @@ struct GeneralEditorSection: View {
                           _ item:DataItem)-> ViewArguments {
         
         return ViewArguments(renderConfig.viewArguments.asDict().merging([
+            "subject": self.item,
             "readOnly": !self.context.currentSession.editMode,
             "sectionTitle": groupKey.camelCaseToWords().uppercased(),
             "displayName": name.camelCaseToWords().capitalizingFirstLetter(),
@@ -247,7 +216,7 @@ struct GeneralEditorSection: View {
 //        renderConfig.renderDescription?[groupKey]?.type ?? ""
 //    }
     
-    func getHeader(_ isArray: Bool) -> some View {
+    func getHeader(_ isArray: Bool, _ listHasItems: Bool) -> some View {
         let editMode = self.context.currentSession.editMode
         let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
@@ -272,7 +241,10 @@ struct GeneralEditorSection: View {
             : nil
         
         return Group {
-            if renderConfig.hasGroup(groupKey) {
+            if isArray && !listHasItems && !editMode {
+                EmptyView()
+            }
+            else if renderConfig.hasGroup(groupKey) {
                 if self.hasSectionTitle(groupKey) {
                     self.constructSectionHeader(
                         title: self.getSectionTitle(groupKey) ?? groupKey,
@@ -314,12 +286,16 @@ struct GeneralEditorSection: View {
         let properties = groupKey == "other"
             ? self.getProperties(item)
             : self.groups[self.groupKey] ?? []
-        let groupContainsNodes = item.objectSchema[groupKey]?.isArray ?? false
+        let groupIsList = item.objectSchema[groupKey]?.isArray ?? false
         let showDividers = self.getSectionTitle(groupKey) != ""
+        let listHasItems = groupIsList && (item[groupKey] as? ListBase)?.count ?? 0 > 0
         
-        return Section (header: self.getHeader(groupContainsNodes)) {
+        return Section (header: self.getHeader(groupIsList, listHasItems)) {
+            if groupIsList && !listHasItems && !editMode {
+                EmptyView()
+            }
             // Render using a view specified renderer
-            if renderConfig.hasGroup(groupKey) {
+            else if renderConfig.hasGroup(groupKey) {
                 if showDividers { Divider() }
                 
                 if self.isDescriptionForGroup(groupKey) {
@@ -330,7 +306,7 @@ struct GeneralEditorSection: View {
                     )
                 }
                 else {
-                    if groupContainsNodes {
+                    if groupIsList {
                         ForEach(self.getArray(item, groupKey), id:\.id) { otherItem in
                             self.renderConfig.render(
                                 item: otherItem,
@@ -354,7 +330,7 @@ struct GeneralEditorSection: View {
                 if showDividers { Divider() }
             }
             // Render lists with their default renderer
-            else if groupContainsNodes {
+            else if groupIsList {
                 Divider()
                 ScrollView {
                     VStack (alignment: .leading, spacing: 0) {

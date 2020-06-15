@@ -93,7 +93,7 @@ ImporterInstance {
                     align: center
                     resizable: fill
                     show: {{.importer.icon}}
-                    systemname: {{.importer.icon}}
+                    systemName: {{.importer.icon}}
                     color: #2480d6
                     maxWidth: 100
                     maxHeight: 100
@@ -102,7 +102,7 @@ ImporterInstance {
                 Image {
                     align: center
                     show: {{!.importer.icon and .importer.bundleImage}}
-                    bundleimage: {{.importer.bundleImage}}
+                    bundleImage: {{.importer.bundleImage}}
                     color: #2480d6
                     resizable: fill
                     minWidth: 100

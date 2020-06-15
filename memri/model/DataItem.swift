@@ -159,7 +159,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// - Parameters:
     ///   - name: property name
     ///   - value: value
-    public func set(_ name:String, _ value:Any) {
+    public func set(_ name:String, _ value:Any?) {
         realmWriteIfAvailable(realm, {
             self[name] = value
         })
