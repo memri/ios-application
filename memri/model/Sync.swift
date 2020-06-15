@@ -265,7 +265,7 @@ class Sync {
                 podAPI.update(item) { (error, version:Int?) -> Void in
                     if let version = version {
                         item.version = version
-                        item.syncState!.actionNeeded = "" // TODO make sure it hasnt changed??
+                        item.syncState?.actionNeeded = "" // TODO make sure it hasnt changed??
                         
                         callback(nil, true)
                     }
@@ -279,7 +279,7 @@ class Sync {
                 break
             default:
                 // Ignore unknown tasks
-                print("Unknown sync state action: \(item.syncState!.actionNeeded)")
+                print("Unknown sync state action: \(item.syncState?.actionNeeded ?? "")")
             }
         }
         else {

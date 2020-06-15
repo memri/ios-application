@@ -133,9 +133,9 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        let item: DataItem
-        if context.cascadingView.resultSet.singletonItem != nil{
-            item = context.cascadingView.resultSet.singletonItem!
+        var item: DataItem
+        if let dataItem = context.cascadingView.resultSet.singletonItem {
+            item = dataItem
         }
         else {
             print("Cannot load DataItem, creating empty")
@@ -175,7 +175,7 @@ struct GeneralEditorSection: View {
     var groups:[String:[String]]
     
     func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
-        return DataItemFamily(rawValue: "Note")?.getCollection(item[prop] ?? []) ?? []
+        dataItemListToArray(item[prop] ?? [])
     }
     
     func getProperties(_ item:DataItem) -> [String]{

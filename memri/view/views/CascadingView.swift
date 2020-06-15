@@ -135,10 +135,12 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else {
                     // TODO Error logging
+                    errorHistory.error("Exception: Unable to cascade render config")
                 }
             }
-            catch {
+            catch let error {
                 // TODO Error logging
+                errorHistory.error("\(error)")
             }
         }
                 
@@ -150,7 +152,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         else {
             // TODO Error Logging
-            
+            errorHistory.error("Exception: Unable to cascade render config")
             return CascadingRenderConfig([], ViewArguments())
         }
     }

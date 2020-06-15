@@ -378,7 +378,7 @@ public class Cache {
         if (!item.deleted) {
             realmWriteIfAvailable(self.realm) {
                 item.deleted = true;
-                item.syncState!.actionNeeded = "delete"
+                item.syncState?.actionNeeded = "delete"
                 realm.add(AuditItem(action: "delete", appliesTo: [item]))
             }
         }
@@ -402,25 +402,24 @@ public class Cache {
      /// - Parameter item: item to be duplicated
      /// - Remark:Does not copy the id property
      /// - Returns: copied item
-    public func duplicate(_ item:DataItem) -> DataItem {
+    public func duplicate(_ item:DataItem) throws -> DataItem {
         if let cls = item.getType() {
-            let copy = item.getType()!.init()
-            let primaryKey = cls.primaryKey()
-            for prop in item.objectSchema.properties {
-                // TODO allow generation of uid based on number replaces {uid}
-                // if (item[prop.name] as! String).includes("{uid}")
-                
-                if prop.name != primaryKey{
-                    copy[prop.name] = item[prop.name]
+            if let copy = item.getType()?.init() {
+                let primaryKey = cls.primaryKey()
+                for prop in item.objectSchema.properties {
+                    // TODO allow generation of uid based on number replaces {uid}
+                    // if (item[prop.name] as! String).includes("{uid}")
+                    
+                    if prop.name != primaryKey{
+                        copy[prop.name] = item[prop.name]
 
+                    }
                 }
+                return copy
             }
-            return copy
         }
-        else {
-            print("Failled to copy DataItem")
-            return DataItem()
-        }
+        
+        throw "Exception: Could not copy \(item.genericType)"
     }
     
 }

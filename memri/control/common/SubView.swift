@@ -55,9 +55,8 @@ public struct SubView : View {
             session.views.append(view)
             session.currentViewIndex = 0
             
-            // NOTE: Allowed force unwrap
             self.proxyMain = context.createSubContext(session)
-            do { try self.proxyMain!.updateCascadingView() }
+            do { try self.proxyMain?.updateCascadingView() }
             catch {
                 // TODO Refactor error handling
                 throw "Cannot update CascadingView \(self): \(error)"
@@ -88,9 +87,8 @@ public struct SubView : View {
             session.views.append(view)
             session.currentViewIndex = 0
             
-            // NOTE: Allowed force unwrap
             self.proxyMain = context.createSubContext(session)
-            try self.proxyMain!.updateCascadingView()
+            try self.proxyMain?.updateCascadingView()
         }
         catch {
             // TODO Refactor error handling
@@ -106,8 +104,7 @@ public struct SubView : View {
                 if self.toolbar {
                     TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
-                // NOTE: Allowed force unwrap
-                allRenderers?.allViews[self.proxyMain!.cascadingView.activeRenderer]
+                allRenderers?.allViews[self.proxyMain?.cascadingView.activeRenderer ?? "list"]
                     .fullHeight()
                 
                 if self.searchbar {

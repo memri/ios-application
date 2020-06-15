@@ -128,16 +128,15 @@ public struct TopNavigation: View {
                     
                     if backButton != nil{
                         Button(action: {
-                            if !self.showingBackActions {
-                                // NOTE: Allowed force unwrap (logic)
-                                context.executeAction(backButton!)
+                            if !self.showingBackActions, let backButton = backButton {
+                                context.executeAction(backButton)
                             }
                         }) {
-                            Image(systemName: backButton!.getString("icon"))
+                            Image(systemName: backButton?.getString("icon") ?? "")
                                 .fixedSize()
                                 .padding(.horizontal, 5)
                                 .padding(.vertical, 5)
-                                .foregroundColor(backButton!.color)
+                                .foregroundColor(backButton?.color ?? Color.white)
                         }
                         .font(Font.system(size: 19, weight: .semibold))
                         .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {

@@ -54,12 +54,7 @@ public class UIElement : CVUToString {
                             }
                         }
                         else {
-                            if let family = DataItemFamily(rawValue: "Note") {
-                                result = family.getCollection(x as Any)
-                            }
-                            else {
-                                // TODO Warn??
-                            }
+                            result = dataItemListToArray(x as Any)
                         }
                         
                         return (result as! T)
@@ -114,7 +109,7 @@ public class UIElement : CVUToString {
         let maxChar:CGFloat? = get("maxChar")
         
         outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
-        outText = maxChar != nil ? String(outText.prefix(Int(maxChar!))) : outText
+        outText = maxChar != nil ? String(outText.prefix(Int(maxChar ?? 0))) : outText
         
         return outText
     }

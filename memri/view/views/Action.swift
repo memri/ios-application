@@ -472,7 +472,7 @@ class ActionAddDataItem : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws {
         if let dataItem = arguments["template"] as? DataItem {
             // Copy template
-            let copy = context.cache.duplicate(dataItem)
+            let copy = try context.cache.duplicate(dataItem)
             
             // Add the new item to the cache
             _ = try context.cache.addToCache(copy)
@@ -855,7 +855,7 @@ class ActionBackAsSession : Action, ActionExec {
             throw "Warn: Can't go back. Already at earliest view in session"
         }
         else {
-            if let duplicateSession = context.cache.duplicate(session as DataItem) as? Session {
+            if let duplicateSession = try context.cache.duplicate(session as DataItem) as? Session {
                 realmWriteIfAvailable(context.cache.realm, {
                     duplicateSession.currentViewIndex -= 1
                 })
@@ -1151,10 +1151,9 @@ class ActionLink : Action, ActionExec {
         
         if schema.isArray {
             // Get list and append
-            let family = DataItemFamily(rawValue: selected.genericType)
-            var list = family?.getCollection(subject[propertyName] as Any)
+            var list = dataItemListToArray(subject[propertyName] as Any)
             
-            list?.append(selected)
+            list.append(selected)
         
             subject.set(propertyName, list as Any)
         }
@@ -1199,10 +1198,9 @@ class ActionUnlink : Action, ActionExec {
         
         if schema.isArray {
             // Get list and append
-            let family = DataItemFamily(rawValue: selected.genericType)
-            var list = family?.getCollection(subject[propertyName] as Any)
+            var list = dataItemListToArray(subject[propertyName] as Any)
             
-            list?.removeAll(where: { item in
+            list.removeAll(where: { item in
                 item == selected
             })
         
