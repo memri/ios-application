@@ -27,12 +27,17 @@
                 
                 MemriButton
                 Spacer
-                Button{
-                    press: archive
+                Button {
+                    press: unlink {
+                        arguments: {
+                            subject: {{subject}}
+                            property: {{name}}
+                        }
+                    }
                     show: {{!readOnly}}
                     
                     Image {
-                        systemName: "bolt.horizontal.circle.fill"
+                        systemName: "minus.circle.fill"
                         color: #ff0000
                     }
                 }

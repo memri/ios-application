@@ -198,15 +198,6 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
     }
 }
 
-func negateAny(_ value:Any) -> Bool {
-    if let value = value as? Bool { return !value}
-    if let value = value as? Int { return value == 0 }
-    if let value = value as? Double { return value == 0 }
-    if let value = value as? String { return value == "" }
-    
-    return false
-}
-
 func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
     // TODO Refactor, Error Handling , _ error:(error) -> Void  ??
     do {

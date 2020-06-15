@@ -42,8 +42,8 @@ public struct UIElementView: SwiftUI.View {
         return UIImage()
     }
     
-    public func getBundleImage() -> Image{
-        if let name: String = get("bundleimage"){
+    public func getbundleImage() -> Image{
+        if let name: String = get("bundleImage"){
             return Image(name)
         }
         return Image(systemName: "exclamationmark.bubble")
@@ -148,7 +148,14 @@ public struct UIElementView: SwiftUI.View {
                 }
                 else if from.type == .EditorLabel {
                     HStack (alignment: .center, spacing:15) {
-                        Button (action:{}) {
+                        Button (action: {
+                            let args:[String:Any?] = [
+                                "subject": self.context.item, // self.item,
+                                "property": self.viewArguments.get("name")
+                            ]
+                            let action = ActionUnlink(self.context, arguments: args)
+                            self.context.executeAction(action, with: self.item, using:self.viewArguments)
+                        }) {
                             Image (systemName: "minus.circle.fill")
                                 .foregroundColor(Color.red)
                                 .font(.system(size: 22))
@@ -176,7 +183,7 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .Button {
                     Button(action: {
                         if let press:Action = self.get("press") {
-                            self.context.executeAction(press, with: self.item)
+                            self.context.executeAction(press, with: self.item, using:self.viewArguments)
                         }
                     }) {
                         self.renderChildren
@@ -272,13 +279,13 @@ public struct UIElementView: SwiftUI.View {
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Image {
-                    if has("systemname") {
-                        Image(systemName: get("systemname") ?? "exclamationmark.bubble")
+                    if has("systemName") {
+                        Image(systemName: get("systemName") ?? "exclamationmark.bubble")
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, context, self.viewArguments)
                     }
-                    else if has("bundleimage"){
-                        getBundleImage()
+                    else if has("bundleImage"){
+                        getbundleImage()
                             .renderingMode(.original)
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, context, self.viewArguments)

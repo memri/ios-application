@@ -106,7 +106,7 @@ Indexer[] {
                 maxHeight: 120
                 Image {
                     show: {{.icon}}
-                    systemname: {{.icon}}
+                    systemName: {{.icon}}
                     font: 30
                     color: #d64f4f
                     maxWidth: 80
@@ -117,7 +117,7 @@ Indexer[] {
 
                 Image {
                     show: {{!.icon and .bundleImage}}
-                    bundleimage: {{.bundleImage}}
+                    bundleImage: {{.bundleImage}}
                     color: #2480d6
                     resizable: fit
                     minWidth: 50

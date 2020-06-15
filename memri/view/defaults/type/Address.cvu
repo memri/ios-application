@@ -60,7 +60,7 @@ Address[] {
                 EditorLabel {
                     title: "{.type}"
                     edge: {{edge}}
-                    hierarchy: address
+                    hierarchy: Ayuddress
                 }
                 VStack {
                     Textfield { hint: Street, value: {{.street}}, rows: 2 }

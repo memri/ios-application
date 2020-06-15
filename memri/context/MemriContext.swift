@@ -343,8 +343,12 @@ public class MemriContext: ObservableObject {
 
 public class SubContext: MemriContext {
     
+    let parent: MemriContext
+    
     init(name:String, _ context:MemriContext, _ session:Session) {
         let views = Views(context.realm)
+        
+        parent = context
         
         super.init(
             name: name,

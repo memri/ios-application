@@ -6,6 +6,193 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
+
+extension MemriContext {
+    
+    private func getDataItem(_ dict:[String:Any], _ dataItem:DataItem?,
+                             _ viewArguments:ViewArguments? = nil) throws -> DataItem {
+        
+        // TODO refactor: move to function
+        guard let stringType = dict["type"] as? String else {
+            throw "Missing type attribute to indicate the type of the data item"
+        }
+        
+        guard let family = DataItemFamily(rawValue: stringType) else {
+            throw "Cannot find find family \(stringType)"
+        }
+        
+        guard let ItemType = DataItemFamily.getType(family)() as? Object.Type else {
+            throw "Cannot find family \(stringType)"
+        }
+        
+        var initArgs = dict
+        initArgs.removeValue(forKey: "type")
+
+        guard let item = ItemType.init() as? DataItem else {
+            throw "Cannot cast type \(ItemType) to DataItem"
+        }
+        
+        // TODO: fill item
+        for prop in item.objectSchema.properties {
+            if prop.name != ItemType.primaryKey(),
+                let inputValue = initArgs[prop.name] {
+                let propValue: Any
+
+                if let expr = inputValue as? Expression {
+                    if let v = viewArguments {
+                        propValue = try expr.execute(v) as Any
+                    }
+                    else {
+                        let viewArgs = ViewArguments(cascadingView.viewArguments.asDict())
+                        viewArgs.set(".", dataItem)
+                        propValue = try expr.execute(viewArgs) as Any
+                    }
+                }
+                else {
+                    propValue = inputValue
+                }
+                
+                item.set(prop.name, propValue)
+            }
+        }
+        
+        return item
+    }
+    
+    private func buildArguments(_ action:Action, _ dataItem:DataItem?,
+                                _ viewArguments:ViewArguments? = nil) throws -> [String: Any] {
+        
+        var args = [String: Any]()
+        for (argName, inputValue) in action.arguments {
+            var argValue: Any?
+            
+            // preprocess arg
+            if let expr = inputValue as? Expression {
+                argValue = try expr.execute(viewArguments ?? cascadingView.viewArguments) as Any
+            }
+            else {
+                argValue = inputValue
+            }
+            
+            var finalValue:Any? = ""
+            
+            // TODO add cases for argValue = DataItem, ViewArgument
+            if let dataItem = argValue as? DataItem {
+                finalValue = dataItem
+            }
+            else if let dict = argValue as? [String: Any] {
+                if action.argumentTypes[argName] == ViewArguments.self {
+                    finalValue = ViewArguments(dict)
+                }
+                else if action.argumentTypes[argName] == DataItemFamily.self {
+                    finalValue = try getDataItem(dict, dataItem, viewArguments)
+                }
+                else if action.argumentTypes[argName] == SessionView.self {
+                    let viewDef = CVUParsedViewDefinition(DataItem.generateUUID())
+                    viewDef.parsed = dict
+                    
+                    finalValue = SessionView(value: ["viewDefinition": viewDef])
+                }
+                else {
+                    throw "Does not recognize argumentType \(argName)"
+                }
+            }
+            else if action.argumentTypes[argName] == Bool.self {
+                finalValue = ExprInterpreter.evaluateBoolean(argValue)
+            }
+            else if action.argumentTypes[argName] == String.self {
+                finalValue = ExprInterpreter.evaluateString(argValue)
+            }
+            else if action.argumentTypes[argName] == Int.self {
+                finalValue = ExprInterpreter.evaluateNumber(argValue)
+            }
+            else if action.argumentTypes[argName] == Double.self {
+                finalValue = ExprInterpreter.evaluateNumber(argValue)
+            }
+            else if action.argumentTypes[argName] == [Action].self {
+                finalValue = argValue ?? []
+            }
+            // TODO are nil values allowed?
+            else if argValue == nil {
+                finalValue = nil
+            }
+            else {
+                throw "Does not recognize argumentType \(argName):\(action.argumentTypes[argName] ?? Void.self)"
+            }
+            
+            args[argName] = finalValue
+        }
+        
+        // Last element of arguments array is the context data item
+        args["dataItem"] = dataItem ?? cascadingView.resultSet.singletonItem as Any
+        
+        return args
+    }
+    
+    private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil,
+                                     using viewArguments:ViewArguments? = nil) throws {
+        // Build arguments dict
+        let args = try buildArguments(action, dataItem, viewArguments)
+        
+        // TODO security implications down the line. How can we prevent leakage? Caching needs to be
+        //      per context
+        action.context = self
+        
+        if action.getBool("opensView") {
+            if let action = action as? ActionExec {
+                try action.exec(args)
+            }
+            else {
+                print("Missing exec for action \(action.name), NOT EXECUTING")
+            }
+        }
+        else {
+            
+            // Track state of the action and toggle the state variable
+            if let binding = action.binding {
+                try binding.toggleBool()
+                
+                // TODO this should be removed and fixed more generally
+                self.scheduleUIUpdate() { _ in true }
+            }
+            
+            if let action = action as? ActionExec {
+                try action.exec(args)
+            }
+            else {
+                print("Missing exec for action \(action.name), NOT EXECUTING")
+            }
+        }
+    }
+    
+    /// Executes the action as described in the action description
+    public func executeAction(_ action:Action, with dataItem:DataItem? = nil,
+                              using viewArguments:ViewArguments? = nil) {
+        do {
+            try executeActionThrows(action, with: dataItem, using: viewArguments)
+        }
+        catch let error {
+            // TODO Log error to the user
+            errorHistory.error("\(error)")
+        }
+    }
+    
+    public func executeAction(_ actions:[Action], with dataItem:DataItem? = nil,
+                              using viewArguments:ViewArguments? = nil) {
+        
+        for action in actions {
+            do {
+                try executeActionThrows(action, with: dataItem, using: viewArguments)
+            }
+            catch let error {
+                // TODO Log error to the user
+                errorHistory.error("\(error)")
+                break
+            }
+        }
+    }
+}
 
 public class Action : HashableClass, CVUToString {
     var name:ActionFamily = .noop
@@ -183,7 +370,7 @@ public enum ActionFamily: String, CaseIterable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        addSelectionToList, closePopup, setProperty, multiAction, noop
+        link, closePopup, unlink, multiAction, noop
 
     func getType() -> Action.Type {
         switch self {
@@ -207,8 +394,8 @@ public enum ActionFamily: String, CaseIterable {
         case .openSession: return ActionOpenSession.self
         case .openSessionByName: return ActionOpenSessionByName.self
         case .closePopup: return ActionClosePopup.self
-        case .addSelectionToList: return ActionAddSelectionToList.self
-        case .setProperty: return ActionSetProperty.self
+        case .link: return ActionLink.self
+        case .unlink: return ActionUnlink.self
         case .multiAction: return ActionMultiAction.self
         case .noop: fallthrough
         default: return ActionNoop.self
@@ -935,101 +1122,102 @@ class ActionClosePopup : Action, ActionExec {
     }
 }
 
-class ActionAddSelectionToList : Action, ActionExec {
+class ActionLink : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(context, "addSelectionToList", arguments:arguments, values:values)
+        super.init(context, "link", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        do {
-            if let subject = arguments["subject"] as? DataItem {
-                if let propertyName = arguments["property"] as? String {
-                    if let selected = arguments["dataItem"] as? DataItem {
-                        // Check that the property exists to avoid hard crash
-                        if subject.objectSchema[propertyName] == nil {
-                            throw "Exception: Invalid property access of \(propertyName) for \(subject)"
-                        }
-                        
-                        // Get list and append
-                        let family = DataItemFamily(rawValue: selected.genericType)
-                        var list = family?.getCollection(subject[propertyName] as Any)
-                        
-                        list?.append(selected)
-                    
-                        subject.set(propertyName, list as Any)
-                        
-                        return
-                    }
-                    else {
-                        throw "Exception: selected data item is not passed"
-                    }
-                }
-                else {
-                    throw "Exception: property is not set to a string"
-                }
-            }
-            else {
-                throw "Exception: subject is not set"
-            }
+        guard let subject = arguments["subject"] as? DataItem else {
+            throw "Exception: subject is not set"
         }
-        catch let error {
-            // TODO error handling
-            throw error
+        
+        guard let propertyName = arguments["property"] as? String else {
+            throw "Exception: property is not set to a string"
         }
+        
+        guard let selected = arguments["dataItem"] as? DataItem else {
+            throw "Exception: selected data item is not passed"
+        }
+        
+        // Check that the property exists to avoid hard crash
+        guard let schema = subject.objectSchema[propertyName] else {
+            throw "Exception: Invalid property access of \(propertyName) for \(subject)"
+        }
+        
+        if schema.isArray {
+            // Get list and append
+            let family = DataItemFamily(rawValue: selected.genericType)
+            var list = family?.getCollection(subject[propertyName] as Any)
+            
+            list?.append(selected)
+        
+            subject.set(propertyName, list as Any)
+        }
+        else {
+            subject.set(propertyName, selected)
+        }
+        
+        // TODO refactor
+        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate{_ in true}
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
+        execWithoutThrow { try ActionLink(context).exec(arguments) }
     }
 }
 
-class ActionSetProperty : Action, ActionExec {
+class ActionUnlink : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(context, "setProperty", arguments:arguments, values:values)
+        super.init(context, "unlink", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        do {
-            if let subject = arguments["subject"] as? DataItem {
-                if let propertyName = arguments["property"] as? String {
-                    if let selected = arguments["dataItem"] as? DataItem {
-                        // Check that the property exists to avoid hard crash
-                        if subject.objectSchema[propertyName] == nil {
-                            throw "Exception: Invalid property access of \(propertyName) for \(selected)"
-                        }
-                        
-                        subject.set(propertyName, selected)
-                        
-                        return
-                    }
-                    else {
-                        throw "Exception: selected data item is not passed"
-                    }
-                }
-                else {
-                    throw "Exception: property is not set to a string"
-                }
-            }
-            else {
-                throw "Exception: subject is not set"
-            }
+        guard let subject = arguments["subject"] as? DataItem else {
+            throw "Exception: subject is not set"
         }
-        catch let error {
-            // TODO error handling
-            throw error
+        guard let propertyName = arguments["property"] as? String else {
+            throw "Exception: property is not set to a string"
         }
+        
+        guard let selected = arguments["dataItem"] as? DataItem else {
+            throw "Exception: selected data item is not passed"
+        }
+        
+        // Check that the property exists to avoid hard crash
+        guard let schema = subject.objectSchema[propertyName] else {
+            throw "Exception: Invalid property access of \(propertyName) for \(subject)"
+        }
+        
+        if schema.isArray {
+            // Get list and append
+            let family = DataItemFamily(rawValue: selected.genericType)
+            var list = family?.getCollection(subject[propertyName] as Any)
+            
+            list?.removeAll(where: { item in
+                item == selected
+            })
+        
+            subject.set(propertyName, list as Any)
+        }
+        else {
+            subject.set(propertyName, nil)
+        }
+        
+        // TODO refactor
+        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate{_ in true}
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
+        execWithoutThrow { try ActionUnlink(context).exec(arguments) }
     }
 }
 
@@ -1044,19 +1232,17 @@ class ActionMultiAction : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        if let actions = arguments["actions"] as? [Action] {
-            for action in actions {
-                self.context.executeAction(action, with: arguments["dataItem"] as? DataItem)
-            }
-        }
-        else {
-            // TODO error handling
+        guard let actions = arguments["actions"] as? [Action] else {
             throw "Cannot execute ActionMultiAction: no actions passed in arguments"
+        }
+        
+        for action in actions {
+            self.context.executeAction(action, with: arguments["dataItem"] as? DataItem)
         }
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
+        execWithoutThrow { try ActionMultiAction(context).exec(arguments) }
     }
 }
 

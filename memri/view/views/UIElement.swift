@@ -161,7 +161,7 @@ public enum UIElementFamily : String, CaseIterable {
 public enum UIElementProperties : String, CaseIterable {
     case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerRadius, hint, value, datasource, defaultValue, empty, style,
+         address, systemName, cornerRadius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -170,7 +170,7 @@ public enum UIElementProperties : String, CaseIterable {
         
         let prop = UIElementProperties(rawValue: key)
         switch prop {
-        case .resizable, .title, .text, .viewName, .systemname, .hint, .empty, .style, .defaultValue:
+        case .resizable, .title, .text, .viewName, .systemName, .hint, .empty, .style, .defaultValue:
             return value is String
         case .show, .nopadding, .bold, .italic, .underline, .strikethrough:
             return value is Bool
