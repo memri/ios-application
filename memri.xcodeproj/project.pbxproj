@@ -1408,6 +1408,7 @@
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				B83E331A24982F4200D88742 /* LEOTextStorage.swift in Sources */,
+				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				86CDB726246DB047007EAE67 /* UIFont.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
