@@ -26,12 +26,17 @@ public struct SubView : View {
         self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
         
         do {
+            guard let context = context as? RootContext else {
+                throw "Exception: Too much nesting"
+            }
             let storedDef = context.views.fetchDefinitions(name:viewName, type:"view").first
             var def = try context.views.parseDefinition(storedDef)
             if def is CVUParsedSessionDefinition {
                 if let list = def?["views"] as? [CVUParsedViewDefinition] { def = list.first }
             }
-            guard let viewDef = def else { throw "Exception: Missing view" }
+            guard let viewDef = def else {
+                throw "Exception: Missing view"
+            }
             
             args.set(".", dataItem)
             
@@ -50,9 +55,8 @@ public struct SubView : View {
             session.views.append(view)
             session.currentViewIndex = 0
             
-            // NOTE: Allowed force unwrap
-            self.proxyMain = (context as! RootContext).createSubContext(session)
-            do { try self.proxyMain!.updateCascadingView() }
+            self.proxyMain = context.createSubContext(session)
+            do { try self.proxyMain?.updateCascadingView() }
             catch {
                 // TODO Refactor error handling
                 throw "Cannot update CascadingView \(self): \(error)"
@@ -70,17 +74,22 @@ public struct SubView : View {
         self.searchbar = args.get("searchbar") ?? searchbar
         self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
         
-        args.set(".", dataItem)
-        
-        view.viewArguments = args
-        
-        let session = Session()
-        session.views.append(view)
-        session.currentViewIndex = 0
-        
-        // NOTE: Allowed force unwrap
-        self.proxyMain = (context as! RootContext).createSubContext(session)
-        do { try self.proxyMain!.updateCascadingView() }
+        do {
+            guard let context = context as? RootContext else {
+                throw "Exception: Too much nesting"
+            }
+            
+            args.set(".", dataItem)
+            
+            view.viewArguments = args
+            
+            let session = Session()
+            session.views.append(view)
+            session.currentViewIndex = 0
+            
+            self.proxyMain = context.createSubContext(session)
+            try self.proxyMain?.updateCascadingView()
+        }
         catch {
             // TODO Refactor error handling
             print("Error: cannot init subview, failed to update CascadingView: \(error)")
@@ -95,8 +104,7 @@ public struct SubView : View {
                 if self.toolbar {
                     TopNavigation(inSubView: true, showCloseButton: showCloseButton)
                 }
-                // NOTE: Allowed force unwrap
-                allRenderers?.allViews[self.proxyMain!.cascadingView.activeRenderer]
+                allRenderers?.allViews[self.proxyMain?.cascadingView.activeRenderer ?? "list"]
                     .fullHeight()
                 
                 if self.searchbar {

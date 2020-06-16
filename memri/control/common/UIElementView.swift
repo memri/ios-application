@@ -11,101 +11,6 @@ import SwiftUI
 import RealmSwift
 import TextView
 
-/*
-    TODO: In order to support mixed content we will need to add an element that renders a dataitem
-          based on the way it is rendered by default for that (multi-item) renderer. This should be
-          overwritable with a renderDescription for that renderer that is for a specific view-type.
-          i.e. for the view-type "inbox". The default render description can always be specified
-          using *. Here's an example:
- 
-            "renderConfigs": {
-                "list": {
-                    "renderDescription": [
-                        "VStack", ["Text", {"text": "Hello"}]
-                    ]
-                },
-                "inbox": {
-                    "renderDescription": [
-                        "VStack", ["Image", {"systemName": "email"}]
-                    ]
-                }
-            }
-        
-          Inbox in the above example is a virtual renderer that is added to a dict on the
-          renderConfigs object. Virtual renderers are useful for composability in the hands of
-          users. For instance the memri button rendering can be implemented using a virtual
-          renderer that simply renders the button in a SubView (see below) and can be customized
-          for each type, without the need of actually implementing a renderer.
- 
-          For this purpose we need to introduce a new element called "ItemCell", this will render
-          the data item as if it was rendered inside the renderer of that type when it would be
-          only showing elements of that type (i.e. "[{type:Person}]" in views_from_json). It would
-          look like this:
- 
-            ItemCell(dataItem, rendererNames [, viewOverride])
- 
-          with viewOverride being the name of a view that should be the template instead of the
-          default. rendererNames is an array of rendererName so that it can search for multiple,
-          for instance if the data item doesnt have definitions for one renderer, but it does for
-          another.
- 
-          The inbox renderer can overlay other elements in its rendering, like this:
- 
-            // this is the inbox render config
-            renderConfigs: {
-                list: {
-                    renderDescription: [
-                        "ZStack", [
-                            "VStack", ["Text", {"text": "Type: {.type}"}],
-                            "ItemCell", {
-                                "dataItem": "{.}",
-                                "rendererNames: ["inbox", "list", "thumbnail", "map"]
-                            }
-                        ],
-                    ]
-                }
-            }
- 
-          In addition and to facilitate the abilities of the view hyper network is the introduction of
-          the subview element that can display views inline. An immediate use case is to view a list
-          of views (in fact they are sessions, but its easier to perceive them as views), and
-          instead of seeing a screenshot of the last state they are the actual live instantiation of
-          that view. This can be used for showing a list of charts that are easy to scroll through
-          and thus easy to check daily without having to go to many views (N.B. this can somewhat be
-          achieved with a session that has a history of each chart you want. you can then navigate
-          with the back button and via the list of views in the session. However this is not as
-          easy as scrolling). This is the signature of the element
- 
-            SubView(viewName or viewInstance, dataItem, variables)
- 
-          And the renderConfig of the session view for the charts could look like this:
-          
-            renderConfigs: {
-                list: {
-                    renderDescription: [
-                        "VStack", [
-                            "Text", {"text": "{.computedTitle}"},
-                            "SubView", {
-                                "view": "{.}", // or "viewName": "someView" for other use cases
-                                "dataItem": "{.}", // this could be left out in this case
-                                "variables": {
-                                    "toolbar": false,
-                                    "readonly": true
-                                }
-                            }
-                        ]
-                    ]
-                }
-            }
- 
-          In order for the hyper network to work openView needs to be extended to be able to open
-          views from URIs (file, http, elsewhere), and to download any additional data from sources
-          other than the pod, for usage in memri. We can even imagine a limited web renderer of views
-          that people can embed on their website, where they also link to the view for download in
-          memri. By allowing views to refer to each other a network of knowledge can appear. But the
-          exact shape of that is still beyond the horizon of my imagination.
- */
-
 public struct UIElementView: SwiftUI.View {
     @EnvironmentObject var context: MemriContext
     
@@ -137,8 +42,8 @@ public struct UIElementView: SwiftUI.View {
         return UIImage()
     }
     
-    public func getBundleImage() -> Image{
-        if let name: String = get("bundleimage"){
+    public func getbundleImage() -> Image{
+        if let name: String = get("bundleImage"){
             return Image(name)
         }
         return Image(systemName: "exclamationmark.bubble")
@@ -243,7 +148,14 @@ public struct UIElementView: SwiftUI.View {
                 }
                 else if from.type == .EditorLabel {
                     HStack (alignment: .center, spacing:15) {
-                        Button (action:{}) {
+                        Button (action: {
+                            let args:[String:Any?] = [
+                                "subject": self.context.item, // self.item,
+                                "property": self.viewArguments.get("name")
+                            ]
+                            let action = ActionUnlink(self.context, arguments: args)
+                            self.context.executeAction(action, with: self.item, using:self.viewArguments)
+                        }) {
                             Image (systemName: "minus.circle.fill")
                                 .foregroundColor(Color.red)
                                 .font(.system(size: 22))
@@ -271,7 +183,7 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .Button {
                     Button(action: {
                         if let press:Action = self.get("press") {
-                            self.context.executeAction(press, with: self.item)
+                            self.context.executeAction(press, with: self.item, using:self.viewArguments)
                         }
                     }) {
                         self.renderChildren
@@ -301,6 +213,10 @@ public struct UIElementView: SwiftUI.View {
                 }
                 else if from.type == .Textfield {
                     self.renderTextfield()
+                        .setProperties(from.properties, self.item, context, self.viewArguments)
+                }
+                else if from.type == .RichTextfield {
+                    self.renderRichTextfield()
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .ItemCell {
@@ -367,13 +283,13 @@ public struct UIElementView: SwiftUI.View {
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Image {
-                    if has("systemname") {
-                        Image(systemName: get("systemname") ?? "exclamationmark.bubble")
+                    if has("systemName") {
+                        Image(systemName: get("systemName") ?? "exclamationmark.bubble")
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, context, self.viewArguments)
                     }
-                    else if has("bundleimage"){
-                        getBundleImage()
+                    else if has("bundleImage"){
+                        getbundleImage()
                             .renderingMode(.original)
                             .if(from.has("resizable")) { self.resize($0) }
                             .setProperties(from.properties, self.item, context, self.viewArguments)
@@ -446,8 +362,29 @@ public struct UIElementView: SwiftUI.View {
         return EmptyView()
     }
     
+    func renderRichTextfield() -> some View {
+        let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
+        
+        return Group {
+            if propName == "" {
+                Text("Invalid property value set on TextField")
+            }
+            else {
+//                let binding = Binding<String>(
+//                    get: { dataItem.getString(propName) },
+//                    set: { dataItem.set(propName, $0) }
+//                )
+                
+//                self.get("hint") ?? ""
+                
+                _RichTextEditor(dataItem: dataItem, filterText: $context.cascadingView.filterText)
+                    .generalEditorInput()
+            }
+        }
+    }
+    
     func renderTextfield() -> some View {
-        let (type, dataItem, propName) = from.getType("value", self.item)
+        let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
         let rows:CGFloat = self.get("rows") ?? 2
         
         return Group {
@@ -497,22 +434,29 @@ public struct UIElementView: SwiftUI.View {
     
     func renderPicker() -> some View {
         let dataItem:DataItem? = self.get("value")
-        let (_, propDataItem, propName) = from.getType("value", self.item)
-        let datasource:[String:Any] = self.get("datasource") ?? [:] // TODO refactor error handling
+        let (_, propDataItem, propName) = from.getType("value", self.item, self.viewArguments)
         let emptyValue = self.get("empty") ?? "Pick a value"
+        
+        var datasource:Datasource
+        if let def = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
+            do { datasource = try Datasource.fromCVUDefinition(def, self.viewArguments) }
+            catch let error {
+                errorHistory.warn("\(error)")
+                datasource = Datasource()
+            }
+        }
+        else {
+            datasource = Datasource()
+        }
         
         return Picker(
             item: self.item,
             selected: dataItem ?? self.get("defaultValue"),
-            title: "Select a \(emptyValue)",
+            title: self.get("title") ?? "Select a \(emptyValue)",
             emptyValue: emptyValue,
             propDataItem: propDataItem,
             propName: propName,
-            datasource: Datasource(value: [
-                "query": datasource["query"],
-                "sortProperty": datasource["sortProperty"],
-                "sortAscending": datasource["sortAscending"]
-            ])
+            datasource: datasource
         )
     }
     

@@ -81,7 +81,7 @@ struct ThumbGridRendererView: View {
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
                     // TODO: Error handling
-                    self.renderConfig!.render(item: dataItem)
+                    self.renderConfig?.render(item: dataItem)
                         .environmentObject(self.context)
                         .onTapGesture {
                             if let press = self.renderConfig?.press {

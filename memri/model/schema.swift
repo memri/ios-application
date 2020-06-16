@@ -36,7 +36,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     case typeMedicalCondition = "MedicalCondition"
     case typeSession = "Session"
     case typeSessionView = "SessionView"
-    case typeStoredCVUDefinition = "ViewDSLDefinition"
+    case typeCVUStoredDefinition = "CVUStoredDefinition"
     case typeImporter = "Importer"
     case typeIndexer = "Indexer"
     case typeImporterInstance = "ImporterInstance"
@@ -67,7 +67,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return Color(hex: "#3dc8e2")
         case .typeSession: return Color(hex: "#93c47d")
         case .typeSessionView: return Color(hex: "#93c47d")
-        case .typeStoredCVUDefinition: return Color(hex: "#93c47d")
+        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
         case .typeImporter: return Color(hex: "#93c47d")
         case .typeIndexer: return Color(hex: "#93c47d")
         case .typeImporterInstance: return Color(hex: "#93c47d")
@@ -84,39 +84,6 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
     
     func getPrimaryKey() -> String {
         return self.getType().primaryKey() ?? ""
-    }
-
-    func getCollection(_ object:Any) -> [DataItem] {
-        var collection:[DataItem] = []
-        
-        if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Photo> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Video> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Audio> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<File> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Person> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<AuditItem> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Sessions> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<PhoneNumber> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Website> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Location> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Address> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Country> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Company> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<PublicKey> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<OnlineProfile> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Diet> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<MedicalCondition> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Session> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<SessionView> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<CVUStoredDefinition> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Importer> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
-        else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
-
-        return collection
     }
     
     func getType() -> AnyObject.Type {
@@ -142,7 +109,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
         case .typeMedicalCondition: return MedicalCondition.self
         case .typeSession: return Session.self
         case .typeSessionView: return SessionView.self
-        case .typeStoredCVUDefinition: return CVUStoredDefinition.self
+        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
         case .typeImporter: return Importer.self
         case .typeIndexer: return Indexer.self
         case .typeImporterInstance: return ImporterInstance.self
@@ -485,19 +452,19 @@ class Person:DataItem {
     override var genericType:String { "Person" }
     @objc dynamic var profilePicture:File? = nil
     
-    let relations = List<Edge>()
-    let phoneNumbers = List<Edge>()
+    let relations = List<Person>()
+    let phoneNumbers = List<PhoneNumber>()
     
     
-    let websites = List<Edge>()
+    let websites = List<Website>()
     //TODO
 //    let placeOfBirth = List<Location>()
-    let companies = List<Edge>()
-    let addresses = List<Edge>()
-    let publicKeys = List<Edge>()
-    let onlineProfiles = List<Edge>()
-    let diets = List<Edge>()
-    let medicalConditions = List<Edge>()
+    let companies = List<Company>()
+    let addresses = List<Address>()
+    let publicKeys = List<PublicKey>()
+    let onlineProfiles = List<OnlineProfile>()
+    let diets = List<Diet>()
+    let medicalConditions = List<MedicalCondition>()
     
     override var computedTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
@@ -523,16 +490,15 @@ class Person:DataItem {
             age.value = try decoder.decodeIfPresent("age") ?? age.value
             profilePicture = try decoder.decodeIfPresent("profilePicture") ?? profilePicture
             
-            decodeEdges(decoder, "websites", Website.self, self.websites, self)
-            
-            decodeEdges(decoder, "relations", Person.self, self.relations, self)
-            decodeEdges(decoder, "phoneNumbers", PhoneNumber.self, self.phoneNumbers, self)
-            decodeEdges(decoder, "companies", Company.self, self.companies, self)
-            decodeEdges(decoder, "addresses", Address.self, self.addresses, self)
-            decodeEdges(decoder, "publicKeys", PublicKey.self, self.publicKeys, self)
-            decodeEdges(decoder, "onlineProfiles", OnlineProfile.self, self.onlineProfiles, self)
-            decodeEdges(decoder, "diets",  Diet.self, self.diets, self)
-            decodeEdges(decoder, "medicalConditions", MedicalCondition.self, self.medicalConditions, self)
+            decodeIntoList(decoder, "websites", self.websites)
+            decodeIntoList(decoder, "relations", self.relations)
+            decodeIntoList(decoder, "phoneNumbers", self.phoneNumbers)
+            decodeIntoList(decoder, "companies", self.companies)
+            decodeIntoList(decoder, "addresses", self.addresses)
+            decodeIntoList(decoder, "publicKeys", self.publicKeys)
+            decodeIntoList(decoder, "onlineProfiles", self.onlineProfiles)
+            decodeIntoList(decoder, "diets",  self.diets)
+            decodeIntoList(decoder, "medicalConditions", self.medicalConditions)
             
             try self.superDecode(from: decoder)
         }
@@ -616,9 +582,8 @@ class Label:DataItem {
             comment = try decoder.decodeIfPresent("comment") ?? comment
             color = try decoder.decodeIfPresent("color") ?? color
             
-            decodeEdges(decoder, "includes", DataItem.self, self.appliesTo, self)
+            decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
 
-            
             try self.superDecode(from: decoder)
         }
     }
@@ -737,7 +702,7 @@ class Importer:DataItem{
     @objc dynamic var icon:String = ""
     @objc dynamic var bundleImage:String = ""
     
-    let runs = List<Edge>()
+    let runs = List<ImporterInstance>()
     
     override var computedTitle:String {
         return name
@@ -756,7 +721,7 @@ class Importer:DataItem{
             icon = try decoder.decodeIfPresent("icon") ?? icon
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
             
-            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            decodeIntoList(decoder, "runs", self.runs)
             
             try self.superDecode(from: decoder)
         }
@@ -798,7 +763,7 @@ class Indexer:DataItem{
     @objc dynamic var icon:String = ""
     @objc dynamic var bundleImage:String = ""
     
-    let runs = List<Edge>() // e.g. person, object, recipe, etc
+    let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -814,7 +779,7 @@ class Indexer:DataItem{
             icon = try decoder.decodeIfPresent("icon") ?? icon
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
             
-            decodeEdges(decoder, "runs", DataItem.self, self.runs, self)
+            decodeIntoList(decoder, "runs", self.runs)
             
             try self.superDecode(from: decoder)
         }
@@ -826,7 +791,6 @@ class IndexerInstance:DataItem{
     override var genericType:String { "IndexerInstance" }
     @objc dynamic var name:String = "unknown indexer instance"
     @objc dynamic var query:String = ""
-
     @objc dynamic var indexer:Indexer? = nil
     
     required init () {

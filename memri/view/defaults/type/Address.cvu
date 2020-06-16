@@ -45,7 +45,7 @@ Address[] {
                     padding: 0 0 10 0
                 }
                 Spacer
-                Map{
+                Map {
                     address: {{.}}
                     maxWidth: 150
                     minHeight: 150
@@ -60,7 +60,7 @@ Address[] {
                 EditorLabel {
                     title: "{.type}"
                     edge: {{edge}}
-                    hierarchy: address
+                    hierarchy: Ayuddress
                 }
                 VStack {
                     Textfield { hint: Street, value: {{.street}}, rows: 2 }
@@ -70,11 +70,13 @@ Address[] {
                         Textfield { hint: "Zip", value: {{.postalCode}} }
                     }
                     Picker {
-                        empty: Country
+                        emptyValue: Country
+                        title: "Select a country"
                         value: {{.country}}
                         defaultValue: "{me.address[primary = true].country}"
+                        
                         [datasource = pod] {
-                            query: "country"
+                            query: "Country"
                             sortProperty: name
                         }
                     }
@@ -85,7 +87,7 @@ Address[] {
 }
             
 Address {
-    title: "{.computedTitle}"
+    title: "Address"
     defaultRenderer: generalEditor
     editActionButton: toggleEditMode
     contextButtons: star schedule
@@ -103,7 +105,7 @@ Address {
             sectionTitle: ""
             
             Map {
-                location: {{.}}
+                address: {{.}}
                 minHeight: 150
                 maxHeight: 150
             }

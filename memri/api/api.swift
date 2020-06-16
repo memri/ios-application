@@ -28,7 +28,15 @@ public class PodAPI {
                       _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void) {
         
         let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
-        let baseUrl = URL(string: Settings.get("user/pod/host") ?? "")!
+        let podhost = Settings.get("user/pod/host") ?? ""
+        guard var baseUrl = URL(string: podhost) else {
+            let message = "Invalid pod host set in settings: \(podhost)"
+            errorHistory.error(message)
+            callback(message, nil)
+            return
+        }
+        
+        baseUrl = baseUrl
             .appendingPathComponent("v1")
             .appendingPathComponent(path)
         
@@ -83,10 +91,31 @@ public class PodAPI {
     
     private func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
         let className = item.objectSchema[prop]?.objectClassName
-        // TODO TEMP FIX
-        let family = DataItemFamily(rawValue: className!)!
-//        let family = DataItemFamily(rawValue: className!.lowercased())!
-        return family.getCollection(item[prop] as Any)
+        
+        if className == "Edge" {
+            var result = [DataItem]()
+            
+            if let list = item[prop] as? List<Edge> {
+                for edge in list {
+                    if let d = getDataItem(edge) {
+                        result.append(d)
+                    }
+                }
+                
+                return result
+            }
+            else {
+                // TODO error
+                return []
+            }
+        }
+        else if className == "DataItem" {
+            // Unsupported
+            return []
+        }
+        else {
+            return dataItemListToArray(item[prop] as Any)
+        }
     }
     
     private let MAXDEPTH = 2
@@ -111,7 +140,7 @@ public class PodAPI {
                     if prop.name == "syncState" || prop.name == "deleted" || (removeUID && prop.name == "uid") {
                         // Ignore
                     }
-                    else if updatedFields == nil || updatedFields!.contains(prop.name) {
+                    else if updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
                         if prop.type == .object {
                             if prop.isArray {
                                 var toList = [[String:Any]]()
@@ -144,7 +173,13 @@ public class PodAPI {
         }
         
         // TODO refactor: error handling
-        return try! MemriJSONEncoder.encode(AnyCodable(recur(dataItem, 1)))
+        do {
+            return try MemriJSONEncoder.encode(AnyCodable(recur(dataItem, 1)))
+        }
+        catch let error {
+            errorHistory.error("Exception while communicating with the pod: \(error)")
+            return Data()
+        }
     }
     
     /// Retrieves a single data item from the pod
@@ -177,7 +212,7 @@ public class PodAPI {
                        _ callback: @escaping (_ error: Error?, _ uid: Int?) -> Void) -> Void {
         
         self.http(.POST, path: "items", body: toJSON(item, removeUID:true)) { error, data in
-            callback(error, data != nil ? Int(String(data: data!, encoding: .utf8) ?? "") : nil)
+            callback(error, data != nil ? Int(String(data: data ?? Data(), encoding: .utf8) ?? "") : nil)
         }
     }
     
@@ -189,7 +224,7 @@ public class PodAPI {
                        _ callback: @escaping (_ error: Error?, _ version: Int?) -> Void) -> Void {
                        
         self.http(.PUT, path: "items/\(item.memriID)", body: toJSON(item)) { error, data in
-            callback(error, (data != nil ? Int(String(data: data!, encoding: .utf8) ?? "") : nil))
+            callback(error, (data != nil ? Int(String(data: data ?? Data(), encoding: .utf8) ?? "") : nil))
         }
     }
     
@@ -222,7 +257,8 @@ public class PodAPI {
         
         var data:Data? = nil
         
-        let matches = queryOptions.query!.match(#"^(\w+) AND memriID = '(.+)'$"#)
+        let query = queryOptions.query ?? ""
+        let matches = query.match(#"^(\w+) AND memriID = '(.+)'$"#)
         if matches.count == 3 {
             let type = matches[1]
             let memriID = matches[2]
@@ -248,7 +284,7 @@ public class PodAPI {
             """.data(using: .utf8)
         }
         else {
-            let type = queryOptions.query!.split(separator: " ").first ?? ""
+            let type = query.split(separator: " ").first ?? ""
             
             print("Requesting query result of \(type): \(queryOptions.query ?? "")")
             
@@ -278,12 +314,10 @@ public class PodAPI {
             }
             else if let data = data {
                 do {
-                    var str = String(data: data, encoding: .utf8) ?? ""
-                    
                     var items:[DataItem]?
                     try JSONErrorReporter() {
                         items = try MemriJSONDecoder
-                            .decode(family: DataItemFamily.self, from: str.data(using: .utf8)!)
+                            .decode(family: DataItemFamily.self, from: data)
                     }
                     
                     callback(nil, items)

@@ -16,7 +16,7 @@ public struct MemriButton : View {
     
     public var body: some View {
         // NOTE: Allowed force unwrap
-        let family = DataItemFamily(rawValue: item.genericType)!
+        let family = DataItemFamily(rawValue: item.genericType)
         var type = item.objectSchema["type"] == nil ? item.genericType : item.getString("type")
         if type == "" { type = item.genericType }
         
@@ -35,11 +35,11 @@ public struct MemriButton : View {
                 .padding(.leading, 5)
                 .padding(.trailing, 9)
                 .padding(.vertical, 3)
-                .foregroundColor(family.foregroundColor)
+                .foregroundColor(family?.foregroundColor ?? Color.white)
                 .font(.system(size: 14, weight: .semibold))
                 .zIndex(10)
         }
-        .background(family.backgroundColor)
+        .background(family?.backgroundColor ?? Color.white)
         .cornerRadius(20)
         .compositingGroup()
 //        .fixedSize(horizontal: false, vertical: true)

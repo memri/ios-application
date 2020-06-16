@@ -69,10 +69,14 @@ public class Views {
     
     // TODO Refactor: distinguish between views and sessions
     public func loadStandardViewSetIntoDatabase() throws {
+        guard let context = context else {
+            throw "Context is not set"
+        }
+        
         let code = getDefaultViewContents()
         
         do {
-            let cvu = CVU(code, context!, lookup: lookupValueOfVariables, execFunc: executeFunction)
+            let cvu = CVU(code, context, lookup: lookupValueOfVariables, execFunc: executeFunction)
             let parsedDefinitions = try cvu.parse() // TODO this could be optimized
             
             let validator = CVUValidator()
@@ -353,9 +357,9 @@ public class Views {
 
         if let domain = domain { filter.append("domain = '\(domain)'") }
         
-        return context!.realm.objects(CVUStoredDefinition.self)
+        return realm.objects(CVUStoredDefinition.self)
             .filter(filter.joined(separator: " AND "))
-            .map({ (def) -> CVUStoredDefinition in def }) // Convert to normal Array
+            .map({ (def) -> CVUStoredDefinition in def })
     }
     
     // TODO REfactor return list of definitions
@@ -364,12 +368,16 @@ public class Views {
             throw "Exception: Missing CVU definition"
         }
         
+        guard let context = context else {
+            throw "Exception: Missing Context"
+        }
+        
         let cached = InMemoryObjectCache.get("memriID: \(viewDef.memriID)")
         if let cached = cached as? CVU {
             return try cached.parse().first
         }
         else if let definition = viewDef.definition {
-            let viewDefParser = CVU(definition, context!,
+            let viewDefParser = CVU(definition, context,
                 lookup: lookupValueOfVariables,
                 execFunc: executeFunction
             )
@@ -404,10 +412,7 @@ public class Views {
             throw "Exception: MemriContext is not defined in views"
         }
 
-        let viewFromSession = sessionView == nil
-            ? context.sessions.currentSession.currentView
-            : sessionView!
-        
+        let viewFromSession = sessionView ?? context.sessions.currentSession.currentView
         let cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
         
         // TODO REFACTOR: move these to a better place (context??)
@@ -541,6 +546,5 @@ public class Views {
 
 func getDefaultViewContents() -> String{
     let urls = Bundle.main.urls(forResourcesWithExtension: "cvu", subdirectory: ".")
-    return urls == nil ? "":
-        urls!.compactMap{try? String(contentsOf: $0)}.joined(separator: "\n")
+    return (urls ?? []).compactMap{try? String(contentsOf: $0)}.joined(separator: "\n")
 }

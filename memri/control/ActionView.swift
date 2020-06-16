@@ -26,16 +26,18 @@ struct ActionButton: View {
     }
     
     func getAction() -> AnyView{
+        let action = self.action ?? ActionNoop(context)
+        
         // NOTE: Allowed force unwrappings (logic)
-        switch self.action?.getRenderAs(context.cascadingView.viewArguments) {
+        switch action.getRenderAs(context.cascadingView.viewArguments) {
         case .popup:
-            return AnyView(ActionPopupButton(action: self.action!))
+            return AnyView(ActionPopupButton(action: action))
         case .button:
-            return AnyView(ActionButtonView(action: self.action!) {
-                self.context.executeAction(self.action!)
+            return AnyView(ActionButtonView(action: action) {
+                self.context.executeAction(action)
             })
         default:
-            return AnyView(ActionButtonView(action: self.action!))
+            return AnyView(ActionButtonView(action: action))
         }
     }
 }
@@ -75,7 +77,7 @@ struct ActionButtonView: View {
             
             if title != nil && action.getBool("showTitle") {
                 // NOTE: Allowed force unwrapping (logic)
-                Text(title!)
+                Text(title ?? "")
                     .font(.subheadline)
                     .foregroundColor(.black)
              }

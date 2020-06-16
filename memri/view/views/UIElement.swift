@@ -47,23 +47,14 @@ public class UIElement : CVUToString {
                         
                         var result = [DataItem]()
                         if let list = x as? List<Edge> {
-                            let realm = try! Realm()
-                            
                             for edge in list {
-                                if let family = DataItemFamily(rawValue: edge.objectType) {
-                                    result.append(realm.object(
-                                        ofType: family.getType() as! Object.Type,
-                                        forPrimaryKey: edge.objectMemriID) as! DataItem)
+                                if let d = getDataItem(edge) {
+                                    result.append(d)
                                 }
                             }
                         }
                         else {
-                            if let family = DataItemFamily(rawValue: "Note") {
-                                result = family.getCollection(x as Any)
-                            }
-                            else {
-                                // TODO Warn??
-                            }
+                            result = dataItemListToArray(x as Any)
                         }
                         
                         return (result as! T)
@@ -93,13 +84,15 @@ public class UIElement : CVUToString {
         return nil
     }
     
-    public func getType(_ propName:String, _ item:DataItem) -> (PropertyType, DataItem, String) {
+    public func getType(_ propName:String, _ item:DataItem,
+                        _ viewArguments:ViewArguments) -> (PropertyType, DataItem, String) {
+        
         if let prop = properties[propName] {
             let propValue = prop
             
             // Execute expression to get the right value
             if let expr = propValue as? Expression {
-                do { return try expr.getTypeOfDataItem() }
+                do { return try expr.getTypeOfDataItem(viewArguments) }
                 catch {
                     // TODO Refactor: Error Handling
                     errorHistory.error("could not get type of \(item)")
@@ -115,8 +108,8 @@ public class UIElement : CVUToString {
         var outText = text
         let maxChar:CGFloat? = get("maxChar")
         
-        outText = get("removewhitespace") ?? false ? removeWhiteSpace(text: text) : text
-        outText = maxChar != nil ? String(outText.prefix(Int(maxChar!))) : outText
+        outText = get("removeWhiteSpace") ?? false ? removeWhiteSpace(text: text) : text
+        outText = maxChar != nil ? String(outText.prefix(Int(maxChar ?? 0))) : outText
         
         return outText
     }
@@ -153,13 +146,13 @@ public class UIElement : CVUToString {
 public enum UIElementFamily : String, CaseIterable {
     case VStack, HStack, ZStack, EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
          Text, Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
-         Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, Empty
+         Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, RichTextfield, Empty
 }
 
 public enum UIElementProperties : String, CaseIterable {
     case resizable, show, alignment, align, textAlign, spacing, title, text, image, nopadding,
          press, bold, italic, underline, strikethrough, list, viewName, view, arguments, location,
-         address, systemname, cornerRadius, hint, value, datasource, defaultValue, empty, style,
+         address, systemName, cornerRadius, hint, value, datasource, defaultValue, empty, style,
          frame, color, font, padding, background, rowbackground, cornerborder, border, margin,
          shadow, offset, blur, opacity, zindex, minWidth, maxWidth, minHeight, maxHeight
     
@@ -168,7 +161,7 @@ public enum UIElementProperties : String, CaseIterable {
         
         let prop = UIElementProperties(rawValue: key)
         switch prop {
-        case .resizable, .title, .text, .viewName, .systemname, .hint, .empty, .style, .defaultValue:
+        case .resizable, .title, .text, .viewName, .systemName, .hint, .empty, .style, .defaultValue:
             return value is String
         case .show, .nopadding, .bold, .italic, .underline, .strikethrough:
             return value is Bool

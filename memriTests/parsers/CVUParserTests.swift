@@ -724,7 +724,7 @@ class CVUParserTests: XCTestCase {
         Person {
             [renderer = list] {
                 press: [
-                    addSelectionToList {
+                    link {
                         arguments: {
                             property: {{property}}
                             dataItem: {{dataItem}}
