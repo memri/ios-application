@@ -83,10 +83,10 @@ public class Views {
             if !validator.validate(parsedDefinitions) {
                 validator.debug()
                 if validator.warnings.count > 0 {
-                    for message in validator.warnings { errorHistory.warn(message) }
+                    for message in validator.warnings { debugHistory.warn(message) }
                 }
                 if validator.errors.count > 0 {
-                    for message in validator.errors { errorHistory.error(message) }
+                    for message in validator.errors { debugHistory.error(message) }
                     throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
                 }
             }
@@ -237,7 +237,7 @@ public class Views {
                         if dataItem.objectSchema[node.name] == nil {
                             // TODO Warn
                             print("Invalid property access '\(node.name)'")
-                            errorHistory.warn("Invalid property access '\(node.name)'")
+                            debugHistory.warn("Invalid property access '\(node.name)'")
                             return nil
                         }
                         else {
@@ -389,10 +389,10 @@ public class Views {
                 if !validator.validate([firstDefinition]) {
                     validator.debug()
                     if validator.warnings.count > 0 {
-                        for message in validator.warnings { errorHistory.warn(message) }
+                        for message in validator.warnings { debugHistory.warn(message) }
                     }
                     if validator.errors.count > 0 {
-                        for message in validator.errors { errorHistory.error(message) }
+                        for message in validator.errors { debugHistory.error(message) }
                         throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
                     }
                 }
@@ -535,7 +535,7 @@ public class Views {
             return cascadingRenderConfig.render(item: dataItem)
         }
         catch let error {
-            errorHistory.error("Unable to render ItemCell: \(error)")
+            debugHistory.error("Unable to render ItemCell: \(error)")
             
             // TODO Refactor: Log error to the user
             return UIElementView(UIElement(.Text,

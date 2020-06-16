@@ -85,7 +85,7 @@ struct MapView: UIViewRepresentable {
                     annotation.coordinate = coordinate
                     view.addAnnotation(annotation)
                 } else{
-                    errorHistory.warn("incomplete location \(String(describing: location)) (lat or long missing)")
+                    debugHistory.warn("incomplete location \(String(describing: location)) (lat or long missing)")
                 }
             }
         }

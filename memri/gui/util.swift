@@ -196,7 +196,7 @@ func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Ty
         }
     }
     catch let error {
-        errorHistory.error("\(error)")
+        debugHistory.error("\(error)")
     }
 }
 
@@ -218,7 +218,7 @@ func realmWriteIfAvailable(_ realm:Realm?, _ doWrite:() throws -> Void) {
         }
     }
     catch let error {
-        errorHistory.error("Realm Error: \(error)")
+        debugHistory.error("Realm Error: \(error)")
     }
 }
 
@@ -228,7 +228,7 @@ func withRealm(_ doThis:(_ realm:Realm) -> Void) {
         doThis(realm)
     }
     catch let error {
-        errorHistory.error("\(error)")
+        debugHistory.error("\(error)")
     }
 }
 
@@ -238,7 +238,7 @@ func withRealm(_ doThis:(_ realm:Realm) -> Any?) -> Any? {
         return doThis(realm)
     }
     catch let error {
-        errorHistory.error("\(error)")
+        debugHistory.error("\(error)")
     }
     return nil
 }
@@ -312,13 +312,13 @@ func dataItemListToArray(_ object:Any) -> [DataItem] {
                     }
                     else {
                         // TODO Error handling
-                        errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
+                        debugHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
                         print("Could not find object of type \(type) with memriID \(objectId)")
                     }
                 }
                 else {
                     // TODO user warning
-                    errorHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
+                    debugHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
                     print("Unknown type \(objectType) for dataItem \(objectId)")
                 }
             }

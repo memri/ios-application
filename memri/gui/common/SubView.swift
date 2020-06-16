@@ -65,7 +65,7 @@ public struct SubView : View {
         catch let error {
             // TODO Refactor: error handling
             print("Error: cannot init subview: \(error)")
-            errorHistory.error("Error: cannot init subview: \(error)")
+            debugHistory.error("Error: cannot init subview: \(error)")
         }
     }
     
@@ -93,7 +93,7 @@ public struct SubView : View {
         catch {
             // TODO Refactor error handling
             print("Error: cannot init subview, failed to update CascadingView: \(error)")
-            errorHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
+            debugHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
         }
     }
     

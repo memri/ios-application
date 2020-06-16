@@ -140,7 +140,7 @@ public class Cache {
         let q = datasource.query ?? ""
         
         // Log to a maker user
-        errorHistory.info("Executing query \(q)")
+        debugHistory.info("Executing query \(q)")
         
         if (q == "") {
             callback("Empty Query", nil)

@@ -601,7 +601,6 @@
 		5D38DE1B2405788700FF9B70 /* api */ = {
 			isa = PBXGroup;
 			children = (
-				868EF61E2476696400C0375F /* parsers */,
 				5D38DE122405775400FF9B70 /* api.swift */,
 				5D4231AA247C2D7100CD1933 /* Datasource.swift */,
 			);
@@ -689,13 +688,13 @@
 			name = "Recovered References";
 			sourceTree = "<group>";
 		};
-		5D493FDC23FC15D10034692B /* view */ = {
+		5D493FDC23FC15D10034692B /* cvu */ = {
 			isa = PBXGroup;
 			children = (
 				86CDB46E2469C1F0007EAE67 /* defaults */,
 				5DB8EC0024598EAC0028FD2E /* views */,
 			);
-			path = view;
+			path = cvu;
 			sourceTree = "<group>";
 		};
 		5D599BAE23F2B77500F218A0 = {
@@ -723,8 +722,8 @@
 				86A5D83D243CEAB600F8FAD8 /* install */,
 				5D38DE1B2405788700FF9B70 /* api */,
 				5DD1E9B623FD812C007BDF7B /* model */,
-				5D493FDC23FC15D10034692B /* view */,
-				5DFB0CB824179DFC002FBDE7 /* control */,
+				5D493FDC23FC15D10034692B /* cvu */,
+				5DFB0CB824179DFC002FBDE7 /* gui */,
 				868EF61F2476699900C0375F /* parsers */,
 				5D1A3E62240704BF00A0583B /* extension */,
 				5D599BC223F2B77700F218A0 /* Preview Content */,
@@ -895,7 +894,7 @@
 			path = actions;
 			sourceTree = "<group>";
 		};
-		5DFB0CB824179DFC002FBDE7 /* control */ = {
+		5DFB0CB824179DFC002FBDE7 /* gui */ = {
 			isa = PBXGroup;
 			children = (
 				5DB8EC09245992D60028FD2E /* browser */,
@@ -910,7 +909,7 @@
 				5D3D9620241675100004040E /* util.swift */,
 				5D228B052432385300464506 /* ActionView.swift */,
 			);
-			path = control;
+			path = gui;
 			sourceTree = "<group>";
 		};
 		6841BBFF7A8894FFF2EACD8A /* Frameworks */ = {
@@ -967,13 +966,6 @@
 				5D487F21244073DF00B50202 /* UIElementView.swift */,
 			);
 			path = common;
-			sourceTree = "<group>";
-		};
-		868EF61E2476696400C0375F /* parsers */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = parsers;
 			sourceTree = "<group>";
 		};
 		868EF61F2476699900C0375F /* parsers */ = {
@@ -1416,7 +1408,6 @@
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				B83E331A24982F4200D88742 /* LEOTextStorage.swift in Sources */,
-				5D98DBD9243B598100046F3E /* MainActions.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				86CDB726246DB047007EAE67 /* UIFont.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,

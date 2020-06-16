@@ -254,7 +254,7 @@ public struct UIElementView: SwiftUI.View {
                                 }
                                 else {
                                     print("Failed to make subview (not defined), creating empty one instead")
-                                    errorHistory.error("Failed to make subview (not defined), creating empty one instead")
+                                    debugHistory.error("Failed to make subview (not defined), creating empty one instead")
                                     return SessionView()
                                 }
                             }(),
@@ -441,7 +441,7 @@ public struct UIElementView: SwiftUI.View {
         if let def = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
             do { datasource = try Datasource.fromCVUDefinition(def, self.viewArguments) }
             catch let error {
-                errorHistory.warn("\(error)")
+                debugHistory.warn("\(error)")
                 datasource = Datasource()
             }
         }
