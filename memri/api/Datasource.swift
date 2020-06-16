@@ -63,7 +63,7 @@ public class Datasource: Object, UniqueString {
                     return x
                 }
                 catch let error {
-                    errorHistory.warn("\(error)")
+                    debugHistory.warn("\(error)")
                     return nil
                 }
             }

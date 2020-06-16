@@ -110,7 +110,7 @@ public class MemriContext: ObservableObject {
                 catch {
                     // TODO User error handling
                     // TODO Error Handling
-                    errorHistory.error("Could not update CascadingView: \(error)")
+                    debugHistory.error("Could not update CascadingView: \(error)")
                 }
             }
         }
@@ -148,7 +148,7 @@ public class MemriContext: ObservableObject {
             if resultSet.determinedType != nil {
                 
                 if self is RootContext { // if type(of: self) == RootMain.self {
-                    errorHistory.info("Computing view "
+                    debugHistory.info("Computing view "
                         + (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
                 }
                 
@@ -179,7 +179,7 @@ public class MemriContext: ObservableObject {
                 catch let error {
                     // TODO Error handling
                     // TODO User Error handling
-                    errorHistory.error("\(error)")
+                    debugHistory.error("\(error)")
                 }
                 
                 // Update the UI

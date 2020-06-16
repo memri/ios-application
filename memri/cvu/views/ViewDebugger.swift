@@ -91,7 +91,7 @@ class WarnState: InfoState {
     }
 }
 
-class ErrorHistory: ObservableObject {
+class DebugHistory: ObservableObject {
     @Published var showErrorConsole:Bool = false
     
     var log = [InfoState]()
@@ -151,12 +151,12 @@ class ErrorHistory: ObservableObject {
 }
 
 // Intentionally global
-var errorHistory = ErrorHistory()
+var debugHistory = DebugHistory()
 
-struct  ErrorConsole: View {
+struct debugConsole: View {
     @EnvironmentObject var context: MemriContext
     
-    @ObservedObject var history = errorHistory
+    @ObservedObject var history = debugHistory
     
     var body: some View {
         let dateFormatter = DateFormatter()
@@ -166,7 +166,7 @@ struct  ErrorConsole: View {
 //        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
         
         return Group {
-            if errorHistory.showErrorConsole {
+            if debugHistory.showErrorConsole {
                 VStack (spacing:0) {
                     HStack {
                         Text("Console")
@@ -194,7 +194,7 @@ struct  ErrorConsole: View {
                     
                     CustomScrollView(scrollToEnd: true) {
                         VStack (spacing:0) {
-                            ForEach (errorHistory.log, id: \.self) { notice in
+                            ForEach (debugHistory.log, id: \.self) { notice in
                                 VStack (spacing: 0 ){
                                     HStack (alignment: .top, spacing: 4) {
                                         Image(systemName: notice.type.icon)
@@ -244,6 +244,6 @@ struct  ErrorConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
     static var previews: some View {
-        ErrorConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
+        debugConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

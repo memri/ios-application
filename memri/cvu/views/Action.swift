@@ -174,7 +174,7 @@ extension MemriContext {
         }
         catch let error {
             // TODO Log error to the user
-            errorHistory.error("\(error)")
+            debugHistory.error("\(error)")
         }
     }
     
@@ -187,7 +187,7 @@ extension MemriContext {
             }
             catch let error {
                 // TODO Log error to the user
-                errorHistory.error("\(error)")
+                debugHistory.error("\(error)")
                 break
             }
         }
@@ -234,7 +234,7 @@ public class Action : HashableClass, CVUToString {
             do { return try binding.isTrue() }
             catch {
                 // TODO error handling
-                errorHistory.warn("Could not read boolean value from binding \(binding)")
+                debugHistory.warn("Could not read boolean value from binding \(binding)")
             }
         }
         return nil
@@ -355,7 +355,7 @@ public class Action : HashableClass, CVUToString {
     class func execWithoutThrow(exec:() throws -> Void) {
         do { try exec() }
         catch let error {
-            errorHistory.error("Could not execute action: \(error)")
+            debugHistory.error("Could not execute action: \(error)")
         }
     }
 }
@@ -512,7 +512,7 @@ class ActionOpenView : Action, ActionExec {
             catch {
                 // TODO: User error handling
                 // TODO Error handling
-                errorHistory.error("\(error)")
+                debugHistory.error("\(error)")
             }
         }
         

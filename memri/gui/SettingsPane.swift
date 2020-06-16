@@ -21,7 +21,7 @@ struct SettingsPane: View {
                     return x
                 }
                 else {
-                    errorHistory.warn("Could not get setting \(path)")
+                    debugHistory.warn("Could not get setting \(path)")
                     
                     if T.self == String.self { return "" as! T }
                     if T.self == Double.self { return 0 as! T }

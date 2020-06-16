@@ -146,7 +146,7 @@ struct _RichTextEditor: UIViewRepresentable {
             }
         }
         catch let error {
-            errorHistory.warn("Regex error: \(error)")
+            debugHistory.warn("Regex error: \(error)")
             return
         }
     }

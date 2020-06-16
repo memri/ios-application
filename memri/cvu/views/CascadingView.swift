@@ -82,7 +82,7 @@ public class CascadingView: Cascadable, ObservableObject {
             }
             if let s:String = cascadeProperty("defaultRenderer") { return s }
             
-            errorHistory.error("Exception: Unable to determine the active renderer. Missing defaultRenderer in view?")
+            debugHistory.error("Exception: Unable to determine the active renderer. Missing defaultRenderer in view?")
             return ""
         }
         set (value) {
@@ -135,12 +135,12 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else {
                     // TODO Error logging
-                    errorHistory.error("Exception: Unable to cascade render config")
+                    debugHistory.error("Exception: Unable to cascade render config")
                 }
             }
             catch let error {
                 // TODO Error logging
-                errorHistory.error("\(error)")
+                debugHistory.error("\(error)")
             }
         }
                 
@@ -152,7 +152,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         else {
             // TODO Error Logging
-            errorHistory.error("Exception: Unable to cascade render config")
+            debugHistory.error("Exception: Unable to cascade render config")
             return CascadingRenderConfig([], ViewArguments())
         }
     }
@@ -351,7 +351,7 @@ public class CascadingView: Cascadable, ObservableObject {
                         if let d = d as? String { activeRenderer = d }
                         else {
                             // TODO ERror logging
-                            errorHistory.error("Could not fnd default renderer")
+                            debugHistory.error("Could not fnd default renderer")
                         }
                     }
                     
@@ -359,16 +359,16 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else {
                     // TODO Error logging
-                    errorHistory.error("Could not parse definition")
+                    debugHistory.error("Could not parse definition")
                 }
             }
             catch let error {
                 // TODO Error logging
                 if let error = error as? CVUParseErrors {
-                    errorHistory.error("\(error.toString(def?.definition ?? ""))")
+                    debugHistory.error("\(error.toString(def?.definition ?? ""))")
                 }
                 else {
-                    errorHistory.error("\(error)")
+                    debugHistory.error("\(error)")
                 }
             }
         }
@@ -389,7 +389,7 @@ public class CascadingView: Cascadable, ObservableObject {
                 }
                 else if key != "user" {
                     // TODO Warn logging
-                    errorHistory.warn("Could not find definition for '\(needle)' in domain '\(key)'")
+                    debugHistory.warn("Could not find definition for '\(needle)' in domain '\(key)'")
                     print("Could not find definition for '\(needle)' in domain '\(key)'")
                 }
             }

@@ -65,7 +65,7 @@ public class UIElement : CVUToString {
                 }
                 catch let error {
                     // TODO Refactor error handling
-                    errorHistory.error("Could note compute \(propName)\n"
+                    debugHistory.error("Could note compute \(propName)\n"
                         + "Arguments: [\(viewArguments.asDict().keys.joined(separator: ", "))]\n"
                         + (expr.startInStringMode
                             ? "Expression: \"\(expr.code)\"\n"
@@ -78,7 +78,7 @@ public class UIElement : CVUToString {
         }
         else {
             // TODO REfactor: WARN
-//            errorHistory.info("Property \(propName) not defined for \(type.rawValue)")
+//            debugHistory.info("Property \(propName) not defined for \(type.rawValue)")
         }
         
         return nil
@@ -95,7 +95,7 @@ public class UIElement : CVUToString {
                 do { return try expr.getTypeOfDataItem(viewArguments) }
                 catch {
                     // TODO Refactor: Error Handling
-                    errorHistory.error("could not get type of \(item)")
+                    debugHistory.error("could not get type of \(item)")
                 }
             }
         }

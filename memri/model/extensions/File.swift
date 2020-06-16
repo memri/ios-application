@@ -37,7 +37,7 @@ class File:DataItem {
         catch {
             // TODO: User error handling
             // TODO Refactor: error handling
-            errorHistory.error("Could not read image in path: \(uri)")
+            debugHistory.error("Could not read image in path: \(uri)")
         }
         return nil
     }

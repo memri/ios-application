@@ -21,7 +21,7 @@ public class Cascadable {
             else { return value }
         }
         catch let error {
-            errorHistory.error("\(error)")
+            debugHistory.error("\(error)")
             return nil
         }
     }

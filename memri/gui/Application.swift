@@ -70,7 +70,7 @@ struct Application: View {
                 }
                 .gesture(drag)
                 
-                ErrorConsole()
+                debugConsole()
             }
 //
 // TODO - Ruben - Commented out so TableView receives swipe gestures

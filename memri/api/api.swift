@@ -31,7 +31,7 @@ public class PodAPI {
         let podhost = Settings.get("user/pod/host") ?? ""
         guard var baseUrl = URL(string: podhost) else {
             let message = "Invalid pod host set in settings: \(podhost)"
-            errorHistory.error(message)
+            debugHistory.error(message)
             callback(message, nil)
             return
         }
@@ -177,7 +177,7 @@ public class PodAPI {
             return try MemriJSONEncoder.encode(AnyCodable(recur(dataItem, 1)))
         }
         catch let error {
-            errorHistory.error("Exception while communicating with the pod: \(error)")
+            debugHistory.error("Exception while communicating with the pod: \(error)")
             return Data()
         }
     }
@@ -309,7 +309,7 @@ public class PodAPI {
         
         self.http(.POST, path: "all", body: data) { error, data in
             if let error = error {
-                errorHistory.error("Could not load data from pod: \n\(error)")
+                debugHistory.error("Could not load data from pod: \n\(error)")
                 callback(error, nil)
             }
             else if let data = data {
@@ -323,7 +323,7 @@ public class PodAPI {
                     callback(nil, items)
                 }
                 catch let error {
-                    errorHistory.error("Could not load data from pod: \n\(error)")
+                    debugHistory.error("Could not load data from pod: \n\(error)")
                     callback(error, nil)
                 }
             }
