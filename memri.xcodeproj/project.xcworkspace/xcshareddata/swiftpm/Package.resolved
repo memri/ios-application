@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "ASCollectionView",
+        "repositoryURL": "https://github.com/apptekstudios/ASCollectionView",
+        "state": {
+          "branch": "master",
+          "revision": "4550cd5b5cfc3f437f8ff838939c6be21edfe992",
+          "version": null
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/ra1028/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "14c66681e12a38b81045f44c6c29724a0d4b0e72",
+          "version": "1.1.5"
+        }
+      },
+      {
         "package": "OrderedDictionary",
         "repositoryURL": "https://github.com/lukaskubanek/OrderedDictionary.git",
         "state": {
@@ -20,12 +38,30 @@
         }
       },
       {
-        "package": "QGrid",
-        "repositoryURL": "https://github.com/Q-Mobile/QGrid",
+        "package": "Realm",
+        "repositoryURL": "https://github.com/realm/realm-cocoa",
         "state": {
           "branch": null,
-          "revision": "40607aec336a8097c94bcadb81762592d89073ac",
-          "version": "0.1.3"
+          "revision": "fa43b8e2909334c79f233ce472332c136ca108da",
+          "version": "4.4.1"
+        }
+      },
+      {
+        "package": "RealmCore",
+        "repositoryURL": "https://github.com/realm/realm-core",
+        "state": {
+          "branch": null,
+          "revision": "35662ff940e340bf630ad1d1d88acfc7af18bee6",
+          "version": "5.23.8"
+        }
+      },
+      {
+        "package": "TextView",
+        "repositoryURL": "https://github.com/kenmueller/TextView",
+        "state": {
+          "branch": "master",
+          "revision": "e326e89963278684647ffaca9aa2cc6720b9cbf6",
+          "version": null
         }
       }
     ]
