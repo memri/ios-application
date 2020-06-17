@@ -19,7 +19,9 @@ struct ContextPaneForground: View {
         
         let addLabelAction = ActionNoop(context)
         
-        return VStack(alignment: .leading) {
+        return
+            ScrollView(.vertical) {
+            VStack(alignment: .leading) {
             VStack (alignment: .leading) {
                 Text(context.cascadingView.title) // TODO make this generic
                     .font(.system(size: 23, weight: .regular, design: .default))
@@ -140,6 +142,7 @@ struct ContextPaneForground: View {
             Spacer()
         }
         .padding(.top, 60)
+            }
 //            .padding(.leading, 16)
         .background(Color.white)
     }

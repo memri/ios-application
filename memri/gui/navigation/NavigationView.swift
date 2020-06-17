@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import memriUI
+import ASCollectionView
 
 struct Navigation: View {
     @EnvironmentObject var context: MemriContext
@@ -27,10 +29,10 @@ struct Navigation: View {
                     SettingsPane().environmentObject(self.context)
                 }
                 
-                TextField("Jump to...", text: $context.navigation.filterText)
+                MemriTextField(value: $context.navigation.filterText, placeholder: "Search", textColor: UIColor(hex:"#8a66bc"))
+                .layoutPriority(-1)
                     .padding(5)
                     .padding(.horizontal, 5)
-                    .foregroundColor(Color(hex:"#8a66bc"))
                     .background(Color(hex:"#341e51"))
                     .cornerRadius(5)
                 
@@ -51,8 +53,21 @@ struct Navigation: View {
             .frame(minHeight: 95)
             .background(Color(hex:"#492f6c"))
             
-            TableView<NavigationItem, AnyView>(context: self.context)
-            .padding(.top, 10)
+            ASTableView(section:
+                ASSection(id: 0, data: context.navigation.getItems(), dataID: \.self) { navItem, cellContext -> AnyView in
+                    switch navItem.type{
+                    case "item":
+                        return AnyView(NavigationItemView(item: navItem, hide: { self.context.showNavigation = false }))
+                    case "heading":
+                        return AnyView(NavigationHeadingView(title: navItem.title))
+                    case "line":
+                        return AnyView(NavigationLineView())
+                    default:
+                        return AnyView(NavigationItemView(item: navItem, hide: { self.context.showNavigation = false }))
+                    }
+                }
+            )
+            .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0))
 
 //            ScrollView(.vertical) {
 //                VStack (spacing:0) {

@@ -29,9 +29,10 @@ var config = Realm.Configuration(
 /// Computes the Realm path /home/<user>/realm.memri and creates the directory if it does not exist.
 /// - Returns: the computed directory
 func getRealmPath() throws -> String{
+    #warning("FIX ME")
     if  let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
         let realmDir = homeDir + "/realm.memri"
-        
+        print("REALM DIR: \(realmDir)")
         do {
             try FileManager.default.createDirectory(atPath:
                 realmDir, withIntermediateDirectories: true, attributes: nil)
