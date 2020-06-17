@@ -14,32 +14,6 @@ public class Views {
     init(_ rlm:Realm) {
         realm = rlm
     }
-    
-    public func parse(_ def:CVUStoredDefinition, cache:Bool = true) -> [String:Any] {
-        guard let definition = def.definition else {
-            return [:]
-        }
-        
-        do {
-            if let data = definition.data(using: .utf8) {
-                let json = try JSONSerialization.jsonObject(with: data, options: [])
-                
-                if cache {
-                    // TODO ???
-                }
-                
-                return json as? [String:Any] ?? [:]
-            }
-            else {
-                 throw "Data is not UTF8"
-            }
-        }
-        catch let error {
-            // TODO refactor: Log this for later feedback to developers
-            print(error)
-            return [:]
-        }
-    }
  
     public func load(_ mn:MemriContext, _ callback: () throws -> Void) throws {
         // Store context for use within createCascadingView)
@@ -175,8 +149,6 @@ public class Views {
         case "sessions": return context?.sessions
         case "currentSession": fallthrough
         case "session": return context?.currentSession
-        case "cascadingView": return context?.cascadingView
-        case "sessionView": return context?.currentSession.currentView
         case "view": return context?.cascadingView
         case "dataItem":
             if let itemRef:DataItem = viewArguments.get(".") {
@@ -210,7 +182,7 @@ public class Views {
         var first = true
         
         // TODO support language lookup: {$name}
-        // TOOD support viewArguments lookup: {name}
+        // TODO support viewArguments lookup: {name}
         
         var i = 0
         for node in lookup.sequence {
@@ -334,8 +306,14 @@ public class Views {
         return value
     }
     
-    func executeFunction(lookup: ExprLookupNode, args:[Any?], viewArguments:ViewArguments) throws -> Any? {
-        let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
+    func executeFunction(lookup: ExprLookupNode,
+                         args: [Any?],
+                         viewArguments: ViewArguments) throws -> Any? {
+        
+        let f = try lookupValueOfVariables(lookup: lookup,
+                                           viewArguments: viewArguments,
+                                           isFunction: true)
+        
         if let f = f as? ([Any?]?) -> Any {
             return f(args) as Any?
         }
@@ -344,10 +322,14 @@ public class Views {
         return x as Any?
     }
     
-    public func fetchDefinitions(selector:String? = nil, name:String? = nil, type:String? = nil,
-                                 query:String? = nil, domain:String? = nil) -> [CVUStoredDefinition] {
+    public func fetchDefinitions(selector: String? = nil,
+                                 name: String? = nil,
+                                 type: String? = nil,
+                                 query: String? = nil,
+                                 domain: String? = nil) -> [CVUStoredDefinition] {
         
         var filter:[String] = []
+        
         if let selector = selector { filter.append("selector = '\(selector)'") }
         else {
             if let type = type { filter.append("type = '\(type)'") }

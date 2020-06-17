@@ -298,30 +298,48 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
+    private class func inherit(_ cascadeStack: inout [CVUParsedDefinition],
+                               _ source: Any,
+                               _ viewArguments: ViewArguments?,
+                               _ context: MemriContext) throws -> CVUStoredDefinition? {
+        
+        var result:Any? = source
+        
+        if let expr = source as? Expression {
+            result = try expr.execute(viewArguments)
+        }
+        
+        if let viewName = result as? String {
+            return context.views.fetchDefinitions(name: viewName).first
+        }
+        else if let view = result as? SessionView {
+            return view.viewDefinition
+        }
+        else if let view = result as? CascadingView {
+            return view.sessionView.viewDefinition
+        }
+        
+        return nil
+    }
+    
     public class func fromSessionView(_ sessionView:SessionView, in context:MemriContext) throws -> CascadingView {
         var cascadeStack:[CVUParsedDefinition] = []
         var isList = true
-        var type = ""
         
         // Fetch query from the view from session
-        if let datasource = sessionView.datasource {
-            
-            // Look up the associated result set
-            let resultSet = context.cache.getResultSet(datasource)
-            
-            // Determine whether this is a list or a single item resultset
-            isList = resultSet.isList
-            
-            // Fetch the type of the results
-            if let determinedType = resultSet.determinedType {
-                type = determinedType
-            }
-            else {
-                throw "Exception: ResultSet does not know the type of its data"
-            }
-        }
-        else {
+        guard let datasource = sessionView.datasource else {
             throw "Exception: Cannot compute a view without a query to fetch data"
+        }
+        
+        // Look up the associated result set
+        let resultSet = context.cache.getResultSet(datasource)
+        
+        // Determine whether this is a list or a single item resultset
+        isList = resultSet.isList
+        
+        // Fetch the type of the results
+        guard let type = resultSet.determinedType else {
+            throw "Exception: ResultSet does not know the type of its data"
         }
 
         var needles:[String]
@@ -336,7 +354,7 @@ public class CascadingView: Cascadable, ObservableObject {
             needles = [isList ? "*[]" : "*"]
         }
         
-        var activeRenderer:String? = nil
+        var activeRenderer:Any? = nil
         
         func parse(_ def:CVUStoredDefinition?, _ domain:String){
             do {
@@ -348,22 +366,22 @@ public class CascadingView: Cascadable, ObservableObject {
                     parsedDef.domain = domain
                     
                     if activeRenderer == nil, let d = parsedDef["defaultRenderer"] {
-                        if let d = d as? String { activeRenderer = d }
-                        else {
-                            // TODO ERror logging
-                            debugHistory.error("Could not fnd default renderer")
-                        }
+                        activeRenderer = d
                     }
                     
                     cascadeStack.append(parsedDef)
+                    
+                    if let iView = parsedDef["inherit"] {
+                        let args = sessionView.viewArguments
+                        let view = try inherit(&cascadeStack, iView, args, context)
+                        parse(view, domain)
+                    }
                 }
                 else {
-                    // TODO Error logging
                     debugHistory.error("Could not parse definition")
                 }
             }
             catch let error {
-                // TODO Error logging
                 if let error = error as? CVUParseErrors {
                     debugHistory.error("\(error.toString(def?.definition ?? ""))")
                 }
@@ -374,36 +392,32 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         
         // Find views based on datatype
-        for key in ["user", "session", "defaults"] {
-            if key == "session" {
-                parse(sessionView.viewDefinition, key)
+        for domain in ["user", "session", "defaults"] {
+            if domain == "session" {
+                parse(sessionView.viewDefinition, domain)
                 continue
             }
             
             for needle in needles {
-                
-                if let sessionViewDef = context.views
-                    .fetchDefinitions(selector:needle, domain:key).first {
-                    
-                    parse(sessionViewDef, key)
+                if let def = context.views.fetchDefinitions(selector:needle, domain:domain).first {
+                    parse(def, domain)
                 }
-                else if key != "user" {
-                    // TODO Warn logging
-                    debugHistory.warn("Could not find definition for '\(needle)' in domain '\(key)'")
-                    print("Could not find definition for '\(needle)' in domain '\(key)'")
+                else if domain != "user" {
+                    debugHistory.warn("Could not find definition for '\(needle)' in domain '\(domain)'")
+                    print("Could not find definition for '\(needle)' in domain '\(domain)'")
                 }
             }
         }
         
         if activeRenderer == nil {
-            // TODO Error Logging
             throw "Exception: could not determine the active renderer for this view"
         }
         
         // Create a new view
-        let c = CascadingView(sessionView, cascadeStack)
-        c.context = context
-        return c
+        let cascadingView = CascadingView(sessionView, cascadeStack)
+        cascadingView.context = context
+        
+        return cascadingView
     }
     
 }
