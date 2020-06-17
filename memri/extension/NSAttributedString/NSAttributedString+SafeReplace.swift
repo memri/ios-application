@@ -69,20 +69,32 @@ extension String {
 }
 
 extension NSAttributedString {
-    func toHTML() -> String {
+    func toRTF() -> String? {
         do {
-            let htmlData = try self.data(from: NSRange(location: 0, length: self.length), documentAttributes:[.documentType: NSAttributedString.DocumentType.html]);
-            let string = String.init(data: htmlData, encoding: String.Encoding.utf8)
-            if let string = string {
-                return string
+            let rtfData = try self.data(from: NSRange(location: 0, length: self.length), documentAttributes:[.documentType: NSAttributedString.DocumentType.rtf]);
+            let string = String(data: rtfData, encoding: .utf8)
+            guard let theString = string else {
+                print("Could not convert NSAttributedString to rtf")
+                return nil
             }
-            else {
-                 print("could not vert NSAttributedString to html")
-                return ""
-            }
+            return theString
         } catch {
-            print("Error, could not vert NSAttributedString to html:", error)
-            return ""
+            print("Error, could not convert NSAttributedString to rtf:", error)
+            return nil
         }
     }
+    
+    static func fromRTF(_ string: String) -> NSAttributedString? {
+        guard let data = string.data(using: .utf8) else { return nil }
+        return try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)
+    }
+    
+    func firstLineString() -> String? {
+        let theString = string as NSString
+        let firstLineRange = theString.lineRange(for: NSRange(location: 0, length: 0))
+        let firstLineString: String = theString.substring(with: firstLineRange).trimmingCharacters(in: .newlines)
+        guard firstLineString.contains(where: { !$0.isWhitespace }) else { return nil }
+        return firstLineString
+    }
 }
+

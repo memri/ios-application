@@ -8,6 +8,7 @@
 
 import SwiftUI
 import RealmSwift
+import memriUI
 
 struct DefaultGeneralEditorRow: View {
     @EnvironmentObject var context: MemriContext
@@ -79,7 +80,7 @@ struct DefaultGeneralEditorRow: View {
             }
         )
         
-        return TextField("", text: binding)
+        return MemriTextField(value: binding)
             .generalEditorCaption()
     }
     
@@ -111,8 +112,7 @@ struct DefaultGeneralEditorRow: View {
             }
         )
         
-        return TextField("", value: binding, formatter: NumberFormatter())
-            .keyboardType(.decimalPad)
+        return MemriTextField(value: binding)
             .generalEditorCaption()
     }
     
@@ -125,8 +125,7 @@ struct DefaultGeneralEditorRow: View {
             }
         )
         
-        return TextField("", value: binding, formatter: NumberFormatter())
-            .keyboardType(.decimalPad)
+        return MemriTextField(value: binding)
             .generalEditorCaption()
     }
     

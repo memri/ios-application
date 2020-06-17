@@ -8,6 +8,7 @@
 
 import Foundation
 import SwiftUI
+import memriUI
 
 struct SettingsPane: View {
     @EnvironmentObject var context: MemriContext
@@ -65,12 +66,12 @@ struct SettingsPane: View {
                             HStack {
                                 Text("Host:")
                                     .frame(width: 100, alignment: .leading)
-                                TextField("Host", text: getBinding("/user/pod/host"))
+                                MemriTextField(value: getBinding("/user/pod/host") as Binding<String>)
                             }
                             HStack {
                                 Text("Username:")
                                     .frame(width: 100, alignment: .leading)
-                                TextField("Username", text: getBinding("/user/pod/username"))
+                                MemriTextField(value: getBinding("/user/pod/username") as Binding<String>)
                             }
                             HStack {
                                 Text("Password:")
@@ -113,7 +114,7 @@ struct SettingsPane: View {
                 
                 NavigationLink(destination: Form {
                     Section(header: Text("Internationalization")) {
-                        TextField("Date Format", text: getBinding("/user/formatting/date"))
+                        MemriTextField(value: getBinding("/user/formatting/date") as Binding<String>)
                     }
                 }) {
                     Text("Internationalization")

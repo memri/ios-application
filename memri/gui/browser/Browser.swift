@@ -8,11 +8,8 @@
 import SwiftUI
 import Combine
 
-let _keyBoardResponder = KeyboardResponder()
-
 struct Browser: View {
     @EnvironmentObject var context: MemriContext
-    @ObservedObject var keyboardResponder = _keyBoardResponder
     
     var body: some View {
         return ZStack {
@@ -21,10 +18,8 @@ struct Browser: View {
 //                Loading(isShowing: .constant(self.context.cascadingView.resultSet.isLoading)) {
                     allRenderers?.allViews[self.context.cascadingView.activeRenderer]
                         .fullHeight()
-                        .padding(.bottom, keyboardResponder.currentHeight)
 //                }.fullHeight()
                 Search()
-                    .offset(y: min(0, -keyboardResponder.currentHeight+20))
 //                .KeyboardAwarePadding()
             }.fullHeight()
             
