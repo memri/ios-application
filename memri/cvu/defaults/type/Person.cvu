@@ -213,7 +213,7 @@ Person {
                         resizable: fill
                     }
                     
-                    HSTack {
+                    HStack {
                         align: center
                         maxWidth: 140
                         maxHeight: 140

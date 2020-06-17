@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 import TextView
+import memriUI
 
 public struct UIElementView: SwiftUI.View {
     @EnvironmentObject var context: MemriContext
@@ -423,10 +424,11 @@ public struct UIElementView: SwiftUI.View {
                 .clipped()
             }
             else {
-                TextField(LocalizedStringKey(self.get("hint") ?? ""), text: Binding<String>(
+                MemriTextField(
+                    value: Binding<String>(
                     get: { dataItem.getString(propName) },
                     set: { dataItem.set(propName, $0) }
-                ))
+                ), placeholder: self.get("hint"))
                 .generalEditorInput()
             }
         }

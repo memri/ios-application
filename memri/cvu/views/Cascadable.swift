@@ -136,7 +136,7 @@ public class Cascadable {
         else {
             for def in cascadeStack {
                 if let x = def[name] as? [String:T] {
-                    result.merge(x)
+                    result.merge(x, uniquingKeysWith: { a, b in a })
                 }
                 else {
                     // TODO WARN

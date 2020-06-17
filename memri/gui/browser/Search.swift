@@ -7,17 +7,19 @@
 //
 
 import SwiftUI
+import memriUI
 import Combine
 
 struct Search: View {
     @EnvironmentObject var context: MemriContext
+    @ObservedObject var keyboard = KeyboardResponder()
 
     var body: some View {
         VStack{
             Divider().background(Color(hex: "#efefef"))
             HStack{
-                TextField(context.cascadingView.searchHint,
-                          text: $context.cascadingView.filterText)
+                MemriTextField(value: $context.cascadingView.filterText, placeholder: context.cascadingView.searchHint)
+                    .layoutPriority(-1)
                 Text(context.cascadingView.searchMatchText)
                 
                 ForEach(context.cascadingView.filterButtons, id: \.self){ filterButton in
@@ -34,6 +36,7 @@ struct Search: View {
             }
         }
         .background(Color.white)
+        .offset(x: 0, y: -keyboard.currentHeight)
     }
 }
 

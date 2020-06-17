@@ -1,0 +1,53 @@
+//
+//  RichTextToolbar.swift
+//  MemriPlayground
+//
+//  Created by Toby Brennan on 10/6/20.
+//  Copyright © 2020 ApptekStudios. All rights reserved.
+//
+
+import Foundation
+import SwiftUI
+
+struct KeyboardToolbarView: View {
+  weak var owner: UIView?
+  
+  var body: some View {
+    HStack(spacing: 4) {
+        self.button(icon: Image(systemName: "chevron.left"), action: {
+            self.owner?.moveToNextResponder(forward: false)
+        })
+        Divider()
+        self.button(icon: Image(systemName: "chevron.right"), action: {
+            self.owner?.moveToNextResponder()
+        })
+        Divider()
+        Spacer()
+        Divider()
+        self.button(icon:
+            Image(systemName: "keyboard.chevron.compact.down")
+                .foregroundColor(.black),
+                    action: {
+                        self.owner?.resignFirstResponder()
+        })
+    }
+    .padding(.horizontal, 4)
+    .frame(height: 40)
+    .background(Color(.secondarySystemBackground))
+    .edgesIgnoringSafeArea(.bottom)
+  }
+  
+    func button<Label: View>(icon: Label, action: @escaping () -> Void, highlighted: Bool = false) -> some View {
+    Button(action: action) {
+      icon
+        .frame(minWidth: 30, minHeight: 36)
+        .background(RoundedRectangle(cornerRadius: 4).fill(highlighted ? Color(.tertiarySystemBackground) : .clear))
+    }
+  }
+}
+
+struct KeyboardToolbarView_Previews: PreviewProvider {
+  static var previews: some View {
+    KeyboardToolbarView()
+  }
+}

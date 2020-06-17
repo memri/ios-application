@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import ASCollectionView
 
 let registerList = {
     Renderers.register(
@@ -55,10 +56,6 @@ struct ListRendererView: View {
         self.context.cascadingView.renderConfig as? CascadingListConfig
     }
     
-    init() {
-        UITableView.appearance().separatorColor = .clear
-    }
-    
     var body: some View {
         let renderConfig = self.renderConfig
         let context = self.context
@@ -82,9 +79,14 @@ struct ListRendererView: View {
             }
             else {
                     // TODO REfactor: why are there 2px between each list row?
-                NavigationView {
-                    SwiftUI.List {
-                        ForEach(context.items) { dataItem in
+                ASTableView(section:
+                        ASSection(id: 0,
+                                  data: context.items,
+                                  dataID: \.memriID,
+                                  onSwipeToDelete: { index, item, callback in
+                            context.executeAction(ActionDelete(context))
+                        }
+                        ) { dataItem, cellContext in
                             Button (action:{
                                 if let press = renderConfig?.press {
                                     context.executeAction(press, with: dataItem)
@@ -93,20 +95,12 @@ struct ListRendererView: View {
                                 // TODO: Error handling
                                 return renderConfig?.render(item: dataItem)
                             }
-                            .listRowInsets(EdgeInsets(top:0, leading:0, bottom:0, trailing:0))
+                            .environmentObject(context)
                         }
-                        .onDelete{ indexSet in
-                            context.executeAction(ActionDelete(context))
-                        }
-                    }
+                        )
+                .alwaysBounce()
                     .environment(\.editMode, $context.currentSession.isEditMode)
-                    .navigationBarTitle("")
-                    .navigationBarHidden(true)
-//                    TableView<DataItem,UIElementView>(context: self.context, canReorder: false)
-//                     .environment(\.editMode, $context.currentSession.isEditMode)
-//                     .navigationBarTitle("")
-//                     .navigationBarHidden(true)
-                }
+                
             }
         }
     }

@@ -8,6 +8,7 @@
 
 import SwiftUI
 import UIKit
+import memriUI
 import Combine
 
 let registerRichText = {
@@ -28,133 +29,26 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
     var type: String? = "richTextEditor"
 }
 
-struct _RichTextEditor: UIViewRepresentable {
+struct _RichTextEditor: View {
     @EnvironmentObject var context: MemriContext
     @ObservedObject public var dataItem: DataItem
     
     let filterText: Binding<String>
-
-    class Coordinator: NSObject, UITextViewDelegate {
-        var control: _RichTextEditor
-
-        init(_ control: _RichTextEditor) {
-            self.control = control
-        }
-        
-        func getHTMLString(_ attributedText: NSAttributedString) -> String{
-            let rtfOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
-            let rtfString: String
-            do {
-                let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length),
-                                                                documentAttributes: rtfOptions)
-                
-                rtfString = String(decoding: rtfData, as: UTF8.self)
-            }
-            catch {
-                print("Cannot read rtfString from attributedText: \(attributedText)")
-                rtfString = ""
-            }
-            return rtfString
-        }
-        
-        
-        func textViewDidChange(_ textView: UITextView) {
-            control.dataItem.set("content", textView.attributedText.toHTML())
-            control.dataItem.set("textContent", textView.attributedText.string)
-        }
+    
+    var initialContent: NSAttributedString {
+        guard let rtf = (dataItem.get("content") as String?) else { return NSAttributedString() }
+        return NSAttributedString.fromRTF(rtf) ?? NSAttributedString()
     }
     
-    func emptyAttributedContent() -> String{
-        let escapedContent = self.dataItem.getString("content").replacingOccurrences(of: "\n", with: "\\n")
-        let attributedContent = """
-        {
-        "text": "\(escapedContent)",
-        "attributes": []
-        }
-        """
-        return attributedContent
+    var body: some View {
+        MemriTextEditor(initialContent: initialContent,
+                        preferredHeight: nil,
+                        onTextChanged: {newAttributedString in
+                            self.dataItem.set("title", newAttributedString.firstLineString())
+                            self.dataItem.set("content", newAttributedString.toRTF())
+                            self.dataItem.set("textContent", newAttributedString.string)
+        })
     }
-    
-
-    func makeUIView(context: Context) -> UITextView {
-
-        // NOT SURE WHY THIS IS NEEDED, doesnt seem to do anything
-        // It seems to be neede to allow the toolbar to fit in the textview
-        let bounds = CGRect(x: 0, y: 0, width: 0, height: 600)
-        
-        let textView = LEOTextView(frame: bounds,
-                                   textContainer: NSTextContainer())
-        
-        textView.setAttributedString(self.dataItem["content"] as? String,
-                                     self.dataItem["textContent"] as? String)
-        
-        
-        textView.isScrollEnabled = true
-        textView.contentInset = UIEdgeInsets(top: 5,left: 5, bottom: 5, right: 5)
-        textView.delegate = context.coordinator
-        _ = textView.enableToolbar()
-        
-        return textView
-    }
-    
-    func removeAllHighlighting(_ leoView: inout LEOTextView){
-        let fullTextRange = NSMakeRange(0, leoView.nck_textStorage.currentString.length)
-        leoView.nck_textStorage.currentString.removeAttribute(.backgroundColor,
-                                                                  range: fullTextRange)
-    }
-    
-    func updateUIView(_ textView: UITextView, context: Context) {
-        
-        var LEOTextView = textView as! LEOTextView
-        // TODO: we should probably only do this when the filterText changed
-        removeAllHighlighting(&LEOTextView)
-        
-        if self.context.cascadingView.filterText != ""{
-            search(LEOTextView)
-        }
-        else{
-            self.context.cascadingView.searchMatchText = ""
-        }
-        
-        // TODO: This is currently necessary to trigger a UI update *when the filterText
-        // **Becomes** empty or safeAddAtributes is not called*, I have no idea why
-        LEOTextView.nck_textStorage.safeAddAttributes([.foregroundColor: UIColor.black],
-                                                      range: NSMakeRange(0, 1))
-    }
-    
-    
-    func search(_ textView: LEOTextView){
-        do {
-            let regex = try NSRegularExpression(pattern: context.cascadingView.filterText,
-                                                options: .caseInsensitive)
-        
-            let searchString = textView.nck_textStorage.currentString.string
-            let searchRange = NSRange(location: 0, length: searchString.utf16.count)
-            let matches = regex.matches(in: searchString,range: searchRange) as [NSTextCheckingResult]
-            
-            self.context.cascadingView.searchMatchText = "(" + String(matches.count) + ") matches"
-            
-            // TODO: set cursor to new position: this is probably challenging as it has to defocus from
-            // the searcharea. We could do something like this
-    //        if let newPosition = textView.position(from: matches[0], offset: 0) {
-    //           textView.selectedTextRange = textView.textRange(from: newPosition, to: newPosition)
-    //        }
-                    
-            for match in matches {
-                textView.nck_textStorage.safeAddAttributes([.backgroundColor: UIColor.systemGray3],
-                                                              range: match.range)
-            }
-        }
-        catch let error {
-            debugHistory.warn("Regex error: \(error)")
-            return
-        }
-    }
-    func makeCoordinator() -> _RichTextEditor.Coordinator {
-        let coordinator = Coordinator(self)
-        return coordinator
-    }
-
 }
 
 struct RichTextRendererView: View {
@@ -172,18 +66,12 @@ struct RichTextRendererView: View {
             }
         )
         
-        return VStack{
+        return VStack(spacing: 0) {
             if context.cascadingView.resultSet.singletonItem != nil {
-                TextField("Daily Note", text: binding)
-                    .padding(.horizontal, 10)
-                    .padding(.top, 20)
-                    .font(.headline)
-                    .foregroundColor(.gray)
-                    
                 _RichTextEditor(dataItem: dataItem!,
                                 filterText: $context.cascadingView.filterText)
             }
-        }
+        }.padding(.horizontal, 6)
     }
 }
 

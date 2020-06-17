@@ -107,10 +107,9 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     public func getString(_ name:String) -> String {
         if self.objectSchema[name] == nil {
             
-            // TODO how to do this in swift?
-            // #IFDEF DEBUG
+            #if DEBUG
             print("Warning: getting property that this dataitem doesnt have: \(name) for \(self.genericType):\(self.memriID)")
-            // #ENDIF
+            #endif
             
             return ""
         }
@@ -154,6 +153,27 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
+    /// Determines whether item has property
+    /// - Parameter propName: name of the property
+    /// - Returns: boolean indicating whether DataItem has the property
+    public func hasProperty(_ propName: String) -> Bool {
+        for prop in self.objectSchema.properties {
+            if let haystack = self[prop.name] as? String {
+                if haystack.lowercased().contains(propName.lowercased()) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
+    
+    /// Get property value
+    /// - Parameters:
+    ///   - name: property name
+    public func get<T>(_ name: String) -> T? {
+        self[name] as? T
+    }
     
     /// Set property to value, which will be persisted in the local database
     /// - Parameters:
@@ -178,20 +198,6 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     }
     
     
-    /// Determines whether item has property
-    /// - Parameter propName: name of the property
-    /// - Returns: boolean indicating whether DataItem has the property
-    public func hasProperty(_ propName:String) -> Bool{
-        for prop in self.objectSchema.properties {
-            if let haystack = self[prop.name] as? String {
-                if haystack.lowercased().contains(propName.lowercased()) {
-                    return true
-                }
-            }
-        }
-        
-        return false
-    }
     
     /// Compares value of this DataItems property with the corresponding property of the passed items property
     /// - Parameters:
