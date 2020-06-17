@@ -28,7 +28,7 @@ public class UserState: Object {
         return dict[propName] as? T
     }
     
-    func set<T>(_ propName:String, _ newValue:T?) {
+    func set<T>(_ propName:String, _ newValue:T?, persist:Bool = true) {
         if let event = onFirstSave {
             event(self)
             onFirstSave = nil
@@ -46,7 +46,7 @@ public class UserState: Object {
         do { try globalInMemoryObjectCache.set(memriID, x) }
         catch { /* TODO ERROR HANDLIGNN */ }
         
-        scheduleWrite()
+        if persist { scheduleWrite() }
     }
     
     private func transformToDict() throws -> [String:Any?]{

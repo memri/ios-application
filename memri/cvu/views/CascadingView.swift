@@ -306,7 +306,11 @@ public class CascadingView: Cascadable, ObservableObject {
         var result:Any? = source
         
         if let expr = source as? Expression {
+            let args = viewArguments ?? ViewArguments()
+            args.set("__include__", true, persist:false)
             result = try expr.execute(viewArguments)
+            let value:Bool? = nil
+            args.set("__include__", value, persist:false)
         }
         
         if let viewName = result as? String {

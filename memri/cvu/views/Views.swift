@@ -149,7 +149,13 @@ public class Views {
         case "sessions": return context?.sessions
         case "currentSession": fallthrough
         case "session": return context?.currentSession
-        case "view": return context?.cascadingView
+        case "view":
+            if viewArguments.get("__include__") ?? false {
+                return context?.cascadingView
+            }
+            else {
+                return context?.previousCascadingView
+            }
         case "dataItem":
             if let itemRef:DataItem = viewArguments.get(".") {
                 return itemRef
@@ -419,7 +425,8 @@ public class Views {
     }
     
     // TODO: Refactor: Consider caching cascadingView based on the type of the item
-    public func renderItemCell(with dataItem:DataItem, search rendererNames: [String] = [],
+    public func renderItemCell(with dataItem: DataItem,
+                               search rendererNames: [String] = [],
                                inView viewOverride: String? = nil,
                                use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
         do {
