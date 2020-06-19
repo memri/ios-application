@@ -149,13 +149,7 @@ public class Views {
         case "sessions": return context?.sessions
         case "currentSession": fallthrough
         case "session": return context?.currentSession
-        case "view":
-            if viewArguments.get("__include__") ?? false {
-                return context?.cascadingView
-            }
-            else {
-                return context?.previousCascadingView
-            }
+        case "view": return context?.cascadingView
         case "dataItem":
             if let itemRef:DataItem = viewArguments.get(".") {
                 return itemRef

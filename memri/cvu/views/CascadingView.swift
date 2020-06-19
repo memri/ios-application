@@ -38,7 +38,8 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     var userState: UserState {
-        sessionView.userState ?? UserState(onFirstSave: { args in            realmWriteIfAvailable(self.sessionView.realm) {
+        return sessionView.userState ?? UserState(onFirstSave: { args in
+            realmWriteIfAvailable(self.sessionView.realm) {
                 self.sessionView.userState = args
             }
         })
@@ -48,7 +49,9 @@ public class CascadingView: Cascadable, ObservableObject {
     override var viewArguments: ViewArguments {
         get {
             sessionView.viewArguments ?? ViewArguments(onFirstSave: { args in
-                realmWriteIfAvailable(self.sessionView.realm) { self.sessionView.userState = args }
+                realmWriteIfAvailable(self.sessionView.realm) {
+                    self.sessionView.viewArguments = args
+                }
             })
             // cascadeProperty("viewArguments", )
         }
@@ -298,8 +301,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
     }
     
-    private class func inherit(_ cascadeStack: inout [CVUParsedDefinition],
-                               _ source: Any,
+    private class func inherit(_ source: Any,
                                _ viewArguments: ViewArguments?,
                                _ context: MemriContext) throws -> CVUStoredDefinition? {
         
@@ -307,10 +309,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         if let expr = source as? Expression {
             let args = viewArguments ?? ViewArguments()
-            args.set("__include__", true, persist:false)
-            result = try expr.execute(viewArguments)
-            let value:Bool? = nil
-            args.set("__include__", value, persist:false)
+            result = try expr.execute(args)
         }
         
         if let viewName = result as? String {
@@ -345,7 +344,10 @@ public class CascadingView: Cascadable, ObservableObject {
         guard let type = resultSet.determinedType else {
             throw "Exception: ResultSet does not know the type of its data"
         }
-
+        
+        
+        print("TYPE: \(type) \(resultSet.datasource.query)")
+        
         var needles:[String]
         if type != "mixed" {
             // Determine query
@@ -373,12 +375,15 @@ public class CascadingView: Cascadable, ObservableObject {
                         activeRenderer = d
                     }
                     
-                    cascadeStack.append(parsedDef)
-                    
-                    if let iView = parsedDef["inherit"] {
-                        let args = sessionView.viewArguments
-                        let view = try inherit(&cascadeStack, iView, args, context)
-                        parse(view, domain)
+                    if !cascadeStack.contains(parsedDef) {
+                        cascadeStack.append(parsedDef)
+                        
+                        if let inheritedView = parsedDef["inherit"] {
+                            let args = sessionView.viewArguments
+                            let view = try inherit(inheritedView, args, context)
+                            
+                            parse(view, domain)
+                        }
                     }
                 }
                 else {
