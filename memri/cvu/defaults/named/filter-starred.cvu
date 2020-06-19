@@ -1,7 +1,7 @@
 .filter-starred {
     inherit: {{view}}
     
-/*    title: "Starred {view.title}"*/
+    title: "Starred {view.title}"
     
     [datasource = pod] {
         query: "{view.datasource.query} AND starred = true"

@@ -148,9 +148,6 @@ extension MemriContext {
                 // Toggle a state value, for instance the starred button in the view (via dataItem.starred)
                 if let binding = binding {
                     try binding.toggleBool()
-                    
-                    // TODO this should be removed and fixed more generally
-//                    self.scheduleUIUpdate() { _ in true }
                 }
             }
             else {
