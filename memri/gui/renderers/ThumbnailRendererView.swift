@@ -1,5 +1,5 @@
 //
-//  TumbnailRenderer.swift
+//  ThumbnailRendererView.swift
 //  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
@@ -91,8 +91,14 @@ struct ThumbnailRendererView: View {
         })
     }
     
+    var edgeInset: UIEdgeInsets {
+        UIEdgeInsets(top: renderConfig?.edgeInset?[safe: 0] ?? 0,
+                   left: renderConfig?.edgeInset?[safe: 3] ?? 0,
+                   bottom: renderConfig?.edgeInset?[safe: 2] ?? 0,
+                   right: renderConfig?.edgeInset?[safe: 1] ?? 0)
+    }
+    
     var body: some View {
-        let edgeInset = renderConfig?.edgeInset ?? []
         
         return VStack {
             if renderConfig == nil {
@@ -115,11 +121,7 @@ struct ThumbnailRendererView: View {
                 ASCollectionView (section: section)
                     .layout (self.layout)
                     .alwaysBounceVertical()
-                    .contentInsets(.init(
-                        top: edgeInset[safe: 0] ?? 0,
-                        left: edgeInset[safe: 3] ?? 0,
-                        bottom: edgeInset[safe: 2] ?? 0,
-                        right: edgeInset[safe: 1] ?? 0))
+                    .contentInsets(edgeInset)
             }
         }
     }

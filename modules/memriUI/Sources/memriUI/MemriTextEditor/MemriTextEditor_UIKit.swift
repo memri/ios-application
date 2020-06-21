@@ -75,6 +75,13 @@ public class MemriTextEditor_UIKit: UITextView {
   func selectionDidChange() {
     updateToolbar()
   }
+    
+    #if targetEnvironment(macCatalyst)
+    @objc(_focusRingType)
+    var focusRingType: UInt {
+        return 1 //NSFocusRingTypeNone
+    }
+    #endif
   
   var toolbarHost: UIHostingController<RichTextToolbarView>?
   

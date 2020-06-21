@@ -21,6 +21,15 @@ extension View {
     }
 }
 
+
+var memri_shouldUseLargeScreenLayout: Bool {
+    #if targetEnvironment(macCatalyst)
+    return true
+    #else
+    return UIDevice.current.userInterfaceIdiom == .pad
+    #endif
+}
+
 struct Application: View {
     @EnvironmentObject var context: MemriContext
     

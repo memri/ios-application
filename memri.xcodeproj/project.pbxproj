@@ -446,6 +446,7 @@
 		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
+		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B86FC6722499E79000112A5F /* memriUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = memriUI; path = modules/memriUI; sourceTree = SOURCE_ROOT; };
 		B8A7CBBF249F3C1E007BC730 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8FB4992249EFBF3007A05C4 /* ScreenSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSize.swift; sourceTree = SOURCE_ROOT; };
@@ -705,6 +706,7 @@
 		5D599BB923F2B77500F218A0 /* memri */ = {
 			isa = PBXGroup;
 			children = (
+				B867929D24A01B9E00042B21 /* memri.entitlements */,
 				5D44A722247DA43600183D11 /* Assets.xcassets */,
 				5D98DBD7243B596D00046F3E /* context */,
 				86A5D83D243CEAB600F8FAD8 /* install */,
@@ -1189,7 +1191,7 @@
 			);
 			name = memriUITests;
 			productName = memriUITests;
-			productReference = 5D0A28B6240671C700398B17 /* memriUITests.xctest */;
+			productReference = B8A7CBBF249F3C1E007BC730 /* memriUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -1660,6 +1662,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
@@ -1677,6 +1680,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -1687,6 +1691,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
@@ -1704,6 +1709,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

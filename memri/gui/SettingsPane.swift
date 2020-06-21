@@ -131,7 +131,7 @@ struct SettingsPane: View {
             }
             .navigationBarItems(leading:
                 Button(action:{ self.presentationMode.wrappedValue.dismiss()}) {
-                    Text("close")
+                    Text("Close")
                 })
             .navigationBarTitle(Text("Settings"), displayMode: .inline)
         }
