@@ -91,115 +91,152 @@ public struct TopNavigation: View {
         let backButton = context.currentSession.hasHistory ? ActionBack(context) : nil
         let context = self.context
         
-        return ZStack {
-            // we place the title *over* the rest of the topnav, to center it horizontally
-            HStack {
-                Button(action: { self.showingTitleActions = true }) {
-                    Text(context.cascadingView.title)
-                        .font(.headline)
-                        .foregroundColor(Color(hex: "#333"))
+        return VStack (alignment: .leading, spacing: 0) {
+            HStack(alignment: .top, spacing: 10) {
+                
+                if !inSubView {
+                    ActionButton(action: ActionShowNavigation(context))
+                        .font(Font.system(size: 20, weight: .semibold))
                 }
-                .actionSheet(isPresented: $showingTitleActions) {
-                    return createTitleActionSheet()
+                else if showCloseButton {
+                    // TODO Refactor: Properly support text labels
+                    //                        Action(action: Action(actionName: .closePopup))
+                    //                            .font(Font.system(size: 20, weight: .semibold))
+                    Button(action: {
+                        context.executeAction(ActionClosePopup(context))
+                    }) {
+                        Text("Close")
+                            .font(.system(size: 16, weight: .regular))
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 2)
+                            .foregroundColor(Color(hex: "#106b9f"))
+                    }
+                    .font(Font.system(size: 19, weight: .semibold))
                 }
-            }
-            VStack (alignment: .leading, spacing: 0) {
-                HStack(alignment: .top, spacing: 10) {
-                    
-                    if !inSubView {
-                        ActionButton(action: ActionShowNavigation(context))
-                            .font(Font.system(size: 20, weight: .semibold))
-                    }
-                    else if showCloseButton {
-                        // TODO Refactor: Properly support text labels
-//                        Action(action: Action(actionName: .closePopup))
-//                            .font(Font.system(size: 20, weight: .semibold))
-                        Button(action: {
-                            context.executeAction(ActionClosePopup(context))
-                        }) {
-                            Text("Close")
-                                .font(.system(size: 16, weight: .regular))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
-                                .foregroundColor(Color(hex: "#106b9f"))
+                
+                if backButton != nil{
+                    Button(action: {
+                        if !self.showingBackActions, let backButton = backButton {
+                            context.executeAction(backButton)
                         }
-                        .font(Font.system(size: 19, weight: .semibold))
+                    }) {
+                        Image(systemName: backButton?.getString("icon") ?? "")
+                            .fixedSize()
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 5)
+                            .foregroundColor(backButton?.color ?? Color.white)
                     }
-                    
-                    if backButton != nil{
-                        Button(action: {
-                            if !self.showingBackActions, let backButton = backButton {
-                                context.executeAction(backButton)
-                            }
-                        }) {
-                            Image(systemName: backButton?.getString("icon") ?? "")
-                                .fixedSize()
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 5)
-                                .foregroundColor(backButton?.color ?? Color.white)
-                        }
-                        .font(Font.system(size: 19, weight: .semibold))
-                        .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
-                            (someBool) in
-                            if self.isPressing || someBool {
-                                self.isPressing = someBool
-                                
-                                if someBool {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                        if self.isPressing {
-                                            self.showingBackActions = true
-                                        }
+                    .font(Font.system(size: 19, weight: .semibold))
+                    .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: {
+                        (someBool) in
+                        if self.isPressing || someBool {
+                            self.isPressing = someBool
+                            
+                            if someBool {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    if self.isPressing {
+                                        self.showingBackActions = true
                                     }
                                 }
                             }
-                        }, perform: {})
+                        }
+                    }, perform: {})
                         .actionSheet(isPresented: $showingBackActions) {
                             return createBackActionSheet()
-                        }
-                    }
-                    else {
-                        Button(action: { self.showingBackActions = true }) {
-                            Image(systemName: "smallcircle.fill.circle")
-                                .fixedSize()
-                                .font(.system(size: 10, weight: .bold, design: .default))
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 8)
-                                .foregroundColor(Color(hex: "#434343"))
-                        }
-                        .font(Font.system(size: 19, weight: .semibold))
-                        .actionSheet(isPresented: $showingBackActions) {
-                            return createBackActionSheet()
-                        }
-                    }
-                    
-                    Spacer()
-                    
-                    // TODO this should not be a setting but a user defined view that works on all
-                    if context.item != nil || context.settings.getBool("user/general/gui/showEditButton") != false {
-                        ActionButton(action: context.cascadingView.editActionButton)
-                            .font(Font.system(size: 19, weight: .semibold))
-                    }
-                    
-                    ActionButton(action: context.cascadingView.actionButton)
-                        .font(Font.system(size: 22, weight: .semibold))
-                    
-                    if !inSubView {
-                        ActionButton(action: ActionShowSessionSwitcher(context))
-                            .font(Font.system(size: 20, weight: .medium))
-                            .rotationEffect(.degrees(90))
                     }
                 }
-                .padding(.top, 15)
-                .padding(.bottom, 10)
-                .padding(.leading, 15)
-                .padding(.trailing, 15)
-                .frame(height: 50, alignment: .top)
+                else {
+                    Button(action: { self.showingBackActions = true }) {
+                        Image(systemName: "smallcircle.fill.circle")
+                            .fixedSize()
+                            .font(.system(size: 10, weight: .bold, design: .default))
+                            .padding(.horizontal, 5)
+                            .padding(.vertical, 8)
+                            .foregroundColor(Color(hex: "#434343"))
+                    }
+                    .font(Font.system(size: 19, weight: .semibold))
+                    .actionSheet(isPresented: $showingBackActions) {
+                        return createBackActionSheet()
+                    }
+                }
                 
-                Divider()
-                    .background(Color(hex: "#efefef"))
-                    .padding(.top, 0)
+                //Store the available space for the title
+                Color.clear
+                    .frame(maxWidth: .infinity)
+                    .layoutPriority(5)
+                    .anchorPreference(
+                        key: BoundsPreferenceKey.self,
+                        value: .bounds
+                    ) { $0 }
+                
+                // TODO this should not be a setting but a user defined view that works on all
+                if context.item != nil || context.settings.getBool("user/general/gui/showEditButton") != false {
+                    ActionButton(action: context.cascadingView.editActionButton)
+                        .font(Font.system(size: 19, weight: .semibold))
+                }
+                
+                ActionButton(action: context.cascadingView.actionButton)
+                    .font(Font.system(size: 22, weight: .semibold))
+                
+                if !inSubView {
+                    ActionButton(action: ActionShowSessionSwitcher(context))
+                        .font(Font.system(size: 20, weight: .medium))
+                        .rotationEffect(.degrees(90))
+                }
             }
-            .padding(.bottom, 0)
+            .padding(.top, 15)
+            .padding(.bottom, 10)
+            .padding(.leading, 15)
+            .padding(.trailing, 15)
+            .frame(height: 50, alignment: .top)
+            
+            Divider()
+        }
+        .padding(.bottom, 0)
+        .centeredOverlayWithinBoundsPreferenceKey {
+            Button(action: { self.showingTitleActions = true }) {
+                Text(context.cascadingView.title)
+                    .font(.headline)
+                    .foregroundColor(Color(hex: "#333"))
+                    .truncationMode(.tail)
+            }
+            .actionSheet(isPresented: self.$showingTitleActions) {
+                return self.createTitleActionSheet()
+            }
+        }
+    }
+}
+
+fileprivate struct BoundsPreferenceKey: PreferenceKey {
+    typealias Value = Anchor<CGRect>?
+    
+    static var defaultValue: Value = nil
+    
+    static func reduce(
+        value: inout Value,
+        nextValue: () -> Value
+    ) {
+        value = nextValue() ?? value
+    }
+}
+
+fileprivate extension View {
+    func centeredOverlayWithinBoundsPreferenceKey<Content: View>(content: @escaping () -> Content) -> some View {
+        func calculateCenterAndMaxSize(geometry: GeometryProxy, anchor: Anchor<CGRect>?) -> (CGPoint, CGSize)? {
+            guard let bounds = anchor.map({ geometry[$0] }) else { return nil }
+            let center = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
+            let maxWidth = min(abs(bounds.maxX - center.x), abs(bounds.minX - center.x)) * 2
+            return (center, CGSize(width: maxWidth, height: bounds.height))
+        }
+        
+        return overlayPreferenceValue(BoundsPreferenceKey.self) { preference in
+            GeometryReader { geometry in
+                calculateCenterAndMaxSize(geometry: geometry, anchor: preference).map { center, maxSize in
+                    content()
+                        .frame(maxWidth: maxSize.width, maxHeight: maxSize.height)
+                        .position(center)
+                }
+            }
         }
     }
 }

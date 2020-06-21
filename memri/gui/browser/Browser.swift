@@ -15,13 +15,13 @@ struct Browser: View {
         return ZStack {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
-//                Loading(isShowing: .constant(self.context.cascadingView.resultSet.isLoading)) {
-                    allRenderers?.allViews[self.context.cascadingView.activeRenderer]
-                        .fullHeight()
-//                }.fullHeight()
+                allRenderers?.allViews[self.context.cascadingView.activeRenderer]
+                    .fullHeight().layoutPriority(1)
                 Search()
-//                .KeyboardAwarePadding()
-            }.fullHeight()
+                if self.context.currentSession.showFilterPanel {
+                    FilterPanel()
+                }
+            }
             
             ContextPane()
         }

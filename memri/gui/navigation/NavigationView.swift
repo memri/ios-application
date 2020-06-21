@@ -9,10 +9,98 @@ import SwiftUI
 import memriUI
 import ASCollectionView
 
+struct NavigationWrapper<Content: View>: View {
+    init(isVisible: Binding<Bool>, @ViewBuilder content: () -> Content) {
+        self._isVisible = isVisible
+        self.content = content()
+    }
+    
+    var content: Content
+    var widthRatio: CGFloat = 0.8
+    @Binding var isVisible: Bool
+    @GestureState(reset: { value, transaction in
+        transaction.animation = .default
+    }) var offset: CGFloat = .zero
+    
+    func navWidth(_ geom: GeometryProxy) -> CGFloat {
+        geom.size.width * widthRatio
+    }
+    
+    func cappedOffset(_ geom: GeometryProxy) -> CGFloat {
+        if isVisible {
+            return max(min(0, offset), -navWidth(geom))
+        } else {
+            return min(max(0, offset), navWidth(geom))
+        }
+    }
+    
+    func fractionVisible(_ geom: GeometryProxy) -> Double {
+        let fraction = Double(abs(cappedOffset(geom)) / navWidth(geom))
+        return isVisible ? 1 - fraction : fraction
+    }
+    
+    var body: some View {
+        GeometryReader { geom in
+            self.body(withGeom: geom)
+        }
+    }
+    
+    func body(withGeom geom: GeometryProxy) -> some View {
+        ZStack(alignment: .leading) {
+            content
+                .frame(width: geom.size.width, height: geom.size.height, alignment: .topLeading)
+                .offset(x: isVisible ? navWidth(geom) + cappedOffset(geom) : cappedOffset(geom))
+                .disabled(isVisible)
+                .zIndex(-1)
+            Color.clear
+            .contentShape(Rectangle())
+                .frame(minWidth: 10, maxWidth: 10, maxHeight: .infinity)
+                .simultaneousGesture(navigationDragGesture)
+            if isVisible || offset > 0 {
+                Color.black
+                    .opacity(fractionVisible(geom) * 0.5)
+                    .edgesIgnoringSafeArea(.all)
+                    .onTapGesture {
+                        withAnimation {
+                            self.isVisible = false
+                        }
+                }
+                .simultaneousGesture(navigationDragGesture)
+                .zIndex(10)
+                Navigation()
+                    .frame(width: geom.size.width * widthRatio)
+                    .edgesIgnoringSafeArea(.all)
+                    .offset(x: isVisible ? cappedOffset(geom) : (-navWidth(geom) + cappedOffset(geom)), y: 0)
+                    .simultaneousGesture(navigationDragGesture)
+                    .transition(.move(edge: .leading))
+                .zIndex(15)
+            }
+        }
+    }
+    
+    
+    var navigationDragGesture: some Gesture {
+        DragGesture()
+            .updating($offset, body: { (value, offset, _) in
+                offset = value.translation.width
+            })
+            .onEnded { value in
+                if
+                    self.isVisible ? value.predictedEndTranslation.width < -140 : value.translation.width > 50,
+                    abs(value.predictedEndTranslation.width) > 20
+                {
+                    withAnimation {
+                        self.isVisible.toggle()
+                    }
+                }
+            }
+    }
+}
+
 struct Navigation: View {
     @EnvironmentObject var context: MemriContext
     
-    @ObservedObject var keyboardResponder = KeyboardResponder()
+    @ObservedObject var keyboardResponder = KeyboardResponder.shared
     
     @State var showSettings: Bool = false
         
@@ -29,7 +117,10 @@ struct Navigation: View {
                     SettingsPane().environmentObject(self.context)
                 }
                 
-                MemriTextField(value: $context.navigation.filterText, placeholder: "Search", textColor: UIColor(hex:"#8a66bc"))
+                MemriTextField(value: $context.navigation.filterText,
+                               placeholder: "Search",
+                               textColor: UIColor(hex:"#8a66bc"),
+                               showPrevNextButtons: false)
                 .layoutPriority(-1)
                     .padding(5)
                     .padding(.horizontal, 5)
@@ -57,16 +148,25 @@ struct Navigation: View {
                 ASSection(id: 0, data: context.navigation.getItems(), dataID: \.self) { navItem, cellContext -> AnyView in
                     switch navItem.type{
                     case "item":
-                        return AnyView(NavigationItemView(item: navItem, hide: { self.context.showNavigation = false }))
+                        return AnyView(NavigationItemView(item: navItem, hide: {
+                            withAnimation {
+                                self.context.showNavigation = false
+                            }
+                        }))
                     case "heading":
                         return AnyView(NavigationHeadingView(title: navItem.title))
                     case "line":
                         return AnyView(NavigationLineView())
                     default:
-                        return AnyView(NavigationItemView(item: navItem, hide: { self.context.showNavigation = false }))
+                        return AnyView(NavigationItemView(item: navItem, hide:  {
+                            withAnimation {
+                                self.context.showNavigation = false
+                            }
+                        }))
                     }
                 }
             )
+            .separatorsEnabled(false)
             .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 0, right: 0))
 
 //            ScrollView(.vertical) {
@@ -80,7 +180,6 @@ struct Navigation: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color(hex: "543184"))
-        .padding(.bottom, keyboardResponder.currentHeight)
     }
 
 //
@@ -117,23 +216,33 @@ struct NavigationItemView: View{
     var hide: () -> Void
     
     var body: some View {
-        HStack{
-            Text(item.title.firstUppercased)
-                .font(.system(size: 18, weight: .regular))
-                .padding(.vertical, 10)
-                .padding(.horizontal, 35)
-                .foregroundColor(Color(hex: "#d9d2e9"))
-            Spacer()
-        }
-        .onTapGesture {
+        Button(action: {
             if let viewName = self.item.view {
-                // TODO 
+                // TODO
                 do { try ActionOpenSessionByName.exec(self.context, ["name": viewName]) }
                 catch{}
                 
                 self.hide()
             }
+        }) {
+            Text(item.title.firstUppercased)
+                .font(.system(size: 18, weight: .regular))
+                .padding(.vertical, 10)
+                .padding(.horizontal, 35)
+                .foregroundColor(Color(hex: "#d9d2e9"))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
         }
+    .buttonStyle(NavigationButtonStyle())
+    }
+}
+
+struct NavigationButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+        .background(
+           configuration.isPressed ? Color.white.opacity(0.15) : .clear
+        )
     }
 }
 

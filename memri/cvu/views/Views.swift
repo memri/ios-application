@@ -418,9 +418,9 @@ public class Views {
         // TODO REFACTOR: move these to a better place (context??)
         
         // turn off editMode when navigating
-        if context.sessions.currentSession.editMode == true {
+        if context.sessions.currentSession.isEditMode == true {
             realmWriteIfAvailable(realm) {
-                context.sessions.currentSession.editMode = false
+                context.sessions.currentSession.isEditMode = false
             }
         }
         

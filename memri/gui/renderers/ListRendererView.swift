@@ -60,7 +60,7 @@ struct ListRendererView: View {
         let renderConfig = self.renderConfig
         let context = self.context
         
-        return VStack{
+        return VStack {
             if renderConfig == nil {
                 Text("Unable to render this view")
             }
@@ -78,28 +78,27 @@ struct ListRendererView: View {
                 Spacer()
             }
             else {
-                    // TODO REfactor: why are there 2px between each list row?
                 ASTableView(section:
                         ASSection(id: 0,
                                   data: context.items,
                                   dataID: \.memriID,
                                   onSwipeToDelete: { index, item, callback in
-                            context.executeAction(ActionDelete(context))
+                            context.executeAction(ActionDelete(context), with: item)
+                            callback(true)
                         }
                         ) { dataItem, cellContext in
-                            Button (action:{
-                                if let press = renderConfig?.press {
-                                    context.executeAction(press, with: dataItem)
-                                }
-                            }) {
-                                // TODO: Error handling
-                                return renderConfig?.render(item: dataItem)
-                            }
+                            renderConfig?.render(item: dataItem)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             .environmentObject(context)
                         }
+                        .onSelectSingle({ (index) in
+                            if let press = renderConfig?.press {
+                                context.executeAction(press, with: context.items[safe: index])
+                            }
+                        })
                         )
                 .alwaysBounce()
-                    .environment(\.editMode, $context.currentSession.isEditMode)
+                    .environment(\.editMode, $context.currentSession.swiftUIEditMode)
                 
             }
         }

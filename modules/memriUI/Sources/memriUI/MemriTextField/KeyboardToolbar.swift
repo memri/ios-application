@@ -11,17 +11,20 @@ import SwiftUI
 
 struct KeyboardToolbarView: View {
   weak var owner: UIView?
+  var showArrows: Bool = true
   
   var body: some View {
     HStack(spacing: 4) {
-        self.button(icon: Image(systemName: "chevron.left"), action: {
-            self.owner?.moveToNextResponder(forward: false)
-        })
-        Divider()
-        self.button(icon: Image(systemName: "chevron.right"), action: {
-            self.owner?.moveToNextResponder()
-        })
-        Divider()
+        if showArrows {
+            self.button(icon: Image(systemName: "chevron.left"), action: {
+                self.owner?.moveToNextResponder(forward: false)
+            })
+            Divider()
+            self.button(icon: Image(systemName: "chevron.right"), action: {
+                self.owner?.moveToNextResponder()
+            })
+            Divider()
+        }
         Spacer()
         Divider()
         self.button(icon:
@@ -42,6 +45,7 @@ struct KeyboardToolbarView: View {
       icon
         .frame(minWidth: 30, minHeight: 36)
         .background(RoundedRectangle(cornerRadius: 4).fill(highlighted ? Color(.tertiarySystemBackground) : .clear))
+        .contentShape(Rectangle())
     }
   }
 }

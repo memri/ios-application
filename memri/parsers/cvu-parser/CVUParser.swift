@@ -338,7 +338,7 @@ class CVUParser {
                     lastKey = value
                 }
                 else if let name = knownActions[value.lowercased()] {
-                    var options:[String:Any] = [:]
+                    var options:[String:Any?] = [:]
                     outerLoop: while true {
                         switch peekCurrentToken() {
                         case .Comma:

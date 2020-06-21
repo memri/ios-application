@@ -8,24 +8,26 @@
 }
 
 Photo {
-    title: "Photos"
+    title: "Photo"
     defaultRenderer: thumbnail
      [datasource = pod] {
         query: "photo"
         sortProperty: dateModified
         sortAscending: false
     },
-    emptyResultText: "There are no photos here yet",
+    emptyResultText: "No photo found",
     
     editActionButton: toggleEditMode
     filterButtons: [ showStarred toggleFilterPanel ]
     
     [renderer = thumbnail] {
         itemInset: 1
+        column: 1
         edgeInset: 0 0 0 0
         Image {
-            image: "{.file}" /* ALLOW BOTH STRINGS AND FILES*/
+            image: {{.file}} /* ALLOW BOTH STRINGS AND FILES*/
             resizable: fill
+            background: #AAA
         }
     }
 }
@@ -51,6 +53,7 @@ Photo[]: {
         Image {
             image: {{.file}}
             resizable: fill
+            background: #AAA
         }
     }
 }

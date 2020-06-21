@@ -49,10 +49,10 @@ public class UserState: Object {
         scheduleWrite()
     }
     
-    private func transformToDict() throws -> [String:Any?]{
-        if state == "" { return [String:Any?]() }
-        let dict:[String:AnyDecodable?] = unserialize(state) ?? [:]
-        try InMemoryObjectCache.set(self.memriID, dict as [String:Any?])
+    private func transformToDict() throws -> [String:Any]{
+        if state == "" { return [String:Any]() }
+        let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
+        try InMemoryObjectCache.set(self.memriID, dict as [String:Any])
         return dict
     }
     
@@ -98,9 +98,9 @@ public class UserState: Object {
         return x
     }
     
-    public func asDict() -> [String:Any?] {
-        var x:[String:Any?]?
-        x = InMemoryObjectCache.get(memriID) as? [String:Any?]
+    public func asDict() -> [String:Any] {
+        var x:[String:Any]?
+        x = InMemoryObjectCache.get(memriID) as? [String:Any]
         do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO refactor: handle error
         return x ?? [:]
     }

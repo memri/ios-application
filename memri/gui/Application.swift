@@ -24,60 +24,24 @@ extension View {
 struct Application: View {
     @EnvironmentObject var context: MemriContext
     
-    @State var showNavigation = false
-    
     var body: some View {
-        // NOTE: Allowed force unwrapping
-        (context as! RootContext).initNavigation(self.$showNavigation)
-        
-        let drag = DragGesture()
-            .onEnded {
-                if self.showNavigation {
-                    if $0.translation.width < -100 {
-                        withAnimation {
-                            self.context.showNavigation = false
-                        }
-                    }
+        ScreenSizer {
+            VStack(spacing: 0) {
+            NavigationWrapper(isVisible: self.context.showNavigationBinding) {
+                if self.context.showSessionSwitcher {
+                    SessionSwitcher()
+                }
+                else {
+                    Browser()
                 }
             }
-        
-        return GeometryReader { geometry in
-            VStack {
-                ZStack(alignment: .leading) {
-                    if self.context.showSessionSwitcher {
-                        SessionSwitcher()
-                    }
-                    else {
-                        Browser()
-                            .frame(width: geometry.size.width)
-//                            .frame(width: geometry.size.width, height: geometry.size.height)
-                            .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                            .disabled(self.showNavigation ? true : false)
-                            .overlay(
-                                Color.black
-                                    .opacity(self.showNavigation ? 0.40 : 0)
-                                    .edgesIgnoringSafeArea(.vertical)
-                                    .offset(x: self.showNavigation ? geometry.size.width * 0.8 : 0)
-                            )
-                        
-                        if self.showNavigation {
-                            Navigation()
-                                .frame(width: geometry.size.width * 0.8)
-                                .edgesIgnoringSafeArea(.vertical)
-                                .transition(.move(edge: .leading))
-                        }
-                    }
-                }
-                .gesture(drag)
-                
-                debugConsole()
+                DebugConsole()
             }
-//
-// TODO - Ruben - Commented out so TableView receives swipe gestures
-//
-//            .gesture(drag)
         }
+        .background(Color(.systemBackground))
+        .colorScheme(.light) // Force light color scheme for now, until we add better dark-mode support
     }
+    
 }
 
 struct Application_Previews: PreviewProvider {

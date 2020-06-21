@@ -12,13 +12,15 @@ import Combine
 
 struct Search: View {
     @EnvironmentObject var context: MemriContext
-    @ObservedObject var keyboard = KeyboardResponder()
 
     var body: some View {
-        VStack{
+        VStack(spacing: 0) {
             Divider().background(Color(hex: "#efefef"))
             HStack{
-                MemriTextField(value: $context.cascadingView.filterText, placeholder: context.cascadingView.searchHint)
+                MemriTextField(value: $context.cascadingView.filterText,
+                               placeholder: context.cascadingView.searchHint,
+                               showPrevNextButtons: false
+                )
                     .layoutPriority(-1)
                 Text(context.cascadingView.searchMatchText)
                 
@@ -28,17 +30,52 @@ struct Search: View {
                 }
             }
             .padding(.horizontal, 15)
-            .padding(.top, 5)
-            .padding(.bottom, 5)
-            
-            if self.context.currentSession.showFilterPanel {
-                FilterPanel()
-            }
+            .padding(.vertical, 6)
         }
         .background(Color.white)
-        .offset(x: 0, y: -keyboard.currentHeight)
+        .modifier(KeyboardModifier())
+        .background(Color.white.edgesIgnoringSafeArea(.all))
     }
 }
+
+struct KeyboardModifier: ViewModifier {
+    @ObservedObject var keyboard = KeyboardResponder.shared
+    @Environment(\.screenSize) var screenSize
+    @State var contentBounds: CGRect?
+    
+    func body(content: Content) -> some View {
+        content
+            .offset(x: 0, y: contentBounds.flatMap { contentBounds in
+                screenSize.map { screenSize in
+                     min(0, (screenSize.height - contentBounds.maxY) - keyboard.currentHeight)
+                }
+            } ?? 0)
+        .background(
+            GeometryReader { geom in
+                Color.clear.preference(key: BoundsPreferenceKey.self, value: geom.frame(in: .global))
+            }
+        )
+            .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
+                DispatchQueue.main.async {
+                    self.contentBounds = value
+                }
+            })
+    }
+}
+
+fileprivate struct BoundsPreferenceKey: PreferenceKey {
+    typealias Value = CGRect?
+    
+    static var defaultValue: Value = nil
+    
+    static func reduce(
+        value: inout Value,
+        nextValue: () -> Value
+    ) {
+        value = nextValue() ?? value
+    }
+}
+
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {

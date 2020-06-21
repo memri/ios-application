@@ -26,9 +26,8 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
     var longPress: Action? { cascadeProperty("longPress") }
     var press: Action? { cascadeProperty("press") }
     
-    var columns:Int? { Int(cascadeProperty("column") ?? 3) }
-    var columnsWide:Int? { Int(cascadeProperty("columnsWide") ?? 5) }
-    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset") ?? 10) }
+    var columns:Int? { Int(cascadeProperty("columns") ?? 3) }
+    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset") ?? 6) }
     var edgeInset:[CGFloat]? { (cascadeProperty("edgeInset") ?? []).map{ CGFloat($0 as Double) } }
 }
 
@@ -43,23 +42,19 @@ struct ThumbnailRendererView: View {
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
-            ASCollectionLayoutSection {
-                let gridBlockSize = NSCollectionLayoutDimension
-                    .fractionalWidth(1 / CGFloat(self.renderConfig?.columns ?? 3))
+            ASCollectionLayoutSection { environment in
+                let numberOfColumns = CGFloat(self.renderConfig?.columns ?? 3)
+                let estimatedGridBlockSize = environment.container.effectiveContentSize.width / numberOfColumns
                 
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(
-                        widthDimension: gridBlockSize,
-                        heightDimension: .fractionalHeight(1.0)))
-                
-                let inset = CGFloat(self.renderConfig?.itemInset ?? 5)
-                item.contentInsets = NSDirectionalEdgeInsets(
-                    top: inset, leading: inset, bottom: inset, trailing: inset)
+                        widthDimension: .fractionalWidth(1 / numberOfColumns),
+                        heightDimension: .estimated(estimatedGridBlockSize)))
 
                 let itemsGroup = NSCollectionLayoutGroup.horizontal(
                     layoutSize: NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1.0),
-                        heightDimension: gridBlockSize),
+                        heightDimension: .estimated(estimatedGridBlockSize)),
                     subitems: [item])
 
                 let section = NSCollectionLayoutSection(group: itemsGroup)
@@ -74,11 +69,7 @@ struct ThumbnailRendererView: View {
                 // TODO: Error handling
                 self.renderConfig?.render(item: dataItem)
                     .environmentObject(self.context)
-                    .onTapGesture {
-                        if let press = self.renderConfig?.press {
-                            self.context.executeAction(press, with: dataItem)
-                        }
-                    }
+                .padding(.all, self.renderConfig?.itemInset)
 
                 if state.isSelected {
                     ZStack {
@@ -93,6 +84,11 @@ struct ThumbnailRendererView: View {
                 }
             }
         }
+        .onSelectSingle({ (index) in
+            if let press = self.renderConfig?.press {
+                self.context.executeAction(press, with: self.context.items[safe: index])
+            }
+        })
     }
     
     var body: some View {
@@ -118,6 +114,7 @@ struct ThumbnailRendererView: View {
             else {
                 ASCollectionView (section: section)
                     .layout (self.layout)
+                    .alwaysBounceVertical()
                     .contentInsets(.init(
                         top: edgeInset[safe: 0] ?? 0,
                         left: edgeInset[safe: 3] ?? 0,

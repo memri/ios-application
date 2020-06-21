@@ -57,12 +57,6 @@ Session[] {
                     padding: -5 0 0 0
                 }
             }
-            Rectangle {
-                minHeight: 1
-                maxHeight: 1
-                color: #efefef
-                padding: 7 -20 12 0
-            }
         }
     }
     

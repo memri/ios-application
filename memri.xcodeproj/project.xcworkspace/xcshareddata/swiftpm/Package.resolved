@@ -12,11 +12,11 @@
       },
       {
         "package": "ASCollectionView",
-        "repositoryURL": "https://github.com/apptekstudios/ASCollectionView",
+        "repositoryURL": "https://gitlab.memri.io/memri/ascollectionview",
         "state": {
-          "branch": null,
-          "revision": "4550cd5b5cfc3f437f8ff838939c6be21edfe992",
-          "version": "1.7.1"
+          "branch": "master",
+          "revision": "cae1d3f6ab5c77d971f70eee9729bcd9b1badf7b",
+          "version": null
         }
       },
       {
@@ -44,15 +44,6 @@
           "branch": null,
           "revision": "35662ff940e340bf630ad1d1d88acfc7af18bee6",
           "version": "5.23.8"
-        }
-      },
-      {
-        "package": "TextView",
-        "repositoryURL": "https://github.com/kenmueller/TextView",
-        "state": {
-          "branch": "master",
-          "revision": "e326e89963278684647ffaca9aa2cc6720b9cbf6",
-          "version": null
         }
       }
     ]

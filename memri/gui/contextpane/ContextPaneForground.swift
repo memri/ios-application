@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct ContextPaneForground: View {
+struct ContextPaneForeground: View {
     @EnvironmentObject var context: MemriContext
     
     var paddingLeft:CGFloat = 25
@@ -72,9 +72,9 @@ struct ContextPaneForground: View {
                             .font(.system(size: 20, weight: .regular, design: .default))
                             .padding(.vertical, 10)
                     }
-                    .padding(.horizontal, self.paddingLeft)
                 }
             }
+            .padding(.horizontal, self.paddingLeft)
             Divider()
             HStack {
                 Text(NSLocalizedString("navigateLabel", comment: ""))
@@ -150,6 +150,6 @@ struct ContextPaneForground: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPaneForground().environmentObject(RootContext(name: "", key: "").mockBoot())
+        ContextPaneForeground().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

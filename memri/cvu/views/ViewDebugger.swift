@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import ASCollectionView
 
 // TODO file watcher
 //let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -153,7 +154,7 @@ class DebugHistory: ObservableObject {
 // Intentionally global
 var debugHistory = DebugHistory()
 
-struct debugConsole: View {
+struct DebugConsole: View {
     @EnvironmentObject var context: MemriContext
     
     @ObservedObject var history = debugHistory
@@ -192,51 +193,46 @@ struct debugConsole: View {
                     .fullWidth()
                     .background(Color(hex:"#eee"))
                     
-                    CustomScrollView(scrollToEnd: true) {
-                        VStack (spacing:0) {
-                            ForEach (debugHistory.log, id: \.self) { notice in
-                                VStack (spacing: 0 ){
-                                    HStack (alignment: .top, spacing: 4) {
-                                        Image(systemName: notice.type.icon)
-                                            .padding(.top, 4)
-                                            .font(.system(size: 14))
-                                            .foregroundColor(notice.type.color)
-                                        
-                                        Text(notice.displayMessage)
-                                            .multilineTextAlignment(.leading)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .font(.system(size: 14))
-                                            .padding(.top, 1)
-                                            .foregroundColor(Color(hex: "#333"))
-                                        
-                                        if notice.messageCount > 1 {
-                                            Text("\(notice.messageCount)x")
-                                                .padding(3)
-                                                .background(Color.yellow)
-                                                .cornerRadius(20)
-                                                .font(.system(size: 12, weight: .semibold))
-                                                .foregroundColor(Color.white)
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Text(dateFormatter.string(from: notice.date))
-                                            .font(.system(size: 12))
-                                            .padding(.top, 1)
-                                            .foregroundColor(Color(hex: "#999"))
-                                    }
-                                    .fullWidth()
-                                    .padding(5)
-                                    
-                                    Divider()
+                    ASTableView(section:
+                        ASSection(id: 0, data: debugHistory.log.reversed(), dataID: \.self) { notice, _ in
+                            HStack (alignment: .top, spacing: 4) {
+                                Image(systemName: notice.type.icon)
+                                    .padding(.top, 4)
+                                    .font(.system(size: 14))
+                                    .foregroundColor(notice.type.color)
+                                
+                                Text(notice.displayMessage)
+                                    .multilineTextAlignment(.leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .font(.system(size: 14))
+                                    .padding(.top, 1)
+                                    .foregroundColor(Color(hex: "#333"))
+                                
+                                if notice.messageCount > 1 {
+                                    Text("\(notice.messageCount)x")
+                                        .padding(3)
+                                        .background(Color.yellow)
+                                        .cornerRadius(20)
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(Color.white)
                                 }
+                                
+                                Spacer()
+                                
+                                Text(dateFormatter.string(from: notice.date))
+                                    .font(.system(size: 12))
+                                    .padding(.top, 1)
+                                    .foregroundColor(Color(hex: "#999"))
                             }
-                        }
-                    }
-                    .fullWidth()
+                            .padding(.horizontal)
+                            .padding(.vertical, 4)
+                            .fullWidth()
+                    })
                 }
-                .frame(maxWidth: .infinity, minHeight: 200, maxHeight: 200, alignment: .topLeading)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
+                .background(Color.white.edgesIgnoringSafeArea(.all))
                 .border(width: [1, 0, 0, 0], color: Color(hex: "ddd"))
+                .frame(height: 200)
             }
         }
     }
@@ -244,6 +240,6 @@ struct debugConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
     static var previews: some View {
-        debugConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
+        DebugConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }
