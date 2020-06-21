@@ -25,12 +25,11 @@ public class MainNavigation:ObservableObject {
         set (newFilter) {
             Settings.set("device/navigation/filterText", newFilter)
             
-            // NOTE: Allowed forced unwrapping
-            scheduleUIUpdate!{_ in true}
+            scheduleUIUpdate?(nil)
         }
     }
     
-    public var scheduleUIUpdate: ((_ check:(_ context:MemriContext) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((((_ context:MemriContext) -> Bool)?) -> ())? = nil
     
     private var realm:Realm
     

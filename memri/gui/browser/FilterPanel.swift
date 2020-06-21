@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import ASCollectionView
 
 struct BrowseSetting: Identifiable {
     var id = UUID()
@@ -89,141 +90,117 @@ struct FilterPanel: View {
         let context = self.context
         let cascadingView = self.context.cascadingView
         
-        return HStack(alignment: .top, spacing: 0){
-            VStack(alignment: .leading, spacing: 0){
-                HStack(alignment: .top, spacing: 3) {
-                    ForEach(rendererCategories(), id: \.0) { (key, renderer) in
-                        
-                        Button(action: { context.executeAction(renderer) } ) {
-                            Image(systemName: renderer.getString("icon"))
-                                .fixedSize()
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 5)
-                                .frame(width: 40, height: 40, alignment: .center)
-                                .foregroundColor(self.isActive(renderer)
-                                    ? renderer.getColor("activeColor")
-                                    : renderer.getColor("inactiveColor"))
-                                .background(self.isActive(renderer)
-                                    ? renderer.getColor("activeBackgroundColor")
-                                    : renderer.getColor("inactiveBackgroundColor"))
+        return
+            HStack(alignment: .top, spacing: 0){
+                VStack(alignment: .leading, spacing: 0){
+                    HStack(alignment: .top, spacing: 3) {
+                        ForEach(rendererCategories(), id: \.0) { (key, renderer) in
+                            
+                            Button(action: { context.executeAction(renderer) } ) {
+                                Image(systemName: renderer.getString("icon"))
+                                    .fixedSize()
+                                    .padding(.horizontal, 5)
+                                    .padding(.vertical, 5)
+                                    .frame(width: 40, height: 40, alignment: .center)
+                                    .foregroundColor(self.isActive(renderer)
+                                        ? renderer.getColor("activeColor")
+                                        : renderer.getColor("inactiveColor"))
+                                    .background(self.isActive(renderer)
+                                        ? renderer.getColor("activeBackgroundColor")
+                                        : renderer.getColor("inactiveBackgroundColor"))
+                            }
                         }
                     }
-                }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 12)
-                .background(Color.white)
-                .padding(.top, 1)
-
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0){
-                        ForEach(renderersAvailable(), id:\.0) { (key, renderer) in
-                            Group {
-                                Button(action:{ context.executeAction(renderer) }) {
-                                    if cascadingView.activeRenderer == renderer.rendererName {
-                                        Text(LocalizedStringKey(renderer.getString("title")))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.leading, 12)
+                    .background(Color.white)
+                    .padding(.top, 1)
+                    
+                    ASTableView(section:
+                        ASSection(id: 0, data: renderersAvailable(), dataID: \.0) { (item: (key: String, renderer: FilterPanelRendererButton), cellContext) in
+                            return Button(action:{ context.executeAction(item.renderer) }) {
+                                Group {
+                                    if cascadingView.activeRenderer == item.renderer.rendererName {
+                                        Text(LocalizedStringKey(item.renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#6aa84f"))
                                             .fontWeight(.semibold)
                                             .font(.system(size: 16))
-                                            .padding(.vertical, 12)
                                     }
                                     else {
-                                        Text(LocalizedStringKey(renderer.getString("title")))
+                                        Text(LocalizedStringKey(item.renderer.getString("title")))
                                             .foregroundColor(Color(hex: "#434343"))
                                             .fontWeight(.regular)
                                             .font(.system(size: 16))
-                                            .padding(.vertical, 12)
                                     }
                                 }
-                                Rectangle()
-                                    .frame(minHeight: 1, maxHeight: 1)
-                                    .foregroundColor(Color(hex: "#efefef"))
+                                .padding(.horizontal)
+                                .padding(.vertical, 6)
                             }
                         }
-                    }
+                    )
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 20)
-                .background(Color.white)
-                .padding(.top, 1)
-            }
-            .frame(minHeight: 0, maxHeight: .infinity, alignment: .top)
-            .padding(.bottom, 1)
-            
-            ScrollView {
-                VStack (alignment: .leading, spacing: 7) {
-                    Text("SORT ON:")
-                        .font(.system(size: 14, weight: .semibold))
-                        .padding(.top, 15)
-                        .padding(.bottom, 6)
-                        .foregroundColor(Color(hex: "#434343"))
-                    
-                    if (cascadingView.datasource.sortProperty != nil) {
-                        Button(action:{ self.toggleAscending() }) {
-                            Text(cascadingView.datasource.sortProperty ?? "")
-                                .foregroundColor(Color(hex: "#6aa84f"))
-                                .font(.system(size: 16, weight: .semibold, design: .default))
-                                .padding(.vertical, 2)
-                                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            
-                            // descending: "arrow.down"
-                            Image(systemName: cascadingView.datasource.sortAscending == false
-                                ? "arrow.down"
-                                : "arrow.up")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .foregroundColor(Color(hex: "#6aa84f"))
-                                .frame(minWidth: 10, maxWidth: 10)
+                .padding(.bottom, 1)
+                
+                ASTableView(section:
+                    ASSection(id: 0, container: {
+                        $0
+                        .padding(.horizontal)
+                        .padding(.vertical, 6)
+                    }) {
+                        cascadingView.datasource.sortProperty.map { currentSortProperty in
+                            Button(action:{ self.toggleAscending() }) {
+                                HStack {
+                                    Text(currentSortProperty)
+                                        .foregroundColor(Color(hex: "#6aa84f"))
+                                        .font(.system(size: 16, weight: .semibold, design: .default))
+                                        .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                    Spacer()
+                                    Image(systemName: cascadingView.datasource.sortAscending == false
+                                        ? "arrow.down"
+                                        : "arrow.up")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .foregroundColor(Color(hex: "#6aa84f"))
+                                        .frame(minWidth: 10, maxWidth: 10)
+                                }
+                            }
+                        }
+                        cascadingView.sortFields.filter {
+                            return cascadingView.datasource.sortProperty != $0
+                        }.map { fieldName in
+                            Button(action:{ self.changeOrderProperty(fieldName) }) {
+                                Text(fieldName)
+                                    .foregroundColor(Color(hex: "#434343"))
+                                    .font(.system(size: 16, weight: .regular, design: .default))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
                         }
                         
-                        Rectangle()
-                            .frame(minHeight: 1, maxHeight: 1)
-                            .foregroundColor(Color(hex: "#efefef"))
-                    }
-                    
-                    ForEach(cascadingView.sortFields.filter {
-                        return cascadingView.datasource.sortProperty != $0
-                    }, id:\.self) { fieldName in
-                        Group {
+                        allOtherFields().map { fieldName in
                             Button(action:{ self.changeOrderProperty(fieldName) }) {
                                 Text(fieldName)
                                     .foregroundColor(Color(hex: "#434343"))
                                     .font(.system(size: 16, weight: .regular, design: .default))
-                                    .padding(.vertical, 2)
-                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                             }
-                            
-                            Rectangle()
-                                .frame(minHeight: 1, maxHeight: 1)
-                                .foregroundColor(Color(hex: "#efefef"))
                         }
                     }
-                    
-                    ForEach(allOtherFields(), id:\.self) { fieldName in
-                        Group {
-                            Button(action:{ self.changeOrderProperty(fieldName) }) {
-                                Text(fieldName)
-                                    .foregroundColor(Color(hex: "#434343"))
-                                    .font(.system(size: 16, weight: .regular, design: .default))
-                                    .padding(.vertical, 2)
-                                    .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
-                            }
-                            
-                            Rectangle()
-                                .frame(minHeight: 1, maxHeight: 1)
-                                .foregroundColor(Color(hex: "#efefef"))
-                        }
+                    .sectionHeader {
+                        Text("Sort on:")
+                            .padding(4)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color(hex: "#434343"))
+                            .background(Color(.secondarySystemBackground))
                     }
-                }
-                .padding(.trailing, 30)
-                .padding(.leading, 20)
+                )
+                    .background(Color.white)
+                    .padding(.vertical, 1)
+                    .padding(.leading, 1)
             }
-            .frame(minHeight: 0, maxHeight: .infinity, alignment: .topLeading)
-            .background(Color.white)
-            .padding(.vertical, 1)
-            .padding(.leading, 1)
-        }
-        .frame(minWidth: 0, maxWidth: .infinity, minHeight:0, maxHeight: 220, alignment: .topLeading)
-        .background(Color(hex: "#eee"))
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .frame(height: 240)
+            .background(Color(hex: "#eee"))
     }
 }
 

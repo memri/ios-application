@@ -9,44 +9,79 @@
 import SwiftUI
 
 struct ContextPane: View {
-
     @EnvironmentObject var context: MemriContext
-
-    private let forgroundPercentageWidth: CGFloat = 0.75
     
-    @State var dragOffset = CGSize.zero
-
+    var widthRatio: CGFloat = 0.75
+    
+    @GestureState(reset: { value, transaction in
+        transaction.animation = .default
+    }) var offset: CGFloat = .zero
+    
+    var isVisible: Bool {
+        get { self.context.currentSession.showContextPane }
+        nonmutating set {
+            realmWriteIfAvailable(self.context.realm) {
+                self.context.currentSession.showContextPane = newValue
+                self.context.scheduleUIUpdate(immediate: true)
+            }
+        }
+    }
+    
+    func paneWidth(_ geom: GeometryProxy) -> CGFloat {
+        geom.size.width * widthRatio
+    }
+    
+    func cappedOffset(_ geom: GeometryProxy) -> CGFloat {
+        min(max(0, offset), paneWidth(geom))
+    }
+    
+    func fractionVisible(_ geom: GeometryProxy) -> Double {
+        1 - Double(abs(cappedOffset(geom)) / paneWidth(geom))
+    }
+    
     var body: some View {
-        ZStack {
-            if self.context.currentSession.showContextPane {
+        GeometryReader { geom in
+            self.body(withGeom: geom)
+        }
+    }
+    
+    func body(withGeom geom: GeometryProxy) -> some View {
+        ZStack(alignment: .trailing) {
+            if isVisible {
                 ContextPaneBackground()
-                    .opacity(0.60)
+                    .opacity(fractionVisible(geom) * 0.5)
                     .edgesIgnoringSafeArea(.vertical)
                     .transition(.opacity)
-                    .animation(.easeOut(duration: 0.6))
                     .gesture(TapGesture()
                         .onEnded{ value in
-                            realmWriteIfAvailable(self.context.realm) {
-                                self.context.currentSession.showContextPane.toggle()
+                            withAnimation {
+                                self.isVisible = false
                             }
                         })
-            
-                ContextPaneForground()
-                    .frame(width: UIScreen.main.bounds.width * forgroundPercentageWidth)
-                    .offset(x: (UIScreen.main.bounds.width / 2.0) * (1.0 - forgroundPercentageWidth) + max(self.dragOffset.width, 0) )
+                    .zIndex(-1)
+                ContextPaneForeground()
+                    .frame(width: paneWidth(geom))
+                    .offset(x: cappedOffset(geom))
                     .edgesIgnoringSafeArea(.vertical)
-                    .gesture(DragGesture()
-                        .onChanged({ value in
-                            self.dragOffset = value.translation
-                        })
-                        .onEnded{ value in
-                            realmWriteIfAvailable(self.context.realm) {
-                                self.context.currentSession.showContextPane.toggle()
-                            }
-                        })
                     .transition(.move(edge: .trailing))
-                    .animation(.easeOut(duration: 0.3))
             }
+        }
+        .simultaneousGesture(contextPaneDragGesture)
+    }
+    
+    
+    var contextPaneDragGesture: some Gesture {
+        DragGesture()
+            .updating($offset, body: { (value, offset, _) in
+                offset = value.translation.width
+            })
+            .onEnded { value in
+                if value.predictedEndTranslation.width > 100, abs(value.translation.width) > 10
+                {
+                    withAnimation {
+                        self.isVisible = false
+                    }
+                }
         }
     }
 }

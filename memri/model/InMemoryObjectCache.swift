@@ -36,7 +36,7 @@ public class InMemoryObjectCache {
         try globalInMemoryObjectCache.set(key, value)
     }
     class func get(_ key:String) -> Any? {
-        try globalInMemoryObjectCache.get(key)
+        globalInMemoryObjectCache.get(key)
     }
 }
 public class CacheItem {

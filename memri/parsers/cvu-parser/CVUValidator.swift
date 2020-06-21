@@ -77,7 +77,7 @@ class CVUValidator {
                     }
                 }
                 else {
-                    validate(prop, key, value)
+                    value.map { validate(prop, key, $0) }
                     continue
                 }
             }
@@ -111,8 +111,10 @@ class CVUValidator {
                 if value is Expression { continue }
                 
                 do {
-                    if !(try validate(key, value)) {
-                        errors.append("Invalid property value '\(valueToTruncatedString(value))' for '\(key)' at definition \(definition.selector ?? "").")
+                    try value.map {
+                        if !(try validate(key, $0)) {
+                            errors.append("Invalid property value '\(valueToTruncatedString($0))' for '\(key)' at definition \(definition.selector ?? "").")
+                        }
                     }
                 }
                 catch {

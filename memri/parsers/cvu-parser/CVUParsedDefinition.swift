@@ -14,7 +14,7 @@ public class CVUParsedDefinition : CVUToString {
     var domain:String?
     
     subscript(propName:String) -> Any? {
-        return parsed[propName]
+        return parsed[propName].flatMap { $0 }
     }
     
 //    var unparsed:String = ""

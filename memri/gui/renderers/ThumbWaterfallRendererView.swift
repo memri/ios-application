@@ -83,6 +83,11 @@ struct ThumbWaterfallRendererView: View {
 //            .frame(width: geom.size.width, height: geom.size.height)
 //            .clipped()
         }
+        .onSelectSingle({ (index) in
+            if let press = self.renderConfig?.press {
+                self.context.executeAction(press, with: self.context.items[safe: index])
+            }
+        })
     }
     
     var body: some View {
@@ -106,7 +111,7 @@ struct ThumbWaterfallRendererView: View {
                 ASCollectionView(section: section)
                     .layout(self.layout)
                     .customDelegate(WaterfallScreenLayoutDelegate.init)
-                    // TODO REfactor: implement this for the other grids
+                    .alwaysBounceVertical()
                     .contentInsets(.init(
                         top: edgeInset[safe: 0] ?? 0,
                         left: edgeInset[safe: 3] ?? 0,

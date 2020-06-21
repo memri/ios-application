@@ -26,10 +26,9 @@ var config = Realm.Configuration(
         }
     })
 
-/// Computes the Realm path /home/<user>/realm.memri and creates the directory if it does not exist.
-/// - Returns: the computed directory
-func getRealmPath() throws -> String{
-    #warning("FIX ME")
+/// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
+/// - Returns: the computed database file path
+func getRealmPath() throws -> String {
     if  let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
         let realmDir = homeDir + "/realm.memri"
         print("REALM DIR: \(realmDir)")
@@ -41,7 +40,7 @@ func getRealmPath() throws -> String{
             print(error)
         }
         
-        return realmDir
+        return realmDir + "/memri.realm"
         }
     else {
         throw "Could not get realm path"
@@ -63,7 +62,7 @@ public class Cache {
     
     
      //TODO: document
-    public var scheduleUIUpdate: ((_ check:(_ context:MemriContext) -> Bool) -> Void)? = nil
+    public var scheduleUIUpdate: ((((_ context:MemriContext) -> Bool)?) -> ())? = nil
     
     
     /// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
@@ -73,7 +72,7 @@ public class Cache {
         // Tell Realm to use this new configuration object for the default Realm
         #if targetEnvironment(simulator)
             do {
-                config.fileURL = URL(string: "file://\(try getRealmPath())/memri.realm")
+                config.fileURL = URL(fileURLWithPath: try getRealmPath())
             }
             catch {
                 // TODO: Error handling
@@ -242,7 +241,7 @@ public class Cache {
             // Make sure the UI updates when the resultset updates
             self.cancellables.append(resultSet.objectWillChange.sink { (_) in
                 // TODO: Error handling
-                self.scheduleUIUpdate!() { context in
+                self.scheduleUIUpdate? { context in
                     return context.cascadingView.resultSet.datasource == resultSet.datasource
                 }
             })
@@ -349,12 +348,7 @@ public class Cache {
                         
                         realmWriteIfAvailable(self.realm, { doAction() } )
                     }
-                    if let scheduleUIUpdate = self.scheduleUIUpdate{
-                        scheduleUIUpdate{_ in true}
-                    }
-                    else {
-                        print("No scheduleUIUpdate available in bindChangeListeners()")
-                    }
+                    self.scheduleUIUpdate?(nil)
                 }
             })
             

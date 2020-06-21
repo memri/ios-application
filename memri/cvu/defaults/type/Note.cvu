@@ -130,13 +130,13 @@ Note[] {
     [renderer = list] {
         VStack {
             alignment: left
-            rowInset: 12 20 -12 20
+            spacing: 3
             
             Text {
                 text: "{.title}"
                 font: 18 semibold
                 color: #333
-                padding: 0 0 3 0
+                padding: 0 0 0 0
             }
             Text {
                 text: "{.textContent}"
@@ -149,9 +149,8 @@ Note[] {
                 text: "{.dateModified}"
                 font: 11 regular
                 color: #888
-                padding: 8 0 5 0
+                padding: 0 0 0 0
             }
-            Divider
         }
     }
             
@@ -162,7 +161,7 @@ Note[] {
             alignment: center
             
             Text {
-                text: "{.content}"
+                text: "{.textContent}"
                 maxChar: 100
                 color: #333
                 background: #fff
@@ -171,7 +170,7 @@ Note[] {
                 padding: 10
                 font: 9 regular
                 minHeight: 80
-                align: lefttop
+                align: left top
             }
             Text {
                 text: "{.title}"

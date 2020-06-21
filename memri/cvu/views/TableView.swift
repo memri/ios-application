@@ -21,7 +21,7 @@ struct TableView<Item, Content: View>: UIViewControllerRepresentable where Item:
         self.context = context
         self.canDelete = canDelete
         self.canReorder = canReorder
-        self.editMode = context.currentSession.isEditMode
+        self.editMode = context.currentSession.swiftUIEditMode
     }
 
     func makeCoordinator() -> Coordinator<Item,Content> {

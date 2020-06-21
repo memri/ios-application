@@ -28,8 +28,18 @@ public class Session: DataItem {
  
     @objc dynamic var screenshot:File? = nil
     
+    var isEditMode: Bool {
+        get {
+            editMode
+        }
+        set {
+            realmWriteIfAvailable(self.realm) {
+                self.editMode = newValue
+            }
+        }
+    }
  
-    var isEditMode: EditMode {
+    var swiftUIEditMode: EditMode {
         get {
             if editMode { return .active }
             else { return .inactive }

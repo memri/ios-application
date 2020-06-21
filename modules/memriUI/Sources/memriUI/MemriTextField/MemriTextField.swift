@@ -21,6 +21,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
     var allowedCharacters: CharacterSet?
     var keyboardType: UIKeyboardType = .default
     var returnKeyType: UIReturnKeyType = .default
+    var showPrevNextButtons: Bool = true
     var selectAllOnEdit: Bool = false
     var font: UIFont?
     
@@ -56,8 +57,11 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
     
     public func updateUIView(_ textField: MemriTextField_UIKit, context: Context) {
         context.coordinator.parent = self
+        
         assignIfChanged(textField, \.textColor, newValue: self.textColor ?? .label)
-        assignIfChanged(textField, \.placeholder, newValue: self.placeholder)
+        assignIfChanged(textField, \.attributedPlaceholder, newValue: self.placeholder.map {
+            NSAttributedString(string: $0, attributes: [.foregroundColor : (self.textColor ?? .label).withAlphaComponent(0.5)])
+        })
         if allowEmpty || !(textField.isEditing && textField.text?.isOnlyWhitespace ?? true)
         {
             assignIfChanged(textField, \.text, newValue: self.valueString)
@@ -70,6 +74,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
         assignIfChanged(textField, \.keyboardType, newValue: self.keyboardType)
         assignIfChanged(textField, \.returnKeyType, newValue: self.returnKeyType)
         assignIfChanged(textField, \.textAlignment, newValue: self.textAlignment.nsTextAlignment)
+        assignIfChanged(textField, \.showPrevNextButtons, newValue: self.showPrevNextButtons)
     }
     
     public func makeCoordinator() -> Delegate {
@@ -103,26 +108,6 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
                     view?.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
                 }
             }
-        }
-        
-        func addDoneButton(_ textField: MemriTextField_UIKit)
-        {
-            let doneToolbar: UIToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 50))
-            doneToolbar.barStyle = .default
-            
-            let flexSpaceBarButton = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-            let doneBarButton: UIBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(doneButtonPressed))
-            
-            let items = [flexSpaceBarButton, doneBarButton]
-            doneToolbar.items = items
-            doneToolbar.sizeToFit()
-            
-            textField.inputAccessoryView = doneToolbar
-        }
-        
-        @objc func doneButtonPressed()
-        {
-            view?.resignFirstResponder()
         }
         
         public func textFieldDidBeginEditing(_ textField: UITextField)
@@ -187,6 +172,7 @@ public extension MemriTextField where Value == String?
         allowedCharacters: CharacterSet? = nil,
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
+        showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false
     )
     {
@@ -198,6 +184,7 @@ public extension MemriTextField where Value == String?
         self.allowedCharacters = allowedCharacters
         self.keyboardType = keyboardType
         self.returnKeyType = returnKeyType
+        self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
     }
 }
@@ -210,6 +197,7 @@ public extension MemriTextField where Value == String
         allowedCharacters: CharacterSet? = nil,
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
+        showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false
     )
     {
@@ -221,6 +209,7 @@ public extension MemriTextField where Value == String
         self.allowedCharacters = allowedCharacters
         self.keyboardType = keyboardType
         self.returnKeyType = returnKeyType
+        self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
     }
 }
@@ -320,6 +309,14 @@ extension String {
 }
 
 public class MemriTextField_UIKit: UITextField {
+    var showPrevNextButtons: Bool = true {
+        didSet {
+            if showPrevNextButtons != oldValue {
+                updateToolbar()
+            }
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         setContentHuggingPriority(.required, for: .vertical)
@@ -333,7 +330,7 @@ public class MemriTextField_UIKit: UITextField {
     var toolbarHost: UIHostingController<KeyboardToolbarView>?
     
     func updateToolbar() {
-        let view = KeyboardToolbarView(owner: self)
+        let view = KeyboardToolbarView(owner: self, showArrows: showPrevNextButtons)
         if let hc = toolbarHost {
             hc.rootView = view
         } else {

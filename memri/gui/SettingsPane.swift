@@ -62,33 +62,30 @@ struct SettingsPane: View {
                         footer: Text("Never give out these details to anyone")
                             .font(.system(size: 11, weight: .regular))
                     ) {
-                        VStack {
-                            HStack {
-                                Text("Host:")
-                                    .frame(width: 100, alignment: .leading)
-                                MemriTextField(value: getBinding("/user/pod/host") as Binding<String>)
-                            }
-                            HStack {
-                                Text("Username:")
-                                    .frame(width: 100, alignment: .leading)
-                                MemriTextField(value: getBinding("/user/pod/username") as Binding<String>)
-                            }
-                            HStack {
-                                Text("Password:")
-                                    .frame(width: 100, alignment: .leading)
-                                SecureField("Password", text: getBinding("/user/pod/password"))
-                            }
-                            HStack {
-                                Button (action: {
-                                    if let datasource = self.context.cascadingView.sessionView.datasource {
-                                        self.context.cache.sync.clearSyncCache()
-                                        self.context.cache.sync.syncQuery(datasource)
-                                    }
-                                }) {
-                                    Text("Connect")
+                        HStack {
+                            Text("Host:")
+                                .frame(width: 100, alignment: .leading)
+                            MemriTextField(value: getBinding("/user/pod/host") as Binding<String>)
+                        }
+                        HStack {
+                            Text("Username:")
+                                .frame(width: 100, alignment: .leading)
+                            MemriTextField(value: getBinding("/user/pod/username") as Binding<String>)
+                        }
+                        HStack {
+                            Text("Password:")
+                                .frame(width: 100, alignment: .leading)
+                            SecureField("Password", text: getBinding("/user/pod/password"))
+                        }
+                        HStack {
+                            Button (action: {
+                                if let datasource = self.context.cascadingView.sessionView.datasource {
+                                    self.context.cache.sync.clearSyncCache()
+                                    self.context.cache.sync.syncQuery(datasource)
                                 }
+                            }) {
+                                Text("Connect")
                             }
-                            .padding(.top, 10)
                         }
                     }
                 }) {
