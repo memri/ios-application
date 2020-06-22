@@ -32,11 +32,14 @@ class File:DataItem {
         }
     }
     
-    public var asUIImage:UIImage? {
+    public var asUIImage: UIImage? {
         do { if let x:UIImage = try read() { return x } }
         catch {
             // TODO: User error handling
             // TODO Refactor: error handling
+            if let fileName = uri.components(separatedBy: "/").last {
+                return UIImage(named: fileName)
+            }
             debugHistory.error("Could not read image in path: \(uri)")
         }
         return nil
@@ -64,28 +67,24 @@ class File:DataItem {
         var cachedData:T? = InMemoryObjectCache.get(self.uri) as? T
         if cachedData != nil { return cachedData }
         
-        let data = self.readData()
-        if let data = data {
-            // NOTE: Allowed forced casting, because we check for types
-            if T.self == UIImage.self {
-                cachedData = UIImage(data: data) as? T
-            }
-            else if T.self == String.self {
-                cachedData = String(data: data, encoding: .utf8) as? T
-            }
-            else if T.self == Data.self {
-                cachedData = data as? T
-            }
-            else {
-                throw "Could not parse \(self.uri)"
-            }
-            // NOTE: Allowed forced unwrapping, because variable must have value by now
-            try InMemoryObjectCache.set(self.uri, cachedData!)
-            return cachedData
+        let data = try self.readData()
+        
+        // NOTE: Allowed forced casting, because we check for types
+        if T.self == UIImage.self {
+            cachedData = UIImage(data: data) as? T
+        }
+        else if T.self == String.self {
+            cachedData = String(data: data, encoding: .utf8) as? T
+        }
+        else if T.self == Data.self {
+            cachedData = data as? T
         }
         else {
-            throw "Could not read data from \(self.uri)"
+            throw "Could not parse \(self.uri)"
         }
+        // NOTE: Allowed forced unwrapping, because variable must have value by now
+        try InMemoryObjectCache.set(self.uri, cachedData!)
+        return cachedData
     }
     
     public func write<T>(_ value: T) throws {
@@ -140,9 +139,9 @@ class File:DataItem {
 //        }
     }
     
-    private func readData() -> Data? {
+    private func readData() throws -> Data  {
         let path = getPath()
-        if path == "" { return nil } // TODO reporting??
+        if path == "" { throw "Path is empty" } // TODO reporting??
 
 //        let databuffer = FileManager.default.contents(atPath: path)
         
@@ -173,12 +172,11 @@ class File:DataItem {
                 if let data = readFromPath(file){
                     return data
                 }else{
-                    return nil
+                    throw "Warning: Could not read file at \(path)"
                 }
             }
             else {
-                print("Warning: Could not read file \(path)")
-                return nil
+                throw "Warning: Could not find file in bundle at \(path)"
             }
         }
         

@@ -47,8 +47,9 @@ public class Renderers {
         registerList()
         registerGeneralEditor()
         registerThumbnail()
-        registerThumGrid()
-        registerThumWaterfall()
+        registerThumbGrid()
+        registerThumbHorizontalGrid()
+        registerThumbWaterfall()
         registerMap()
         registerRichText()
     }

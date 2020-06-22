@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumWaterfall = {
+let registerThumbWaterfall = {
     Renderers.register(
         name: "thumbnail.waterfall",
         title: "Waterfall Grid",
@@ -39,16 +39,11 @@ struct ThumbWaterfallRendererView: View {
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(createCustomLayout: ASWaterfallLayout.init) { layout in
+            let spacing = self.renderConfig?.spacing
+            layout.columnSpacing = spacing?.x ?? 0
+            layout.itemSpacing = spacing?.y ?? 0
             layout.numberOfColumns = .adaptive(minWidth: 150) // @State var columnMinSize: CGFloat = 150
         }
-        // Can also initialise like this when no need to dynamically update values
-        /*
-         ASCollectionLayout
-         {
-             let layout = ASWaterfallLayout()
-             return layout
-         }
-         */
     }
     
     var section: ASCollectionViewSection<Int>{
@@ -91,8 +86,6 @@ struct ThumbWaterfallRendererView: View {
     }
     
     var body: some View {
-        let edgeInset = renderConfig?.edgeInset ?? []
-        
         return VStack {
             if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
@@ -112,11 +105,7 @@ struct ThumbWaterfallRendererView: View {
                     .layout(self.layout)
                     .customDelegate(WaterfallScreenLayoutDelegate.init)
                     .alwaysBounceVertical()
-                    .contentInsets(.init(
-                        top: edgeInset[safe: 0] ?? 0,
-                        left: edgeInset[safe: 3] ?? 0,
-                        bottom: edgeInset[safe: 2] ?? 0,
-                        right: edgeInset[safe: 1] ?? 0))
+                    .contentInsets(renderConfig?.edgeInset ?? .init())
 //                    .navigationBarTitle("Waterfall Layout", displayMode: .inline)
 //                    .navigationBarItems(
 //                        trailing:
@@ -159,9 +148,11 @@ class WaterfallScreenLayoutDelegate: ASCollectionViewDelegate, ASWaterfallLayout
         0
     }
 
+    let heights: [CGFloat] = [1.5, 1.0, 0.75, 1.75, 0.6]
     /// We explicitely provide a height here. If providing no delegate, this layout will use auto-sizing, however this causes problems if rotating the device (due to limitaitons in UICollecitonView and autosizing cells that are not visible)
     func heightForCell(at indexPath: IndexPath, context: ASWaterfallLayout.CellLayoutContext) -> CGFloat {
 //        guard let item: DataItem = getDataForItem(at: indexPath) else { return 100 }
-        return context.width / .random(in: 0.3 ... 1.5)
+        let rand = indexPath.item % heights.count
+        return context.width * (heights[safe: rand] ?? 1)
     }
 }

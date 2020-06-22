@@ -62,7 +62,8 @@ Session[] {
     
     [renderer = thumbnail] {
         columns: 2
-        hSpacing: 20
+        spacing: 20 10
+        edgeInset: 10
         press: openSession
         
         VStack {
