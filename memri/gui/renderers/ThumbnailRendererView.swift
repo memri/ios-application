@@ -124,13 +124,6 @@ struct ThumbnailRendererView: View {
         })
     }
     
-    var edgeInset: UIEdgeInsets {
-        UIEdgeInsets(top: renderConfig?.edgeInset?[safe: 0] ?? 0,
-                   left: renderConfig?.edgeInset?[safe: 3] ?? 0,
-                   bottom: renderConfig?.edgeInset?[safe: 2] ?? 0,
-                   right: renderConfig?.edgeInset?[safe: 1] ?? 0)
-    }
-    
     var body: some View {
         return VStack {
             if context.cascadingView.resultSet.count == 0 {
