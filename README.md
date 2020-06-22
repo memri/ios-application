@@ -11,6 +11,7 @@ The memri iOS application can be used to connect to your [pod](https://gitlab.me
 
 #### Run formatter
 *make sure to run this from the repo directory only*
+
 ```swift-format . --configuration .swift-format.json```
 
 ## Defining your own interface
