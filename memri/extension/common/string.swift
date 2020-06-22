@@ -125,5 +125,10 @@ extension String: Error {
     mutating func capitalizeFirstLetter() {
         self = self.capitalizingFirstLetter()
     }
+    
+    var nilIfBlank: String? {
+        guard self.contains(where: { !$0.isWhitespace }) else { return nil }
+        return self
+    }
 }
 

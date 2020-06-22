@@ -60,29 +60,28 @@ public class Expression : CVUToString {
                 let lookupNode = ExprLookupNode(sequence: sequence)
                 let lookupValue = try self.lookup(lookupNode, ViewArguments())
                 
-                if let obj = lookupValue as? Object, let context = context {
-                    realmWriteIfAvailable(context.realm) {
-                        obj[lastProperty.name] =
-                            !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
-                    }
-                    return
-                }
-                // TODO FIX: Implement LookUpAble
-                else if let obj = lookupValue as? MemriContext, let context = context{
-                    realmWriteIfAvailable(context.realm) {
-                        obj[lastProperty.name] =
-                            !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
-                    }
-                    return
-                }
-                else if let obj = lookupValue as? UserState, let context = context{
-                    realmWriteIfAvailable(context.realm) {
+                if let context = context {
+                    if let obj = lookupValue as? UserState {
                         obj.set(lastProperty.name,
                                 !ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
+                        return
                     }
-                    return
+                    else if let obj = lookupValue as? Object {
+                        realmWriteIfAvailable(context.realm) {
+                            obj[lastProperty.name] =
+                                !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                        }
+                        return
+                    }
+                    // TODO FIX: Implement LookUpAble
+                    else if let obj = lookupValue as? MemriContext {
+                        realmWriteIfAvailable(context.realm) {
+                            obj[lastProperty.name] =
+                                !ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                        }
+                        return
+                    }
                 }
-                
             }
         }
             

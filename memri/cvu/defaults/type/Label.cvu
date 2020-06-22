@@ -60,6 +60,8 @@ Label[]: {
     }
     
     [renderer = thumbnail] {
+        spacing: 10
+        edgeInset: 10
         VStack {
             VStack {
                 spacing: 5

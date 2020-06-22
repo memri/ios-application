@@ -30,8 +30,12 @@ public struct UIElementView: SwiftUI.View {
         viewArguments.get(propName) != nil || from.has(propName)
     }
     
-    public func get<T>(_ propName:String) -> T? {
+    public func get<T>(_ propName:String, type: T.Type = T.self) -> T? {
         from.get(propName, item, viewArguments)
+    }
+    
+    public func get<T>(_ propName:String, defaultValue: T, type: T.Type = T.self) -> T {
+        from.get(propName, item, viewArguments) ?? defaultValue
     }
     
     public func getImage(_ propName:String) -> UIImage {
@@ -203,7 +207,11 @@ public struct UIElementView: SwiftUI.View {
                     .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Text {
-                    from.processText(get("text")).map { text in
+                    (from
+                        .processText(get("text"))
+                        ?? get("nilText")
+                        ?? (get("allowNil", defaultValue: false, type: Bool.self) ? "" : nil)
+                    ).map { text in
                         Text(text)
                             .if(from.getBool("bold")){ $0.bold() }
                             .if(from.getBool("italic")){ $0.italic() }

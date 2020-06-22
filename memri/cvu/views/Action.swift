@@ -140,8 +140,15 @@ extension MemriContext {
         action.context = self
         
         if action.getBool("opensView") {
+            let binding = action.binding
+            
             if let action = action as? ActionExec {
                 try action.exec(args)
+                
+                // Toggle a state value, for instance the starred button in the view (via dataItem.starred)
+                if let binding = binding {
+                    try binding.toggleBool()
+                }
             }
             else {
                 print("Missing exec for action \(action.name), NOT EXECUTING")
@@ -504,18 +511,8 @@ class ActionOpenView : Action, ActionExec {
         super.init(context, "openView", arguments:arguments, values:values)
     }
     
-    func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil){
+    func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil) throws {
         let session = context.currentSession
-        
-        // Toggle a state value, for instance the starred button in the view (via dataItem.starred)
-        if let binding = self.binding {
-            do { try binding.toggleBool() }
-            catch {
-                // TODO: User error handling
-                // TODO Error handling
-                debugHistory.error("\(error)")
-            }
-        }
         
         // Merge arguments into view
         if let dict = arguments?.asDict() {
@@ -532,10 +529,10 @@ class ActionOpenView : Action, ActionExec {
         view.access()
     
         // Recompute view
-        context.scheduleCascadingViewUpdate()
+        try context.updateCascadingView() // scheduleCascadingViewUpdate()
     }
     
-    private func openView(_ context: MemriContext, _ item: DataItem, with arguments: ViewArguments? = nil){
+    private func openView(_ context: MemriContext, _ item: DataItem, with arguments: ViewArguments? = nil) throws {
         // Create a new view
         let view = SessionView(value: ["datasource": Datasource(value: [
             // Set the query options to load the item
@@ -543,7 +540,7 @@ class ActionOpenView : Action, ActionExec {
         ])])
     
         // Open the view
-        self.openView(context, view:view, with: arguments)
+        try self.openView(context, view:view, with: arguments)
     }
     
     func exec(_ arguments:[String: Any]) throws {
@@ -554,13 +551,13 @@ class ActionOpenView : Action, ActionExec {
         
         // if let selection = selection, selection.count > 0 { self.openView(context, selection) }
         if let sessionView = arguments["view"] as? SessionView {
-            self.openView(context, view: sessionView, with: viewArguments)
+            try self.openView(context, view: sessionView, with: viewArguments)
         }
         else if let item = dataItem as? SessionView {
-            self.openView(context, view: item, with: viewArguments)
+            try self.openView(context, view: item, with: viewArguments)
         }
         else if let item = dataItem {
-            self.openView(context, item, with: viewArguments)
+            try self.openView(context, item, with: viewArguments)
         }
         else {
             // TODO Error handling
@@ -598,7 +595,7 @@ class ActionOpenViewByName : Action, ActionExec {
                 "datasource": viewDef["datasource"] // TODO Refactor
             ])
             
-            ActionOpenView(context).openView(context, view:view)
+            try ActionOpenView(context).openView(context, view:view)
         }
         else {
             // TODO Error Handling

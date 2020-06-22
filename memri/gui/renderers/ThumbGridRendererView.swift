@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumGrid = {
+let registerThumbGrid = {
     Renderers.register(
         name: "thumbnail.grid",
         title: "Photo Grid",
@@ -33,44 +33,54 @@ struct ThumbGridRendererView: View {
 //        editMode?.wrappedValue.isEditing ?? false
 //    }
     
-    var renderConfig: CascadingThumbnailConfig? {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig
+    var renderConfig: CascadingThumbnailConfig {
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig([], ViewArguments())
     }
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
+                let contentInset = self.renderConfig.nsEdgeInset
                 let isWide = environment.container.effectiveContentSize.width > 500
-                let columns = CGFloat(self.renderConfig?.columns ?? 3)
+                let columns = self.renderConfig.columns
+                let spacing = self.renderConfig.spacing
                 
-                let gridBlockSize = environment.container.effectiveContentSize.width / columns
-                let inset = CGFloat(self.renderConfig?.itemInset ?? 5)
-                let gridItemInsets = NSDirectionalEdgeInsets(top: inset, leading: inset, bottom: inset, trailing: inset)
-                let itemSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize), heightDimension: .absolute(gridBlockSize))
+                let singleBlockSize = (environment.container.effectiveContentSize.width - contentInset.leading - contentInset.trailing - spacing.x * CGFloat(columns - 1)) / CGFloat(columns)
+                func gridBlockSize(forSize size: Int, sizeY: Int? = nil) -> NSCollectionLayoutSize {
+                    let x = CGFloat(size) * singleBlockSize + spacing.x * CGFloat(size - 1)
+                    let y = CGFloat(sizeY ?? size) * singleBlockSize + spacing.y * CGFloat((sizeY ?? size) - 1)
+                    return NSCollectionLayoutSize(widthDimension: .absolute(x), heightDimension: .absolute(y))
+                }
+                let itemSize = gridBlockSize(forSize: 1)
+                
                 let item = NSCollectionLayoutItem(layoutSize: itemSize)
-                item.contentInsets = gridItemInsets
-                let verticalGroupSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize), heightDimension: .absolute(gridBlockSize * 2))
+                
+                let verticalGroupSize = gridBlockSize(forSize: 1, sizeY: 2)
                 let verticalGroup = NSCollectionLayoutGroup.vertical(layoutSize: verticalGroupSize, subitem: item, count: 2)
+                verticalGroup.interItemSpacing = .fixed(spacing.y)
 
-                let featureItemSize = NSCollectionLayoutSize(widthDimension: .absolute(gridBlockSize * 2), heightDimension: .absolute(gridBlockSize * 2))
+                let featureItemSize = gridBlockSize(forSize: 2)
                 let featureItem = NSCollectionLayoutItem(layoutSize: featureItemSize)
-                featureItem.contentInsets = gridItemInsets
 
-                let fullWidthItemSize = NSCollectionLayoutSize(widthDimension: .absolute(environment.container.effectiveContentSize.width), heightDimension: .absolute(gridBlockSize * 2))
+                let fullWidthItemSize = gridBlockSize(forSize: 3, sizeY: 1)
                 let fullWidthItem = NSCollectionLayoutItem(layoutSize: fullWidthItemSize)
-                fullWidthItem.contentInsets = gridItemInsets
 
-                let verticalAndFeatureGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(gridBlockSize * 2))
+                let verticalAndFeatureGroupSize = gridBlockSize(forSize: 3, sizeY: 2)
                 let verticalAndFeatureGroupA = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: isWide ? [verticalGroup, verticalGroup, featureItem, verticalGroup] : [verticalGroup, featureItem])
+                verticalAndFeatureGroupA.interItemSpacing = .fixed(spacing.x)
                 let verticalAndFeatureGroupB = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: isWide ? [verticalGroup, featureItem, verticalGroup, verticalGroup] : [featureItem, verticalGroup])
-
-                let rowGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(gridBlockSize))
+                verticalAndFeatureGroupB.interItemSpacing = .fixed(spacing.x)
+                
+                let rowGroupSize = gridBlockSize(forSize: 3, sizeY: 1)
                 let rowGroup = NSCollectionLayoutGroup.horizontal(layoutSize: rowGroupSize, subitem: item, count: Int(columns))
-
-                let outerGroupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(gridBlockSize * 8))
+                rowGroup.interItemSpacing = .fixed(spacing.x)
+                
+                let outerGroupSize = gridBlockSize(forSize: 3, sizeY: 7)
                 let outerGroup = NSCollectionLayoutGroup.vertical(layoutSize: outerGroupSize, subitems: [verticalAndFeatureGroupA, rowGroup, fullWidthItem, verticalAndFeatureGroupB, rowGroup])
-
+                outerGroup.interItemSpacing = .fixed(spacing.y)
+                
                 let section = NSCollectionLayoutSection(group: outerGroup)
+                section.contentInsets = contentInset
                 return section
             }
         }
@@ -81,7 +91,7 @@ struct ThumbGridRendererView: View {
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
                     // TODO: Error handling
-                    self.renderConfig?.render(item: dataItem)
+                    self.renderConfig.render(item: dataItem)
                         .environmentObject(self.context)
                         .frame(width: geom.size.width, height: geom.size.height)
                         .clipped()
@@ -101,20 +111,15 @@ struct ThumbGridRendererView: View {
             }
         }
         .onSelectSingle({ (index) in
-            if let press = self.renderConfig?.press {
+            if let press = self.renderConfig.press {
                 self.context.executeAction(press, with: self.context.items[safe: index])
             }
         })
     }
     
     var body: some View {
-        let edgeInset = renderConfig?.edgeInset ?? []
-        
         return VStack {
-            if renderConfig == nil {
-                Text("Unable to render this view")
-            }
-            else if context.cascadingView.resultSet.count == 0 {
+            if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
                     Text(self.context.cascadingView.emptyResultText)
@@ -131,40 +136,13 @@ struct ThumbGridRendererView: View {
                 ASCollectionView(section: section)
                     .layout(self.layout)
                     .alwaysBounceVertical()
-                    .contentInsets(.init(
-                        top: edgeInset[safe: 0] ?? 0,
-                        left: edgeInset[safe: 3] ?? 0,
-                        bottom: edgeInset[safe: 2] ?? 0,
-                        right: edgeInset[safe: 1] ?? 0))
-//                    .initialScrollPosition(startingAtBottom ? .bottom : nil)
-//                    .edgesIgnoringSafeArea(.all)
-//                    .navigationBarTitle("Explore", displayMode: .large)
-//                    .navigationBarItems(
-//                        trailing:
-//                        HStack(spacing: 20)
-//                        {
-//                            if self.isEditing
-//                            {
-//                                Button(action: {
-//                                    withAnimation {
-//                                        // We want the cell removal to be animated, so explicitly specify `withAnimation`
-//                                        self.data.remove(atOffsets: IndexSet(self.selectedItems))
-//                                    }
-//                                })
-//                                {
-//                                    Image(systemName: "trash")
-//                                }
-//                            }
-//
-//                            EditButton()
-//                    })
             }
         }
     }
 }
 
-struct ThumbGridRendererView_Previews: PreviewProvider {
+struct ThumbHorizontalGridRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+        ThumbHorizontalGridRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

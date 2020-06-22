@@ -26,9 +26,38 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
     var longPress: Action? { cascadeProperty("longPress") }
     var press: Action? { cascadeProperty("press") }
     
-    var columns:Int? { Int(cascadeProperty("columns") ?? 3) }
-    var itemInset:CGFloat? { CGFloat(cascadeProperty("itemInset") ?? 6) }
-    var edgeInset:[CGFloat]? { (cascadeProperty("edgeInset") ?? []).map{ CGFloat($0 as Double) } }
+    var columns: Int { Int(cascadeProperty("columns") as Double? ?? 3) }
+    
+    var edgeInset: UIEdgeInsets {
+        if let edgeInset = cascadePropertyAsCGFloat("edgeInset") {
+            return UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+        } else if let x: [Double?] = cascadeProperty("edgeInset") {
+            let insetArray = x.compactMap({ $0.map { CGFloat($0) } })
+            switch insetArray.count {
+            case 2: return UIEdgeInsets(top: insetArray[1], left: insetArray[0], bottom: insetArray[1], right: insetArray[0])
+            case 4: return UIEdgeInsets(top: insetArray[0], left: insetArray[3], bottom: insetArray[2], right: insetArray[1])
+            default: return .init()
+            }
+        }
+        return .init()
+    }
+    
+    var nsEdgeInset: NSDirectionalEdgeInsets {
+        let edgeInset = self.edgeInset
+        return NSDirectionalEdgeInsets(top: edgeInset.top, leading: edgeInset.left, bottom: edgeInset.bottom, trailing: edgeInset.right)
+    }
+    
+    //Calculated
+    var spacing: (x: CGFloat, y: CGFloat) {
+        if let spacing = cascadePropertyAsCGFloat("spacing") {
+            return (spacing, spacing)
+        } else if let x: [Double?] = cascadeProperty("spacing") {
+            let spacingArray = x.compactMap({ $0.map { CGFloat($0) } })
+            guard spacingArray.count == 2 else { return (0, 0) }
+            return (spacingArray[0], spacingArray[1])
+        }
+        return (0, 0)
+    }
 }
 
 struct ThumbnailRendererView: View {
@@ -36,28 +65,33 @@ struct ThumbnailRendererView: View {
     
     var name: String="thumbnail"
     
-    var renderConfig: CascadingThumbnailConfig? {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig
+    var renderConfig: CascadingThumbnailConfig {
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig([], ViewArguments())
     }
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
-                let numberOfColumns = CGFloat(self.renderConfig?.columns ?? 3)
-                let estimatedGridBlockSize = environment.container.effectiveContentSize.width / numberOfColumns
+                let contentInsets = self.renderConfig.nsEdgeInset
+                let numberOfColumns = self.renderConfig.columns
+                let xSpacing = self.renderConfig.spacing.x
+                let estimatedGridBlockSize = (environment.container.effectiveContentSize.width - contentInsets.leading - contentInsets.trailing - xSpacing * (CGFloat(numberOfColumns) - 1)) / CGFloat(numberOfColumns)
                 
                 let item = NSCollectionLayoutItem(
                     layoutSize: NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1 / numberOfColumns),
+                        widthDimension: .fractionalWidth(1.0),
                         heightDimension: .estimated(estimatedGridBlockSize)))
 
                 let itemsGroup = NSCollectionLayoutGroup.horizontal(
                     layoutSize: NSCollectionLayoutSize(
                         widthDimension: .fractionalWidth(1.0),
                         heightDimension: .estimated(estimatedGridBlockSize)),
-                    subitems: [item])
+                    subitem: item, count: numberOfColumns)
+                itemsGroup.interItemSpacing = .fixed(xSpacing)
 
                 let section = NSCollectionLayoutSection(group: itemsGroup)
+                section.interGroupSpacing = self.renderConfig.spacing.y
+                section.contentInsets = contentInsets
                 return section
             }
         }
@@ -67,9 +101,8 @@ struct ThumbnailRendererView: View {
         ASCollectionViewSection (id: 0, data: context.items) { dataItem, state in
             ZStack (alignment: .bottomTrailing) {
                 // TODO: Error handling
-                self.renderConfig?.render(item: dataItem)
+                self.renderConfig.render(item: dataItem)
                     .environmentObject(self.context)
-                .padding(.all, self.renderConfig?.itemInset)
 
                 if state.isSelected {
                     ZStack {
@@ -85,7 +118,7 @@ struct ThumbnailRendererView: View {
             }
         }
         .onSelectSingle({ (index) in
-            if let press = self.renderConfig?.press {
+            if let press = self.renderConfig.press {
                 self.context.executeAction(press, with: self.context.items[safe: index])
             }
         })
@@ -99,12 +132,8 @@ struct ThumbnailRendererView: View {
     }
     
     var body: some View {
-        
         return VStack {
-            if renderConfig == nil {
-                Text("Unable to render this view")
-            }
-            else if context.cascadingView.resultSet.count == 0 {
+            if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
                     Text(self.context.cascadingView.emptyResultText)
@@ -121,7 +150,6 @@ struct ThumbnailRendererView: View {
                 ASCollectionView (section: section)
                     .layout (self.layout)
                     .alwaysBounceVertical()
-                    .contentInsets(edgeInset)
             }
         }
     }

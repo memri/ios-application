@@ -8,13 +8,18 @@
 
 import Foundation
 
-public class CVUParsedDefinition : CVUToString {
+public class CVUParsedDefinition : Equatable, CVUToString {
+    
     let name:String?
     let selector:String?
     var domain:String?
     
     subscript(propName:String) -> Any? {
         return parsed[propName].flatMap { $0 }
+    }
+    
+    public static func == (lhs: CVUParsedDefinition, rhs: CVUParsedDefinition) -> Bool {
+        lhs.selector == rhs.selector && lhs.domain == rhs.domain
     }
     
 //    var unparsed:String = ""

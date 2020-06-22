@@ -5,40 +5,16 @@ import RealmSwift
 
 // TODO: Move to integrate with some of the sessions features so that Sessions can be nested
 public class Views {
- 
+    ///
     let languages = Languages()
-    
-    private var realm:Realm
+    ///
     var context:MemriContext? = nil
+    
+    private var recursionCounter = 0
+    private var realm:Realm
 
     init(_ rlm:Realm) {
         realm = rlm
-    }
-    
-    public func parse(_ def:CVUStoredDefinition, cache:Bool = true) -> [String:Any] {
-        guard let definition = def.definition else {
-            return [:]
-        }
-        
-        do {
-            if let data = definition.data(using: .utf8) {
-                let json = try JSONSerialization.jsonObject(with: data, options: [])
-                
-                if cache {
-                    // TODO ???
-                }
-                
-                return json as? [String:Any] ?? [:]
-            }
-            else {
-                 throw "Data is not UTF8"
-            }
-        }
-        catch let error {
-            // TODO refactor: Log this for later feedback to developers
-            print(error)
-            return [:]
-        }
     }
  
     public func load(_ mn:MemriContext, _ callback: () throws -> Void) throws {
@@ -175,8 +151,6 @@ public class Views {
         case "sessions": return context?.sessions
         case "currentSession": fallthrough
         case "session": return context?.currentSession
-        case "cascadingView": return context?.cascadingView
-        case "sessionView": return context?.currentSession.currentView
         case "view": return context?.cascadingView
         case "dataItem":
             if let itemRef:DataItem = viewArguments.get(".") {
@@ -210,7 +184,14 @@ public class Views {
         var first = true
         
         // TODO support language lookup: {$name}
-        // TOOD support viewArguments lookup: {name}
+        // TODO support viewArguments lookup: {name}
+        
+        recursionCounter += 1
+        
+        if recursionCounter > 4 {
+            recursionCounter = 0
+            throw "Exception: Recursion detected while expanding variable \(lookup)"
+        }
         
         var i = 0
         for node in lookup.sequence {
@@ -220,6 +201,7 @@ public class Views {
                 value = (value as? DataItem)?.functions[(node as? ExprVariableNode)?.name ?? ""]
                 if value == nil {
                     // TODO parse [blah]
+                    recursionCounter = 0
                     let message = "Exception: Invalid function call. Could not find"
                     throw "\(message) \((node as? ExprVariableNode)?.name ?? "")"
                 }
@@ -229,8 +211,14 @@ public class Views {
             if let node = node as? ExprVariableNode {
                 if first {
                     let name = node.name == "__DEFAULT__" ? "dataItem" : node.name
-                    value = try getGlobalReference(name, viewArguments:viewArguments)
-                    first = false
+                    do {
+                        value = try getGlobalReference(name, viewArguments:viewArguments)
+                        first = false
+                    }
+                    catch let error {
+                        recursionCounter = 0
+                        throw error
+                    }
                 }
                 else {
                     if let dataItem = value as? DataItem {
@@ -238,6 +226,7 @@ public class Views {
                             // TODO Warn
                             print("Invalid property access '\(node.name)'")
                             debugHistory.warn("Invalid property access '\(node.name)'")
+                            recursionCounter -= 1
                             return nil
                         }
                         else {
@@ -293,6 +282,7 @@ public class Views {
                     else if let v = value as? Object {
                         if v.objectSchema[node.name] == nil {
                             // TODO error handling
+                            recursionCounter = 0
                             throw "No variable with name \(node.name)"
                         }
                         else {
@@ -331,11 +321,19 @@ public class Views {
 //            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
 //        }
         
+        recursionCounter -= 1
+        
         return value
     }
     
-    func executeFunction(lookup: ExprLookupNode, args:[Any?], viewArguments:ViewArguments) throws -> Any? {
-        let f = try lookupValueOfVariables( lookup: lookup, viewArguments: viewArguments, isFunction: true )
+    func executeFunction(lookup: ExprLookupNode,
+                         args: [Any?],
+                         viewArguments: ViewArguments) throws -> Any? {
+        
+        let f = try lookupValueOfVariables(lookup: lookup,
+                                           viewArguments: viewArguments,
+                                           isFunction: true)
+        
         if let f = f as? ([Any?]?) -> Any {
             return f(args) as Any?
         }
@@ -344,10 +342,14 @@ public class Views {
         return x as Any?
     }
     
-    public func fetchDefinitions(selector:String? = nil, name:String? = nil, type:String? = nil,
-                                 query:String? = nil, domain:String? = nil) -> [CVUStoredDefinition] {
+    public func fetchDefinitions(selector: String? = nil,
+                                 name: String? = nil,
+                                 type: String? = nil,
+                                 query: String? = nil,
+                                 domain: String? = nil) -> [CVUStoredDefinition] {
         
         var filter:[String] = []
+        
         if let selector = selector { filter.append("selector = '\(selector)'") }
         else {
             if let type = type { filter.append("type = '\(type)'") }
@@ -437,7 +439,8 @@ public class Views {
     }
     
     // TODO: Refactor: Consider caching cascadingView based on the type of the item
-    public func renderItemCell(with dataItem:DataItem, search rendererNames: [String] = [],
+    public func renderItemCell(with dataItem: DataItem,
+                               search rendererNames: [String] = [],
                                inView viewOverride: String? = nil,
                                use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
         do {
