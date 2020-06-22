@@ -15,7 +15,7 @@ public class CVUParsedDefinition : Equatable, CVUToString {
     var domain:String?
     
     subscript(propName:String) -> Any? {
-        return parsed[propName]
+        return parsed[propName].flatMap { $0 }
     }
     
     public static func == (lhs: CVUParsedDefinition, rhs: CVUParsedDefinition) -> Bool {

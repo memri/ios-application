@@ -9,7 +9,6 @@
 import Foundation
 import SwiftUI
 import RealmSwift
-import TextView
 import memriUI
 
 public struct UIElementView: SwiftUI.View {
@@ -204,13 +203,15 @@ public struct UIElementView: SwiftUI.View {
                     .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Text {
-                    Text(from.processText(get("text") ?? "[nil]"))
-                        .if(from.getBool("bold")){ $0.bold() }
-                        .if(from.getBool("italic")){ $0.italic() }
-                        .if(from.getBool("underline")){ $0.underline() }
-                        .if(from.getBool("strikethrough")){ $0.strikethrough() }
-                        .fixedSize(horizontal: false, vertical: true)
-                        .setProperties(from.properties, self.item, context, self.viewArguments)
+                    from.processText(get("text")).map { text in
+                        Text(text)
+                            .if(from.getBool("bold")){ $0.bold() }
+                            .if(from.getBool("italic")){ $0.italic() }
+                            .if(from.getBool("underline")){ $0.underline() }
+                            .if(from.getBool("strikethrough")){ $0.strikethrough() }
+                            .fixedSize(horizontal: false, vertical: true)
+                            .setProperties(from.properties, self.item, context, self.viewArguments)
+                    }
                 }
                 else if from.type == .Textfield {
                     self.renderTextfield()
@@ -364,20 +365,13 @@ public struct UIElementView: SwiftUI.View {
     }
     
     func renderRichTextfield() -> some View {
-        let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
+        let (_, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
         
         return Group {
             if propName == "" {
                 Text("Invalid property value set on TextField")
             }
             else {
-//                let binding = Binding<String>(
-//                    get: { dataItem.getString(propName) },
-//                    set: { dataItem.set(propName, $0) }
-//                )
-                
-//                self.get("hint") ?? ""
-                
                 _RichTextEditor(dataItem: dataItem, filterText: $context.cascadingView.filterText)
                     .generalEditorInput()
             }
@@ -386,7 +380,7 @@ public struct UIElementView: SwiftUI.View {
     
     func renderTextfield() -> some View {
         let (type, dataItem, propName) = from.getType("value", self.item, self.viewArguments)
-        let rows:CGFloat = self.get("rows") ?? 2
+//        let rows:CGFloat = self.get("rows") ?? 2
         
         return Group {
             if propName == "" {
@@ -400,7 +394,8 @@ public struct UIElementView: SwiftUI.View {
                 .keyboardType(.decimalPad)
                 .generalEditorInput()
             }
-            else if self.has("rows") {
+            //Temporarily disabled
+            /*else if self.has("rows") {
                 VStack {
                     TextView(
                         text: Binding<String>(
@@ -422,7 +417,7 @@ public struct UIElementView: SwiftUI.View {
                 .padding(EdgeInsets(top: 0, leading: 5, bottom: 5, trailing: 5))
                 .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
                 .clipped()
-            }
+            }*/
             else {
                 MemriTextField(
                     value: Binding<String>(

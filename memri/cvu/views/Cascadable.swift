@@ -55,8 +55,8 @@ public class Cascadable {
             return execExpression(expr)
         }
         
-        if localCache[name] != nil {
-            return transformActionArray(localCache[name])
+        if let local = localCache[name] {
+            return transformActionArray(local)
         }
 
         for def in cascadeStack {

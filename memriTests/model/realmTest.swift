@@ -20,9 +20,9 @@ class realmTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testRealmCreate() {
+    func testRealmCreate() throws {
         #if targetEnvironment(simulator)
-            config.fileURL = URL(string: "file://\(try! getRealmPath())/memri.realm")
+            config.fileURL = URL(fileURLWithPath: try getRealmPath())
         #endif
         
         Realm.Configuration.defaultConfiguration = config

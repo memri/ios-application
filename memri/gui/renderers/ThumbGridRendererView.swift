@@ -41,7 +41,7 @@ struct ThumbGridRendererView: View {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let isWide = environment.container.effectiveContentSize.width > 500
-                let columns = CGFloat(isWide ? self.renderConfig?.columnsWide ?? 5 : self.renderConfig?.columns ?? 3)
+                let columns = CGFloat(self.renderConfig?.columns ?? 3)
                 
                 let gridBlockSize = environment.container.effectiveContentSize.width / columns
                 let inset = CGFloat(self.renderConfig?.itemInset ?? 5)
@@ -83,11 +83,6 @@ struct ThumbGridRendererView: View {
                     // TODO: Error handling
                     self.renderConfig?.render(item: dataItem)
                         .environmentObject(self.context)
-                        .onTapGesture {
-                            if let press = self.renderConfig?.press {
-                                self.context.executeAction(press, with: dataItem)
-                            }
-                        }
                         .frame(width: geom.size.width, height: geom.size.height)
                         .clipped()
                 }
@@ -105,6 +100,11 @@ struct ThumbGridRendererView: View {
                 }
             }
         }
+        .onSelectSingle({ (index) in
+            if let press = self.renderConfig?.press {
+                self.context.executeAction(press, with: self.context.items[safe: index])
+            }
+        })
     }
     
     var body: some View {
@@ -130,11 +130,12 @@ struct ThumbGridRendererView: View {
             else {
                 ASCollectionView(section: section)
                     .layout(self.layout)
-                        .contentInsets(.init(
-                            top: edgeInset[safe: 0] ?? 0,
-                            left: edgeInset[safe: 3] ?? 0,
-                            bottom: edgeInset[safe: 2] ?? 0,
-                            right: edgeInset[safe: 1] ?? 0))
+                    .alwaysBounceVertical()
+                    .contentInsets(.init(
+                        top: edgeInset[safe: 0] ?? 0,
+                        left: edgeInset[safe: 3] ?? 0,
+                        bottom: edgeInset[safe: 2] ?? 0,
+                        right: edgeInset[safe: 1] ?? 0))
 //                    .initialScrollPosition(startingAtBottom ? .bottom : nil)
 //                    .edgesIgnoringSafeArea(.all)
 //                    .navigationBarTitle("Explore", displayMode: .large)
@@ -159,10 +160,6 @@ struct ThumbGridRendererView: View {
 //                    })
             }
         }
-    }
-    
-    func onTap(Action: Action, dataItem: DataItem){
-        context.executeAction(Action, with: dataItem)
     }
 }
 

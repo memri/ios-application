@@ -19,7 +19,7 @@ struct GeneralEditorSection: View {
 
     var body: some View {
         let renderConfig = self.renderConfig
-        let editMode = self.context.currentSession.editMode
+        let editMode = self.context.currentSession.isEditMode
         let properties = groupKey == "other"
             ? self.getProperties(item)
             : self.groups[self.groupKey] ?? []
@@ -126,11 +126,11 @@ struct GeneralEditorSection: View {
         
         return ViewArguments(renderConfig.viewArguments.asDict().merging([
             "subject": self.item,
-            "readOnly": !self.context.currentSession.editMode,
+            "readOnly": !self.context.currentSession.isEditMode,
             "sectionTitle": groupKey.camelCaseToWords().uppercased(),
             "displayName": name.camelCaseToWords().capitalizingFirstLetter(),
             "name": name,
-            ".": value
+            ".": value as Any
         ], uniquingKeysWith: { current, new in new }))
     }
     
@@ -152,7 +152,7 @@ struct GeneralEditorSection: View {
 //    }
     
     func getHeader(_ isArray: Bool, _ listHasItems: Bool) -> some View {
-        let editMode = self.context.currentSession.editMode
+        let editMode = self.context.currentSession.isEditMode
         let className = self.item.objectSchema[groupKey]?.objectClassName ?? ""
         let readOnly = self.renderConfig.readOnly.contains(groupKey)
         

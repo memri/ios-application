@@ -104,18 +104,18 @@ public class UIElement : CVUToString {
         return (.any, item, "")
     }
     
-    func processText(_ text: String) -> String{
-        var outText = text
-        let maxChar:CGFloat? = get("maxChar")
-        
-        outText = get("removeWhiteSpace") ?? false ? removeWhiteSpace(text: text) : text
-        outText = maxChar != nil ? String(outText.prefix(Int(maxChar ?? 0))) : outText
-        
+    func processText(_ text: String?) -> String? {
+        guard var outText = text else { return nil }
+        outText = (get("removeWhiteSpace") ?? false) ? removeWhiteSpace(text: outText) : outText
+        outText = (get("maxChar") as CGFloat?).map { String(outText.prefix(Int($0))) } ?? outText
+        guard outText.contains(where: { !$0.isWhitespace }) else { return nil } //Return nil if blank
         return outText
     }
     
     func removeWhiteSpace(text: String) -> String{
-        return text.replacingOccurrences(of: "[\\r\\n]", with: " ", options: .regularExpression)
+        return text
+            .trimmingCharacters(in: .whitespacesAndNewlines) // Remove whitespace/newLine from start/end of string
+            .split { $0.isNewline }.joined(separator: " ") // Replace new-lines with a space
     }
     
     func toCVUString(_ depth:Int, _ tab:String) -> String {

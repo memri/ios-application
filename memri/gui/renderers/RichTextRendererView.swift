@@ -33,20 +33,20 @@ struct _RichTextEditor: View {
     @EnvironmentObject var context: MemriContext
     @ObservedObject public var dataItem: DataItem
     
-    let filterText: Binding<String>
-    
-    var initialContent: NSAttributedString {
-        guard let rtf = (dataItem.get("content") as String?) else { return NSAttributedString() }
-        return NSAttributedString.fromRTF(rtf) ?? NSAttributedString()
+    var editModeBinding: Binding<Bool> {
+        Binding<Bool>(get: { self.context.currentSession.isEditMode }, set: { self.context.currentSession.isEditMode = $0 })
     }
     
+    let filterText: Binding<String>
+    
     var body: some View {
-        MemriTextEditor(initialContent: initialContent,
+        MemriTextEditor(initialContentHTML: dataItem.get("content") as String?,
+                        isEditing: editModeBinding,
                         preferredHeight: nil,
                         onTextChanged: {newAttributedString in
-                            self.dataItem.set("title", newAttributedString.firstLineString())
-                            self.dataItem.set("content", newAttributedString.toRTF())
-                            self.dataItem.set("textContent", newAttributedString.string)
+                            self.dataItem.set("content", newAttributedString.toHTML())
+                            self.dataItem.set("textContent", newAttributedString.string.withoutFirstLine())
+                            self.dataItem.set("title", newAttributedString.string.firstLineString())
         })
     }
 }
@@ -59,12 +59,6 @@ struct RichTextRendererView: View {
 
     var body: some View {
         let dataItem = self.context.cascadingView.resultSet.singletonItem
-        let binding = Binding(
-            get: { dataItem?.getString("title") ?? "" },
-            set: {
-                dataItem?.set("title", $0)
-            }
-        )
         
         return VStack(spacing: 0) {
             if context.cascadingView.resultSet.singletonItem != nil {

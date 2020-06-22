@@ -161,7 +161,7 @@ extension MemriContext {
                 try binding.toggleBool()
                 
                 // TODO this should be removed and fixed more generally
-                self.scheduleUIUpdate() { _ in true }
+                self.scheduleUIUpdate(immediate: true)
             }
             
             if let action = action as? ActionExec {
@@ -301,6 +301,7 @@ public class Action : HashableClass, CVUToString {
                 return value
             }
             catch {
+                print("ACTION ERROR: \(error)")
                 // TODO Refactor: Error reporting
                 return nil
             }
@@ -517,7 +518,7 @@ class ActionOpenView : Action, ActionExec {
         if let dict = arguments?.asDict() {
             if let viewArguments = view.viewArguments {
                 view.viewArguments = ViewArguments(viewArguments.asDict()
-                    .merging(dict, uniquingKeysWith: { current, new in new }))
+                    .merging(dict, uniquingKeysWith: { current, new in new }) as [String : Any])
             }
         }
         
@@ -638,7 +639,8 @@ class ActionToggleFilterPanel : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        // Do Nothing
+        // Hide Keyboard
+        dismissCurrentResponder()
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
@@ -727,7 +729,8 @@ class ActionShowContextPane : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        // Do Nothing
+        // Hide Keyboard
+        dismissCurrentResponder()
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
@@ -746,7 +749,8 @@ class ActionShowNavigation : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        // Do Nothing
+        // Hide Keyboard
+        dismissCurrentResponder()
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
@@ -1018,11 +1022,11 @@ class ActionDelete : Action, ActionExec {
         
         if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
             context.cache.delete(selection)
-            context.scheduleUIUpdate{_ in true}
+            context.scheduleCascadingViewUpdate()
         }
         else if let dataItem = arguments["dataItem"] as? DataItem {
             context.cache.delete(dataItem)
-            context.scheduleUIUpdate{_ in true}
+            context.scheduleCascadingViewUpdate(immediate: true)
         }
         else {
             // TODO Erorr handling
@@ -1159,7 +1163,7 @@ class ActionLink : Action, ActionExec {
         }
         
         // TODO refactor
-        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate{_ in true}
+        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate()
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
@@ -1208,7 +1212,7 @@ class ActionUnlink : Action, ActionExec {
         }
         
         // TODO refactor
-        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate{_ in true}
+        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate()
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {

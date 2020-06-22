@@ -11,11 +11,31 @@ import SwiftUI
 
 public class MemriTextEditor_UIKit: UITextView {
     var preferredHeightBinding: Binding<CGFloat>?
+    var defaultFontSize: CGFloat = 17
     var onTextChanged: ((NSAttributedString) -> Void)?
+    var isEditingBinding: Binding<Bool>? {
+        didSet {
+            if let bindingIsEditing = isEditingBinding?.wrappedValue, bindingIsEditing != isEditing {
+                if bindingIsEditing {
+                    becomeFirstResponder()
+                } else {
+                    resignFirstResponder()
+                }
+            }
+        }
+    }
     
-  public init(initialContent: NSAttributedString = NSAttributedString()) {
+    private var isEditing: Bool = false
+    
+  public init(initialContentHTML: String?) {
     super.init(frame: .zero, textContainer: nil)
-    self.attributedText = initialContent.copy() as? NSAttributedString
+    if let htmlData = initialContentHTML?.data(using: .utf8) {
+        DispatchQueue.main.async {
+            if let attributedStringFromHTML = try? NSAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
+                self.attributedText = attributedStringFromHTML.withFontSize(self.defaultFontSize)
+            }
+        }
+    }
     configure()
   }
   
@@ -34,6 +54,13 @@ public class MemriTextEditor_UIKit: UITextView {
     // Set up toolbar
     updateToolbar()
     
+    // Set up default sizing
+    let defaultFont = UIFont.systemFont(ofSize: defaultFontSize)
+    font = defaultFont
+    typingAttributes = [
+        .font: defaultFont
+    ]
+    
     delegate = self
     layoutManager.delegate = self
   }
@@ -41,7 +68,9 @@ public class MemriTextEditor_UIKit: UITextView {
   let indentWidth: CGFloat = 20
   
   
-  
+    func didChangeFormatting() {
+        onTextChanged?(attributedText)
+    }
   
   func selectionDidChange() {
     updateToolbar()
@@ -83,6 +112,24 @@ public class MemriTextEditor_UIKit: UITextView {
       selectionDidChange()
     }
   }
+    
+    public func textViewDidBeginEditing(_ textView: UITextView) {
+        isEditing = true
+        if let isEditingBinding = isEditingBinding, isEditingBinding.wrappedValue != true {
+            DispatchQueue.main.async {
+                isEditingBinding.wrappedValue = true
+            }
+        }
+    }
+    
+    public func textViewDidEndEditing(_ textView: UITextView) {
+        isEditing = false
+        if let isEditingBinding = isEditingBinding, isEditingBinding.wrappedValue != false {
+            DispatchQueue.main.async {
+                isEditingBinding.wrappedValue = false
+            }
+        }
+    }
 }
 
 extension MemriTextEditor_UIKit: NSLayoutManagerDelegate {
@@ -119,6 +166,11 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
         return handleTab(changedRange: range, replacementText: text)
     }
     
+    if text.last == " " {
+        //Space - check if dash for list
+        return handleSpace(changedRange: range, replacementText: text)
+    }
+    
     return true
   }
     
@@ -137,6 +189,21 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
         return true
     }
     
+    func handleSpace(changedRange range: NSRange, replacementText newText: String) -> Bool {
+        let currentLineRange = (textStorage.string as NSString).lineRange(for: NSRange(location: range.location, length: 0))
+        let currentLineString = (textStorage.string as NSString).substring(with: currentLineRange) as NSString
+        
+        if currentLineString.trimmingCharacters(in: .whitespacesAndNewlines) == "-" {
+            textStorage.beginEditing()
+            let newString = ListType.unorderedList.stringForLine(index: 0) as NSString
+            textStorage.replaceCharacters(in: currentLineRange, with: newString as String)
+            textStorage.endEditing()
+            selectedRange = NSRange(location: currentLineRange.location + newString.length, length: 0)
+            return false
+        }
+        return true
+    }
+    
     func handleBackspace(changedRange range: NSRange, replacementText newText: String) -> Bool {
         let currentLineRange = (textStorage.string as NSString).lineRange(for: NSRange(location: range.location, length: 0))
         let currentLineString = (textStorage.string as NSString).substring(with: currentLineRange) as NSString
@@ -149,7 +216,7 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
             textStorage.beginEditing()
             textStorage.replaceCharacters(in: currentLineRange, with: "")
             textStorage.endEditing()
-            selectedRange = NSRange(location: currentLineRange.location - 1, length: 0)
+            selectedRange = NSRange(location: max(0, currentLineRange.location - 1), length: 0)
             return false
         }
         return true
@@ -168,14 +235,14 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
     if oldLineIsEmpty {
         switch oldLineListType {
         case .some:
-            if helper_currentIndent() != 0 {
+            if oldLineListType == .unorderedList, helper_currentIndent() != 0 {
                 // Empty line, reduce indent
                 helper_shiftIndent(by: -1)
                 return false
             } else {
-                // Empty line, remove the dot
+                // Empty line, remove the list
                 textStorage.beginEditing()
-                textStorage.replaceCharacters(in: oldLineRange, with: "")
+                textStorage.replaceCharacters(in: oldLineRange, with: "\n")
                 textStorage.endEditing()
                 selectedRange = NSRange(location: oldLineRange.location, length: 0)
                 return false
@@ -219,6 +286,7 @@ extension MemriTextEditor_UIKit {
   func action_toggleBold() {
     helper_currentContext_toggleFontTrait(.traitBold)
     updateToolbar()
+    didChangeFormatting()
   }
   
   var state_isItalic: Bool {
@@ -228,14 +296,17 @@ extension MemriTextEditor_UIKit {
   func action_toggleItalic() {
     helper_currentContext_toggleFontTrait(.traitItalic)
     updateToolbar()
+    didChangeFormatting()
   }
   
   func action_indent() {
     helper_shiftIndent(by: 1)
+    didChangeFormatting()
   }
   
   func action_outdent() {
     helper_shiftIndent(by: -1)
+    didChangeFormatting()
   }
   
     func action_unorderedList() {
@@ -256,6 +327,7 @@ extension MemriTextEditor_UIKit {
   func action_toggleUnderlined() {
     helper_currentContext_setTrait(.underlineStyle, value: state_isUnderlined ? nil : NSUnderlineStyle.single.rawValue)
     updateToolbar()
+    didChangeFormatting()
   }
   
   var state_isStrikethrough: Bool {
@@ -269,20 +341,7 @@ extension MemriTextEditor_UIKit {
   func action_toggleStrikethrough() {
     helper_currentContext_setTrait(.strikethroughStyle, value: state_isStrikethrough ? nil : NSUnderlineStyle.single.rawValue)
     updateToolbar()
-  }
-  
-  func helper_getHTML(_ attributedText: NSAttributedString) -> String? {
-    let exportOptions = [NSAttributedString.DocumentAttributeKey.documentType : NSAttributedString.DocumentType.rtf]
-    do {
-      let rtfData = try attributedText.data(from: NSRange(location: 0, length: attributedText.length),
-                                            documentAttributes: exportOptions)
-      
-      return String(decoding: rtfData, as: UTF8.self)
-    }
-    catch {
-      print("Cannot export attributedText as HTML: \(attributedText)")
-      return nil
-    }
+    didChangeFormatting()
   }
 }
 
@@ -432,14 +491,16 @@ extension MemriTextEditor_UIKit {
       let currentLineRange = (textStorage.string as NSString).paragraphRange(for: NSRange(location: currentParaStart, length: 0))
       guard let string = textStorage.attributedSubstring(from: currentLineRange).mutableCopy() as? NSMutableAttributedString else { continue }
 
-        var paragraphAttributes: NSParagraphStyle?
+        var attributes: [NSAttributedString.Key : Any] = [.font: UIFont.systemFont(ofSize: defaultFontSize)]
+
         if !string.string.isEmpty {
-            paragraphAttributes = string.attributes(at: 0, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle
+            attributes[.paragraphStyle] = string.attributes(at: 0, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle
         }
+        
       
       //MODIFY HERE
       ListType.removeListText(in: string.mutableString)
-        string.insert(NSAttributedString(string: type.stringForLine(index: lineIndex), attributes: paragraphAttributes.map { [.paragraphStyle: $0] } ?? .none), at: 0)
+        string.insert(NSAttributedString(string: type.stringForLine(index: lineIndex), attributes: attributes), at: 0)
     
       
       // Append modified string

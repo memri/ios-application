@@ -79,6 +79,7 @@ struct RichTextToolbarView: View {
       icon
         .frame(minWidth: 30, minHeight: 36)
         .background(RoundedRectangle(cornerRadius: 4).fill(highlighted ? Color(.tertiarySystemBackground) : .clear))
+        .contentShape(Rectangle())
     }
   }
 }

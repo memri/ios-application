@@ -73,26 +73,52 @@ public class MemriContext: ObservableObject {
     private var scheduled: Bool = false
     private var scheduledComputeView: Bool = false
     
-    func scheduleUIUpdate(_ check:(_ context:MemriContext) -> Bool){
+    func scheduleUIUpdate(immediate: Bool = false, _ check:((_ context:MemriContext) -> Bool)? = nil){// Update UI
+        let outcome = {
+            // Reset scheduled
+            self.scheduled = false
+            
+            // Update UI
+            self.objectWillChange.send()
+        }
+        if immediate {
+            // Do this straight away, usually for the sake of correct animation
+            outcome()
+            return
+        }
+        
+        if let check = check {
+            guard check(self) else { return }
+        }
         // Don't schedule when we are already scheduled
-        if !scheduled && check(self) {
-            
-            // Prevent multiple calls to the dispatch queue
-            scheduled = true
-            
-            // Schedule update
-            DispatchQueue.main.async {
-                
-                // Reset scheduled
-                self.scheduled = false
-                
-                // Update UI
-                self.objectWillChange.send()
-            }
+        guard !scheduled else { return }
+        // Prevent multiple calls to the dispatch queue
+        scheduled = true
+        
+        // Schedule update
+        DispatchQueue.main.async {
+            outcome()
         }
     }
     
-    func scheduleCascadingViewUpdate(){
+    func scheduleCascadingViewUpdate(immediate: Bool = false) {
+        let outcome = {
+            // Reset scheduled
+            self.scheduledComputeView = false
+            
+            // Update UI
+            do { try self.updateCascadingView() }
+            catch {
+                // TODO User error handling
+                // TODO Error Handling
+                debugHistory.error("Could not update CascadingView: \(error)")
+            }
+        }
+        if immediate {
+            // Do this straight away, usually for the sake of correct animation
+            outcome()
+            return
+        }
         // Don't schedule when we are already scheduled
         if !scheduledComputeView {
             
@@ -101,17 +127,7 @@ public class MemriContext: ObservableObject {
             
             // Schedule update
             DispatchQueue.main.async {
-                
-                // Reset scheduled
-                self.scheduledComputeView = false
-                
-                // Update UI
-                do { try self.updateCascadingView() }
-                catch {
-                    // TODO User error handling
-                    // TODO Error Handling
-                    debugHistory.error("Could not update CascadingView: \(error)")
-                }
+                outcome()
             }
         }
     }
@@ -172,7 +188,7 @@ public class MemriContext: ObservableObject {
                             maybeLogRead()
                             
                             // Update the UI
-                            scheduleUIUpdate{_ in true}
+                            scheduleUIUpdate()
                         }
                     }
                 }
@@ -183,7 +199,7 @@ public class MemriContext: ObservableObject {
                 }
                 
                 // Update the UI
-                scheduleUIUpdate{_ in true}
+                scheduleUIUpdate()
             }
             // Otherwise let's execute the query first
             else {
@@ -198,7 +214,7 @@ public class MemriContext: ObservableObject {
                     }
                     else {
                         // Update the current view based on the new info
-                        scheduleUIUpdate{_ in true} // TODO shouldn't this be setCurrentView??
+                        scheduleUIUpdate() // TODO shouldn't this be setCurrentView??
                     }
                 }
             }
@@ -287,7 +303,7 @@ public class MemriContext: ObservableObject {
                 if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
                 
                 
-                scheduleUIUpdate{_ in true}
+                scheduleUIUpdate(immediate: true)
             }
             else {
                 print("Cannot set property \(propName), does not exist on context")
@@ -300,11 +316,12 @@ public class MemriContext: ObservableObject {
         set(value) { self["showSessionSwitcher"] = value }
     }
     
-    // TODO Refactor: use a property wrapper to apply state recording in settings
-    public var showNavigationBinding = Binding<Bool>(
-        get: { return true },
-        set: { let _ = $0 }
-    )
+    public var showNavigationBinding: Binding<Bool> {
+        Binding<Bool>(
+            get: { [weak self] in self?.showNavigation ?? false },
+            set: { [weak self] in self?.showNavigation = $0 }
+            )
+    }
     
     public var showNavigation:Bool {
         get { return self["showNavigation"] as? Bool == true }
@@ -413,29 +430,14 @@ public class RootContext: MemriContext {
         // TODO Refactor: This is a mess. Create a nice API, possible using property wrappers
         aliases = [
            "showSessionSwitcher": Alias(key:"device/gui/showSessionSwitcher", type:"bool", on:takeScreenShot),
-           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:{
-                self.showNavigationBinding.wrappedValue = true
-                takeScreenShot()
-           }, off: {
-                self.showNavigationBinding.wrappedValue = false
-           })
+           "showNavigation": Alias(key:"device/gui/showNavigation", type:"bool", on:takeScreenShot)
        ]
         
-        cache.scheduleUIUpdate = scheduleUIUpdate
-        navigation.scheduleUIUpdate = scheduleUIUpdate
+        cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0)}
+        navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0)}
         
         // Make settings global so it can be reached everywhere
         globalSettings = settings
-    }
-    
-    // TODO Refactor: This is a mess.
-    public func initNavigation(_ showNav:Binding<Bool>) {
-        self.showNavigationBinding = showNav
-        if self.showNavigation {
-            DispatchQueue.main.async {
-                showNav.wrappedValue = true
-            }
-        }
     }
     
     public func createSubContext(_ session:Session) -> MemriContext {
@@ -466,7 +468,7 @@ public class RootContext: MemriContext {
                             
                             // Update view when sessions changes
                             self.cancellable = self.sessions.objectWillChange.sink { (_) in
-                                self.scheduleUIUpdate{_ in true}
+                                self.scheduleUIUpdate()
                             }
                             
                             self.currentSession.access()

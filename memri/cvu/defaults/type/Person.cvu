@@ -390,13 +390,6 @@ Person[] {
                     }
                 }
             }
-            
-            Rectangle {
-                minHeight: 1
-                maxHeight: 1
-                color: #efefef
-                padding: 0 0 0 0
-            }
         }
         
     }
