@@ -203,7 +203,7 @@ public struct UIElementView: SwiftUI.View {
                     .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Text {
-                    from.processText(get("text")).map { text in
+                    (from.processText(get("text")) ?? get("nilText") ).map { text in
                         Text(text)
                             .if(from.getBool("bold")){ $0.bold() }
                             .if(from.getBool("italic")){ $0.italic() }

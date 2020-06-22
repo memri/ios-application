@@ -47,8 +47,8 @@ Photo[]: {
     defaultRenderer: thumbnail
 
     [renderer = thumbnail] {
-        itemInset: 1
-        edgeInset: 0 0 0 0
+        spacing: 1
+        edgeInset: 0 15 0 15 /* inset edges */
         
         Image {
             image: {{.file}}
