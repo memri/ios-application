@@ -345,9 +345,6 @@ public class CascadingView: Cascadable, ObservableObject {
             throw "Exception: ResultSet does not know the type of its data"
         }
         
-        
-        print("TYPE: \(type) \(String(describing: resultSet.datasource.query))")
-        
         var needles:[String]
         if type != "mixed" {
             // Determine query

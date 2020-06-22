@@ -177,26 +177,27 @@ extension MemriContext {
     public func executeAction(_ action:Action, with dataItem:DataItem? = nil,
                               using viewArguments:ViewArguments? = nil) {
         do {
-            try executeActionThrows(action, with: dataItem, using: viewArguments)
+            if action.getBool("withAnimation") {
+                try withAnimation {
+                    try executeActionThrows(action, with: dataItem, using: viewArguments)
+                }
+            }
+            else {
+                try withAnimation(nil) {
+                    try executeActionThrows(action, with: dataItem, using: viewArguments)
+                }
+            }
         }
         catch let error {
             // TODO Log error to the user
             debugHistory.error("\(error)")
         }
     }
-    
     public func executeAction(_ actions:[Action], with dataItem:DataItem? = nil,
                               using viewArguments:ViewArguments? = nil) {
         
         for action in actions {
-            do {
-                try executeActionThrows(action, with: dataItem, using: viewArguments)
-            }
-            catch let error {
-                // TODO Log error to the user
-                debugHistory.error("\(error)")
-                break
-            }
+            self.executeAction(action, with: dataItem, using: viewArguments)
         }
     }
 }
@@ -230,7 +231,8 @@ public class Action : HashableClass, CVUToString {
         "activeColor": Color(hex: "#ffdb00"),
         "inactiveColor": Color(hex: "#999999"),
         "activeBackgroundColor": Color.white,
-        "inactiveBackgroundColor": Color.white
+        "inactiveBackgroundColor": Color.white,
+        "withAnimation": true
     ]
     var values:[String:Any?] = [:]
     
@@ -441,7 +443,8 @@ class ActionBack : Action, ActionExec {
         "icon": "chevron.left",
         "opensView": true,
         "color": Color(hex: "#434343"),
-        "inactiveColor": Color(hex: "#434343")
+        "inactiveColor": Color(hex: "#434343"),
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -504,6 +507,7 @@ class ActionAddDataItem : Action, ActionExec {
 class ActionOpenView : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
+        "withAnimation": false,
         "opensView": true
     ]}
     
@@ -572,6 +576,7 @@ class ActionOpenView : Action, ActionExec {
 class ActionOpenViewByName : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
+        "withAnimation": false,
         "opensView": true
     ]}
     
@@ -612,7 +617,8 @@ class ActionToggleEditMode : Action, ActionExec {
         "icon": "pencil",
         "binding": Expression("currentSession.editMode"),
         "activeColor": Color(hex: "#6aa84f"),
-        "inactiveColor": Color(hex: "#434343")
+        "inactiveColor": Color(hex: "#434343"),
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -843,6 +849,7 @@ class ActionForwardToFront : Action, ActionExec {
 class ActionBackAsSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "opensView": true,
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -879,6 +886,7 @@ class ActionOpenSession : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["session": Session.self, "viewArguments": ViewArguments.self],
         "opensView": true,
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -905,8 +913,8 @@ class ActionOpenSession : Action, ActionExec {
 //        // Fetch a dynamic view based on its name
 //    }
     
-    ///// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
-    /////  reorders it on top
+    /// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
+    /// reorders it on top
     func exec(_ arguments:[String: Any]) throws {
         if let item = arguments["session"]{
             if let session = item as? Session {
@@ -936,6 +944,7 @@ class ActionOpenSessionByName : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
         "opensView": true,
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -945,55 +954,51 @@ class ActionOpenSessionByName : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws {
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
-        if let name = arguments["name"] as? String {
-            do {
-                // Fetch and parse view from the database
-                let def = try context.views
-                    .parseDefinition(context.views.fetchDefinitions(name:name, type:"session").first)
-                
-                // See if this is a session, if so take the last view
-                if let def = def as? CVUParsedSessionDefinition {
-                    let session = Session()
-                    if let viewDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition] {
-                        var list:[SessionView] = []
-                        
-                        for viewDef in viewDefs {
-                            list.append(SessionView(value: [
-                                "viewDefinition": CVUStoredDefinition(
-                                    value: ["definition": viewDef.toCVUString(0, "    ")]
-                                ),
-                                "viewArguments": viewArguments as Any?
-                            ]))
-                        }
-                        
-                        if list.count == 0 {
-                            throw "Exception: Session \(name) has no views."
-                        }
-                        
-                        session["views"] = list
-                    }
-                    else {
-                        throw "Exception: Session \(name) has no views."
-                    }
-                    
-                    // Open the view
-                    ActionOpenSession(context).openSession(context, session)
-                }
-                else {
-                    // TODO Error handling
-                    throw "Exception: Cannot open session with name \(name) " +
-                          "cannot be casted as CVUParsedSessionDefinition"
-                }
-            }
-            catch let error {
-                // TODO: Log error, Error handling
-                throw "Exception: Cannot open session by name \(name): \(error)"
-
-            }
-        }
-        else {
+        guard let name = arguments["name"] as? String else {
             // TODO: Error handling "No name given"
             throw "Cannot execute ActionOpenSessionByName, no name defined in viewArguments"
+        }
+        
+        do {
+            // Fetch and parse view from the database
+            let fromDB = try context.views
+                .parseDefinition(context.views.fetchDefinitions(name:name, type:"session").first)
+            
+            // See if this is a session, if so take the last view
+            guard let def = fromDB as? CVUParsedSessionDefinition else {
+                // TODO Error handling
+                throw "Exception: Cannot open session with name \(name) " +
+                      "cannot be casted as CVUParsedSessionDefinition"
+            }
+            
+            let session = Session()
+            guard let viewDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition] else {
+                throw "Exception: Session \(name) has no views."
+            }
+            
+            var list:[SessionView] = []
+            for viewDef in viewDefs {
+                list.append(SessionView(value: [
+                    "viewDefinition": CVUStoredDefinition(
+                        value: ["definition": viewDef.toCVUString(0, "    ")]
+                    ),
+                    "viewArguments": viewArguments as Any?
+                ]))
+            }
+            
+            if list.count == 0 {
+                throw "Exception: Session \(name) has no views."
+            }
+            
+            session["views"] = list
+            
+            // Open the view
+            ActionOpenSession(context).openSession(context, session)
+        }
+        catch let error {
+            // TODO: Log error, Error handling
+            throw "Exception: Cannot open session by name \(name): \(error)"
+
         }
     }
     
