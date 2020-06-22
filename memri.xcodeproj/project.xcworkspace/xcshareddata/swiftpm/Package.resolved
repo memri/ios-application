@@ -11,6 +11,24 @@
         }
       },
       {
+        "package": "ASCollectionView",
+        "repositoryURL": "https://gitlab.memri.io/memri/ascollectionview",
+        "state": {
+          "branch": "master",
+          "revision": "b6ab8dddf86c16e02cba582e41c02301cc6fa345",
+          "version": null
+        }
+      },
+      {
+        "package": "DifferenceKit",
+        "repositoryURL": "https://github.com/ra1028/DifferenceKit",
+        "state": {
+          "branch": null,
+          "revision": "14c66681e12a38b81045f44c6c29724a0d4b0e72",
+          "version": "1.1.5"
+        }
+      },
+      {
         "package": "Realm",
         "repositoryURL": "https://github.com/realm/realm-cocoa",
         "state": {
