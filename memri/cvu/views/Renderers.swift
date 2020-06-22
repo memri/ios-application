@@ -88,10 +88,7 @@ class FilterPanelRendererButton: Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) {
-        realmWriteIfAvailable(context.cache.realm, {
-            context.cascadingView.activeRenderer = self.rendererName
-        })
-        
+        context.cascadingView.activeRenderer = self.rendererName
         context.scheduleUIUpdate(){ _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
     }
 }

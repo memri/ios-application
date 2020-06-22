@@ -31,7 +31,7 @@ public class MemriContext: ObservableObject {
     @Published public var cascadingView: CascadingView
  
     @Published public var sessions: Sessions
- 
+    
     public var views: Views
  
     public var settings: Settings
@@ -175,7 +175,7 @@ public class MemriContext: ObservableObject {
                     // Update current session
                     self.currentSession = self.sessions.currentSession // TODO filter to a single property
                     
-                    // Set the newly computed view
+                    // Set the newly cascading view
                     self.cascadingView = cascadingView
                     
                     // Load data in the resultset of the computed view
