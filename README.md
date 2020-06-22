@@ -1,13 +1,10 @@
 # iOS application
 
-Thanks for checking this, we are currenlty in the process of enabeling the community to join in and co-create with us.  
-Can't wait? Cool! Reach out to us via our [Slack](https://app.slack.com/client/TSSDHE1JN/CT4PAP7FE)
+The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data.
 
+### Developer
 
-## Installation
-```pod install```
-
-### formatter
+## formatter
 ```brew install nshipster/formulae/swift-format```
 
 ```[sudo] gem install jazzy```
