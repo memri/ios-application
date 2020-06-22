@@ -587,7 +587,14 @@ class CVUParserTests: XCTestCase {
         }
         """
         
-        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+        let parsed = try parse(snippet).first
+        
+        XCTAssertEqual(toCVUString([parsed!]), snippet)
+        
+        guard let _ = parsed!["userState"] as? UserState else {
+            XCTFail()
+            throw "Error"
+        }
     }
     
     func testViewArguments() throws {
@@ -599,7 +606,14 @@ class CVUParserTests: XCTestCase {
         }
         """
         
-        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+        let parsed = try parse(snippet).first
+        
+        XCTAssertEqual(toCVUString([parsed!]), snippet)
+        
+        guard let _ = parsed!["viewArguments"] as? ViewArguments else {
+            XCTFail()
+            throw "Error"
+        }
     }
     
     func testUIElementProperties() throws {
