@@ -742,8 +742,8 @@
 				5D0A28BE24069A3800398B17 /* model */,
 				5D0A28BD24069A3000398B17 /* api */,
 				5D0A28BC2406834700398B17 /* data */,
-				5D599BD323F2B77700F218A0 /* Info.plist */,
 				868EF63924766AA100C0375F /* parsers */,
+				5D599BD323F2B77700F218A0 /* Info.plist */,
 			);
 			path = memriTests;
 			sourceTree = "<group>";

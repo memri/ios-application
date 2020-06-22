@@ -578,6 +578,30 @@ class CVUParserTests: XCTestCase {
         """)
     }
     
+    func testUserState() throws {
+        let snippet = """
+        Person {
+            userState: {
+                showStarred: true
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
+    
+    func testViewArguments() throws {
+        let snippet = """
+        Person {
+            viewArguments: {
+                readOnly: true
+            }
+        }
+        """
+        
+        XCTAssertEqual(try parseToCVUString(snippet), snippet)
+    }
+    
     func testUIElementProperties() throws {
         let snippet = """
         Person {

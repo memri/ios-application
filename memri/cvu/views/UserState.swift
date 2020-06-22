@@ -7,11 +7,25 @@
 import Foundation
 import RealmSwift
 
-public class UserState: Object {
+public class UserState: Object, CVUToString {
     @objc dynamic var memriID: String = DataItem.generateUUID()
     @objc dynamic var state:String = ""
     
     var onFirstSave: ((UserState) -> Void)? = nil
+    
+    convenience init(_ dict:[String:Any]) {
+        self.init()
+        
+        do { try InMemoryObjectCache.set(self.memriID, dict) }
+        catch {
+            // TODO Refactor error reporting
+        }
+    }
+    
+    convenience init(onFirstSave:@escaping (UserState) -> Void) {
+        self.init()
+        self.onFirstSave = onFirstSave
+    }
     
     func get<T>(_ propName:String) -> T? {
         let dict = self.asDict()
@@ -105,18 +119,8 @@ public class UserState: Object {
         return x ?? [:]
     }
     
-    convenience init(_ dict:[String:Any]) {
-        self.init()
-        
-        do { try InMemoryObjectCache.set(self.memriID, dict) }
-        catch {
-            // TODO Refactor error reporting
-        }
-    }
-    
-    convenience init(onFirstSave:@escaping (UserState) -> Void) {
-        self.init()
-        self.onFirstSave = onFirstSave
+    func toCVUString(_ depth: Int, _ tab: String) -> String {
+        CVUSerializer.dictToString(asDict(), depth, tab)
     }
 }
 public typealias ViewArguments = UserState
