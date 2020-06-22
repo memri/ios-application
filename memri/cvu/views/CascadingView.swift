@@ -115,7 +115,7 @@ public class CascadingView: Cascadable, ObservableObject {
         
         var stack = self.cascadeStack.compactMap {
             ($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
-                .filter { $0.name == activeRenderer }.first
+                .filter { $0.name == activeRenderer || $0.name == activeRenderer.components(separatedBy: ".").first }.first
         }
         
         let renderDSLDefinitions = context!.views
@@ -174,7 +174,7 @@ public class CascadingView: Cascadable, ObservableObject {
     private var _titleTemp: String? = nil
     var title: String {
         get {
-            return _titleTemp ?? cascadeProperty("title") ?? ""
+            return _titleTemp ?? cascadeProperty("title", type: String.self)?.nilIfBlank  ?? cascadeProperty("titleIfNil") ?? ""
         }
         set (newTitle) {
             if newTitle == "" { _titleTemp = nil }
@@ -346,7 +346,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
         
         
-        print("TYPE: \(type) \(resultSet.datasource.query)")
+        print("TYPE: \(type) \(String(describing: resultSet.datasource.query))")
         
         var needles:[String]
         if type != "mixed" {
