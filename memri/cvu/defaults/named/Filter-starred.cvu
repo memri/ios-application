@@ -1,6 +1,6 @@
 
 .filter-starred {
-    title: "Starred {cascadingView.title}"
+/*    title: "Starred {cascadingView.title}"*/
     include: {{view}}
     
     [datasource = pod] {
