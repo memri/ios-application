@@ -248,10 +248,6 @@ class Country:DataItem {
     @objc dynamic var flag:File? = nil // or Image ??
     @objc dynamic var location:Location? = nil
     
-    override var computedTitle:String {
-        return "\(name ?? "")"
-    }
-    
     required init () {
         super.init()
     }
@@ -266,6 +262,12 @@ class Country:DataItem {
 
             try self.superDecode(from: decoder)
         }
+    }
+}
+
+extension Country {
+    override var computedTitle:String {
+        return "\(name ?? "")"
     }
 }
 
