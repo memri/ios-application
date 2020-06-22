@@ -157,6 +157,7 @@ Note[] {
             
     [renderer = thumbnail] {
         edgeInset: 10 10 10 10
+        spacing: 10
         
         VStack {
             minWidth: 10
@@ -165,6 +166,7 @@ Note[] {
             
             Text {
                 text: "{.textContent}"
+                allowNil: true
                 maxChar: 100
                 color: #333
                 background: #fff
@@ -172,7 +174,8 @@ Note[] {
                 cornerRadius: 10
                 padding: 10
                 font: 9 regular
-                minHeight: 80
+                minHeight: 40
+                idealHeight: 80
                 align: left top
             }
             Text {
