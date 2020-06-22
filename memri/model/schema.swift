@@ -767,6 +767,10 @@ class Indexer:DataItem{
     
     let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
     
+    override var computedTitle:String {
+        return name
+    }
+    
     required init () {
         super.init()
     }
