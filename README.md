@@ -2,14 +2,14 @@
 
 The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data.
 
-### Developer
+## Developer
 
-## formatter
+### formatter
 ```brew install nshipster/formulae/swift-format```
 
 ```[sudo] gem install jazzy```
 
-## Run formatter
+#### Run formatter
 *make sure to run this from the repo directory only*
 ```swift-format . --configuration .swift-format.json```
 
