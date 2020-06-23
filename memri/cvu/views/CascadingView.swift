@@ -303,7 +303,8 @@ public class CascadingView: Cascadable, ObservableObject {
     
     private class func inherit(_ source: Any,
                                _ viewArguments: ViewArguments?,
-                               _ context: MemriContext) throws -> CVUStoredDefinition? {
+                               _ context: MemriContext,
+                               _ sessionView: SessionView) throws -> CVUStoredDefinition? {
         
         var result:Any? = source
         
@@ -316,9 +317,11 @@ public class CascadingView: Cascadable, ObservableObject {
             return context.views.fetchDefinitions(name: viewName).first
         }
         else if let view = result as? SessionView {
+            try sessionView.mergeState(view)
             return view.viewDefinition
         }
         else if let view = result as? CascadingView {
+            try sessionView.mergeState(view.sessionView)
             return view.sessionView.viewDefinition
         }
         
@@ -377,7 +380,7 @@ public class CascadingView: Cascadable, ObservableObject {
                         
                         if let inheritedView = parsedDef["inherit"] {
                             let args = sessionView.viewArguments
-                            let view = try inherit(inheritedView, args, context)
+                            let view = try inherit(inheritedView, args, context, sessionView)
                             
                             parse(view, domain)
                         }

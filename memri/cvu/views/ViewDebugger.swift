@@ -97,6 +97,18 @@ class DebugHistory: ObservableObject {
     
     var log = [InfoState]()
     
+    private func time() -> String {
+        let d = Date()
+        
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        return "[\(dateFormatter.string(from: d))]"
+    }
+    
     func info(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
@@ -108,6 +120,8 @@ class DebugHistory: ObservableObject {
     //            cascadingView: cascadingView
             ))
         }
+        
+        print("\(time()) INFO: \(message)")
     }
     
     func warn(_ message:String/*, _ cascadingView:ComputedView*/){
@@ -125,6 +139,8 @@ class DebugHistory: ObservableObject {
         if Settings.get("device/debug/autoShowErrorConsole") ?? false {
             showErrorConsole = true
         }
+        
+        print("\(time()) WARNING: \(message)")
     }
     
     func error(_ message:String/*, _ cascadingView:ComputedView*/){
@@ -142,6 +158,8 @@ class DebugHistory: ObservableObject {
         if Settings.get("device/debug/autoShowErrorConsole") ?? false {
             showErrorConsole = true
         }
+        
+        print("\(time()) WARNING: \(message)")
     }
     
     func clear(){

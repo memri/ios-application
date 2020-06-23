@@ -589,16 +589,14 @@ class ActionOpenViewByName : Action, ActionExec {
         
         if let name = arguments["name"] as? String {
             // Fetch a dynamic view based on its name
-            let fetchedDef = context.views.fetchDefinitions(name:name, type:"view").first
-            let def = try context.views.parseDefinition(fetchedDef)
+            let stored = context.views.fetchDefinitions(name:name, type:"view").first
+            let parsed = try context.views.parseDefinition(stored)
             
-            guard let viewDef = def else { throw "Exception: Missing view" }
-            
-            let view = SessionView(value: [
-                "viewDefinition": fetchedDef,
-                "viewArguments": viewArguments,
-                "datasource": viewDef["datasource"] // TODO Refactor
-            ])
+            let view = try SessionView.fromCVUDefinition(
+                parsed: parsed as? CVUParsedViewDefinition,
+                stored: stored,
+                viewArguments: viewArguments
+            )
             
             try ActionOpenView(context).openView(context, view:view)
         }

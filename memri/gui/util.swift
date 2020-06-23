@@ -26,27 +26,16 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x:JSONEncoder, y:JSONDecoder
     return (encoder, decoder)
 }()
 
-func unserialize<T:Decodable>(_ s:String) -> T? {
-    do {
-        let data = s.data(using: .utf8) ?? Data()
-        let output:T = try MemriJSONDecoder.decode(T.self, from: data)
-        return output as T
-    }
-    catch{
-        return nil
-    }
+func unserialize<T:Decodable>(_ s:String) throws -> T? {
+    let data = s.data(using: .utf8) ?? Data()
+    let output:T = try MemriJSONDecoder.decode(T.self, from: data)
+    return output as T
 }
 
-func serialize(_ a:AnyCodable) -> String {
-    do {
-        let data = try MemriJSONEncoder.encode(a)
-        let string = String(data: data, encoding: .utf8) ?? ""
-        return string
-    }
-    catch {
-        print("Failed to encode \(a)")
-        return ""
-    }
+func serialize(_ a:AnyCodable) throws -> String {
+    let data = try MemriJSONEncoder.encode(a)
+    let string = String(data: data, encoding: .utf8) ?? ""
+    return string
 }
 
 func stringFromFile(_ file: String, _ ext:String = "json") throws -> String{

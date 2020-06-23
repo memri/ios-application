@@ -65,8 +65,14 @@ public class UserState: Object, CVUToString {
     
     private func transformToDict() throws -> [String:Any]{
         if state == "" { return [String:Any]() }
-        let dict:[String:AnyDecodable] = unserialize(state) ?? [:]
-        try InMemoryObjectCache.set(self.memriID, dict as [String:Any])
+        let stored:[String:AnyCodable] = try unserialize(state) ?? [:]
+        var dict = [String:Any]()
+        
+        for (key, value) in stored {
+            dict[key] = value.value
+        }
+        
+        try InMemoryObjectCache.set(self.memriID, dict)
         return dict
     }
     
@@ -95,7 +101,24 @@ public class UserState: Object, CVUToString {
         
         if let x = InMemoryObjectCache.get(memriID) as? [String : Any?] {
             realmWriteIfAvailable(self.realm) {
-                self["state"] = serialize(AnyCodable(x))
+                do {
+                    var values:[String:AnyCodable?] = [:]
+                    
+                    for (key, value) in x {
+                        if let value = value as? AnyCodable {
+                            values[key] = value
+                        }
+                        else {
+                            values[key] = AnyCodable(value)
+                        }
+                    }
+                    
+                    let data = try MemriJSONEncoder.encode(values)
+                    self["state"] = String(data: data, encoding: .utf8) ?? ""
+                }
+                catch let error {
+                    debugHistory.error("Could not persist state object: \(error)")
+                }
             }
         }
     }
@@ -117,6 +140,15 @@ public class UserState: Object, CVUToString {
         x = InMemoryObjectCache.get(memriID) as? [String:Any]
         do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO refactor: handle error
         return x ?? [:]
+    }
+    
+    public func merge(_ state:UserState) throws {
+        let dict = asDict().merging(state.asDict(), uniquingKeysWith: { current, new in new })
+        try InMemoryObjectCache.set(self.memriID, dict as [String:Any])
+    }
+    
+    public func clone() -> UserState {
+        UserState(asDict())
     }
     
     func toCVUString(_ depth: Int, _ tab: String) -> String {

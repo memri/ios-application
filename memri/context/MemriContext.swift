@@ -241,9 +241,18 @@ public class MemriContext: ObservableObject {
             realmWriteIfAvailable(realm) {
                 // TODO serialize
                 if let item = self.cascadingView.resultSet.singletonItem{
-                    self.realm.add(AuditItem(contents: serialize(AnyCodable(Array(fields))),
-                                             action: "update", appliesTo: [item]))
-                    syncState.changedInThisSession = false
+                    do {
+                        self.realm.add(AuditItem(
+                            contents: try serialize(AnyCodable(Array(fields))),
+                            action: "update",
+                            appliesTo: [item]
+                        ))
+                        syncState.changedInThisSession = false
+                    }
+                    catch let error {
+                        print(error)
+                        debugHistory.error("\(error)")
+                    }
                 }
                 else {
                     print("Could not log update, no Item found")
