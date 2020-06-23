@@ -141,9 +141,9 @@ IndexerInstance {
                     Button {
                         margin: 0 5 10 35
                         
-                        press: import {
+                        press: runIndexerInstance {
                             arguments {
-                                importerInstance: {{.}}
+                                indexerInstance: {{.}}
                             }
                         }
                         

@@ -149,6 +149,9 @@ public class PodAPI {
                                 }
                                 result[prop.name] = toList
                             }
+                            else if dataItem[prop.name] == nil{
+                                continue
+                            }
                             else {
                                 result[prop.name] = recur(dataItem[prop.name] as! DataItem, depth + 1)
                             }
@@ -335,7 +338,7 @@ public class PodAPI {
     /// - Parameters:
     ///   - memriID: The memriID of the data item to remove
     ///   - callback: Function that is called when the task is completed either with a result, or  an error
-    public func runImport(_ memriID:String,
+    public func runImporterInstance(_ memriID:String,
                        _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
         
         self.http(.PUT, path: "import/\(memriID)") { error, data in
@@ -347,12 +350,59 @@ public class PodAPI {
     /// - Parameters:
     ///   - memriID: The memriID of the data item to remove
     ///   - callback: Function that is called when the task is completed either with a result, or  an error
-    public func runIndex(_ memriID:String,
+    public func runIndexerInstance(_ item:DataItem, _ maxWait:Int,
                           _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
-        
-        self.http(.PUT, path: "index/\(memriID)") { error, data in
-            callback(error, error == nil)
+        // First make sure the indexer exists
+        let memriID: String? = item.get("memriID")
+        if let memriID = memriID {
+            print("starting IndexerInstance with memrID \(memriID)")
+            item.set("progress", 0)
+            // TODO: indexerInstance items should have been automatically created already by now
+            let uid:Int? = item.get("uid")
+            print(uid)
+            self.create(item) { error, data in
+                if let data = data {
+                    let start = Date()
+
+                    Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                        let timePassed = Int(Date().timeIntervalSince(start))
+                        print("polling indexerInstance")
+                        self.get(memriID) { error, data in
+                            if let progress = (data as? IndexerInstance)?.progress {
+                                if timePassed > maxWait || progress >= 100 {
+                                    timer.invalidate()
+                                }
+                                else{
+                                    print("setting random progress")
+                                    let randomProgress = Int.random(in: 1...20)
+                                    item.set("progress", randomProgress)
+                                    let p:Int? = item.get("progress")
+                                    print(p)
+                                }
+                            }
+                            else {
+                                print("ERROR, could not get progress \(error)")
+                                timer.invalidate()
+                            }
+                        }
+                    }
+                    
+                }
+                else{
+                    print("Error \(error)")
+                }
+            }
         }
+        else{
+            print("Error, no memriID")
+        }
+
+        
+        // then run the indexer
+        
+//        self.http(.PUT, path: "index/\(memriID)") { error, data in
+//            callback(error, error == nil)
+//        }
     }
     
     

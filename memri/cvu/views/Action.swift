@@ -378,7 +378,7 @@ public enum ActionFamily: String, CaseIterable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        link, closePopup, unlink, multiAction, noop
+        link, closePopup, unlink, multiAction, noop, runIndexerInstance, runImporterInstance
 
     func getType() -> Action.Type {
         switch self {
@@ -405,6 +405,8 @@ public enum ActionFamily: String, CaseIterable {
         case .link: return ActionLink.self
         case .unlink: return ActionUnlink.self
         case .multiAction: return ActionMultiAction.self
+        case .runIndexerInstance: return ActionRunIndexerInstance.self
+        case .runImporterInstance: return ActionRunImporterInstance.self
         case .noop: fallthrough
         default: return ActionNoop.self
         }
@@ -1060,9 +1062,9 @@ class ActionDuplicate : Action, ActionExec {
     }
 }
 
-class ActionImport : Action, ActionExec {
+class ActionRunImporterInstance : Action, ActionExec {
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(context, "import", arguments:arguments, values:values)
+        super.init(context, "runImporterInstance", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws -> Void {
@@ -1071,7 +1073,7 @@ class ActionImport : Action, ActionExec {
         if let importerInstance = arguments["importerInstance"] as? ImporterInstance{
             let cachedImporterInstance = try context.cache.addToCache(importerInstance)
             
-            context.podAPI.runImport(cachedImporterInstance.memriID){ error, succes in
+            context.podAPI.runImporterInstance(cachedImporterInstance.memriID){ error, succes in
                 if let error = error{
                     print("Cannot execute actionImport: \(error)")
                 }
@@ -1080,23 +1082,22 @@ class ActionImport : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(context, arguments) }
+        execWithoutThrow { try ActionRunImporterInstance.exec(context, arguments) }
     }
 }
 
 
-class ActionIndex : Action, ActionExec {
+class ActionRunIndexerInstance : Action, ActionExec {
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(context, "index", arguments:arguments, values:values)
+        super.init(context, "runIndexerInstance", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
-        if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance{
-            let cachedIndexerInstance = try context.cache.addToCache(indexerInstance)
+        if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance {
             
-            context.podAPI.runIndex(cachedIndexerInstance.memriID){ error, succes in
+            context.podAPI.runIndexerInstance(indexerInstance, 5){ error, succes in
                 if let error = error{
                     print("Cannot execute actionIndex: \(error)")
                 }
@@ -1105,7 +1106,7 @@ class ActionIndex : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(context, arguments) }
+        execWithoutThrow { try ActionRunIndexerInstance.exec(context, arguments) }
     }
 }
 

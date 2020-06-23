@@ -266,6 +266,9 @@ public class Cache {
             
             // Add item to realm
             try realm.write() { realm.add(item, update: .modified) }
+            try self.sync.execute(item) { error, succes in
+                
+            }
         }
         catch{
             print("Could not add to cache: \(error)")

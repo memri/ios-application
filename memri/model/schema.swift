@@ -799,6 +799,8 @@ class IndexerInstance:DataItem{
     @objc dynamic var name:String = "unknown indexer instance"
     @objc dynamic var query:String = ""
     @objc dynamic var indexer:Indexer? = nil
+    @objc dynamic var progress:Int = -1
+
     
     required init () {
         super.init()
