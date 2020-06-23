@@ -239,7 +239,7 @@ public class Views {
                         case "lowercased": value = v.lowercased()
                         case "camelCaseToWords": value = v.camelCaseToWords()
                         case "plural": value = v + "s" // TODO
-                        case "firstUppercased": value = v.capitalizingFirstLetter()
+                        case "firstUppercased": value = v.capitalizingFirst()
                         default:
                             // TODO Warn
                             break

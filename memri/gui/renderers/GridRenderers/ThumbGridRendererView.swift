@@ -8,11 +8,11 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumbGrid = {
+let registerThumbGridRenderer = {
     Renderers.register(
         name: "thumbnail.grid",
         title: "Photo Grid",
-        order: 20,
+        order: 110,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbGridRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,
@@ -34,15 +34,14 @@ struct ThumbGridRendererView: View {
 //    }
     
     var renderConfig: CascadingThumbnailConfig {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig([], ViewArguments())
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
                 let contentInset = self.renderConfig.nsEdgeInset
-                let isWide = environment.container.effectiveContentSize.width > 500
-                let columns = self.renderConfig.columns
+                let columns = 3
                 let spacing = self.renderConfig.spacing
                 
                 let singleBlockSize = (environment.container.effectiveContentSize.width - contentInset.leading - contentInset.trailing - spacing.x * CGFloat(columns - 1)) / CGFloat(columns)
@@ -66,9 +65,9 @@ struct ThumbGridRendererView: View {
                 let fullWidthItem = NSCollectionLayoutItem(layoutSize: fullWidthItemSize)
 
                 let verticalAndFeatureGroupSize = gridBlockSize(forSize: 3, sizeY: 2)
-                let verticalAndFeatureGroupA = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: isWide ? [verticalGroup, verticalGroup, featureItem, verticalGroup] : [verticalGroup, featureItem])
+                let verticalAndFeatureGroupA = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: [verticalGroup, featureItem])
                 verticalAndFeatureGroupA.interItemSpacing = .fixed(spacing.x)
-                let verticalAndFeatureGroupB = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: isWide ? [verticalGroup, featureItem, verticalGroup, verticalGroup] : [featureItem, verticalGroup])
+                let verticalAndFeatureGroupB = NSCollectionLayoutGroup.horizontal(layoutSize: verticalAndFeatureGroupSize, subitems: [featureItem, verticalGroup])
                 verticalAndFeatureGroupB.interItemSpacing = .fixed(spacing.x)
                 
                 let rowGroupSize = gridBlockSize(forSize: 3, sizeY: 1)

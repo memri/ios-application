@@ -65,6 +65,7 @@ struct FilterPanel: View {
             .filter { (key, renderer) -> Bool in
                 !key.contains(".") && renderer.canDisplayResults(self.context.items)
             }
+            .sorted(by: { $0.1.order < $1.1.order })
     }
     
     private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {

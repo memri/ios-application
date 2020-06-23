@@ -177,6 +177,8 @@ struct DebugConsole: View {
     
     @ObservedObject var history = debugHistory
     
+    @State var scrollPosition: ASTableViewScrollPosition?
+    
     var body: some View {
         let dateFormatter = DateFormatter()
         
@@ -192,6 +194,9 @@ struct DebugConsole: View {
                             .font(.system(size: 14, weight: .semibold))
                             .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
                             .foregroundColor(Color(hex:"555"))
+                        Button(action: { self.scrollPosition = .top  }) {
+                            Text("scroll to top")
+                        }
                         Spacer()
                         Button(action: { self.history.clear() }) {
                             Text("clear")
@@ -246,6 +251,7 @@ struct DebugConsole: View {
                             .padding(.vertical, 4)
                             .fullWidth()
                     })
+                    .scrollPositionSetter($scrollPosition)
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .background(Color.white.edgesIgnoringSafeArea(.all))

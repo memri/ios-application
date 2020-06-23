@@ -21,15 +21,17 @@ public struct MemriTextEditor: UIViewRepresentable {
         self.onTextChanged = onTextChanged
     }
     
-    public func makeUIView(context: Context) -> MemriTextEditor_UIKit {
-        MemriTextEditor_UIKit(initialContentHTML: initialContentHTML)
+    public func makeUIView(context: Context) -> MemriTextEditorWrapper_UIKit {
+        MemriTextEditorWrapper_UIKit(
+            MemriTextEditor_UIKit(initialContentHTML: initialContentHTML)
+        )
     }
     
     
-    public func updateUIView(_ textEditor: MemriTextEditor_UIKit, context: Context) {
-        textEditor.preferredHeightBinding = preferredHeight
-        textEditor.onTextChanged = onTextChanged
-        textEditor.defaultFontSize = defaultFontSize
-        textEditor.isEditingBinding = isEditing
+    public func updateUIView(_ wrapper: MemriTextEditorWrapper_UIKit, context: Context) {
+        wrapper.textEditor.preferredHeightBinding = preferredHeight
+        wrapper.textEditor.onTextChanged = onTextChanged
+        wrapper.textEditor.defaultFontSize = defaultFontSize
+        wrapper.textEditor.isEditingBinding = isEditing
     }
 }

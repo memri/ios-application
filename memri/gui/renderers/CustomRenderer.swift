@@ -8,7 +8,7 @@ import Foundation
 import Combine
 import SwiftUI
 
-let registerCustom = {
+let registerCustomRenderer = {
     Renderers.register(
         name: "custom",
         title: "",

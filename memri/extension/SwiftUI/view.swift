@@ -12,6 +12,23 @@ private let ViewPropertyOrder = ["style", "frame", "color", "font", "padding", "
     "offset", "blur", "opacity", "zindex"]
 
 extension View {
+    func eraseToAnyView() -> AnyView {
+        AnyView(self)
+    }
+}
+
+extension View {
+    @inlinable
+    func ignoreSafeAreaOnMac() -> some View {
+        #if targetEnvironment(macCatalyst)
+        return edgesIgnoringSafeArea(.all)
+        #else
+        return self
+        #endif
+    }
+}
+
+extension View {
     func setProperties(_ properties:[String:Any?], _ item:DataItem, _ context:MemriContext,
                        _ viewArguments:ViewArguments) -> AnyView {
         

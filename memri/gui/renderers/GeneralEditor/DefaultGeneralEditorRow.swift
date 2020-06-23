@@ -29,7 +29,7 @@ struct DefaultGeneralEditorRow: View {
                 Text(prop
                     .camelCaseToWords()
                     .lowercased()
-                    .capitalizingFirstLetter()
+                    .capitalizingFirst()
                 )
                 .generalEditorLabel()
                 
@@ -97,7 +97,7 @@ struct DefaultGeneralEditorRow: View {
             Text(prop
                 .camelCaseToWords()
                 .lowercased()
-                .capitalizingFirstLetter())
+                .capitalizingFirst())
         }
         .toggleStyle(MemriToggleStyle())
         .generalEditorCaption()
@@ -146,7 +146,7 @@ struct DefaultGeneralEditorRow: View {
     }
     
     func defaultRow(_ caption:String? = nil) -> some View {
-        Text(caption ?? (prop.camelCaseToWords().lowercased().capitalizingFirstLetter()))
+        Text(caption ?? (prop.camelCaseToWords().lowercased().capitalizingFirst()))
               .generalEditorCaption()
     }
 }

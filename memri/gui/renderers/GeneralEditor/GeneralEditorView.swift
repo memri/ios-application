@@ -7,7 +7,7 @@
 import SwiftUI
 import RealmSwift
 
-let registerGeneralEditor = {
+let registerGeneralEditorRenderer = {
     Renderers.register(
         name: "generalEditor",
         title: "Default",
