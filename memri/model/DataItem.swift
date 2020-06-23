@@ -9,7 +9,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     var genericType:String { "unknown" }
     
     /// Title computed by implementations of the DataItem class
-    var computedTitle:String {
+    @objc dynamic var computedTitle:String {
         return "\(genericType) [\(memriID)]"
     }
     

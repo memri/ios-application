@@ -43,7 +43,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5D599BD723F2B77700F218A0"
-               BuildableName = "memriUITests"
+               BuildableName = "memriUITests.xctest"
                BlueprintName = "memriUITests"
                ReferencedContainer = "container:memri.xcodeproj">
             </BuildableReference>
