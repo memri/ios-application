@@ -21,7 +21,7 @@ Photo {
     filterButtons: [ showStarred toggleFilterPanel ]
     
     [renderer = thumbnail] {
-        itemInset: 1
+        spacing: 1
         column: 1
         edgeInset: 0 0 0 0
         Image {
