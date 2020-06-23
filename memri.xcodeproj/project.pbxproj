@@ -211,13 +211,9 @@
 		86DDB361247AAD030051A92F /* Cascadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB360247AAD030051A92F /* Cascadable.swift */; };
 		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
 		86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB363247AD0400051A92F /* CVUValidatorTests.swift */; };
-		B809BC9424A16ECE007E38CE /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; platformFilter = ios; };
-		B809BC9524A16ECE007E38CE /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB1B24A1A99F0007C9EB /* memriUI */; };
-		B88AAB1F24A1AA5D0007C9EB /* MapboxMobileEvents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */; platformFilter = ios; };
-		B88AAB2024A1AA5D0007C9EB /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B88AAB2324A1AD140007C9EB /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB2224A1AD140007C9EB /* Charts */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
@@ -264,8 +260,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				B88AAB2024A1AA5D0007C9EB /* MapboxMobileEvents.framework in Embed Frameworks */,
-				B809BC9524A16ECE007E38CE /* Mapbox.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -456,13 +450,11 @@
 		86DDB35E247AA9D20051A92F /* CVUValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		B809BC9224A16D64007E38CE /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B86FC6722499E79000112A5F /* memriUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = memriUI; path = modules/memriUI; sourceTree = SOURCE_ROOT; };
-		B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapboxMobileEvents.framework; sourceTree = "<group>"; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -497,8 +489,6 @@
 				B88AAB2324A1AD140007C9EB /* Charts in Frameworks */,
 				B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
-				B88AAB1F24A1AA5D0007C9EB /* MapboxMobileEvents.framework in Frameworks */,
-				B809BC9424A16ECE007E38CE /* Mapbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1097,8 +1087,6 @@
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B809BC9224A16D64007E38CE /* Mapbox.framework */,
-				B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1415,7 +1403,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_OS_MACCATALYST}\" = \"1\" ]; then\nbash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\nfi\n";
+			shellScript = "#if [ \"${TARGET_OS_MACCATALYST}\" = \"1\" ]; then\n#bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\n#fi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
