@@ -332,7 +332,7 @@ Person {
 
 Person[] {
     title: "All People"
-    defaultRenderer: list
+    defaultRenderer: thumbnail
     emptyResultText: "There are no people here yet"
     
      [datasource = pod] {

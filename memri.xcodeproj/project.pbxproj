@@ -211,7 +211,7 @@
 		86DDB361247AAD030051A92F /* Cascadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB360247AAD030051A92F /* Cascadable.swift */; };
 		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
 		86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB363247AD0400051A92F /* CVUValidatorTests.swift */; };
-		86FFD0BE24A2398F001BF14B /* chart.cvu in Sources */ = {isa = PBXBuildFile; fileRef = 86FFD0BD24A2398F001BF14B /* chart.cvu */; };
+		86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86FFD0BD24A2398F001BF14B /* chart.cvu */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB1B24A1A99F0007C9EB /* memriUI */; };
@@ -443,7 +443,7 @@
 		86CDB4782469CB6F007EAE67 /* Session.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Session.json; sourceTree = "<group>"; };
 		86CDB47A2469CC60007EAE67 /* Session.cvu */ = {isa = PBXFileReference; explicitFileType = text.css; path = Session.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB47E246A4570007EAE67 /* Note.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = Note.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		86CDB481246A4D94007EAE67 /* generalEditor.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = generalEditor.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		86CDB481246A4D94007EAE67 /* generalEditor.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = generalEditor.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB483246A58FF007EAE67 /* Person.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = Person.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB486246A61F3007EAE67 /* defaults.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = defaults.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86CDB48A246ABE46007EAE67 /* ViewDebugger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewDebugger.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -451,7 +451,7 @@
 		86DDB35E247AA9D20051A92F /* CVUValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidator.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		86FFD0BD24A2398F001BF14B /* chart.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = chart.cvu; sourceTree = "<group>"; };
+		86FFD0BD24A2398F001BF14B /* chart.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chart.cvu; sourceTree = "<group>"; wrapsLines = 0; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1280,6 +1280,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
 				8699AA31247BCF3000EC85C0 /* generalEditor.cvu in Resources */,
@@ -1489,7 +1490,6 @@
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
-				86FFD0BE24A2398F001BF14B /* chart.cvu in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
