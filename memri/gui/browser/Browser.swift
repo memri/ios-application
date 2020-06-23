@@ -15,6 +15,7 @@ struct Browser: View {
         return ZStack {
             VStack(alignment: .center, spacing: 0) {
                 TopNavigation()
+                    .background(Color(.systemBackground))
                 allRenderers?.allViews[self.context.cascadingView.activeRenderer]
                     .fullHeight().layoutPriority(1)
                 Search()

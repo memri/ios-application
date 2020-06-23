@@ -8,6 +8,39 @@ import Foundation
 import UIKit
 import SwiftUI
 
+public class MemriTextEditorWrapper_UIKit: UIView {
+    //This UIView allows us to add overlays to the UITextView if needed
+    var textEditor: MemriTextEditor_UIKit
+    
+    init(_ textEditor: MemriTextEditor_UIKit) {
+        self.textEditor = textEditor
+        super.init(frame: .zero)
+        addSubview(textEditor)
+        textEditor.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            (textEditor).leadingAnchor.constraint(equalTo: leadingAnchor),
+            (textEditor).trailingAnchor.constraint(equalTo: trailingAnchor),
+            (textEditor).topAnchor.constraint(equalTo: topAnchor),
+            (textEditor).bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override var intrinsicContentSize: CGSize {
+        textEditor.intrinsicContentSize
+    }
+    
+    public override func contentHuggingPriority(for axis: NSLayoutConstraint.Axis) -> UILayoutPriority {
+        textEditor.contentHuggingPriority(for: axis)
+    }
+    
+    public override func contentCompressionResistancePriority(for axis: NSLayoutConstraint.Axis) -> UILayoutPriority {
+        textEditor.contentCompressionResistancePriority(for: axis)
+    }
+}
 
 public class MemriTextEditor_UIKit: UITextView {
     var preferredHeightBinding: Binding<CGFloat>?
@@ -68,13 +101,6 @@ public class MemriTextEditor_UIKit: UITextView {
   let indentWidth: CGFloat = 20
   
   
-    func didChangeFormatting() {
-        onTextChanged?(attributedText)
-    }
-  
-  func selectionDidChange() {
-    updateToolbar()
-  }
     
     #if targetEnvironment(macCatalyst)
     @objc(_focusRingType)
@@ -82,6 +108,13 @@ public class MemriTextEditor_UIKit: UITextView {
         return 1 //NSFocusRingTypeNone
     }
     #endif
+    
+    public override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        #if targetEnvironment(macCatalyst)
+        updateToolbar()
+        #endif
+    }
   
   var toolbarHost: UIHostingController<RichTextToolbarView>?
   
@@ -104,15 +137,47 @@ public class MemriTextEditor_UIKit: UITextView {
     if let hc = toolbarHost {
       hc.rootView = view
     } else {
-      toolbarHost = UIHostingController(rootView: view)
-      toolbarHost?.view.sizeToFit()
-      inputAccessoryView = toolbarHost?.view
+      let toolbarHost = UIHostingController(rootView: view)
+    #if targetEnvironment(macCatalyst)
+        if let superview = superview {
+            superview.addSubview(toolbarHost.view)
+            let macToolbarHeight: CGFloat = 50
+            toolbarHost.view.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                toolbarHost.view.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 0),
+                toolbarHost.view.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: 0),
+                toolbarHost.view.heightAnchor.constraint(equalToConstant: macToolbarHeight),
+                toolbarHost.view.topAnchor.constraint(equalTo: superview.topAnchor)
+            ])
+            contentInset.top = macToolbarHeight
+            self.toolbarHost = toolbarHost
+        }
+        #else
+        toolbarHost.view.sizeToFit()
+        inputAccessoryView = toolbarHost.view
+        self.toolbarHost = toolbarHost
+        #endif
     }
   }
     
-    public func textViewDidChange(_ textView: UITextView) {
+    func fireTextChange() {
         onTextChanged?(attributedText)
     }
+    
+    func didChangeFormatting() {
+        updateToolbar()
+        fireTextChange()
+    }
+    
+    func selectionDidChange() {
+        updateToolbar()
+    }
+    
+    public func textViewDidChange(_ textView: UITextView) {
+        fireTextChange()
+        updateToolbar()
+    }
+    
   
   override public var selectedTextRange: UITextRange? {
     didSet{
@@ -136,6 +201,21 @@ public class MemriTextEditor_UIKit: UITextView {
                 isEditingBinding.wrappedValue = false
             }
         }
+    }
+    
+    public override func toggleBoldface(_ sender: Any?) {
+        super.toggleBoldface(sender)
+        fireTextChange() //TextView didChange not called otherwise
+    }
+    
+    public override func toggleItalics(_ sender: Any?) {
+        super.toggleItalics(sender)
+        fireTextChange() //TextView didChange not called otherwise
+    }
+    
+    public override func toggleUnderline(_ sender: Any?) {
+        super.toggleUnderline(sender)
+        fireTextChange() //TextView didChange not called otherwise
     }
 }
 
@@ -292,7 +372,6 @@ extension MemriTextEditor_UIKit {
   
   func action_toggleBold() {
     helper_currentContext_toggleFontTrait(.traitBold)
-    updateToolbar()
     didChangeFormatting()
   }
   
@@ -302,7 +381,6 @@ extension MemriTextEditor_UIKit {
   
   func action_toggleItalic() {
     helper_currentContext_toggleFontTrait(.traitItalic)
-    updateToolbar()
     didChangeFormatting()
   }
   
@@ -318,9 +396,11 @@ extension MemriTextEditor_UIKit {
   
     func action_unorderedList() {
         helper_makeSelectionList(type: .unorderedList)
+        didChangeFormatting()
     }
   func action_orderedList() {
     helper_makeSelectionList(type: .orderedList)
+    didChangeFormatting()
   }
   
   var state_isUnderlined: Bool {
@@ -333,7 +413,6 @@ extension MemriTextEditor_UIKit {
   
   func action_toggleUnderlined() {
     helper_currentContext_setTrait(.underlineStyle, value: state_isUnderlined ? nil : NSUnderlineStyle.single.rawValue)
-    updateToolbar()
     didChangeFormatting()
   }
   
@@ -347,7 +426,6 @@ extension MemriTextEditor_UIKit {
   
   func action_toggleStrikethrough() {
     helper_currentContext_setTrait(.strikethroughStyle, value: state_isStrikethrough ? nil : NSUnderlineStyle.single.rawValue)
-    updateToolbar()
     didChangeFormatting()
   }
 }
@@ -526,7 +604,7 @@ extension MemriTextEditor_UIKit {
     textStorage.replaceCharacters(in: paragraphRange,
                                   with: modifiedSection)
         textStorage.endEditing()
-        selectedRange = NSRange(location: paragraphRange.lowerBound + modifiedSection.length, length: 0)
+        selectedRange = NSRange(location: paragraphRange.lowerBound + modifiedSection.length - 1, length: 0)
   }
 }
 

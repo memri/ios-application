@@ -44,7 +44,6 @@ struct RichTextToolbarView: View {
               self.button(icon: Image(systemName: "strikethrough"), action: self.onPress_strikethrough, highlighted: self.state_strikethrough)
             }
             Divider()
-            Spacer()
             Divider()
             Group {
               self.button(icon: Image(systemName: "list.bullet"), action: self.onPress_unorderedList, highlighted: false)
@@ -56,6 +55,9 @@ struct RichTextToolbarView: View {
               self.button(icon: Image(systemName: "increase.indent"), action: self.onPress_indent)
             }
             Divider()
+            Spacer()
+            
+            #if !targetEnvironment(macCatalyst)
             Divider()
             self.button(icon:
                 Image(systemName: "keyboard.chevron.compact.down")
@@ -63,14 +65,16 @@ struct RichTextToolbarView: View {
                         action: {
                 self.textView?.resignFirstResponder()
             })
+            #endif
           }
           .padding(.horizontal, 4)
-        //}
       }
-      .frame(maxWidth: 1000) //Avoid strange scrollView crash
-      .frame(height: 40)
-      .background(Color(.secondarySystemBackground))
+        #if targetEnvironment(macCatalyst)
+        Divider()
+        #endif
     }
+    .frame(minHeight: 40, idealHeight: 40, maxHeight: 60)
+    .background(Color(.secondarySystemBackground))
     .edgesIgnoringSafeArea(.bottom)
   }
   

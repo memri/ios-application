@@ -39,9 +39,11 @@ struct Application: View {
             NavigationWrapper(isVisible: self.context.showNavigationBinding) {
                 if self.context.showSessionSwitcher {
                     SessionSwitcher()
+                        .ignoreSafeAreaOnMac()
                 }
                 else {
                     Browser()
+                        .ignoreSafeAreaOnMac()
                 }
             }
                 DebugConsole()

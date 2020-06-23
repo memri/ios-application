@@ -61,11 +61,11 @@ struct RichTextRendererView: View {
         let dataItem = self.context.cascadingView.resultSet.singletonItem
         
         return VStack(spacing: 0) {
-            if context.cascadingView.resultSet.singletonItem != nil {
-                _RichTextEditor(dataItem: dataItem!,
+            dataItem.map { dataItem in
+                _RichTextEditor(dataItem: dataItem,
                                 filterText: $context.cascadingView.filterText)
             }
-        }.padding(.horizontal, 6)
+        }
     }
 }
 
