@@ -141,9 +141,8 @@ class CVUSerializer {
                 continue
             }
             else if key == "cornerborder" {
-                if let value = dict[key] as? [Any] {
-//                    let radius = value.popLast()
-//                    str.append("cornerRadius: \(valueToString(radius, depth, tab))")
+                if var value = dict[key] as? [Any] {
+                    _ = value.popLast()
                     str.append("border: \(valueToString(value, depth, tab))")
                 }
                 else {
