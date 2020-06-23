@@ -79,22 +79,22 @@ struct ListRendererView: View {
                                   data: context.items,
                                   dataID: \.memriID,
                                   onSwipeToDelete: { index, item, callback in
-                            context.executeAction(ActionDelete(context), with: item)
-                            callback(true)
-                        }
+                                      context.executeAction(ActionDelete(context), with: item)
+                                      callback(true)
+                                  }
                         ) { dataItem, cellContext in
                             self.renderConfig.render(item: dataItem)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            .environmentObject(context)
+                                .environmentObject(context)
                         }
                         .onSelectSingle({ (index) in
                             if let press = self.renderConfig.press {
                                 context.executeAction(press, with: context.items[safe: index])
                             }
                         })
-                        )
+                )
                 .alwaysBounce()
-                    .environment(\.editMode, $context.currentSession.swiftUIEditMode)
+                .environment(\.editMode, $context.currentSession.swiftUIEditMode)
                 
             }
         }

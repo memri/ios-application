@@ -259,8 +259,14 @@ public struct UIElementView: SwiftUI.View {
                                 if let parsed:[String:Any?] = get("view") {
                                     let parsedViewDef = CVUParsedViewDefinition(DataItem.generateUUID())
                                     parsedViewDef.parsed = parsed
-                                    let sessionView = SessionView.fromCVUDefinition(parsedViewDef)
-                                    return sessionView
+                                    do {
+                                        let sessionView = try SessionView.fromCVUDefinition(parsed: parsedViewDef)
+                                        return sessionView
+                                    }
+                                    catch let error {
+                                        debugHistory.error("\(error)")
+                                    }
+                                    return SessionView()
                                 }
                                 else {
                                     print("Failed to make subview (not defined), creating empty one instead")

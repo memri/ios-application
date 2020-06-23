@@ -24,7 +24,7 @@ struct GeneralEditorSection: View {
             ? self.getProperties(item)
             : self.groups[self.groupKey] ?? []
         let groupIsList = item.objectSchema[groupKey]?.isArray ?? false
-        let showDividers = self.getSectionTitle(groupKey) != ""
+        let showDividers = self.hasSectionTitle(groupKey)
         let listHasItems = groupIsList && (item[groupKey] as? ListBase)?.count ?? 0 > 0
         
         return Section (header: self.getHeader(groupIsList, listHasItems)) {
@@ -139,7 +139,23 @@ struct GeneralEditorSection: View {
     }
     
     func getSectionTitle(_ groupKey:String) -> String? {
-        renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String
+        let title = renderConfig.getGroupOptions(groupKey)["sectionTitle"]
+        
+        if let title = title as? String {
+            return title
+        }
+        else if let expr = title as? Expression {
+            let args = getViewArguments(self.groupKey, self.groupKey, nil, self.item)
+            do {
+                return try expr.execForReturnType(args)
+            }
+            catch let error {
+                debugHistory.error("\(error)")
+                return nil
+            }
+        }
+        
+        return nil
     }
     
     func isDescriptionForGroup(_ groupKey:String) -> Bool {

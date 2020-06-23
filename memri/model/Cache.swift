@@ -138,7 +138,7 @@ public class Cache {
 
         // Do nothing when the query is empty. Should not happen.
         let q = datasource.query ?? ""
-        
+
         // Log to a maker user
         debugHistory.info("Executing query \(q)")
         
