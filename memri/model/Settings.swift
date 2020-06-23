@@ -45,7 +45,7 @@ public class Settings {
             }
         }
         else {
-            print("Error: Settings are not initialized")
+            debugHistory.error("Error: Settings are not initialized")
         }
         
         try callback()
@@ -67,7 +67,7 @@ public class Settings {
             }
         }
         catch {
-            print(error)
+            debugHistory.error("\(error)")
         }
         
         // Load default settings from disk
@@ -75,14 +75,14 @@ public class Settings {
             let jsonData = try jsonDataFromFile("default_settings")
             let values = try MemriJSONDecoder.decode([String:AnyCodable].self, from: jsonData)
             for (key, value) in values {
-                defaults.set(key, value)
+                try defaults.set(key, value)
             }
+            
+            try device.set("/name", "iphone")
         }
         catch {
-            print("Failed to install settings: \(error)")
+            debugHistory.error("Failed to install settings: \(error)")
         }
-        
-        device.set("/name", "iphone")
     }
     
     
@@ -92,18 +92,22 @@ public class Settings {
     public func get<T:Decodable>(_ path:String) -> T? {
         let (collection, query) = parse(path)
         
-        if let collection = collection {
-            if let value:T = collection.get(query) {
-                return value
+        do {
+            if let collection = collection {
+                if let value:T = try collection.get(query) {
+                    return value
+                }
+                else if let value:T = try defaults.get(query) {
+                    return value
+                }
+                return nil
             }
-            else if let value:T = defaults.get(query) {
-                return value
-            }
-            return nil
         }
-        else {
-            return nil
+        catch let error {
+            debugHistory.error("Could not fetch setting: \(error)")
         }
+        
+        return nil
     }
     
     /// get settings from path as String
@@ -140,7 +144,7 @@ public class Settings {
                 collection = device
             }
             else {
-                print("Could not find settings collection: \(type)")
+                debugHistory.warn("Could not find settings collection: \(type)")
             }
         }
         else {
@@ -163,10 +167,16 @@ public class Settings {
         }
         
         if let collection = collection, let codableValue = codableValue {
-            collection.set(query, codableValue)
+            do {
+                try collection.set(query, codableValue)
+            }
+            catch let error {
+                debugHistory.error("\(error)")
+                print(error)
+            }
         }
         else {
-            print("failed to set setting with path \(path) and value \(value)")
+            debugHistory.warn("failed to set setting with path \(path) and value \(value)")
         }
     }
     
@@ -175,7 +185,7 @@ public class Settings {
     /// - Parameter path: global setting path
     /// - Returns: setting value
     public class func get<T:Decodable>(_ path:String) -> T? {
-        return globalSettings?.get(path)
+        globalSettings?.get(path)
     }
     
     /// Get *global* setting value for given path
@@ -186,7 +196,7 @@ public class Settings {
             return globalSettings.set(path, value)
         }
         else {
-            print("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
+            debugHistory.error("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
         }
     }
 }
@@ -210,12 +220,12 @@ class SettingCollection:Object {
     /// get setting for given path
     /// - Parameter path: path for the setting
     /// - Returns: setting value
-    public func get<T:Decodable>(_ path:String) -> T? {
+    public func get<T:Decodable>(_ path:String) throws -> T? {
         let needle = self.type + (path.first == "/" ? "" :"/") + path
         
         let item = self.settings.filter("key = '\(needle)'").first
         if let item = item {
-            let output:T? = unserialize(item.json)
+            let output:T? = try unserialize(item.json)
             return output
         }
         else {
@@ -226,19 +236,19 @@ class SettingCollection:Object {
     /// Get setting as String for given path
     /// - Parameter path: path for the setting
     /// - Returns: setting value as String
-    public func getString(_ path:String) -> String {
-        return get(path) ?? ""
+    public func getString(_ path:String) throws -> String {
+        return try get(path) ?? ""
     }
     
     /// Sets a setting to the value passed.Also responsible for saving the setting to the permanent storage
     /// - Parameters:
     ///   - path: path of the setting
     ///   - value: setting Value
-    public func set(_ path:String, _ value:AnyCodable) {
+    public func set(_ path:String, _ value:AnyCodable) throws {
         let key = self.type + (path.first == "/" ? "" :"/") + path
         
-        func saveState(){
-            let s = Setting(value: ["key": key, "json": serialize(value)])
+        func saveState() throws {
+            let s = Setting(value: ["key": key, "json": try serialize(value)])
             realmWriteIfAvailable(realm) {
                 if let realm = realm {
                     realm.add(s, update: .modified)
@@ -250,12 +260,12 @@ class SettingCollection:Object {
                 syncState.actionNeeded = "update"
             }
             else{
-                print("No syncState available for settings")
+                debugHistory.error("No syncState available for settings")
             }
         }
         
         realmWriteIfAvailable(realm) {
-            saveState()
+            try saveState()
         }
     }
 }

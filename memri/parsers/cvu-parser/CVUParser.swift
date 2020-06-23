@@ -315,24 +315,32 @@ class CVUParser {
                         _ = popCurrentToken()
                         lastKey = value
                     }
-                    else {
-                        if let type = knownUIElements[value.lowercased()] {
-                            var properties:[String:Any?] = [:]
-                            if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
-                                _ = popCurrentToken()
-                                properties = try parseDict(value)
-                            }
-                            
-                            addUIElement(type, &properties)
-                            continue
+                    
+                    let lvalue = value.lowercased()
+                    if let type = knownUIElements[lvalue] {
+                        var properties:[String:Any?] = [:]
+                        if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
+                            _ = popCurrentToken()
+                            properties = try parseDict(value)
                         }
-                        else if value.lowercased() == "datasource" {
-                            
+                        
+                        addUIElement(type, &properties)
+                        continue
+                    }
+                    else if lvalue == "userstate" || lvalue == "viewarguments" {
+                        var properties:[String:Any?] = [:]
+                        if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
+                            _ = popCurrentToken()
+                            properties = try parseDict(value)
                         }
-                        else if case CVUToken.CurlyBracketOpen = nextToken { }
-                        else {
-                            throw CVUParseErrors.ExpectedKey(lastToken!)
-                        }
+                        stack.append(UserState(properties))
+                        continue
+                    }
+                    else if case CVUToken.CurlyBracketOpen = nextToken {
+                        // Do nothing
+                    }
+                    else if lastKey == nil {
+                        throw CVUParseErrors.ExpectedKey(lastToken!)
                     }
                     
                     lastKey = value

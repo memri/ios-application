@@ -132,12 +132,21 @@ Note[] {
             alignment: left
             spacing: 3
             
-            Text {
-                text: "{.title}"
-                nilText: "Untitled Note"
-                font: 18 semibold
-                color: #333
-                padding: 0 0 0 0
+            HStack {
+                Text {
+                    text: "{.title}"
+                    nilText: "Untitled Note"
+                    font: 18 semibold
+                    color: #333
+                    padding: 0 0 0 0
+                }
+                Image {
+                    systemName: "star.fill"
+                    font: 14
+                    color: #eecc00
+                    margin: 5
+                    show: {{.starred}}
+                }
             }
             Text {
                 text: "{.textContent}"
@@ -178,12 +187,22 @@ Note[] {
                 idealHeight: 80
                 align: left top
             }
-            Text {
-                text: "{.title}"
-                padding: 5 0 0 0
-                color: #333
-                font: 12 semibold
-                maxChar: 100
+            HStack {
+                Text {
+                    text: "{.title}"
+                    nilText: "Untitled Note"
+                    padding: 5 0 0 0
+                    color: #333
+                    font: 12 semibold
+                    maxChar: 100
+                }
+                Image {
+                    systemName: "star.fill"
+                    font: 10
+                    color: #eecc00
+                    margin: 8 0 0 2
+                    show: {{.starred}}
+                }
             }
             Text {
                 text: "{.dateModified}"

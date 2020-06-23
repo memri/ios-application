@@ -173,9 +173,9 @@ public class Session: DataItem {
         }
     }
     
-    public class func fromCVUDefinition(_ def:CVUParsedSessionDefinition) -> Session {
-        let views = (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
-            .map { SessionView.fromCVUDefinition($0) }
+    public class func fromCVUDefinition(_ def:CVUParsedSessionDefinition) throws -> Session {
+        let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
+            .map { try SessionView.fromCVUDefinition(parsed: $0) }
         
         return Session(value: [
             "selector": (def.selector ?? "[session]") as Any,
