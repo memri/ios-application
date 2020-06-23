@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumbWaterfall = {
+let registerThumbWaterfallRenderer = {
     Renderers.register(
         name: "thumbnail.waterfall",
         title: "Waterfall Grid",
@@ -33,15 +33,15 @@ struct ThumbWaterfallRendererView: View {
 //        editMode?.wrappedValue.isEditing ?? false
 //    }
     
-    var renderConfig: CascadingThumbnailConfig? {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig
+    var renderConfig: CascadingThumbnailConfig {
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(createCustomLayout: ASWaterfallLayout.init) { layout in
-            let spacing = self.renderConfig?.spacing
-            layout.columnSpacing = spacing?.x ?? 0
-            layout.itemSpacing = spacing?.y ?? 0
+            let spacing = self.renderConfig.spacing
+            layout.columnSpacing = spacing.x
+            layout.itemSpacing = spacing.y
             layout.numberOfColumns = .adaptive(minWidth: 150) // @State var columnMinSize: CGFloat = 150
         }
     }
@@ -51,10 +51,10 @@ struct ThumbWaterfallRendererView: View {
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
                     // TODO: Error handling
-                    self.renderConfig?.render(item: dataItem)
+                    self.renderConfig.render(item: dataItem)
                         .environmentObject(self.context)
                         .onTapGesture {
-                            if let press = self.renderConfig?.press {
+                            if let press = self.renderConfig.press {
                                 self.context.executeAction(press, with: dataItem)
                             }
                         }
@@ -79,7 +79,7 @@ struct ThumbWaterfallRendererView: View {
 //            .clipped()
         }
         .onSelectSingle({ (index) in
-            if let press = self.renderConfig?.press {
+            if let press = self.renderConfig.press {
                 self.context.executeAction(press, with: self.context.items[safe: index])
             }
         })
@@ -105,7 +105,7 @@ struct ThumbWaterfallRendererView: View {
                     .layout(self.layout)
                     .customDelegate(WaterfallScreenLayoutDelegate.init)
                     .alwaysBounceVertical()
-                    .contentInsets(renderConfig?.edgeInset ?? .init())
+                    .contentInsets(renderConfig.edgeInset)
 //                    .navigationBarTitle("Waterfall Layout", displayMode: .inline)
 //                    .navigationBarItems(
 //                        trailing:

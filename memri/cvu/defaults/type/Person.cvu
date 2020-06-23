@@ -268,7 +268,7 @@ Person {
             foreach: false
             sectionTitle: ""
         
-            VSTack {
+            VStack {
                 padding: 10 36 5 36
             
                 Text {
@@ -393,5 +393,37 @@ Person[] {
             }
         }
         
+    }
+    
+    [renderer = thumbnail] {
+        spacing: 10
+        edgeInset: 10
+        
+        VStack {
+            Image {
+                image: {{.profilePicture}}
+                resizable: fit
+            }
+            Text {
+                text: "{.firstName} {.lastName}"
+                font: 16 semibold
+                color: #333
+                padding: 3 0 0 0
+            }
+        }
+    }
+    
+    [renderer = chart] {
+        chartType: bar /* or try: line - would plot age values vs height values */
+        /*chartTitle: "Override title"*/ /* Use this to override the auto-generated chart title */
+        
+        xAxisKey: age /* used only for line chart */
+        labelKey: firstName /* used for bar chart (also provides label on line chart) */
+        yAxisKey: height
+        
+        
+        sortProperty: height /* line chart ignores sort (automatically sorted by x-axis) */
+        sortAscending: true
+        press: openView /* open the person when pressing their value on the chart */
     }
 }

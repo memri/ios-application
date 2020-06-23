@@ -125,7 +125,7 @@ public struct UIElementView: SwiftUI.View {
                                 Text(LocalizedStringKey(self.get("title") ?? ""
                                     .camelCaseToWords()
                                     .lowercased()
-                                    .capitalizingFirstLetter())
+                                    .capitalizingFirst())
                                 )
                                 .generalEditorLabel()
                             }

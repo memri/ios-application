@@ -128,7 +128,7 @@ struct GeneralEditorSection: View {
             "subject": self.item,
             "readOnly": !self.context.currentSession.isEditMode,
             "sectionTitle": groupKey.camelCaseToWords().uppercased(),
-            "displayName": name.camelCaseToWords().capitalizingFirstLetter(),
+            "displayName": name.camelCaseToWords().capitalizingFirst(),
             "name": name,
             ".": value as Any
         ], uniquingKeysWith: { current, new in new }))

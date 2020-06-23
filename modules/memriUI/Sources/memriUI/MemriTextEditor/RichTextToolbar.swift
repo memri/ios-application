@@ -59,7 +59,7 @@ struct RichTextToolbarView: View {
             Divider()
             self.button(icon:
                 Image(systemName: "keyboard.chevron.compact.down")
-                    .foregroundColor(.black),
+                    .foregroundColor(Color(.label)),
                         action: {
                 self.textView?.resignFirstResponder()
             })

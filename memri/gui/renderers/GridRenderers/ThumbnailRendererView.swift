@@ -8,7 +8,7 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumbnail = {
+let registerThumbnailRenderer = {
     Renderers.register(
         name: "thumbnail",
         title: "Default",
@@ -66,7 +66,7 @@ struct ThumbnailRendererView: View {
     var name: String="thumbnail"
     
     var renderConfig: CascadingThumbnailConfig {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig([], ViewArguments())
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {

@@ -11,7 +11,7 @@ import UIKit
 import memriUI
 import Combine
 
-let registerRichText = {
+let registerRichTextEditorRenderer = {
     Renderers.register(
         name: "richTextEditor",
         title: "Default",

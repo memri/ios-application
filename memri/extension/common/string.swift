@@ -118,17 +118,31 @@ extension String: Error {
             }
         }
     }
-    func capitalizingFirstLetter() -> String {
-        return prefix(1).capitalized + dropFirst()
-    }
+    
 
     mutating func capitalizeFirstLetter() {
-        self = self.capitalizingFirstLetter()
+        self = self.capitalizingFirst()
     }
     
+    func camelCaseToTitleCase() -> String {
+        self.split { $0.isWhitespace }.map { $0.capitalizingFirst() }.joined(separator: " ")
+    }
+    
+    // Return nil if string is only whitespace
     var nilIfBlank: String? {
         guard self.contains(where: { !$0.isWhitespace }) else { return nil }
         return self
     }
+    
+    // Return real length of String. it's not absolute equal String.characters.count
+    func nsLength() -> Int {
+        return NSString(string: self).length
+    }
 }
 
+extension RangeReplaceableCollection where Element == Character {
+    func capitalizingFirst() -> String {
+        guard let first = first else { return String(self) }
+        return first.uppercased() + dropFirst()
+    }
+}
