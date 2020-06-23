@@ -1190,12 +1190,12 @@ class ActionSetProperty : Action, ActionExec {
         }
         
         // Check that the property exists to avoid hard crash
-        guard let schema = subject.objectSchema[propertyName] else {
+        guard let _ = subject.objectSchema[propertyName] else {
             throw "Exception: Invalid property access of \(propertyName) for \(subject)"
         }
-        print(subject.realm)
         
-        subject.set(propertyName, 565)
+        #warning("Ask Toby for how to cast this")
+        subject.set(propertyName, arguments["value"])
         
         // TODO refactor
         ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate()
