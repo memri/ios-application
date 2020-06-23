@@ -400,13 +400,17 @@ Person[] {
         edgeInset: 10
         
         VStack {
+            alignment: center
+            
             Image {
                 image: {{.profilePicture}}
+                cornerRadius: 10
                 resizable: fit
             }
             Text {
                 text: "{.firstName} {.lastName}"
-                font: 16 semibold
+                font: 12 semibold
+                textAlign: center
                 color: #333
                 padding: 3 0 0 0
             }
@@ -414,16 +418,13 @@ Person[] {
     }
     
     [renderer = chart] {
-        chartType: bar /* or try: line - would plot age values vs height values */
         /*chartTitle: "Override title"*/ /* Use this to override the auto-generated chart title */
         
         xAxisKey: age /* used only for line chart */
         labelKey: firstName /* used for bar chart (also provides label on line chart) */
         yAxisKey: height
         
-        
         sortProperty: height /* line chart ignores sort (automatically sorted by x-axis) */
         sortAscending: true
-        press: openView /* open the person when pressing their value on the chart */
     }
 }

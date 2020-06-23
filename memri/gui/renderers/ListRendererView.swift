@@ -24,7 +24,7 @@ let registerListRenderer = {
     Renderers.register(
         name: "list.alphabet",
         title: "Alphabet",
-        order: 1,
+        order: 10,
         view: AnyView(ListRendererView()),
         renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }

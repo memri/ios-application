@@ -12,7 +12,7 @@ let registerThumbWaterfallRenderer = {
     Renderers.register(
         name: "thumbnail.waterfall",
         title: "Waterfall Grid",
-        order: 30,
+        order: 130,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbWaterfallRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,

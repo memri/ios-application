@@ -12,7 +12,7 @@ let registerThumbGridRenderer = {
     Renderers.register(
         name: "thumbnail.grid",
         title: "Photo Grid",
-        order: 20,
+        order: 110,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbGridRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,

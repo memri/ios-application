@@ -12,7 +12,7 @@ let registerThumbnailRenderer = {
     Renderers.register(
         name: "thumbnail",
         title: "Default",
-        order: 10,
+        order: 100,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbnailRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,

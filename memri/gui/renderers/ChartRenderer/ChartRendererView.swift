@@ -12,10 +12,20 @@ import SwiftUI
 let registerChartRenderer = {
     Renderers.register(
         name: "chart",
-        title: "Default",
-        order: 3,
+        title: "Bar",
+        order: 500,
         icon: "chart.bar",
-        view: AnyView(ChartRendererView()),
+        view: AnyView(ChartRendererView(type:.bar)),
+        renderConfigType: CascadingChartConfig.self,
+        canDisplayResults: { items -> Bool in true }
+    )
+    
+    Renderers.register(
+        name: "chart.line",
+        title: "Line",
+        order: 510,
+        icon: "chart.line",
+        view: AnyView(ChartRendererView(type:.line)),
         renderConfigType: CascadingChartConfig.self,
         canDisplayResults: { items -> Bool in true }
     )
@@ -31,7 +41,7 @@ class CascadingChartConfig: CascadingRenderConfig {
     var labelKey: String? { cascadeProperty("labelKey") }
     var yAxisKey: String? { cascadeProperty("yAxisKey") }
     var yAxisMustStartAtZero: Bool { cascadeProperty("yAxisMustStartAtZero") ?? false }
-    var chartType: ChartType { cascadeProperty("chartType").flatMap(ChartType.init(rawValue:)) ?? .bar }
+//    var chartType: ChartType { cascadeProperty("chartType").flatMap(ChartType.init(rawValue:)) ?? .bar }
 }
 
 enum ChartType: String {
@@ -43,6 +53,7 @@ struct ChartRendererView: View {
     @EnvironmentObject var context: MemriContext
     
     let name = "chart"
+    let type:ChartType
     
     var renderConfig: CascadingChartConfig {
         (self.context.cascadingView.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([], ViewArguments())
@@ -57,7 +68,7 @@ struct ChartRendererView: View {
         if let title = renderConfig.chartTitle { return title }
         
         //Autogenerate title
-        switch renderConfig.chartType {
+        switch self.type {
         case .bar:
             return renderConfig.yAxisKey?.camelCaseToTitleCase()
         case .line:
@@ -75,7 +86,7 @@ struct ChartRendererView: View {
     
     var chartView: AnyView {
         let dataItems = context.items
-        switch renderConfig.chartType {
+        switch self.type {
         case .bar:
             guard let labelKey = renderConfig.labelKey, let yAxisKey = renderConfig.yAxisKey else { return missingDataView.eraseToAnyView() }
             let data = ChartHelper.generateLabelledYChartSetFromDataItems(dataItems, labelKey: labelKey, yAxisKey: yAxisKey)
@@ -114,6 +125,6 @@ struct ChartRendererView: View {
 
 struct ChartRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+        ChartRendererView(type:.bar).environmentObject(RootContext(name: "", key: "").mockBoot())
     }
 }

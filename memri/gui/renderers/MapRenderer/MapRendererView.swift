@@ -13,7 +13,7 @@ let registerMapRenderer = {
     Renderers.register(
         name: "map",
         title: "Default",
-        order: 3,
+        order: 300,
         icon: "map",
         view: AnyView(MapRendererView()),
         renderConfigType: CascadingMapConfig.self,

@@ -12,7 +12,7 @@ let registerThumbHorizontalGridRenderer = {
     Renderers.register(
         name: "thumbnail.horizontalgrid",
         title: "Horizontal Grid",
-        order: 20,
+        order: 120,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbHorizontalGridRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,
