@@ -282,9 +282,10 @@ class Address:DataItem {
     
     override var computedTitle:String {
         return """
+        \(type ?? "")
         \(street ?? "")
         \(city ?? "")
-        \(postalCode ?? ""), \(state ?? "")
+        \(postalCode == nil ? "" : postalCode! + ",") \(state ?? "")
         \(country?.computedTitle ?? "")
         """
     }

@@ -384,23 +384,18 @@
         ],
         "addresses":  [
             {
-                "type": "home",
-                "country": { "memriID": "United States" },
-                "city": "Washington, DC",
-                "state": "NW",
-                "street": "1600 Pennsylvania Ave",
-                "postalCode": "20500",
-                "labels": [
-                    { "name": "Government", "color": "#835506" }
-                ],
+                "type": "Home",
+                "location": {
+                    "latitude": -37.81,
+                    "longitude": 144.96
+                }
             },
             {
-                "type": "Holiday home in France",
-                "country": { "memriID": "France" },
-                "city": "Paris",
-                "state": "",
-                "street": "45 Rue de la plage",
-                "postalCode": "EL29"
+                "type": "Work",
+                "location": {
+                    "latitude": -37.83,
+                    "longitude": 144.96
+                }
             }
         ],
         "syncState": {
