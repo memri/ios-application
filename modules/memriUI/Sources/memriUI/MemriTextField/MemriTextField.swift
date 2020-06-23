@@ -16,9 +16,11 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
     var valueToString: (Value) -> String?
     var stringToValue: (String?) -> Value
     var textColor: UIColor?
+    var tintColor: UIColor?
     var placeholder: String?
     var allowEmpty: Bool = true
     var allowedCharacters: CharacterSet?
+    var clearButtonMode: UITextField.ViewMode = .never
     var keyboardType: UIKeyboardType = .default
     var returnKeyType: UIReturnKeyType = .default
     var showPrevNextButtons: Bool = true
@@ -57,8 +59,8 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
     
     public func updateUIView(_ textField: MemriTextField_UIKit, context: Context) {
         context.coordinator.parent = self
-        
         assignIfChanged(textField, \.textColor, newValue: self.textColor ?? .label)
+        assignIfChanged(textField, \.tintColor, newValue: self.tintColor)
         assignIfChanged(textField, \.attributedPlaceholder, newValue: self.placeholder.map {
             NSAttributedString(string: $0, attributes: [.foregroundColor : (self.textColor ?? .label).withAlphaComponent(0.5)])
         })
@@ -71,6 +73,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable
         {
             assignIfChanged(textField, \.font, newValue: self.font)
         }
+        assignIfChanged(textField, \.clearButtonMode, newValue: self.clearButtonMode)
         assignIfChanged(textField, \.keyboardType, newValue: self.keyboardType)
         assignIfChanged(textField, \.returnKeyType, newValue: self.returnKeyType)
         assignIfChanged(textField, \.textAlignment, newValue: self.textAlignment.nsTextAlignment)
@@ -169,7 +172,9 @@ public extension MemriTextField where Value == String?
         value: Binding<String?>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
+        tintColor: UIColor? = nil,
         allowedCharacters: CharacterSet? = nil,
+        clearButtonMode: UITextField.ViewMode = .never,
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
@@ -181,7 +186,9 @@ public extension MemriTextField where Value == String?
         stringToValue = { $0 }
         self.placeholder = placeholder
         self.textColor = textColor
+        self.tintColor = tintColor
         self.allowedCharacters = allowedCharacters
+        self.clearButtonMode = clearButtonMode
         self.keyboardType = keyboardType
         self.returnKeyType = returnKeyType
         self.showPrevNextButtons = showPrevNextButtons
@@ -194,7 +201,9 @@ public extension MemriTextField where Value == String
         value: Binding<String>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
+        tintColor: UIColor? = nil,
         allowedCharacters: CharacterSet? = nil,
+        clearButtonMode: UITextField.ViewMode = .never,
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
@@ -206,7 +215,9 @@ public extension MemriTextField where Value == String
         stringToValue = { $0 ?? "" }
         self.placeholder = placeholder
         self.textColor = textColor
+        self.tintColor = tintColor
         self.allowedCharacters = allowedCharacters
+        self.clearButtonMode = clearButtonMode
         self.keyboardType = keyboardType
         self.returnKeyType = returnKeyType
         self.showPrevNextButtons = showPrevNextButtons

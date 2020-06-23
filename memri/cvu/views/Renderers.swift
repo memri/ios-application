@@ -43,15 +43,16 @@ public class Renderers {
     init() {
         if allRenderers == nil { allRenderers = self }
         
-        registerCustom()
-        registerList()
-        registerGeneralEditor()
-        registerThumbnail()
-        registerThumbGrid()
-        registerThumbHorizontalGrid()
-        registerThumbWaterfall()
-        registerMap()
-        registerRichText()
+        registerCustomRenderer()
+        registerListRenderer()
+        registerGeneralEditorRenderer()
+        registerThumbnailRenderer()
+        registerThumbGridRenderer()
+        registerThumbHorizontalGridRenderer()
+        registerThumbWaterfallRenderer()
+        registerMapRenderer()
+        registerChartRenderer()
+        registerRichTextEditorRenderer()
     }
     
     var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {
@@ -126,7 +127,7 @@ protocol CascadingRendererDefaults {
 
 public class CascadingRenderConfig: Cascadable {
     
-    required init(_ cascadeStack: [CVUParsedRendererDefinition], _ viewArguments: ViewArguments) {
+    required init(_ cascadeStack: [CVUParsedRendererDefinition] = [], _ viewArguments: ViewArguments = .init()) {
         super.init(cascadeStack, viewArguments)
     }
     

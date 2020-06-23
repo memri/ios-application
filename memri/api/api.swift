@@ -286,7 +286,7 @@ public class PodAPI {
                 }
             """.data(using: .utf8)
         }
-        else {
+        else if query.match(#"^(\w+)$"#).count == 1 {
             let type = query.split(separator: " ").first ?? ""
             
             print("Requesting query result of \(type): \(queryOptions.query ?? "")")
@@ -308,6 +308,10 @@ public class PodAPI {
                   }
                 }
             """.data(using: .utf8)
+        }
+        else {
+            callback("Not implemented yet", nil)
+            return
         }
         
         self.http(.POST, path: "all", body: data) { error, data in

@@ -29,13 +29,13 @@ struct KeyboardToolbarView: View {
         Divider()
         self.button(icon:
             Image(systemName: "keyboard.chevron.compact.down")
-                .foregroundColor(.black),
+                        .foregroundColor(Color(.label)),
                     action: {
                         self.owner?.resignFirstResponder()
         })
     }
     .padding(.horizontal, 4)
-    .frame(height: 40)
+    .frame(minHeight: 40, idealHeight: 40, maxHeight: 60)
     .background(Color(.secondarySystemBackground))
     .edgesIgnoringSafeArea(.bottom)
   }

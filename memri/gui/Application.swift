@@ -21,6 +21,15 @@ extension View {
     }
 }
 
+
+var memri_shouldUseLargeScreenLayout: Bool {
+    #if targetEnvironment(macCatalyst)
+    return true
+    #else
+    return UIDevice.current.userInterfaceIdiom == .pad
+    #endif
+}
+
 struct Application: View {
     @EnvironmentObject var context: MemriContext
     
@@ -30,9 +39,11 @@ struct Application: View {
             NavigationWrapper(isVisible: self.context.showNavigationBinding) {
                 if self.context.showSessionSwitcher {
                     SessionSwitcher()
+                        .ignoreSafeAreaOnMac()
                 }
                 else {
                     Browser()
+                        .ignoreSafeAreaOnMac()
                 }
             }
                 DebugConsole()

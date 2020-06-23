@@ -29,28 +29,22 @@ public struct SubView : View {
             guard let context = context as? RootContext else {
                 throw "Exception: Too much nesting"
             }
-            let storedDef = context.views.fetchDefinitions(name:viewName, type:"view").first
-            var def = try context.views.parseDefinition(storedDef)
-            if def is CVUParsedSessionDefinition {
-                if let list = def?["views"] as? [CVUParsedViewDefinition] { def = list.first }
-            }
-            guard let viewDef = def else {
-                throw "Exception: Missing view"
+            
+            let stored = context.views.fetchDefinitions(name:viewName, type:"view").first
+            var parsed = try context.views.parseDefinition(stored)
+            
+            if parsed is CVUParsedSessionDefinition {
+                if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
             }
             
             args.set(".", dataItem)
             
-            var values = [
-                "viewDefinition": storedDef,
-                "viewArguments": args
-            ]
+            let view = try SessionView.fromCVUDefinition(
+                parsed: parsed as? CVUParsedViewDefinition,
+                stored: stored,
+                viewArguments: args
+            )
             
-            if let sourceDef = viewDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-                values["datasource"] = try Datasource.fromCVUDefinition(sourceDef, args)
-            }
-            
-            let view = SessionView(value: values)
-        
             let session = Session()
             session.views.append(view)
             session.currentViewIndex = 0

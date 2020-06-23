@@ -48,7 +48,7 @@ public class Installer {
                 realm.create(AuditItem.self, value: [
                     "action": "install",
                     "date": Date(),
-                    "contents": serialize(["version": "1.0"])
+                    "contents": try serialize(["version": "1.0"])
                 ])
             }
         }

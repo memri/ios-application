@@ -82,11 +82,13 @@ public class Sessions: DataItem {
             if let setting = setting {
                 
                 // Set it as the memriID
-                if let memriID: String = unserialize(setting.json) {
-                    self.memriID = memriID
+                do {
+                    let memriID:String? = try unserialize(setting.json)
+                    self.memriID = memriID ?? ""
                 }
-                else {
-                    print("Cannot unserialize settings.json")
+                catch let error {
+                    print(error)
+                    debugHistory.error("\(error)")
                 }
             }
         }
@@ -160,8 +162,8 @@ public class Sessions: DataItem {
                         "selector": "[sessions = '\(self.memriID)']",
                         "name": self.memriID,
                         "currentSessionIndex": Int(parsed["sessionsDefinition"] as? Double ?? 0),
-                        "sessions": (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
-                            .map { Session.fromCVUDefinition($0) }
+                        "sessions": try (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
+                            .map { try Session.fromCVUDefinition($0) }
                     ])
                 }
                 return

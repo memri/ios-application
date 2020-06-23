@@ -408,6 +408,7 @@
         "firstName": "Bob",
         "lastName": "Brown",
         "age": 37,
+        "height": 197,
         "relations": [{"memriID":"0x011"}],
         "profilePicture": {
             "uri": "/tmp/lfw/Michael_Douglas/Michael_Douglas_0005.jpg"
@@ -426,6 +427,7 @@
         "firstName": "Alice",
         "lastName": "Awesome",
         "age": 21,
+        "height": 141,
         "dateCreated": "1996-12-20T00:39:57Z",
         "profilePicture": {
             "uri": "/tmp/lfw/Norah_Jones/Norah_Jones_0007.jpg"

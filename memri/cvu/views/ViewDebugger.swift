@@ -97,6 +97,18 @@ class DebugHistory: ObservableObject {
     
     var log = [InfoState]()
     
+    private func time() -> String {
+        let d = Date()
+        
+        let dateFormatter = DateFormatter()
+        
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        
+        return "[\(dateFormatter.string(from: d))]"
+    }
+    
     func info(_ message:String/*, _ cascadingView:ComputedView*/){
         // if same view
         if log.last?.displayMessage == message {
@@ -108,6 +120,8 @@ class DebugHistory: ObservableObject {
     //            cascadingView: cascadingView
             ))
         }
+        
+        print("\(time()) INFO: \(message)")
     }
     
     func warn(_ message:String/*, _ cascadingView:ComputedView*/){
@@ -125,6 +139,8 @@ class DebugHistory: ObservableObject {
         if Settings.get("device/debug/autoShowErrorConsole") ?? false {
             showErrorConsole = true
         }
+        
+        print("\(time()) WARNING: \(message)")
     }
     
     func error(_ message:String/*, _ cascadingView:ComputedView*/){
@@ -142,6 +158,8 @@ class DebugHistory: ObservableObject {
         if Settings.get("device/debug/autoShowErrorConsole") ?? false {
             showErrorConsole = true
         }
+        
+        print("\(time()) WARNING: \(message)")
     }
     
     func clear(){
@@ -159,6 +177,8 @@ struct DebugConsole: View {
     
     @ObservedObject var history = debugHistory
     
+    @State var scrollPosition: ASTableViewScrollPosition?
+    
     var body: some View {
         let dateFormatter = DateFormatter()
         
@@ -174,6 +194,9 @@ struct DebugConsole: View {
                             .font(.system(size: 14, weight: .semibold))
                             .padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
                             .foregroundColor(Color(hex:"555"))
+                        Button(action: { self.scrollPosition = .top  }) {
+                            Text("scroll to top")
+                        }
                         Spacer()
                         Button(action: { self.history.clear() }) {
                             Text("clear")
@@ -228,6 +251,7 @@ struct DebugConsole: View {
                             .padding(.vertical, 4)
                             .fullWidth()
                     })
+                    .scrollPositionSetter($scrollPosition)
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .background(Color.white.edgesIgnoringSafeArea(.all))

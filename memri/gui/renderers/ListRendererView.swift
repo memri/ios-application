@@ -10,7 +10,7 @@ import Combine
 import SwiftUI
 import ASCollectionView
 
-let registerList = {
+let registerListRenderer = {
     Renderers.register(
         name: "list",
         title: "Default",
@@ -24,7 +24,7 @@ let registerList = {
     Renderers.register(
         name: "list.alphabet",
         title: "Alphabet",
-        order: 1,
+        order: 10,
         view: AnyView(ListRendererView()),
         renderConfigType: CascadingListConfig.self,
         canDisplayResults: { items -> Bool in true }
@@ -52,19 +52,15 @@ struct ListRendererView: View {
     
     let name = "list"
     
-    var renderConfig: CascadingListConfig? {
-        self.context.cascadingView.renderConfig as? CascadingListConfig
+    var renderConfig: CascadingListConfig {
+        self.context.cascadingView.renderConfig as? CascadingListConfig ?? CascadingListConfig()
     }
     
     var body: some View {
-        let renderConfig = self.renderConfig
         let context = self.context
         
         return VStack {
-            if renderConfig == nil {
-                Text("Unable to render this view")
-            }
-            else if context.cascadingView.resultSet.count == 0 {
+            if context.cascadingView.resultSet.count == 0 {
                 HStack (alignment: .top)  {
                     Spacer()
                     Text(context.cascadingView.emptyResultText)
@@ -83,22 +79,22 @@ struct ListRendererView: View {
                                   data: context.items,
                                   dataID: \.memriID,
                                   onSwipeToDelete: { index, item, callback in
-                            context.executeAction(ActionDelete(context), with: item)
-                            callback(true)
-                        }
+                                      context.executeAction(ActionDelete(context), with: item)
+                                      callback(true)
+                                  }
                         ) { dataItem, cellContext in
-                            renderConfig?.render(item: dataItem)
+                            self.renderConfig.render(item: dataItem)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                            .environmentObject(context)
+                                .environmentObject(context)
                         }
                         .onSelectSingle({ (index) in
-                            if let press = renderConfig?.press {
+                            if let press = self.renderConfig.press {
                                 context.executeAction(press, with: context.items[safe: index])
                             }
                         })
-                        )
+                )
                 .alwaysBounce()
-                    .environment(\.editMode, $context.currentSession.swiftUIEditMode)
+                .environment(\.editMode, $context.currentSession.swiftUIEditMode)
                 
             }
         }

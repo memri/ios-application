@@ -40,8 +40,16 @@ struct NavigationWrapper<Content: View>: View {
     }
     
     var body: some View {
-        GeometryReader { geom in
-            self.body(withGeom: geom)
+        Group {
+            if memri_shouldUseLargeScreenLayout {
+                GeometryReader { geom in
+                    self.bodyForLargeScreen(withGeom: geom)
+                }
+            } else {
+                GeometryReader { geom in
+                    self.body(withGeom: geom)
+                }
+            }
         }
     }
     
@@ -75,6 +83,15 @@ struct NavigationWrapper<Content: View>: View {
                     .transition(.move(edge: .leading))
                 .zIndex(15)
             }
+        }
+    }
+    
+    func bodyForLargeScreen(withGeom geom: GeometryProxy) -> some View {
+        HStack(spacing: 0) {
+            Navigation()
+                .frame(width: 300)
+                .edgesIgnoringSafeArea(.all)
+            content
         }
     }
     
@@ -117,13 +134,18 @@ struct Navigation: View {
                     SettingsPane().environmentObject(self.context)
                 }
                 
-                MemriTextField(value: $context.navigation.filterText,
-                               placeholder: "Search",
-                               textColor: UIColor(hex:"#8a66bc"),
-                               showPrevNextButtons: false)
+                MemriTextField(
+                    value: $context.navigation.filterText,
+                    placeholder: "Search",
+                    textColor: UIColor(hex:"#8a66bc"),
+                    tintColor: UIColor.white,
+                    clearButtonMode: .always,
+                    showPrevNextButtons: false
+                )
                 .layoutPriority(-1)
                     .padding(5)
                     .padding(.horizontal, 5)
+                    .accentColor(.white)
                     .background(Color(hex:"#341e51"))
                     .cornerRadius(5)
                 

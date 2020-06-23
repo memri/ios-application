@@ -2,6 +2,7 @@
     inherit: {{view}}
     
 /*    title: "Starred {view.title}"*/
+    title: "Starred"
     
     [datasource = pod] {
         query: "{view.datasource.query} AND starred = true"

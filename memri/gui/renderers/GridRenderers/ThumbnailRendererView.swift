@@ -1,5 +1,5 @@
 //
-//  TumbnailRenderer.swift
+//  ThumbnailRendererView.swift
 //  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
@@ -8,11 +8,11 @@
 import SwiftUI
 import ASCollectionView
 
-let registerThumbnail = {
+let registerThumbnailRenderer = {
     Renderers.register(
         name: "thumbnail",
         title: "Default",
-        order: 10,
+        order: 100,
         icon: "square.grid.3x2.fill",
         view: AnyView(ThumbnailRendererView()),
         renderConfigType: CascadingThumbnailConfig.self,
@@ -66,7 +66,7 @@ struct ThumbnailRendererView: View {
     var name: String="thumbnail"
     
     var renderConfig: CascadingThumbnailConfig {
-        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig([], ViewArguments())
+        self.context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
     }
     
     var layout: ASCollectionLayout<Int> {
