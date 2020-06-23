@@ -11,7 +11,7 @@ import UIKit
 import memriUI
 import Combine
 
-let registerRichText = {
+let registerRichTextEditorRenderer = {
     Renderers.register(
         name: "richTextEditor",
         title: "Default",
@@ -61,11 +61,11 @@ struct RichTextRendererView: View {
         let dataItem = self.context.cascadingView.resultSet.singletonItem
         
         return VStack(spacing: 0) {
-            if context.cascadingView.resultSet.singletonItem != nil {
-                _RichTextEditor(dataItem: dataItem!,
+            dataItem.map { dataItem in
+                _RichTextEditor(dataItem: dataItem,
                                 filterText: $context.cascadingView.filterText)
             }
-        }.padding(.horizontal, 6)
+        }
     }
 }
 

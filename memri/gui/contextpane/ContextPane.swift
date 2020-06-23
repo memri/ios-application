@@ -28,7 +28,7 @@ struct ContextPane: View {
     }
     
     func paneWidth(_ geom: GeometryProxy) -> CGFloat {
-        geom.size.width * widthRatio
+        min(geom.size.width * widthRatio, 300)
     }
     
     func cappedOffset(_ geom: GeometryProxy) -> CGFloat {

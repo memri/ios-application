@@ -118,10 +118,15 @@ public class CascadingView: Cascadable, ObservableObject {
                 .filter { $0.name == activeRenderer || $0.name == activeRenderer.components(separatedBy: ".").first }.first
         }
         
-        let renderDSLDefinitions = context!.views
-            .fetchDefinitions(name:activeRenderer, type:"renderer")
+        var renderDef:[CVUStoredDefinition] = context?.views
+            .fetchDefinitions(name:activeRenderer, type:"renderer") ?? []
         
-        for def in renderDSLDefinitions {
+        if activeRenderer.contains("."), let name = activeRenderer.split(separator: ".").first {
+            renderDef.append(contentsOf: context?.views
+                .fetchDefinitions(name: String(name), type:"renderer") ?? [])
+        }
+        
+        for def in renderDef {
             do {
                 if let parsedRenderDef = try context?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
                     if parsedRenderDef.domain == "user" {

@@ -31,12 +31,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         }
         
         // Use a UIHostingController as window root view controller.
-        if let windowScene = scene as? UIWindowScene {
-            let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: application)
-            self.window = window
-            window.makeKeyAndVisible()
+        guard let windowScene = scene as? UIWindowScene else { return }
+            
+        let window = UIWindow(windowScene: windowScene)
+        window.rootViewController = UIHostingController(rootView: application)
+        
+        #if targetEnvironment(macCatalyst)
+        if let titlebar = windowScene.titlebar {
+            titlebar.titleVisibility = .hidden
+            titlebar.toolbar = nil
         }
+        #endif
+        
+        self.window = window
+        window.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

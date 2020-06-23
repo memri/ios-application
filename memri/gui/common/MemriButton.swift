@@ -21,7 +21,7 @@ public struct MemriButton : View {
         if type == "" { type = item.genericType }
         
         return HStack (spacing:0) {
-            Text(type.camelCaseToWords().capitalizingFirstLetter())
+            Text(type.camelCaseToWords().capitalizingFirst())
                 .padding(.trailing, 8)
                 .padding(.leading, 8)
                 .padding(.vertical, 3)

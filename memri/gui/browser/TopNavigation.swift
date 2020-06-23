@@ -94,7 +94,7 @@ public struct TopNavigation: View {
         return VStack (alignment: .leading, spacing: 0) {
             HStack(alignment: .top, spacing: 10) {
                 
-                if !inSubView {
+                if !inSubView && !memri_shouldUseLargeScreenLayout {
                     ActionButton(action: ActionShowNavigation(context))
                         .font(Font.system(size: 20, weight: .semibold))
                 }

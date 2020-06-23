@@ -9,11 +9,11 @@ import Foundation
 import Combine
 import SwiftUI
 
-let registerMap = {
+let registerMapRenderer = {
     Renderers.register(
         name: "map",
         title: "Default",
-        order: 3,
+        order: 300,
         icon: "map",
         view: AnyView(MapRendererView()),
         renderConfigType: CascadingMapConfig.self,
@@ -38,10 +38,11 @@ struct MapRendererView: View {
     }
     
     var body: some View {
-        return VStack {
-//            if context.cascadingView.resultSet.count == 0 {
-            MapView(locations: nil, addresses: context.items as? [Address]) // TODO Refactor: this is very not generic
-        }
+        #if targetEnvironment(macCatalyst)
+        return Text("Map is not supported on Mac yet.")
+        #else
+        return MapView(locations: nil, addresses: context.items as? [Address]) // TODO Refactor: this is very not generic
+        #endif
     }
 }
 
