@@ -247,7 +247,7 @@ class Sync {
                     
                     // Set the new id from the server
                     if let id = id {
-                        item.uid = id
+                        item.set("uid", id)
                         callback(nil, true)
                     }
                     else {

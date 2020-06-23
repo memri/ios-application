@@ -30,11 +30,11 @@ public class Installer {
             // Load default navigation items in database
             context.navigation.install()
             
+            // Load default settings in database
+            try context.settings.install()
+            
             // Load default objects in database
             context.cache.install()
-            
-            // Load default settings in database
-            context.settings.install()
             
             // Load default views in database
             context.views.context = context

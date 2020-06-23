@@ -1101,11 +1101,63 @@ class ActionRunIndexerInstance : Action, ActionExec {
         
         if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance {
             
-            context.podAPI.runIndexerInstance(indexerInstance, 5){ error, succes in
-                if let error = error{
-                    print("Cannot execute actionIndex: \(error)")
-                }
-            }
+                    // First make sure the indexer exists
+                    if let memriID: String = indexerInstance.get("memriID") {
+                        print("starting IndexerInstance with memrID \(memriID)")
+                        indexerInstance.set("progress", 0)
+                        self.context.scheduleUIUpdate()
+                        // TODO: indexerInstance items should have been automatically created already by now
+                        let uid:Int? = indexerInstance.get("uid")
+                        print(uid)
+            //            self.create(item) { error, data in
+            //                if let data = data {
+                                let start = Date()
+
+                                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                                    let timePassed = Int(Date().timeIntervalSince(start))
+                                    print("polling indexerInstance")
+                                    self.context.podAPI.get(memriID) { error, data in
+                                        if let updatedInstance = data as? IndexerInstance {
+                                            
+                                            
+                                            
+                                        
+                                            if let progress: Int = updatedInstance.get("progress") {
+                                                if timePassed > 5 || progress >= 100 {
+                                                    timer.invalidate()
+                                                }
+                                                else{
+                                                    print("setting random progress")
+                                                    let randomProgress = Int.random(in: 1...20)
+                                                    indexerInstance.set("progress", randomProgress)
+                                                    self.context.scheduleUIUpdate()
+                                                    
+                                                    let p:Int? = indexerInstance.get("progress")
+                                                    print(p)
+                                                }
+                                            }
+                                            else {
+                                                print("ERROR, could not get progress \(error)")
+                                                timer.invalidate()
+                                            }
+                                        }
+                                        else {
+                                            print("Error, no instance")
+                                            timer.invalidate()
+                                        }
+                                    }
+                                }
+                                
+            //                }
+            //                else{
+            //                    print("Error \(error)")
+            //                }
+                    
+            //            }
+                    }
+                    else{
+                        print("Error, no memriID")
+                    }
         }
     }
     

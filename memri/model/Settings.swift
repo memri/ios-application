@@ -54,7 +54,7 @@ public class Settings {
     
     /// Initialize SettingsCollection objects for default, device and user-settings. Populate them by reading the default settings from
     /// disk and updating the empty SettingCollections.
-    public func install() {
+    public func install() throws {
         let defaults = SettingCollection(value: ["type": "defaults"])
         let device = SettingCollection(value: ["type": "device"])
         let user = SettingCollection(value: ["type": "user"])
@@ -83,6 +83,11 @@ public class Settings {
         catch {
             debugHistory.error("Failed to install settings: \(error)")
         }
+        
+        try self.load(){
+            
+        }
+        
     }
     
     
