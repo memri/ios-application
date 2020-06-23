@@ -50,7 +50,7 @@ public class MemriContext: ObservableObject {
  
     public var items: [DataItem] {
         get {
-            self.cascadingView.resultSet.items
+            return self.cascadingView.resultSet.items
         }
         set {
             // Do nothing

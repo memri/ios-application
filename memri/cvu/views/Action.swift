@@ -693,7 +693,8 @@ class ActionShowStarred : Action, ActionExec {
         "icon": "star.fill",
         "binding": Expression("view.userState.showStarred"),
         "opensView": true,
-        "activeColor": Color(hex: "#ffdb00")
+        "activeColor": Color(hex: "#ffdb00"),
+        "withAnimation": false
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){

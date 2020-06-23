@@ -250,8 +250,6 @@ public class CascadingView: Cascadable, ObservableObject {
             userState.set("searchMatchText", newValue)
         }
     }
-
-
     
     init(_ sessionView:SessionView,
          _ cascadeStack:[CVUParsedDefinition]
