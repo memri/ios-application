@@ -211,11 +211,13 @@
 		86DDB361247AAD030051A92F /* Cascadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB360247AAD030051A92F /* Cascadable.swift */; };
 		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
 		86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB363247AD0400051A92F /* CVUValidatorTests.swift */; };
-		B809BC9424A16ECE007E38CE /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; };
-		B809BC9524A16ECE007E38CE /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B809BC9424A16ECE007E38CE /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; platformFilter = ios; };
+		B809BC9524A16ECE007E38CE /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B809BC9224A16D64007E38CE /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B86FC6742499E79700112A5F /* memriUI in Frameworks */ = {isa = PBXBuildFile; productRef = B86FC6732499E79700112A5F /* memriUI */; };
+		B88AAB1F24A1AA5D0007C9EB /* MapboxMobileEvents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */; platformFilter = ios; };
+		B88AAB2024A1AA5D0007C9EB /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
 		B8FB4993249EFBF3007A05C4 /* ScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4992249EFBF3007A05C4 /* ScreenSize.swift */; };
@@ -252,6 +254,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B88AAB2024A1AA5D0007C9EB /* MapboxMobileEvents.framework in Embed Frameworks */,
 				B809BC9524A16ECE007E38CE /* Mapbox.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -451,6 +454,7 @@
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B86FC6722499E79000112A5F /* memriUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = memriUI; path = modules/memriUI; sourceTree = SOURCE_ROOT; };
 		B8A7CBBF249F3C1E007BC730 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapboxMobileEvents.framework; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
 		B8FB4992249EFBF3007A05C4 /* ScreenSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSize.swift; sourceTree = SOURCE_ROOT; };
@@ -475,6 +479,7 @@
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
 				B86FC6742499E79700112A5F /* memriUI in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
+				B88AAB1F24A1AA5D0007C9EB /* MapboxMobileEvents.framework in Frameworks */,
 				B809BC9424A16ECE007E38CE /* Mapbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -696,8 +701,8 @@
 				5D0A28B5240671C700398B17 /* memriTests.xctest */,
 				868EF64724766B2200C0375F /* memriParserTests */,
 				5D487F1C2440735E00B50202 /* Recovered References */,
-				B809BC9224A16D64007E38CE /* Mapbox.framework */,
 				B8A7CBBF249F3C1E007BC730 /* memriUITests.xctest */,
+				B88AAB1A24A1A99F0007C9EB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1099,6 +1104,15 @@
 				86CDB486246A61F3007EAE67 /* defaults.cvu */,
 			);
 			path = styles;
+			sourceTree = "<group>";
+		};
+		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B809BC9224A16D64007E38CE /* Mapbox.framework */,
+				B88AAB1D24A1AA590007C9EB /* MapboxMobileEvents.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		B8FB4998249F317E007A05C4 /* UIKit */ = {
