@@ -1,6 +1,6 @@
 # iOS application
 
-The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data.
+The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data. There is no real installation, but XCode (and thus macOS) is required. To run the app open the project in XCode and run in a simulator.
 
 ## Developer
 
@@ -11,6 +11,7 @@ The memri iOS application can be used to connect to your [pod](https://gitlab.me
 
 #### Run formatter
 *make sure to run this from the repo directory only*
+
 ```swift-format . --configuration .swift-format.json```
 
 ## Defining your own interface

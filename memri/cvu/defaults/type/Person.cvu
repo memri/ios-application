@@ -244,15 +244,16 @@ Person {
                 minHeight: 165
                 
                 view {
-                    defaultRenderer: thumbnail.grid
+                    defaultRenderer: thumbnail.horizontalgrid
                     
                     [datasource = pod] {
                         query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
                     }
                     
-                    [renderer = thumbnail] {
-                        columns: 5
-                        itemInset: 0
+                    [renderer = thumbnail.horizontalgrid] {
+                        columns: 2
+                        edgeInset: 0
+                        allowBounce: false
                     }
                 }
                 arguments: {
