@@ -758,13 +758,15 @@ class ImporterInstance:DataItem{
 }
 
 
-class Indexer:DataItem{
+public class Indexer:DataItem{
     override var genericType:String { "Indexer" }
     @objc dynamic var name:String = ""
     @objc dynamic var indexerDescription:String = ""
     @objc dynamic var query:String = ""
     @objc dynamic var icon:String = ""
     @objc dynamic var bundleImage:String = ""
+    @objc dynamic var runDestination:String = ""
+
     
     let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
     
@@ -785,7 +787,8 @@ class Indexer:DataItem{
             indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
             icon = try decoder.decodeIfPresent("icon") ?? icon
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
-            
+            runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
+
             decodeIntoList(decoder, "runs", self.runs)
             
             try self.superDecode(from: decoder)
@@ -793,17 +796,8 @@ class Indexer:DataItem{
     }
 }
 
-class LocalIndexer:Indexer {
-    
-    
-    func index() {
-        
-    }
-}
 
-
-
-class IndexerInstance:DataItem{
+public class IndexerInstance:DataItem{
     override var genericType:String { "IndexerInstance" }
     @objc dynamic var name:String = "unknown indexer instance"
     @objc dynamic var query:String = ""

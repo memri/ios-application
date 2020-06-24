@@ -39,6 +39,8 @@ public class MemriContext: ObservableObject {
     public var installer: Installer
  
     public var podAPI: PodAPI
+    
+    public var indexerAPI: IndexerAPI
  
     public var cache: Cache
  
@@ -348,7 +350,8 @@ public class MemriContext: ObservableObject {
         views: Views,
         cascadingView: CascadingView,
         navigation: MainNavigation,
-        renderers: Renderers
+        renderers: Renderers,
+        indexerAPI: IndexerAPI
     ) {
         self.name = name
         self.podAPI = podAPI
@@ -361,6 +364,7 @@ public class MemriContext: ObservableObject {
         self.cascadingView = cascadingView
         self.navigation = navigation
         self.renderers = renderers
+        self.indexerAPI = indexerAPI
         
         // TODO: FIX
         self.cascadingView.context = self
@@ -387,7 +391,8 @@ public class SubContext: MemriContext {
             views: views,
             cascadingView: context.cascadingView,
             navigation: context.navigation,
-            renderers: context.renderers
+            renderers: context.renderers,
+            indexerAPI: context.indexerAPI
         )
         
         self.closeStack = context.closeStack
@@ -426,7 +431,8 @@ public class RootContext: MemriContext {
             views: Views(realm),
             cascadingView: CascadingView(SessionView(), []),
             navigation: MainNavigation(realm),
-            renderers: Renderers()
+            renderers: Renderers(),
+            indexerAPI: IndexerAPI()
         )
         
         self.cascadingView.context = self

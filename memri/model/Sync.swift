@@ -150,15 +150,15 @@ class Sync {
                         for item in items {
                             // TODO handle sync errors
                             do {
-                                #warning("Remove this when the new backend is in place")
-                                if !["Indexer", "IndexerInstance", "Importer", "ImporterInstance"].contains(item.genericType) {
+//                                #warning("Remove this when the new backend is in place")
+//                                if !["Indexer", "IndexerInstance", "Importer", "ImporterInstance"].contains(item.genericType) {
                                     let cachedItem = try cache.addToCache(item)
                                     if cachedItem.syncState?.actionNeeded != "deleted" {
                                         // Add item to result
                                         result.append(cachedItem)
                                     }
                                     // Ignore items marked for deletion
-                                }
+//                                }
                             }
                             catch {
                                 print("\(error)")

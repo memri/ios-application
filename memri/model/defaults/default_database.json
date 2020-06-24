@@ -18,8 +18,9 @@
         "icon": "mappin.and.ellipse"
     },
     {
-        "type": "LocalIndexer",
+        "type": "Indexer",
         "name": "Lists indexer",
+        "runDestination": "ios",
         "indexerDescription": "extracts todo, to read, to watch lists from notes",
         "icon": "text.badge.plus"
     },
