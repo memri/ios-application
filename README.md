@@ -6,6 +6,10 @@ The memri iOS application can be used to connect to your [pod](https://gitlab.me
 ![Semantic description of image](/readme_images/Screenshot2.png "Image Title")
 ![Semantic description of image](/readme_images/Screenshot3.png "Image Title")
 
+| Default aligned | Left aligned | Center aligned  |
+|-------------------------|-------------------------|-------------------------|
+| ![Semantic description of image](/readme_images/Screenshot1.png "Image Title") | ![Semantic description of image](/readme_images/Screenshot2.png "Image Title")  | ![Semantic description of image](/readme_images/Screenshot3.png "Image Title") |
+
 ## Developer
 
 ### formatter
