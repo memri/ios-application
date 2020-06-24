@@ -2,9 +2,11 @@
 
 The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data. There is no real installation, but XCode (and thus macOS) is required. To run the app open the project in XCode and run in a simulator.
 
-| Notes overview | Main menu | Note |
-|-------------------------|-------------------------|-------------------------|
-| ![Screenshot of Memri](/readme_images/Screenshot1.png "Notes overview") | ![Screenshot of Memri](/readme_images/Screenshot2.png "Main menu")  | ![Screenshot of Memri](/readme_images/Screenshot3.png "Note with markup menu") |
+<p float="left">
+  <img src="readme_images/Screenshot1.png" height="512" />
+  <img src="readme_images/Screenshot2.png" height="512" /> 
+  <img src="readme_images/Screenshot3.png" height="512" />
+</p>
 
 ## Developer
 
