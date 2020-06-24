@@ -18,6 +18,12 @@
         "icon": "mappin.and.ellipse"
     },
     {
+        "type": "LocalIndexer",
+        "name": "Lists indexer",
+        "indexerDescription": "extracts todo, to read, to watch lists from notes",
+        "icon": "text.badge.plus"
+    },
+    {
         "type": "Photo",
         "width": 250,
         "height": 250,

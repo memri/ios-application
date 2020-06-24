@@ -791,8 +791,17 @@ class Indexer:DataItem{
             try self.superDecode(from: decoder)
         }
     }
-    
 }
+
+class LocalIndexer:Indexer {
+    
+    
+    func index() {
+        
+    }
+}
+
+
 
 class IndexerInstance:DataItem{
     override var genericType:String { "IndexerInstance" }
