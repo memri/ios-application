@@ -113,6 +113,9 @@ extension MemriContext {
             else if action.argumentTypes[argName] == [Action].self {
                 finalValue = argValue ?? []
             }
+            else if action.argumentTypes[argName] == AnyObject.self {
+                finalValue = argValue ?? nil
+            }
             // TODO are nil values allowed?
             else if argValue == nil {
                 finalValue = nil
@@ -380,7 +383,8 @@ public enum ActionFamily: String, CaseIterable {
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-        link, closePopup, unlink, multiAction, noop, runIndexerInstance, runImporterInstance
+        link, closePopup, unlink, multiAction, noop, runIndexerInstance, runImporterInstance,
+        setProperty
 
     func getType() -> Action.Type {
         switch self {
@@ -409,6 +413,7 @@ public enum ActionFamily: String, CaseIterable {
         case .multiAction: return ActionMultiAction.self
         case .runIndexerInstance: return ActionRunIndexerInstance.self
         case .runImporterInstance: return ActionRunImporterInstance.self
+        case .setProperty: return ActionSetProperty.self
         case .noop: fallthrough
         default: return ActionNoop.self
         }
@@ -1099,65 +1104,51 @@ class ActionRunIndexerInstance : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
-        if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance {
+        guard let indexerInstance = arguments["indexerInstance"] as? IndexerInstance else {
+            throw "Error, no memriID"
+        }
             
-                    // First make sure the indexer exists
-                    if let memriID: String = indexerInstance.get("memriID") {
-                        print("starting IndexerInstance with memrID \(memriID)")
-                        indexerInstance.set("progress", 0)
-                        self.context.scheduleUIUpdate()
-                        // TODO: indexerInstance items should have been automatically created already by now
-                        let uid:Int? = indexerInstance.get("uid")
-                        print(uid)
-            //            self.create(item) { error, data in
-            //                if let data = data {
-                                let start = Date()
+        // First make sure the indexer exists
+        if let memriID: String = indexerInstance.get("memriID") {
+            print("starting IndexerInstance with memrID \(memriID)")
+            indexerInstance.set("progress", 0)
+            self.context.scheduleUIUpdate()
+            // TODO: indexerInstance items should have been automatically created already by now
+            let uid:Int? = indexerInstance.get("uid")
+            
+            let start = Date()
 
-                                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                                    let timePassed = Int(Date().timeIntervalSince(start))
-                                    print("polling indexerInstance")
-                                    self.context.podAPI.get(memriID) { error, data in
-                                        if let updatedInstance = data as? IndexerInstance {
-                                            
-                                            
-                                            
-                                        
-                                            if let progress: Int = updatedInstance.get("progress") {
-                                                if timePassed > 5 || progress >= 100 {
-                                                    timer.invalidate()
-                                                }
-                                                else{
-                                                    print("setting random progress")
-                                                    let randomProgress = Int.random(in: 1...20)
-                                                    indexerInstance.set("progress", randomProgress)
-                                                    self.context.scheduleUIUpdate()
-                                                    
-                                                    let p:Int? = indexerInstance.get("progress")
-                                                    print(p)
-                                                }
-                                            }
-                                            else {
-                                                print("ERROR, could not get progress \(error)")
-                                                timer.invalidate()
-                                            }
-                                        }
-                                        else {
-                                            print("Error, no instance")
-                                            timer.invalidate()
-                                        }
-                                    }
-                                }
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                let timePassed = Int(Date().timeIntervalSince(start))
+                print("polling indexerInstance")
+                self.context.podAPI.get(memriID) { error, data in
+                    if let updatedInstance = data as? IndexerInstance {
+                        
+                        if let progress: Int = updatedInstance.get("progress") {
+                            if timePassed > 5 || progress >= 100 {
+                                timer.invalidate()
+                            }
+                            else{
+                                print("setting random progress")
+                                let randomProgress = Int.random(in: 1...20)
+                                indexerInstance.set("progress", randomProgress)
+                                self.context.scheduleUIUpdate()
                                 
-            //                }
-            //                else{
-            //                    print("Error \(error)")
-            //                }
-                    
-            //            }
+                                let p:Int? = indexerInstance.get("progress")
+                                print(p)
+                            }
+                        }
+                        else {
+                            print("ERROR, could not get progress \(error)")
+                            timer.invalidate()
+                        }
                     }
-                    else{
-                        print("Error, no memriID")
+                    else {
+                        print("Error, no instance")
+                        timer.invalidate()
                     }
+                }
+            }
         }
     }
     
@@ -1177,6 +1168,41 @@ class ActionClosePopup : Action, ActionExec {
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
         execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
+    }
+}
+
+class ActionSetProperty : Action, ActionExec {
+    override var defaultValues:[String:Any] {[
+        "argumentTypes": ["subject": DataItemFamily.self, "property": String.self, "value": AnyObject.self]
+    ]}
+    
+    required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
+        super.init(context, "setProperty", arguments:arguments, values:values)
+    }
+    
+    func exec(_ arguments:[String: Any]) throws {
+        guard let subject = arguments["subject"] as? DataItem else {
+            throw "Exception: subject is not set"
+        }
+        
+        guard let propertyName = arguments["property"] as? String else {
+            throw "Exception: property is not set to a string"
+        }
+        
+        // Check that the property exists to avoid hard crash
+        guard let _ = subject.objectSchema[propertyName] else {
+            throw "Exception: Invalid property access of \(propertyName) for \(subject)"
+        }
+        
+        #warning("Ask Toby for how to cast this")
+        subject.set(propertyName, arguments["value"])
+        
+        // TODO refactor
+        ((self.context as? SubContext)?.parent ?? self.context).scheduleUIUpdate()
+    }
+    
+    class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
+        execWithoutThrow { try ActionLink(context).exec(arguments) }
     }
 }
 

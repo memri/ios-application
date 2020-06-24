@@ -84,10 +84,7 @@ public class Settings {
             debugHistory.error("Failed to install settings: \(error)")
         }
         
-        try self.load(){
-            
-        }
-        
+        try self.load(){}
     }
     
     
