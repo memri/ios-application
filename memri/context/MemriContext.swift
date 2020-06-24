@@ -368,6 +368,7 @@ public class MemriContext: ObservableObject {
         
         // TODO: FIX
         self.cascadingView.context = self
+        self.indexerAPI.context = self
     }
 }
 

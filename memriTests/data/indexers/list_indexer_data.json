@@ -20,7 +20,6 @@
     {
         "type": "Indexer",
         "name": "Lists indexer",
-        "query": "Note",
         "runDestination": "ios",
         "indexerDescription": "extracts todo, to read, to watch lists from notes",
         "icon": "text.badge.plus"

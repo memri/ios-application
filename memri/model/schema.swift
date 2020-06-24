@@ -774,6 +774,19 @@ public class Indexer:DataItem{
         return name
     }
     
+    required convenience internal init(name: String? = nil, indexerDescription: String? = nil,
+                                       query: String? = nil, icon: String? = nil,
+                                       bundleImage: String? = nil, runDestination: String? = nil) {
+        self.init()
+        self.name = name ?? self.name
+        self.indexerDescription = indexerDescription ?? self.indexerDescription
+        self.query = query ?? self.query
+        self.icon = icon ?? self.icon
+        self.bundleImage = bundleImage ?? self.bundleImage
+        self.runDestination = runDestination ?? self.runDestination
+
+    }
+    
     required init () {
         super.init()
     }
@@ -798,11 +811,21 @@ public class Indexer:DataItem{
 
 
 public class IndexerInstance:DataItem{
+    
     override var genericType:String { "IndexerInstance" }
     @objc dynamic var name:String = "unknown indexer instance"
     @objc dynamic var query:String = ""
     @objc dynamic var indexer:Indexer? = nil
     @objc dynamic var progress:Int = -1
+    
+    required convenience internal init(name: String? = nil, query: String? = nil, indexer: Indexer? = nil,
+                                       progress: Int? = nil) {
+        self.init()
+        self.name = name ?? self.name
+        self.query = query ?? self.query
+        self.indexer = indexer ?? self.indexer
+        self.progress = progress ?? self.progress
+    }
 
     
     required init () {

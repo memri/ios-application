@@ -1158,12 +1158,17 @@ class ActionRunIndexerInstance : Action, ActionExec {
     }
     
     func runLocal(_ indexerInstance: IndexerInstance) throws {
-        guard let query: String = indexerInstance.get("query") else {
-            
+        guard let query: String = indexerInstance.indexer?.get("query") else {
+            throw "Cannot execute IndexerInstance \(indexerInstance), no query specified"
         }
+        let ds = Datasource(query: query)
         
-        
-        self.context.indexerAPI.execute(indexerInstance)
+       self.context.podAPI.query(ds) { (error, result) -> Void in
+            
+            if let items = result {
+                self.context.indexerAPI.execute(indexerInstance, items)
+            }
+        }
         
     }
     

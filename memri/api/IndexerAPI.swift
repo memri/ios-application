@@ -10,7 +10,10 @@ import Foundation
 
 
 public class IndexerAPI{
-    public func execute(_ indexerInstance: IndexerInstance){
+    
+    public var context: MemriContext? = nil
+    
+    public func execute(_ indexerInstance: IndexerInstance, _ items: [DataItem]){
         if indexerInstance.name == "Lists indexer" {
             executeListIndexer(indexerInstance)
         }
