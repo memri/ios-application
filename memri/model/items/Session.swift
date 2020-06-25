@@ -117,26 +117,28 @@ public class Session: SchemaSession {
     
     public func takeScreenShot(){
         if let view = UIApplication.shared.windows[0].rootViewController?.view {
-            let uiImage = view.takeScreenShot()
-            
-            if self.screenshot == nil {
-                let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
+            if let uiImage = view.takeScreenShot() {
                 
-                realmWriteIfAvailable(realm) {
-                    doIt()
+                if self.screenshot == nil {
+                    let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
+                    
+                    realmWriteIfAvailable(realm) {
+                        doIt()
+                    }
                 }
-            }
-            
-            do {
-                try self.screenshot?.write(uiImage)
-            }
-            catch let error {
-                print(error)
+                
+                do {
+                    try self.screenshot?.write(uiImage)
+                }
+                catch let error {
+                    debugHistory.error("Unable to write screenshot: \(error)")
+                }
+                
+                return
             }
         }
-        else {
-            print("No view available")
-        }
+        
+        debugHistory.error("Unable to create screenshot")
     }
     
     public class func fromCVUDefinition(_ def:CVUParsedSessionDefinition) throws -> Session {

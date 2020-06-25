@@ -685,7 +685,7 @@ class ActionStar : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionStar.exec(context, arguments) }
+        execWithoutThrow { try ActionStar(context).exec(arguments) }
     }
 }
 class ActionShowStarred : Action, ActionExec {
@@ -759,7 +759,7 @@ class ActionShowNavigation : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionShowNavigation.exec(context, arguments) }
+        execWithoutThrow { try ActionShowNavigation(context).exec(arguments) }
     }
 }
 class ActionSchedule : Action, ActionExec {
@@ -842,7 +842,7 @@ class ActionForwardToFront : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionForwardToFront.exec(context, arguments) }
+        execWithoutThrow { try ActionForwardToFront(context).exec(arguments) }
     }
 }
 class ActionBackAsSession : Action, ActionExec {
@@ -877,7 +877,7 @@ class ActionBackAsSession : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionBackAsSession.exec(context, arguments) }
+        execWithoutThrow { try ActionBackAsSession(context).exec(arguments) }
     }
 }
 
@@ -935,7 +935,7 @@ class ActionOpenSession : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionOpenSession.exec(context, arguments) }
+        execWithoutThrow { try ActionOpenSession(context).exec(arguments) }
     }
 }
 // TODO How to deal with viewArguments in sessions
@@ -1060,7 +1060,7 @@ class ActionDuplicate : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionDuplicate.exec(context, arguments) }
+        execWithoutThrow { try ActionDuplicate(context).exec(arguments) }
     }
 }
 
@@ -1084,7 +1084,7 @@ class ActionImport : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(context, arguments) }
+        execWithoutThrow { try ActionImport(context).exec(arguments) }
     }
 }
 
@@ -1109,7 +1109,7 @@ class ActionIndex : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionImport.exec(context, arguments) }
+        execWithoutThrow { try ActionImport(context).exec(arguments) }
     }
 }
 
