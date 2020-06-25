@@ -398,7 +398,7 @@ class MedicalCondition: Item{
     }
 }
 
-class Person:Item {
+class SchemaPerson : Item {
     @objc dynamic var firstName:String? = nil
     @objc dynamic var lastName:String? = nil
     @objc dynamic var birthDate:Date? = nil

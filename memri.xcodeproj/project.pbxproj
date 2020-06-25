@@ -916,12 +916,12 @@
 			isa = PBXGroup;
 			children = (
 				5D38DE162405776B00FF9B70 /* Item.swift */,
-				86FFD0C424A4CE42001BF14B /* Other.swift */,
 				863CDB702441E69F000D7AC0 /* File.swift */,
 				86FFD0C024A4B301001BF14B /* SettingCollection.swift */,
 				5DFB0CBE24179FA6002FBDE7 /* Sessions.swift */,
 				86C6D895246EC33A001B87D0 /* Session.swift */,
 				5DB8EC0124598ED80028FD2E /* SessionView.swift */,
+				86FFD0C424A4CE42001BF14B /* Other.swift */,
 			);
 			path = items;
 			sourceTree = "<group>";

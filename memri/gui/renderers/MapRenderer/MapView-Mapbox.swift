@@ -9,14 +9,14 @@ import SwiftUI
 import Combine
 
 struct MapView: UIViewRepresentable {
-    var dataItems: [DataItem] = []
+    var dataItems: [Item] = []
     var locationKey: String = "coordinate"
     var addressKey: String = "address"
     var labelKey: String = "name"
     var maxInitialZoom: Double = 16
     var mapStyle: MapStyle = .street
     
-    var onPress: ((DataItem) -> Void)?
+    var onPress: ((Item) -> Void)?
     
     @Environment(\.colorScheme) var colorScheme
 }
@@ -148,7 +148,7 @@ extension MapView {
 }
 
 class MapAnnotation: NSObject, MGLAnnotation {
-    init(coordinate: CLLocationCoordinate2D, title: String? = nil, dataItem: DataItem? = nil) {
+    init(coordinate: CLLocationCoordinate2D, title: String? = nil, dataItem: Item? = nil) {
         self.coordinate = coordinate
         self.title = title
         self.dataItem = dataItem
@@ -156,7 +156,7 @@ class MapAnnotation: NSObject, MGLAnnotation {
     
     var coordinate: CLLocationCoordinate2D
     var title: String?
-    var dataItem: DataItem?
+    var dataItem: Item?
 }
 
 #endif

@@ -23,7 +23,7 @@ class MapModel {
         .store(in: &cancellableBag)
     }
 
-    var dataItems: [DataItem] = [] {
+    var dataItems: [Item] = [] {
         didSet {
             if dataItems != oldValue {
                 updateModel()
@@ -31,7 +31,7 @@ class MapModel {
         }
     }
 
-    private(set) var items: [Item] = [] {
+    private(set) var items: [MapItem] = [] {
         didSet {
             if items != oldValue {
                 didChange.send()
@@ -78,11 +78,11 @@ class MapModel {
     let updateQueue = PassthroughSubject<Void, Never>()
 
     func _updateModel() {
-        let newItems = dataItems.flatMap { dataItem -> [Item] in
+        let newItems = dataItems.flatMap { dataItem -> [MapItem] in
             let locations: [CLLocation] = resolveItem(dataItem: dataItem)
             let label: String = dataItem.hasProperty(labelKey) ? (dataItem.get(labelKey) ?? "") : ""
             return locations.map {
-                return Item(label: label, coordinate: $0.coordinate, dataItem: dataItem)
+                return MapItem(label: label, coordinate: $0.coordinate, dataItem: dataItem)
             }
         }
         items = newItems
@@ -90,7 +90,7 @@ class MapModel {
     
     
     
-    func resolveItem(dataItem: DataItem) -> [CLLocation] {
+    func resolveItem(dataItem: Item) -> [CLLocation] {
         if let locationKey = locationKey, dataItem.hasProperty(locationKey) {
             if let location: CLLocation = dataItem.get(locationKey) {
                 // Has a coordinate value
@@ -129,10 +129,10 @@ class MapModel {
         return nil
     }
 
-    struct Item: Equatable {
+    struct MapItem: Equatable {
         var label: String
         var coordinate: CLLocationCoordinate2D
-        var dataItem: DataItem?
+        var dataItem: Item?
     }
 }
 

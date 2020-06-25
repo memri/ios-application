@@ -67,9 +67,21 @@ extension MedicalCondition {
     }
 }
 
-extension Person {
+class Person : SchemaPerson {
     override var computedTitle:String {
         return "\(firstName ?? "") \(lastName ?? "")"
+    }
+    
+    required init () {
+        super.init()
+        
+        self.functions["age"] = {_ in
+            return Date().distance(to: self.birthDate ?? Date())
+        }
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        try super.init(from: decoder)
     }
 }
 

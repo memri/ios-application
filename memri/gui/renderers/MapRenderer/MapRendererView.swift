@@ -54,7 +54,7 @@ struct MapRendererView: View {
             .background(Color(.secondarySystemBackground))
     }
     
-    func onPress(_ dataItem: DataItem) {
+    func onPress(_ dataItem: Item) {
         renderConfig.press.map { context.executeAction($0, with: dataItem) }
     }
 }

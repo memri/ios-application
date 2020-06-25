@@ -105,12 +105,12 @@ extension MapView {
 class MapAnnotation: NSObject, MKAnnotation {
     let title: String?
     let coordinate: CLLocationCoordinate2D
-    let dataItem: DataItem?
+    let dataItem: MapItem?
     
     init(
         title: String?,
         coordinate: CLLocationCoordinate2D,
-        dataItem: DataItem?
+        dataItem: MapItem?
     ) {
         self.title = title
         self.coordinate = coordinate
