@@ -147,7 +147,7 @@ struct ThumbnailRendererView: View {
         }
     }
     
-    func onTap(action: Action, dataItem: DataItem){
+    func onTap(action: Action, dataItem: Item){
         context.executeAction(action, with: dataItem)
     }
 }

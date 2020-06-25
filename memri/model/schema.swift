@@ -14,7 +14,7 @@ import RealmSwift
 public typealias List = RealmSwift.List
 
 // The family of all data item classes
-enum DataItemFamily: String, ClassFamily, CaseIterable {
+enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeNote = "Note"
     case typeLabel = "Label"
     case typePhoto = "Photo"
@@ -122,29 +122,24 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 //required init(from decoder: Decoder) throws {
 //  let container = try decoder.container(keyedBy: PersonCodingKeys.self)
 //  name = try container.decode(String.self, forKey: .name)
-//  pets = try container.decode(family: DataItemFamily.self, forKey: .pets)
+//  pets = try container.decode(family: ItemFamily.self, forKey: .pets)
 //}
 
-// completion(try JSONDecoder().decode(family: DataItemFamily.self, from: data))
+// completion(try JSONDecoder().decode(family: ItemFamily.self, from: data))
 
 
-class Note:DataItem {
+class Note : Item {
     @objc dynamic var title:String? = ""
     /// HTML
     @objc dynamic var content:String? = nil
     /// Text string
     @objc dynamic var textContent:String? = nil
 
-
     override var genericType:String { "Note" }
     
     let writtenBy = List<Edge>()
     let sharedWith = List<Edge>()
-    let comments = List<DataItem>()
-    
-    override var computedTitle:String {
-        return "\(title ?? "")"
-    }
+    let comments = List<Item>()
     
     required init () {
         super.init()
@@ -167,15 +162,11 @@ class Note:DataItem {
     }
 }
 
-class PhoneNumber:DataItem{
+class PhoneNumber:Item{
     override var genericType:String { "PhoneNumber" }
     // mobile/landline
     @objc dynamic var type:String? = nil
     @objc dynamic var number:String? = nil
-    
-    override var computedTitle:String {
-        return number ?? ""
-    }
     
     required init () {
         super.init()
@@ -193,15 +184,11 @@ class PhoneNumber:DataItem{
     }
 }
 
-class Website:DataItem{
+class Website:Item{
     override var genericType:String { "Website" }
     // blog portifolio website
     @objc dynamic var type:String? = nil
     @objc dynamic var url:String? = nil
-    
-    override var computedTitle:String {
-        return url ?? ""
-    }
     
     required init () {
         super.init()
@@ -219,7 +206,7 @@ class Website:DataItem{
     }
 }
 
-class Location:DataItem{
+class Location:Item{
     override var genericType:String { "Location" }
     
     let latitude = RealmOptional<Double>()
@@ -241,7 +228,7 @@ class Location:DataItem{
     }
 }
 
-class Country:DataItem {
+class Country:Item {
     override var genericType:String { "Country" }
     
     @objc dynamic var name:String? = nil
@@ -265,13 +252,7 @@ class Country:DataItem {
     }
 }
 
-extension Country {
-    override var computedTitle:String {
-        return "\(name ?? "")"
-    }
-}
-
-class Address:DataItem {
+class Address:Item {
     override var genericType:String { "Address" }
     
     @objc dynamic var type:String? = nil
@@ -281,15 +262,6 @@ class Address:DataItem {
     @objc dynamic var state:String? = nil
     @objc dynamic var postalCode:String? = nil
     @objc dynamic var location:Location? = nil
-    
-    override var computedTitle:String {
-        return """
-        \(street ?? "")
-        \(city ?? "")
-        \(postalCode ?? ""), \(state ?? "")
-        \(country?.computedTitle ?? "")
-        """
-    }
     
     required init () {
         super.init()
@@ -314,14 +286,10 @@ class Address:DataItem {
     }
 }
 
-class Company: DataItem{
+class Company: Item{
     override var genericType:String { "Company" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
-    
-    override var computedTitle:String {
-        return name ?? ""
-    }
     
     required init () {
         super.init()
@@ -339,7 +307,7 @@ class Company: DataItem{
     }
 }
 
-class PublicKey: DataItem{
+class PublicKey: Item{
     override var genericType:String { "PublicKey" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
@@ -362,14 +330,10 @@ class PublicKey: DataItem{
     }
 }
 
-class OnlineProfile: DataItem{
+class OnlineProfile: Item{
     override var genericType:String { "OnlineProfile" }
     @objc dynamic var type:String? = nil
     @objc dynamic var handle:String? = nil
-    
-    override var computedTitle:String {
-        return handle ?? ""
-    }
     
     required init () {
         super.init()
@@ -387,16 +351,12 @@ class OnlineProfile: DataItem{
     }
 }
 
-class Diet: DataItem{
+class Diet: Item{
     override var genericType:String { "Diet" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
     let additions = List<String>()
 
-    override var computedTitle:String {
-        return name ?? ""
-    }
-    
     required init () {
         super.init()
     }
@@ -415,14 +375,10 @@ class Diet: DataItem{
     }
 }
 
-class MedicalCondition: DataItem{
+class MedicalCondition: Item{
     override var genericType:String { "MedicalCondition" }
     @objc dynamic var type:String? = nil
     @objc dynamic var name:String? = nil
-    
-    override var computedTitle:String {
-        return name ?? ""
-    }
     
     required init () {
         super.init()
@@ -440,7 +396,7 @@ class MedicalCondition: DataItem{
     }
 }
 
-class Person:DataItem {
+class Person:Item {
     @objc dynamic var firstName:String? = nil
     @objc dynamic var lastName:String? = nil
     @objc dynamic var birthDate:Date? = nil
@@ -457,7 +413,6 @@ class Person:DataItem {
     let relations = List<Person>()
     let phoneNumbers = List<PhoneNumber>()
     
-    
     let websites = List<Website>()
     //TODO
 //    let placeOfBirth = List<Location>()
@@ -467,10 +422,6 @@ class Person:DataItem {
     let onlineProfiles = List<OnlineProfile>()
     let diets = List<Diet>()
     let medicalConditions = List<MedicalCondition>()
-    
-    override var computedTitle:String {
-        return "\(firstName ?? "") \(lastName ?? "")"
-    }
     
     required init () {
         super.init()
@@ -507,42 +458,16 @@ class Person:DataItem {
     }
 }
 
-class AuditItem:DataItem {
-    
+class AuditItem:Item {
     @objc dynamic var date:Date? = Date()
     @objc dynamic var contents:String? = nil
     @objc dynamic var action:String? = nil
     override var genericType:String { "AuditItem" }
     
-    override var computedTitle:String {
-        return "Logged \(action ?? "unknown action") on \(date?.description ?? "")"
-    }
-    
     let appliesTo = List<Edge>()
     
     required init () {
         super.init()
-    }
-    
-    convenience init(date: Date? = nil,contents: String? = nil, action: String? = nil,
-                     appliesTo: [DataItem]? = nil) {
-        self.init()
-        self.date = date ?? self.date
-        self.contents = contents ?? self.contents
-        self.action = action ?? self.action
-                
-        if let appliesTo = appliesTo{
-            let edges = appliesTo.map{ Edge(self.memriID, $0.memriID, self.genericType, $0.genericType) }
-            
-//            let edgeName = "appliesTo"
-//            
-//            item["~appliesTo"] =  edges
-            // TODO
-            self.appliesTo.append(objectsIn: edges)
-//            for item in appliesTo{
-//                item.changelog.append(objectsIn: edges)
-//            }
-        }
     }
     
     public required init(from decoder: Decoder) throws {
@@ -553,22 +478,18 @@ class AuditItem:DataItem {
             contents = try decoder.decodeIfPresent("contents") ?? contents
             action = try decoder.decodeIfPresent("action") ?? action
             
-            decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
+            decodeEdges(decoder, "appliesTo", Item.self, self.appliesTo, self)
             
             try self.superDecode(from: decoder)
         }
     }
 }
 
-class Label:DataItem {
+class Label:Item {
     @objc dynamic var name:String = ""
     @objc dynamic var comment:String? = nil
     @objc dynamic var color:String? = nil
     override var genericType:String { "Label" }
-    
-    override var computedTitle:String {
-        return name
-    }
     
     let appliesTo = List<Edge>() // TODO make two-way binding in realm
     
@@ -584,7 +505,7 @@ class Label:DataItem {
             comment = try decoder.decodeIfPresent("comment") ?? comment
             color = try decoder.decodeIfPresent("color") ?? color
             
-            decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
+            decodeEdges(decoder, "appliesTo", Item.self, self.appliesTo, self)
 
             try self.superDecode(from: decoder)
         }
@@ -592,16 +513,12 @@ class Label:DataItem {
 }
 
 // TODO Refactor: can this inherit from a Media class?
-class Photo:DataItem {
+class Photo:Item {
     @objc dynamic var name:String = ""
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
     override var genericType:String { "Photo" }
-    
-    override var computedTitle:String {
-        return name
-    }
     
     let includes = List<Edge>() // e.g. person, object, recipe, etc
     
@@ -627,17 +544,13 @@ class Photo:DataItem {
 }
 
 // TODO Refactor: can this inherit from a Media class?
-class Video:DataItem {
+class Video:Item {
     @objc dynamic var name:String = ""
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
     override var genericType:String { "Video" }
-    
-    override var computedTitle:String {
-        return name
-    }
     
     let includes = List<Edge>() // e.g. person, object, recipe, etc
     
@@ -655,7 +568,7 @@ class Video:DataItem {
             height.value = try decoder.decodeIfPresent("height") ?? height.value
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             
-            decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
+            decodeEdges(decoder, "includes", Item.self, self.includes, self)
 
             
             try self.superDecode(from: decoder)
@@ -664,16 +577,12 @@ class Video:DataItem {
 }
 
 // TODO Refactor: can this inherit from a Media class?
-class Audio:DataItem {
+class Audio:Item {
     @objc dynamic var name:String = ""
     @objc dynamic var file:File? = nil
     let bitrate = RealmOptional<Int>()
     let duration = RealmOptional<Int>()
     override var genericType:String { "Audio" }
-    
-    override var computedTitle:String {
-        return name
-    }
     
     let includes = List<Edge>() // e.g. person, object, recipe, etc
     
@@ -690,14 +599,14 @@ class Audio:DataItem {
             bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             
-            decodeEdges(decoder, "includes", DataItem.self, self.includes, self)
+            decodeEdges(decoder, "includes", Item.self, self.includes, self)
             
             try self.superDecode(from: decoder)
         }
     }
 }
 
-class Importer:DataItem{
+class Importer:Item{
     override var genericType:String { "Importer" }
     @objc dynamic var name:String = ""
     @objc dynamic var datatype:String = "unknown"
@@ -705,10 +614,6 @@ class Importer:DataItem{
     @objc dynamic var bundleImage:String = ""
     
     let runs = List<ImporterInstance>()
-    
-    override var computedTitle:String {
-        return name
-    }
     
     required init () {
         super.init()
@@ -731,7 +636,7 @@ class Importer:DataItem{
 }
 
 
-class ImporterInstance:DataItem{
+class ImporterInstance:Item{
     override var genericType:String { "ImporterInstance" }
     @objc dynamic var name:String = "unknown importer run"
     @objc dynamic var datatype:String = "unknown"
@@ -757,7 +662,7 @@ class ImporterInstance:DataItem{
 }
 
 
-class Indexer:DataItem{
+class Indexer:Item{
     override var genericType:String { "Indexer" }
     @objc dynamic var name:String = ""
     @objc dynamic var indexerDescription:String = ""
@@ -766,10 +671,6 @@ class Indexer:DataItem{
     @objc dynamic var bundleImage:String = ""
     
     let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
-    
-    override var computedTitle:String {
-        return name
-    }
     
     required init () {
         super.init()
@@ -793,7 +694,7 @@ class Indexer:DataItem{
     
 }
 
-class IndexerInstance:DataItem{
+class IndexerInstance:Item{
     override var genericType:String { "IndexerInstance" }
     @objc dynamic var name:String = "unknown indexer instance"
     @objc dynamic var query:String = ""
@@ -816,4 +717,175 @@ class IndexerInstance:DataItem{
         }
     }
     
+}
+
+public class NavigationItem : Item {
+
+    /// Used as the caption in the navigation
+    @objc dynamic var title: String = ""
+    /// Name of the view it opens
+    @objc dynamic var view: String? = nil
+    /// Defines the position in the navigation
+    @objc dynamic var order: Int = 0
+    
+    ///     0 = Item
+    ///     1 = Heading
+    ///     2 = Line
+    @objc dynamic var type: String = "item"
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            self.title = try decoder.decodeIfPresent("title") ?? self.title
+            self.view = try decoder.decodeIfPresent("view") ?? self.view
+            self.order = try decoder.decodeIfPresent("order") ?? self.order
+            self.type = try decoder.decodeIfPresent("type") ?? self.type
+        }
+    }
+}
+
+public class CVUStoredDefinition : Item {
+    override var genericType:String { "CVUStoredDefinition" }
+    
+    @objc dynamic var type: String? = nil
+    @objc dynamic var name: String? = nil
+    @objc dynamic var selector: String? = nil
+    @objc dynamic var definition: String? = nil
+    @objc dynamic var query: String? = nil
+    @objc dynamic var domain: String = "user"
+}
+
+public class SessionView : Item {
+   override var genericType:String { "SessionView" }
+
+   @objc dynamic var name: String? = nil
+   @objc dynamic var viewDefinition: CVUStoredDefinition? = nil
+   @objc dynamic var userState: UserState? = nil
+   @objc dynamic var viewArguments: ViewArguments? = nil
+   @objc dynamic var datasource: Datasource? = nil // TODO refactor: fix cascading
+   @objc dynamic var session: Session? = nil
+}
+
+/// Single setting object, persisted to disk
+public class Setting : Item {
+    /// key of the setting
+    @objc dynamic var key:String = ""
+    /// json value of the setting
+    @objc dynamic var json:String = ""
+}
+
+/// Collection of settings that are grouped based on who defined them
+class SettingCollection : Item {
+    /// Type that represent who created the setting: Default/User/Device
+    @objc dynamic var type:String = ""
+    
+    /// Setting in this collection
+    let settings = List<Setting>()
+}
+
+public class SchemaSessions : Item {
+    override var genericType:String { "Sessions" }
+    @objc dynamic var currentSessionIndex: Int = 0
+    let sessions = RealmSwift.List<Session>()
+    
+    required init() {
+        super.init()
+    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
+            
+            decodeIntoList(decoder, "sessions", self.sessions)
+            
+            try super.superDecode(from:decoder)
+        }
+    }
+}
+
+public class SchemaSession : Item {
+    override var genericType:String { "Session" }
+    @objc dynamic var name: String = ""
+    @objc dynamic var currentViewIndex: Int = 0
+    let views = RealmSwift.List<SessionView>() // @Published
+    @objc dynamic var showFilterPanel:Bool = false
+    @objc dynamic var showContextPane:Bool = false
+    @objc dynamic var editMode:Bool = false
+    @objc dynamic var screenshot:File? = nil
+    
+    required init() {
+        super.init()
+    }
+    
+    public convenience required init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
+            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
+            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
+            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
+            
+            decodeIntoList(decoder, "views", self.views)
+            
+            try super.superDecode(from: decoder)
+        }
+    }
+}
+
+class File : Item {
+    @objc dynamic var uri:String = ""
+    override var genericType:String { "File" }
+
+    let usedBy = RealmSwift.List<Item>() // TODO make two-way binding in realm
+    
+    required init () {
+        super.init()
+    }
+    
+    public required init(from decoder: Decoder) throws {
+        super.init()
+        
+        jsonErrorHandling(decoder) {
+            uri = try decoder.decodeIfPresent("uri") ?? uri
+            
+            decodeIntoList(decoder, "usedBy", self.usedBy)
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Item is the baseclass for all of the data clases, all functions
+public class SchemaItem: Object, Codable, Identifiable, ObservableObject {
+ 
+    /// name of the Item implementation class (E.g. "note" or "person")
+    var genericType:String { "unknown" }
+    
+    /// uid of the Item set by the pod
+    @objc dynamic var uid:Int = 0
+    /// memriID of the Item
+    @objc dynamic var memriID:String =  Item.generateUUID()
+    /// Boolean whether the Item has been deleted
+    @objc dynamic var deleted:Bool = false
+    /// The last version loaded from the server
+    @objc dynamic var version:Int = 0
+    /// Boolean whether the Item has been starred
+    @objc dynamic var starred:Bool = false
+    /// Creation date of the Item
+    @objc dynamic var dateCreated:Date? = Date()
+    /// Last modification date of the Item
+    @objc dynamic var dateModified:Date? = Date()
+    /// Last access date of the Item
+    @objc dynamic var dateAccessed:Date? = nil
+    /// Array AuditItems describing the log history of the Item
+    let changelog = List<AuditItem>()
+    /// Labels assigned to / associated with this Item
+    let labels = List<memri.Label>()
+    
+    /// Object descirbing syncing information about this object like loading state, versioning, etc.
+    @objc dynamic var syncState:SyncState? = SyncState()
 }

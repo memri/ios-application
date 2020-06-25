@@ -46,13 +46,13 @@ struct GeneralEditorView: View {
     }
     
     var body: some View {
-        var item: DataItem
+        var item: Item
         if let dataItem = context.cascadingView.resultSet.singletonItem {
             item = dataItem
         }
         else {
-            print("Cannot load DataItem, creating empty")
-            item = DataItem()
+            print("Cannot load Item, creating empty")
+            item = Item()
         }
         // TODO: Error Handling
         let renderConfig = self.renderConfig
@@ -78,7 +78,7 @@ struct GeneralEditorView: View {
         }
     }
     
-    func getGroups(_ item:DataItem) -> [String:[String]]? {
+    func getGroups(_ item:Item) -> [String:[String]]? {
         let renderConfig = self.renderConfig
         let groups = renderConfig?.groups ?? [:]
         var filteredGroups: [String:[String]] = [:]

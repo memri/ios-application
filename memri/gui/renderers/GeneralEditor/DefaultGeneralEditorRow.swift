@@ -13,7 +13,7 @@ import memriUI
 struct DefaultGeneralEditorRow: View {
     @EnvironmentObject var context: MemriContext
     
-    var item: DataItem
+    var item: Item
     var prop: String
     var readOnly: Bool
     var isLast: Bool
@@ -41,9 +41,9 @@ struct DefaultGeneralEditorRow: View {
                         defaultRow(self.item.getString(self.prop))
                     }
                     else if propType == .object {
-                        if self.item[self.prop] is DataItem {
+                        if self.item[self.prop] is Item {
                             MemriButton(context: self._context,
-                                        item: self.item[self.prop] as! DataItem)
+                                        item: self.item[self.prop] as! Item)
                         }
                         else {
                             defaultRow()

@@ -139,7 +139,7 @@ public class Views {
         }
     }
     
-    func resolveEdge(_ edge:Edge) throws -> DataItem {
+    func resolveEdge(_ edge:Edge) throws -> Item {
         // TODO REFACTOR: implement
         throw "not implemented"
     }
@@ -153,7 +153,7 @@ public class Views {
         case "session": return context?.currentSession
         case "view": return context?.cascadingView
         case "dataItem":
-            if let itemRef:DataItem = viewArguments.get(".") {
+            if let itemRef:Item = viewArguments.get(".") {
                 return itemRef
             }
             else if let item = context?.cascadingView.resultSet.singletonItem {
@@ -198,7 +198,7 @@ public class Views {
             i += 1
             
             if isFunction && i == lookup.sequence.count {
-                value = (value as? DataItem)?.functions[(node as? ExprVariableNode)?.name ?? ""]
+                value = (value as? Item)?.functions[(node as? ExprVariableNode)?.name ?? ""]
                 if value == nil {
                     // TODO parse [blah]
                     recursionCounter = 0
@@ -221,7 +221,7 @@ public class Views {
                     }
                 }
                 else {
-                    if let dataItem = value as? DataItem {
+                    if let dataItem = value as? Item {
                         if dataItem.objectSchema[node.name] == nil {
                             // TODO Warn
                             print("Invalid property access '\(node.name)'")
@@ -318,7 +318,7 @@ public class Views {
 //           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
 //
 //            // Convert Realm List into Array
-//            value = DataItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
+//            value = ItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
 //        }
         
         recursionCounter -= 1
@@ -439,7 +439,7 @@ public class Views {
     }
     
     // TODO: Refactor: Consider caching cascadingView based on the type of the item
-    public func renderItemCell(with dataItem: DataItem,
+    public func renderItemCell(with dataItem: Item,
                                search rendererNames: [String] = [],
                                inView viewOverride: String? = nil,
                                use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {

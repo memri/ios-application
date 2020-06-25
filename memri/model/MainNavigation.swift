@@ -78,29 +78,3 @@ public class MainNavigation:ObservableObject {
         }
     }
 }
-
-public class NavigationItem: Object, ObservableObject, Codable {
-
-    /// Used as the caption in the navigation
-    @objc dynamic var title: String = ""
-    /// Name of the view it opens
-    @objc dynamic var view: String? = nil
-    /// Defines the position in the navigation
-    @objc dynamic var order: Int = 0
-    
-    ///     0 = Item
-    ///     1 = Heading
-    ///     2 = Line
-    @objc dynamic var type: String = "item"
-    
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            self.title = try decoder.decodeIfPresent("title") ?? self.title
-            self.view = try decoder.decodeIfPresent("view") ?? self.view
-            self.order = try decoder.decodeIfPresent("order") ?? self.order
-            self.type = try decoder.decodeIfPresent("type") ?? self.type
-        }
-    }
-}

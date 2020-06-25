@@ -13,18 +13,18 @@ public class ResultSet: ObservableObject {
  
     /// Object describing the query and postprocessing instructions
     var datasource: Datasource = Datasource(query: "")
-    /// Resulting DataItems
-    var items: [DataItem] = []
+    /// Resulting Items
+    var items: [Item] = []
     /// Nr of items in the resultset
     var count: Int = 0
-    /// Boolean indicating whether the DataItems in the result are currently being loaded
+    /// Boolean indicating whether the Items in the result are currently being loaded
     var isLoading: Bool = false
     
     /// Unused, Experimental
     private var pages: [Int] = []
     private let cache: Cache
     private var _filterText: String = ""
-    private var _unfilteredItems: [DataItem]? = nil
+    private var _unfilteredItems: [Item]? = nil
  
     /// Computes the type of the data items being requested via the query
     /// Returns "mixed" when data items of multiple types can be returned
@@ -46,7 +46,7 @@ public class ResultSet: ObservableObject {
         
         let (typeName, filter) = cache.parseQuery((self.datasource.query ?? ""))
         
-        if let type = DataItemFamily(rawValue: typeName) {
+        if let type = ItemFamily(rawValue: typeName) {
             let primKey = type.getPrimaryKey()
             if (filter ?? "").match("^AND \(primKey) = '.*?'$").count > 0 {
                 return false
@@ -58,7 +58,7 @@ public class ResultSet: ObservableObject {
  
     /// Get the only item from the resultset if the set has size 1, else return nil. Note that
     ///  [singleton](https://en.wikipedia.org/wiki/Singleton_(mathematics)) is here in the mathematical sense.
-    var singletonItem: DataItem? {
+    var singletonItem: Item? {
         get{
             if !isList && count > 0 { return items[0] }
             else { return nil }
@@ -85,8 +85,8 @@ public class ResultSet: ObservableObject {
     }
     
     /// Executes a query given the current QueryOptions, filters the result client side and executes the callback on the resulting
-    ///  DataItems
-    /// - Parameter callback: Callback with params (error: Error, result: [DataItem]) that is executed on the returned result
+    ///  Items
+    /// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
     /// - Throws: empty query error
     func load(_ callback:(_ error:Error?) -> Void) throws {
         
@@ -143,7 +143,7 @@ public class ResultSet: ObservableObject {
     
     /// Force update the items property, recompute the counts and reapply filters
     /// - Parameter result: the new items
-    func forceItemsUpdate(_ result:[DataItem]) {
+    func forceItemsUpdate(_ result:[Item]) {
         // Set data and count
         items = result
         count = items.count
@@ -178,7 +178,7 @@ public class ResultSet: ObservableObject {
         // Filter using _filterText
         else {
             // Array to store filter results
-            var filterResult:[DataItem] = []
+            var filterResult:[Item] = []
             
             // Filter through items
             let searchSet = _unfilteredItems ?? items

@@ -21,8 +21,8 @@ class ModelTest: XCTestCase {
     }
     
     func testInitSearchResult(){
-//        let items = try! DataItem.fromJSONFile("test_dataItems")
-//        let sr = SearchResult.fromDataItems(items)
+//        let items = try! Item.fromJSONFile("test_dataItems")
+//        let sr = SearchResult.fromItems(items)
 //        XCTAssert(sr.data[0].id == "0x01" && sr.data[1].id == "0x02")
     }
     

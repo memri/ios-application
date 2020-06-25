@@ -29,7 +29,7 @@ extension View {
 }
 
 extension View {
-    func setProperties(_ properties:[String:Any?], _ item:DataItem, _ context:MemriContext,
+    func setProperties(_ properties:[String:Any?], _ item:Item, _ context:MemriContext,
                        _ viewArguments:ViewArguments) -> AnyView {
         
         var view:AnyView = AnyView(self)

@@ -1,5 +1,5 @@
 //
-//  DataItemTest.swift
+//  ItemTest.swift
 //  memriTests
 //
 //  Created by Koen van der Veen on 30/04/2020.
@@ -10,7 +10,7 @@ import XCTest
 @testable import memri
 
 
-class DataItemTest: XCTestCase {
+class ItemTest: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -20,14 +20,14 @@ class DataItemTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testDeserializeDataItem(){
+    func testDeserializeItem(){
         let data = Data("""
             {
                 "memriID": "0x012345",
             }
             """.utf8
         )
-        let item: DataItem = try! JSONDecoder().decode(DataItem.self, from: data)
+        let item: Item = try! JSONDecoder().decode(Item.self, from: data)
     }
     
     func testGetString(){
@@ -37,7 +37,7 @@ class DataItemTest: XCTestCase {
             }
             """.utf8
         )
-        let item: DataItem = try! JSONDecoder().decode(DataItem.self, from: data)
+        let item: Item = try! JSONDecoder().decode(Item.self, from: data)
         
         XCTAssertTrue(item.getString("memriID") == "0x012345") 
     }

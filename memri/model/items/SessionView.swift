@@ -11,35 +11,17 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-public class SessionView: DataItem {
- 
-    override var genericType:String { "SessionView" }
- 
-    @objc dynamic var name: String? = nil
-    @objc dynamic var viewDefinition: CVUStoredDefinition? = nil
-    @objc dynamic var userState: UserState? = nil
-    @objc dynamic var viewArguments: ViewArguments? = nil
-    @objc dynamic var datasource: Datasource? = nil // TODO refactor: fix cascading
-    @objc dynamic var session: Session? = nil
+extension SessionView {
     
     override var computedTitle:String {
-//        if let value = self.name ?? self.title { return value }
+        if let value = self.name { return value }
 //        else if let rendererName = self.rendererName {
 //            return "A \(rendererName) showing: \(self.datasource?.query ?? "")"
 //        }
-//        else if let query = self.datasource?.query {
-//            return "Showing: \(query)"
-//        }
-        return "[No Name]"
-    }
-    
-    required init(){
-        super.init()
-        
-        self.functions["computedDescription"] = {_ in
-            print("MAKE THIS DISSAPEAR")
-            return self.computedTitle
+        else if let query = self.datasource?.query {
+            return "Showing: \(query)"
         }
+        return "[No Name]"
     }
     
     func mergeState(_ view:SessionView) throws {

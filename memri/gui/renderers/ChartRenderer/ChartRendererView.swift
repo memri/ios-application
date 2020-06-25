@@ -89,7 +89,7 @@ struct ChartRendererView: View {
         switch self.type {
         case .bar:
             guard let labelKey = renderConfig.labelKey, let yAxisKey = renderConfig.yAxisKey else { return missingDataView.eraseToAnyView() }
-            let data = ChartHelper.generateLabelledYChartSetFromDataItems(dataItems, labelKey: labelKey, yAxisKey: yAxisKey)
+            let data = ChartHelper.generateLabelledYChartSetFromItems(dataItems, labelKey: labelKey, yAxisKey: yAxisKey)
             
             return VStack(spacing: 0) {
                 chartTitleView
@@ -100,7 +100,7 @@ struct ChartRendererView: View {
                 .eraseToAnyView()
         case .line:
             guard let xAxisKey = renderConfig.xAxisKey, let yAxisKey = renderConfig.yAxisKey else { return missingDataView.eraseToAnyView() }
-            let data = ChartHelper.generateXYChartSetFromDataItems(dataItems, xAxisKey: xAxisKey, yAxisKey: yAxisKey, labelKey: renderConfig.labelKey)
+            let data = ChartHelper.generateXYChartSetFromItems(dataItems, xAxisKey: xAxisKey, yAxisKey: yAxisKey, labelKey: renderConfig.labelKey)
             return VStack(spacing: 0) {
                 chartTitleView
                 LineChartSwiftUIView(model: LineChartModel(sets: [data], forceMinYOfZero: renderConfig.yAxisMustStartAtZero),

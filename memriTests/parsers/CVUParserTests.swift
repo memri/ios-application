@@ -87,7 +87,7 @@ class CVUParserTests: XCTestCase {
     
     func testNamedViewDefinition() throws {
         let snippet = """
-        .defaultButtonsForDataItem {
+        .defaultButtonsForItem {
             editActionButton: toggleEditMode
         }
         """
@@ -738,11 +738,11 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(try parseToCVUString(snippet), snippet)
     }
     
-    func testActionAddDataItem() throws {
+    func testActionAddItem() throws {
         let snippet = """
         Person {
             [renderer = list] {
-                press: addDataItem {
+                press: addItem {
                     arguments: {
                         template: {
                             type: "ImporterInstance"

@@ -169,8 +169,8 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
 }
 
 
-func decodeEdges<T:DataItem>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
-                             _ edgeList:RealmSwift.List<Edge>, _ subject: DataItem) {
+func decodeEdges<T:Item>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
+                             _ edgeList:RealmSwift.List<Edge>, _ subject: Item) {
     do {
         let objects:[T]? = try decoder.decodeIfPresent(key)
         if let objects = objects {
@@ -237,29 +237,29 @@ func withRealm(_ doThis:(_ realm:Realm) -> Any?) -> Any? {
 ///   - type: realm type
 ///   - memriID: item memriID
 /// - Returns: retrieved item. If the item does not exist, returns nil.
-func getDataItem(_ type:String, _ memriID: String) -> DataItem? {
-    let type = DataItemFamily(rawValue: type)
+func getItem(_ type:String, _ memriID: String) -> Item? {
+    let type = ItemFamily(rawValue: type)
     if let type = type {
-        let item = DataItemFamily.getType(type)
+        let item = ItemFamily.getType(type)
         return withRealm { realm in
             realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID)
-        } as? DataItem
+        } as? Item
     }
     return nil
 }
 
-func getDataItem(_ edge:Edge) -> DataItem? {
-    if let family = DataItemFamily(rawValue: edge.objectType) {
+func getItem(_ edge:Edge) -> Item? {
+    if let family = ItemFamily(rawValue: edge.objectType) {
         return withRealm { realm in
             realm.object(ofType: family.getType() as! Object.Type,
                          forPrimaryKey: edge.objectMemriID)
-        } as? DataItem
+        } as? Item
     }
     return nil
 }
 
-func dataItemListToArray(_ object:Any) -> [DataItem] {
-    var collection:[DataItem] = []
+func dataItemListToArray(_ object:Any) -> [Item] {
+    var collection:[Item] = []
     
     if let list = object as? List<Note> { list.forEach{ collection.append($0) } }
     else if let list = object as? List<Label> { list.forEach{ collection.append($0) } }
@@ -293,10 +293,10 @@ func dataItemListToArray(_ object:Any) -> [DataItem] {
                 let objectType = edge.objectType
                 let objectId = edge.objectMemriID
                 
-                if let family = DataItemFamily(rawValue: objectType),
+                if let family = ItemFamily(rawValue: objectType),
                    let type = family.getType() as? Object.Type {
                     
-                    if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? DataItem {
+                    if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? Item {
                         collection.append(item)
                     }
                     else {

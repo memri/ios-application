@@ -18,7 +18,7 @@ public class Renderers {
     
     func register(name:String, title:String, order:Int, icon:String = "",
                   view:AnyView, renderConfigType: CascadingRenderConfig.Type,
-                  canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
+                  canDisplayResults: @escaping (_ items: [Item]) -> Bool) {
         
         self.all[name] = { context in FilterPanelRendererButton(context,
             name: name,
@@ -33,7 +33,7 @@ public class Renderers {
     
     class func register(name:String, title:String, order:Int, icon:String = "",
                         view:AnyView, renderConfigType: CascadingRenderConfig.Type,
-                        canDisplayResults: @escaping (_ items: [DataItem]) -> Bool) {
+                        canDisplayResults: @escaping (_ items: [Item]) -> Bool) {
         
         allRenderers?.register(name: name, title: title, order: order, icon:icon, view: view,
                                renderConfigType: renderConfigType,
@@ -68,11 +68,11 @@ class FilterPanelRendererButton: Action, ActionExec {
     ]}
     
     var order: Int
-    var canDisplayResults: (_ items: [DataItem]) -> Bool
+    var canDisplayResults: (_ items: [Item]) -> Bool
     var rendererName: String
     
     required init(_ context:MemriContext, name:String, order:Int, title:String, icon:String,
-                  canDisplayResults:@escaping (_ items: [DataItem]) -> Bool){
+                  canDisplayResults:@escaping (_ items: [Item]) -> Bool){
         
         self.rendererName = name
         self.order = order
@@ -164,7 +164,7 @@ public class CascadingRenderConfig: Cascadable {
         return nil
     }
  
-    public func render(item:DataItem, group:String = "*",
+    public func render(item:Item, group:String = "*",
                        arguments:ViewArguments? = nil) -> UIElementView {
         
         func doRender(_ renderGroup:RenderGroup) -> UIElementView {

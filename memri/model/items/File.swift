@@ -10,27 +10,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-class File:DataItem {
-    @objc dynamic var uri:String = ""
-    override var genericType:String { "File" }
-    
-    let usedBy = RealmSwift.List<DataItem>() // TODO make two-way binding in realm
-    
-    required init () {
-        super.init()
-    }
-    
-    public required init(from decoder: Decoder) throws {
-        super.init()
-        
-        jsonErrorHandling(decoder) {
-            uri = try decoder.decodeIfPresent("uri") ?? uri
-            
-            decodeIntoList(decoder, "usedBy", self.usedBy)
-            
-            try self.superDecode(from: decoder)
-        }
-    }
+extension File {
     
     public var asUIImage: UIImage? {
         do { if let x:UIImage = try read() { return x } }

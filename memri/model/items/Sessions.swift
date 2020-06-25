@@ -11,25 +11,8 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-public class Sessions: DataItem {
+public class Sessions : SchemaSessions {
  
-    override var genericType:String { "Sessions" }
- 
-    @objc dynamic var currentSessionIndex: Int = 0
- 
-    let sessions = RealmSwift.List<Session>()
- 
-    var currentSession: Session {
-        return sessions.count > 0 ? sessions[currentSessionIndex] : Session()
-    }
- 
-    var currentView: SessionView {
-        return currentSession.currentView
-    }
-    
-    private var rlmTokens: [NotificationToken] = []
-    private var cancellables: [AnyCancellable] = []
-    
     public convenience required init(from decoder: Decoder) throws {
         self.init()
         
@@ -44,26 +27,17 @@ public class Sessions: DataItem {
         self.postInit()
     }
     
-    public convenience init(_ realm:Realm) {
-        self.init()
-        
-        fetchMemriID(realm)
-        
-        self.postInit()
-    }
+    private var rlmTokens: [NotificationToken] = []
+    private var cancellables: [AnyCancellable] = []
     
-    required init() {
-        super.init()
-    }
-    
-    private func postInit(){
+    func postInit(){
         for session in sessions {
             decorate(session)
             session.postInit()
         }
     }
     
-    private func decorate(_ session:Session) {
+    func decorate(_ session:Session) {
         if realm != nil {
             rlmTokens.append(session.observe({ (objectChange) in
                 if case .change = objectChange {
@@ -71,6 +45,22 @@ public class Sessions: DataItem {
                 }
             }))
         }
+    }
+    
+    var currentSession: Session {
+        return sessions.count > 0 ? sessions[currentSessionIndex] : Session()
+    }
+ 
+    var currentView: SessionView {
+        return currentSession.currentView
+    }
+    
+    public convenience init(_ realm:Realm) {
+        self.init()
+        
+        fetchMemriID(realm)
+        
+        self.postInit()
     }
     
     private func fetchMemriID(_ realm:Realm){

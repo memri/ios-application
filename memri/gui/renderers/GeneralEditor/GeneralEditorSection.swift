@@ -12,7 +12,7 @@ import RealmSwift
 struct GeneralEditorSection: View {
     @EnvironmentObject var context: MemriContext
 
-    var item: DataItem
+    var item: Item
     var renderConfig: CascadingGeneralEditorConfig
     var groupKey: String
     var groups:[String:[String]]
@@ -109,11 +109,11 @@ struct GeneralEditorSection: View {
         }
     }
 
-    func getArray(_ item:DataItem, _ prop:String) -> [DataItem] {
+    func getArray(_ item:Item, _ prop:String) -> [Item] {
         dataItemListToArray(item[prop] ?? [])
     }
     
-    func getProperties(_ item:DataItem) -> [String]{
+    func getProperties(_ item:Item) -> [String]{
         return item.objectSchema.properties.filter {
             return !self.renderConfig.excluded.contains($0.name)
                 && !self.renderConfig.allGroupValues().contains($0.name)
@@ -122,7 +122,7 @@ struct GeneralEditorSection: View {
     }
     
     func getViewArguments(_ groupKey:String, _ name:String, _ value:Any?,
-                          _ item:DataItem)-> ViewArguments {
+                          _ item:Item)-> ViewArguments {
         
         return ViewArguments(renderConfig.viewArguments.asDict().merging([
             "subject": self.item,

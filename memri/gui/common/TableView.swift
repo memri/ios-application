@@ -94,7 +94,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if Item.self == DataItem.self {
+        if Item.self == Item.self {
             return self.parent.context.items.count
         } else if Item.self == NavigationItem.self {
             return self.parent.context.navigation.getItems().count
@@ -108,7 +108,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
             .dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! HostingTableViewCell<Content>
         
         print("indexPath.row = \(indexPath.row)")
-        if Item.self == DataItem.self {
+        if Item.self == Item.self {
             let dataItem = self.parent.context.items[indexPath.row]
             let guiView = self.renderConfig?.render(item: dataItem)
             cell.host(guiView as! Content, parent: self.tableViewController)
@@ -128,7 +128,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
     //
     
     func tableView(_ tableView: UITableView, didSelectRowAt: IndexPath) {
-        if Item.self == DataItem.self {
+        if Item.self == Item.self {
             let dataItem = self.parent.context.items[didSelectRowAt.row]
             if let press = self.renderConfig?.press {
                 self.parent.context.executeAction(press, with: dataItem)
@@ -149,7 +149,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
     }
 
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        if Item.self == DataItem.self {
+        if Item.self == Item.self {
             let itemMoving = self.parent.context.items[sourceIndexPath.row]
             self.parent.context.items.remove(at: sourceIndexPath.row)
             self.parent.context.items.insert(itemMoving, at: destinationIndexPath.row)
@@ -218,7 +218,7 @@ class Coordinator<Item, Content: View> : NSObject, UITableViewDelegate, UITableV
         let itemAtRow = indexPath
         let delete = UIContextualAction(style: .destructive, title:  "Delete", handler: { (ac: UIContextualAction, view: UIView, success: (Bool) -> Void) in
             print("Delete Button Tapped")
-            if Item.self == DataItem.self {
+            if Item.self == Item.self {
                 self.parent.context.executeAction( Action(self.parent.context, "delete"), with: self.parent.context.items[itemAtRow.row])
                 self.tableViewController.tableView.deleteRows(at: [indexPath], with: UITableView.RowAnimation.automatic)
             } else if Item.self == NavigationItem.self {

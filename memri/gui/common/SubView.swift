@@ -20,7 +20,7 @@ public struct SubView : View {
     // There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
     // By only duplicating that line and setting session later, but I am too lazy to do that.
     // TODO Refactor
-    public init (context:MemriContext, viewName: String, dataItem: DataItem, args:ViewArguments){
+    public init (context:MemriContext, viewName: String, dataItem: Item, args:ViewArguments){
         self.toolbar = args.get("toolbar") ?? toolbar
         self.searchbar = args.get("searchbar") ?? searchbar
         self.showCloseButton = args.get("showCloseButton") ?? showCloseButton
@@ -63,7 +63,7 @@ public struct SubView : View {
         }
     }
     
-    public init (context: MemriContext, view: SessionView, dataItem: DataItem, args:ViewArguments){
+    public init (context: MemriContext, view: SessionView, dataItem: Item, args:ViewArguments){
         self.toolbar = args.get("toolbar") ?? toolbar
         self.searchbar = args.get("searchbar") ?? searchbar
         self.showCloseButton = args.get("showCloseButton") ?? showCloseButton

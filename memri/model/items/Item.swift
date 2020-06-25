@@ -2,53 +2,18 @@ import Foundation
 import Combine
 import RealmSwift
 
-/// DataItem is the baseclass for all of the data clases, all functions
-public class DataItem: Object, Codable, Identifiable, ObservableObject {
- 
-    /// name of the DataItem implementation class (E.g. "note" or "person")
-    var genericType:String { "unknown" }
+public class Item : SchemaItem {
     
-    /// Title computed by implementations of the DataItem class
+    /// Title computed by implementations of the Item class
     @objc dynamic var computedTitle:String {
         return "\(genericType) [\(memriID)]"
     }
     
-    var test:String =  DataItem.generateUUID()
-    /// Boolean whether the DataItem has been deleted
-    
-    /// uid of the DataItem set by the pod
-    @objc dynamic var uid:Int = 0
-    /// memriID of the DataItem
-    @objc dynamic var memriID:String =  DataItem.generateUUID()
-    /// Boolean whether the DataItem has been deleted
-    @objc dynamic var deleted:Bool = false
-    /// The last version loaded from the server
-    @objc dynamic var version:Int = 0
-    /// Boolean whether the DataItem has been starred
-    @objc dynamic var starred:Bool = false
-    /// Creation date of the DataItem
-    @objc dynamic var dateCreated:Date? = Date()
-    /// Last modification date of the DataItem
-    @objc dynamic var dateModified:Date? = Date()
-    /// Last access date of the DataItem
-    @objc dynamic var dateAccessed:Date? = nil
-    /// Array AuditItems describing the log history of the DataItem
-    let changelog = List<AuditItem>()
-    /// Labels assigned to / associated with this DataItem
-    let labels = List<memri.Label>()
-    /// Object descirbing syncing information about this object like loading state, versioning, etc.
-    @objc dynamic var syncState:SyncState? = SyncState()
-    
- 
     var functions:[String: (_ args:[Any?]?) -> Any] = [:]
     
-    /// Primary key used in the realm database of this DataItem
+    /// Primary key used in the realm database of this Item
     public override static func primaryKey() -> String? {
         return "memriID"
-    }
-    
-    public func cast() -> Self{
-        return self
     }
     
     private enum CodingKeys: String, CodingKey {
@@ -56,7 +21,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
              labels, syncState
     }
         
-    enum DataItemError: Error {
+    enum ItemError: Error {
         case cannotMergeItemWithDifferentId
     }
     
@@ -75,7 +40,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /// Deserializes DataItem from json decoder
+    /// Deserializes Item from json decoder
     /// - Parameter decoder: Decoder object
     /// - Throws: Decoding error
     required public convenience init(from decoder: Decoder) throws{
@@ -100,6 +65,9 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         decodeIntoList(decoder, "labels", self.labels)
     }
     
+    public func cast() -> Self {
+        return self
+    }
     
     /// Get string, or string representation (e.g. "true) from property name
     /// - Parameter name: property name
@@ -139,23 +107,23 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    ///Get the type of DataItem
-    /// - Returns: type of the DataItem
-    public func getType() -> DataItem.Type? {
-        if let type = DataItemFamily(rawValue: self.genericType){
-            let T = DataItemFamily.getType(type)
+    ///Get the type of Item
+    /// - Returns: type of the Item
+    public func getType() -> Item.Type? {
+        if let type = ItemFamily(rawValue: self.genericType){
+            let T = ItemFamily.getType(type)
             // NOTE: allowed forced downcast
-            return (T() as! DataItem.Type)
+            return (T() as! Item.Type)
         }
         else {
-            print("Cannot find type \(self.genericType) in DataItemFamily")
+            print("Cannot find type \(self.genericType) in ItemFamily")
             return nil
         }
     }
     
     /// Determines whether item has property
     /// - Parameter propName: name of the property
-    /// - Returns: boolean indicating whether DataItem has the property
+    /// - Returns: boolean indicating whether Item has the property
     public func hasProperty(_ propName: String) -> Bool {
         for prop in self.objectSchema.properties {
             if let haystack = self[prop.name] as? String {
@@ -197,14 +165,12 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
 
     }
     
-    
-    
-    /// Compares value of this DataItems property with the corresponding property of the passed items property
+    /// Compares value of this Items property with the corresponding property of the passed items property
     /// - Parameters:
     ///   - propName: name of the compared property
     ///   - item: item to compare against
     /// - Returns: boolean indicating whether the property values are the same
-    public func isEqualProperty(_ propName:String, _ item:DataItem) -> Bool {
+    public func isEqualProperty(_ propName:String, _ item:Item) -> Bool {
         if let prop = self.objectSchema[propName]{
             // List
             if prop.objectClassName != nil {
@@ -242,11 +208,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /// Safely merges the passed item with the current DataItem. When there are merge conflicts, meaning that some other process
+    /// Safely merges the passed item with the current Item. When there are merge conflicts, meaning that some other process
     /// requested changes for the same properties with different values, merging is not performed.
-    /// - Parameter item: item to be merged with the current DataItem
+    /// - Parameter item: item to be merged with the current Item
     /// - Returns: boolean indicating the succes of the merge
-    public func safeMerge(_ item:DataItem) -> Bool {
+    public func safeMerge(_ item:Item) -> Bool {
         if let syncState = self.syncState{
             // Ignore when marked for deletion
             if syncState.actionNeeded == "delete" { return true }
@@ -274,13 +240,13 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /// merges the the passed DataItem in the current item
+    /// merges the the passed Item in the current item
     /// - Parameters:
-    ///   - item: passed DataItem
+    ///   - item: passed Item
     ///   - mergeDefaults: boolean describing how to merge. If mergeDefault == true: Overwrite only the property values have
     ///    not already been set (nil). else: Overwrite all property values with the values from the passed item, with the exception
     ///    that values cannot be set from a non-nil value to nil.
-    public func merge(_ item:DataItem, _ mergeDefaults:Bool=false) {
+    public func merge(_ item:Item, _ mergeDefaults:Bool=false) {
         // Store these changes in realm
         if let realm = self.realm {
             do {
@@ -295,7 +261,7 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    private func doMerge(_ item:DataItem, _ mergeDefaults:Bool=false) {
+    private func doMerge(_ item:Item, _ mergeDefaults:Bool=false) {
         let properties = self.objectSchema.properties
         for prop in properties {
             
@@ -333,10 +299,10 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     
     /// compare two dataItems
     /// - Parameters:
-    ///   - lhs: DataItem 1
-    ///   - rhs: DataItem 2
+    ///   - lhs: Item 1
+    ///   - rhs: Item 2
     /// - Returns: boolean indicating equality
-    public static func == (lhs: DataItem, rhs: DataItem) -> Bool {
+    public static func == (lhs: Item, rhs: Item) -> Bool {
         lhs.memriID == rhs.memriID
     }
     
@@ -346,16 +312,16 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         return "Memri\(UUID().uuidString)"
     }
     
-    /// Reads DataItems from file
+    /// Reads Items from file
     /// - Parameters:
     ///   - file: filename (without extension)
     ///   - ext: extension
     /// - Throws: Decoding error
-    /// - Returns: Array of deserialized DataItems
-    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [DataItem] {
+    /// - Returns: Array of deserialized Items
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> [Item] {
         let jsonData = try jsonDataFromFile(file, ext)
         
-        let items:[DataItem] = try MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
+        let items:[Item] = try MemriJSONDecoder.decode(family:ItemFamily.self, from:jsonData)
         return items
     }
     
@@ -371,29 +337,29 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         }
     }
     
-    /// Read DataItem from string
+    /// Read Item from string
     /// - Parameter json: string to parse
     /// - Throws: Decoding error
-    /// - Returns: Array of deserialized DataItems
-    public class func fromJSONString(_ json: String) throws -> [DataItem] {
-        let items:[DataItem] = try MemriJSONDecoder
-            .decode(family:DataItemFamily.self, from:Data(json.utf8))
+    /// - Returns: Array of deserialized Items
+    public class func fromJSONString(_ json: String) throws -> [Item] {
+        let items:[Item] = try MemriJSONDecoder
+            .decode(family:ItemFamily.self, from:Data(json.utf8))
         return items
     }
     
 }
 
 class Edge: Object {
-    @objc dynamic var objectMemriID:String = DataItem.generateUUID()
-    @objc dynamic var subjectMemriID:String = DataItem.generateUUID()
+    @objc dynamic var objectMemriID:String = Item.generateUUID()
+    @objc dynamic var subjectMemriID:String = Item.generateUUID()
     
     @objc dynamic var objectType:String = "unknown"
     @objc dynamic var subjectType:String = "unknown"
     
     required init() {}
     
-    init(_ subjectMemriID: String = DataItem.generateUUID(),
-         _ objectMemriID: String = DataItem.generateUUID(),
+    init(_ subjectMemriID: String = Item.generateUUID(),
+         _ objectMemriID: String = Item.generateUUID(),
          _ subjectType: String = "unknown", _ objectType: String = "unknown") {
         self.objectMemriID = objectMemriID
         self.subjectMemriID = subjectMemriID
@@ -402,10 +368,10 @@ class Edge: Object {
     }
     
     // maybe we dont need this
-//    @objc dynamic var objectType:String = DataItem.generateUUID()
-//    @objc dynamic var subectType:String = DataItem.generateUUID()
+//    @objc dynamic var objectType:String = Item.generateUUID()
+//    @objc dynamic var subectType:String = Item.generateUUID()
     
-    /// Deserializes DataItem from json decoder
+    /// Deserializes Item from json decoder
     /// - Parameter decoder: Decoder object
     /// - Throws: Decoding error
 //    required public convenience init(from decoder: Decoder) throws{

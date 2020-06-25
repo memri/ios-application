@@ -35,7 +35,7 @@ struct CustomRendererView: View {
     
     var body: some View {
         return VStack{
-            self.renderConfig?.render(item: self.context.item ?? DataItem())
+            self.renderConfig?.render(item: self.context.item ?? Item())
         }
     }
 }

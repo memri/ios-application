@@ -132,7 +132,7 @@ struct ThumbWaterfallRendererView: View {
         }
     }
     
-    func onTap(action: Action, dataItem: DataItem){
+    func onTap(action: Action, dataItem: Item){
         context.executeAction(action, with: dataItem)
     }
 }
@@ -151,7 +151,7 @@ class WaterfallScreenLayoutDelegate: ASCollectionViewDelegate, ASWaterfallLayout
     let heights: [CGFloat] = [1.5, 1.0, 0.75, 1.75, 0.6]
     /// We explicitely provide a height here. If providing no delegate, this layout will use auto-sizing, however this causes problems if rotating the device (due to limitaitons in UICollecitonView and autosizing cells that are not visible)
     func heightForCell(at indexPath: IndexPath, context: ASWaterfallLayout.CellLayoutContext) -> CGFloat {
-//        guard let item: DataItem = getDataForItem(at: indexPath) else { return 100 }
+//        guard let item: Item = getDataForItem(at: indexPath) else { return 100 }
         let rand = indexPath.item % heights.count
         return context.width * (heights[safe: rand] ?? 1)
     }

@@ -10,27 +10,27 @@ import RealmSwift
 
 extension MemriContext {
     
-    private func getDataItem(_ dict:[String:Any], _ dataItem:DataItem?,
-                             _ viewArguments:ViewArguments? = nil) throws -> DataItem {
+    private func getItem(_ dict:[String:Any], _ dataItem:Item?,
+                             _ viewArguments:ViewArguments? = nil) throws -> Item {
         
         // TODO refactor: move to function
         guard let stringType = dict["type"] as? String else {
             throw "Missing type attribute to indicate the type of the data item"
         }
         
-        guard let family = DataItemFamily(rawValue: stringType) else {
+        guard let family = ItemFamily(rawValue: stringType) else {
             throw "Cannot find find family \(stringType)"
         }
         
-        guard let ItemType = DataItemFamily.getType(family)() as? Object.Type else {
+        guard let ItemType = ItemFamily.getType(family)() as? Object.Type else {
             throw "Cannot find family \(stringType)"
         }
         
         var initArgs = dict
         initArgs.removeValue(forKey: "type")
 
-        guard let item = ItemType.init() as? DataItem else {
-            throw "Cannot cast type \(ItemType) to DataItem"
+        guard let item = ItemType.init() as? Item else {
+            throw "Cannot cast type \(ItemType) to Item"
         }
         
         // TODO: fill item
@@ -60,7 +60,7 @@ extension MemriContext {
         return item
     }
     
-    private func buildArguments(_ action:Action, _ dataItem:DataItem?,
+    private func buildArguments(_ action:Action, _ dataItem:Item?,
                                 _ viewArguments:ViewArguments? = nil) throws -> [String: Any] {
         
         var args = [String: Any]()
@@ -77,19 +77,19 @@ extension MemriContext {
             
             var finalValue:Any? = ""
             
-            // TODO add cases for argValue = DataItem, ViewArgument
-            if let dataItem = argValue as? DataItem {
+            // TODO add cases for argValue = Item, ViewArgument
+            if let dataItem = argValue as? Item {
                 finalValue = dataItem
             }
             else if let dict = argValue as? [String: Any] {
                 if action.argumentTypes[argName] == ViewArguments.self {
                     finalValue = ViewArguments(dict)
                 }
-                else if action.argumentTypes[argName] == DataItemFamily.self {
-                    finalValue = try getDataItem(dict, dataItem, viewArguments)
+                else if action.argumentTypes[argName] == ItemFamily.self {
+                    finalValue = try getItem(dict, dataItem, viewArguments)
                 }
                 else if action.argumentTypes[argName] == SessionView.self {
-                    let viewDef = CVUParsedViewDefinition(DataItem.generateUUID())
+                    let viewDef = CVUParsedViewDefinition(Item.generateUUID())
                     viewDef.parsed = dict
                     
                     finalValue = SessionView(value: ["viewDefinition": viewDef])
@@ -130,7 +130,7 @@ extension MemriContext {
         return args
     }
     
-    private func executeActionThrows(_ action:Action, with dataItem:DataItem? = nil,
+    private func executeActionThrows(_ action:Action, with dataItem:Item? = nil,
                                      using viewArguments:ViewArguments? = nil) throws {
         // Build arguments dict
         let args = try buildArguments(action, dataItem, viewArguments)
@@ -174,7 +174,7 @@ extension MemriContext {
     }
     
     /// Executes the action as described in the action description
-    public func executeAction(_ action:Action, with dataItem:DataItem? = nil,
+    public func executeAction(_ action:Action, with dataItem:Item? = nil,
                               using viewArguments:ViewArguments? = nil) {
         do {
             if action.getBool("withAnimation") {
@@ -193,7 +193,7 @@ extension MemriContext {
             debugHistory.error("\(error)")
         }
     }
-    public func executeAction(_ actions:[Action], with dataItem:DataItem? = nil,
+    public func executeAction(_ actions:[Action], with dataItem:Item? = nil,
                               using viewArguments:ViewArguments? = nil) {
         
         for action in actions {
@@ -375,7 +375,7 @@ public enum RenderType: String{
 }
 
 public enum ActionFamily: String, CaseIterable {
-    case back, addDataItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
+    case back, addItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
         star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
@@ -385,7 +385,7 @@ public enum ActionFamily: String, CaseIterable {
     func getType() -> Action.Type {
         switch self {
         case .back: return ActionBack.self
-        case .addDataItem: return ActionAddDataItem.self
+        case .addItem: return ActionAddItem.self
         case .openView: return ActionOpenView.self
         case .openViewByName: return ActionOpenViewByName.self
         case .toggleEditMode: return ActionToggleEditMode.self
@@ -467,21 +467,21 @@ class ActionBack : Action, ActionExec {
         execWithoutThrow { try ActionBack(context).exec(arguments) }
     }
 }
-class ActionAddDataItem : Action, ActionExec {
+class ActionAddItem : Action, ActionExec {
     override var defaultValues:[String:Any] {[
         "icon": "plus",
-        "argumentTypes": ["template": DataItemFamily.self],
+        "argumentTypes": ["template": ItemFamily.self],
         "opensView": true,
         "color": Color(hex: "#6aa84f"),
         "inactiveColor": Color(hex: "#434343")
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
-        super.init(context, "addDataItem", arguments:arguments, values:values)
+        super.init(context, "addItem", arguments:arguments, values:values)
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        if let dataItem = arguments["template"] as? DataItem {
+        if let dataItem = arguments["template"] as? Item {
             // Copy template
             let copy = try context.cache.duplicate(dataItem)
             
@@ -499,7 +499,7 @@ class ActionAddDataItem : Action, ActionExec {
     }
     
     class func exec(_ context:MemriContext, _ arguments:[String: Any]) throws {
-        execWithoutThrow { try ActionAddDataItem(context).exec(arguments) }
+        execWithoutThrow { try ActionAddItem(context).exec(arguments) }
     }
 }
 
@@ -536,7 +536,7 @@ class ActionOpenView : Action, ActionExec {
         try context.updateCascadingView() // scheduleCascadingViewUpdate()
     }
     
-    private func openView(_ context: MemriContext, _ item: DataItem, with arguments: ViewArguments? = nil) throws {
+    private func openView(_ context: MemriContext, _ item: Item, with arguments: ViewArguments? = nil) throws {
         // Create a new view
         let view = SessionView(value: ["datasource": Datasource(value: [
             // Set the query options to load the item
@@ -548,8 +548,8 @@ class ActionOpenView : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-//        let selection = context.cascadingView.userState.get("selection") as? [DataItem]
-        let dataItem = arguments["dataItem"] as? DataItem
+//        let selection = context.cascadingView.userState.get("selection") as? [Item]
+        let dataItem = arguments["dataItem"] as? Item
         let viewArguments = arguments["viewArguments"] as? ViewArguments
         
         
@@ -663,8 +663,8 @@ class ActionStar : Action, ActionExec {
     
     // TODO selection handling for binding
     func exec(_ arguments:[String: Any]) throws {
-//        if let item = arguments["dataItem"] as? DataItem {
-//            var selection:[DataItem] = context.cascadingView.userState.get("selection") ?? []
+//        if let item = arguments["dataItem"] as? Item {
+//            var selection:[Item] = context.cascadingView.userState.get("selection") ?? []
 //            let toValue = !item.starred
 //
 //            if !selection.contains(item) {
@@ -862,7 +862,7 @@ class ActionBackAsSession : Action, ActionExec {
             throw "Warn: Can't go back. Already at earliest view in session"
         }
         else {
-            if let duplicateSession = try context.cache.duplicate(session as DataItem) as? Session {
+            if let duplicateSession = try context.cache.duplicate(session as Item) as? Session {
                 realmWriteIfAvailable(context.cache.realm, {
                     duplicateSession.currentViewIndex -= 1
                 })
@@ -1017,18 +1017,18 @@ class ActionDelete : Action, ActionExec {
 //        //        self.context.items.remove(atOffsets: indexSet)
 //        let indexSet = arguments["indices"] as? IndexSet
 //        if let indexSet = indexSet{
-//            var items:[DataItem] = []
+//            var items:[Item] = []
 //            for i in indexSet {
 //                let item = context.items[i]
 //                items.append(item)
 //            }
 //        }
         
-        if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+        if let selection:[Item] = context.cascadingView.userState.get("selection"), selection.count > 0 {
             context.cache.delete(selection)
             context.scheduleCascadingViewUpdate()
         }
-        else if let dataItem = arguments["dataItem"] as? DataItem {
+        else if let dataItem = arguments["dataItem"] as? Item {
             context.cache.delete(dataItem)
             context.scheduleCascadingViewUpdate(immediate: true)
         }
@@ -1047,11 +1047,11 @@ class ActionDuplicate : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
-            try selection.forEach{ item in try ActionAddDataItem.exec(context, ["dataItem": item]) }
+        if let selection:[Item] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+            try selection.forEach{ item in try ActionAddItem.exec(context, ["dataItem": item]) }
         }
-        else if let item = arguments["dataItem"] as? DataItem {
-            try ActionAddDataItem.exec(context, ["dataItem": item])
+        else if let item = arguments["dataItem"] as? Item {
+            try ActionAddItem.exec(context, ["dataItem": item])
         }
         else {
             // TODO Error handling
@@ -1129,7 +1129,7 @@ class ActionClosePopup : Action, ActionExec {
 
 class ActionLink : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
+        "argumentTypes": ["subject": ItemFamily.self, "property": String.self]
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -1137,7 +1137,7 @@ class ActionLink : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        guard let subject = arguments["subject"] as? DataItem else {
+        guard let subject = arguments["subject"] as? Item else {
             throw "Exception: subject is not set"
         }
         
@@ -1145,7 +1145,7 @@ class ActionLink : Action, ActionExec {
             throw "Exception: property is not set to a string"
         }
         
-        guard let selected = arguments["dataItem"] as? DataItem else {
+        guard let selected = arguments["dataItem"] as? Item else {
             throw "Exception: selected data item is not passed"
         }
         
@@ -1177,7 +1177,7 @@ class ActionLink : Action, ActionExec {
 
 class ActionUnlink : Action, ActionExec {
     override var defaultValues:[String:Any] {[
-        "argumentTypes": ["subject": DataItemFamily.self, "property": String.self]
+        "argumentTypes": ["subject": ItemFamily.self, "property": String.self]
     ]}
     
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
@@ -1185,14 +1185,14 @@ class ActionUnlink : Action, ActionExec {
     }
     
     func exec(_ arguments:[String: Any]) throws {
-        guard let subject = arguments["subject"] as? DataItem else {
+        guard let subject = arguments["subject"] as? Item else {
             throw "Exception: subject is not set"
         }
         guard let propertyName = arguments["property"] as? String else {
             throw "Exception: property is not set to a string"
         }
         
-        guard let selected = arguments["dataItem"] as? DataItem else {
+        guard let selected = arguments["dataItem"] as? Item else {
             throw "Exception: selected data item is not passed"
         }
         
@@ -1240,7 +1240,7 @@ class ActionMultiAction : Action, ActionExec {
         }
         
         for action in actions {
-            self.context.executeAction(action, with: arguments["dataItem"] as? DataItem)
+            self.context.executeAction(action, with: arguments["dataItem"] as? Item)
         }
     }
     

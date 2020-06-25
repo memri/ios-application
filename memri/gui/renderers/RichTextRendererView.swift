@@ -31,7 +31,7 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
 
 struct _RichTextEditor: View {
     @EnvironmentObject var context: MemriContext
-    @ObservedObject public var dataItem: DataItem
+    @ObservedObject public var dataItem: Item
     
     var editModeBinding: Binding<Bool> {
         Binding<Bool>(get: { self.context.currentSession.isEditMode }, set: { self.context.currentSession.isEditMode = $0 })

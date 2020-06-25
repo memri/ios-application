@@ -8,7 +8,7 @@ import Foundation
 import RealmSwift
 
 public class UserState: Object, CVUToString {
-    @objc dynamic var memriID: String = DataItem.generateUUID()
+    @objc dynamic var memriID: String = Item.generateUUID()
     @objc dynamic var state:String = ""
     
     var onFirstSave: ((UserState) -> Void)? = nil
@@ -31,7 +31,7 @@ public class UserState: Object, CVUToString {
         let dict = self.asDict()
         
         if let lookup = dict[propName] as? [String:Any?], lookup["memriID"] != nil {
-            let x:DataItem? = getDataItem(lookup["type"] as? String ?? "",
+            let x:Item? = getItem(lookup["type"] as? String ?? "",
                                           lookup["memriID"] as? String ?? "")
             return x as? T
         }
@@ -50,7 +50,7 @@ public class UserState: Object, CVUToString {
         
         var x = self.asDict()
         
-        if let newValue = newValue as? DataItem {
+        if let newValue = newValue as? Item {
             x[propName] = ["type": newValue.genericType, "memriID": newValue.memriID]
         }
         else {

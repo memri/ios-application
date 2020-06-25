@@ -31,7 +31,7 @@ class CacheTest: XCTestCase {
     
     func testGetItem(){
         testCache.install()
-        XCTAssertEqual(getDataItem("Country", "Aruba")?.getString("name"), "Aruba")
+        XCTAssertEqual(getItem("Country", "Aruba")?.getString("name"), "Aruba")
     }
     
     func testEmptyQuery() {
@@ -43,7 +43,7 @@ class CacheTest: XCTestCase {
     func testTypeQuery() {
         testCache.install()
         
-        for dtype in DataItemFamily.allCases {
+        for dtype in ItemFamily.allCases {
             testCache.query(Datasource(query: dtype.rawValue)){ error, items in
                 if let result = items {
                     XCTAssertTrue(result.allSatisfy { item in item.genericType == dtype.rawValue })
@@ -120,28 +120,28 @@ class CacheTest: XCTestCase {
     
     func testDelete(){
         testCache.install()
-        let item = getDataItem("Country", "Aruba")
+        let item = getItem("Country", "Aruba")
         testCache.delete(item!)
-        let item2 = getDataItem("Country", "Aruba")
+        let item2 = getItem("Country", "Aruba")
         XCTAssertTrue(item2?.deleted == true || item2 == nil)
     }
     
     func testDeleteMulti(){
         testCache.install()
-        let items = [getDataItem("Country", "Aruba")!,
-                     getDataItem("Country", "Antarctica")!]
+        let items = [getItem("Country", "Aruba")!,
+                     getItem("Country", "Antarctica")!]
         
         testCache.delete(items)
         
-        let items2 = [getDataItem("Country", "Aruba"),
-                      getDataItem("Country", "Antarctica")]
+        let items2 = [getItem("Country", "Aruba"),
+                      getItem("Country", "Antarctica")]
         
         XCTAssertTrue(items2.allSatisfy{$0?.deleted == true || $0 == nil})
     }
     
     func testDuplicate(){
         testCache.install()
-        let item = getDataItem("Country", "Aruba")
+        let item = getItem("Country", "Aruba")
         let copy = try! testCache.duplicate(item!)
         let cls = item!.getType()
 

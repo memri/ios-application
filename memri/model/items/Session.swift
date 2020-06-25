@@ -10,24 +10,49 @@ import Combine
 import SwiftUI
 import RealmSwift
 
-public class Session: DataItem {
- 
-    override var genericType:String { "Session" }
- 
-    @objc dynamic var name: String = ""
- 
-    @objc dynamic var currentViewIndex: Int = 0
- 
-    let views = RealmSwift.List<SessionView>() // @Published
- 
-    @objc dynamic var showFilterPanel:Bool = false
- 
-    @objc dynamic var showContextPane:Bool = false
- 
-    @objc dynamic var editMode:Bool = false
- 
-    @objc dynamic var screenshot:File? = nil
+public class Session: SchemaSession {
+    private var rlmTokens: [NotificationToken] = []
+    private var cancellables: [AnyCancellable] = []
     
+    required init() {
+        super.init()
+       
+        self.postInit()
+    }
+    
+    func postInit(){
+        if realm != nil {
+            for view in views{
+                decorate(view)
+            }
+            
+            rlmTokens.append(self.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
+    }
+    
+    func decorate(_ view:SessionView) {
+        // Set the .session property on views for easy querying
+        if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
+        
+        // Observe and process changes for UI updates
+        if realm != nil {
+            // TODO Refactor: What is the impact of this not happening in subviews
+            //                The impact is that for instance clicking on the showFilterPanel button
+            //                is not working. The UI won't update. Perhaps we need to implement
+            //                our own pub/sub structure. More thought is needed.
+            
+            rlmTokens.append(view.observe({ (objectChange) in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
+            }))
+        }
+    }
+
     var isEditMode: Bool {
         get {
             editMode
@@ -52,71 +77,12 @@ public class Session: DataItem {
         }
     }
     
-    private var rlmTokens: [NotificationToken] = []
-    private var cancellables: [AnyCancellable] = []
-    
     var hasHistory: Bool {
         self.currentViewIndex > 0
     }
     
     public var currentView: SessionView {
         return views.count > 0 ? views[currentViewIndex] : SessionView()
-    }
-    
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
-            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
-            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
-            
-            decodeIntoList(decoder, "views", self.views)
-            
-            try super.superDecode(from: decoder)
-        }
-        
-//        self.postInit()
-    }
-    
-    required init() {
-        super.init()
-        
-        self.postInit()
-    }
-    
-    public func postInit(){
-        if realm != nil {
-            for view in views{
-                decorate(view)
-            }
-            
-            rlmTokens.append(self.observe({ (objectChange) in
-                if case .change = objectChange {
-                    self.objectWillChange.send()
-                }
-            }))
-        }
-    }
-    
-    private func decorate(_ view:SessionView) {
-        // Set the .session property on views for easy querying
-        if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
-        
-        // Observe and process changes for UI updates
-        if realm != nil {
-            // TODO Refactor: What is the impact of this not happening in subviews
-            //                The impact is that for instance clicking on the showFilterPanel button
-            //                is not working. The UI won't update. Perhaps we need to implement
-            //                our own pub/sub structure. More thought is needed.
-            
-            rlmTokens.append(view.observe({ (objectChange) in
-                if case .change = objectChange {
-                    self.objectWillChange.send()
-                }
-            }))
-        }
     }
     
 //    deinit {
@@ -266,7 +232,6 @@ extension UIView {
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
         drawHierarchy(in: self.bounds, afterScreenUpdates: true)
 
-        // NOTE: Allowed force unwrap
         if let image = UIGraphicsGetImageFromCurrentImageContext() {
             UIGraphicsEndImageContext()
             return image
