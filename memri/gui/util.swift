@@ -170,7 +170,7 @@ func decodeIntoList<T:Decodable>(_ decoder:Decoder, _ key:String, _ list:RealmSw
 
 
 func decodeEdges<T:Item>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
-                             _ edgeList:RealmSwift.List<Edge>, _ subject: Item) {
+                             _ edgeList:RealmSwift.List<Relationship>, _ subject: Item) {
     do {
         let objects:[T]? = try decoder.decodeIfPresent(key)
         if let objects = objects {
@@ -179,7 +179,7 @@ func decodeEdges<T:Item>(_ decoder:Decoder, _ key:String, _ subjectType:T.Type,
                 catch {
                     // TODO Error logging
                 }
-                let edge = Edge(subject.memriID, object.memriID, subject.genericType, object.genericType)
+                let edge = Relationship(subject.memriID, object.memriID, subject.genericType, object.genericType)
                 edgeList.append(edge)
             }
         }
@@ -248,7 +248,7 @@ func getItem(_ type:String, _ memriID: String) -> Item? {
     return nil
 }
 
-func getItem(_ edge:Edge) -> Item? {
+func getItem(_ edge:Relationship) -> Item? {
     if let family = ItemFamily(rawValue: edge.objectType) {
         return withRealm { realm in
             realm.object(ofType: family.getType() as! Object.Type,
@@ -287,7 +287,7 @@ func dataItemListToArray(_ object:Any) -> [Item] {
     else if let list = object as? List<Indexer> { list.forEach{ collection.append($0) } }
     else if let list = object as? List<ImporterInstance> { list.forEach{ collection.append($0) } }
     else if let list = object as? List<IndexerInstance> { list.forEach{ collection.append($0) } }
-    else if let list = object as? List<Edge> {
+    else if let list = object as? List<Relationship> {
         withRealm { realm -> Void in
             for edge in list {
                 let objectType = edge.objectType

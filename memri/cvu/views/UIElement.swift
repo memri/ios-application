@@ -46,7 +46,7 @@ public class UIElement : CVUToString {
                         let x = try expr.execute(viewArguments);
                         
                         var result = [Item]()
-                        if let list = x as? List<Edge> {
+                        if let list = x as? List<Relationship> {
                             for edge in list {
                                 if let d = getItem(edge) {
                                     result.append(d)

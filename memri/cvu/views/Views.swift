@@ -139,7 +139,7 @@ public class Views {
         }
     }
     
-    func resolveEdge(_ edge:Edge) throws -> Item {
+    func resolveEdge(_ edge:Relationship) throws -> Item {
         // TODO REFACTOR: implement
         throw "not implemented"
     }
@@ -245,7 +245,7 @@ public class Views {
                             break
                         }
                     }
-                    else if let v = value as? RealmSwift.List<Edge> {
+                    else if let v = value as? RealmSwift.List<Relationship> {
                         switch node.name {
                         case "count": value = v.count
                         case "first": value = v.first
@@ -296,7 +296,7 @@ public class Views {
                 // TODO REFACTOR: parse and query
             }
             
-            if let edge = value as? Edge {
+            if let edge = value as? Relationship {
                 value = try resolveEdge(edge)
             }
         }

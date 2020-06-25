@@ -95,7 +95,7 @@ public class PodAPI {
         if className == "Edge" {
             var result = [Item]()
             
-            if let list = item[prop] as? List<Edge> {
+            if let list = item[prop] as? List<Relationship> {
                 for edge in list {
                     if let d = getItem(edge) {
                         result.append(d)

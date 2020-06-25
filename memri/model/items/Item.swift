@@ -349,7 +349,7 @@ public class Item : SchemaItem {
     
 }
 
-class Edge: Object {
+class Relationship: Object {
     @objc dynamic var objectMemriID:String = Item.generateUUID()
     @objc dynamic var subjectMemriID:String = Item.generateUUID()
     

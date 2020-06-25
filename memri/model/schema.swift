@@ -137,8 +137,8 @@ class Note : Item {
 
     override var genericType:String { "Note" }
     
-    let writtenBy = List<Edge>()
-    let sharedWith = List<Edge>()
+    let writtenBy = List<Relationship>()
+    let sharedWith = List<Relationship>()
     let comments = List<Item>()
     
     required init () {
@@ -464,7 +464,7 @@ class AuditItem:Item {
     @objc dynamic var action:String? = nil
     override var genericType:String { "AuditItem" }
     
-    let appliesTo = List<Edge>()
+    let appliesTo = List<Relationship>()
     
     required init () {
         super.init()
@@ -491,7 +491,7 @@ class Label:Item {
     @objc dynamic var color:String? = nil
     override var genericType:String { "Label" }
     
-    let appliesTo = List<Edge>() // TODO make two-way binding in realm
+    let appliesTo = List<Relationship>() // TODO make two-way binding in realm
     
     required init () {
         super.init()
@@ -520,7 +520,7 @@ class Photo:Item {
     let height = RealmOptional<Int>()
     override var genericType:String { "Photo" }
     
-    let includes = List<Edge>() // e.g. person, object, recipe, etc
+    let includes = List<Relationship>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -552,7 +552,7 @@ class Video:Item {
     let duration = RealmOptional<Int>()
     override var genericType:String { "Video" }
     
-    let includes = List<Edge>() // e.g. person, object, recipe, etc
+    let includes = List<Relationship>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
@@ -584,7 +584,7 @@ class Audio:Item {
     let duration = RealmOptional<Int>()
     override var genericType:String { "Audio" }
     
-    let includes = List<Edge>() // e.g. person, object, recipe, etc
+    let includes = List<Relationship>() // e.g. person, object, recipe, etc
     
     required init () {
         super.init()
