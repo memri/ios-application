@@ -44,14 +44,33 @@ struct LineChartSwiftUIView: UIViewRepresentable {
 
     final class Coordinator: NSObject, ChartViewDelegate {
         var parent: LineChartSwiftUIView
+        
+        
 
         init(_ parent: LineChartSwiftUIView) {
             self.parent = parent
         }
         
-        func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        //Fire when selected and then tapped
+//        var selectedIndex: Int?
+//        func chartValueTapped(_ chartView: ChartViewBase, dataset: Int, index: Int) {
+//            if selectedIndex == index {
+//                //Pressed twice
+//                parent.onPress?(index)
+//            } else {
+//                selectedIndex = index
+//            }
+//        }
+//
+//        func chartNothingTapped(_ chartView: ChartViewBase) {
+//            selectedIndex = nil
+//        }
+        
+        //Fire when double-tapped
+        func chartValueDoubleTapped(_ chartView: ChartViewBase, entry: ChartDataEntry, dataset: Int, index: Int) {
+            //Pressed twice
             guard let info = entry.data as? ChartEntryInfo else { return }
-            parent.onPress?(info.dataIndex)
+            parent.onPress?(info.dataIndex) //Using this index in case we have sorted the items
         }
     }
 }

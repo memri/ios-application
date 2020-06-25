@@ -26,6 +26,12 @@ class CascadingMapConfig: CascadingRenderConfig {
     
     var longPress: Action? { cascadeProperty("longPress") }
     var press: Action? { cascadeProperty("press") }
+    
+    var locationKey: String { cascadeProperty("locationKey") ?? "coordinate" }
+    var addressKey: String { cascadeProperty("addressKey") ?? "address" }
+    var labelKey: String { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
+    
+    var mapStyle: MapStyle { MapStyle(fromString: cascadeProperty("mapStyle")) }
 }
 
 struct MapRendererView: View {
@@ -33,16 +39,23 @@ struct MapRendererView: View {
     
     let name = "map"
     
-    var renderConfig: CascadingMapConfig? {
-        self.context.cascadingView.renderConfig as? CascadingMapConfig
+    var renderConfig: CascadingMapConfig {
+        (self.context.cascadingView.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
     }
     
     var body: some View {
-        #if targetEnvironment(macCatalyst)
-        return Text("Map is not supported on Mac yet.")
-        #else
-        return MapView(locations: nil, addresses: context.items as? [Address]) // TODO Refactor: this is very not generic
-        #endif
+        MapView(dataItems: context.items,
+                locationKey: renderConfig.locationKey,
+                addressKey: renderConfig.addressKey,
+                labelKey: renderConfig.labelKey,
+                mapStyle: renderConfig.mapStyle,
+                onPress: self.onPress
+        )
+            .background(Color(.secondarySystemBackground))
+    }
+    
+    func onPress(_ dataItem: DataItem) {
+        renderConfig.press.map { context.executeAction($0, with: dataItem) }
     }
 }
 

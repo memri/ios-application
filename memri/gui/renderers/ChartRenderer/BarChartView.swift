@@ -48,14 +48,16 @@ struct BarChartSwiftUIView: UIViewRepresentable {
 
     final class Coordinator: NSObject, ChartViewDelegate {
         var parent: BarChartSwiftUIView
-
+        
         init(_ parent: BarChartSwiftUIView) {
             self.parent = parent
         }
         
-        func chartValueSelected(_ chartView: ChartViewBase, entry: ChartDataEntry, highlight: Highlight) {
+        //Fire when double-tapped
+        func chartValueDoubleTapped(_ chartView: ChartViewBase, entry: ChartDataEntry, dataset: Int, index: Int) {
+            //Pressed twice
             guard let info = entry.data as? ChartEntryInfo else { return }
-            parent.onPress?(info.dataIndex)
+            parent.onPress?(info.dataIndex) //Using this index in case we have sorted the items
         }
     }
 }

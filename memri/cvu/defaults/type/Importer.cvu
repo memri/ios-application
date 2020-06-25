@@ -85,7 +85,6 @@ Importer[] {
         sortAscending: false
     }
     
-    editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = thumbnail] {
