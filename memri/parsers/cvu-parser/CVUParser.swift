@@ -334,7 +334,7 @@ class CVUParser {
                             _ = popCurrentToken()
                             properties = try parseDict(value)
                         }
-                        stack.append(UserState(properties))
+                        stack.append(UserState(properties as [String: Any]))
                         continue
                     }
                     else if case CVUToken.CurlyBracketOpen = nextToken {

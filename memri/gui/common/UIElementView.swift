@@ -281,7 +281,8 @@ public struct UIElementView: SwiftUI.View {
                     }
                 }
                 else if from.type == .Map {
-                    MapView(location: get("location"), address: get("address"))
+                    MapView(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address")
+                        .background(Color(.secondarySystemBackground))
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
                 else if from.type == .Picker {

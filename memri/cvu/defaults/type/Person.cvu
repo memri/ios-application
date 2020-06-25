@@ -417,6 +417,11 @@ Person[] {
         }
     }
     
+    [renderer = map] {
+        addressKey: addresses
+        labelKey: firstName
+    }
+    
     [renderer = chart] {
         /*chartTitle: "Override title"*/ /* Use this to override the auto-generated chart title */
         

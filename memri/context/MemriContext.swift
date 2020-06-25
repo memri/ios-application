@@ -415,6 +415,8 @@ public class RootContext: MemriContext {
         
         globalCache = cache // TODO remove this and fix edges
         
+        MapHelper.shared.realm = realm //TODO: How to access realm in a better way?
+        
         super.init(
             name: name,
             podAPI: podAPI,

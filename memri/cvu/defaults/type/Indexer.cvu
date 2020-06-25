@@ -85,7 +85,6 @@ Indexer[] {
         sortAscending: false
     }
 
-    editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
 
     [renderer = list] {

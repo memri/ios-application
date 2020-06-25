@@ -62,6 +62,12 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
 
 struct ThumbnailRendererView: View {
     @EnvironmentObject var context: MemriContext
+    var selectedIndices: Binding<Set<Int>> {
+        Binding<Set<Int>>(
+            get: { [] },
+            set: { self.context.cascadingView.userState.set("selection", $0.compactMap { self.context.items[safe: $0] }) }
+        )
+    }
     
     var name: String="thumbnail"
     
@@ -98,21 +104,27 @@ struct ThumbnailRendererView: View {
     }
     
     var section: ASCollectionViewSection<Int> {
-        ASCollectionViewSection (id: 0, data: context.items) { dataItem, state in
+        ASCollectionViewSection (id: 0,
+                                 data: context.items,
+                                 selectedItems: selectedIndices)
+        { dataItem, state in
             ZStack (alignment: .bottomTrailing) {
                 // TODO: Error handling
                 self.renderConfig.render(item: dataItem)
                     .environmentObject(self.context)
 
+                if self.context.currentSession.editMode && !state.isSelected {
+                    Color.white.opacity(0.15)
+                }
                 if state.isSelected {
                     ZStack {
                         Circle().fill(Color.blue)
                         Circle().strokeBorder(Color.white, lineWidth: 2)
                         Image(systemName: "checkmark")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: 15, weight: .bold))
                             .foregroundColor(.white)
                     }
-                    .frame(width: 20, height: 20)
+                    .frame(width: 30, height: 30)
                     .padding(10)
                 }
             }
@@ -143,6 +155,7 @@ struct ThumbnailRendererView: View {
                 ASCollectionView (section: section)
                     .layout (self.layout)
                     .alwaysBounceVertical()
+                    .environment(\.editMode, $context.currentSession.swiftUIEditMode)
             }
         }
     }

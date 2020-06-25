@@ -12,10 +12,12 @@ struct ChartHelper {
     static func generateXYChartSetFromItems(_ items: [Item], xAxisKey: String, yAxisKey: String, labelKey: String? = nil) -> ChartSetXY {
         let points = items.compactMap { (item) -> ChartPointXY? in
             guard
+                item.hasProperty(xAxisKey),
+                item.hasProperty(yAxisKey),
                 let x: Double = item.get(xAxisKey),
                 let y: Double = item.get(yAxisKey)
             else { return nil }
-            let label: String? = labelKey.flatMap { item.get($0) }
+            let label: String? = labelKey.flatMap { item.hasProperty($0) ? item.get($0) : nil }
             return ChartPointXY(x: x, y: y, label: label, itemID: item.memriID)
         }
         return ChartSetXY(points: points)
@@ -24,6 +26,8 @@ struct ChartHelper {
     static func generateLabelledYChartSetFromItems(_ items: [Item], labelKey: String, yAxisKey: String) -> ChartSetLabelledY {
         let points = items.compactMap { (item) -> ChartPointLabelledY? in
             guard
+                item.hasProperty(labelKey),
+                item.hasProperty(yAxisKey),
                 let label: String = item.get(labelKey),
                 let y: Double = item.get(yAxisKey)
             else { return nil }

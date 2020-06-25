@@ -82,10 +82,11 @@ public class Cache {
 
         Realm.Configuration.defaultConfiguration = config
 
+        print("Starting realm at \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
+        
         // TODO: Error handling
         realm = try! Realm()
         
-        print("Starting realm at \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
         
         podAPI = api
         
