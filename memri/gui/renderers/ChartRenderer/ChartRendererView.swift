@@ -53,7 +53,7 @@ struct ChartRendererView: View {
     @EnvironmentObject var context: MemriContext
     
     let name = "chart"
-    let type:ChartType
+    let type: ChartType
     
     var renderConfig: CascadingChartConfig {
         (self.context.cascadingView.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([], ViewArguments())
