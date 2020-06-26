@@ -150,9 +150,9 @@ class CVUValidator {
                 case "name", "emptyResultText", "title", "subTitle", "filterText",
                      "activeRenderer", "defaultRenderer", "backTitle", "searchHint":
                     return value is String
-                case "userState": return value is [String:Any] // TODO
+                case "userState": return value is UserState
                 case "datasourceDefinition": return value is CVUParsedDatasourceDefinition
-                case "viewArguments": return value is [String:Any] // TODO
+                case "viewArguments": return value is ViewArguments
                 case "showLabels": return value is Bool
                 case "actionButton", "editActionButton":
                     if let value = value as? Action { validateAction(value) }

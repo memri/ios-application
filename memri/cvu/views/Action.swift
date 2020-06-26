@@ -1033,7 +1033,7 @@ class ActionDelete : Action, ActionExec {
         
         if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
             context.cache.delete(selection)
-            context.scheduleCascadingViewUpdate()
+            context.scheduleCascadingViewUpdate(immediate: true)
         }
         else if let dataItem = arguments["dataItem"] as? DataItem {
             context.cache.delete(dataItem)
@@ -1048,6 +1048,7 @@ class ActionDelete : Action, ActionExec {
         execWithoutThrow { try ActionDelete(context).exec(arguments) }
     }
 }
+
 class ActionDuplicate : Action, ActionExec {
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(context, "duplicate", arguments:arguments, values:values)

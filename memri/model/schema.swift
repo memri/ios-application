@@ -159,9 +159,11 @@ class Note:DataItem {
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             try self.superDecode(from: decoder)
             if let htmlContent = content, textContent == nil || textContent == "" {
-                self.textContent = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
+                let plainString = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
                                                                     options: .regularExpression,
                                                                     range: nil)
+                title = plainString.firstLineString()
+                textContent = plainString.withoutFirstLine()
             }
         }
     }
@@ -598,6 +600,9 @@ class Photo:DataItem {
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
+    
+    //@objc dynamic var location: Location? = nil //To add
+    
     override var genericType:String { "Photo" }
     
     override var computedTitle:String {

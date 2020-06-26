@@ -617,9 +617,9 @@ extension MemriTextEditor_UIKit {
     var expression: NSRegularExpression? {
       switch self {
       case .unorderedList:
-        return try? NSRegularExpression(pattern: "^[-*••∙●] ", options: .caseInsensitive)
+        return try? NSRegularExpression(pattern: "^\\s*[-*••∙●][ \t]", options: .caseInsensitive)
       case .orderedList:
-        return try? NSRegularExpression(pattern: "^\\d*\\. ", options: .caseInsensitive)
+        return try? NSRegularExpression(pattern: "^\\s*\\d*\\.[ \t]", options: .caseInsensitive)
       }
     }
     
