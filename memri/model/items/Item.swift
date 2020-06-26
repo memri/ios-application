@@ -220,12 +220,12 @@ public class Item : SchemaItem {
     /// - Parameter item: item to be merged with the current Item
     /// - Returns: boolean indicating the succes of the merge
     public func safeMerge(_ item:Item) -> Bool {
-        if let syncState = self.syncState{
+        if let syncState = self.syncState {
             // Ignore when marked for deletion
             if syncState.actionNeeded == "delete" { return true }
             
             // Do not update when the version is not higher then what we already have
-            if item.version <= self.version { return true }
+            if item.version <= self.version { return false }
             
             // Make sure to not overwrite properties that have been changed
             let updatedFields = syncState.updatedFields

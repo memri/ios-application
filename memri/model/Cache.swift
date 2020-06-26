@@ -274,12 +274,12 @@ public class Cache {
             
             // Add item to realm
             try realm.write() { realm.add(item, update: .modified) }
+            
+            bindChangeListeners(item)
         }
         catch{
             print("Could not add to cache: \(error)")
         }
-        
-        bindChangeListeners(item)
         
         return item
     }
