@@ -23,8 +23,8 @@ public class Datasource: Object, UniqueString {
     @objc dynamic var sortProperty: String? = nil
     
     /// Retrieves whether the sort direction
-    /// false sort descending
-    /// true sort ascending
+    /// - false sort descending
+    /// - true sort ascending
     let sortAscending = RealmOptional<Bool>()
     /// Retrieves the number of items per page
     let pageCount = RealmOptional<Int>() // Todo move to ResultSet

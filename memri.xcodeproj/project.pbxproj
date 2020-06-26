@@ -128,6 +128,7 @@
 		861439F52435AF8C008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
 		861439F62435AF91008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
 		861C52C524A5B24500B3230C /* installerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C424A5B24500B3230C /* installerTest.swift */; };
+		861C52C724A5BAD500B3230C /* datasourceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C624A5BAD500B3230C /* datasourceTest.swift */; };
 		86229DCC243508B00013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		86229DCD243509F60013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
@@ -386,6 +387,7 @@
 		861439F12435942A008D6B5B /* Installer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Installer.swift; sourceTree = "<group>"; };
 		861439F42435AF8C008D6B5B /* test_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_sessions.json; sourceTree = "<group>"; };
 		861C52C424A5B24500B3230C /* installerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = installerTest.swift; sourceTree = "<group>"; };
+		861C52C624A5BAD500B3230C /* datasourceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = datasourceTest.swift; sourceTree = "<group>"; };
 		86229DCB243508B00013750A /* default_settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_settings.json; sourceTree = "<group>"; };
 		862A934E24435372005E06A6 /* default_navigation_full.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_navigation_full.json; sourceTree = "<group>"; };
 		863CDB702441E69F000D7AC0 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
@@ -561,6 +563,7 @@
 			isa = PBXGroup;
 			children = (
 				5D38DE10240576D200FF9B70 /* PodAPITest.swift */,
+				861C52C624A5BAD500B3230C /* datasourceTest.swift */,
 			);
 			path = api;
 			sourceTree = "<group>";
@@ -1582,6 +1585,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				861C52C724A5BAD500B3230C /* datasourceTest.swift in Sources */,
 				5D1A3E69240807C100A0583B /* SessionTest.swift in Sources */,
 				5D0A28B9240678EE00398B17 /* ModelTest.swift in Sources */,
 				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,

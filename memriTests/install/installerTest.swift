@@ -1,8 +1,6 @@
 //
 //  installerTest.swift
-//  memriTests
 //
-//  Created by Koen van der Veen on 30/03/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -33,11 +31,11 @@ class installerTest: XCTestCase {
         XCTAssertEqual(root.realm.objects(AuditItem.self).filter("action = 'install'").first!.action, "install")
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
 
 }
