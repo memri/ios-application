@@ -1,5 +1,6 @@
 # iOS application
 
+This is the repository for Memri's iOS and OSX client, there also exists a [browser client](https://gitlab.memri.io/memri/browser-application). 
 The memri iOS application can be used to connect to your [pod](https://gitlab.memri.io/memri/pod) to browse and use your data. There is no real installation, but XCode (and thus macOS) is required. To run the app open the project in XCode and run in a simulator.
 
 <p float="left">
