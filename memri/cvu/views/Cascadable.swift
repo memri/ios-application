@@ -57,10 +57,17 @@ public class Cascadable {
     
     func cascadeProperty<T>(_ name:String, type: T.Type = T.self) -> T? {
         #if DEBUG
-        //These are temporary checks put in place to catch programmer errors. We should find a safer way that won't lose CVU properties. It is wrapped in DEBUG flag so will not crash in testflight.
-        if T.self == CGFloat.self { fatalError("You need to use the `cascadePropertyAsCGFloat` function instead") }
-        if T.self == Int.self { fatalError("You need to request a Double and then case to integer instead") }
+        // These are temporary checks put in place to catch programmer errors. We should find a
+        // safer way that won't lose CVU properties. It is wrapped in DEBUG flag so will not crash
+        // in testflight.
+        if T.self == CGFloat.self {
+            fatalError("You need to use the `cascadePropertyAsCGFloat` function instead")
+        }
+        if T.self == Int.self {
+            fatalError("You need to request a Double and then case to integer instead")
+        }
         #endif
+        
         if let expr = localCache[name] as? Expression {
             return execExpression(expr)
         }

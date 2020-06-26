@@ -139,7 +139,7 @@ public class Views {
         }
     }
     
-    func resolveEdge(_ edge:Relationship) throws -> Item {
+    func resolveRelationship(_ edge:Relationship) throws -> Item {
         // TODO REFACTOR: implement
         throw "not implemented"
     }
@@ -297,7 +297,7 @@ public class Views {
             }
             
             if let edge = value as? Relationship {
-                value = try resolveEdge(edge)
+                value = try resolveRelationship(edge)
             }
         }
         

@@ -385,7 +385,7 @@ public class SubContext: MemriContext {
             installer: context.installer,
             sessions: Sessions(context.realm),
             views: views,
-            cascadingView: context.cascadingView,
+            cascadingView: CascadingView(SessionView(), []),
             navigation: context.navigation,
             renderers: context.renderers
         )

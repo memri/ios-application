@@ -1,5 +1,5 @@
 //
-//  mainTest.swift
+//  installerTest.swift
 //  memriTests
 //
 //  Created by Koen van der Veen on 30/03/2020.
@@ -9,7 +9,7 @@
 import XCTest
 @testable import memri
 
-class mainTest: XCTestCase {
+class installerTest: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
