@@ -10,6 +10,8 @@ import Foundation
 import Combine
 import RealmSwift
 
+var realmTesting = false
+
 var config = Realm.Configuration(
     // Set the new schema version. This must be greater than the previously used
     // version (if you've never set a schema version before, the version is 0).
@@ -30,7 +32,12 @@ var config = Realm.Configuration(
 /// - Returns: the computed database file path
 func getRealmPath() throws -> String {
     if  let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
-        let realmDir = homeDir + "/realm.memri"
+        var realmDir = homeDir + "/realm.memri"
+        
+        if realmTesting {
+            realmDir += ".testing"
+        }
+        
         print("REALM DIR: \(realmDir)")
         do {
             try FileManager.default.createDirectory(atPath:

@@ -19,8 +19,18 @@ class installerTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testMain() throws {
-//        let context = MemriContext(name: "Memri GUI", key: "ABCDEF")
+    func testInstaller() throws {
+        realmTesting = true
+        
+        // Delete DB
+        let dbPath = try getRealmPath()
+        let fileManager = FileManager()
+        try fileManager.removeItem(atPath: dbPath)
+        
+        let root = RootContext(name: "", key: "")
+        try root.boot()
+
+        XCTAssertEqual(root.realm.objects(AuditItem.self).filter("action = 'install'").first!.action, "install")
     }
 
     func testPerformanceExample() throws {
