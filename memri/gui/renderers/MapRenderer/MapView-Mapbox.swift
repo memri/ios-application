@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct MapView: UIViewRepresentable {
+struct MapViewConfig  {
     var dataItems: [DataItem] = []
     var locationKey: String = "coordinate"
     var addressKey: String = "address"
@@ -24,7 +24,10 @@ struct MapView: UIViewRepresentable {
 #if !targetEnvironment(macCatalyst)
 import Mapbox
 
-extension MapView {
+struct MapView_Mapbox: UIViewRepresentable {
+    var config: MapViewConfig
+    
+    @Environment(\.colorScheme) var colorScheme
     func makeUIView(context: Context) -> MGLMapView {
         let mapView: MGLMapView = MGLMapView(frame: .zero, styleURL: MGLStyle.streetsStyleURL)
         mapView.delegate = context.coordinator
@@ -43,21 +46,21 @@ extension MapView {
     }
 
     func updateUIView(_ mapView: MGLMapView, context: Context) {
-        context.coordinator.mapModel.dataItems = dataItems
-        context.coordinator.mapModel.locationKey = locationKey
-        context.coordinator.mapModel.addressKey = addressKey
-        context.coordinator.mapModel.labelKey = labelKey
-        context.coordinator.mapModel.mapStyle = mapStyle
+        context.coordinator.mapModel.dataItems = config.dataItems
+        context.coordinator.mapModel.locationKey = config.locationKey
+        context.coordinator.mapModel.addressKey = config.addressKey
+        context.coordinator.mapModel.labelKey = config.labelKey
+        context.coordinator.mapModel.mapStyle = config.mapStyle
     }
 
-    func makeCoordinator() -> MapView.Coordinator {
+    func makeCoordinator() -> MapView_Mapbox.Coordinator {
         Coordinator(self)
     }
 
     // MARK: - Implementing MGLMapViewDelegate
 
     final class Coordinator: NSObject, MGLMapViewDelegate {
-        var parent: MapView
+        var parent: MapView_Mapbox
         var mapModel: MapModel = MapModel()
         
         var mapView: MGLMapView?
@@ -67,7 +70,7 @@ extension MapView {
         }
         var cancellableBag: Set<AnyCancellable> = []
 
-        init(_ parent: MapView) {
+        init(_ parent: MapView_Mapbox) {
             self.parent = parent
             super.init()
             
@@ -82,7 +85,7 @@ extension MapView {
             mapView.styleURL = mapModel.mapStyle.url(preferDark: parent.colorScheme == .dark)
             
             let newAnnotations = mapModel.items.map { item -> MGLAnnotation in
-                let annotation = MapAnnotation(
+                let annotation = MapAnnotation_Mapbox(
                     coordinate: item.coordinate,
                     title: item.label,
                     dataItem: item.dataItem
@@ -98,8 +101,8 @@ extension MapView {
                 mapView.setVisibleCoordinateBounds($0, edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40), animated: false, completionHandler: { [weak self] in
                     self?.updateHiddenState()
                 })
-                if mapView.zoomLevel > parent.maxInitialZoom {
-                    mapView.setZoomLevel(parent.maxInitialZoom, animated: false)
+                if mapView.zoomLevel > parent.config.maxInitialZoom {
+                    mapView.setZoomLevel(parent.config.maxInitialZoom, animated: false)
                 }
             }
         }
@@ -141,13 +144,13 @@ extension MapView {
         
         func mapView(_ mapView: MGLMapView, tapOnCalloutFor annotation: MGLAnnotation) {
             // ONPRESS
-            guard let annotation = annotation as? MapAnnotation, let dataItem = annotation.dataItem else { return }
-            parent.onPress?(dataItem)
+            guard let annotation = annotation as? MapAnnotation_Mapbox, let dataItem = annotation.dataItem else { return }
+            parent.config.onPress?(dataItem)
         }
     }
 }
 
-class MapAnnotation: NSObject, MGLAnnotation {
+class MapAnnotation_Mapbox: NSObject, MGLAnnotation {
     init(coordinate: CLLocationCoordinate2D, title: String? = nil, dataItem: DataItem? = nil) {
         self.coordinate = coordinate
         self.title = title

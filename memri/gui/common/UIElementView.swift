@@ -281,7 +281,7 @@ public struct UIElementView: SwiftUI.View {
                     }
                 }
                 else if from.type == .Map {
-                    MapView(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address")
+                    MapView(config: .init(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address"))
                         .background(Color(.secondarySystemBackground))
                         .setProperties(from.properties, self.item, context, self.viewArguments)
                 }

@@ -44,13 +44,14 @@ struct MapRendererView: View {
     }
     
     var body: some View {
-        MapView(dataItems: context.items,
-                locationKey: renderConfig.locationKey,
-                addressKey: renderConfig.addressKey,
-                labelKey: renderConfig.labelKey,
-                mapStyle: renderConfig.mapStyle,
-                onPress: self.onPress
-        )
+        let config = MapViewConfig(dataItems: context.items,
+                                   locationKey: renderConfig.locationKey,
+                                   addressKey: renderConfig.addressKey,
+                                   labelKey: renderConfig.labelKey,
+                                   mapStyle: renderConfig.mapStyle,
+                                   onPress: self.onPress)
+            
+        return MapView(config: config)
             .background(Color(.secondarySystemBackground))
     }
     
