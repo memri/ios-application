@@ -29,6 +29,7 @@ extension MemriContext {
         var initArgs = dict
         initArgs.removeValue(forKey: "type")
 
+        // swiftformat:disable:next redundantInit
         guard let item = ItemType.init() as? Item else {
             throw "Cannot cast type \(ItemType) to Item"
         }

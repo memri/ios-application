@@ -153,6 +153,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
                 
         if let allRenderers = allRenderers, let RenderConfigType = allRenderers.allConfigTypes[activeRenderer] {
+            // swiftformat:disable:next redundantInit
             let renderConfig = RenderConfigType.init(stack, viewArguments)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig

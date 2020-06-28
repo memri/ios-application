@@ -10,7 +10,7 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "rm -rf ${INTERMEDIATES_OUTPUT_DIR}&#10;mkdir -p ${INTERMEDIATES_OUTPUT_DIR}&#10;echo NORMAL &gt; ${SCHEME_FILE}&#10;">
+               scriptText = "rm -rf ${INTERMEDIATES_OUTPUT_DIR}&#10;mkdir -p ${INTERMEDIATES_OUTPUT_DIR}&#10;echo BUILDTOOLS &gt; ${SCHEME_FILE}&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
@@ -25,11 +25,11 @@
       </PreActions>
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES"
+            buildForTesting = "NO"
             buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5D599BB623F2B77500F218A0"
@@ -46,46 +46,6 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5D599BCC23F2B77700F218A0"
-               BuildableName = "memriTests.xctest"
-               BlueprintName = "memriTests"
-               ReferencedContainer = "container:memri.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5D599BD723F2B77700F218A0"
-               BuildableName = "memriUITests.xctest"
-               BlueprintName = "memriUITests"
-               ReferencedContainer = "container:memri.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5D38DE282405810600FF9B70"
-               BuildableName = "memriLibraryTests.xctest"
-               BlueprintName = "memriLibraryTests"
-               ReferencedContainer = "container:memri.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "868EF64524766B2200C0375F"
-               BuildableName = "memriParserTests.xctest"
-               BlueprintName = "memriParserTests"
-               ReferencedContainer = "container:memri.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -117,8 +77,7 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5D599BB623F2B77500F218A0"
@@ -126,7 +85,7 @@
             BlueprintName = "memri"
             ReferencedContainer = "container:memri.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
