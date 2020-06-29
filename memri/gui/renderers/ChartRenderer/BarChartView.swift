@@ -22,6 +22,8 @@ struct BarChartSwiftUIView: UIViewRepresentable {
 		chartView.xAxis.granularity = 1
 		chartView.xAxis.drawGridLinesEnabled = false
 		chartView.xAxis.valueFormatter = BarChartXAxisFormatter()
+        chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
+        chartView.rightAxis.drawGridLinesEnabled = false
 		chartView.legend.enabled = false
 		chartView.pinchZoomEnabled = false
 		chartView.scaleXEnabled = false

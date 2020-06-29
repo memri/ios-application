@@ -122,7 +122,7 @@ public class Expression: CVUToString {
 		try parse()
 	}
 
-	public func execForReturnType<T>(_ args: ViewArguments? = nil) throws -> T? {
+    public func execForReturnType<T>(_ type: T.Type = T.self, args: ViewArguments? = nil) throws -> T? {
 		if !parsed { try parse() }
 		let value = try interpreter?.execute(args ?? ViewArguments())
 

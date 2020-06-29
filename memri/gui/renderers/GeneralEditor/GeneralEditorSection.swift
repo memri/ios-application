@@ -144,7 +144,7 @@ struct GeneralEditorSection: View {
 		} else if let expr = title as? Expression {
 			let args = getViewArguments(self.groupKey, self.groupKey, nil, item)
 			do {
-				return try expr.execForReturnType(args)
+                return try expr.execForReturnType(args: args)
 			} catch {
 				debugHistory.error("\(error)")
 				return nil

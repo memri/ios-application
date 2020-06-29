@@ -276,7 +276,7 @@ public class Action: HashableClass, CVUToString {
 				expr.execFunc = context.views.executeFunction
 				expr.context = context
 
-				let value: T? = try expr.execForReturnType(viewArguments)
+                let value = try expr.execForReturnType(T.self, args: viewArguments)
 				return value
 			} catch {
 				print("ACTION ERROR: \(error)")
