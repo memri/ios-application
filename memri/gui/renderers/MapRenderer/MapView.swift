@@ -10,7 +10,7 @@ import Foundation
 import SwiftUI
 
 struct MapView: View {
-	var useMapBox = true
+	var useMapBox = false
 	var config: MapViewConfig
 
 	var body: some View {

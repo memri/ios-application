@@ -65,7 +65,7 @@ public class MemriTextEditor_UIKit: UITextView {
 		if let htmlData = initialContentHTML?.data(using: .utf8) {
 			DispatchQueue.main.async {
 				if let attributedStringFromHTML = try? NSAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-					self.attributedText = attributedStringFromHTML.withFontSize(self.defaultFontSize)
+					self.attributedText = attributedStringFromHTML
 				}
 			}
 		}
