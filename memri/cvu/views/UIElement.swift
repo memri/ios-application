@@ -57,7 +57,7 @@ public class UIElement: CVUToString {
 
 						return (result as! T)
 					} else {
-                        let x = try expr.execForReturnType(T.self, args: viewArguments); return x
+						let x = try expr.execForReturnType(T.self, args: viewArguments); return x
 					}
 				} catch {
 					// TODO: Refactor error handling

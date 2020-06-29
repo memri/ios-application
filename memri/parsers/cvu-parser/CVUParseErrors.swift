@@ -24,7 +24,7 @@ enum CVUParseErrors: Error {
 		var parts: [Any]
 
 		func loc(_ parts: [Any]) -> String {
-            if parts[safe: 2] as? String == "" { return "at the end of the file" }
+			if parts[safe: 2] as? String == "" { return "at the end of the file" }
 			else {
 				let line = (parts[safe: 2] as? Int ?? -2) + 1
 				let char = (parts[safe: 3] as? Int ?? -2) + 1
@@ -66,7 +66,7 @@ enum CVUParseErrors: Error {
 		}
 
 		let lines = code.split(separator: "\n")
-        if let line = parts[safe: 2] as? Int {
+		if let line = parts[safe: 2] as? Int {
 			let ch = parts[safe: 3] as? Int ?? 0
 			let beforeLines = lines[max(0, line - 10) ... line - 1].joined(separator: "\n")
 			let afterLines = lines[line ... min(line + 10, lines.count)].joined(separator: "\n")

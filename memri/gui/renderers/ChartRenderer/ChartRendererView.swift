@@ -37,14 +37,14 @@ class CascadingChartConfig: CascadingRenderConfig {
 	var press: Action? { cascadeProperty("press") }
 
 	var chartTitle: String? { cascadeProperty("chartTitle") }
-    var chartSubtitle: String? { cascadeProperty("chartSubtitle") }
+	var chartSubtitle: String? { cascadeProperty("chartSubtitle") }
 
-    var xAxisExpression: Expression? { cascadeProperty("xAxis", type: Expression.self) }
+	var xAxisExpression: Expression? { cascadeProperty("xAxis", type: Expression.self) }
 	var yAxisExpression: Expression? { cascadeProperty("yAxis", type: Expression.self) }
-    var labelExpression: Expression? { cascadeProperty("label", type: Expression.self) }
-    
+	var labelExpression: Expression? { cascadeProperty("label", type: Expression.self) }
+
 	var yAxisStartAtZero: Bool { cascadeProperty("yAxisStartAtZero") ?? false }
-    var hideGridLines: Bool { cascadeProperty("hideGridlines") ?? false }
+	var hideGridLines: Bool { cascadeProperty("hideGridlines") ?? false }
 }
 
 enum ChartType: String {
@@ -76,25 +76,25 @@ struct ChartRendererView: View {
 //		case .line:
 //			return "\(renderConfig.yAxisKey?.camelCaseToTitleCase() ?? "-") vs \(renderConfig.xAxisKey?.camelCaseToTitleCase() ?? "-")"
 //		}
-        return nil
+		return nil
 	}
 
 	func resolveExpression<T>(_ expression: Expression?, toType _: T.Type = T.self, forDataItem dataItem: DataItem) -> T? {
-        try? expression?.execForReturnType(T.self, args: ViewArguments([".": dataItem]))
+		try? expression?.execForReturnType(T.self, args: ViewArguments([".": dataItem]))
 	}
 
 	var chartTitleView: some View {
-        VStack {
-            chartTitle.map {
-                Text($0)
-                    .font(.title)
-            }
-            renderConfig.chartSubtitle.map {
-                Text($0)
-                    .foregroundColor(Color(.secondaryLabel))
-                    .font(.body)
-            }
-        }
+		VStack {
+			chartTitle.map {
+				Text($0)
+					.font(.title)
+			}
+			renderConfig.chartSubtitle.map {
+				Text($0)
+					.foregroundColor(Color(.secondaryLabel))
+					.font(.body)
+			}
+		}
 	}
 
 	var chartView: AnyView {
@@ -112,7 +112,7 @@ struct ChartRendererView: View {
 
 			return VStack(spacing: 0) {
 				chartTitleView
-                BarChartSwiftUIView(model: BarChartModel(sets: [data], hideGridLines: renderConfig.hideGridLines, forceMinYOfZero: renderConfig.yAxisStartAtZero),
+				BarChartSwiftUIView(model: BarChartModel(sets: [data], hideGridLines: renderConfig.hideGridLines, forceMinYOfZero: renderConfig.yAxisStartAtZero),
 									onPress: { self.onPress(index: $0) })
 			}
 			.padding(10)
