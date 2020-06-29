@@ -39,9 +39,6 @@ struct MapViewConfig {
 			mapView.logoViewPosition = .bottomRight
 			mapView.logoViewMargins = .init(x: 35, y: 6)
 
-			mapView.isHidden = true
-			mapView.alpha = 0
-
 			return mapView
 		}
 
@@ -64,10 +61,6 @@ struct MapViewConfig {
 			var mapModel: MapModel = MapModel()
 
 			var mapView: MGLMapView?
-
-			var hasLoadedStyle: Bool = false {
-				didSet { if !oldValue, hasLoadedStyle { updateHiddenState() } }
-			}
 
 			var cancellableBag: Set<AnyCancellable> = []
 
@@ -98,22 +91,10 @@ struct MapViewConfig {
 
 				// Set initial position
 				getBoundsToFit().map {
-					mapView.setVisibleCoordinateBounds($0, edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40), animated: false, completionHandler: { [weak self] in
-						self?.updateHiddenState()
-                })
+					mapView.setVisibleCoordinateBounds($0, edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40), animated: false, completionHandler: {})
 					if mapView.zoomLevel > parent.config.maxInitialZoom {
 						mapView.setZoomLevel(parent.config.maxInitialZoom, animated: false)
 					}
-				}
-			}
-
-			func updateHiddenState() {
-				let shouldHide = hasLoadedStyle && (mapView?.annotations?.isEmpty ?? true)
-				if mapView?.isHidden != shouldHide {
-					UIView.animate(withDuration: 0.3, delay: 0.3, options: [], animations: {
-						self.mapView?.isHidden = shouldHide
-						self.mapView?.alpha = shouldHide ? 0 : 1
-                }, completion: nil)
 				}
 			}
 
@@ -131,7 +112,7 @@ struct MapViewConfig {
 			}
 
 			func mapView(_: MGLMapView, didFinishLoading _: MGLStyle) {
-				hasLoadedStyle = true
+				//
 			}
 
 			func mapView(_: MGLMapView, viewFor _: MGLAnnotation) -> MGLAnnotationView? {

@@ -275,12 +275,6 @@ extension Binding where Value: Equatable {
 	}
 }
 
-extension String {
-	var nilIfBlank: String? {
-		isOnlyWhitespace ? nil : self
-	}
-}
-
 public class MemriTextField_UIKit: UITextField {
 	var showPrevNextButtons: Bool = true {
 		didSet {
