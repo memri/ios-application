@@ -4,240 +4,235 @@
 //  Copyright © 2020 memri. All rights reserved.
 //
 
-import XCTest
 @testable import memri
+import XCTest
 
 class CVUValidatorTests: XCTestCase {
-    override func setUpWithError() throws {
-        
-    }
+	override func setUpWithError() throws {}
 
-    override func tearDownWithError() throws {
-    }
-    
-    private func parse(_ snippet:String) throws -> [CVUParsedDefinition] {
-        let lexer = CVULexer(input: snippet)
-        let tokens = try lexer.tokenize()
-        let parser = CVUParser(tokens, RootContext(name: "", key: "").mockBoot(),
-                               lookup: {_,_ in}, execFunc: {_,_,_ in})
-        let x = try parser.parse()
-        return x
-    }
-    
-    private func toCVUString(_ list:[CVUParsedDefinition]) -> String {
-        list.map{ $0.toCVUString(0, "    ") }.joined(separator: "\n\n")
-    }
-    
-    func testColorDefinition() throws {
-        let snippet = """
-        [color = "background"] {
-            dark: #ff0000
-            light: #330000
-        }
-        """
-        
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+	override func tearDownWithError() throws {}
 
-    func testStyleDefinition() throws {
-        let snippet = """
-        [style = "my-label-text"] {
-            color: highlight
-            border: background 1
-        }
-        """
+	private func parse(_ snippet: String) throws -> [CVUParsedDefinition] {
+		let lexer = CVULexer(input: snippet)
+		let tokens = try lexer.tokenize()
+		let parser = CVUParser(tokens, RootContext(name: "", key: "").mockBoot(),
+							   lookup: { _, _ in }, execFunc: { _, _, _ in })
+		let x = try parser.parse()
+		return x
+	}
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+	private func toCVUString(_ list: [CVUParsedDefinition]) -> String {
+		list.map { $0.toCVUString(0, "    ") }.joined(separator: "\n\n")
+	}
 
-    func testRendererDefinition() throws {
-        let snippet = """
-        [renderer = "generalEditor"] {
-            sequence: labels starred other dates
-        }
-        """
+	func testColorDefinition() throws {
+		let snippet = """
+		[color = "background"] {
+		    dark: #ff0000
+		    light: #330000
+		}
+		"""
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-    func testLanguageDefinition() throws {
-        let snippet = """
-        [language = "Dutch"] {
-            addtolist: "Voeg toe aan lijst..."
-            sharewith: "Deel met..."
-        }
-        """
+	func testStyleDefinition() throws {
+		let snippet = """
+		[style = "my-label-text"] {
+		    color: highlight
+		    border: background 1
+		}
+		"""
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-    func testNamedViewDefinition() throws {
-        let snippet = """
-        .defaultButtonsForDataItem {
-            editActionButton: toggleEditMode
-        }
-        """
+	func testRendererDefinition() throws {
+		let snippet = """
+		[renderer = "generalEditor"] {
+		    sequence: labels starred other dates
+		}
+		"""
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-    func testTypeViewDefinition() throws {
-        let snippet = """
-        Person {
-            title: "{.firstName}"
-        }
-        """
+	func testLanguageDefinition() throws {
+		let snippet = """
+		[language = "Dutch"] {
+		    addtolist: "Voeg toe aan lijst..."
+		    sharewith: "Deel met..."
+		}
+		"""
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-    func testListViewDefinition() throws {
-        let snippet = """
-        Person[] {
-            title: "All People"
-        }
-        """
+	func testNamedViewDefinition() throws {
+		let snippet = """
+		.defaultButtonsForDataItem {
+		    editActionButton: toggleEditMode
+		}
+		"""
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-    func testMultipleDefinitions() throws {
-        let snippet = """
-        [color = "background"] {
-            dark: #ff0000
-            light: #330000
-        }
+	func testTypeViewDefinition() throws {
+		let snippet = """
+		Person {
+		    title: "{.firstName}"
+		}
+		"""
 
-        [style = "my-label-text"] {
-            border: background 1
-            color: highlight
-        }
-        """
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        XCTAssertEqual(validator.validate(parsed), true)
-    }
+	func testListViewDefinition() throws {
+		let snippet = """
+		Person[] {
+		    title: "All People"
+		}
+		"""
 
-    func testUIElementProperties() throws {
-        let snippet = """
-        [renderer = "list"] {
-            VStack {
-                alignment: lkjlkj
-                font: 14
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-                Text {
-                    align: top
-                    textAlign: center
-                    font: 12 light
-                }
-                Text {
-                    maxheight: 500
-                    cornerRadius: 10
-                    border: #ff0000 1
-                }
-            }
-        }
-        """
+	func testMultipleDefinitions() throws {
+		let snippet = """
+		[color = "background"] {
+		    dark: #ff0000
+		    light: #330000
+		}
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        _ = validator.validate(parsed)
-        
-        XCTAssertEqual(validator.errors.count, 1)
-        XCTAssertEqual(validator.warnings.count, 1)
-    }
-    
-    func testActionProperties() throws {
-        let snippet = """
-        Person {
-            viewArguments: { readonly: true }
+		[style = "my-label-text"] {
+		    border: background 1
+		    color: highlight
+		}
+		"""
 
-            navigateItems: [
-                openView {
-                    title: 10
-                    arguments: {
-                        view: {
-                            defaultRenderer: timeline
-                            
-                            datasource {
-                                query: "AuditItem appliesTo:{.id}"
-                                sortProperty: dateCreated
-                                sortAscending: true
-                            }
-                            
-                            [renderer = "timeline"] {
-                                timeProperty: dateCreated
-                            }
-                        }
-                    }
-                }
-                openViewByName {
-                    title: "{$starred} {type.plural()}"
-                    arguments: {
-                        name: "filter-starred"
-                        include: "all-{type}"
-                    }
-                }
-                openViewByName {
-                    title: "{$all} {type.lowercased().plural()}"
-                    arguments: {
-                        name: "all-{type}"
-                    }
-                }
-            ]
-        }
-        """
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		XCTAssertEqual(validator.validate(parsed), true)
+	}
 
-        let parsed = try parse(snippet)
-        let validator = CVUValidator()
-        _ = validator.validate(parsed)
-        
-        validator.debug()
-        
-        XCTAssertEqual(validator.errors.count, 1)
-        XCTAssertEqual(validator.warnings.count, 0)
-    }
+	func testUIElementProperties() throws {
+		let snippet = """
+		[renderer = "list"] {
+		    VStack {
+		        alignment: lkjlkj
+		        font: 14
 
-    func testLargeCVU() throws {
-        let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
-        let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+		        Text {
+		            align: top
+		            textAlign: center
+		            font: 12 light
+		        }
+		        Text {
+		            maxheight: 500
+		            cornerRadius: 10
+		            border: #ff0000 1
+		        }
+		    }
+		}
+		"""
 
-        let viewDef = CVU(code, RootContext(name: "", key: "").mockBoot(),
-            lookup: { lookup, viewArgs in return 10 },
-            execFunc: { lookup, args, viewArgs in return 20 })
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		_ = validator.validate(parsed)
 
-        let parsed = try viewDef.parse()
-        
-        let validator = CVUValidator()
-        _ = validator.validate(parsed)
-        
-        validator.debug()
-        
-        XCTAssertEqual(validator.errors.count, 0)
-        XCTAssertEqual(validator.warnings.count, 1)
-    }
-    
+		XCTAssertEqual(validator.errors.count, 1)
+		XCTAssertEqual(validator.warnings.count, 1)
+	}
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+	func testActionProperties() throws {
+		let snippet = """
+		Person {
+		    viewArguments: { readonly: true }
 
+		    navigateItems: [
+		        openView {
+		            title: 10
+		            arguments: {
+		                view: {
+		                    defaultRenderer: timeline
+
+		                    datasource {
+		                        query: "AuditItem appliesTo:{.id}"
+		                        sortProperty: dateCreated
+		                        sortAscending: true
+		                    }
+
+		                    [renderer = "timeline"] {
+		                        timeProperty: dateCreated
+		                    }
+		                }
+		            }
+		        }
+		        openViewByName {
+		            title: "{$starred} {type.plural()}"
+		            arguments: {
+		                name: "filter-starred"
+		                include: "all-{type}"
+		            }
+		        }
+		        openViewByName {
+		            title: "{$all} {type.lowercased().plural()}"
+		            arguments: {
+		                name: "all-{type}"
+		            }
+		        }
+		    ]
+		}
+		"""
+
+		let parsed = try parse(snippet)
+		let validator = CVUValidator()
+		_ = validator.validate(parsed)
+
+		validator.debug()
+
+		XCTAssertEqual(validator.errors.count, 1)
+		XCTAssertEqual(validator.warnings.count, 0)
+	}
+
+	func testLargeCVU() throws {
+		let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
+		let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
+
+		let viewDef = CVU(code, RootContext(name: "", key: "").mockBoot(),
+						  lookup: { _, _ in 10 },
+						  execFunc: { _, _, _ in 20 })
+
+		let parsed = try viewDef.parse()
+
+		let validator = CVUValidator()
+		_ = validator.validate(parsed)
+
+		validator.debug()
+
+		XCTAssertEqual(validator.errors.count, 0)
+		XCTAssertEqual(validator.warnings.count, 1)
+	}
+
+	func testPerformanceExample() throws {
+		// This is an example of a performance test case.
+		measure {
+			// Put the code you want to measure the time of here.
+		}
+	}
 }
