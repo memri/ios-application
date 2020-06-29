@@ -128,7 +128,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 // completion(try JSONDecoder().decode(family: DataItemFamily.self, from: data))
 
 
-class Note:DataItem {
+public class Note:DataItem {
     @objc dynamic var title:String? = ""
     /// HTML
     @objc dynamic var content:String? = nil

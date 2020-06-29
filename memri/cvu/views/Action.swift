@@ -1114,44 +1114,72 @@ class ActionRunIndexerInstance : Action, ActionExec {
             
             // First make sure the indexer exists
             if let memriID: String = indexerInstance.get("memriID") {
+                
+                
                 print("starting IndexerInstance with memrID \(memriID)")
                 indexerInstance.set("progress", 0)
                 self.context.scheduleUIUpdate()
                 // TODO: indexerInstance items should have been automatically created already by now
                 let uid:Int? = indexerInstance.get("uid")
                 
-                let start = Date()
-
-                Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-                    let timePassed = Int(Date().timeIntervalSince(start))
-                    print("polling indexerInstance")
-                    self.context.podAPI.get(memriID) { error, data in
-                        if let updatedInstance = data as? IndexerInstance {
-                            
-                            if let progress: Int = updatedInstance.get("progress") {
-                                if timePassed > 5 || progress >= 100 {
-                                    timer.invalidate()
-                                }
-                                else{
-                                    print("setting random progress")
-                                    let randomProgress = Int.random(in: 1...20)
-                                    indexerInstance.set("progress", randomProgress)
-                                    self.context.scheduleUIUpdate()
-                                    
-                                    let p:Int? = indexerInstance.get("progress")
-                                    print(p)
-                                }
-                            }
-                            else {
-                                print("ERROR, could not get progress \(error)")
-                                timer.invalidate()
-                            }
+                if uid == 0 || uid == nil {
+                    
+                    // create
+                    self.context.podAPI.create(indexerInstance){ error, data in
+                        
+                        if let error = error {
+                            print("Could not create indexerInstance")
                         }
                         else {
-                            print("Error, no instance")
-                            timer.invalidate()
+                            print(indexerInstance)
+                            
+                            self.runIndexerInstance(indexerInstance, memriID)
                         }
                     }
+                }
+                else {
+                    
+                    self.runIndexerInstance(indexerInstance, memriID)
+                }
+                
+            }
+            
+        }
+    }
+    
+    
+    func runIndexerInstance(_ indexerInstance: IndexerInstance, _ memriID: String){
+        let start = Date()
+
+        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+            let timePassed = Int(Date().timeIntervalSince(start))
+            print("polling indexerInstance")
+            self.context.podAPI.get(memriID) { error, data in
+                
+                if let updatedInstance = data as? IndexerInstance {
+                    
+                    if let progress: Int = updatedInstance.get("progress") {
+                        if timePassed > 5 || progress >= 100 {
+                            timer.invalidate()
+                        }
+                        else{
+                            print("setting random progress")
+                            let randomProgress = Int.random(in: 1...20)
+                            indexerInstance.set("progress", randomProgress)
+                            self.context.scheduleUIUpdate()
+                            
+                            let p:Int? = indexerInstance.get("progress")
+                            print(p)
+                        }
+                    }
+                    else {
+                        print("ERROR, could not get progress \(error)")
+                        timer.invalidate()
+                    }
+                }
+                else {
+                    print("Error, no instance")
+                    timer.invalidate()
                 }
             }
         }

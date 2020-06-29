@@ -19,10 +19,10 @@
     },
     {
         "type": "Indexer",
-        "name": "Lists indexer",
+        "name": "Note Label Indexer",
         "query": "Note",
         "runDestination": "ios",
-        "indexerDescription": "extracts todo, to read, to watch lists from notes",
+        "indexerDescription": "extracts labels from notes",
         "icon": "text.badge.plus"
     },
     {
@@ -334,6 +334,7 @@
             "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"
         },
         "labels": [
+            { "type": "label", "name": "Green house", "color": "#047a0a" },
             { "type": "label", "name": "Soccer team", "color": "#83ac06" },
             { "type": "label", "name": "Friends from University", "color": "#ffd966" }
         ],

@@ -1,15 +1,16 @@
 //
-//  NotesListIndexerTest.swift
+//  LabelIndexerNotesTest.swift
 //  memriTests
 //
-//  Created by Koen van der Veen on 24/06/2020.
+//  Created by Koen van der Veen on 29/06/2020.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
 import XCTest
 @testable import memri
 
-class NotesListIndexerTest: XCTestCase {
+
+class LabelIndexerNotesTest: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -21,16 +22,19 @@ class NotesListIndexerTest: XCTestCase {
 
     func testExample() throws {
         
-        let api = IndexerAPI()
+        let indexerAPI = IndexerAPI()
         
-        let indexer = Indexer(name: "Lists indexer")
+        let indexer = Indexer(name: "Label indexer",
+                              indexerDescription: "Adds labels to notes based on their content",
+                              query: "Note", runDestination: "ios")
+        let indexerInstance =   IndexerInstance(name: indexer.name, indexer: indexer)
         
-        let indexerInstance =   IndexerInstance()
         
-        let jsonData = try jsonDataFromFile("list_indexer_data")
+        
+        let jsonData = try jsonDataFromFile("label_indexer_data")
         let items:[DataItem] = try MemriJSONDecoder.decode(family:DataItemFamily.self, from:jsonData)
         
-        api.execute(<#T##indexerInstance: IndexerInstance##IndexerInstance#>, <#T##items: [DataItem]##[DataItem]#>)
+        indexerAPI.execute(indexerInstance, items)
         
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
