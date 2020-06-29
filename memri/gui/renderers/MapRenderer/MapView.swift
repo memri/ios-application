@@ -10,20 +10,20 @@ import Foundation
 import SwiftUI
 
 struct MapView: View {
-    var useMapBox = true
-    var config: MapViewConfig
-    
-    var body: some View {
-        #if targetEnvironment(macCatalyst)
-        return MapView_AppleMaps(config: config)
-        #else
-        return Group {
-            if useMapBox {
-                MapView_Mapbox(config: config)
-            } else {
-                MapView_AppleMaps(config: config)
-            }
-        }
-        #endif
-    }
+	var useMapBox = true
+	var config: MapViewConfig
+
+	var body: some View {
+		#if targetEnvironment(macCatalyst)
+			return MapView_AppleMaps(config: config)
+		#else
+			return Group {
+				if useMapBox {
+					MapView_Mapbox(config: config)
+				} else {
+					MapView_AppleMaps(config: config)
+				}
+			}
+		#endif
+	}
 }

@@ -8,9 +8,8 @@
 
 import Foundation
 
-
 enum ActionError: Error {
-    case Error(messages: String)
-    case Warning(message: String)
-    case Info(message: String)
+	case Error(messages: String)
+	case Warning(message: String)
+	case Info(message: String)
 }
