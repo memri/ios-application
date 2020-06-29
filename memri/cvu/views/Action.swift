@@ -1033,7 +1033,7 @@ class ActionDelete : Action, ActionExec {
         
         if let selection:[DataItem] = context.cascadingView.userState.get("selection"), selection.count > 0 {
             context.cache.delete(selection)
-            context.scheduleCascadingViewUpdate()
+            context.scheduleCascadingViewUpdate(immediate: true)
         }
         else if let dataItem = arguments["dataItem"] as? DataItem {
             context.cache.delete(dataItem)
@@ -1048,6 +1048,7 @@ class ActionDelete : Action, ActionExec {
         execWithoutThrow { try ActionDelete(context).exec(arguments) }
     }
 }
+
 class ActionDuplicate : Action, ActionExec {
     required init(_ context:MemriContext, arguments:[String: Any?]? = nil, values:[String:Any?] = [:]){
         super.init(context, "duplicate", arguments:arguments, values:values)
@@ -1104,58 +1105,51 @@ class ActionRunIndexerInstance : Action, ActionExec {
     func exec(_ arguments:[String: Any]) throws -> Void {
         // TODO: parse options
         
+        
+        
         guard let indexerInstance = arguments["indexerInstance"] as? IndexerInstance else {
             throw "Error, no memriID"
         }
+        
         if indexerInstance.indexer?.runDestination == "ios" {
             try self.runLocal(indexerInstance)
         }
         else {
             
             // First make sure the indexer exists
-            if let memriID: String = indexerInstance.get("memriID") {
                 
                 
-                print("starting IndexerInstance with memrID \(memriID)")
-                indexerInstance.set("progress", 0)
-                self.context.scheduleUIUpdate()
-                // TODO: indexerInstance items should have been automatically created already by now
-                let uid:Int? = indexerInstance.get("uid")
-                
-                if uid == 0 || uid == nil {
+//            print("starting IndexerInstance with memrID \(memriID)")
+            indexerInstance.set("progress", 0)
+            self.context.scheduleUIUpdate()
+            // TODO: indexerInstance items should have been automatically created already by now
                     
-                    // create
-                    self.context.podAPI.create(indexerInstance){ error, data in
-                        
-                        if let error = error {
-                            print("Could not create indexerInstance")
-                        }
-                        else {
-                            print(indexerInstance)
-                            
-                            self.runIndexerInstance(indexerInstance, memriID)
-                        }
+            func getAndrunIndexerInstance(_ tries: Int){
+                if tries > 20 {
+                    return
+                }
+                let uid:Int? = indexerInstance.get("uid")
+                if uid == 0 || uid == nil {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        getAndrunIndexerInstance(tries + 1)
                     }
                 }
                 else {
-                    
-                    self.runIndexerInstance(indexerInstance, memriID)
+                    self.runIndexerInstance(indexerInstance, uid!)
                 }
-                
             }
-            
+            getAndrunIndexerInstance(0)
+           
         }
     }
     
-    
-    func runIndexerInstance(_ indexerInstance: IndexerInstance, _ memriID: String){
+    func runIndexerInstance(_ indexerInstance: IndexerInstance, _ uid: Int){
         let start = Date()
 
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             let timePassed = Int(Date().timeIntervalSince(start))
             print("polling indexerInstance")
-            self.context.podAPI.get(memriID) { error, data in
-                
+            self.context.podAPI.get(uid) { error, data in
                 if let updatedInstance = data as? IndexerInstance {
                     
                     if let progress: Int = updatedInstance.get("progress") {
@@ -1186,15 +1180,17 @@ class ActionRunIndexerInstance : Action, ActionExec {
     }
     
     func runLocal(_ indexerInstance: IndexerInstance) throws {
+        
         guard let query: String = indexerInstance.indexer?.get("query") else {
             throw "Cannot execute IndexerInstance \(indexerInstance), no query specified"
         }
         let ds = Datasource(query: query)
         
-       self.context.podAPI.query(ds) { (error, result) -> Void in
-            
-            if let items = result {
-                self.context.indexerAPI.execute(indexerInstance, items)
+        
+        self.context.cache.query(ds) { (error, result) -> Void in
+
+        if let items = result {
+            self.context.indexerAPI.execute(indexerInstance, items)
             }
         }
         

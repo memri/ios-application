@@ -49,6 +49,12 @@ class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
 
 struct ListRendererView: View {
     @EnvironmentObject var context: MemriContext
+    var selectedIndices: Binding<Set<Int>> {
+        Binding<Set<Int>>(
+            get: { [] },
+            set: { self.context.cascadingView.userState.set("selection", $0.compactMap { self.context.items[safe: $0] }) }
+        )
+    }
     
     let name = "list"
     
@@ -78,10 +84,11 @@ struct ListRendererView: View {
                         ASSection(id: 0,
                                   data: context.items,
                                   dataID: \.memriID,
+                                  selectedItems: selectedIndices,
                                   onSwipeToDelete: { index, item, callback in
-                                      context.executeAction(ActionDelete(context), with: item)
-                                      callback(true)
-                                  }
+                                    context.executeAction(ActionDelete(context), with: item)
+                                    callback(true)
+                        }
                         ) { dataItem, cellContext in
                             self.renderConfig.render(item: dataItem)
                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -94,7 +101,6 @@ struct ListRendererView: View {
                         })
                 )
                 .alwaysBounce()
-                .environment(\.editMode, $context.currentSession.swiftUIEditMode)
                 
             }
         }

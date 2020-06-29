@@ -157,7 +157,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// - Parameter propName: name of the property
     /// - Returns: boolean indicating whether DataItem has the property
     public func hasProperty(_ propName: String) -> Bool {
+        if propName == "self" {
+            return true
+        }
         for prop in self.objectSchema.properties {
+            if prop.name == propName { return true }
             if let haystack = self[prop.name] as? String {
                 if haystack.lowercased().contains(propName.lowercased()) {
                     return true
@@ -171,8 +175,11 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
     /// Get property value
     /// - Parameters:
     ///   - name: property name
-    public func get<T>(_ name: String) -> T? {
-        self[name] as? T
+    public func get<T>(_ name: String, type: T.Type = T.self) -> T? {
+        if name == "self" {
+            return self as? T
+        }
+        return self[name] as? T
     }
     
     /// Set property to value, which will be persisted in the local database
@@ -183,6 +190,50 @@ public class DataItem: Object, Codable, Identifiable, ObservableObject {
         realmWriteIfAvailable(realm, {
             self[name] = value
         })
+    }
+    
+    
+    public func addEdge(_ propertyName: String, _ item: DataItem) throws {
+        guard let subjectID: String = self.get("memriID"),
+              let objectID: String = item.get("memriID") else {
+            return
+        }
+
+        let edges: [Edge] = self.get(propertyName) ?? []
+        if !edges.map{$0.objectMemriID}.contains(objectID) {
+
+            let newEdge = Edge(subjectID,objectID, "Label", "Note")
+            let newEdges = edges + [newEdge]
+            self.set("appliesTo", newEdges)
+        }
+        else {
+            throw "Could note create Edge, already exists"
+        }
+        
+//        // Check that the property exists to avoid hard crash
+//        guard let schema = self.objectSchema[propertyName] else {
+//            throw "Exception: Invalid property access of \(item) for \(self)"
+//        }
+//        guard let objectID: String = item.get("memriID") else {
+//            throw "no memriID"
+//        }
+//
+//        if schema.isArray {
+//            // Get list and append
+//            var list = dataItemListToArray(self[propertyName] as Any)
+//
+//            if !list.map{$0.memriID}.contains(objectID){
+//                list.append(item)
+//                print(list)
+//                self.set(propertyName, list as Any)
+//            }
+//            else {
+//                print("Could not set edge, already exists")
+//            }
+//        }
+//        else {
+//            self.set(propertyName, item)
+//        }
     }
     
     /// Toggle boolean property

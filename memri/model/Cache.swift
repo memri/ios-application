@@ -82,10 +82,11 @@ public class Cache {
 
         Realm.Configuration.defaultConfiguration = config
 
+        print("Starting realm at \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
+        
         // TODO: Error handling
         realm = try! Realm()
         
-        print("Starting realm at \(String(describing: Realm.Configuration.defaultConfiguration.fileURL))")
         
         podAPI = api
         
@@ -266,9 +267,9 @@ public class Cache {
             
             // Add item to realm
             try realm.write() { realm.add(item, update: .modified) }
+            
             if item.syncState?.actionNeeded == "create" {
-                try self.sync.execute(item) { error, succes in
-                }
+                try self.sync.execute(item) { error, succes in }
             }
         }
         catch{

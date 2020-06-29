@@ -159,9 +159,11 @@ public class Note:DataItem {
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             try self.superDecode(from: decoder)
             if let htmlContent = content, textContent == nil || textContent == "" {
-                self.textContent = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
+                let plainString = htmlContent.replacingOccurrences(of: "<[^>]+>", with: "",
                                                                     options: .regularExpression,
                                                                     range: nil)
+                title = plainString.firstLineString()
+                textContent = plainString.withoutFirstLine()
             }
         }
     }
@@ -565,6 +567,8 @@ class Label:DataItem {
     @objc dynamic var name:String = ""
     @objc dynamic var comment:String? = nil
     @objc dynamic var color:String? = nil
+    let aliases = List<String>()
+
     override var genericType:String { "Label" }
     
     override var computedTitle:String {
@@ -584,6 +588,7 @@ class Label:DataItem {
             name = try decoder.decodeIfPresent("name") ?? name
             comment = try decoder.decodeIfPresent("comment") ?? comment
             color = try decoder.decodeIfPresent("color") ?? color
+            decodeIntoList(decoder, "aliases", self.aliases)
             
             decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
 
@@ -598,6 +603,9 @@ class Photo:DataItem {
     @objc dynamic var file:File? = nil
     let width = RealmOptional<Int>()
     let height = RealmOptional<Int>()
+    
+    //@objc dynamic var location: Location? = nil //To add
+    
     override var genericType:String { "Photo" }
     
     override var computedTitle:String {

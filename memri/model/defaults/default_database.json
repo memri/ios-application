@@ -22,8 +22,19 @@
         "name": "Note Label Indexer",
         "query": "Note",
         "runDestination": "ios",
-        "indexerDescription": "extracts labels from notes",
+        "indexerDescription": "This indexer extracts labels from notes. You can specify aliases in the labels to add keywords that are used to match against.",
         "icon": "text.badge.plus"
+    },
+    {
+        "type": "Note",
+        "title": "Note1",
+        "content": "Greenhouse green house green-house",
+        "icon": "mappin.and.ellipse"
+    },
+    {
+        "type": "Note",
+        "title": "Note2",
+        "content": "some random note",
     },
     {
         "type": "Photo",
@@ -334,7 +345,7 @@
             "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"
         },
         "labels": [
-            { "type": "label", "name": "Green house", "color": "#047a0a" },
+            { "type": "label", "name": "Green house", "color": "#047a0a", "aliases": ["green house", "green-house"] },
             { "type": "label", "name": "Soccer team", "color": "#83ac06" },
             { "type": "label", "name": "Friends from University", "color": "#ffd966" }
         ],

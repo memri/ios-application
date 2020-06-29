@@ -21,11 +21,11 @@
       },
       {
         "package": "Charts",
-        "repositoryURL": "https://github.com/danielgindi/Charts",
+        "repositoryURL": "https://gitlab.memri.io/memri/ios-dependencies/charts",
         "state": {
-          "branch": null,
-          "revision": "7ac4a05e83d279bac305a472af9128c2a0eca3d7",
-          "version": "3.5.0"
+          "branch": "master",
+          "revision": "c7609524054ed624c08f2695f2b4881ae71e4cd8",
+          "version": null
         }
       },
       {

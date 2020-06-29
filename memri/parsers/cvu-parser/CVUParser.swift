@@ -310,16 +310,17 @@ class CVUParser {
                 stack.append(Color(hex: value))
             case let .Identifier(value, _, _):
                 if lastKey == nil {
-                    let nextToken = peekCurrentToken()
+                    var nextToken = peekCurrentToken()
                     if case CVUToken.Colon = nextToken {
                         _ = popCurrentToken()
                         lastKey = value
+                        nextToken = peekCurrentToken()
                     }
                     
                     let lvalue = value.lowercased()
-                    if let type = knownUIElements[lvalue] {
+                    if lastKey == nil, let type = knownUIElements[lvalue] {
                         var properties:[String:Any?] = [:]
-                        if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
+                        if case CVUToken.CurlyBracketOpen = nextToken {
                             _ = popCurrentToken()
                             properties = try parseDict(value)
                         }
@@ -329,11 +330,11 @@ class CVUParser {
                     }
                     else if lvalue == "userstate" || lvalue == "viewarguments" {
                         var properties:[String:Any?] = [:]
-                        if case CVUToken.CurlyBracketOpen = peekCurrentToken() {
+                        if case CVUToken.CurlyBracketOpen = nextToken {
                             _ = popCurrentToken()
                             properties = try parseDict(value)
                         }
-                        stack.append(UserState(properties))
+                        stack.append(UserState(properties as [String: Any]))
                         continue
                     }
                     else if case CVUToken.CurlyBracketOpen = nextToken {

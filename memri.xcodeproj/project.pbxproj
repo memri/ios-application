@@ -150,7 +150,6 @@
 		86677DEB242A6751007A4782 /* CacheTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86677DEA242A6751007A4782 /* CacheTest.swift */; };
 		866F87B4245302A4000E5FAB /* default_database.json in Resources */ = {isa = PBXBuildFile; fileRef = 86C3A7382452FFD4006D4F55 /* default_database.json */; };
 		866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C2245354B5000E5FAB /* PickerPane.swift */; };
-		866F87C624536626000E5FAB /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87C524536626000E5FAB /* MapView.swift */; };
 		866F87D82456AD76000E5FAB /* person.0x013.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D52456AD76000E5FAB /* person.0x013.json */; };
 		866F87D92456AD76000E5FAB /* person.0x013.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D52456AD76000E5FAB /* person.0x013.json */; };
 		866F87DA2456AD76000E5FAB /* person.0x012.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D62456AD76000E5FAB /* person.0x012.json */; };
@@ -216,10 +215,11 @@
 		86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB35E247AA9D20051A92F /* CVUValidator.swift */; };
 		86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DDB363247AD0400051A92F /* CVUValidatorTests.swift */; };
 		86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86FFD0BD24A2398F001BF14B /* chart.cvu */; };
+		B809186524A4DFF400BD74D8 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B809186424A4DFF400BD74D8 /* Charts */; };
+		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB1B24A1A99F0007C9EB /* memriUI */; };
-		B88AAB2324A1AD140007C9EB /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB2224A1AD140007C9EB /* Charts */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -232,6 +232,15 @@
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
+		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
+		B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */; };
+		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
+		B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */; };
+		B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; };
+		B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; };
+		B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8E0FBE324A4ADE3009C3C30 /* map.cvu */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
@@ -265,6 +274,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */,
+				B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -390,7 +401,6 @@
 		8665ADD8241A8387005B3FA5 /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		86677DEA242A6751007A4782 /* CacheTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTest.swift; sourceTree = "<group>"; };
 		866F87C2245354B5000E5FAB /* PickerPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerPane.swift; sourceTree = "<group>"; };
-		866F87C524536626000E5FAB /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		866F87C8245434A1000E5FAB /* SubView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		866F87D52456AD76000E5FAB /* person.0x013.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x013.json; sourceTree = "<group>"; };
 		866F87D62456AD76000E5FAB /* person.0x012.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x012.json; sourceTree = "<group>"; };
@@ -459,6 +469,9 @@
 		86DDB360247AAD030051A92F /* Cascadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cascadable.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86FFD0BD24A2398F001BF14B /* chart.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chart.cvu; sourceTree = "<group>"; wrapsLines = 0; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		B81237E824A43D7C003E8BCB /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
+		B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapboxMobileEvents.framework; sourceTree = "<group>"; };
+		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -476,6 +489,11 @@
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
+		B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapView-Mapbox.swift"; sourceTree = "<group>"; };
+		B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapView-AppleMaps.swift"; sourceTree = "<group>"; };
+		B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapStyle.swift; sourceTree = "<group>"; };
+		B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapModel.swift; sourceTree = "<group>"; };
+		B8E0FBE324A4ADE3009C3C30 /* map.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = map.cvu; sourceTree = "<group>"; };
 		B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit+FirstResponder.swift"; sourceTree = "<group>"; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
 		C806E06D2426694300C050E9 /* ContextPaneBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneBackground.swift; sourceTree = "<group>"; };
@@ -495,7 +513,9 @@
 				B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */,
 				B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
-				B88AAB2324A1AD140007C9EB /* Charts in Frameworks */,
+				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
+				B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */,
+				B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */,
 				B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
 			);
@@ -961,7 +981,6 @@
 				86C3A73424518763006D4F55 /* ItemCell.swift */,
 				866F87C8245434A1000E5FAB /* SubView.swift */,
 				866F87C2245354B5000E5FAB /* PickerPane.swift */,
-				866F87C524536626000E5FAB /* MapView.swift */,
 				86B7A6772457F28A00292E81 /* KeyboardResponder.swift */,
 				5D487F21244073DF00B50202 /* UIElementView.swift */,
 			);
@@ -1100,6 +1119,7 @@
 				86CDB481246A4D94007EAE67 /* generalEditor.cvu */,
 				5DAFB6142479524500719160 /* thumbnail.cvu */,
 				5DAFB6122479523B00719160 /* list.cvu */,
+				B8E0FBE324A4ADE3009C3C30 /* map.cvu */,
 				86FFD0BD24A2398F001BF14B /* chart.cvu */,
 			);
 			path = renderer;
@@ -1116,6 +1136,8 @@
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B81237E824A43D7C003E8BCB /* Mapbox.framework */,
+				B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1137,7 +1159,11 @@
 		B88AAB3324A1AEEE0007C9EB /* MapRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				B8E0FBDA24A43FCD009C3C30 /* MapModel */,
+				B81237EC24A43E42003E8BCB /* MapHelper.swift */,
 				86B7A6752457404C00292E81 /* MapRendererView.swift */,
+				B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */,
+				B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */,
 			);
 			path = MapRenderer;
 			sourceTree = "<group>";
@@ -1160,6 +1186,15 @@
 				B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */,
 			);
 			path = SwiftUI;
+			sourceTree = "<group>";
+		};
+		B8E0FBDA24A43FCD009C3C30 /* MapModel */ = {
+			isa = PBXGroup;
+			children = (
+				B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */,
+				B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */,
+			);
+			path = MapModel;
 			sourceTree = "<group>";
 		};
 		B8FB4998249F317E007A05C4 /* UIKit */ = {
@@ -1206,7 +1241,7 @@
 				B83E330E2496F3A100D88742 /* RealmSwift */,
 				B8FB4995249F21A6007A05C4 /* ASCollectionView */,
 				B88AAB1B24A1A99F0007C9EB /* memriUI */,
-				B88AAB2224A1AD140007C9EB /* Charts */,
+				B809186424A4DFF400BD74D8 /* Charts */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -1288,7 +1323,7 @@
 				5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */,
 				B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 				B8FB4994249F21A6007A05C4 /* XCRemoteSwiftPackageReference "ascollectionview" */,
-				B88AAB2124A1AD140007C9EB /* XCRemoteSwiftPackageReference "Charts" */,
+				B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1308,6 +1343,7 @@
 			files = (
 				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
 				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
+				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
 				8699AA31247BCF3000EC85C0 /* generalEditor.cvu in Resources */,
@@ -1435,7 +1471,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "#if [ \"${TARGET_OS_MACCATALYST}\" = \"1\" ]; then\n#bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\n#fi\n";
+			shellScript = "if [ \"${TARGET_OS_MACCATALYST}\" = \"1\" ]; then\nbash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1464,6 +1500,7 @@
 				868EF659247678BC00C0375F /* Colors.swift in Sources */,
 				5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
+				B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				869789EA24344A530003756B /* schema.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
@@ -1472,7 +1509,6 @@
 				B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
-				866F87C624536626000E5FAB /* MapView.swift in Sources */,
 				868EF63224766A8800C0375F /* CVUParser.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				8672C27A2497ECEF006F0D42 /* DefaultGeneralEditorRow.swift in Sources */,
@@ -1480,6 +1516,7 @@
 				B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */,
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
+				B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */,
 				868EF63524766A8800C0375F /* Expression.swift in Sources */,
@@ -1500,7 +1537,9 @@
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
 				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
+				B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */,
 				5D228B062432385300464506 /* ActionView.swift in Sources */,
+				B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */,
 				868EF6552476768C00C0375F /* UIElement.swift in Sources */,
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
@@ -1542,6 +1581,7 @@
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
 				8672C27C2497F35A006F0D42 /* CustomRenderer.swift in Sources */,
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
+				B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
@@ -1755,6 +1795,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
@@ -1786,6 +1827,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
 				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
@@ -1955,20 +1997,20 @@
 				minimumVersion = 0.2.3;
 			};
 		};
+		B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://gitlab.memri.io/memri/ios-dependencies/charts";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
 		B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-cocoa";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 4.4.1;
-			};
-		};
-		B88AAB2124A1AD140007C9EB /* XCRemoteSwiftPackageReference "Charts" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielgindi/Charts";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.5.0;
 			};
 		};
 		B8FB4994249F21A6007A05C4 /* XCRemoteSwiftPackageReference "ascollectionview" */ = {
@@ -1987,6 +2029,11 @@
 			package = 5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */;
 			productName = AnyCodable;
 		};
+		B809186424A4DFF400BD74D8 /* Charts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */;
+			productName = Charts;
+		};
 		B83E330C2496F3A100D88742 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
@@ -2000,11 +2047,6 @@
 		B88AAB1B24A1A99F0007C9EB /* memriUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = memriUI;
-		};
-		B88AAB2224A1AD140007C9EB /* Charts */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B88AAB2124A1AD140007C9EB /* XCRemoteSwiftPackageReference "Charts" */;
-			productName = Charts;
 		};
 		B8FB4995249F21A6007A05C4 /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;

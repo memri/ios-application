@@ -124,6 +124,13 @@ extension String: Error {
         self = self.capitalizingFirst()
     }
     
+    func removeHTML() -> String {
+        return self.replacingOccurrences(of: "<[^>]+>", with: "",
+                                         options: .regularExpression,
+                                         range: nil)
+    }
+
+    
     func camelCaseToTitleCase() -> String {
         self.split { $0.isWhitespace }.map { $0.capitalizingFirst() }.joined(separator: " ")
     }
