@@ -43,13 +43,17 @@ struct MapRendererView: View {
 		(context.cascadingView.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
 	}
 
+	var useMapBox: Bool { context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false }
+
 	var body: some View {
-		MapView(dataItems: context.items,
-				locationKey: renderConfig.locationKey,
-				addressKey: renderConfig.addressKey,
-				labelKey: renderConfig.labelKey,
-				mapStyle: renderConfig.mapStyle,
-				onPress: self.onPress)
+		let config = MapViewConfig(dataItems: context.items,
+								   locationKey: renderConfig.locationKey,
+								   addressKey: renderConfig.addressKey,
+								   labelKey: renderConfig.labelKey,
+								   mapStyle: renderConfig.mapStyle,
+								   onPress: self.onPress)
+
+		return MapView(useMapBox: useMapBox, config: config)
 			.background(Color(.secondarySystemBackground))
 	}
 

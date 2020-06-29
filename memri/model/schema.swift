@@ -534,7 +534,7 @@ class AuditItem: DataItem {
 			let edges = appliesTo.map { Edge(self.memriID, $0.memriID, self.genericType, $0.genericType) }
 
 			//            let edgeName = "appliesTo"
-			//
+//
 			//            item["~appliesTo"] =  edges
 			// TODO:
 			self.appliesTo.append(objectsIn: edges)

@@ -17,9 +17,9 @@ struct LineChartSwiftUIView: UIViewRepresentable {
 		let chartView: LineChartView = LineChartView()
 		chartView.delegate = context.coordinator
 		chartView.legend.enabled = false
-		chartView.xAxis.drawGridLinesEnabled = model.showGridLines
+		chartView.xAxis.drawGridLinesEnabled = !model.hideGridLines
 		chartView.xAxis.labelPosition = .bottom
-		chartView.leftAxis.drawGridLinesEnabled = model.showGridLines
+		chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
 		chartView.rightAxis.enabled = false
 		chartView.pinchZoomEnabled = false
 		chartView.doubleTapToZoomEnabled = false

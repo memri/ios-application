@@ -9,27 +9,23 @@
 import Foundation
 
 struct ChartHelper {
-	static func generateXYChartSetFromDataItems(_ items: [DataItem], xAxisKey: String, yAxisKey: String, labelKey: String? = nil) -> ChartSetXY {
+	static func generateXYChartSetFromDataItems(_ items: [DataItem], xAxis: (DataItem) -> Double?, yAxis: (DataItem) -> Double?, labelKey: ((DataItem) -> String?)?) -> ChartSetXY {
 		let points = items.compactMap { (item) -> ChartPointXY? in
 			guard
-				item.hasProperty(xAxisKey),
-				item.hasProperty(yAxisKey),
-				let x: Double = item.get(xAxisKey),
-				let y: Double = item.get(yAxisKey)
+				let x: Double = xAxis(item),
+				let y: Double = yAxis(item)
 			else { return nil }
-			let label: String? = labelKey.flatMap { item.hasProperty($0) ? item.get($0) : nil }
+			let label: String? = labelKey.flatMap { $0(item) }
 			return ChartPointXY(x: x, y: y, label: label, itemID: item.memriID)
 		}
 		return ChartSetXY(points: points)
 	}
 
-	static func generateLabelledYChartSetFromDataItems(_ items: [DataItem], labelKey: String, yAxisKey: String) -> ChartSetLabelledY {
+	static func generateLabelledYChartSetFromDataItems(_ items: [DataItem], labelKey: (DataItem) -> String?, yAxis: (DataItem) -> Double?) -> ChartSetLabelledY {
 		let points = items.compactMap { (item) -> ChartPointLabelledY? in
 			guard
-				item.hasProperty(labelKey),
-				item.hasProperty(yAxisKey),
-				let label: String = item.get(labelKey),
-				let y: Double = item.get(yAxisKey)
+				let label: String = labelKey(item),
+				let y: Double = yAxis(item)
 			else { return nil }
 			return ChartPointLabelledY(label: label, y: y, itemID: item.memriID)
 		}

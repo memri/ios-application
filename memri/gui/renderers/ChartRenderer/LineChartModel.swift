@@ -12,7 +12,7 @@ import SwiftUI
 struct LineChartModel {
 	var sets: [ChartSetXY]
 	var showValueLabels: Bool = true
-	var showGridLines: Bool = true
+	var hideGridLines: Bool = false
 	var forceMinYOfZero: Bool = true
 
 	func label(set: Int = 0, index: Int) -> String? {

@@ -250,7 +250,6 @@ public class Cache {
 
 			// Add item to realm
 			try realm.write { realm.add(item, update: .modified) }
-
 			if item.syncState?.actionNeeded == "create" {
 				try sync.execute(item) { _, _ in }
 			}

@@ -318,9 +318,9 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runImporterInstance(_ memriID: String,
+	public func runImporterInstance(_ uid: Int,
 									_ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		http(.PUT, path: "import/\(memriID)") { error, _ in
+		http(.PUT, path: "import/\(uid)") { error, _ in
 			callback(error, error == nil)
 		}
 	}
@@ -329,13 +329,11 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runIndexerInstance(_: DataItem, _: Int,
-								   _: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		// then run the indexer
-
-		//        self.http(.PUT, path: "index/\(memriID)") { error, data in
-		//            callback(error, error == nil)
-		//        }
+	public func runIndexerInstance(_ uid: Int,
+								   _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
+		http(.PUT, path: "index/\(uid)") { error, _ in
+			callback(error, error == nil)
+		}
 	}
 
 	//    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}

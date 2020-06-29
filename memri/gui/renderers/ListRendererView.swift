@@ -79,7 +79,7 @@ struct ListRendererView: View {
 				.padding(.top, 40)
 				Spacer()
 			} else {
-				ASTableView(section:
+				ASTableView(editMode: context.currentSession.isEditMode, section:
 					ASSection(id: 0,
 							  data: context.items,
 							  dataID: \.memriID,
@@ -96,9 +96,8 @@ struct ListRendererView: View {
 						if let press = self.renderConfig.press {
 							context.executeAction(press, with: context.items[safe: index])
 						}
-					}
-				)
-				.alwaysBounce()
+                        })
+					.alwaysBounce()
 			}
 		}
 	}

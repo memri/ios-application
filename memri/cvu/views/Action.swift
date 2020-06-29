@@ -278,7 +278,7 @@ public class Action: HashableClass, CVUToString {
 				expr.execFunc = context.views.executeFunction
 				expr.context = context
 
-				let value: T? = try expr.execForReturnType(viewArguments)
+				let value = try expr.execForReturnType(T.self, args: viewArguments)
 				return value
 			} catch {
 				print("ACTION ERROR: \(error)")
@@ -1046,7 +1046,7 @@ class ActionRunImporterInstance: Action, ActionExec {
 		if let importerInstance = arguments["importerInstance"] as? ImporterInstance {
 			let cachedImporterInstance = try context.cache.addToCache(importerInstance)
 
-			context.podAPI.runImporterInstance(cachedImporterInstance.memriID) { error, _ in
+			context.podAPI.runImporterInstance(cachedImporterInstance.uid) { error, _ in
 				if let error = error {
 					print("Cannot execute actionImport: \(error)")
 				}
@@ -1055,7 +1055,7 @@ class ActionRunImporterInstance: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionRunImporterInstance.exec(context, arguments) }
+		execWithoutThrow { try ActionRunImporterInstance(context).exec(arguments) }
 	}
 }
 
@@ -1145,7 +1145,7 @@ class ActionRunIndexerInstance: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionRunIndexerInstance.exec(context, arguments) }
+		execWithoutThrow { try ActionRunIndexerInstance(context).exec(arguments) }
 	}
 }
 
