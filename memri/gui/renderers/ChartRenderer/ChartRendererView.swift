@@ -127,7 +127,7 @@ struct ChartRendererView: View {
 																   	self.resolveExpression(yAxisExpression, forDataItem: $0)
 																   },
 																   labelKey: {
-																   	self.resolveExpression(renderConfig.labelExpression, forDataItem: $0)
+																   	self.resolveExpression(self.renderConfig.labelExpression, forDataItem: $0)
                                                                    })
 			return VStack(spacing: 0) {
 				chartTitleView

@@ -141,14 +141,35 @@ IndexerInstance {
                     Button {
                         margin: 0 5 10 35
                         
-                        press: import {
+                        press: runIndexerInstance {
                             arguments {
-                                importerInstance: {{.}}
+                                indexerInstance: {{.}}
                             }
                         }
                         
                         Text {
                             text: "START RUN"
+                            font: 16 semibold
+                            color: #fff
+                            padding: 5 8 5 8
+                            cornerRadius: 5
+                            background: #70ba6c
+                        }
+                    }
+                    
+                    Button {
+                        margin: 0 5 10 35
+                        
+                        press: setProperty {
+                            arguments {
+                                subject: {{.}}
+                                property: progress
+                                value: 565
+                            }
+                        }
+                        
+                        Text {
+                            text: "TEST"
                             font: 16 semibold
                             color: #fff
                             padding: 5 8 5 8

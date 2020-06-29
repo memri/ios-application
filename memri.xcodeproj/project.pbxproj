@@ -19,11 +19,15 @@
 		5D1A3E6D24080BD800A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
 		5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
 		5D228B062432385300464506 /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* ActionView.swift */; };
+		5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */; };
 		5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F61245C372400183BD2 /* ListRendererView.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
 		5D38DE172405776B00FF9B70 /* DataItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* DataItem.swift */; };
 		5D38DE19240577BA00FF9B70 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE18240577BA00FF9B70 /* Views.swift */; };
+		5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D395B4F24A37A980008610E /* IndexerAPI.swift */; };
+		5D395B5624A38FCC0008610E /* label_indexer_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D395B5524A38FCC0008610E /* label_indexer_data.json */; };
+		5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D395B5524A38FCC0008610E /* label_indexer_data.json */; };
 		5D3D961F24164B240004040E /* CodeExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D961E24164B240004040E /* CodeExtended.swift */; };
 		5D3D9621241675100004040E /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D9620241675100004040E /* util.swift */; };
 		5D3D962424168C810004040E /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
@@ -299,12 +303,15 @@
 		5D228B052432385300464506 /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
 		5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRendererComponent.swift; sourceTree = "<group>"; };
+		5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelIndexerNotesTest.swift; sourceTree = "<group>"; };
 		5D301F61245C372400183BD2 /* ListRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
 		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE162405776B00FF9B70 /* DataItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataItem.swift; sourceTree = "<group>"; };
 		5D38DE18240577BA00FF9B70 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE3F240581E500FF9B70 /* memri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memri.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D395B4F24A37A980008610E /* IndexerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerAPI.swift; sourceTree = "<group>"; };
+		5D395B5524A38FCC0008610E /* label_indexer_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = label_indexer_data.json; sourceTree = "<group>"; };
 		5D3D961E24164B240004040E /* CodeExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeExtended.swift; sourceTree = "<group>"; };
 		5D3D9620241675100004040E /* util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D3EE57024476FFB00562AAC /* note.0x02.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x02.json; sourceTree = "<group>"; };
@@ -551,6 +558,7 @@
 		5D0A28BC2406834700398B17 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5D395B5424A38ECF0008610E /* indexers */,
 				5D44D527245857EC004796BA /* file */,
 				866F87D42456AD76000E5FAB /* persons */,
 				5D3EE56F24476FFB00562AAC /* notes */,
@@ -632,8 +640,25 @@
 			children = (
 				5D38DE122405775400FF9B70 /* api.swift */,
 				5D4231AA247C2D7100CD1933 /* Datasource.swift */,
+				5D395B4F24A37A980008610E /* IndexerAPI.swift */,
 			);
 			path = api;
+			sourceTree = "<group>";
+		};
+		5D395B5124A38CAB0008610E /* indexer */ = {
+			isa = PBXGroup;
+			children = (
+				5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */,
+			);
+			path = indexer;
+			sourceTree = "<group>";
+		};
+		5D395B5424A38ECF0008610E /* indexers */ = {
+			isa = PBXGroup;
+			children = (
+				5D395B5524A38FCC0008610E /* label_indexer_data.json */,
+			);
+			path = indexers;
 			sourceTree = "<group>";
 		};
 		5D3D96222416764A0004040E /* codable */ = {
@@ -773,6 +798,7 @@
 		5D599BD023F2B77700F218A0 /* memriTests */ = {
 			isa = PBXGroup;
 			children = (
+				5D395B5124A38CAB0008610E /* indexer */,
 				5DB66FB32431DD2D007736D6 /* main */,
 				5D0A28C024069A4E00398B17 /* control */,
 				5D0A28BF24069A4600398B17 /* view */,
@@ -1374,6 +1400,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
+				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
 				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
@@ -1453,6 +1480,7 @@
 				5D3EE57924476FFB00562AAC /* note.0x01.json in Resources */,
 				86A5D848243EC46700F8FAD8 /* named_views.json in Resources */,
 				861439F52435AF8C008D6B5B /* test_sessions.json in Resources */,
+				5D395B5624A38FCC0008610E /* label_indexer_data.json in Resources */,
 				5D4768E0247D24B800008CA2 /* exampleNote.html in Resources */,
 				5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */,
 				5D4C71E92445E07500DF09E8 /* persons_from_server.json in Resources */,
@@ -1598,6 +1626,7 @@
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
 				5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */,
+				5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
@@ -1663,6 +1692,7 @@
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
 				5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */,
+				5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */,
 				863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */,
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,
 				5D42A8F7245AF1ED0093D85F /* DataItemTest.swift in Sources */,
@@ -1872,6 +1902,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -1907,6 +1938,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -2008,6 +2040,148 @@
 			};
 			name = Release;
 		};
+		B8E8BA7424A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7524A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
+				DEVELOPMENT_TEAM = 2JV298SK2V;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/memri/Resources",
+					"$(PROJECT_DIR)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				INFOPLIST_FILE = memri/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					memri/Resources,
+				);
+				MARKETING_VERSION = 0.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7624A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K92CHY7KDL;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/memri/Resources",
+				);
+				INFOPLIST_FILE = memriTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				NEW_SETTING = "";
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memriTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/memri.app/memri";
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7724A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = memriUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memriUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = memri;
+			};
+			name = RUNBUILDTOOLS;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2015,6 +2189,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BDF23F2B77700F218A0 /* Debug */,
+				B8E8BA7424A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE023F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2024,6 +2199,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE223F2B77700F218A0 /* Debug */,
+				B8E8BA7524A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE323F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2033,6 +2209,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE523F2B77700F218A0 /* Debug */,
+				B8E8BA7624A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE623F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2042,6 +2219,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE823F2B77700F218A0 /* Debug */,
+				B8E8BA7724A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE923F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

@@ -127,7 +127,7 @@ enum DataItemFamily: String, ClassFamily, CaseIterable {
 
 // completion(try JSONDecoder().decode(family: DataItemFamily.self, from: data))
 
-class Note: DataItem {
+public class Note: DataItem {
 	@objc dynamic var title: String? = ""
 	/// HTML
 	@objc dynamic var content: String?
@@ -284,9 +284,10 @@ class Address: DataItem {
 
 	override var computedTitle: String {
 		"""
+		\(type ?? "")
 		\(street ?? "")
 		\(city ?? "")
-		\(postalCode ?? ""), \(state ?? "")
+		\(postalCode == nil ? "" : postalCode! + ",") \(state ?? "")
 		\(country?.computedTitle ?? "")
 		"""
 	}
@@ -533,7 +534,7 @@ class AuditItem: DataItem {
 			let edges = appliesTo.map { Edge(self.memriID, $0.memriID, self.genericType, $0.genericType) }
 
 			//            let edgeName = "appliesTo"
-			//
+//
 			//            item["~appliesTo"] =  edges
 			// TODO:
 			self.appliesTo.append(objectsIn: edges)
@@ -562,6 +563,8 @@ class Label: DataItem {
 	@objc dynamic var name: String = ""
 	@objc dynamic var comment: String?
 	@objc dynamic var color: String?
+	let aliases = List<String>()
+
 	override var genericType: String { "Label" }
 
 	override var computedTitle: String {
@@ -581,6 +584,7 @@ class Label: DataItem {
 			name = try decoder.decodeIfPresent("name") ?? name
 			comment = try decoder.decodeIfPresent("comment") ?? comment
 			color = try decoder.decodeIfPresent("color") ?? color
+			decodeIntoList(decoder, "aliases", self.aliases)
 
 			decodeEdges(decoder, "appliesTo", DataItem.self, self.appliesTo, self)
 
@@ -754,18 +758,31 @@ class ImporterInstance: DataItem {
 	}
 }
 
-class Indexer: DataItem {
+public class Indexer: DataItem {
 	override var genericType: String { "Indexer" }
 	@objc dynamic var name: String = ""
 	@objc dynamic var indexerDescription: String = ""
 	@objc dynamic var query: String = ""
 	@objc dynamic var icon: String = ""
 	@objc dynamic var bundleImage: String = ""
+	@objc dynamic var runDestination: String = ""
 
 	let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
 
 	override var computedTitle: String {
 		name
+	}
+
+	internal required convenience init(name: String? = nil, indexerDescription: String? = nil,
+									   query: String? = nil, icon: String? = nil,
+									   bundleImage: String? = nil, runDestination: String? = nil) {
+		self.init()
+		self.name = name ?? self.name
+		self.indexerDescription = indexerDescription ?? self.indexerDescription
+		self.query = query ?? self.query
+		self.icon = icon ?? self.icon
+		self.bundleImage = bundleImage ?? self.bundleImage
+		self.runDestination = runDestination ?? self.runDestination
 	}
 
 	required init() {
@@ -781,6 +798,7 @@ class Indexer: DataItem {
 			indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
 			icon = try decoder.decodeIfPresent("icon") ?? icon
 			bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
+			runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
 
 			decodeIntoList(decoder, "runs", self.runs)
 
@@ -789,11 +807,21 @@ class Indexer: DataItem {
 	}
 }
 
-class IndexerInstance: DataItem {
+public class IndexerInstance: DataItem {
 	override var genericType: String { "IndexerInstance" }
 	@objc dynamic var name: String = "unknown indexer instance"
 	@objc dynamic var query: String = ""
 	@objc dynamic var indexer: Indexer?
+	@objc dynamic var progress: Int = -1
+
+	internal required convenience init(name: String? = nil, query: String? = nil, indexer: Indexer? = nil,
+									   progress: Int? = nil) {
+		self.init()
+		self.name = name ?? self.name
+		self.query = query ?? self.query
+		self.indexer = indexer ?? self.indexer
+		self.progress = progress ?? self.progress
+	}
 
 	required init() {
 		super.init()

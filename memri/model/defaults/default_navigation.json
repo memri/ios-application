@@ -50,8 +50,18 @@
     },
     {
         "type": "item",
+        "title": "importer instances",
+        "view": "all-importer-instances"
+    },
+    {
+        "type": "item",
         "title": "indexers",
         "view": "all-indexers"
+    },
+    {
+        "type": "item",
+        "title": "indexer instances",
+        "view": "all-indexer-instances"
     },
     {
         "type": "item",

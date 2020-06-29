@@ -77,7 +77,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				context.currentSession.isEditMode = true
+				self.context.currentSession.isEditMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -112,7 +112,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				context.currentSession.isEditMode = true
+				self.context.currentSession.isEditMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -128,7 +128,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				context.currentSession.isEditMode = true
+				self.context.currentSession.isEditMode = true
 			}
 			.generalEditorCaption()
 	}

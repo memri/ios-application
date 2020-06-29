@@ -44,6 +44,7 @@ struct _RichTextEditor: View {
 						isEditing: editModeBinding,
 						preferredHeight: nil,
 						onTextChanged: { newAttributedString in
+							print(newAttributedString.toHTML()?.replace("'", "\""))
 							self.dataItem.set("content", newAttributedString.toHTML())
 							self.dataItem.set("textContent", newAttributedString.string.withoutFirstLine())
 							self.dataItem.set("title", newAttributedString.string.firstLineString())
