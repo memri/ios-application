@@ -190,10 +190,10 @@ public class PodAPI {
     ///   - memriID: The memriID of the data item to retrieve
     ///   - callback: Function that is called when the task is completed either with a result, or an error
     /// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
-    public func get(_ memriID:String,
+    public func get(_ uid:Int,
                     _ callback: @escaping (_ error: Error?, _ item: DataItem?) -> Void) -> Void {
         
-        self.http(path: "items/\(memriID)") { error, data in
+        self.http(path: "items/\(uid)") { error, data in
             if let data = data {
                 // TODO Refactor: Error handling
                 let result:[DataItem]? = try? MemriJSONDecoder
@@ -236,10 +236,10 @@ public class PodAPI {
     ///   - memriID: The memriID of the data item to remove
     ///   - callback: Function that is called when the task is completed either with a result, or  an error
     /// - Remark: Note that data items that are marked as deleted are by default not returned when querying
-    public func remove(_ memriID:String,
+    public func remove(_ uid:Int,
                        _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) -> Void {
         
-        self.http(.DELETE, path: "items/\(memriID)") { error, data in
+        self.http(.DELETE, path: "items/\(uid)") { error, data in
             callback(error, error == nil)
         }
     }

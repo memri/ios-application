@@ -245,12 +245,12 @@ class Sync {
         if let syncState = item.syncState {
             switch syncState.actionNeeded {
             case "create":
-                podAPI.create(item) { (error, id) -> Void in
+                podAPI.create(item) { (error, uid) -> Void in
                     if error != nil { return callback(error, false) }
                     
                     // Set the new id from the server
-                    if let id = id {
-                        item.set("uid", id)
+                    if let uid = uid {
+                        item.set("uid", uid)
                         callback(nil, true)
                     }
                     else {
@@ -259,7 +259,7 @@ class Sync {
                     
                 }
             case "delete":
-                podAPI.remove(item.getString("memriID")) { (error, success) -> Void in
+                podAPI.remove(item.uid) { (error, success) -> Void in
                     if (error == nil) {
                         // Remove from local storage
                         realmWriteIfAvailable(self.realm){
