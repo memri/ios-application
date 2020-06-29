@@ -57,7 +57,7 @@ public class Datasource: Object, UniqueString {
 		func getValue<T>(_ name: String) throws -> T? {
 			if let expr = def[name] as? Expression {
 				do {
-					let x: T? = try expr.execForReturnType(viewArguments)
+					let x = try expr.execForReturnType(T.self, args: viewArguments)
 					return x
 				} catch {
 					debugHistory.warn("\(error)")

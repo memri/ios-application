@@ -11,6 +11,7 @@ import SwiftUI
 
 struct BarChartModel {
 	var sets: [ChartSetLabelledY]
+	var hideGridLines: Bool = true
 	var forceMinYOfZero: Bool = true
 
 	func generateData() -> BarChartData {
