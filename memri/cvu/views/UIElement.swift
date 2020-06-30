@@ -23,15 +23,15 @@ public class UIElement: CVUToString {
 		properties[propName] != nil
 	}
 
-	public func getString(_ propName: String, _ item: DataItem? = nil) -> String {
+	public func getString(_ propName: String, _ item: Item? = nil) -> String {
 		get(propName, item) ?? ""
 	}
 
-	public func getBool(_ propName: String, _ item: DataItem? = nil) -> Bool {
+	public func getBool(_ propName: String, _ item: Item? = nil) -> Bool {
 		get(propName, item) ?? false
 	}
 
-	public func get<T>(_ propName: String, _ item: DataItem? = nil,
+	public func get<T>(_ propName: String, _ item: Item? = nil,
 					   _ viewArguments: ViewArguments = ViewArguments()) -> T? {
 		if let prop = properties[propName] {
 			let propValue = prop
@@ -41,13 +41,13 @@ public class UIElement: CVUToString {
 				viewArguments.set(".", item) // TODO: Optimization This is called a billion times. Find a better place for this
 
 				do {
-					if T.self == [DataItem].self {
+					if T.self == [Item].self {
 						let x = try expr.execute(viewArguments)
 
-						var result = [DataItem]()
-						if let list = x as? List<Edge> {
+						var result = [Item]()
+						if let list = x as? List<Relationship> {
 							for edge in list {
-								if let d = getDataItem(edge) {
+								if let d = getItem(edge) {
 									result.append(d)
 								}
 							}
@@ -79,14 +79,14 @@ public class UIElement: CVUToString {
 		return nil
 	}
 
-	public func getType(_ propName: String, _ item: DataItem,
-						_ viewArguments: ViewArguments) -> (PropertyType, DataItem, String) {
+	public func getType(_ propName: String, _ item: Item,
+						_ viewArguments: ViewArguments) -> (PropertyType, Item, String) {
 		if let prop = properties[propName] {
 			let propValue = prop
 
 			// Execute expression to get the right value
 			if let expr = propValue as? Expression {
-				do { return try expr.getTypeOfDataItem(viewArguments) }
+				do { return try expr.getTypeOfItem(viewArguments) }
 				catch {
 					// TODO: Refactor: Error Handling
 					debugHistory.error("could not get type of \(item)")
@@ -166,7 +166,7 @@ public enum UIElementProperties: String, CaseIterable {
 			return value is CGFloat
 		case .image: return value is File || value is String
 		case .press: return value is Action || value is [Action]
-		case .list: return value is [DataItem]
+		case .list: return value is [Item]
 		case .view: return value is CVUParsedDefinition || value is [String: Any?]
 		case .arguments: return value is [String: Any?]
 		case .location: return value is Location

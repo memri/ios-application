@@ -47,7 +47,7 @@ public class MemriContext: ObservableObject {
 
 	public var renderers: Renderers
 
-	public var items: [DataItem] {
+	public var items: [Item] {
 		get {
 			cascadingView.resultSet.items
 		}
@@ -57,7 +57,7 @@ public class MemriContext: ObservableObject {
 		}
 	}
 
-	public var item: DataItem? {
+	public var item: Item? {
 		get {
 			cascadingView.resultSet.singletonItem
 		}

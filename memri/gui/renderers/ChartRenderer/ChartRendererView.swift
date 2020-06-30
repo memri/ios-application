@@ -79,7 +79,7 @@ struct ChartRendererView: View {
 		return nil
 	}
 
-	func resolveExpression<T>(_ expression: Expression?, toType _: T.Type = T.self, forDataItem dataItem: DataItem) -> T? {
+	func resolveExpression<T>(_ expression: Expression?, toType _: T.Type = T.self, forItem dataItem: Item) -> T? {
 		try? expression?.execForReturnType(T.self, args: ViewArguments([".": dataItem]))
 	}
 
@@ -102,12 +102,12 @@ struct ChartRendererView: View {
 		switch type {
 		case .bar:
 			guard let labelExpression = renderConfig.labelExpression, let yAxisExpression = renderConfig.yAxisExpression else { return missingDataView.eraseToAnyView() }
-			let data = ChartHelper.generateLabelledYChartSetFromDataItems(dataItems,
-																		  labelKey: {
-																		  	self.resolveExpression(labelExpression, forDataItem: $0)
-																		  },
-																		  yAxis: {
-																		  	self.resolveExpression(yAxisExpression, forDataItem: $0)
+			let data = ChartHelper.generateLabelledYChartSetFromItems(dataItems,
+																	  labelKey: {
+																	  	self.resolveExpression(labelExpression, forItem: $0)
+																	  },
+																	  yAxis: {
+																	  	self.resolveExpression(yAxisExpression, forItem: $0)
                                                                           })
 
 			return VStack(spacing: 0) {
@@ -119,15 +119,15 @@ struct ChartRendererView: View {
 			.eraseToAnyView()
 		case .line:
 			guard let xAxisExpression = renderConfig.xAxisExpression, let yAxisExpression = renderConfig.yAxisExpression else { return missingDataView.eraseToAnyView() }
-			let data = ChartHelper.generateXYChartSetFromDataItems(dataItems,
-																   xAxis: {
-																   	self.resolveExpression(xAxisExpression, forDataItem: $0)
-																   },
-																   yAxis: {
-																   	self.resolveExpression(yAxisExpression, forDataItem: $0)
-																   },
-																   labelKey: {
-																   	self.resolveExpression(self.renderConfig.labelExpression, forDataItem: $0)
+			let data = ChartHelper.generateXYChartSetFromItems(dataItems,
+															   xAxis: {
+															   	self.resolveExpression(xAxisExpression, forItem: $0)
+															   },
+															   yAxis: {
+															   	self.resolveExpression(yAxisExpression, forItem: $0)
+															   },
+															   labelKey: {
+															   	self.resolveExpression(self.renderConfig.labelExpression, forItem: $0)
                                                                    })
 			return VStack(spacing: 0) {
 				chartTitleView

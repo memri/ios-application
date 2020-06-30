@@ -1,10 +1,10 @@
 {
-    "/general/gui/showEditButton": false,
+    "/general/gui/showEditButton": true,
     "/general/gui/showDateAgo": true,
     "/general/gui/useMapBox": false,
     "/formatting/date": "yyyy/MM/dd HH:mm",
     "/pod/host": "http://0.0.0.0:3030",
     "/pod/username": "",
     "/pod/password": "",
-    "/debug/autoShowErrorConsole": false
+    "/debug/autoShowErrorConsole": true
 }

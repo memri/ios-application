@@ -78,7 +78,7 @@ class CVUValidatorTests: XCTestCase {
 
 	func testNamedViewDefinition() throws {
 		let snippet = """
-		.defaultButtonsForDataItem {
+		.defaultButtonsForItem {
 		    editActionButton: toggleEditMode
 		}
 		"""

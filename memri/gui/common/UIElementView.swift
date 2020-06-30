@@ -15,10 +15,10 @@ public struct UIElementView: SwiftUI.View {
 	@EnvironmentObject var context: MemriContext
 
 	let from: UIElement
-	let item: DataItem
+	let item: Item
 	let viewArguments: ViewArguments
 
-	public init(_ gui: UIElement, _ dataItem: DataItem, _ viewArguments: ViewArguments? = nil) {
+	public init(_ gui: UIElement, _ dataItem: Item, _ viewArguments: ViewArguments? = nil) {
 		from = gui
 		item = dataItem
 		self.viewArguments = viewArguments ?? ViewArguments()
@@ -53,8 +53,8 @@ public struct UIElementView: SwiftUI.View {
 		return Image(systemName: "exclamationmark.bubble")
 	}
 
-	public func getList(_: String) -> [DataItem] {
-		let x: [DataItem]? = get("list")
+	public func getList(_: String) -> [Item] {
+		let x: [Item]? = get("list")
 		return x ?? []
 	}
 
@@ -242,7 +242,7 @@ public struct UIElementView: SwiftUI.View {
 								// Find out why datasource is not parsed
 
 								if let parsed: [String: Any?] = get("view") {
-									let parsedViewDef = CVUParsedViewDefinition(DataItem.generateUUID())
+									let parsedViewDef = CVUParsedViewDefinition(Item.generateUUID())
 									parsedViewDef.parsed = parsed
 									do {
 										let sessionView = try SessionView.fromCVUDefinition(parsed: parsedViewDef)
@@ -412,8 +412,8 @@ public struct UIElementView: SwiftUI.View {
 	}
 
 	func renderPicker() -> some View {
-		let dataItem: DataItem? = get("value")
-		let (_, propDataItem, propName) = from.getType("value", item, viewArguments)
+		let dataItem: Item? = get("value")
+		let (_, propItem, propName) = from.getType("value", item, viewArguments)
 		let emptyValue = get("empty") ?? "Pick a value"
 
 		var datasource: Datasource
@@ -432,7 +432,7 @@ public struct UIElementView: SwiftUI.View {
 			selected: dataItem ?? get("defaultValue"),
 			title: get("title") ?? "Select a \(emptyValue)",
 			emptyValue: emptyValue,
-			propDataItem: propDataItem,
+			propItem: propItem,
 			propName: propName,
 			datasource: datasource
 		)

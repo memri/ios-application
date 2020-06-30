@@ -27,7 +27,7 @@ class LabelIndexerNotesTest: XCTestCase {
 		let indexerInstance = IndexerInstance(name: indexer.name, indexer: indexer)
 
 		let jsonData = try jsonDataFromFile("label_indexer_data")
-		let items: [DataItem] = try MemriJSONDecoder.decode(family: DataItemFamily.self, from: jsonData)
+		let items: [Item] = try MemriJSONDecoder.decode(family: ItemFamily.self, from: jsonData)
 
 		indexerAPI.execute(indexerInstance, items)
 

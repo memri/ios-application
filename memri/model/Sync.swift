@@ -9,8 +9,8 @@
 import Foundation
 import RealmSwift
 
-/// This class represent the state of syncing for a DataItem, it keeps tracks of the multiple versions of a DataItem on the server and
-/// what actions are needed to sync the DataItem with the latest version on the pod
+/// This class represent the state of syncing for a Item, it keeps tracks of the multiple versions of a Item on the server and
+/// what actions are needed to sync the Item with the latest version on the pod
 class SyncState: Object, Codable {
 	// Whether the data item is loaded partially and requires a full load
 	@objc dynamic var isPartiallyLoaded: Bool = false
@@ -38,7 +38,7 @@ class SyncState: Object, Codable {
 	}
 }
 
-/// Based on a query, Sync checks whether it still has the latest version of the resulting DataItems. It does this asynchronous and in the
+/// Based on a query, Sync checks whether it still has the latest version of the resulting Items. It does this asynchronous and in the
 /// background, items are updated automatically.
 class Sync {
 	/// PodAPI Object to use for executing queries
@@ -72,7 +72,7 @@ class Sync {
 		prioritySyncAll()
 	}
 
-	/// Schedule a query to sync the resulting DataItems from the pod
+	/// Schedule a query to sync the resulting Items from the pod
 	/// - Parameter datasource: QueryOptions used to perform the query
 	public func syncQuery(_ datasource: Datasource) {
 		// TODO: if this query was executed recently, considering postponing action
@@ -138,7 +138,7 @@ class Sync {
 						//                    if resultSet.count == 1 { return }
 
 						// The result that we'll add to resultset
-						var result: [DataItem] = []
+						var result: [Item] = []
 
 						for item in items {
 							// TODO: handle sync errors
@@ -228,16 +228,16 @@ class Sync {
 	///   - item:
 	///   - callback:
 	/// - Throws:
-	public func execute(_ item: DataItem, callback: @escaping (_ error: Error?, _ success: Bool) -> Void) throws {
+	public func execute(_ item: Item, callback: @escaping (_ error: Error?, _ success: Bool) -> Void) throws {
 		if let syncState = item.syncState {
 			switch syncState.actionNeeded {
 			case "create":
-				podAPI.create(item) { (error, uid) -> Void in
+				podAPI.create(item) { (error, id) -> Void in
 					if error != nil { return callback(error, false) }
 
 					// Set the new id from the server
-					if let uid = uid {
-						item.set("uid", uid)
+					if let id = id {
+						item.uid = id
 						callback(nil, true)
 					} else {
 						callback(nil, false)

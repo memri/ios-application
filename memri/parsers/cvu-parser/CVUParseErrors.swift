@@ -66,7 +66,6 @@ enum CVUParseErrors: Error {
 		}
 
 		let lines = code.split(separator: "\n")
-
 		if let line = parts[safe: 2] as? Int {
 			let ch = parts[safe: 3] as? Int ?? 0
 			let beforeLines = lines[max(0, line - 10) ... line - 1].joined(separator: "\n")

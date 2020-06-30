@@ -7,16 +7,16 @@
 public class PodAPI {
     public func init(_ key:String) {}
 
-    // Sets the .id property on DataItem
-    public func create(_ item:DataItem, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
-    public func get(_ id:String, _ callback: (error:Error, item:DataItem) -> Void) -> Void {}
-    public func update(_ id:String, _ item:DataItem, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    // Sets the .id property on Item
+    public func create(_ item:Item, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func get(_ id:String, _ callback: (error:Error, item:Item) -> Void) -> Void {}
+    public func update(_ id:String, _ item:Item, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
     public func remove(_ id:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
     
     public func link(_ id:String, _ id:String, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
-    public func link(_ item:DataItem, _ item:DataItem, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
+    public func link(_ item:Item, _ item:Item, _ predicate:String, _ callback: (error:Error, created:Bool) -> Void) -> Void {}
     public func unlink(_ id:String, _ id:String, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
-    public func unlink(_ item:DataItem, _ item:DataItem, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
+    public func unlink(_ item:Item, _ item:Item, _ predicate:String, _ callback: (error:Error, success:Bool) -> Void) -> Void {}
 
     public func query(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
     public func queryNLP(_ query:String, _ options:QueryOptions=QueryOptions(), _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
@@ -110,7 +110,7 @@ public class Cache {
      */
     public func query(_ query:String, _ options:QueryOptions, _ callback: (error:Error, result:SearchResult) -> Void) -> Void {}
 
-    public fromJSON(_ file: String, _ ext: String = "json") throws -> [DataItem] {}
+    public fromJSON(_ file: String, _ ext: String = "json") throws -> [Item] {}
 }
 
 public class Event {
@@ -146,7 +146,7 @@ public class SearchResult: Event {
     /**
      * Retrieves the data loaded from the pod
      */
-    public let data: [DataItem]
+    public let data: [Item]
 
     /**
      * Returns the loading state
@@ -175,11 +175,11 @@ public class SearchResult: Event {
 
 public struct Predicate {
     public let name: String
-    public let target: DataItem
+    public let target: Item
     public func unlink() -> Void {}
 }
 
-public class DataItem: ObservableObject { // @TODD figure out how to implement ObservableObject
+public class Item: ObservableObject { // @TODD figure out how to implement ObservableObject
     @Published public var id: String // @TODO How can this variable become read-only after it has been set
     public let type: String
     @Published public var predicates: [Predicate]
@@ -191,17 +191,17 @@ public class DataItem: ObservableObject { // @TODD figure out how to implement O
 
     public func findProperty(_ name:String) -> AnyObject {}
     public func findPredicateByType(_ type:String) -> [Predicate] {}
-    public func findPredicateByTarget(_ item:DataItem) -> [Predicate] {}
+    public func findPredicateByTarget(_ item:Item) -> [Predicate] {}
 
     /**
      * Does not copy the id property
      */
-    public func duplicate() -> DataItem {}
+    public func duplicate() -> Item {}
     /**
      * Sets deleted to true
      * All methods and properties must throw when deleted = true;
      */
-    public func delete() -> DataItem {}
+    public func delete() -> Item {}
 }
 
 /**
@@ -411,33 +411,33 @@ public struct Action {
      * saveView                View view, [String, title]    // Will ask for title input when title already exists or is not specified.
      * deleteView              View view        
      * updateView              View view        
-     * add                     DataItem item
+     * add                     Item item
      * search                  String query    
      * globalSearch            String query        
-     * select                  DataItem[] items    
+     * select                  Item[] items    
      * cancelEditMode          -            
      * showSessionSwitch       -                
      * showFilterPanel         -            
      * transformView           View source, View changes            
-     * schedule                DataItem[] items, [ScheduleOptions options]    // Will show the schedule screen if options are omitted.
+     * schedule                Item[] items, [ScheduleOptions options]    // Will show the schedule screen if options are omitted.
      * editMode                Boolean enable     // Will toggle edit mode if no argument is given
      * showContextPane         -            
      * showEditOptions         -            
-     * remove                  DataItem item | String id | DataItem[] items | String[] ids    
-     * addTo                   DataItem item, String type, String id    // Will show the addToPanel if id is omitted
-     * shareWith               DataItem item, String type, String id    // Will show the shareWithPanel if id is omitted
+     * remove                  Item item | String id | Item[] items | String[] ids    
+     * addTo                   Item item, String type, String id    // Will show the addToPanel if id is omitted
+     * shareWith               Item item, String type, String id    // Will show the shareWithPanel if id is omitted
      * showOverlay             String name    // e.g. viewOptions, addToPanel, shareWithPanel, scheduleOptions
      * showStarred             View view        
      * showTimeline            View view        
-     * bulkEdit                DataItem[] items | String[] ids    
-     * star                    DataItem item | String id
-     * addToList               DataItem item | String id, String listId        
-     * duplicate               DataItem item | String id, [String newTitle]        
+     * bulkEdit                Item[] items | String[] ids    
+     * star                    Item item | String id
+     * addToList               Item item | String id, String listId        
+     * duplicate               Item item | String id, [String newTitle]        
      * setBookmark             View view        
      * gotoBookmark            -        
      * duplicateView           View view, [String newTitle]            
      * renameView              View view, [String newTitle]        // Will ask for title input when title already exists or is not specified.
-     * copyProperty            DataItem item | String id, String propertyName        
+     * copyProperty            Item item | String id, String propertyName        
      * addToNav                View view, [String newTitle], [View beforeView]    
      * removeFromNav           View view, [String title]            
      * renameNav               View view, [String newTitle]        
@@ -447,8 +447,8 @@ public struct Action {
      * augment                 ?    
      * convert                 ?    
      * index                   ?    
-     * update                  DataItem item | String id, DataItem changes    
-     * addReminder             DataItem item, [String description]        
+     * update                  Item item | String id, Item changes    
+     * addReminder             Item item, [String description]        
      * %name                   Type value    // Sets a property or calls a method on the related object
      */
     public var actionName: String
@@ -479,11 +479,11 @@ public class ScheduleOptions {
     /**
      * The data item that this task pertains to
      */
-    public var item: DataItem
+    public var item: Item
     /**
      * The data items that this task pertains to
      */
-    public var items: [DataItem]
+    public var items: [Item]
     /**
      * The action to perform when the event is triggered
      */
@@ -600,19 +600,19 @@ class Application: View, Event {
      */
     public func openView(_ view: SessionView) {}
     public func openView(_ view: String) {}
-    public func openView(_ items: [DataItem]) {}
-    public func openView(_ item: DataItem) {}
+    public func openView(_ items: [Item]) {}
+    public func openView(_ item: Item) {}
 
     /**
      * Add a new data item and displays that item in the UI
      * in edit mode
      */
-    public func add(_ item:DataItem) -> DataItem {}
+    public func add(_ item:Item) -> Item {}
 
     /**
      * Executes the action as described in the action description
      */
-    public func executeAction(_ action:Action, _ data:DataItem) -> Bool {}
+    public func executeAction(_ action:Action, _ data:Item) -> Bool {}
 }
 
 struct ScrollState {
@@ -830,29 +830,29 @@ public protocol MultiItemView: Renderer {
     /**
      * The selected items in the view (only relevant for edit mode)
      */
-    public var selection: [DataItem]
+    public var selection: [Item]
 
     /**
      * The render config that is used to render this renderer
      */
-    public var data: [DataItem]
+    public var data: [Item]
 
     /**
      * Loads the data to be rendered
      */
-    public func loadData(_ data:[DataItem]) -> Boolean
+    public func loadData(_ data:[Item]) -> Boolean
 }
 
 public protocol SingleItemView: Renderer {
     /**
      * The render config that is used to render this renderer
      */
-    public var data: DataItem
+    public var data: Item
 
     /**
      * Loads the data to be rendered
      */
-    public func loadData(_ data:DataItem) -> Boolean {}
+    public func loadData(_ data:Item) -> Boolean {}
 }
 
 /**

@@ -11,7 +11,7 @@ import Foundation
 public class IndexerAPI {
 	public var context: MemriContext?
 
-	public func execute(_ indexerInstance: IndexerInstance, _ items: [DataItem]) {
+	public func execute(_ indexerInstance: IndexerInstance, _ items: [Item]) {
 		if indexerInstance.name == "Note Label Indexer" {
 			guard let notes = items as? [Note] else {
 				print("Could not execute IndexerInstance \(indexerInstance) non note objects passed")

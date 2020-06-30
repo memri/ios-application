@@ -11,11 +11,11 @@ import SwiftUI
 struct Picker: View {
 	@EnvironmentObject var context: MemriContext
 
-	let item: DataItem
-	let selected: DataItem?
+	let item: Item
+	let selected: Item?
 	let title: String
 	let emptyValue: String
-	let propDataItem: DataItem
+	let propItem: Item
 	let propName: String
 	let datasource: Datasource
 
@@ -39,7 +39,7 @@ struct Picker: View {
 			PickerPane(
 				item: self.item,
 				title: self.title,
-				propDataItem: self.propDataItem,
+				propItem: self.propItem,
 				propName: self.propName,
 				selected: self.selected,
 				datasource: self.datasource
@@ -53,11 +53,11 @@ struct PickerPane: View {
 	@EnvironmentObject var context: MemriContext
 	@Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
-	let item: DataItem
+	let item: Item
 	let title: String
-	let propDataItem: DataItem
+	let propItem: Item
 	let propName: String
-	let selected: DataItem?
+	let selected: Item?
 	let datasource: Datasource
 
 	var body: some View {
@@ -106,7 +106,7 @@ struct PickerPane: View {
 				"""]),
 			]),
 			dataItem: self.item,
-			args: ViewArguments(["showCloseButton": true, "subject": propDataItem])
+			args: ViewArguments(["showCloseButton": true, "subject": propItem])
 		)
 	}
 }

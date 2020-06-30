@@ -56,9 +56,9 @@ public class Settings {
 	/// Initialize SettingsCollection objects for default, device and user-settings. Populate them by reading the default settings from
 	/// disk and updating the empty SettingCollections.
 	public func install() throws {
-		let defaults = SettingCollection(value: ["type": "defaults"])
-		let device = SettingCollection(value: ["type": "device"])
-		let user = SettingCollection(value: ["type": "user"])
+		let defaults = SettingCollection(value: ["type": "defaults", "memriID": "settingsDefaults"])
+		let device = SettingCollection(value: ["type": "device", "memriID": "settingsDevice"])
+		let user = SettingCollection(value: ["type": "user", "memriID": "settingsUser"])
 
 		do {
 			try realm.write {
@@ -75,10 +75,10 @@ public class Settings {
 			let jsonData = try jsonDataFromFile("default_settings")
 			let values = try MemriJSONDecoder.decode([String: AnyCodable].self, from: jsonData)
 			for (key, value) in values {
-				try defaults.set(key, value)
+				try defaults.setSetting(key, value)
 			}
 
-			try device.set("/name", "iphone")
+			try device.setSetting("/name", "iphone")
 		} catch {
 			debugHistory.error("Failed to install settings: \(error)")
 		}
@@ -93,9 +93,9 @@ public class Settings {
 
 		do {
 			if let collection = collection {
-				if let value: T = try collection.get(query) {
+				if let value: T = try collection.getSetting(query) {
 					return value
-				} else if let value: T = try defaults.get(query) {
+				} else if let value: T = try defaults.getSetting(query) {
 					return value
 				}
 				return nil
@@ -162,7 +162,7 @@ public class Settings {
 
 		if let collection = collection, let codableValue = codableValue {
 			do {
-				try collection.set(query, codableValue)
+				try collection.setSetting(query, codableValue)
 			} catch {
 				debugHistory.error("\(error)")
 				print(error)
@@ -188,85 +188,6 @@ public class Settings {
 		} else {
 			debugHistory.error("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
 		}
-	}
-}
-
-/// Collection of settings that are grouped based on who defined them
-class SettingCollection: Object {
-	/// Type that represent who created the setting: Default/User/Device
-	@objc dynamic var type: String = ""
-
-	/// Setting in this collection
-	let settings = List<Setting>()
-	/// SyncState for this colleciton
-	@objc dynamic var syncState: SyncState? = SyncState()
-
-	/// primary key for the local realm database
-	override static func primaryKey() -> String? {
-		"type"
-	}
-
-	/// get setting for given path
-	/// - Parameter path: path for the setting
-	/// - Returns: setting value
-	public func get<T: Decodable>(_ path: String) throws -> T? {
-		let needle = type + (path.first == "/" ? "" : "/") + path
-
-		let item = settings.filter("key = '\(needle)'").first
-		if let item = item {
-			let output: T? = try unserialize(item.json)
-			return output
-		} else {
-			return nil
-		}
-	}
-
-	/// Get setting as String for given path
-	/// - Parameter path: path for the setting
-	/// - Returns: setting value as String
-	public func getString(_ path: String) throws -> String {
-		try get(path) ?? ""
-	}
-
-	/// Sets a setting to the value passed.Also responsible for saving the setting to the permanent storage
-	/// - Parameters:
-	///   - path: path of the setting
-	///   - value: setting Value
-	public func set(_ path: String, _ value: AnyCodable) throws {
-		let key = type + (path.first == "/" ? "" : "/") + path
-
-		func saveState() throws {
-			let s = Setting(value: ["key": key, "json": try serialize(value)])
-			realmWriteIfAvailable(realm) {
-				if let realm = realm {
-					realm.add(s, update: .modified)
-				}
-			}
-			if settings.index(of: s) == nil { settings.append(s) }
-
-			if let syncState = syncState {
-				syncState.actionNeeded = "update"
-			} else {
-				debugHistory.error("No syncState available for settings")
-			}
-		}
-
-		realmWriteIfAvailable(realm) {
-			try saveState()
-		}
-	}
-}
-
-/// Single setting object, persisted to disk
-class Setting: Object {
-	/// key of the setting
-	@objc dynamic var key: String = ""
-	/// json value of the setting
-	@objc dynamic var json: String = ""
-
-	/// primary key for the setting object in the realm database
-	override static func primaryKey() -> String? {
-		"key"
 	}
 }
 

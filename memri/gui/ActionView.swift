@@ -119,7 +119,7 @@ struct ActionPopup: View {
 		// TODO: is this still needed? Need test cases
 		// TODO: this is now set back on variables["."] there is something wrong in the architecture
 		//      that is causing this
-		let dataItem = args.get(".") ?? DataItem() // TODO: Refactor: Error handling
+		let dataItem = args.get(".") ?? Item() // TODO: Refactor: Error handling
 
 		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
 		if action.name == .openView {

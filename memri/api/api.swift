@@ -87,15 +87,15 @@ public class PodAPI {
 		task.resume()
 	}
 
-	private func getArray(_ item: DataItem, _ prop: String) -> [DataItem] {
+	private func getArray(_ item: Item, _ prop: String) -> [Item] {
 		let className = item.objectSchema[prop]?.objectClassName
 
 		if className == "Edge" {
-			var result = [DataItem]()
+			var result = [Item]()
 
-			if let list = item[prop] as? List<Edge> {
+			if let list = item[prop] as? List<Relationship> {
 				for edge in list {
-					if let d = getDataItem(edge) {
+					if let d = getItem(edge) {
 						result.append(d)
 					}
 				}
@@ -105,7 +105,7 @@ public class PodAPI {
 				// TODO: error
 				return []
 			}
-		} else if className == "DataItem" {
+		} else if className == "Item" {
 			// Unsupported
 			return []
 		} else {
@@ -114,12 +114,12 @@ public class PodAPI {
 	}
 
 	private let MAXDEPTH = 2
-	private func toJSON(_ dataItem: DataItem, removeUID: Bool = false) -> Data {
+	private func toJSON(_ dataItem: Item, removeUID: Bool = false) -> Data {
 		let updatedFields: List<String>? = dataItem.syncState?.actionNeeded == "updated"
 			? dataItem.syncState?.updatedFields
 			: nil
 
-		func recur(_ dataItem: DataItem, _ depth: Int) -> [String: Any] {
+		func recur(_ dataItem: Item, _ depth: Int) -> [String: Any] {
 			let properties = dataItem.objectSchema.properties
 			var result: [String: Any] = [:]
 			var isPartiallyLoaded = false
@@ -143,7 +143,7 @@ public class PodAPI {
 							} else if dataItem[prop.name] == nil {
 								continue
 							} else {
-								result[prop.name] = recur(dataItem[prop.name] as! DataItem, depth + 1)
+								result[prop.name] = recur(dataItem[prop.name] as! Item, depth + 1)
 							}
 						} else {
 							result[prop.name] = dataItem[prop.name]
@@ -178,13 +178,12 @@ public class PodAPI {
 	///   - callback: Function that is called when the task is completed either with a result, or an error
 	/// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
 	public func get(_ uid: Int,
-					_ callback: @escaping (_ error: Error?, _ item: DataItem?) -> Void) {
+					_ callback: @escaping (_ error: Error?, _ item: Item?) -> Void) {
 		http(path: "items/\(uid)") { error, data in
 			if let data = data {
 				// TODO: Refactor: Error handling
-				let result: [DataItem]? = try? MemriJSONDecoder
-					.decode(family: DataItemFamily.self, from: data)
-
+				let result: [Item]? = try? MemriJSONDecoder
+					.decode(family: ItemFamily.self, from: data)
 				callback(nil, result?[safe: 0])
 			} else {
 				callback(error, nil)
@@ -196,7 +195,7 @@ public class PodAPI {
 	/// - Parameters:
 	///   - item: The data item to create on the pod
 	///   - callback: Function that is called when the task is completed either with the new uid, or an error
-	public func create(_ item: DataItem,
+	public func create(_ item: Item,
 					   _ callback: @escaping (_ error: Error?, _ uid: Int?) -> Void) {
 		http(.POST, path: "items", body: toJSON(item, removeUID: true)) { error, data in
 			callback(error, data != nil ? Int(String(data: data ?? Data(), encoding: .utf8) ?? "") : nil)
@@ -207,7 +206,7 @@ public class PodAPI {
 	/// - Parameters:
 	///   - item: The data item to update on the pod
 	///   - callback: Function that is called when the task is completed either with the new version number, or an error
-	public func update(_ item: DataItem,
+	public func update(_ item: Item,
 					   _ callback: @escaping (_ error: Error?, _ version: Int?) -> Void) {
 		http(.PUT, path: "items/\(item.memriID)", body: toJSON(item)) { error, data in
 			callback(error, data != nil ? Int(String(data: data ?? Data(), encoding: .utf8) ?? "") : nil)
@@ -226,13 +225,13 @@ public class PodAPI {
 		}
 	}
 
-	/// Queries the database for a subset of DataItems and returns a list of DataItems
+	/// Queries the database for a subset of Items and returns a list of Items
 	/// - Parameters:
 	///   - queryOptions: Object describing what to query and how to return the results
 	///   - callback: Function that is called when the task is completed either with the results, or  an error
 	/// - Remark: The query language is a WIP
 	public func query(_ queryOptions: Datasource,
-					  _ callback: @escaping (_ error: Error?, _ result: [DataItem]?) -> Void) {
+					  _ callback: @escaping (_ error: Error?, _ result: [Item]?) -> Void) {
 		// TODO: Can no longer detect whether the data item is synced
 		//        if queryOptions.query!.test(#"^-\d+"#) { // test for uid that is negative
 		//            callback("nothing to do", nil)
@@ -299,10 +298,10 @@ public class PodAPI {
 				callback(error, nil)
 			} else if let data = data {
 				do {
-					var items: [DataItem]?
+					var items: [Item]?
 					try JSONErrorReporter {
 						items = try MemriJSONDecoder
-							.decode(family: DataItemFamily.self, from: data)
+							.decode(family: ItemFamily.self, from: data)
 					}
 
 					callback(nil, items)
@@ -336,11 +335,11 @@ public class PodAPI {
 		}
 	}
 
-	//    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+	//    public func queryNLP(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[Item]) -> Void) -> Void {}
 //
-	//    public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+	//    public func queryDSL(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[Item]) -> Void) -> Void {}
 //
-	//    public func queryRAW(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[DataItem]) -> Void) -> Void {}
+	//    public func queryRAW(_ query:QueryOptions, _ callback: (_ error:Error?, _ result:[Item]) -> Void) -> Void {}
 
 	//    public func import() -> Void {}
 	//    public func export() -> Void {}

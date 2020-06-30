@@ -31,7 +31,7 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
 
 struct _RichTextEditor: View {
 	@EnvironmentObject var context: MemriContext
-	@ObservedObject public var dataItem: DataItem
+	@ObservedObject public var dataItem: Item
 
 	var editModeBinding: Binding<Bool> {
 		Binding<Bool>(get: { self.context.currentSession.isEditMode }, set: { self.context.currentSession.isEditMode = $0 })
@@ -44,7 +44,7 @@ struct _RichTextEditor: View {
 						isEditing: editModeBinding,
 						preferredHeight: nil,
 						onTextChanged: { newAttributedString in
-							print(newAttributedString.toHTML()?.replace("'", "\""))
+//							print(newAttributedString.toHTML()?.replace("'", "\""))
 							self.dataItem.set("content", newAttributedString.toHTML())
 							self.dataItem.set("textContent", newAttributedString.string.withoutFirstLine())
 							self.dataItem.set("title", newAttributedString.string.firstLineString())

@@ -45,7 +45,7 @@ class PodAPITest: XCTestCase {
 
 	// DISABLED due to not having a pod
 	//    func testPodCreate() {
-	//        let item = DataItem()
+	//        let item = Item()
 	//        let expectation = self.expectation(description: "create")
 //
 	//        testPodAPI.create(item) { error, uid in
@@ -86,7 +86,7 @@ class PodAPITest: XCTestCase {
 
 	func testPodQuery() {
 		//        let sr = testPodAPI.query("get notes query")
-		//        XCTAssert(sr.data == [DataItem.fromUid(uid: "0x01"), DataItem.fromUid(uid: "0x02")])
+		//        XCTAssert(sr.data == [Item.fromUid(uid: "0x01"), Item.fromUid(uid: "0x02")])
 	}
 
 	func testPerformanceExample() {

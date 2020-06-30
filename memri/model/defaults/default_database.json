@@ -1748,5 +1748,66 @@
         "name": "Zimbabwe",
         "type": "Country",
         "memriID": "Zimbabwe"
+    },
+    {
+        "memriID": "0x01",
+        "type": "Note",
+        "content": "Shopping list\n- potatoes\n- mayonaise",
+        "starred": true,
+        "labels": [
+            { "memriID":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "memriID":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
+            {
+                "name": "Soccer team",
+                "color": "#83ac06",
+                "memriID": "0x0124"
+            }
+        ],
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "isPartiallyLoaded": true,
+            "version": 1
+        }
+    },
+    {
+        "memriID": "0x02",
+        "type": "Note",
+        "content": "To read list\nAge of surveillance capitalism",
+        "labels": [
+            { "memriID":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+            { "memriID":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
+        ],
+        "dateModified": "2020-04-14T03:10:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "memriID": "0x03",
+        "type": "Note",
+        "content": "Ideas for memri\nprivacy by design, digital memory",
+        "starred": true,
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "memriID": "0x04",
+        "type": "Note",
+        "content": "Love letter\nRoses are red, violets are blue",
+        "dateModified": "2020-04-10T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
+    },
+    {
+        "memriID": "0x05",
+        "type": "Note",
+        "content": "Notes to self\nBe in time with hour administration",
+        "dateModified": "2011-11-11T11:11:11Z",
+        "syncState": {
+            "version": 1
+        }
     }
 ]

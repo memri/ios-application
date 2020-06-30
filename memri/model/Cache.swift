@@ -10,6 +10,8 @@ import Combine
 import Foundation
 import RealmSwift
 
+var realmTesting = false
+
 var config = Realm.Configuration(
 	// Set the new schema version. This must be greater than the previously used
 	// version (if you've never set a schema version before, the version is 0).
@@ -31,7 +33,12 @@ var config = Realm.Configuration(
 /// - Returns: the computed database file path
 func getRealmPath() throws -> String {
 	if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
-		let realmDir = homeDir + "/realm.memri"
+		var realmDir = homeDir + "/realm.memri"
+
+		if realmTesting {
+			realmDir += ".testing"
+		}
+
 		print("REALM DIR: \(realmDir)")
 		do {
 			try FileManager.default.createDirectory(atPath:
@@ -93,7 +100,7 @@ public class Cache {
 		// Load default database from disk
 		do {
 			let jsonData = try jsonDataFromFile("default_database")
-			let items: [DataItem] = try MemriJSONDecoder.decode(family: DataItemFamily.self, from: jsonData)
+			let items: [Item] = try MemriJSONDecoder.decode(family: ItemFamily.self, from: jsonData)
 			realmWriteIfAvailable(realm) {
 				for item in items {
 					realm.add(item, update: .modified)
@@ -105,9 +112,9 @@ public class Cache {
 	}
 
 	// TODO: Refactor: don't use async syntax when nothing is async
-	public func query(_ datasource: Datasource) throws -> [DataItem] {
+	public func query(_ datasource: Datasource) throws -> [Item] {
 		var error: Error?
-		var items: [DataItem]?
+		var items: [Item]?
 
 		query(datasource) {
 			error = $0
@@ -125,7 +132,7 @@ public class Cache {
 	///   - datasource: datasource for the query, containing datatype(s), filters, sortInstructions etc.
 	///   - callback: action exectued on the result
 	public func query(_ datasource: Datasource,
-					  _ callback: (_ error: Error?, _ items: [DataItem]?) -> Void) {
+					  _ callback: (_ error: Error?, _ items: [Item]?) -> Void) {
 		// Do nothing when the query is empty. Should not happen.
 		let q = datasource.query ?? ""
 
@@ -142,25 +149,25 @@ public class Cache {
 			let (typeName, filter) = parseQuery(q)
 
 			if typeName == "*" {
-				var returnValue: [DataItem] = []
+				var returnValue: [Item] = []
 
-				for dtype in DataItemFamily.allCases {
+				for dtype in ItemFamily.allCases {
 					// NOTE: Allowed forced cast
 					let objects = realm.objects(dtype.getType() as! Object.Type)
 						.filter("deleted = false " + (filter ?? ""))
-					for item in objects { returnValue.append(item as! DataItem) }
+					for item in objects { returnValue.append(item as! Item) }
 				}
 
 				callback(nil, returnValue)
 			}
 			// Fetch the type of the data item
-			else if let type = DataItemFamily(rawValue: typeName) {
+			else if let type = ItemFamily(rawValue: typeName) {
 				// Get primary key of data item
 				// let primKey = type.getPrimaryKey()
 
 				// Query based on a simple format:
 				// Query format: <type><space><filter-text>
-				let queryType = DataItemFamily.getType(type)
+				let queryType = ItemFamily.getType(type)
 				//                let t = queryType() as! Object.Type
 
 				var result = realm.objects(queryType() as! Object.Type)
@@ -174,9 +181,9 @@ public class Cache {
 				}
 
 				// Construct return array
-				var returnValue: [DataItem] = []
+				var returnValue: [Item] = []
 				for item in result {
-					if let item = item as? DataItem {
+					if let item = item as? Item {
 						returnValue.append(item)
 					}
 				}
@@ -239,10 +246,10 @@ public class Cache {
 	/// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
 	/// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
 	/// the the item changes
-	/// - Parameter item:DataItem to be added
+	/// - Parameter item:Item to be added
 	/// - Throws: Sync conflict exception
 	/// - Returns: cached dataItem
-	public func addToCache(_ item: DataItem) throws -> DataItem {
+	public func addToCache(_ item: Item) throws -> Item {
 		do {
 			if let newerItem = try mergeWithCache(item) {
 				return newerItem
@@ -250,6 +257,7 @@ public class Cache {
 
 			// Add item to realm
 			try realm.write { realm.add(item, update: .modified) }
+
 			if item.syncState?.actionNeeded == "create" {
 				try sync.execute(item) { _, _ in }
 			}
@@ -262,7 +270,7 @@ public class Cache {
 		return item
 	}
 
-	private func mergeWithCache(_ item: DataItem) throws -> DataItem? {
+	private func mergeWithCache(_ item: Item) throws -> Item? {
 		// Check if this is a new item or an existing one
 		if let syncState = item.syncState {
 			if item.uid == 0 {
@@ -273,7 +281,7 @@ public class Cache {
 				}
 			} else {
 				// Fetch item from the cache to double check
-				if let cachedItem: DataItem = getDataItem(item.genericType, item.memriID) {
+				if let cachedItem: Item = getItem(item.genericType, item.memriID) {
 					// Do nothing when the version is not higher then what we already have
 					if !syncState.isPartiallyLoaded,
 						item.version <= cachedItem.version {
@@ -304,7 +312,7 @@ public class Cache {
 	}
 
 	// TODO: does this work for subobjects?
-	private func bindChangeListeners(_ item: DataItem) {
+	private func bindChangeListeners(_ item: Item) {
 		if let syncState = item.syncState {
 			// Update the sync state when the item changes
 			rlmTokens.append(item.observe { objectChange in
@@ -345,7 +353,7 @@ public class Cache {
 	/// sets delete to true in the syncstate, for an array of items
 	/// - Parameter item: item to be deleted
 	/// - Remark: All methods and properties must throw when deleted = true;
-	public func delete(_ item: DataItem) {
+	public func delete(_ item: Item) {
 		if !item.deleted {
 			realmWriteIfAvailable(realm) {
 				item.deleted = true
@@ -357,7 +365,7 @@ public class Cache {
 
 	/// sets delete to true in the syncstate, for an array of items
 	/// - Parameter items: items to be deleted
-	public func delete(_ items: [DataItem]) {
+	public func delete(_ items: [Item]) {
 		realmWriteIfAvailable(realm) {
 			for item in items {
 				if !item.deleted {
@@ -372,7 +380,7 @@ public class Cache {
 	/// - Parameter item: item to be duplicated
 	/// - Remark:Does not copy the id property
 	/// - Returns: copied item
-	public func duplicate(_ item: DataItem) throws -> DataItem {
+	public func duplicate(_ item: Item) throws -> Item {
 		if let cls = item.getType() {
 			if let copy = item.getType()?.init() {
 				let primaryKey = cls.primaryKey()

@@ -89,7 +89,7 @@ Indexer[] {
 
     [renderer = list] {
         press:
-            addDataItem {
+            addItem {
                 arguments {
                     template {
                         type: IndexerInstance

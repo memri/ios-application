@@ -106,12 +106,12 @@ struct MapView_AppleMaps: UIViewRepresentable {
 class MapAnnotation_AppleMaps: NSObject, MKAnnotation {
 	let title: String?
 	let coordinate: CLLocationCoordinate2D
-	let dataItem: DataItem?
+	let dataItem: Item?
 
 	init(
 		title: String?,
 		coordinate: CLLocationCoordinate2D,
-		dataItem: DataItem?
+		dataItem: Item?
 	) {
 		self.title = title
 		self.coordinate = coordinate

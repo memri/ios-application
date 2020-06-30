@@ -9,7 +9,7 @@
 import Foundation
 
 struct ChartHelper {
-	static func generateXYChartSetFromDataItems(_ items: [DataItem], xAxis: (DataItem) -> Double?, yAxis: (DataItem) -> Double?, labelKey: ((DataItem) -> String?)?) -> ChartSetXY {
+	static func generateXYChartSetFromItems(_ items: [Item], xAxis: (Item) -> Double?, yAxis: (Item) -> Double?, labelKey: ((Item) -> String?)?) -> ChartSetXY {
 		let points = items.compactMap { (item) -> ChartPointXY? in
 			guard
 				let x: Double = xAxis(item),
@@ -21,7 +21,7 @@ struct ChartHelper {
 		return ChartSetXY(points: points)
 	}
 
-	static func generateLabelledYChartSetFromDataItems(_ items: [DataItem], labelKey: (DataItem) -> String?, yAxis: (DataItem) -> Double?) -> ChartSetLabelledY {
+	static func generateLabelledYChartSetFromItems(_ items: [Item], labelKey: (Item) -> String?, yAxis: (Item) -> Double?) -> ChartSetLabelledY {
 		let points = items.compactMap { (item) -> ChartPointLabelledY? in
 			guard
 				let label: String = labelKey(item),
