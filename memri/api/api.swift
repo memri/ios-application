@@ -140,6 +140,8 @@ public class PodAPI {
 									toList.append(recur(item, depth + 1))
 								}
 								result[prop.name] = toList
+							} else if dataItem[prop.name] == nil {
+								continue
 							} else {
 								result[prop.name] = recur(dataItem[prop.name] as! Item, depth + 1)
 							}
@@ -175,14 +177,13 @@ public class PodAPI {
 	///   - memriID: The memriID of the data item to retrieve
 	///   - callback: Function that is called when the task is completed either with a result, or an error
 	/// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
-	public func get(_ memriID: String,
+	public func get(_ uid: Int,
 					_ callback: @escaping (_ error: Error?, _ item: Item?) -> Void) {
-		http(path: "items/\(memriID)") { error, data in
+		http(path: "items/\(uid)") { error, data in
 			if let data = data {
 				// TODO: Refactor: Error handling
 				let result: [Item]? = try? MemriJSONDecoder
 					.decode(family: ItemFamily.self, from: data)
-
 				callback(nil, result?[safe: 0])
 			} else {
 				callback(error, nil)
@@ -217,9 +218,9 @@ public class PodAPI {
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
 	/// - Remark: Note that data items that are marked as deleted are by default not returned when querying
-	public func remove(_ memriID: String,
+	public func remove(_ uid: Int,
 					   _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		http(.DELETE, path: "items/\(memriID)") { error, _ in
+		http(.DELETE, path: "items/\(uid)") { error, _ in
 			callback(error, error == nil)
 		}
 	}
@@ -316,9 +317,9 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runImport(_ memriID: String,
-						  _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		http(.PUT, path: "import/\(memriID)") { error, _ in
+	public func runImporterInstance(_ uid: Int,
+									_ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
+		http(.PUT, path: "import/\(uid)") { error, _ in
 			callback(error, error == nil)
 		}
 	}
@@ -327,9 +328,9 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runIndex(_ memriID: String,
-						 _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		http(.PUT, path: "index/\(memriID)") { error, _ in
+	public func runIndexerInstance(_ uid: Int,
+								   _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
+		http(.PUT, path: "index/\(uid)") { error, _ in
 			callback(error, error == nil)
 		}
 	}

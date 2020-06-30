@@ -125,7 +125,7 @@ ImporterInstance {
                     Button {
                         margin: 5 5 5 35
                         
-                        press: import {
+                        press: runImporterInstance {
                             arguments {
                                 importerInstance: {{.}}
                             }

@@ -35,9 +35,10 @@ extension Country {
 extension Address {
 	override var computedTitle: String {
 		"""
+		\(type ?? "")
 		\(street ?? "")
 		\(city ?? "")
-		\(postalCode ?? ""), \(state ?? "")
+		\(postalCode == nil ? "" : postalCode! + ",") \(state ?? "")
 		\(country?.computedTitle ?? "")
 		"""
 	}
@@ -145,5 +146,28 @@ extension Importer {
 extension Indexer {
 	override var computedTitle: String {
 		name
+	}
+
+	internal convenience init(name: String? = nil, indexerDescription: String? = nil,
+							  query: String? = nil, icon: String? = nil,
+							  bundleImage: String? = nil, runDestination: String? = nil) {
+		self.init()
+		self.name = name ?? self.name
+		self.indexerDescription = indexerDescription ?? self.indexerDescription
+		self.query = query ?? self.query
+		self.icon = icon ?? self.icon
+		self.bundleImage = bundleImage ?? self.bundleImage
+		self.runDestination = runDestination ?? self.runDestination
+	}
+}
+
+extension IndexerInstance {
+	internal convenience init(name: String? = nil, query: String? = nil, indexer: Indexer? = nil,
+							  progress: Int? = nil) {
+		self.init()
+		self.name = name ?? self.name
+		self.query = query ?? self.query
+		self.indexer = indexer ?? self.indexer
+		self.progress = progress ?? self.progress
 	}
 }

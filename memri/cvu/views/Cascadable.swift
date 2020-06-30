@@ -16,7 +16,7 @@ public class Cascadable {
 
 	private func execExpression<T>(_ expr: Expression) -> T? {
 		do {
-			let x: Any? = try expr.execForReturnType(viewArguments)
+			let x: Any? = try expr.execute(viewArguments)
 			let value: T? = transformActionArray(x)
 			if value == nil { return nil }
 			else { return value }
@@ -54,9 +54,7 @@ public class Cascadable {
 
 	func cascadeProperty<T>(_ name: String, type _: T.Type = T.self) -> T? {
 		#if DEBUG
-			// These are temporary checks put in place to catch programmer errors. We should find a
-			// safer way that won't lose CVU properties. It is wrapped in DEBUG flag so will not crash
-			// in testflight.
+			// These are temporary checks put in place to catch programmer errors. We should find a safer way that won't lose CVU properties. It is wrapped in DEBUG flag so will not crash in testflight.
 			if T.self == CGFloat.self {
 				fatalError("You need to use the `cascadePropertyAsCGFloat` function instead")
 			}
@@ -64,19 +62,24 @@ public class Cascadable {
 				fatalError("You need to request a Double and then case to integer instead")
 			}
 		#endif
-
 		if let expr = localCache[name] as? Expression {
-			return execExpression(expr)
-		}
-
-		if let local = localCache[name] {
+			if T.self == Expression.self {
+				return expr as? T // We're requesting the Expression (not just the resolved value)
+			} else {
+				return execExpression(expr)
+			}
+		} else if let local = localCache[name] {
 			return transformActionArray(local)
 		}
 
 		for def in cascadeStack {
 			if let expr = def[name] as? Expression {
 				localCache[name] = expr
-				return cascadeProperty(name) as T?
+				if T.self == Expression.self {
+					return expr as? T // We're requesting the Expression (not just the resolved value)
+				} else {
+					return cascadeProperty(name) as T?
+				}
 			}
 			if def[name] != nil {
 				localCache[name] = def[name]

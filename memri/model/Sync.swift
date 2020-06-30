@@ -143,12 +143,15 @@ class Sync {
 						for item in items {
 							// TODO: handle sync errors
 							do {
+								//                                #warning("Remove this when the new backend is in place")
+								//                                if !["Indexer", "IndexerInstance", "Importer", "ImporterInstance"].contains(item.genericType) {
 								let cachedItem = try cache.addToCache(item)
 								if cachedItem.syncState?.actionNeeded != "deleted" {
 									// Add item to result
 									result.append(cachedItem)
 								}
 								// Ignore items marked for deletion
+								//                                }
 							} catch {
 								print("\(error)")
 							}
@@ -241,7 +244,7 @@ class Sync {
 					}
 				}
 			case "delete":
-				podAPI.remove(item.getString("memriID")) { (error, success) -> Void in
+				podAPI.remove(item.uid) { (error, success) -> Void in
 					if error == nil {
 						// Remove from local storage
 						realmWriteIfAvailable(self.realm) {

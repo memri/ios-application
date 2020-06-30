@@ -110,9 +110,10 @@ public class CascadingView: Cascadable, ObservableObject {
 	var renderConfig: CascadingRenderConfig? {
 		if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
 
-		var stack = cascadeStack.compactMap {
-			($0["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
-				.filter { $0.name == activeRenderer || $0.name == activeRenderer.components(separatedBy: ".").first }.first
+		var stack = cascadeStack.compactMap { a -> CVUParsedRendererDefinition? in
+			let definitions = (a["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
+			return definitions.first(where: { $0.name == activeRenderer }) // Prefer a perfectly matched definition
+				?? definitions.first(where: { $0.name == activeRenderer.components(separatedBy: ".").dropLast().joined(separator: ".") }) // Else get the one from the parent renderer
 		}
 
 		var renderDef: [CVUStoredDefinition] = context?.views

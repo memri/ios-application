@@ -120,6 +120,12 @@ extension String: Error {
 		self = capitalizingFirst()
 	}
 
+	func removeHTML() -> String {
+		replacingOccurrences(of: "<[^>]+>", with: "",
+							 options: .regularExpression,
+							 range: nil)
+	}
+
 	func camelCaseToTitleCase() -> String {
 		split { $0.isWhitespace }.map { $0.capitalizingFirst() }.joined(separator: " ")
 	}

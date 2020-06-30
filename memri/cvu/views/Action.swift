@@ -98,6 +98,8 @@ extension MemriContext {
 				finalValue = ExprInterpreter.evaluateNumber(argValue)
 			} else if action.argumentTypes[argName] == [Action].self {
 				finalValue = argValue ?? []
+			} else if action.argumentTypes[argName] == AnyObject.self {
+				finalValue = argValue ?? nil
 			}
 			// TODO: are nil values allowed?
 			else if argValue == nil {
@@ -276,7 +278,7 @@ public class Action: HashableClass, CVUToString {
 				expr.execFunc = context.views.executeFunction
 				expr.context = context
 
-				let value: T? = try expr.execForReturnType(viewArguments)
+				let value = try expr.execForReturnType(T.self, args: viewArguments)
 				return value
 			} catch {
 				print("ACTION ERROR: \(error)")
@@ -354,7 +356,8 @@ public enum ActionFamily: String, CaseIterable {
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
 		showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-		link, closePopup, unlink, multiAction, noop
+		link, closePopup, unlink, multiAction, noop, runIndexerInstance, runImporterInstance,
+		setProperty
 
 	func getType() -> Action.Type {
 		switch self {
@@ -381,6 +384,9 @@ public enum ActionFamily: String, CaseIterable {
 		case .link: return ActionLink.self
 		case .unlink: return ActionUnlink.self
 		case .multiAction: return ActionMultiAction.self
+		case .runIndexerInstance: return ActionRunIndexerInstance.self
+		case .runImporterInstance: return ActionRunImporterInstance.self
+		case .setProperty: return ActionSetProperty.self
 		case .noop: fallthrough
 		default: return ActionNoop.self
 		}
@@ -1029,9 +1035,9 @@ class ActionDuplicate: Action, ActionExec {
 	}
 }
 
-class ActionImport: Action, ActionExec {
+class ActionRunImporterInstance: Action, ActionExec {
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "import", arguments: arguments, values: values)
+		super.init(context, "runImporterInstance", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
@@ -1040,7 +1046,7 @@ class ActionImport: Action, ActionExec {
 		if let importerInstance = arguments["importerInstance"] as? ImporterInstance {
 			let cachedImporterInstance = try context.cache.addToCache(importerInstance)
 
-			context.podAPI.runImport(cachedImporterInstance.memriID) { error, _ in
+			context.podAPI.runImporterInstance(cachedImporterInstance.uid) { error, _ in
 				if let error = error {
 					print("Cannot execute actionImport: \(error)")
 				}
@@ -1049,31 +1055,97 @@ class ActionImport: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionImport(context).exec(arguments) }
+		execWithoutThrow { try ActionRunImporterInstance(context).exec(arguments) }
 	}
 }
 
-class ActionIndex: Action, ActionExec {
+class ActionRunIndexerInstance: Action, ActionExec {
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "index", arguments: arguments, values: values)
+		super.init(context, "runIndexerInstance", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
 		// TODO: parse options
 
-		if let indexerInstance = arguments["indexerInstance"] as? IndexerInstance {
-			let cachedIndexerInstance = try context.cache.addToCache(indexerInstance)
+		guard let indexerInstance = arguments["indexerInstance"] as? IndexerInstance else {
+			throw "Error, no memriID"
+		}
 
-			context.podAPI.runIndex(cachedIndexerInstance.memriID) { error, _ in
-				if let error = error {
-					print("Cannot execute actionIndex: \(error)")
+		if indexerInstance.indexer?.runDestination == "ios" {
+			try runLocal(indexerInstance)
+		} else {
+			// First make sure the indexer exists
+
+			//            print("starting IndexerInstance with memrID \(memriID)")
+			indexerInstance.set("progress", 0)
+			context.scheduleUIUpdate()
+			// TODO: indexerInstance items should have been automatically created already by now
+
+			func getAndrunIndexerInstance(_ tries: Int) {
+				if tries > 20 {
+					return
+				}
+				let uid: Int? = indexerInstance.get("uid")
+				if uid == 0 || uid == nil {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+						getAndrunIndexerInstance(tries + 1)
+					}
+				} else {
+					runIndexerInstance(indexerInstance, uid!)
+				}
+			}
+			getAndrunIndexerInstance(0)
+		}
+	}
+
+	func runIndexerInstance(_ indexerInstance: IndexerInstance, _ uid: Int) {
+		let start = Date()
+
+		Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+			let timePassed = Int(Date().timeIntervalSince(start))
+			print("polling indexerInstance")
+			self.context.podAPI.get(uid) { error, data in
+				if let updatedInstance = data as? IndexerInstance {
+					if let progress: Int = updatedInstance.get("progress") {
+						if timePassed > 5 || progress >= 100 {
+							timer.invalidate()
+						} else {
+							print("setting random progress")
+							let randomProgress = Int.random(in: 1 ... 20)
+							indexerInstance.set("progress", randomProgress)
+							self.context.scheduleUIUpdate()
+
+							let p: Int? = indexerInstance.get("progress")
+							print(p)
+						}
+					} else {
+						print("ERROR, could not get progress \(error)")
+						timer.invalidate()
+					}
+				} else {
+					print("Error, no instance")
+					timer.invalidate()
 				}
 			}
 		}
 	}
 
+	func runLocal(_ indexerInstance: IndexerInstance) throws {
+		guard let query: String = indexerInstance.indexer?.get("query") else {
+			throw "Cannot execute IndexerInstance \(indexerInstance), no query specified"
+		}
+		let ds = Datasource(query: query)
+
+		context.cache.query(ds) { (_, result) -> Void in
+
+			if let items = result {
+				self.context.indexerAPI.execute(indexerInstance, items)
+			}
+		}
+	}
+
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionImport(context).exec(arguments) }
+		execWithoutThrow { try ActionRunIndexerInstance(context).exec(arguments) }
 	}
 }
 
@@ -1088,6 +1160,41 @@ class ActionClosePopup: Action, ActionExec {
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
 		execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
+	}
+}
+
+class ActionSetProperty: Action, ActionExec {
+	override var defaultValues: [String: Any] { [
+		"argumentTypes": ["subject": ItemFamily.self, "property": String.self, "value": AnyObject.self],
+	] }
+
+	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+		super.init(context, "setProperty", arguments: arguments, values: values)
+	}
+
+	func exec(_ arguments: [String: Any]) throws {
+		guard let subject = arguments["subject"] as? Item else {
+			throw "Exception: subject is not set"
+		}
+
+		guard let propertyName = arguments["property"] as? String else {
+			throw "Exception: property is not set to a string"
+		}
+
+		// Check that the property exists to avoid hard crash
+		guard let _ = subject.objectSchema[propertyName] else {
+			throw "Exception: Invalid property access of \(propertyName) for \(subject)"
+		}
+
+		#warning("Ask Toby for how to cast this")
+		subject.set(propertyName, arguments["value"])
+
+		// TODO: refactor
+		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
+	}
+
+	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+		execWithoutThrow { try ActionLink(context).exec(arguments) }
 	}
 }
 

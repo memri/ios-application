@@ -19,11 +19,15 @@
 		5D1A3E6D24080BD800A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
 		5D1A3E6E24080BDA00A0583B /* empty_session.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D1A3E6C2408099900A0583B /* empty_session.json */; };
 		5D228B062432385300464506 /* ActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D228B052432385300464506 /* ActionView.swift */; };
+		5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */; };
 		5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F61245C372400183BD2 /* ListRendererView.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
 		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
 		5D38DE172405776B00FF9B70 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* Item.swift */; };
 		5D38DE19240577BA00FF9B70 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE18240577BA00FF9B70 /* Views.swift */; };
+		5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D395B4F24A37A980008610E /* IndexerAPI.swift */; };
+		5D395B5624A38FCC0008610E /* label_indexer_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D395B5524A38FCC0008610E /* label_indexer_data.json */; };
+		5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D395B5524A38FCC0008610E /* label_indexer_data.json */; };
 		5D3D961F24164B240004040E /* CodeExtended.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D961E24164B240004040E /* CodeExtended.swift */; };
 		5D3D9621241675100004040E /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D3D9620241675100004040E /* util.swift */; };
 		5D3D962424168C810004040E /* AnyCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DD17B67241294CC0018A8F1 /* AnyCodable.swift */; };
@@ -218,7 +222,15 @@
 		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
-		B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */ = {isa = PBXBuildFile; productRef = B88AAB1B24A1A99F0007C9EB /* memriUI */; };
+		B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */; };
+		B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */; };
+		B8627E3B24A9EAAA005A1A8F /* MemriFittedTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */; };
+		B8627E3C24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */; };
+		B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3224A9EAAA005A1A8F /* UIFont+.swift */; };
+		B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3324A9EAAA005A1A8F /* UIView+NextResponder.swift */; };
+		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
+		B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */; };
+		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -229,6 +241,7 @@
 		B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */; };
 		B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3824A1B10F0007C9EB /* UIColor.swift */; };
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
+		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
 		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
@@ -293,12 +306,15 @@
 		5D228B052432385300464506 /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
 		5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRendererComponent.swift; sourceTree = "<group>"; };
+		5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelIndexerNotesTest.swift; sourceTree = "<group>"; };
 		5D301F61245C372400183BD2 /* ListRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
 		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE162405776B00FF9B70 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE18240577BA00FF9B70 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE3F240581E500FF9B70 /* memri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memri.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		5D395B4F24A37A980008610E /* IndexerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndexerAPI.swift; sourceTree = "<group>"; };
+		5D395B5524A38FCC0008610E /* label_indexer_data.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = label_indexer_data.json; sourceTree = "<group>"; };
 		5D3D961E24164B240004040E /* CodeExtended.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeExtended.swift; sourceTree = "<group>"; };
 		5D3D9620241675100004040E /* util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D3EE57024476FFB00562AAC /* note.0x02.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x02.json; sourceTree = "<group>"; };
@@ -475,8 +491,16 @@
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichTextToolbar.swift; sourceTree = "<group>"; };
+		B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor.swift; sourceTree = "<group>"; };
+		B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriFittedTextEditor.swift; sourceTree = "<group>"; };
+		B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor_UIKit.swift; sourceTree = "<group>"; };
+		B8627E3224A9EAAA005A1A8F /* UIFont+.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIFont+.swift"; sourceTree = "<group>"; };
+		B8627E3324A9EAAA005A1A8F /* UIView+NextResponder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+NextResponder.swift"; sourceTree = "<group>"; };
+		B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+NSExpression.swift"; sourceTree = "<group>"; };
+		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
+		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
-		B86FC6722499E79000112A5F /* memriUI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = memriUI; path = modules/memriUI; sourceTree = SOURCE_ROOT; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -487,6 +511,7 @@
 		B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSize.swift; sourceTree = "<group>"; };
 		B88AAB3824A1B10F0007C9EB /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
+		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
 		B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapView-Mapbox.swift"; sourceTree = "<group>"; };
@@ -516,7 +541,6 @@
 				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
 				B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */,
 				B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */,
-				B88AAB1C24A1A99F0007C9EB /* memriUI in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -541,6 +565,7 @@
 		5D0A28BC2406834700398B17 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				5D395B5424A38ECF0008610E /* indexers */,
 				5D44D527245857EC004796BA /* file */,
 				866F87D42456AD76000E5FAB /* persons */,
 				5D3EE56F24476FFB00562AAC /* notes */,
@@ -619,8 +644,25 @@
 			children = (
 				5D38DE122405775400FF9B70 /* api.swift */,
 				5D4231AA247C2D7100CD1933 /* Datasource.swift */,
+				5D395B4F24A37A980008610E /* IndexerAPI.swift */,
 			);
 			path = api;
+			sourceTree = "<group>";
+		};
+		5D395B5124A38CAB0008610E /* indexer */ = {
+			isa = PBXGroup;
+			children = (
+				5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */,
+			);
+			path = indexer;
+			sourceTree = "<group>";
+		};
+		5D395B5424A38ECF0008610E /* indexers */ = {
+			isa = PBXGroup;
+			children = (
+				5D395B5524A38FCC0008610E /* label_indexer_data.json */,
+			);
+			path = indexers;
 			sourceTree = "<group>";
 		};
 		5D3D96222416764A0004040E /* codable */ = {
@@ -717,7 +759,6 @@
 			isa = PBXGroup;
 			children = (
 				5D599BB923F2B77500F218A0 /* memri */,
-				B86FC6722499E79000112A5F /* memriUI */,
 				5D406F2223F5667C00F98616 /* playground */,
 				5D599BD023F2B77700F218A0 /* memriTests */,
 				5D599BDB23F2B77700F218A0 /* memriUITests */,
@@ -763,6 +804,11 @@
 			children = (
 				5DB66FB32431DD2D007736D6 /* context */,
 				861C52C324A5B21D00B3230C /* install */,
+				5D395B5124A38CAB0008610E /* indexer */,
+				5DB66FB32431DD2D007736D6 /* main */,
+				5D0A28C024069A4E00398B17 /* control */,
+				5D0A28BF24069A4600398B17 /* view */,
+				5D0A28BE24069A3800398B17 /* model */,
 				5D0A28BD24069A3000398B17 /* api */,
 				5D0A28BE24069A3800398B17 /* model */,
 				5D0A28BF24069A4600398B17 /* cvu */,
@@ -910,6 +956,9 @@
 				5D414AD6242B4E4700A3DDFA /* contextpane */,
 				5D78D0702425319400F7BD3B /* navigation */,
 				5D41E2A52417A20E001D4482 /* renderers */,
+				B8627E3024A9EAAA005A1A8F /* Extensions */,
+				B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */,
+				B8627E3624A9EAAA005A1A8F /* MemriTextField */,
 				86A5D83B243B3FFF00F8FAD8 /* Loading.swift */,
 				869CA735243F9AA3009C56FF /* SessionSwitcher.swift */,
 				86865D3224487B390010271A /* SettingsPane.swift */,
@@ -1126,6 +1175,44 @@
 			path = styles;
 			sourceTree = "<group>";
 		};
+		B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */ = {
+			isa = PBXGroup;
+			children = (
+				B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */,
+				B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */,
+				B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */,
+				B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */,
+			);
+			path = MemriTextEditor;
+			sourceTree = "<group>";
+		};
+		B8627E3024A9EAAA005A1A8F /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				B8627E3124A9EAAA005A1A8F /* UIKit */,
+				B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		B8627E3124A9EAAA005A1A8F /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				B8627E3224A9EAAA005A1A8F /* UIFont+.swift */,
+				B8627E3324A9EAAA005A1A8F /* UIView+NextResponder.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		B8627E3624A9EAAA005A1A8F /* MemriTextField */ = {
+			isa = PBXGroup;
+			children = (
+				B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */,
+				B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */,
+			);
+			path = MemriTextField;
+			sourceTree = "<group>";
+		};
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1155,6 +1242,7 @@
 				B8E0FBDA24A43FCD009C3C30 /* MapModel */,
 				B81237EC24A43E42003E8BCB /* MapHelper.swift */,
 				86B7A6752457404C00292E81 /* MapRendererView.swift */,
+				B89A268224A70358009119E4 /* MapView.swift */,
 				B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */,
 				B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */,
 			);
@@ -1234,7 +1322,6 @@
 				B83E330C2496F3A100D88742 /* Realm */,
 				B83E330E2496F3A100D88742 /* RealmSwift */,
 				B8FB4995249F21A6007A05C4 /* ASCollectionView */,
-				B88AAB1B24A1A99F0007C9EB /* memriUI */,
 				B809186424A4DFF400BD74D8 /* Charts */,
 			);
 			productName = memri;
@@ -1336,6 +1423,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
+				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
 				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
@@ -1415,6 +1503,7 @@
 				5D3EE57924476FFB00562AAC /* note.0x01.json in Resources */,
 				86A5D848243EC46700F8FAD8 /* named_views.json in Resources */,
 				861439F52435AF8C008D6B5B /* test_sessions.json in Resources */,
+				5D395B5624A38FCC0008610E /* label_indexer_data.json in Resources */,
 				5D4768E0247D24B800008CA2 /* exampleNote.html in Resources */,
 				5D1A3E67240805C700A0583B /* empty_sessionview.json in Resources */,
 				5D4C71E92445E07500DF09E8 /* persons_from_server.json in Resources */,
@@ -1518,8 +1607,10 @@
 				5D4320E8247E79890052B224 /* HorizonalLine.swift in Sources */,
 				B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
+				B8627E3B24A9EAAA005A1A8F /* MemriFittedTextEditor.swift in Sources */,
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				868EF63224766A8800C0375F /* CVUParser.swift in Sources */,
+				B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				8672C27A2497ECEF006F0D42 /* DefaultGeneralEditorRow.swift in Sources */,
 				86FFD0C524A4CE42001BF14B /* Other.swift in Sources */,
@@ -1529,6 +1620,8 @@
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
+				B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */,
+				B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */,
 				86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */,
 				868EF63524766A8800C0375F /* Expression.swift in Sources */,
 				861439F22435942A008D6B5B /* Installer.swift in Sources */,
@@ -1536,6 +1629,7 @@
 				5D4B903D247BC0ED00EE50B4 /* ActionErrors.swift in Sources */,
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				8690AF082472D91F00FC49F4 /* collection.swift in Sources */,
+				B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */,
 				B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
@@ -1547,6 +1641,7 @@
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
 				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
+				B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */,
 				B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */,
 				5D228B062432385300464506 /* ActionView.swift in Sources */,
 				B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */,
@@ -1554,6 +1649,7 @@
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
 				5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */,
+				5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
@@ -1563,14 +1659,17 @@
 				868EF63424766A8800C0375F /* ExprParser.swift in Sources */,
 				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				8690AF062472D90D00FC49F4 /* date.swift in Sources */,
+				B8627E3C24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift in Sources */,
 				8699AA2A247B958700EC85C0 /* UserState.swift in Sources */,
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
+				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
 				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
+				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,
 				5D90464F243616B000632492 /* color.swift in Sources */,
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
@@ -1580,6 +1679,7 @@
 				5DB8EC0424598FA30028FD2E /* CascadingView.swift in Sources */,
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */,
+				B89A268324A70358009119E4 /* MapView.swift in Sources */,
 				869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */,
 				868EF62E24766A8800C0375F /* CVULexer.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
@@ -1618,6 +1718,7 @@
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DB66FB72431DEB0007736D6 /* realmTest.swift in Sources */,
 				5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */,
+				5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */,
 				863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */,
 				86677DEB242A6751007A4782 /* CacheTest.swift in Sources */,
 				5D42A8F7245AF1ED0093D85F /* ItemTest.swift in Sources */,
@@ -1827,6 +1928,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -1862,6 +1964,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = NO;
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
@@ -2205,10 +2308,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */;
 			productName = RealmSwift;
-		};
-		B88AAB1B24A1A99F0007C9EB /* memriUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = memriUI;
 		};
 		B8FB4995249F21A6007A05C4 /* ASCollectionView */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -50,9 +50,12 @@ public class Settings {
 		try callback()
 	}
 
+	// TODO: Refactor this so that the default settings are always used if not found in Realm.
+	// Otherwise anytime we add a new setting the get function will return nil instead of the default
+
 	/// Initialize SettingsCollection objects for default, device and user-settings. Populate them by reading the default settings from
 	/// disk and updating the empty SettingCollections.
-	public func install() {
+	public func install() throws {
 		let defaults = SettingCollection(value: ["type": "defaults", "memriID": "settingsDefaults"])
 		let device = SettingCollection(value: ["type": "device", "memriID": "settingsDevice"])
 		let user = SettingCollection(value: ["type": "user", "memriID": "settingsUser"])
@@ -79,12 +82,13 @@ public class Settings {
 		} catch {
 			debugHistory.error("Failed to install settings: \(error)")
 		}
+		try load {}
 	}
 
 	/// Get setting from path
 	/// - Parameter path: path of the setting
 	/// - Returns: setting value
-	public func get<T: Decodable>(_ path: String) -> T? {
+	public func get<T: Decodable>(_ path: String, type _: T.Type = T.self) -> T? {
 		let (collection, query) = parse(path)
 
 		do {
@@ -171,7 +175,7 @@ public class Settings {
 	/// Get *global* setting value for given path
 	/// - Parameter path: global setting path
 	/// - Returns: setting value
-	public class func get<T: Decodable>(_ path: String) -> T? {
+	public class func get<T: Decodable>(_ path: String, type _: T.Type = T.self) -> T? {
 		globalSettings?.get(path)
 	}
 

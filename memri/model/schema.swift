@@ -127,7 +127,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
 
 // completion(try JSONDecoder().decode(family: ItemFamily.self, from: data))
 
-class Note: Item {
+public class Note: Item {
 	@objc dynamic var title: String? = ""
 	/// HTML
 	@objc dynamic var content: String?
@@ -662,13 +662,14 @@ class ImporterInstance: Item {
 	}
 }
 
-class Indexer: Item {
+public class Indexer: Item {
 	override var genericType: String { "Indexer" }
 	@objc dynamic var name: String = ""
 	@objc dynamic var indexerDescription: String = ""
 	@objc dynamic var query: String = ""
 	@objc dynamic var icon: String = ""
 	@objc dynamic var bundleImage: String = ""
+	@objc dynamic var runDestination: String = ""
 
 	let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
 
@@ -685,6 +686,7 @@ class Indexer: Item {
 			indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
 			icon = try decoder.decodeIfPresent("icon") ?? icon
 			bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
+			runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
 
 			decodeIntoList(decoder, "runs", self.runs)
 
@@ -693,11 +695,12 @@ class Indexer: Item {
 	}
 }
 
-class IndexerInstance: Item {
+public class IndexerInstance: Item {
 	override var genericType: String { "IndexerInstance" }
 	@objc dynamic var name: String = "unknown indexer instance"
 	@objc dynamic var query: String = ""
 	@objc dynamic var indexer: Indexer?
+	@objc dynamic var progress: Int = -1
 
 	required init() {
 		super.init()
