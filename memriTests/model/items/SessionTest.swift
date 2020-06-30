@@ -6,10 +6,10 @@
 ////  Copyright © 2020 memri. All rights reserved.
 ////
 //
-//import XCTest
-//@testable import memri
+// import XCTest
+// @testable import memri
 //
-//class SessionTest: XCTestCase {
+// class SessionTest: XCTestCase {
 //
 //    override func setUp() {
 //        // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -24,7 +24,7 @@
 //        XCTAssert(session.currentView.rendererName == "List")
 //        XCTAssert(session.currentView.resultSet.data == [])
 //    }
-//    
+//
 //    func testLoadEmptySessionsFromJson(){
 //        // load multiple
 //        let sessions =  try! Sessions.fromJSONFile("empty_sessions")
@@ -32,8 +32,8 @@
 //        XCTAssert(sessions.currentSession.currentView.resultSet.data.count > 0)
 //        XCTAssert(sessions.currentSession.currentView.actionButton!.actionName == "add")
 //    }
-//    
-//    
+//
+//
 //
 //    func test PerformanceExample() {
 //        // This is an example of a performance test case.
@@ -42,4 +42,4 @@
 //        }
 //    }
 //
-//}
+// }

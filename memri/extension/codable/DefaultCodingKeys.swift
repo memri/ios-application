@@ -6,13 +6,13 @@
 //  Copyright © 2020 memri. All rights reserved.
 //
 
-//import Foundation
+// import Foundation
 
-//protocol DefaultingCodingKey: CodingKey, Hashable {
+// protocol DefaultingCodingKey: CodingKey, Hashable {
 //    static var defaults: [Self: Any] { get }
-//}
+// }
 //
-//extension KeyedDecodingContainer where Key: DefaultingCodingKey {
+// extension KeyedDecodingContainer where Key: DefaultingCodingKey {
 //
 //    func decode(_ type: String.Type, forKey key: Key) throws -> String {
 //        if let t = try self.decodeIfPresent(type, forKey: key) {
@@ -29,9 +29,9 @@
 //            return Swift.type(of: key).defaults[key] as! T
 //        }
 //    }
-//}
+// }
 //
-//extension KeyedEncodingContainer where Key: DefaultingCodingKey {
+// extension KeyedEncodingContainer where Key: DefaultingCodingKey {
 //
 //    mutating func encode(_ value: String, forKey key: Key) throws {
 //        guard value != type(of: key).defaults[key] as! String else { return }
@@ -48,4 +48,4 @@
 //        try self.encodeIfPresent(value, forKey: key)
 //    }
 //
-//}
+// }
