@@ -129,6 +129,7 @@
 		861439F62435AF91008D6B5B /* test_sessions.json in Resources */ = {isa = PBXBuildFile; fileRef = 861439F42435AF8C008D6B5B /* test_sessions.json */; };
 		861C52C524A5B24500B3230C /* installerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C424A5B24500B3230C /* installerTest.swift */; };
 		861C52C724A5BAD500B3230C /* datasourceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C624A5BAD500B3230C /* datasourceTest.swift */; };
+		861C52C224A5A9B100B3230C /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C124A5A9B100B3230C /* schema.swift */; };
 		86229DCC243508B00013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		86229DCD243509F60013750A /* default_settings.json in Resources */ = {isa = PBXBuildFile; fileRef = 86229DCB243508B00013750A /* default_settings.json */; };
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
@@ -180,7 +181,6 @@
 		8690AF062472D90D00FC49F4 /* date.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF052472D90D00FC49F4 /* date.swift */; };
 		8690AF082472D91F00FC49F4 /* collection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF072472D91F00FC49F4 /* collection.swift */; };
 		8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8690AF092472F60600FC49F4 /* InMemoryObjectCache.swift */; };
-		869789EA24344A530003756B /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789E924344A530003756B /* schema.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2A247B958700EC85C0 /* UserState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA29247B958700EC85C0 /* UserState.swift */; };
@@ -388,6 +388,7 @@
 		861439F42435AF8C008D6B5B /* test_sessions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_sessions.json; sourceTree = "<group>"; };
 		861C52C424A5B24500B3230C /* installerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = installerTest.swift; sourceTree = "<group>"; };
 		861C52C624A5BAD500B3230C /* datasourceTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = datasourceTest.swift; sourceTree = "<group>"; };
+		861C52C124A5A9B100B3230C /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; };
 		86229DCB243508B00013750A /* default_settings.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_settings.json; sourceTree = "<group>"; };
 		862A934E24435372005E06A6 /* default_navigation_full.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = default_navigation_full.json; sourceTree = "<group>"; };
 		863CDB702441E69F000D7AC0 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
@@ -433,7 +434,7 @@
 		8690AF052472D90D00FC49F4 /* date.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = date.swift; sourceTree = "<group>"; };
 		8690AF072472D91F00FC49F4 /* collection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = collection.swift; sourceTree = "<group>"; };
 		8690AF092472F60600FC49F4 /* InMemoryObjectCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryObjectCache.swift; sourceTree = "<group>"; };
-		869789E924344A530003756B /* schema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		869789E924344A530003756B /* schema_original.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema_original.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		8699AA29247B958700EC85C0 /* UserState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserState.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -879,7 +880,8 @@
 			children = (
 				86CDB46D2469C1E4007EAE67 /* defaults */,
 				863CDB6F2441E680000D7AC0 /* items */,
-				869789E924344A530003756B /* schema.swift */,
+				869789E924344A530003756B /* schema_original.swift */,
+				861C52C124A5A9B100B3230C /* schema.swift */,
 				8665ADD8241A8387005B3FA5 /* Cache.swift */,
 				868EF696247784C600C0375F /* ResultSet.swift */,
 				86A5D8392437321700F8FAD8 /* Sync.swift */,
@@ -1215,6 +1217,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D599BE123F2B77700F218A0 /* Build configuration list for PBXNativeTarget "memri" */;
 			buildPhases = (
+				B8E8BA7324A8227500A89F60 /* Swift Format */,
 				5D599BB323F2B77500F218A0 /* Sources */,
 				5D599BB423F2B77500F218A0 /* Frameworks */,
 				5D599BB523F2B77500F218A0 /* Resources */,
@@ -1462,6 +1465,24 @@
 			shellPath = /bin/sh;
 			shellScript = "if [ \"${TARGET_OS_MACCATALYST}\" = \"1\" ]; then\nbash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\nfi\n";
 		};
+		B8E8BA7324A8227500A89F60 /* Swift Format */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Swift Format";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "SCHEME_NAME=`cat \"${SCHEME_FILE}\"`\n\nif [ \"${SCHEME_NAME}\" = \"BUILDTOOLS\" ]; then\ncd BuildTools\nSDKROOT=macosx\n\n#Temporarily uncomment the following line to update Build tools\n#swift package update\n\nswift run -c release swiftformat \"$SRCROOT\"\n\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -1492,7 +1513,6 @@
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
-				869789EA24344A530003756B /* schema.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
 				5D4320E8247E79890052B224 /* HorizonalLine.swift in Sources */,
@@ -1549,6 +1569,7 @@
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
+				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,
 				5D90464F243616B000632492 /* color.swift in Sources */,
@@ -1796,6 +1817,7 @@
 					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = memri/Info.plist;
+				INTERMEDIATES_OUTPUT_DIR = "${BUILD_ROOT}/intermediates/${CONFIGURATION}/";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1805,6 +1827,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1827,7 +1850,9 @@
 					"$(PROJECT_DIR)/memri/Resources",
 					"$(PROJECT_DIR)",
 				);
+				"GCC_PREPROCESSOR_DEFINITIONS[arch=*]" = "";
 				INFOPLIST_FILE = memri/Info.plist;
+				INTERMEDIATES_OUTPUT_DIR = "${BUILD_ROOT}/intermediates/${CONFIGURATION}/";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1837,6 +1862,7 @@
 				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1937,6 +1963,148 @@
 			};
 			name = Release;
 		};
+		B8E8BA7424A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7524A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = NO;
+				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
+				DEVELOPMENT_TEAM = 2JV298SK2V;
+				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/memri/Resources",
+					"$(PROJECT_DIR)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				INFOPLIST_FILE = memri/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					memri/Resources,
+				);
+				MARKETING_VERSION = 0.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTS_MACCATALYST = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7624A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = K92CHY7KDL;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/memri/Resources",
+				);
+				INFOPLIST_FILE = memriTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				NEW_SETTING = "";
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memriTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/memri.app/memri";
+			};
+			name = RUNBUILDTOOLS;
+		};
+		B8E8BA7724A8239400A89F60 /* RUNBUILDTOOLS */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = "$(inherited)";
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = memriUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = polis.memriUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = memri;
+			};
+			name = RUNBUILDTOOLS;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1944,6 +2112,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BDF23F2B77700F218A0 /* Debug */,
+				B8E8BA7424A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE023F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1953,6 +2122,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE223F2B77700F218A0 /* Debug */,
+				B8E8BA7524A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE323F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1962,6 +2132,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE523F2B77700F218A0 /* Debug */,
+				B8E8BA7624A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE623F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1971,6 +2142,7 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5D599BE823F2B77700F218A0 /* Debug */,
+				B8E8BA7724A8239400A89F60 /* RUNBUILDTOOLS */,
 				5D599BE923F2B77700F218A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
