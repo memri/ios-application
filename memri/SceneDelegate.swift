@@ -12,7 +12,6 @@ import Darwin
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-    var locationManager: LocationManager!
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -29,8 +28,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             print(error)
             exit(1)
         }
-
-        self.locationManager = LocationManager()
 
         // Use a UIHostingController as window root view controller.
         guard let windowScene = scene as? UIWindowScene else { return }
