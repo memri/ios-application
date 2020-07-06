@@ -26,9 +26,7 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     public override init() {}
 
     func onAppStart() {
-        #if !targetEnvironment(macCatalyst)
-            self.setupCoreLocationManager()
-        #endif
+        self.setupCoreLocationManager()
     }
     
     //
@@ -74,32 +72,34 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     // Heading, Region Monitoring or Ranging (Beacons) features
     //
     private func setupCoreLocationManager() {
-        if self.locatonTrackingIsEnabledByUser() && CLLocationManager.locationServicesEnabled()  {
-            //
-            // Instantiation will kick off first call to delegate ... didChangeAuthorization
-            //
-            self.coreLocationManager = CLLocationManager()
-            self.coreLocationManager?.delegate = self
+        #if !targetEnvironment(macCatalyst)
+            if self.locatonTrackingIsEnabledByUser() && CLLocationManager.locationServicesEnabled()  {
+                //
+                // Instantiation will kick off first call to delegate ... didChangeAuthorization
+                //
+                self.coreLocationManager = CLLocationManager()
+                self.coreLocationManager?.delegate = self
 
-            self.coreLocationManager?.allowsBackgroundLocationUpdates = true        // This could be a user setting, but it's default for now
-            self.coreLocationManager?.showsBackgroundLocationIndicator = false
-            self.coreLocationManager?.pausesLocationUpdatesAutomatically = false
+                self.coreLocationManager?.allowsBackgroundLocationUpdates = true        // This could be a user setting, but it's default for now
+                self.coreLocationManager?.showsBackgroundLocationIndicator = false
+                self.coreLocationManager?.pausesLocationUpdatesAutomatically = false
 
-            //
-            // We choose to use the significant location change monitoring capabilities
-            // by default, unless they are not available.
-            //
-            if CLLocationManager.significantLocationChangeMonitoringAvailable() {
-                self.usingSignificantLocationChangeMonitoring = true                // This could be a user setting, but it's default for now
-                print("Significant Change Location Servics Enabled")
+                //
+                // We choose to use the significant location change monitoring capabilities
+                // by default, unless they are not available.
+                //
+                if CLLocationManager.significantLocationChangeMonitoringAvailable() {
+                    self.usingSignificantLocationChangeMonitoring = true                // This could be a user setting, but it's default for now
+                    print("Significant Change Location Servics Enabled")
+                } else {
+                    self.coreLocationManager?.desiredAccuracy = kCLLocationAccuracyBest // This could be a user setting
+                    self.coreLocationManager?.distanceFilter = kCLDistanceFilterNone    // This could be a user setting
+                    print("Location Servics Enabled")
+                }
             } else {
-                self.coreLocationManager?.desiredAccuracy = kCLLocationAccuracyBest // This could be a user setting
-                self.coreLocationManager?.distanceFilter = kCLDistanceFilterNone    // This could be a user setting
-                print("Location Servics Enabled")
+                print("Location Services Not Available")
             }
-        } else {
-            print("Location Services Not Available")
-        }
+        #endif
     }
 
     private func stopUpdates() {
