@@ -14,32 +14,74 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     
     static var shared = SensorManager()
 
-    public var usingSignificantLocationChangeMonitoring: Bool = false // TODO: This needs to be persisted as a user default?!
-
     private var realm: Realm?
+    
+    //
+    // Core Location Manager
+    //
     private var coreLocationManager: CLLocationManager?
+    private var usingSignificantLocationChangeMonitoring: Bool = false
+    private let locationTrackingEnabledByUserKey: String = "MLocationTrackingEnabledKey"
+    
+    public override init() {}
 
     func onAppStart() {
         #if !targetEnvironment(macCatalyst)
             self.setupCoreLocationManager()
         #endif
     }
-
-    public override init() {}
-        
-    //
-    // MARK - Core Location Manager
-    //
     
+    //
+    // MARK - Location user interaction lifecycle methods
+    //
+
+    // Call this method to decide whether to offer location tracking to the user
+    public func locationTrackingIsAvailableToUser() -> Bool {
+        CLLocationManager.locationServicesEnabled()
+    }
+    
+    // Returns the current user setting
+    public func locatonTrackingIsEnabledByUser() -> Bool {
+        UserDefaults.standard.bool(forKey: self.locationTrackingEnabledByUserKey)
+    }
+    
+    // Turn on tracking
+    public func locationTrackingEnabledByUser() {
+        if !self.locatonTrackingIsEnabledByUser() {
+            UserDefaults.standard.set(true, forKey: self.locationTrackingEnabledByUserKey)
+            self.setupCoreLocationManager()
+        }
+    }
+
+    // Turn off tracking
+    public func locationTrackingDisabledByUser() {
+        UserDefaults.standard.set(false, forKey: self.locationTrackingEnabledByUserKey)
+        self.tearDownCoreLocationManager()
+        //
+        // TODO - what to do about any collected data?
+        //
+    }
+
+    private func tearDownCoreLocationManager() {
+        guard self.coreLocationManager == nil else { return }
+        self.stopUpdates()
+        self.coreLocationManager?.delegate = nil
+        self.coreLocationManager = nil
+    }
+    
+    //
+    // Note: we are currently implementing only location tracking, not
+    // Heading, Region Monitoring or Ranging (Beacons) features
+    //
     private func setupCoreLocationManager() {
-        if CLLocationManager.locationServicesEnabled() {
+        if self.locatonTrackingIsEnabledByUser() && CLLocationManager.locationServicesEnabled()  {
             //
             // Instantiation will kick off first call to delegate ... didChangeAuthorization
             //
             self.coreLocationManager = CLLocationManager()
             self.coreLocationManager?.delegate = self
 
-            self.coreLocationManager?.allowsBackgroundLocationUpdates = true
+            self.coreLocationManager?.allowsBackgroundLocationUpdates = true        // This could be a user setting, but it's default for now
             self.coreLocationManager?.showsBackgroundLocationIndicator = false
             self.coreLocationManager?.pausesLocationUpdatesAutomatically = false
 
@@ -48,7 +90,7 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
             // by default, unless they are not available.
             //
             if CLLocationManager.significantLocationChangeMonitoringAvailable() {
-                self.usingSignificantLocationChangeMonitoring = true
+                self.usingSignificantLocationChangeMonitoring = true                // This could be a user setting, but it's default for now
                 print("Significant Change Location Servics Enabled")
             } else {
                 self.coreLocationManager?.desiredAccuracy = kCLLocationAccuracyBest // This could be a user setting
@@ -59,26 +101,28 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
             print("Location Services Not Available")
         }
     }
-    
-    public func stopUpdates() -> Bool {
-        guard self.coreLocationManager == nil else {
-            return false
-        }
+
+    private func stopUpdates() {
+        guard self.coreLocationManager == nil else { return }
         if self.usingSignificantLocationChangeMonitoring {
             self.coreLocationManager?.stopMonitoringSignificantLocationChanges()
         } else {
             self.coreLocationManager?.stopUpdatingLocation()
         }
-        return true
     }
     
-    public func persistLocation(location: CLLocation) {
-// TODO - Implement
-//        do {
-//            try realm?.add("TODO")
-//        } catch {
-//            print(error.localizedDescription)
-//        }
+    private func persistLocation(location: CLLocation) {
+        // TODO - Implement
+        //        do {
+        //            try realm?.add("TODO")
+        //        } catch {
+        //            print(error.localizedDescription)
+        //        }
+        //
+        // Need to create the location "table" if it does not exist
+        // Need to save the location
+        // It may be convenient to create a managed object that mapped easily to a CLLocation object?
+        //
         print(location)
     }
     

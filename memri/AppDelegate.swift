@@ -13,7 +13,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         MapHelper.shared.onAppStart()
+        
+        // This works for normal app startup and background location event startups (testing for the launch "location" key not necessary)
         SensorManager.shared.onAppStart()
+        
+        // Comment / Uncomment this to toggle location services (will eventually be replaced by a "settings" page)
+        //SensorManager.shared.locationTrackingEnabledByUser()
+        
         return true
     }
 
