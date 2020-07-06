@@ -12,8 +12,8 @@ import Darwin
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    var locationManager: LocationManager!
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
@@ -22,14 +22,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the SwiftUI view that provides the window contents.
         let context = RootContext(name: "Memri GUI", key: "ABCDEF")
         let application = Application().environmentObject(context as MemriContext)
-
+        
         do { try context.boot() }
         catch let error {
             // TODO Error Handling (show fatal error on screen)
             print(error)
             exit(1)
         }
-        
+
+        self.locationManager = LocationManager()
+
         // Use a UIHostingController as window root view controller.
         guard let windowScene = scene as? UIWindowScene else { return }
             
