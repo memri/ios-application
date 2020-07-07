@@ -348,19 +348,51 @@ public struct UIElementView: SwiftUI.View {
 	}
 
 	func renderRichTextfield() -> some View {
-		let (_, dataItem, propName) = from.getType("value", item, viewArguments)
+		let (_, contentDataItem, contentPropertyName) = from.getType("htmlValue", item, viewArguments)
+		let (_, plainContentDataItem, plainContentPropertyName) = from.getType("value", item, viewArguments)
 
-		return Group {
-			if propName == "" {
-				Text("Invalid property value set on TextField")
-			} else {
-				_RichTextEditor(dataItem: dataItem, filterText: Binding<String>(
-					get: { self.context.cascadingView?.filterText ?? "" },
-					set: { self.context.cascadingView?.filterText = $0 }
-				))
-					.generalEditorInput()
-			}
+		guard contentDataItem.hasProperty(contentPropertyName),
+			plainContentDataItem.hasProperty(plainContentPropertyName)
+		else {
+			return Text("Invalid property value set on RichTextEditor").eraseToAnyView()
 		}
+
+		// CONTENT
+		let contentBinding = Binding<String?>(
+			get: { (contentDataItem[contentPropertyName] as? String)?.nilIfBlank },
+			set: { contentDataItem.set(contentPropertyName, $0) }
+		)
+
+		let plainContentBinding = Binding<String?>(
+			get: { (plainContentDataItem[plainContentPropertyName] as? String)?.nilIfBlank },
+			set: { plainContentDataItem.set(plainContentPropertyName, $0) }
+		)
+
+		let fontSize = get("fontSize", type: CGFloat.self)
+
+		// TITLE
+		let (_, titleDataItem, titlePropertyName) = from.getType("title", item, viewArguments)
+		let titleBinding = titleDataItem.hasProperty(titlePropertyName) ? Binding<String?>(
+			get: { (titleDataItem[titlePropertyName] as? String)?.nilIfBlank },
+			set: { titleDataItem.set(titlePropertyName, $0) }
+		) : nil // Only pass a title binding if the property exists (otherwise pass nil)
+		let titleHint = get("titleHint", type: String.self)
+		let titleFontSize = get("titleFontSize", type: CGFloat.self)
+
+		// Filter (unimplemented)
+		let filterTextBinding = Binding<String>(
+			get: { self.context.cascadingView?.filterText ?? "" },
+			set: { self.context.cascadingView?.filterText = $0 }
+		)
+
+		return _RichTextEditor(htmlContentBinding: contentBinding,
+							   plainContentBinding: plainContentBinding,
+							   titleBinding: titleBinding,
+							   titleHint: titleHint,
+							   fontSize: fontSize ?? 18,
+							   headingFontSize: titleFontSize ?? 26,
+							   filterText: filterTextBinding)
+			.eraseToAnyView()
 	}
 
 	func renderTextfield() -> some View {

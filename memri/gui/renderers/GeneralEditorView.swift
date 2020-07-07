@@ -169,16 +169,18 @@ struct GeneralEditorSection: View {
 					)
 				} else {
 					if groupIsList {
-						ForEach<Results<Edge>, Edge, UIElementView>(item.edges(groupKey)!, id: \.self) { edge in
-							let otherItem = edge.item()
-							return self.renderConfig.render(
-								item: otherItem,
-								group: self.groupKey,
-								arguments: self._args(groupKey: self.groupKey,
-													  value: otherItem,
-													  item: otherItem,
-													  edge: edge)
-							)
+						item.edges(groupKey).map { edges in
+							ForEach<Results<Edge>, Edge, UIElementView>(edges, id: \.self) { edge in
+								let otherItem = edge.item()
+								return self.renderConfig.render(
+									item: otherItem,
+									group: self.groupKey,
+									arguments: self._args(groupKey: self.groupKey,
+														  value: otherItem,
+														  item: otherItem,
+														  edge: edge)
+								)
+							}
 						}
 					} else {
 						// TODO: Error handling

@@ -24,13 +24,16 @@ let registerRichTextEditorRenderer = {
 	)
 }
 
-class CascadingRichTextEditorConfig: CascadingRenderConfig {
-	var type: String? = "richTextEditor"
-}
-
 struct _RichTextEditor: View {
 	@EnvironmentObject var context: MemriContext
-	@ObservedObject public var dataItem: Item
+
+	var htmlContentBinding: Binding<String?>?
+	var plainContentBinding: Binding<String?>
+	var titleBinding: Binding<String?>?
+	var titleHint: String?
+
+	var fontSize: CGFloat = 18
+	var headingFontSize: CGFloat = 26
 
 	var editModeBinding: Binding<Bool> {
 		Binding<Bool>(get: { self.context.currentSession?.isEditMode ?? false },
@@ -40,30 +43,75 @@ struct _RichTextEditor: View {
 	let filterText: Binding<String>
 
 	var body: some View {
-		MemriTextEditor(initialContentHTML: dataItem.get("content") as String?,
-						isEditing: editModeBinding,
-						preferredHeight: nil,
-						onTextChanged: { newAttributedString in
-//							print(newAttributedString.toHTML()?.replace("'", "\""))
-							self.dataItem.set("content", newAttributedString.toHTML())
-							self.dataItem.set("textContent", newAttributedString.string.withoutFirstLine())
-							self.dataItem.set("title", newAttributedString.string.firstLineString())
-        })
+		VStack(spacing: 0) {
+			MemriTextEditor(initialContentHTML: htmlContentBinding?.wrappedValue ?? plainContentBinding.wrappedValue,
+							titleBinding: titleBinding,
+							titlePlaceholder: titleHint,
+							fontSize: fontSize,
+							headingFontSize: headingFontSize,
+							isEditing: editModeBinding,
+							preferredHeight: nil,
+							onTextChanged: { newAttributedString in
+								htmlContentBinding?.wrappedValue = newAttributedString.toHTML()
+								plainContentBinding.wrappedValue = newAttributedString.string
+                            })
+		}
 	}
 }
 
+class CascadingRichTextEditorConfig: CascadingRenderConfig {
+	var type: String? = "richTextEditor"
+
+	var titleHint: String? { cascadeProperty("titleHint") ?? "Untitled" }
+	var fontSize: CGFloat { cascadePropertyAsCGFloat("fontSize") ?? 18 }
+	var titleFontSize: CGFloat { cascadePropertyAsCGFloat("titleFontSize") ?? 26 }
+}
+
+#warning("This renderer is currently specialised for Notes - it might make sense to utilise the custom renderer instead. The RichTextEditor CVU component has all this functionality.")
 struct RichTextRendererView: View {
 	@EnvironmentObject var context: MemriContext
 
 	var renderConfig: CascadingRichTextEditorConfig
 		= CascadingRichTextEditorConfig([])
 
+	var noteItem: Note? {
+		context.item as? Note
+	}
+
+	// CONTENT
+	var contentBinding: Binding<String?> {
+		Binding<String?>(
+			get: { noteItem?.get("content") },
+			set: { noteItem?.set("content", $0) }
+		)
+	}
+
+	var plainContentBinding: Binding<String?> {
+		Binding<String?>(
+			get: { noteItem?.get("textContent") },
+			set: { noteItem?.set("textContent", $0) }
+		)
+	}
+
+	// TITLE
+	var titleBinding: Binding<String?> {
+		Binding<String?>(
+			get: { noteItem?.get("title") },
+			set: { noteItem?.set("title", $0) }
+		)
+	}
+
 	var body: some View {
 		let dataItem = self.context.cascadingView?.resultSet.singletonItem
 
 		return VStack(spacing: 0) {
-			dataItem.map { dataItem in
-				_RichTextEditor(dataItem: dataItem,
+			dataItem.map { _ in
+				_RichTextEditor(htmlContentBinding: contentBinding,
+								plainContentBinding: plainContentBinding,
+								titleBinding: titleBinding,
+								titleHint: renderConfig.titleHint,
+								fontSize: renderConfig.fontSize,
+								headingFontSize: renderConfig.titleFontSize,
 								filterText: Binding<String>(
 									get: { self.context.cascadingView?.filterText ?? "" },
 									set: { self.context.cascadingView?.filterText = $0 }

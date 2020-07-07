@@ -140,7 +140,7 @@ public class Views {
 		switch name {
 		case "setting":
 			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
-				#warning("Toby, how can we re-architect this?")
+				#warning("@Toby - how can we re-architect this?")
 				if let value = args?[0] as? String {
 					if let x = Settings.get(value, type: Double.self) { return x }
 					else if let x = Settings.get(value, type: Int.self) { return x }
@@ -149,7 +149,6 @@ public class Views {
 				}
 				return ""
 			}
-			#warning("@Ruben: I don't quite understand what this is doing... it returns a function, is it meant to return the result instead?? If so should be `return f()`")
 			return f
 		case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
 		case "context": return context
