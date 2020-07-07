@@ -62,8 +62,8 @@ public class Sessions: SchemaSessions {
 
 	public func setCurrentSession(_ session: Session) {
 		realmWriteIfAvailable(realm) {
-			if let edge = try link(session, type: "sessions", order: .last),
-				let index = edges("sessions")?.index(of: edge) {
+			if let edge = try link(session, type: "session", order: .last),
+				let index = edges("session")?.index(of: edge) {
 				// Update the index pointer
 				currentSessionIndex = index
 			} else {
@@ -95,7 +95,7 @@ public class Sessions: SchemaSessions {
 					"currentSessionIndex": Int(parsed["sessionsDefinition"] as? Double ?? 0),
 				])
 				for session in allSessions {
-					_ = try sessions.link(session, type: "sessions")
+					_ = try sessions.link(session, type: "session")
 				}
 
 				postInit()

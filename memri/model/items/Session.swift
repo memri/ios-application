@@ -103,15 +103,15 @@ public class Session: SchemaSession {
 				currentViewIndex = index
 			} else {
 				// Remove all items after the current index
-				if let list = edges("views")?.sorted(byKeyPath: "sequence") {
+				if let list = edges("view")?.sorted(byKeyPath: "sequence") {
 					for i in stride(from: list.count - 1, to: currentViewIndex, by: -1) {
 						try self.unlink(list[i])
 					}
 				}
 
 				// Add the view to the session
-				if let edge = try self.link(view, type: "views", order: .last),
-					let index = edges("views")?.index(of: edge) {
+				if let edge = try self.link(view, type: "view", order: .last),
+					let index = edges("view")?.index(of: edge) {
 					// Update the index pointer
 					currentViewIndex = index
 				} else {
@@ -165,7 +165,7 @@ public class Session: SchemaSession {
 		}
 		if views.count > 0 {
 			for view in views {
-				_ = try session.link(view, type: "views")
+				_ = try session.link(view, type: "view")
 			}
 		}
 

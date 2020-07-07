@@ -16,79 +16,79 @@
         "_type": "NavigationItem",
         "type": "item",
         "title": "notes",
-        "view": "all-notes"
+        "sessionName": "all-notes"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "shopping notes",
-        "view": "shopping-notes"
+        "sessionName": "shopping-notes"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "people",
-        "view": "all-people"
+        "sessionName": "all-people"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "photos",
-        "view": "all-photos"
+        "sessionName": "all-photos"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "addresses",
-        "view": "all-addresses"
+        "sessionName": "all-addresses"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "log",
-        "view": "all-audit-items"
+        "sessionName": "all-audit-items"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "labels",
-        "view": "all-labels"
+        "sessionName": "all-labels"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "sessions",
-        "view": "all-sessions"
+        "sessionName": "all-sessions"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "importers",
-        "view": "all-importers"
+        "sessionName": "all-importers"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "importer instances",
-        "view": "all-importer-instances"
+        "sessionName": "all-importer-instances"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "indexers",
-        "view": "all-indexers"
+        "sessionName": "all-indexers"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "indexer instances",
-        "view": "all-indexer-instances"
+        "sessionName": "all-indexer-instances"
     },
     {
         "_type": "NavigationItem",
         "type": "item",
         "title": "views",
-        "view": "all-sessionviews"
+        "sessionName": "all-sessionviews"
     },
     {
         "_type": "NavigationItem",
@@ -99,7 +99,7 @@
         "_type": "NavigationItem",
         "type": "item",
         "title": "starred",
-        "view": "filter-starred"
+        "sessionName": "filter-starred"
     },
     {
         "_type": "Importer",
@@ -559,7 +559,7 @@
         "street": "1600 Pennsylvania Ave",
         "postalCode": "20500",
         "allEdges": [
-            {"type":"labels", "itemType": "Label", "uid": 1017},
+            {"type":"label", "itemType": "Label", "uid": 1017},
             {"type":"country", "itemType": "Country", "uid": 1401}
         ]
     },
@@ -584,24 +584,24 @@
         "armLength": 73,
         "allEdges": [
             {"type":"me", "itemType": "Person", "uid": 3},
-            {"type":"relations", "itemType": "Person", "uid": 2},
-            {"type":"relations", "itemType": "Person", "uid": 1},
+            {"type":"relation", "itemType": "Person", "uid": 2},
+            {"type":"relation", "itemType": "Person", "uid": 1},
             {"type":"profilePicture", "itemType": "Photo", "uid": 500},
-            {"type":"labels", "itemType": "Label", "uid": 1000},
-            {"type":"labels", "itemType": "Label", "uid": 1001},
-            {"type":"labels", "itemType": "Label", "uid": 1002},
-            {"type":"phoneNumbers", "itemType": "PhoneNumber", "uid": 1003},
-            {"type":"websites", "itemType": "Website", "uid": 1004},
-            {"type":"websites", "itemType": "Website", "uid": 1005},
-            {"type":"companies", "itemType": "Company", "uid": 1006},
-            {"type":"publicKeys", "itemType": "PublicKey", "uid": 1007},
-            {"type":"onlineProfiles", "itemType": "OnlineProfile", "uid": 1008},
-            {"type":"onlineProfiles", "itemType": "OnlineProfile", "uid": 1009},
-            {"type":"diets", "itemType": "Diet", "uid": 1010},
-            {"type":"diets", "itemType": "Diet", "uid": 1011},
-            {"type":"medicalConditions", "itemType": "MedicalCondition", "uid": 1012},
-            {"type":"addresses", "label": "Home", "itemType": "Address", "uid": 1013},
-            {"type":"addresses", "label": "Holiday home in France", "itemType": "Address", "uid": 1014},
+            {"type":"label", "itemType": "Label", "uid": 1000},
+            {"type":"label", "itemType": "Label", "uid": 1001},
+            {"type":"label", "itemType": "Label", "uid": 1002},
+            {"type":"hasPhoneNumber", "itemType": "PhoneNumber", "uid": 1003},
+            {"type":"website", "itemType": "Website", "uid": 1004},
+            {"type":"website", "itemType": "Website", "uid": 1005},
+            {"type":"company", "itemType": "Company", "uid": 1006},
+            {"type":"publicKey", "itemType": "PublicKey", "uid": 1007},
+            {"type":"onlineProfile", "itemType": "OnlineProfile", "uid": 1008},
+            {"type":"onlineProfile", "itemType": "OnlineProfile", "uid": 1009},
+            {"type":"diet", "itemType": "Diet", "uid": 1010},
+            {"type":"diet", "itemType": "Diet", "uid": 1011},
+            {"type":"medicalCondition", "itemType": "MedicalCondition", "uid": 1012},
+            {"type":"address", "label": "Home", "itemType": "Address", "uid": 1013},
+            {"type":"address", "label": "Holiday home in France", "itemType": "Address", "uid": 1014},
         ],
         "version": 1
     },
@@ -613,10 +613,10 @@
         "birthDate": 1593777745298,
         "height": 197,
         "allEdges": [
-            {"type":"relations", "itemType": "Person", "uid": 1},
+            {"type":"relation", "itemType": "Person", "uid": 1},
             {"type":"profilePicture", "itemType": "Photo", "uid": 501},
-            {"type":"labels", "itemType": "Label", "uid": 1015},
-            {"type":"labels", "itemType": "Label", "uid": 1016},
+            {"type":"label", "itemType": "Label", "uid": 1015},
+            {"type":"label", "itemType": "Label", "uid": 1016},
         ],
         "version": 1
     },
@@ -631,8 +631,8 @@
         "starred": true,
         "allEdges": [
             {"type":"profilePicture", "itemType": "Photo", "uid": 502},
-            {"type":"labels", "itemType": "Label", "uid": 1015},
-            {"type":"labels", "itemType": "Label", "uid": 1016},
+            {"type":"label", "itemType": "Label", "uid": 1015},
+            {"type":"label", "itemType": "Label", "uid": 1016},
         ],
         "version": 1
     },
@@ -900,8 +900,8 @@
         "starred": true,
         "dateModified": 1593777745298,
         "allEdges": [
-            {"type":"labels", "itemType": "Label", "uid": 1015},
-            {"type":"labels", "itemType": "Label", "uid": 1016}
+            {"type":"label", "itemType": "Label", "uid": 1015},
+            {"type":"label", "itemType": "Label", "uid": 1016}
         ],
         "_partial": true,
         "version": 1
@@ -911,8 +911,8 @@
         "title": "To read list",
         "content": "Age of surveillance capitalism",
         "allEdges": [
-            {"type":"labels", "itemType": "Label", "uid": 1015},
-            {"type":"labels", "itemType": "Label", "uid": 1016}
+            {"type":"label", "itemType": "Label", "uid": 1015},
+            {"type":"label", "itemType": "Label", "uid": 1016}
         ],
         "dateModified": 1593777745298,
         "version": 1

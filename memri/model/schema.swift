@@ -16,206 +16,207 @@ public typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum ItemFamily: String, ClassFamily, CaseIterable {
-	case typeAuditItem = "AuditItem"
-	case typeCVUStoredDefinition = "CVUStoredDefinition"
-	case typeCompany = "Company"
-	case typeCreativeWork = "CreativeWork"
-	case typeDigitalDocument = "DigitalDocument"
-	case typeComment = "Comment"
-	case typeNote = "Note"
-	case typeMediaObject = "MediaObject"
-	case typeAudio = "Audio"
-	case typePhoto = "Photo"
-	case typeVideo = "Video"
-	case typeDiet = "Diet"
-	case typeDownloader = "Downloader"
-	case typeEdge = "Edge"
-	case typeFile = "File"
-	case typeImporter = "Importer"
-	case typeImporterRun = "ImporterRun"
-	case typeIndexer = "Indexer"
-	case typeIndexerRun = "IndexerRun"
-	case typeLabel = "Label"
-	case typeLocation = "Location"
-	case typeAddress = "Address"
-	case typeCountry = "Country"
-	case typeMedicalCondition = "MedicalCondition"
-	case typeNavigationItem = "NavigationItem"
-	case typeOnlineProfile = "OnlineProfile"
-	case typePerson = "Person"
-	case typePhoneNumber = "PhoneNumber"
-	case typePublicKey = "PublicKey"
-	case typeSession = "Session"
-	case typeSessionView = "SessionView"
-	case typeSessions = "Sessions"
-	case typeSetting = "Setting"
-	case typeSyncState = "SyncState"
-	case typeViewArguments = "ViewArguments"
-	case typeWebsite = "Website"
-	case typeDatasource = "Datasource"
-	case typeUserState = "UserState"
+    case typeAuditItem = "AuditItem"
+    case typeCVUStoredDefinition = "CVUStoredDefinition"
+    case typeCompany = "Company"
+    case typeCreativeWork = "CreativeWork"
+    case typeDigitalDocument = "DigitalDocument"
+    case typeComment = "Comment"
+    case typeNote = "Note"
+    case typeMediaObject = "MediaObject"
+    case typeAudio = "Audio"
+    case typePhoto = "Photo"
+    case typeVideo = "Video"
+    case typeDiet = "Diet"
+    case typeDownloader = "Downloader"
+    case typeEdge = "Edge"
+    case typeFile = "File"
+    case typeImporter = "Importer"
+    case typeImporterRun = "ImporterRun"
+    case typeIndexer = "Indexer"
+    case typeIndexerRun = "IndexerRun"
+    case typeLabel = "Label"
+    case typeLocation = "Location"
+    case typeAddress = "Address"
+    case typeCountry = "Country"
+    case typeMedicalCondition = "MedicalCondition"
+    case typeNavigationItem = "NavigationItem"
+    case typeOnlineProfile = "OnlineProfile"
+    case typePerson = "Person"
+    case typePhoneNumber = "PhoneNumber"
+    case typePublicKey = "PublicKey"
+    case typeSession = "Session"
+    case typeSessionView = "SessionView"
+    case typeSessions = "Sessions"
+    case typeSetting = "Setting"
+    case typeSyncState = "SyncState"
+    case typeViewArguments = "ViewArguments"
+    case typeWebsite = "Website"
+    case typeDatasource = "Datasource"
+    case typeUserState = "UserState"
 
-	static var discriminator: Discriminator = ._type
+    static var discriminator: Discriminator = ._type
 
-	var backgroundColor: Color {
-		switch self {
-		case .typeAuditItem: return Color(hex: "#93c47d")
-		case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
-		case .typeCompany: return Color(hex: "#93c47d")
-		case .typeCreativeWork: return Color(hex: "#93c47d")
-		case .typeDigitalDocument: return Color(hex: "#93c47d")
-		case .typeComment: return Color(hex: "#93c47d")
-		case .typeNote: return Color(hex: "#93c47d")
-		case .typeMediaObject: return Color(hex: "#93c47d")
-		case .typeAudio: return Color(hex: "#93c47d")
-		case .typePhoto: return Color(hex: "#93c47d")
-		case .typeVideo: return Color(hex: "#93c47d")
-		case .typeDiet: return Color(hex: "#93c47d")
-		case .typeDownloader: return Color(hex: "#93c47d")
-		case .typeEdge: return Color(hex: "#93c47d")
-		case .typeFile: return Color(hex: "#93c47d")
-		case .typeImporter: return Color(hex: "#93c47d")
-		case .typeImporterRun: return Color(hex: "#93c47d")
-		case .typeIndexer: return Color(hex: "#93c47d")
-		case .typeIndexerRun: return Color(hex: "#93c47d")
-		case .typeLabel: return Color(hex: "#93c47d")
-		case .typeLocation: return Color(hex: "#93c47d")
-		case .typeAddress: return Color(hex: "#93c47d")
-		case .typeCountry: return Color(hex: "#93c47d")
-		case .typeMedicalCondition: return Color(hex: "#93c47d")
-		case .typeNavigationItem: return Color(hex: "#93c47d")
-		case .typeOnlineProfile: return Color(hex: "#93c47d")
-		case .typePerson: return Color(hex: "#93c47d")
-		case .typePhoneNumber: return Color(hex: "#93c47d")
-		case .typePublicKey: return Color(hex: "#93c47d")
-		case .typeSession: return Color(hex: "#93c47d")
-		case .typeSessionView: return Color(hex: "#93c47d")
-		case .typeSessions: return Color(hex: "#93c47d")
-		case .typeSetting: return Color(hex: "#93c47d")
-		case .typeSyncState: return Color(hex: "#93c47d")
-		case .typeViewArguments: return Color(hex: "#93c47d")
-		case .typeDatasource: return Color(hex: "#93c47d")
-		case .typeUserState: return Color(hex: "#93c47d")
-		case .typeWebsite: return Color(hex: "#93c47d")
-		}
-	}
+    var backgroundColor: Color {
+        switch self {
+        case .typeAuditItem: return Color(hex: "#93c47d")
+        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
+        case .typeCompany: return Color(hex: "#93c47d")
+        case .typeCreativeWork: return Color(hex: "#93c47d")
+        case .typeDigitalDocument: return Color(hex: "#93c47d")
+        case .typeComment: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
+        case .typeMediaObject: return Color(hex: "#93c47d")
+        case .typeAudio: return Color(hex: "#93c47d")
+        case .typePhoto: return Color(hex: "#93c47d")
+        case .typeVideo: return Color(hex: "#93c47d")
+        case .typeDiet: return Color(hex: "#93c47d")
+        case .typeDownloader: return Color(hex: "#93c47d")
+        case .typeEdge: return Color(hex: "#93c47d")
+        case .typeFile: return Color(hex: "#93c47d")
+        case .typeImporter: return Color(hex: "#93c47d")
+        case .typeImporterRun: return Color(hex: "#93c47d")
+        case .typeIndexer: return Color(hex: "#93c47d")
+        case .typeIndexerRun: return Color(hex: "#93c47d")
+        case .typeLabel: return Color(hex: "#93c47d")
+        case .typeLocation: return Color(hex: "#93c47d")
+        case .typeAddress: return Color(hex: "#93c47d")
+        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeMedicalCondition: return Color(hex: "#93c47d")
+        case .typeNavigationItem: return Color(hex: "#93c47d")
+        case .typeOnlineProfile: return Color(hex: "#93c47d")
+        case .typePerson: return Color(hex: "#93c47d")
+        case .typePhoneNumber: return Color(hex: "#93c47d")
+        case .typePublicKey: return Color(hex: "#93c47d")
+        case .typeSession: return Color(hex: "#93c47d")
+        case .typeSessionView: return Color(hex: "#93c47d")
+        case .typeSessions: return Color(hex: "#93c47d")
+        case .typeSetting: return Color(hex: "#93c47d")
+        case .typeSyncState: return Color(hex: "#93c47d")
+        case .typeViewArguments: return Color(hex: "#93c47d")
+        case .typeDatasource: return Color(hex: "#93c47d")
+        case .typeUserState: return Color(hex: "#93c47d")
+        case .typeWebsite: return Color(hex: "#93c47d")
+        }
+    }
 
-	var foregroundColor: Color {
-		switch self {
-		case .typeAuditItem: return Color(hex: "#fff")
-		case .typeCVUStoredDefinition: return Color(hex: "#fff")
-		case .typeCompany: return Color(hex: "#fff")
-		case .typeCreativeWork: return Color(hex: "#fff")
-		case .typeDigitalDocument: return Color(hex: "#fff")
-		case .typeComment: return Color(hex: "#fff")
-		case .typeNote: return Color(hex: "#fff")
-		case .typeMediaObject: return Color(hex: "#fff")
-		case .typeAudio: return Color(hex: "#fff")
-		case .typePhoto: return Color(hex: "#fff")
-		case .typeVideo: return Color(hex: "#fff")
-		case .typeDiet: return Color(hex: "#fff")
-		case .typeDownloader: return Color(hex: "#fff")
-		case .typeEdge: return Color(hex: "#fff")
-		case .typeFile: return Color(hex: "#fff")
-		case .typeImporter: return Color(hex: "#fff")
-		case .typeImporterRun: return Color(hex: "#fff")
-		case .typeIndexer: return Color(hex: "#fff")
-		case .typeIndexerRun: return Color(hex: "#fff")
-		case .typeLabel: return Color(hex: "#fff")
-		case .typeLocation: return Color(hex: "#fff")
-		case .typeAddress: return Color(hex: "#fff")
-		case .typeCountry: return Color(hex: "#fff")
-		case .typeMedicalCondition: return Color(hex: "#fff")
-		case .typeNavigationItem: return Color(hex: "#fff")
-		case .typeOnlineProfile: return Color(hex: "#fff")
-		case .typePerson: return Color(hex: "#fff")
-		case .typePhoneNumber: return Color(hex: "#fff")
-		case .typePublicKey: return Color(hex: "#fff")
-		case .typeSession: return Color(hex: "#fff")
-		case .typeSessionView: return Color(hex: "#fff")
-		case .typeSessions: return Color(hex: "#fff")
-		case .typeSetting: return Color(hex: "#fff")
-		case .typeSyncState: return Color(hex: "#fff")
-		case .typeViewArguments: return Color(hex: "#fff")
-		case .typeDatasource: return Color(hex: "#93c47d")
-		case .typeUserState: return Color(hex: "#93c47d")
-		case .typeWebsite: return Color(hex: "#fff")
-		}
-	}
+    var foregroundColor: Color {
+        switch self {
+        case .typeAuditItem: return Color(hex: "#fff")
+        case .typeCVUStoredDefinition: return Color(hex: "#fff")
+        case .typeCompany: return Color(hex: "#fff")
+        case .typeCreativeWork: return Color(hex: "#fff")
+        case .typeDigitalDocument: return Color(hex: "#fff")
+        case .typeComment: return Color(hex: "#fff")
+        case .typeNote: return Color(hex: "#fff")
+        case .typeMediaObject: return Color(hex: "#fff")
+        case .typeAudio: return Color(hex: "#fff")
+        case .typePhoto: return Color(hex: "#fff")
+        case .typeVideo: return Color(hex: "#fff")
+        case .typeDiet: return Color(hex: "#fff")
+        case .typeDownloader: return Color(hex: "#fff")
+        case .typeEdge: return Color(hex: "#fff")
+        case .typeFile: return Color(hex: "#fff")
+        case .typeImporter: return Color(hex: "#fff")
+        case .typeImporterRun: return Color(hex: "#fff")
+        case .typeIndexer: return Color(hex: "#fff")
+        case .typeIndexerRun: return Color(hex: "#fff")
+        case .typeLabel: return Color(hex: "#fff")
+        case .typeLocation: return Color(hex: "#fff")
+        case .typeAddress: return Color(hex: "#fff")
+        case .typeCountry: return Color(hex: "#fff")
+        case .typeMedicalCondition: return Color(hex: "#fff")
+        case .typeNavigationItem: return Color(hex: "#fff")
+        case .typeOnlineProfile: return Color(hex: "#fff")
+        case .typePerson: return Color(hex: "#fff")
+        case .typePhoneNumber: return Color(hex: "#fff")
+        case .typePublicKey: return Color(hex: "#fff")
+        case .typeSession: return Color(hex: "#fff")
+        case .typeSessionView: return Color(hex: "#fff")
+        case .typeSessions: return Color(hex: "#fff")
+        case .typeSetting: return Color(hex: "#fff")
+        case .typeSyncState: return Color(hex: "#fff")
+        case .typeViewArguments: return Color(hex: "#fff")
+        case .typeDatasource: return Color(hex: "#93c47d")
+        case .typeUserState: return Color(hex: "#93c47d")
+        case .typeWebsite: return Color(hex: "#fff")
+        }
+    }
 
-	func getPrimaryKey() -> String {
-		getType().primaryKey() ?? ""
-	}
+    func getPrimaryKey() -> String {
+        getType().primaryKey() ?? ""
+    }
 
-	func getType() -> AnyObject.Type {
-		switch self {
-		case .typeAuditItem: return AuditItem.self
-		case .typeCVUStoredDefinition: return CVUStoredDefinition.self
-		case .typeCompany: return Company.self
-		case .typeCreativeWork: return CreativeWork.self
-		case .typeDigitalDocument: return DigitalDocument.self
-		case .typeComment: return Comment.self
-		case .typeNote: return Note.self
-		case .typeMediaObject: return MediaObject.self
-		case .typeAudio: return Audio.self
-		case .typePhoto: return Photo.self
-		case .typeVideo: return Video.self
-		case .typeDiet: return Diet.self
-		case .typeDownloader: return Downloader.self
-		case .typeEdge: return Edge.self
-		case .typeFile: return File.self
-		case .typeImporter: return Importer.self
-		case .typeImporterRun: return ImporterRun.self
-		case .typeIndexer: return Indexer.self
-		case .typeIndexerRun: return IndexerRun.self
-		case .typeLabel: return Label.self
-		case .typeLocation: return Location.self
-		case .typeAddress: return Address.self
-		case .typeCountry: return Country.self
-		case .typeMedicalCondition: return MedicalCondition.self
-		case .typeNavigationItem: return NavigationItem.self
-		case .typeOnlineProfile: return OnlineProfile.self
-		case .typePerson: return Person.self
-		case .typePhoneNumber: return PhoneNumber.self
-		case .typePublicKey: return PublicKey.self
-		case .typeSession: return Session.self
-		case .typeSessionView: return SessionView.self
-		case .typeSessions: return Sessions.self
-		case .typeSetting: return Setting.self
-		case .typeSyncState: return SyncState.self
-		case .typeViewArguments: return ViewArguments.self
-		case .typeDatasource: return Datasource.self
-		case .typeUserState: return UserState.self
-		case .typeWebsite: return Website.self
-		}
-	}
+    func getType() -> AnyObject.Type {
+        switch self {
+        case .typeAuditItem: return AuditItem.self
+        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
+        case .typeCompany: return Company.self
+        case .typeCreativeWork: return CreativeWork.self
+        case .typeDigitalDocument: return DigitalDocument.self
+        case .typeComment: return Comment.self
+        case .typeNote: return Note.self
+        case .typeMediaObject: return MediaObject.self
+        case .typeAudio: return Audio.self
+        case .typePhoto: return Photo.self
+        case .typeVideo: return Video.self
+        case .typeDiet: return Diet.self
+        case .typeDownloader: return Downloader.self
+        case .typeEdge: return Edge.self
+        case .typeFile: return File.self
+        case .typeImporter: return Importer.self
+        case .typeImporterRun: return ImporterRun.self
+        case .typeIndexer: return Indexer.self
+        case .typeIndexerRun: return IndexerRun.self
+        case .typeLabel: return Label.self
+        case .typeLocation: return Location.self
+        case .typeAddress: return Address.self
+        case .typeCountry: return Country.self
+        case .typeMedicalCondition: return MedicalCondition.self
+        case .typeNavigationItem: return NavigationItem.self
+        case .typeOnlineProfile: return OnlineProfile.self
+        case .typePerson: return Person.self
+        case .typePhoneNumber: return PhoneNumber.self
+        case .typePublicKey: return PublicKey.self
+        case .typeSession: return Session.self
+        case .typeSessionView: return SessionView.self
+        case .typeSessions: return Sessions.self
+        case .typeSetting: return Setting.self
+        case .typeSyncState: return SyncState.self
+        case .typeViewArguments: return ViewArguments.self
+        case .typeDatasource: return Datasource.self
+        case .typeUserState: return UserState.self
+        case .typeWebsite: return Website.self
+        }
+    }
 }
+
 
 /// Item is the baseclass for all of the data classes.
 public class SchemaItem: Object, Codable, Identifiable {
-	/// The unique identifier of the Item
-	let uid = RealmOptional<Int>()
-	/// Object describing syncing information about this object like loading state, versioning,
-	/// etc.
-	@objc dynamic var syncState: SyncState? = SyncState()
-	/// The last version loaded from the server.
-	@objc dynamic var version: Int = 0
-	/// Boolean whether the Item has been deleted.
-	@objc dynamic var deleted: Bool = false
-	/// Last access date of the Item.
-	@objc dynamic var dateAccessed: Date?
-	/// Creation date of the Item.
-	@objc dynamic var dateCreated: Date?
-	/// Last modification date of the Item.
-	@objc dynamic var dateModified: Date?
-	/// The identifier of an external source.
 	/// A collection of all edges this Item is connected to.
 	let allEdges = List<Edge>()
+	/// Last access date of the Item.
+	@objc dynamic var dateAccessed: Date? = nil
+	/// Creation date of the Item.
+	@objc dynamic var dateCreated: Date? = nil
+	/// Last modification date of the Item.
+	@objc dynamic var dateModified: Date? = nil
+	/// Boolean whether the Item has been deleted.
+	@objc dynamic var deleted: Bool = false
+	/// The identifier of an external source.
 	@objc dynamic var externalID: String? = nil
 	/// A description of the item.
 	@objc dynamic var itemDescription: String? = nil
 	/// Boolean whether the Item has been starred.
 	@objc dynamic var starred: Bool = false
+	/// Object describing syncing information about this object like loading state, versioning,
+	/// etc.
+	@objc dynamic var syncState: SyncState? = SyncState()
+	/// The last version loaded from the server.
+	@objc dynamic var version: Int = 0
+	/// The unique identifier of the Item set by the pod.
+	let uid = RealmOptional<Int>()
 
 	public func superDecode(from decoder: Decoder) throws {
 		decodeEdges(decoder, "allEdges", self as! Item)
@@ -241,8 +242,8 @@ public class SchemaItem: Object, Codable, Identifiable {
 public class AuditItem: Item {
 	/// Date of death.
 	@objc dynamic var date: Date?
-	/// The actual text content of a creativeWork.
-	@objc dynamic var contents: String?
+	/// TBD
+	@objc dynamic var content: String?
 	/// TBD
 	@objc dynamic var action: String?
 
@@ -256,7 +257,7 @@ public class AuditItem: Item {
 
 		jsonErrorHandling(decoder) {
 			date = try decoder.decodeIfPresent("date") ?? date
-			contents = try decoder.decodeIfPresent("contents") ?? contents
+			content = try decoder.decodeIfPresent("content") ?? content
 			action = try decoder.decodeIfPresent("action") ?? action
 
 			try self.superDecode(from: decoder)
@@ -323,7 +324,7 @@ public class CreativeWork: Item {
 	@objc dynamic var datePublished: Date?
 	/// Keywords or tags used to describe this content. Multiple entries in a keywords list are
 	/// typically delimited by commas.
-	@objc dynamic var keywords: String?
+	@objc dynamic var keyword: String?
 	/// A license document that applies to this content, typically indicated by URL.
 	@objc dynamic var license: String?
 	/// A text that belongs to this item.
@@ -373,7 +374,7 @@ public class CreativeWork: Item {
 		jsonErrorHandling(decoder) {
 			abstract = try decoder.decodeIfPresent("abstract") ?? abstract
 			datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-			keywords = try decoder.decodeIfPresent("keywords") ?? keywords
+			keyword = try decoder.decodeIfPresent("keyword") ?? keyword
 			license = try decoder.decodeIfPresent("license") ?? license
 			text = try decoder.decodeIfPresent("text") ?? text
 
@@ -395,10 +396,18 @@ public class DigitalDocument: Item {
 
 /// A comment.
 public class Comment: Item {
+	/// TBD
+	@objc dynamic var content: String?
+	/// TBD
+	@objc dynamic var textContent: String?
+
 	public required convenience init(from decoder: Decoder) throws {
 		self.init()
 
 		jsonErrorHandling(decoder) {
+			content = try decoder.decodeIfPresent("content") ?? content
+			textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+
 			try self.superDecode(from: decoder)
 		}
 	}
@@ -413,9 +422,9 @@ public class Note: Item {
 	/// TBD
 	@objc dynamic var textContent: String?
 
-	/// A comment on an item - for example, a comment on a blog post.
-	var comments: Results<Comment>? {
-		edges("comments")?.items(type: Comment.self)
+	/// TBD
+	var comment: Results<Comment>? {
+		edges("comment")?.items(type: Comment.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -619,12 +628,46 @@ public class Video: Item {
 	}
 }
 
+/// A business corporation.
+public class Device: Item {
+	/// TBD
+	@objc dynamic var deviceID: String?
+	/// TBD
+	@objc dynamic var make: String?
+	/// TBD
+	@objc dynamic var manufacturer: String?
+	/// TBD
+	@objc dynamic var model: String?
+	/// The name of the item.
+	@objc dynamic var name: String?
+	/// TBD
+	@objc dynamic var dateAquired: Date?
+	/// TBD
+	@objc dynamic var dateLost: Date?
+
+	public required convenience init(from decoder: Decoder) throws {
+		self.init()
+
+		jsonErrorHandling(decoder) {
+			deviceID = try decoder.decodeIfPresent("deviceID") ?? deviceID
+			make = try decoder.decodeIfPresent("make") ?? make
+			manufacturer = try decoder.decodeIfPresent("manufacturer") ?? manufacturer
+			model = try decoder.decodeIfPresent("model") ?? model
+			name = try decoder.decodeIfPresent("name") ?? name
+			dateAquired = try decoder.decodeIfPresent("dateAquired") ?? dateAquired
+			dateLost = try decoder.decodeIfPresent("dateLost") ?? dateLost
+
+			try self.superDecode(from: decoder)
+		}
+	}
+}
+
 /// TBD
 public class Diet: Item {
 	/// TBD
 	@objc dynamic var type: String?
 	/// TBD
-	@objc dynamic var additions: String?
+	@objc dynamic var addition: String?
 	/// The name of the item.
 	@objc dynamic var name: String?
 
@@ -633,7 +676,7 @@ public class Diet: Item {
 
 		jsonErrorHandling(decoder) {
 			type = try decoder.decodeIfPresent("type") ?? type
-			additions = try decoder.decodeIfPresent("additions") ?? additions
+			addition = try decoder.decodeIfPresent("addition") ?? addition
 			name = try decoder.decodeIfPresent("name") ?? name
 
 			try self.superDecode(from: decoder)
@@ -652,66 +695,48 @@ public class Downloader: Item {
 	}
 }
 
-/// TBD
+// TBD
 public class Edge: Object, Codable {
-	/// TBD
-	@objc dynamic var type: String? = nil
-	/// TBD
-	@objc dynamic var targetItemType: String? = nil
-	/// TBD
-	@objc dynamic var sourceItemType: String? = nil
-	/// TBD
-	@objc dynamic var label: String? = nil
-	/// Object describing syncing information about this object like loading state, versioning,
-	/// etc.
-	@objc dynamic var syncState: SyncState? = SyncState()
-	/// Boolean whether the Item has been deleted.
-	@objc dynamic var deleted: Bool = false
-	/// The last version loaded from the server.
-	@objc dynamic var version: Int = 0
-	/// TBD
-	let targetItemID = RealmOptional<Int>()
-	/// TBD
-	let sourceItemID = RealmOptional<Int>()
-	/// TBD
-	let sequence = RealmOptional<Int>()
+    /// TBD
+    @objc dynamic var type: String? = nil
+    /// TBD
+    @objc dynamic var targetItemType: String? = nil
+    /// TBD
+    @objc dynamic var sourceItemType: String? = nil
+    /// TBD
+    @objc dynamic var label: String? = nil
+    /// Object describing syncing information about this object like loading state, versioning,
+    /// etc.
+    @objc dynamic var syncState: SyncState? = SyncState()
+    /// Boolean whether the Item has been deleted.
+    @objc dynamic var deleted: Bool = false
+    /// The last version loaded from the server.
+    @objc dynamic var version: Int = 0
+    /// TBD
+    let targetItemID = RealmOptional<Int>()
+    /// TBD
+    let sourceItemID = RealmOptional<Int>()
+    /// TBD
+    let sequence = RealmOptional<Int>()
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			label = try decoder.decodeIfPresent("label") ?? label
-			syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-			deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-			version = try decoder.decodeIfPresent("version") ?? version
-			targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
-			targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
-			sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            label = try decoder.decodeIfPresent("label") ?? label
+            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            version = try decoder.decodeIfPresent("version") ?? version
+            targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
+            targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
+            sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
-			if let info: [String: AnyCodable] = try decoder.decodeIfPresent("target") {
-				guard let itemType = info["_type"]?.value as? String else {
-					throw "Invalid JSON, no _type specified for target: \(info)"
-				}
-
-				if let type = ItemFamily(rawValue: itemType)?.getType() as? Object.Type {
-					var values = [String: Any]()
-					for (key, value) in info { values[key] = value.value }
-
-					let item = try Cache.createItem(type, values: values)
-					if let uid = item["uid"] as? Int {
-						targetItemType = itemType
-						targetItemID.value = uid
-					} else {
-						throw "Unable to create target item in edge"
-					}
-				} else {
-					// TODO: error handling
-				}
-			}
-		}
-	}
+            try parseTargetDict(try decoder.decodeIfPresent("target"))
+        }
+    }
 }
+
 
 /// TBD
 public class File: Item {
@@ -746,8 +771,8 @@ public class Importer: Item {
 	@objc dynamic var bundleImage: String?
 
 	/// TBD
-	var importerRuns: Results<ImporterRun>? {
-		edges("importerRuns")?.items(type: ImporterRun.self)
+	var importerRun: Results<ImporterRun>? {
+		edges("importerRun")?.items(type: ImporterRun.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -803,8 +828,8 @@ public class Indexer: Item {
 	@objc dynamic var runDestination: String?
 
 	/// TBD
-	var indexerRuns: Results<IndexerRun>? {
-		edges("indexerRuns")?.items(type: IndexerRun.self)
+	var indexerRun: Results<IndexerRun>? {
+		edges("indexerRun")?.items(type: IndexerRun.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -851,12 +876,15 @@ public class IndexerRun: Item {
 
 /// TBD
 public class Label: Item {
-	/// TBD
-	@objc dynamic var comment: String?
 	/// The color of this thing.
 	@objc dynamic var color: String?
 	/// The name of the item.
 	@objc dynamic var name: String?
+
+	/// TBD
+	var comment: Results<Comment>? {
+		edges("comment")?.items(type: Comment.self)
+	}
 
 	/// TBD
 	var appliesTo: [Item]? {
@@ -867,7 +895,6 @@ public class Label: Item {
 		self.init()
 
 		jsonErrorHandling(decoder) {
-			comment = try decoder.decodeIfPresent("comment") ?? comment
 			color = try decoder.decodeIfPresent("color") ?? color
 			name = try decoder.decodeIfPresent("name") ?? name
 
@@ -985,7 +1012,7 @@ public class NavigationItem: Item {
 	/// TBD
 	@objc dynamic var title: String?
 	/// TBD
-	@objc dynamic var view: String?
+	@objc dynamic var sessionName: String?
 	/// TBD
 	@objc dynamic var type: String?
 	/// TBD
@@ -996,7 +1023,7 @@ public class NavigationItem: Item {
 
 		jsonErrorHandling(decoder) {
 			title = try decoder.decodeIfPresent("title") ?? title
-			view = try decoder.decodeIfPresent("view") ?? view
+			sessionName = try decoder.decodeIfPresent("sessionName") ?? sessionName
 			type = try decoder.decodeIfPresent("type") ?? type
 			sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
@@ -1048,12 +1075,10 @@ public class SchemaPerson: Item {
 	let shoulderWidth = RealmOptional<Double>()
 	/// TBD
 	let armLength = RealmOptional<Double>()
-//	/// TBD
-//	let age = RealmOptional<Double>()
 
 	/// Physical address of the event or place.
-	var addresses: Results<Address>? {
-		edges("addresses")?.items(type: Address.self)
+	var address: Results<Address>? {
+		edges("address")?.items(type: Address.self)
 	}
 
 	/// The place where the person was born.
@@ -1072,43 +1097,43 @@ public class SchemaPerson: Item {
 	}
 
 	/// A relation between two persons.
-	var relationships: Results<Person>? {
-		edges("relationships")?.items(type: Person.self)
+	var relationship: Results<Person>? {
+		edges("relationship")?.items(type: Person.self)
+	}
+
+	/// A phone number.
+	var phoneNumber: Results<PhoneNumber>? {
+		edges("phoneNumber")?.items(type: PhoneNumber.self)
 	}
 
 	/// TBD
-	var phoneNumbers: Results<PhoneNumber>? {
-		edges("phoneNumbers")?.items(type: PhoneNumber.self)
+	var website: Results<Website>? {
+		edges("website")?.items(type: Website.self)
 	}
 
 	/// TBD
-	var websites: Results<Website>? {
-		edges("websites")?.items(type: Website.self)
+	var company: Results<Company>? {
+		edges("company")?.items(type: Company.self)
 	}
 
 	/// TBD
-	var companies: Results<Company>? {
-		edges("companies")?.items(type: Company.self)
+	var publicKey: Results<PublicKey>? {
+		edges("publicKey")?.items(type: PublicKey.self)
 	}
 
 	/// TBD
-	var publicKeys: Results<PublicKey>? {
-		edges("publicKeys")?.items(type: PublicKey.self)
+	var onlineProfile: Results<OnlineProfile>? {
+		edges("onlineProfile")?.items(type: OnlineProfile.self)
 	}
 
 	/// TBD
-	var onlineProfiles: Results<OnlineProfile>? {
-		edges("onlineProfiles")?.items(type: OnlineProfile.self)
+	var diet: Results<Diet>? {
+		edges("diet")?.items(type: Diet.self)
 	}
 
 	/// TBD
-	var diets: Results<Diet>? {
-		edges("diets")?.items(type: Diet.self)
-	}
-
-	/// TBD
-	var medicalConditions: Results<MedicalCondition>? {
-		edges("medicalConditions")?.items(type: MedicalCondition.self)
+	var medicalCondition: Results<MedicalCondition>? {
+		edges("medicalCondition")?.items(type: MedicalCondition.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -1125,7 +1150,6 @@ public class SchemaPerson: Item {
 			height.value = try decoder.decodeIfPresent("height") ?? height.value
 			shoulderWidth.value = try decoder.decodeIfPresent("shoulderWidth") ?? shoulderWidth.value
 			armLength.value = try decoder.decodeIfPresent("armLength") ?? armLength.value
-//			age.value = try decoder.decodeIfPresent("age") ?? age.value
 
 			try self.superDecode(from: decoder)
 		}
@@ -1134,8 +1158,8 @@ public class SchemaPerson: Item {
 
 /// TBD
 public class PhoneNumber: Item {
-	/// A phone number.
-	@objc dynamic var phoneNumber: String?
+	/// A phone number with an area code.
+	@objc dynamic var phoneNumberWithAreaCode: String?
 	/// TBD
 	@objc dynamic var type: String?
 
@@ -1143,7 +1167,7 @@ public class PhoneNumber: Item {
 		self.init()
 
 		jsonErrorHandling(decoder) {
-			phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
+			phoneNumberWithAreaCode = try decoder.decodeIfPresent("phoneNumberWithAreaCode") ?? phoneNumberWithAreaCode
 			type = try decoder.decodeIfPresent("type") ?? type
 
 			try self.superDecode(from: decoder)
@@ -1193,7 +1217,7 @@ public class SchemaSession: Item {
 
 	/// TBD
 	var views: Results<SessionView>? {
-		edges("views")?.sorted(byKeyPath: "sequence").items(type: SessionView.self)
+		edges("view")?.sorted(byKeyPath: "sequence").items(type: SessionView.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -1259,7 +1283,7 @@ public class SchemaSessions: Item {
 
 	/// TBD
 	var sessions: Results<Session>? {
-		edges("sessions")?.sorted(byKeyPath: "sequence").items(type: Session.self)
+		edges("session")?.sorted(byKeyPath: "sequence").items(type: Session.self)
 	}
 
 	public required convenience init(from decoder: Decoder) throws {
@@ -1347,6 +1371,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
 	else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
 	else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
 	else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
+	else if let list = object as? Results<Device> { list.forEach { collection.append($0) } }
 	else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
 	else if let list = object as? Results<Downloader> { list.forEach { collection.append($0) } }
 	else if let list = object as? Results<Edge> { return list.itemsArray() }

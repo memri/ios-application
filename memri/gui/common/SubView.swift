@@ -49,7 +49,7 @@ public struct SubView: View {
 			)
 
 			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "views")
+			_ = try session.link(view, type: "view")
 
 			proxyMain = try context.createSubContext(session)
 			do { try proxyMain?.updateCascadingView() }
@@ -80,7 +80,7 @@ public struct SubView: View {
 			view.set("viewArguments", args)
 
 			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "views")
+			_ = try session.link(view, type: "view")
 
 			proxyMain = try context.createSubContext(session)
 			try proxyMain?.updateCascadingView()

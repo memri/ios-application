@@ -792,6 +792,29 @@ extension memri.Edge {
 
 		return nil
 	}
+    
+    func parseTargetDict(_ dict:[String:AnyCodable]?) throws {
+        guard let dict = dict else { return }
+        
+        guard let itemType = dict["_type"]?.value as? String else {
+            throw "Invalid JSON, no _type specified for target: \(dict)"
+        }
+
+        guard let type = ItemFamily(rawValue: itemType)?.getType() as? Object.Type else {
+            throw "Invalid target item type specificed: \(itemType)"
+        }
+        
+        var values = [String: Any]()
+        for (key, value) in dict { values[key] = value.value }
+
+        let item = try Cache.createItem(type, values: values)
+        if let uid = item["uid"] as? Int {
+            targetItemType = itemType
+            targetItemID.value = uid
+        } else {
+            throw "Unable to create target item in edge"
+        }
+    }
 
 	convenience init(type: String = "edge", source: (String, Int), target: (String, Int),
 					 sequence: Int? = nil, label: String? = nil, action: String? = nil) {

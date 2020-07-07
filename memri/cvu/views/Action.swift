@@ -971,7 +971,7 @@ class ActionOpenSessionByName: Action, ActionExec {
 					parsed: parsed,
 					viewArguments: viewArguments
 				)
-				_ = try session.link(view, type: "views")
+				_ = try session.link(view, type: "view")
 			}
 
 			// Open the view

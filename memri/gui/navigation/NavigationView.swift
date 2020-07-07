@@ -234,9 +234,9 @@ struct NavigationItemView: View {
 
 	var body: some View {
 		Button(action: {
-			if let viewName = self.item.view {
+			if let sessionName = self.item.sessionName {
 				// TODO:
-				do { try ActionOpenSessionByName.exec(self.context, ["name": viewName]) }
+				do { try ActionOpenSessionByName.exec(self.context, ["name": sessionName]) }
 				catch {}
 
 				self.hide()

@@ -3,5 +3,5 @@ import PlaygroundSupport
 import SwiftUI
 import UIKit
 
-let x:Int? = nil
+let x: Int? = nil
 print(String(x))

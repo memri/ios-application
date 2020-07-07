@@ -176,9 +176,22 @@ Person {
              profilePicture: profilePicture
              names: firstName lastName
              picturesOfPerson: picturesOfPerson
+             phoneNumbers: hasPhoneNumber
+             labels: label
+             names: name
+             relationships: relationship
+             addresses: address
+             websites: website
+             companies: company
+             diets: diet
+             medicalConditions: medicalCondition
+             publicKeys: publicKey
+             onlineProfiles: onlineProfile
          }
         
-         sequence: profilePicture labels names picturesOfPerson phoneNumbers relations addresses websites companies diets medicalConditions publicKeys onlineProfiles other dates
+         sequence: [profilePicture labels names picturesOfPerson phoneNumbers relationships
+                    addresses websites companies diets medicalConditions publicKeys
+                    onlineProfiles other dates]
         
         /*excluded: profilePicture labels names picturesOfPerson phoneNumbers*/
         

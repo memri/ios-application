@@ -86,7 +86,7 @@ class Sync {
 			] as? [String: String])
 
 			audititem.uid.value = try Cache.incrementUID()
-			audititem.contents = String(data: data, encoding: .utf8) ?? ""
+			audititem.content = String(data: data, encoding: .utf8) ?? ""
 			audititem.action = "query"
 			audititem.date = Date()
 
