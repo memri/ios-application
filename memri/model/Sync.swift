@@ -239,14 +239,16 @@ class Sync {
 		}
 
 		func markAsDone(_ list: [String: Any]) {
-			for (_, sublist) in list {
-				for item in sublist as? [Any] ?? [] {
-					if let item = item as? SchemaItem {
-						item.syncState?.actionNeeded = ""
-						item.syncState?.updatedFields.removeAll()
-					} else if let item = item as? Edge {
-						item.syncState?.actionNeeded = ""
-						item.syncState?.updatedFields.removeAll()
+			realmWriteIfAvailable(realm) {
+				for (_, sublist) in list {
+					for item in sublist as? [Any] ?? [] {
+						if let item = item as? SchemaItem {
+							item.syncState?.actionNeeded = ""
+							item.syncState?.updatedFields.removeAll()
+						} else if let item = item as? Edge {
+							item.syncState?.actionNeeded = ""
+							item.syncState?.updatedFields.removeAll()
+						}
 					}
 				}
 			}
