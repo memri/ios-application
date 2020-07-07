@@ -1,11 +1,17 @@
 [renderer = generalEditor] {
-    sequence: labels starred other dates
-    excluded: version deleted syncState uid externalID allEdges
-    readOnly: uid
-    
-    groups {
-        dates: dateCreated dateModified dateAccessed changelog
-    }
+    layout: [
+        { section: labels, edges: label }
+        {
+            section: other
+            fields: *
+            exclude: version deleted syncState uid externalID allEdges
+        }
+        {
+            section: dates
+            fields: dateCreated dateModified dateAccessed changelog
+            readOnly: true
+        }
+    ]
     
     starred {
         Action {
