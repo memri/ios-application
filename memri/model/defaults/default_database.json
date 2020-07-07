@@ -559,7 +559,6 @@
         "street": "1600 Pennsylvania Ave",
         "postalCode": "20500",
         "allEdges": [
-            {"type":"location", "target": {"_type": "Location", "latitude": -37.81, "longitude": 144.96 }},
             {"type":"labels", "itemType": "Label", "uid": 1017},
             {"type":"country", "itemType": "Country", "uid": 1401}
         ]
@@ -570,7 +569,6 @@
         "street": "45 Rue de la plage",
         "postalCode": "EL29",
         "allEdges": [
-            {"type":"location", "target": {"_type": "Location", "latitude": -37.83, "longitude": 144.96 }},
             {"type":"country", "itemType": "Country", "uid": 1402}
         ]
     },

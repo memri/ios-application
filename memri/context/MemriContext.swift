@@ -421,8 +421,6 @@ public class RootContext: MemriContext {
 			"showSessionSwitcher": Alias(key: "device/gui/showSessionSwitcher", type: "bool", on: takeScreenShot),
 			"showNavigation": Alias(key: "device/gui/showNavigation", type: "bool", on: takeScreenShot),
 		]
-		#warning("Does showing navigation/session switcher really belong in settings?")
-		#warning("@Toby I am treating settings as a key/value store for state. Just like the windows registry.")
 
 		cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
 		navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }

@@ -300,4 +300,28 @@ public class MemriTextField_UIKit: UITextField {
 			inputAccessoryView = toolbarHost?.view
 		}
 	}
+
+	var showBottomBorder: Bool = false {
+		didSet {
+			if showBottomBorder {
+				if bottomBorderLayer == nil {
+					let borderLayer = CALayer()
+					layer.addSublayer(borderLayer)
+					bottomBorderLayer = borderLayer
+				}
+				bottomBorderLayer?.backgroundColor = UIColor.separator.cgColor
+				bottomBorderLayer?.opacity = 0.5
+			} else {
+				bottomBorderLayer?.removeFromSuperlayer()
+				bottomBorderLayer = nil
+			}
+		}
+	}
+
+	var bottomBorderLayer: CALayer?
+
+	override public func layoutSubviews() {
+		super.layoutSubviews()
+		bottomBorderLayer?.frame = CGRect(x: 0, y: frame.height - 1, width: frame.width, height: 1)
+	}
 }

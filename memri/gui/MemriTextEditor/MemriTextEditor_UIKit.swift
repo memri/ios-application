@@ -44,8 +44,12 @@ public class MemriTextEditorWrapper_UIKit: UIView {
 
 public class MemriTextEditor_UIKit: UITextView {
 	var preferredHeightBinding: Binding<CGFloat>?
-	var defaultFontSize: CGFloat = 17
+	var titleBinding: Binding<String?>?
+	var titlePlaceholder: String?
+	var fontSize: CGFloat
+	var headingFontSize: CGFloat
 	var onTextChanged: ((NSAttributedString) -> Void)?
+
 	var isEditingBinding: Binding<Bool>? {
 		didSet {
 			if let bindingIsEditing = isEditingBinding?.wrappedValue, bindingIsEditing != isEditing {
@@ -60,21 +64,23 @@ public class MemriTextEditor_UIKit: UITextView {
 
 	private var isEditing: Bool = false
 
-	public init(initialContentHTML: String?) {
+	public init(initialContentHTML: String?,
+				titleBinding: Binding<String?>?,
+				titlePlaceholder: String?,
+				fontSize: CGFloat = 18,
+				headingFontSize: CGFloat = 26) {
+		self.titleBinding = titleBinding
+		self.titlePlaceholder = titlePlaceholder
+		self.fontSize = fontSize
+		self.headingFontSize = headingFontSize
+
 		super.init(frame: .zero, textContainer: nil)
 		DispatchQueue.main.async {
 			if let html = initialContentHTML, let attributedStringFromHTML = NSAttributedString.fromHTML(html) {
-				self.attributedText = attributedStringFromHTML
+				self.attributedText = attributedStringFromHTML.withFontSize(self.fontSize)
 			}
 		}
-		configure()
-	}
 
-	required init?(coder _: NSCoder) {
-		fatalError("init(coder:) has not been implemented")
-	}
-
-	func configure() {
 		// Allow editing attributes
 		allowsEditingTextAttributes = true
 
@@ -86,7 +92,7 @@ public class MemriTextEditor_UIKit: UITextView {
 		updateToolbar()
 
 		// Set up default sizing
-		let defaultFont = UIFont.systemFont(ofSize: defaultFontSize)
+		let defaultFont = UIFont.systemFont(ofSize: fontSize)
 		font = defaultFont
 		typingAttributes = [
 			.font: defaultFont,
@@ -94,6 +100,66 @@ public class MemriTextEditor_UIKit: UITextView {
 
 		delegate = self
 		layoutManager.delegate = self
+
+		updateHeader()
+	}
+
+	required init?(coder _: NSCoder) {
+		fatalError("init(coder:) has not been implemented")
+	}
+
+	var header: MemriTextField_UIKit?
+	func updateHeader() {
+		if let titleBinding = titleBinding {
+			if header == nil {
+				let header = MemriTextField_UIKit()
+				header.delegate = self
+				header.addTarget(self, action: #selector(headerTextChanged(_:)), for: .editingChanged)
+				header.showBottomBorder = true
+				self.header = header
+
+				addSubview(header)
+				setNeedsLayout()
+			}
+			header?.font = UIFont.systemFont(ofSize: headingFontSize)
+			header?.placeholder = titlePlaceholder
+			header?.text = titleBinding.wrappedValue
+		} else {
+			header.map {
+				$0.removeFromSuperview()
+				setNeedsLayout()
+			}
+			header = nil
+		}
+	}
+
+	@objc
+	func headerTextChanged(_ textField: MemriTextField_UIKit) {
+		titleBinding?.wrappedValue = textField.text?.nilIfBlank
+	}
+
+	var headerSize: CGFloat { ceil(headingFontSize + 8) }
+	var toolbarInset: CGFloat {
+		#if targetEnvironment(macCatalyst)
+			return 50
+		#else
+			return 0
+		#endif
+	}
+
+	var preferredContentInset: UIEdgeInsets {
+		UIEdgeInsets(top: 10 + toolbarInset + ((header != nil) ? headerSize : 0),
+					 left: 10,
+					 bottom: 10,
+					 right: 10)
+	}
+
+	override public func layoutSubviews() {
+		if let header = header {
+			header.frame = CGRect(x: preferredContentInset.left, y: 5, width: bounds.width - preferredContentInset.left - preferredContentInset.right, height: headerSize)
+		}
+		textContainerInset = preferredContentInset
+		super.layoutSubviews()
 	}
 
 	let indentWidth: CGFloat = 20
@@ -137,15 +203,13 @@ public class MemriTextEditor_UIKit: UITextView {
 			#if targetEnvironment(macCatalyst)
 				if let superview = superview {
 					superview.addSubview(toolbarHost.view)
-					let macToolbarHeight: CGFloat = 50
 					toolbarHost.view.translatesAutoresizingMaskIntoConstraints = false
 					NSLayoutConstraint.activate([
 						toolbarHost.view.leadingAnchor.constraint(equalTo: superview.leadingAnchor, constant: 0),
 						toolbarHost.view.trailingAnchor.constraint(equalTo: superview.trailingAnchor, constant: 0),
-						toolbarHost.view.heightAnchor.constraint(equalToConstant: macToolbarHeight),
+						toolbarHost.view.heightAnchor.constraint(equalToConstant: toolbarInset),
 						toolbarHost.view.topAnchor.constraint(equalTo: superview.topAnchor),
 					])
-					contentInset.top = macToolbarHeight
 					self.toolbarHost = toolbarHost
 				}
 			#else
@@ -228,6 +292,13 @@ extension MemriTextEditor_UIKit: NSLayoutManagerDelegate {
 				heightBinding.wrappedValue = desiredHeight
 			}
 		}
+	}
+}
+
+extension MemriTextEditor_UIKit: UITextFieldDelegate {
+	public func textFieldShouldReturn(_: UITextField) -> Bool {
+		becomeFirstResponder()
+		return true
 	}
 }
 
@@ -480,13 +551,14 @@ extension MemriTextEditor_UIKit {
 
 	func helper_selectedText_toggleFontTrait(_ trait: UIFontDescriptor.SymbolicTraits) {
 		guard helper_hasSelection else { return }
-		textStorage.enumerateAttribute(.font, in: selectedRange, options: .longestEffectiveRangeNotRequired) { _, range, _ in
-			guard let currentFont = textStorage.attribute(.font, at: selectedRange.location, effectiveRange: nil) as? UIFont else { return }
+		textStorage.enumerateAttribute(.font, in: selectedRange, options: .longestEffectiveRangeNotRequired) { attribute, range, _ in
+			guard let currentFont = attribute as? UIFont else { return }
 			textStorage.beginEditing()
 			let newFont = currentFont.helper_toggleTrait(trait: trait)
 			textStorage.addAttribute(.font, value: newFont, range: range)
 			textStorage.endEditing()
 		}
+		textStorage.fixAttributes(in: selectedRange)
 	}
 
 	func helper_typingAttributes_getTrait<T>(_ trait: NSAttributedString.Key) -> T? {
@@ -561,7 +633,7 @@ extension MemriTextEditor_UIKit {
 			let currentLineRange = (textStorage.string as NSString).paragraphRange(for: NSRange(location: currentParaStart, length: 0))
 			guard let string = textStorage.attributedSubstring(from: currentLineRange).mutableCopy() as? NSMutableAttributedString else { continue }
 
-			var attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: defaultFontSize)]
+			var attributes: [NSAttributedString.Key: Any] = [.font: UIFont.systemFont(ofSize: fontSize)]
 
 			if !string.string.isEmpty {
 				attributes[.paragraphStyle] = string.attributes(at: 0, effectiveRange: nil)[.paragraphStyle] as? NSParagraphStyle
