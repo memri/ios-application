@@ -34,7 +34,7 @@ struct ThumbWaterfallRendererView: View {
 	//    }
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
@@ -87,10 +87,10 @@ struct ThumbWaterfallRendererView: View {
 
 	var body: some View {
 		VStack {
-			if context.cascadingView.resultSet.count == 0 {
+			if context.cascadingView?.resultSet.count == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView.emptyResultText)
+					Text(self.context.cascadingView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)
@@ -105,40 +105,14 @@ struct ThumbWaterfallRendererView: View {
 					.customDelegate(WaterfallScreenLayoutDelegate.init)
 					.alwaysBounceVertical()
 					.contentInsets(renderConfig.edgeInset)
-				//                    .navigationBarTitle("Waterfall Layout", displayMode: .inline)
-				//                    .navigationBarItems(
-				//                        trailing:
-				//                        HStack(spacing: 20)
-				//                        {
-				//                            if self.isEditing
-				//                            {
-				//                                Button(action: {
-				//                                    withAnimation {
-				//                                        self.selectedItems.forEach { sectionIndex, selected in
-				//                                            self.data[sectionIndex].remove(atOffsets: IndexSet(selected))
-				//                                        }
-				//                                    }
-				//                                })
-				//                                {
-				//                                    Image(systemName: "trash")
-				//                                }
-				//                            }
-//
-				//                            EditButton()
-				//                    })
-				//                    .initialScrollPosition(startingAtBottom ? .bottom : nil)
 			}
 		}
-	}
-
-	func onTap(action: Action, dataItem: Item) {
-		context.executeAction(action, with: dataItem)
 	}
 }
 
 struct ThumbWaterfallRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		ThumbnailRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }
 

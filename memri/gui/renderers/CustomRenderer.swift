@@ -30,7 +30,7 @@ struct CustomRendererView: View {
 	let name = "custom"
 
 	var renderConfig: CascadingCustomConfig? {
-		context.cascadingView.renderConfig as? CascadingCustomConfig
+		context.cascadingView?.renderConfig as? CascadingCustomConfig
 	}
 
 	var body: some View {
@@ -42,6 +42,6 @@ struct CustomRendererView: View {
 
 struct CustomRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		CustomRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		CustomRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

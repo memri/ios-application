@@ -26,16 +26,15 @@ struct FilterPanel: View {
 	private func allOtherFields() -> [String] {
 		var list: [String] = []
 
-		if let item = context.cascadingView.resultSet.items.first {
-			var excludeList = context.cascadingView.sortFields
-			excludeList.append(context.cascadingView.datasource.sortProperty ?? "")
-			excludeList.append("memriID")
-			excludeList.append("uid")
-			excludeList.append("deleted")
+		if let item = context.cascadingView?.resultSet.items.first {
+			var excludeList = context.cascadingView?.sortFields
+			excludeList?.append(context.cascadingView?.datasource.sortProperty ?? "")
+			excludeList?.append("uid")
+			excludeList?.append("deleted")
 
 			let properties = item.objectSchema.properties
 			for prop in properties {
-				if !excludeList.contains(prop.name), prop.type != .object, prop.type != .linkingObjects {
+				if !(excludeList?.contains(prop.name) ?? false), prop.type != .object, prop.type != .linkingObjects {
 					list.append(prop.name)
 				}
 			}
@@ -46,15 +45,15 @@ struct FilterPanel: View {
 
 	private func toggleAscending() {
 		realmWriteIfAvailable(context.realm) {
-			self.context.currentSession.currentView.datasource?.sortAscending.value
-				= !(self.context.cascadingView.datasource.sortAscending ?? true)
+			self.context.currentSession?.currentView?.datasource?.sortAscending.value
+				= !(self.context.cascadingView?.datasource.sortAscending ?? true)
 		}
 		context.scheduleCascadingViewUpdate()
 	}
 
 	private func changeOrderProperty(_ fieldName: String) {
 		realmWriteIfAvailable(context.realm) {
-			self.context.currentSession.currentView.datasource?.sortProperty = fieldName
+			self.context.currentSession?.currentView?.datasource?.sortProperty = fieldName
 		}
 		context.scheduleCascadingViewUpdate()
 	}
@@ -69,7 +68,7 @@ struct FilterPanel: View {
 	}
 
 	private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
-		if let currentCategory = context.cascadingView.activeRenderer.split(separator: ".").first {
+		if let currentCategory = context.cascadingView?.activeRenderer.split(separator: ".").first {
 			return context.renderers.all
 				.map { (arg0) -> (String, FilterPanelRendererButton) in
 					let (key, value) = arg0
@@ -84,7 +83,7 @@ struct FilterPanel: View {
 	}
 
 	private func isActive(_ renderer: FilterPanelRendererButton) -> Bool {
-		context.cascadingView.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
+		context.cascadingView?.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
 	}
 
 	var body: some View {
@@ -121,7 +120,7 @@ struct FilterPanel: View {
 						ASSection(id: 0, data: renderersAvailable(), dataID: \.0) { (item: (key: String, renderer: FilterPanelRendererButton), _) in
 							Button(action: { context.executeAction(item.renderer) }) {
 								Group {
-									if cascadingView.activeRenderer == item.renderer.rendererName {
+									if cascadingView?.activeRenderer == item.renderer.rendererName {
 										Text(LocalizedStringKey(item.renderer.getString("title")))
 											.foregroundColor(Color(hex: "#6aa84f"))
 											.fontWeight(.semibold)
@@ -147,7 +146,7 @@ struct FilterPanel: View {
 							.padding(.horizontal)
 							.padding(.vertical, 6)
                     }) {
-						cascadingView.datasource.sortProperty.map { currentSortProperty in
+						cascadingView?.datasource.sortProperty.map { currentSortProperty in
 							Button(action: { self.toggleAscending() }) {
 								HStack {
 									Text(currentSortProperty)
@@ -155,7 +154,7 @@ struct FilterPanel: View {
 										.font(.system(size: 16, weight: .semibold, design: .default))
 										.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
 									Spacer()
-									Image(systemName: cascadingView.datasource.sortAscending == false
+									Image(systemName: cascadingView?.datasource.sortAscending == false
 										? "arrow.down"
 										: "arrow.up")
 										.resizable()
@@ -165,8 +164,8 @@ struct FilterPanel: View {
 								}
 							}
 						}
-						cascadingView.sortFields.filter {
-							cascadingView.datasource.sortProperty != $0
+						cascadingView?.sortFields.filter {
+							cascadingView?.datasource.sortProperty != $0
 						}.map { fieldName in
 							Button(action: { self.changeOrderProperty(fieldName) }) {
 								Text(fieldName)
@@ -206,6 +205,6 @@ struct FilterPanel: View {
 
 struct FilterPanel_Previews: PreviewProvider {
 	static var previews: some View {
-		FilterPanel().environmentObject(RootContext(name: "", key: "").mockBoot())
+		FilterPanel().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

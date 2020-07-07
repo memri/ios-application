@@ -39,11 +39,11 @@ class datasourceTest: XCTestCase {
 
 		let def = CVUStoredDefinition(value: ["definition": strDef])
 
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
 		let parsed = try root.views.parseDefinition(def)
-		let ds = try Datasource.fromCVUDefinition(parsed as! CVUParsedDatasourceDefinition, ViewArguments())
+		let ds = try Datasource.fromCVUDefinition(parsed as! CVUParsedDatasourceDefinition)
 
 		XCTAssertEqual(ds.query, "test")
 		XCTAssertEqual(ds.sortProperty, "foo")
@@ -71,7 +71,7 @@ class datasourceTest: XCTestCase {
 		let def2 = CVUStoredDefinition(value: ["definition": strDef2])
 		let def3 = CVUStoredDefinition(value: ["definition": strDef3])
 
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
 		let parsed = [
@@ -80,7 +80,7 @@ class datasourceTest: XCTestCase {
 			try root.views.parseDefinition(def3) as! CVUParsedDatasourceDefinition,
 		]
 
-		let ds = CascadingDatasource(parsed, ViewArguments(), Datasource())
+		let ds = CascadingDatasource(parsed, nil, Datasource())
 
 		XCTAssertEqual(ds.query, "test")
 		XCTAssertEqual(ds.sortProperty, "foo")

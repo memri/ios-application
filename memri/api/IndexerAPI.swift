@@ -11,24 +11,25 @@ import Foundation
 public class IndexerAPI {
 	public var context: MemriContext?
 
-	public func execute(_ indexerInstance: IndexerInstance, _ items: [Item]) {
+	public func execute(_ indexerInstance: IndexerRun, _ items: [Item]) throws {
 		if indexerInstance.name == "Note Label Indexer" {
 			guard let notes = items as? [Note] else {
-				print("Could not execute IndexerInstance \(indexerInstance) non note objects passed")
-				return
+				throw "Could not execute IndexerRun \(indexerInstance) non note objects passed"
 			}
-			executeNoteLabelIndexer(indexerInstance, notes)
+			try executeNoteLabelIndexer(indexerInstance, notes)
 		} else {
-			print("\n***COULD NOT FIND LOCAL INDEXER IN INDEXERAPI***\n")
+			throw "\n***COULD NOT FIND LOCAL INDEXER IN INDEXERAPI***\n"
 		}
 	}
 }
 
 extension IndexerAPI {
-	public func executeNoteLabelIndexer(_ indexerInstance: IndexerInstance, _ items: [Note]) {
-		context?.cache.query(Datasource(query: "Label")) { error, labels in
+	public func executeNoteLabelIndexer(_ indexerInstance: IndexerRun, _ items: [Note]) throws {
+		try context?.cache.query(Datasource(query: "Label")) { error, labels in
 			guard let labels = labels else {
-				print("Abborting, no labels found: \(error)")
+				if let error = error {
+					print("Aborting, no labels found: \(error)")
+				}
 				return
 			}
 
@@ -49,7 +50,7 @@ extension IndexerAPI {
 						// If any of the aliases matches
 						do {
 							print("Adding label from \(note) to \(label)")
-							try label.addEdge("appliesTo", note)
+							_ = try label.link(note, type: "appliesTo")
 						} catch {
 							print("Could not create edge")
 						}

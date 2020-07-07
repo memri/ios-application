@@ -28,7 +28,7 @@ struct ActionButton: View {
 		let action = self.action ?? ActionNoop(context)
 
 		// NOTE: Allowed force unwrappings (logic)
-		switch action.getRenderAs(context.cascadingView.viewArguments) {
+		switch action.getRenderAs(context.cascadingView?.viewArguments) {
 		case .popup:
 			return AnyView(ActionPopupButton(action: action))
 		case .button:
@@ -43,7 +43,7 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
 	static var previews: some View {
-		let context = RootContext(name: "", key: "").mockBoot()
+		let context = try! RootContext(name: "", key: "").mockBoot()
 		return ActionButton(action: ActionBack(context))
 			.environmentObject(context)
 	}
@@ -113,7 +113,10 @@ struct ActionPopup: View {
 			self.presentationMode.wrappedValue.dismiss()
 		}
 
-		let args = action.arguments["viewArguments"] as? ViewArguments ?? ViewArguments()
+		let args = action.arguments["viewArguments"] as? ViewArguments ?? {
+			try! ViewArguments.fromDict([:])
+		}()
+
 		args.set("showCloseButton", true)
 
 		// TODO: is this still needed? Need test cases
@@ -128,7 +131,7 @@ struct ActionPopup: View {
 					context: self.context,
 					view: view, // TODO: refactor: consider adding .closePopup to all press actions
 					dataItem: dataItem,
-					args: args
+					viewArguments: args
 				)
 			} else {
 				// TODO: ERror logging
@@ -139,7 +142,7 @@ struct ActionPopup: View {
 					context: self.context,
 					viewName: viewName,
 					dataItem: dataItem,
-					args: args
+					viewArguments: args
 				)
 			} else {
 				// TODO: Error logging
@@ -151,7 +154,7 @@ struct ActionPopup: View {
 			context: self.context,
 			viewName: "catch-all-view",
 			dataItem: dataItem,
-			args: args
+			viewArguments: args
 		)
 	}
 }

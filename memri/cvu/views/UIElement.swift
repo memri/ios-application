@@ -45,9 +45,9 @@ public class UIElement: CVUToString {
 						let x = try expr.execute(viewArguments)
 
 						var result = [Item]()
-						if let list = x as? List<Relationship> {
+						if let list = x as? Results<Edge> {
 							for edge in list {
-								if let d = getItem(edge) {
+								if let d = edge.item() {
 									result.append(d)
 								}
 							}
@@ -62,7 +62,7 @@ public class UIElement: CVUToString {
 				} catch {
 					// TODO: Refactor error handling
 					debugHistory.error("Could note compute \(propName)\n"
-						+ "Arguments: [\(viewArguments.asDict().keys.joined(separator: ", "))]\n"
+						+ "Arguments: [\(viewArguments.asDict().keys.description)]\n"
 						+ (expr.startInStringMode
 							? "Expression: \"\(expr.code)\"\n"
 							: "Expression: \(expr.code)\n")

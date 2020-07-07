@@ -23,17 +23,17 @@ class SessionViewTest: XCTestCase {
 		// Put teardown code here. This method is called after the invocation of each test method in the class.
 	}
 
-	func testLoadSessionViewFromJson() {
-		//        let sessionView =  try! SessionView.fromJSONFile("empty_sessionview")
+	func testLoadSessionViewFromJson() throws {
+		//        let sessionView =  try SessionView.fromJSONFile("empty_sessionview")
 		//        XCTAssert(sessionView.title == "testtitle")
 	}
 
-	func testLoadActionFromJson() {
-		//        var sessions = try! Sessions.fromJSONFile("empty_sessions")
+	func testLoadActionFromJson() throws {
+		//        var sessions = try Sessions.fromJSONFile("empty_sessions")
 
-		//        let backDescription = try! Action.from_json("back_action")
-		//        let addDescription = try! Action.from_json("add_action")
-		//        let openViewDescription = try! Action.from_json("openview_action")
+		//        let backDescription = try Action.from_json("back_action")
+		//        let addDescription = try Action.from_json("add_action")
+		//        let openViewDescription = try Action.from_json("openview_action")
 
 		//        sessions.currentSession.executeAction(action: backDescription)
 		//        sessions.currentSession.executeAction(action: addDescription)

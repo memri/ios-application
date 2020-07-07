@@ -15,12 +15,12 @@ class CVUParser {
 	var index = 0
 	var lastToken: CVUToken?
 
-	private let lookup: (ExprLookupNode, ViewArguments) throws -> Any?
-	private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
+	private let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
+	private let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
 
 	init(_ tokens: [CVUToken], _ context: MemriContext,
-		 lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
-		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
+		 lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
+		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
 		self.context = context
 		self.tokens = tokens
 		self.lookup = lookup
@@ -319,7 +319,7 @@ class CVUParser {
 							_ = popCurrentToken()
 							properties = try parseDict(value)
 						}
-						stack.append(UserState(properties as [String: Any]))
+						stack.append(try UserState(properties as [String: Any]))
 						continue
 					} else if case CVUToken.CurlyBracketOpen = nextToken {
 						// Do nothing

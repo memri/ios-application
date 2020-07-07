@@ -15,10 +15,6 @@ struct LineChartModel {
 	var hideGridLines: Bool = false
 	var forceMinYOfZero: Bool = true
 
-	func label(set: Int = 0, index: Int) -> String? {
-		sets[safe: set]?.points[safe: index]?.label
-	}
-
 	func generateData() -> LineChartData {
 		let dataSets: [LineChartDataSet] = sets.map { set in
 			let dataSet = LineChartDataSet(entries: set.points.indexed().sorted(by: { $0.x <= $1.x }).map { indexedPoint in

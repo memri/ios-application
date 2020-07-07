@@ -5,23 +5,24 @@
 //
 
 import Foundation
+import RealmSwift
 
 class ExprInterpreter {
 	let ast: ExprNode
-	let lookup: (ExprLookupNode, ViewArguments) throws -> Any?
-	let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
+	let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
+	let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
 	var stack: [Any] = []
 
 	init(_ ast: ExprNode,
-		 _ lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
-		 _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
+		 _ lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
+		 _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
 		self.ast = ast
 		self.lookup = lookup
 		self.execFunc = execFunc
 	}
 
 	func execute(_ args: ViewArguments? = nil) throws -> Any? {
-		try execSingle(ast, args ?? ViewArguments())
+		try execSingle(ast, args)
 	}
 
 	class func evaluateBoolean(_ x: Any?) -> Bool {
@@ -29,6 +30,11 @@ class ExprInterpreter {
 		else if let x = x as? Int { return x != 0 }
 		else if let x = x as? Double { return x != 0 }
 		else if let x = x as? String { return x != "" }
+		else if let x = x as? ListBase { return x.count > 0 }
+		else if let x = x as? [Int] { return x.count > 0 }
+		else if let x = x as? [Double] { return x.count > 0 }
+		else if let x = x as? [String] { return x.count > 0 }
+		else if let x = x as? [Bool] { return x.count > 0 }
 		else if x == nil { return false }
 		else { return true }
 	}
@@ -56,11 +62,12 @@ class ExprInterpreter {
 		else if let a = a as? Int { return Double(a) == IP.evaluateNumber(b) }
 		else if let a = a as? Double { return a == IP.evaluateNumber(b) }
 		else if let a = a as? String { return a == "\(b ?? "")" }
+		else if let a = a as? Item, let b = b as? Item { return a == b }
 		else if a == nil { return b == nil }
 		else { return false }
 	}
 
-	func execSingle(_ expr: ExprNode, _ args: ViewArguments) throws -> Any? {
+	func execSingle(_ expr: ExprNode, _ args: ViewArguments?) throws -> Any? {
 		if let expr = expr as? ExprBinaryOpNode {
 			let result = try execSingle(expr.lhs, args) ?? nil
 
@@ -73,14 +80,14 @@ class ExprInterpreter {
 				if !boolLHS { return false }
 				else {
 					let otherResult = try execSingle(expr.rhs, args)
-					return IP.evaluateBoolean(otherResult)
+					return otherResult // IP.evaluateBoolean(otherResult)
 				}
 			case .ConditionOR:
-				let boolLHS = IP.evaluateBoolean(result)
-				if boolLHS { return true }
+				let boolLHS = result // IP.evaluateBoolean(result)
+				if IP.evaluateBoolean(boolLHS) { return boolLHS }
 				else {
 					let otherResult = try execSingle(expr.rhs, args)
-					return IP.evaluateBoolean(otherResult)
+					return otherResult // IP.evaluateBoolean(otherResult)
 				}
 			case .Division:
 				let otherResult = try execSingle(expr.rhs, args)

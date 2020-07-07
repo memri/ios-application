@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import memriUI
 import SwiftUI
 
 struct SettingsPane: View {
@@ -78,7 +77,7 @@ struct SettingsPane: View {
 						}
 						HStack {
 							Button(action: {
-								if let datasource = self.context.cascadingView.sessionView.datasource {
+								if let datasource = self.context.cascadingView?.sessionView.datasource {
 									self.context.cache.sync.clearSyncCache()
 									self.context.cache.sync.syncQuery(datasource)
 								}
@@ -140,11 +139,5 @@ struct SettingsPane: View {
                 })
 			.navigationBarTitle(Text("Settings"), displayMode: .inline)
 		}
-	}
-}
-
-struct DetailsView: View {
-	var body: some View {
-		Text("hello")
 	}
 }

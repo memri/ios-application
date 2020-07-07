@@ -16,10 +16,10 @@ extension File {
 		catch {
 			// TODO: User error handling
 			// TODO: Refactor: error handling
-			if let fileName = uri.components(separatedBy: "/").last {
+			if let uri = uri, let fileName = uri.components(separatedBy: "/").last {
 				return UIImage(named: fileName)
 			}
-			debugHistory.error("Could not read image in path: \(uri)")
+			debugHistory.error("Could not read image in path: \(uri ?? "")")
 		}
 		return nil
 	}
@@ -43,6 +43,8 @@ extension File {
 	}
 
 	public func read<T>() throws -> T? {
+		guard let uri = uri else { throw "URI Not set" }
+
 		var cachedData: T? = InMemoryObjectCache.get(uri) as? T
 		if cachedData != nil { return cachedData }
 
@@ -64,6 +66,8 @@ extension File {
 	}
 
 	public func write<T>(_ value: T) throws {
+		guard let uri = uri else { throw "URI Not set" }
+
 		do {
 			var data: Data?
 
@@ -88,7 +92,7 @@ extension File {
 	}
 
 	private func getPath() -> String {
-		uri
+		uri ?? ""
 	}
 
 	private func writeData(_ data: Data) throws {

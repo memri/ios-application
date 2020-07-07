@@ -16,7 +16,7 @@ struct ChartHelper {
 				let y: Double = yAxis(item)
 			else { return nil }
 			let label: String? = labelKey.flatMap { $0(item) }
-			return ChartPointXY(x: x, y: y, label: label, itemID: item.memriID)
+			return ChartPointXY(x: x, y: y, label: label, itemID: item.getString("uid"))
 		}
 		return ChartSetXY(points: points)
 	}
@@ -27,7 +27,7 @@ struct ChartHelper {
 				let label: String = labelKey(item),
 				let y: Double = yAxis(item)
 			else { return nil }
-			return ChartPointLabelledY(label: label, y: y, itemID: item.memriID)
+			return ChartPointLabelledY(label: label, y: y, itemID: item.getString("uid"))
 		}
 		return ChartSetLabelledY(points: points)
 	}

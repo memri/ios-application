@@ -20,7 +20,7 @@ struct TableView<Item, Content: View>: UIViewControllerRepresentable where Item:
 		self.context = context
 		self.canDelete = canDelete
 		self.canReorder = canReorder
-		editMode = context.currentSession.swiftUIEditMode
+		editMode = context.currentSession?.swiftUIEditMode ?? EditMode.inactive
 	}
 
 	func makeCoordinator() -> Coordinator<Item, Content> {
@@ -61,7 +61,7 @@ class Coordinator<Item, Content: View>: NSObject, UITableViewDelegate, UITableVi
 
 	let name = "list"
 	public var renderConfig: CascadingListConfig? {
-		parent.context.cascadingView.renderConfig as? CascadingListConfig
+		parent.context.cascadingView?.renderConfig as? CascadingListConfig
 	}
 
 	func item(_ navigationItem: NavigationItem) -> AnyView {
@@ -156,9 +156,10 @@ class Coordinator<Item, Content: View>: NSObject, UITableViewDelegate, UITableVi
 			parent.context.items.remove(at: sourceIndexPath.row)
 			parent.context.items.insert(itemMoving, at: destinationIndexPath.row)
 		} else if Item.self == NavigationItem.self {
-			let itemMoving = parent.context.navigation.getItems()[sourceIndexPath.row]
-			parent.context.navigation.items.remove(at: sourceIndexPath.row)
-			parent.context.navigation.items.insert(itemMoving, at: destinationIndexPath.row)
+//			let itemMoving = parent.context.navigation.getItems()[sourceIndexPath.row]
+			#warning("This needs to be implemented. it needs to adjust the sequence value")
+//			parent.context.navigation.items.remove(at: sourceIndexPath.row)
+//			parent.context.navigation.items.insert(itemMoving, at: destinationIndexPath.row)
 		} else {
 			fatalError("Object type not recognized")
 		}

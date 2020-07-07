@@ -15,7 +15,7 @@ extension StringProtocol {
 }
 
 public class MainNavigation: ObservableObject {
-	var items: [NavigationItem] = []
+	var items: Results<NavigationItem>
 
 	var filterText: String {
 		get {
@@ -34,42 +34,14 @@ public class MainNavigation: ObservableObject {
 
 	required init(_ rlm: Realm) {
 		realm = rlm
+		items = realm.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
 	}
 
 	public func getItems() -> [NavigationItem] {
 		let needle = filterText.lowercased()
 
 		return items.filter {
-			return needle == "" || $0.type == "item" && $0.title.lowercased().contains(needle)
-		}
-	}
-
-	public func load(_ callback: () throws -> Void) throws {
-		// Fetch navigation from realm and sort based on the order property
-		let navItems = realm.objects(NavigationItem.self).sorted(byKeyPath: "order")
-
-		// Add items to the items array
-		for item in navItems {
-			items.append(item)
-		}
-
-		try callback()
-	}
-
-	public func install() {
-		// Load default navigation items from pacakge
-		do {
-			let jsonData = try jsonDataFromFile("default_navigation")
-			items = try MemriJSONDecoder.decode([NavigationItem].self, from: jsonData)
-
-			realmWriteIfAvailable(realm) {
-				for item in items {
-					print(item.title)
-					realm.add(item)
-				}
-			}
-		} catch {
-			print("Failed to install MainNavigation")
+			return needle == "" || $0.type == "item" && ($0.title ?? "").lowercased().contains(needle)
 		}
 	}
 }

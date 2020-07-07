@@ -62,11 +62,9 @@ public class MemriTextEditor_UIKit: UITextView {
 
 	public init(initialContentHTML: String?) {
 		super.init(frame: .zero, textContainer: nil)
-		if let htmlData = initialContentHTML?.data(using: .utf8) {
-			DispatchQueue.main.async {
-				if let attributedStringFromHTML = try? NSAttributedString(data: htmlData, options: [.documentType: NSAttributedString.DocumentType.html], documentAttributes: nil) {
-					self.attributedText = attributedStringFromHTML
-				}
+		DispatchQueue.main.async {
+			if let html = initialContentHTML, let attributedStringFromHTML = NSAttributedString.fromHTML(html) {
+				self.attributedText = attributedStringFromHTML
 			}
 		}
 		configure()
@@ -546,11 +544,6 @@ extension MemriTextEditor_UIKit {
 }
 
 extension MemriTextEditor_UIKit {
-	func helper_selectionHasUnorderedList() -> Bool {
-		let string = (textStorage.string as NSString).substring(with: selectedRange) as NSString
-		return ListType.unorderedList.checkIfHasMatch(in: string)
-	}
-
 	func helper_makeSelectionList(type: ListType) {
 		// Find the range of selected lines
 		// var startOfFirstLine: Int = 0, endOfLastLine: Int = 0

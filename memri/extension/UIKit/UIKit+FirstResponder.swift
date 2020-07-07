@@ -9,18 +9,18 @@
 import Foundation
 import UIKit
 
-func dismissCurrentResponder() {
+public func dismissCurrentResponder() {
 	UIApplication.shared.windows.first?.findFirstResponder()?.resignFirstResponder()
 }
 
 extension UIViewController {
-	func findFirstResponder() -> UIView? {
+	public func findFirstResponder() -> UIView? {
 		view.findFirstResponder()
 	}
 }
 
 extension UIView {
-	func findFirstResponder() -> UIView? {
+	public func findFirstResponder() -> UIView? {
 		if isFirstResponder {
 			return self
 		} else {

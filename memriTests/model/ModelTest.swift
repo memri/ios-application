@@ -18,8 +18,8 @@ class ModelTest: XCTestCase {
 		// Put teardown code here. This method is called after the invocation of each test method in the class.
 	}
 
-	func testInitSearchResult() {
-		//        let items = try! Item.fromJSONFile("test_dataItems")
+	func testInitSearchResult() throws {
+		//        let items = try Item.fromJSONFile("test_dataItems")
 		//        let sr = SearchResult.fromItems(items)
 		//        XCTAssert(sr.data[0].id == "0x01" && sr.data[1].id == "0x02")
 	}

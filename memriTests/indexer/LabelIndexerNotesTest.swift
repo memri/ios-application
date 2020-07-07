@@ -22,14 +22,14 @@ class LabelIndexerNotesTest: XCTestCase {
 		let indexerAPI = IndexerAPI()
 
 		let indexer = Indexer(name: "Label indexer",
-							  indexerDescription: "Adds labels to notes based on their content",
+							  itemDescription: "Adds labels to notes based on their content",
 							  query: "Note", runDestination: "ios")
-		let indexerInstance = IndexerInstance(name: indexer.name, indexer: indexer)
+		let indexerInstance = IndexerRun(name: indexer.name, indexer: indexer)
 
 		let jsonData = try jsonDataFromFile("label_indexer_data")
 		let items: [Item] = try MemriJSONDecoder.decode(family: ItemFamily.self, from: jsonData)
 
-		indexerAPI.execute(indexerInstance, items)
+		try indexerAPI.execute(indexerInstance, items)
 
 		// This is an example of a functional test case.
 		// Use XCTAssert and related functions to verify your tests produce the correct results.

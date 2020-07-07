@@ -9,34 +9,34 @@
 import Foundation
 import RealmSwift
 
-/// This class represent the state of syncing for a Item, it keeps tracks of the multiple versions of a Item on the server and
-/// what actions are needed to sync the Item with the latest version on the pod
-class SyncState: Object, Codable {
-	// Whether the data item is loaded partially and requires a full load
-	@objc dynamic var isPartiallyLoaded: Bool = false
-
-	// What action is needed on this data item to sync with the pod
-	// Enum: "create", "delete", "update"
-	@objc dynamic var actionNeeded: String = ""
-
-	// Which fields to update
-	let updatedFields = List<String>()
-
-	//
-	@objc dynamic var changedInThisSession = false
-
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
-
-		jsonErrorHandling(decoder) {
-			isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-		}
-	}
-
-	required init() {
-		super.init()
-	}
-}
+///// This class represent the state of syncing for a Item, it keeps tracks of the multiple versions of a Item on the server and
+///// what actions are needed to sync the Item with the latest version on the pod
+// class SyncState: Object, Codable {
+//	// Whether the data item is loaded partially and requires a full load
+//	@objc dynamic var isPartiallyLoaded: Bool = false
+//
+//	// What action is needed on this data item to sync with the pod
+//	// Enum: "create", "delete", "update"
+//	@objc dynamic var actionNeeded: String = ""
+//
+//	// Which fields to update
+//	let updatedFields = List<String>()
+//
+//	//
+//	@objc dynamic var changedInThisSession = false
+//
+//	public required convenience init(from decoder: Decoder) throws {
+//		self.init()
+//
+//		jsonErrorHandling(decoder) {
+//			isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
+//		}
+//	}
+//
+//	required init() {
+//		super.init()
+//	}
+// }
 
 /// Based on a query, Sync checks whether it still has the latest version of the resulting Items. It does this asynchronous and in the
 /// background, items are updated automatically.
@@ -48,7 +48,7 @@ class Sync {
 	/// Cache Object used to fetch resultsets
 	public var cache: Cache?
 
-	private var scheduled: Bool = false
+	private var scheduled: Int = 0
 	private var syncing: Bool = false
 	private var backgroundSyncing: Bool = false
 
@@ -85,6 +85,7 @@ class Sync {
 				"sortAscending": datasource.sortAscending.value ?? false ? "true" : "false",
 			] as? [String: String])
 
+			audititem.uid.value = try Cache.incrementUID()
 			audititem.contents = String(data: data, encoding: .utf8) ?? ""
 			audititem.action = "query"
 			audititem.date = Date()
@@ -123,7 +124,7 @@ class Sync {
 	}
 
 	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
-		print("Syncing from pod with query: \(datasource.query ?? "")")
+		debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
 
 		// Only execute queries once per session until we fix syncing
 		if recentQueries[datasource.uniqueString] != true {
@@ -144,7 +145,7 @@ class Sync {
 							// TODO: handle sync errors
 							do {
 								//                                #warning("Remove this when the new backend is in place")
-								//                                if !["Indexer", "IndexerInstance", "Importer", "ImporterInstance"].contains(item.genericType) {
+								//                                if !["Indexer", "IndexerRun", "Importer", "ImporterRun"].contains(item.genericType) {
 								let cachedItem = try cache.addToCache(item)
 								if cachedItem.syncState?.actionNeeded != "deleted" {
 									// Add item to result
@@ -185,16 +186,22 @@ class Sync {
 	/// Schedule a syncing round
 	/// - Remark: currently calls mock code
 	/// - TODO: implement syncToPod()
-	public func schedule() {
+	public func schedule(long: Bool = false) {
 		// Don't schedule when we are already scheduled
-		if !scheduled {
+		if scheduled == 0 || !long && scheduled == 2 {
 			// Prevent multiple calls to the dispatch queue
-			scheduled = true
+			scheduled = long ? 2 : 1
 
 			// Wait 100ms before syncing (should this be longer?)
-			DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+			DispatchQueue.main.asyncAfter(deadline: .now() + (long ? 18000 : 0.1)) {
+				if self.syncing {
+					self.scheduled = 0
+					self.schedule()
+					return
+				}
+
 				// Reset scheduled
-				self.scheduled = false
+				self.scheduled = 0
 
 				// Start syncing local data to the pod
 				self.syncToPod()
@@ -205,75 +212,100 @@ class Sync {
 	private func syncToPod() {
 		syncing = true
 
-		// TODO: how to get the right info in SyncState (perhaps in the change binder)
+		var found = false
+		var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
+		var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
 
-		// Loop through syncstate objects (ignore "fetch" and "")
+		// Items
+		for itemType in ItemFamily.allCases {
+			if let type = itemType.getType() as? SchemaItem.Type {
+				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
+				for item in items {
+					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
+						itemQueue[action]?.append(item)
+						found = true
+					}
+				}
+			}
+		}
 
-		// Fetch the data item
+		// Edges
+		let edges = realm.objects(Edge.self).filter("syncState.actionNeeded != ''")
+		for edge in edges {
+			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
+				edgeQueue[action]?.append(edge)
+				found = true
+			}
+		}
 
-		// call execute
+		func markAsDone(_ list: [String: Any]) {
+			for (_, sublist) in list {
+				for item in sublist as? [Any] ?? [] {
+					if let item = item as? SchemaItem {
+						item.syncState?.actionNeeded = ""
+						item.syncState?.updatedFields.removeAll()
+					} else if let item = item as? Edge {
+						item.syncState?.actionNeeded = ""
+						item.syncState?.updatedFields.removeAll()
+					}
+				}
+			}
+		}
 
-		// call next
+		if found {
+			do {
+				try podAPI.sync(
+					createItems: itemQueue["create"],
+					updateItems: itemQueue["update"],
+					deleteItems: itemQueue["delete"],
+					createEdges: edgeQueue["create"],
+					updateEdges: edgeQueue["update"],
+					deleteEdges: edgeQueue["delete"]
+				) { (error) -> Void in
+					self.syncing = false
 
-		syncing = false
+					if error == nil {
+						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
+						markAsDone(itemQueue)
+						markAsDone(edgeQueue)
+					}
+
+					self.schedule()
+				}
+			} catch {
+				debugHistory.error("Could not sync to pod: \(error)")
+			}
+		} else {
+			schedule(long: true)
+		}
 	}
 
 	private func syncFromPod() {
 		// TODO:
 	}
 
-	/// - Remark: Currently unused
-	/// - TODO: Implement and document
-	/// - Parameters:
-	///   - item:
-	///   - callback:
-	/// - Throws:
-	public func execute(_ item: Item, callback: @escaping (_ error: Error?, _ success: Bool) -> Void) throws {
-		if let syncState = item.syncState {
-			switch syncState.actionNeeded {
-			case "create":
-				podAPI.create(item) { (error, id) -> Void in
-					if error != nil { return callback(error, false) }
-
-					// Set the new id from the server
-					if let id = id {
-						item.uid = id
-						callback(nil, true)
-					} else {
-						callback(nil, false)
-					}
-				}
-			case "delete":
-				podAPI.remove(item.uid) { (error, success) -> Void in
-					if error == nil {
-						// Remove from local storage
-						realmWriteIfAvailable(self.realm) {
-							self.realm.add(item) // , update: .modified
-						}
-						callback(error, success)
-					}
-				}
-			case "update":
-				podAPI.update(item) { (error, version: Int?) -> Void in
-					if let version = version {
-						item.version = version
-						item.syncState?.actionNeeded = "" // TODO: make sure it hasnt changed??
-
-						callback(nil, true)
-					} else {
-						callback(error, false)
-					}
-				}
-
-			case "fetch":
-				// TODO:
-				break
-			default:
-				// Ignore unknown tasks
-				print("Unknown sync state action: \(item.syncState?.actionNeeded ?? "")")
-			}
-		} else {
-			throw "No syncState deifned"
-		}
-	}
+//	/// - Remark: Currently unused
+//	/// - TODO: Implement and document
+//	/// - Parameters:
+//	///   - item:
+//	///   - callback:
+//	/// - Throws:
+//	public func execute(_ item: Item, callback: @escaping (_ error: Error?, _ success: Bool) -> Void) throws {
+//		if let syncState = item.syncState {
+//			switch syncState.actionNeeded {
+//			case "create", "delete", "update":
+//				try podAPI.sync(item) { (error, _) -> Void in
+//					if error != nil { return callback(error, false) }
+//				}
+//			case "fetch":
+//				// TODO:
+//				break
+//			default:
+//				// Ignore unknown tasks
+//				print("Unknown sync state action: \(item.syncState?.actionNeeded ?? "")")
+//			}
+//		} else {
+//			throw "No syncState defined"
+//		}
+//	}
 }

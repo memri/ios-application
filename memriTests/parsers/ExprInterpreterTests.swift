@@ -50,6 +50,38 @@ class ExprInterpreterTests: XCTestCase {
 		XCTAssertEqual(result as! Bool, true)
 	}
 
+	func testEqualsTrue() throws {
+		let snippet = "1 = '1'"
+
+		let result = try exec(snippet)
+
+		XCTAssertEqual(result as! Bool, true)
+	}
+
+	func testEqualsFalse() throws {
+		let snippet = "1 = 2"
+
+		let result = try exec(snippet)
+
+		XCTAssertEqual(result as! Bool, false)
+	}
+
+	func testAndValue() throws {
+		let snippet = "true and 10"
+
+		let result = try exec(snippet)
+
+		XCTAssertEqual(result as! Double, 10)
+	}
+
+	func testOrValue() throws {
+		let snippet = "10 or 0"
+
+		let result = try exec(snippet)
+
+		XCTAssertEqual(result as! Double, 10)
+	}
+
 	func testSimpleCondition() throws {
 		let snippet = "true ? 'yes' : 'no'"
 
@@ -86,7 +118,7 @@ class ExprInterpreterTests: XCTestCase {
 
 		XCTAssertEqual(results.count, 3)
 
-		XCTAssertEqual(results[0].description, "LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)])")
+		XCTAssertEqual(results[0].description, "LookupNode([VariableNode(@@DEFAULT@@), VariableNode(bar)])")
 		XCTAssertEqual(results[1].description, "LookupNode([VariableNode(bar), VariableNode(foo)])")
 		XCTAssertEqual(results[2].description, "LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])")
 

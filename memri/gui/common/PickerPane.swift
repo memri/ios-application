@@ -60,27 +60,15 @@ struct PickerPane: View {
 	let selected: Item?
 	let datasource: Datasource
 
-	var body: some View {
-		self.context.closeStack.append {
-			self.presentationMode.wrappedValue.dismiss()
-		}
-
-		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
-		return SubView(
-			context: self.context,
-			view: SessionView(value: [
-				"datasource": datasource,
-				"userState": UserState([
-					"selection": [["type": item.genericType, "memriID": item.memriID]],
-				]),
-				// "editMode": true // TODO REfactor: also allow edit mode toggle on session view
-				// TODO: REfactor: allow only 1 or more selected items
-				"viewDefinition": CVUStoredDefinition(value: ["definition": """
+	func getSessionView() -> SessionView {
+		do {
+			return try SessionView.fromCVUDefinition(
+				stored: CVUStoredDefinition(value: ["definition": """
 				    [view] {
 				        title: "\(title)"
 
 				        [renderer = list] {
-				            press: [
+				    try!                        press: [
 				                link {
 				                    arguments {
 				                        subject: {{subject}}
@@ -104,9 +92,28 @@ struct PickerPane: View {
 				        }
 				    }
 				"""]),
-			]),
+				userState: UserState([
+					"selection": [["type": item.genericType, "uid": item.uid]],
+				]),
+				datasource: datasource
+			)
+		} catch {
+			debugHistory.error("Subview: \(error)")
+			return SessionView()
+		}
+	}
+
+	var body: some View {
+		self.context.closeStack.append {
+			self.presentationMode.wrappedValue.dismiss()
+		}
+
+		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
+		return SubView(
+			context: self.context,
+			view: getSessionView(),
 			dataItem: self.item,
-			args: ViewArguments(["showCloseButton": true, "subject": propItem])
+			viewArguments: try! ViewArguments.fromDict(["showCloseButton": true, "subject": propItem])
 		)
 	}
 }

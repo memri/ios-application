@@ -5,23 +5,47 @@ import RealmSwift
 public class Item: SchemaItem {
 	/// Title computed by implementations of the Item class
 	@objc dynamic var computedTitle: String {
-		"\(genericType) [\(memriID)]"
+		"\(genericType) [\(uid.value ?? -1000)]"
 	}
 
-	var functions: [String: (_ args: [Any?]?) -> Any] = [:]
+	var functions: [String: (_ args: [Any?]?) -> Any?] = [:]
 
 	/// Primary key used in the realm database of this Item
 	override public static func primaryKey() -> String? {
-		"memriID"
+		"uid"
 	}
 
-	private enum CodingKeys: String, CodingKey {
-		case uid, memriID, deleted, starred, dateCreated, dateModified, dateAccessed, changelog,
-			labels, syncState
+	override public var description: String {
+		var str = "\(genericType) \(realm == nil ? "[UNMANAGED] " : ""){\n"
+			+ "    uid: \(uid.value == nil ? "nil" : String(uid.value ?? 0))\n"
+			+ "    " + objectSchema.properties
+			.filter {
+				self[$0.name] != nil && $0.name != "allEdges"
+					&& $0.name != "uid" && $0.name != "syncState"
+			}
+			.map { "\($0.name): \(CVUSerializer.valueToString(self[$0.name]))" }
+			.joined(separator: "\n    ")
+			+ "\n    syncState: \(syncState?.description ?? "")"
+
+		str += (allEdges.count > 0 ? "\n\n    " : "")
+			+ allEdges
+			.map { $0.description }
+			.joined(separator: "\n    ")
+			+ "\n}"
+
+		return str
 	}
 
 	enum ItemError: Error {
 		case cannotMergeItemWithDifferentId
+	}
+
+	var changelog: Results<AuditItem>? {
+		edges("changelog")?.items(type: AuditItem.self)
+	}
+
+	var labels: Results<Label>? {
+		edges("labels")?.items(type: Label.self)
 	}
 
 	required init() {
@@ -29,40 +53,72 @@ public class Item: SchemaItem {
 
 		functions["describeChangelog"] = { _ in
 			let dateCreated = Views.formatDate(self.dateCreated)
-			let views = self.changelog.filter { $0.action == "read" }.count
-			let edits = self.changelog.filter { $0.action == "update" }.count
+			let views = self.changelog?.filter { $0.action == "read" }.count ?? 0
+			let edits = self.changelog?.filter { $0.action == "update" }.count ?? 0
 			let timeSinceCreated = Views.formatDateSinceCreated(self.dateCreated)
 			return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
 		}
 		functions["computedTitle"] = { _ in
 			self.computedTitle
 		}
+		functions["edge"] = { args in
+			if let edgeType = args?[0] as? String {
+				return self.edge(edgeType) as Any
+			} else if let edgeTypes = args?[0] as? [String] {
+				return self.edge(edgeTypes) as Any
+			}
+			return nil
+		}
+		functions["edges"] = { args in
+			if let edgeType = args?[0] as? String {
+				return self.edges(edgeType) as Any
+			} else if let edgeTypes = args?[0] as? [String] {
+				return self.edges(edgeTypes) as Any
+			}
+
+			return nil
+		}
+		functions["min"] = { args in
+			let first = args?[0] as? Double ?? Double.nan
+			let second = args?[1] as? Double ?? Double.nan
+			return min(first, second)
+		}
+		functions["max"] = { args in
+			let first = args?[0] as? Double ?? Double.nan
+			let second = args?[1] as? Double ?? Double.nan
+			return max(first, second)
+		}
+		functions["floor"] = { args in
+			let value = args?[0] as? Double ?? Double.nan
+			return floor(value)
+		}
+		functions["ceil"] = { args in
+			let value = args?[0] as? Double ?? Double.nan
+			return ceil(value)
+		}
 	}
 
-	/// Deserializes Item from json decoder
-	/// - Parameter decoder: Decoder object
-	/// - Throws: Decoding error
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
-		try superDecode(from: decoder)
+	required init(from _: Decoder) throws {
+		super.init()
 	}
 
-	/// @private
-	public func superDecode(from decoder: Decoder) throws {
-		uid = try decoder.decodeIfPresent("uid") ?? uid
-		memriID = try decoder.decodeIfPresent("memriID") ?? memriID
-		starred = try decoder.decodeIfPresent("starred") ?? starred
-		deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-		version = try decoder.decodeIfPresent("version") ?? version
-		syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-
-		dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
-		dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
-		dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
-
-		decodeIntoList(decoder, "changelog", changelog)
-		decodeIntoList(decoder, "labels", labels)
-	}
+//
+//	/// @private
+//	public func superDecode(from decoder: Decoder) throws {
+//		uid = try decoder.decodeIfPresent("uid") ?? uid
+//		memriID = try decoder.decodeIfPresent("memriID") ?? memriID
+//		starred = try decoder.decodeIfPresent("starred") ?? starred
+//		deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+//		version = try decoder.decodeIfPresent("version") ?? version
+//		syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+//
+//		dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
+//		dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
+//		dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
+//
+//		decodeIntoList(decoder, "changelog", changelog)
+//		decodeIntoList(decoder, "labels", labels)
+//	}
 
 	public func cast() -> Self {
 		self
@@ -74,7 +130,7 @@ public class Item: SchemaItem {
 	public func getString(_ name: String) -> String {
 		if objectSchema[name] == nil {
 			#if DEBUG
-				print("Warning: getting property that this dataitem doesnt have: \(name) for \(genericType):\(memriID)")
+				print("Warning: getting property that this item doesnt have: \(name) for \(genericType):\(uid.value ?? -1000)")
 			#endif
 
 			return ""
@@ -137,8 +193,12 @@ public class Item: SchemaItem {
 	public func get<T>(_ name: String, type _: T.Type = T.self) -> T? {
 		if name == "self" {
 			return self as? T
+		} else if objectSchema[name] != nil {
+			return self[name] as? T
+		} else if let edge = edge(name) {
+			return edge.target() as? T
 		}
-		return self[name] as? T
+		return nil
 	}
 
 	/// Set property to value, which will be persisted in the local database
@@ -147,49 +207,290 @@ public class Item: SchemaItem {
 	///   - value: value
 	public func set(_ name: String, _ value: Any?) {
 		realmWriteIfAvailable(realm) {
-			self[name] = value
+			if self.objectSchema[name] != nil {
+				self[name] = value
+			} else if let obj = value as? Object {
+				_ = try self.link(obj, type: name, distinct: true)
+			}
 		}
 	}
 
-	public func addEdge(_ propertyName: String, _ item: Item) throws {
-		guard let subjectID: String = get("memriID"),
-			let objectID: String = item.get("memriID") else {
+	/// Flattens the type hierarchy in sequence to search through all related edge types
+	private func edgeCollection(_ edgeType: String) -> [String]? {
+		// TODO: IMPLEMENT
+
+		if edgeType == "family" {
+			return ["family", "brother", "sister", "sibling", "father", "mother", "aunt",
+					"uncle", "cousin", "niece"]
+		}
+
+		return nil
+	}
+
+	public func reverseEdges(_ edgeType: String) -> Results<Edge>? {
+		guard realm != nil, let uid = self.uid.value else {
+			return nil
+		}
+
+		// TODO: collection support
+		#warning("Not implemented fully yet")
+
+		// Should this create a temporary edge for which item() is source() ?
+		return realm?.objects(Edge.self)
+			.filter("targetItemID = \(uid) AND type = '\(edgeType)")
+	}
+
+	public func reverseEdge(_ edgeType: String) -> Edge? {
+		guard realm != nil, let uid = self.uid.value else {
+			return nil
+		}
+
+		// TODO: collection support
+		#warning("Not implemented fully yet")
+
+		// Should this create a temporary edge for which item() is source() ?
+		return realm?.objects(Edge.self)
+			.filter("targetItemID = \(uid) AND type = '\(edgeType)").first
+	}
+
+	public func edges(_ edgeType: String) -> Results<Edge>? {
+		guard edgeType != "", realm != nil else {
+			return nil
+		}
+
+		if let collection = edgeCollection(edgeType) {
+			return edges(collection)
+		}
+
+		return allEdges.filter("type = '\(edgeType)'")
+	}
+
+	public func edges(_ edgeTypes: [String]) -> Results<Edge>? {
+		guard edgeTypes.count > 0, realm != nil else {
+			return nil
+		}
+
+		var flattened = [String]()
+		for type in edgeTypes {
+			if let collection = edgeCollection(type) {
+				flattened.append(contentsOf: collection)
+			} else {
+				flattened.append(type)
+			}
+		}
+
+		let filter = "deleted = false and (type = '\(flattened.joined(separator: "' or type = '"))')"
+
+		return allEdges.filter(filter)
+	}
+
+	public func edge(_ edgeType: String) -> Edge? {
+		guard edgeType != "", realm != nil else {
+			return nil
+		}
+
+		if let collection = edgeCollection(edgeType) {
+			return edge(collection)
+		}
+
+		return allEdges.filter("type = '\(edgeType)'").first
+	}
+
+	public func edge(_ edgeTypes: [String]) -> Edge? {
+		guard edgeTypes.count > 0, realm != nil else {
+			return nil
+		}
+
+		var flattened = [String]()
+		for type in edgeTypes {
+			if let collection = edgeCollection(type) {
+				flattened.append(contentsOf: collection)
+			} else {
+				flattened.append(type)
+			}
+		}
+
+		let filter = "deleted = false and (type = '\(flattened.joined(separator: "' or type = '"))')"
+
+		return allEdges.filter(filter).first
+	}
+
+	private func determineSequenceNumber(_ edgeType: String, _ sequence: EdgeSequencePosition?) throws -> Int? {
+		guard let sequence = sequence else {
+			return nil
+		}
+
+		var orderNumber: Int = 1000 // Default 1st order number
+
+		let edges = allEdges.filter("deleted = false and type = '\(edgeType)'")
+
+		switch sequence {
+		case let .number(nr): orderNumber = nr
+		case .first:
+			let sorted = edges.sorted(byKeyPath: "sequence", ascending: false)
+			if let firstOrderNumber = sorted.first?.sequence.value {
+				orderNumber = Int(firstOrderNumber / 2)
+
+				if orderNumber == firstOrderNumber {
+					// TODO: renumber the entire list
+					throw "Not implemented yet"
+				}
+			}
+		case .last:
+			let sorted = edges.sorted(byKeyPath: "sequence", ascending: true)
+			if let lastOrderNumber = sorted.first?.sequence.value {
+				orderNumber = lastOrderNumber + 1000
+			}
+		case let .before(beforeEdge):
+			if !allEdges.contains(beforeEdge) || beforeEdge.type != edgeType {
+				throw "Edge is not part of this set"
+			}
+
+			guard let beforeNumber = beforeEdge.sequence.value else {
+				throw "Before edge is not part of an ordered list"
+			}
+
+			let beforeBeforeEdge = edges
+				.filter("sequence < \(beforeNumber)")
+				.sorted(byKeyPath: "sequence", ascending: true)
+				.first
+
+			let previousNumber = (beforeBeforeEdge?.sequence.value ?? 0)
+			if beforeNumber - previousNumber > 1000 {
+				orderNumber = beforeNumber - 1000
+			} else if beforeNumber - previousNumber > 1 {
+				orderNumber = beforeNumber - (beforeNumber - previousNumber / 2)
+			} else {
+				// TODO: renumber the entire list
+				throw "Not implemented yet"
+			}
+		case let .after(afterEdge):
+			if !allEdges.contains(afterEdge) || afterEdge.type != edgeType {
+				throw "Edge is not part of this set"
+			}
+
+			guard let afterNumber = afterEdge.sequence.value else {
+				throw "Before edge is not part of an ordered list"
+			}
+
+			let afterAfterEdge = edges
+				.filter("sequence < \(afterNumber)")
+				.sorted(byKeyPath: "sequence", ascending: true)
+				.first
+
+			let nextNumber = (afterAfterEdge?.sequence.value ?? 0)
+			if afterNumber - nextNumber > 1000 {
+				orderNumber = afterNumber - 1000
+			} else if afterNumber - nextNumber > 1 {
+				orderNumber = afterNumber - (afterNumber - nextNumber / 2)
+			} else {
+				// TODO: renumber the entire list
+				throw "Not implemented yet"
+			}
+		}
+
+		return orderNumber
+	}
+
+	/// When distinct is set to false multiple of the same relationship type are allowed
+	public func link(_ item: Object, type edgeType: String = "edge",
+					 order: EdgeSequencePosition? = nil, label: String? = nil,
+					 distinct: Bool = false, overwrite: Bool = true) throws -> Edge? {
+		guard let _: Int = get("uid") else {
+			throw "Exception: Missing uid on source"
+		}
+
+		guard item.objectSchema["uid"] != nil, let targetID: Int = item["uid"] as? Int else {
+			throw "Exception: Missing uid on target"
+		}
+
+		let query = "deleted = false and type = '\(edgeType)'"
+			+ (distinct ? "" : " and targetItemID = \(targetID)")
+		var edge = allEdges.filter(query).first
+		let sequenceNumber: Int? = try determineSequenceNumber(edgeType, order)
+
+		realmWriteIfAvailable(realm) {
+			if item.realm == nil, let item = item as? Item {
+				item.syncState?.actionNeeded = "create"
+				realm?.add(item, update: .modified)
+			}
+
+			if edge == nil {
+				edge = try Cache.createEdge(
+					source: self,
+					target: item,
+					type: edgeType,
+					label: label,
+					sequence: sequenceNumber
+				)
+				if let edge = edge {
+					allEdges.append(edge)
+				}
+			} else if overwrite, let edge = edge {
+				edge.targetItemID.value = targetID
+				edge.targetItemType = item.genericType
+				edge.sequence.value = sequenceNumber
+				edge.label = label
+
+				if edge.syncState?.actionNeeded == nil {
+					edge.syncState?.actionNeeded = "update"
+				}
+			} else if edge == nil {
+				throw "Exception: Could not create link"
+			}
+		}
+
+		return edge
+	}
+
+	//    public func orderedEdgeIndex(_ type: String, _ needle: Edge) -> Int? {
+	//        var i = 0
+	//        if let list = edges(type) {
+	//            for edge in list {
+	//                i += 1
+	//                if edge.sourceItemID.value == needle.sourceItemID.value
+	//                    && edge.sourceItemType == needle.sourceItemType {
+	//                    return i
+	//                }
+	//            }
+	//        }
+	//        return nil
+	//    }
+
+	public func unlink(_ edge: Edge) throws {
+		if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
+			realmWriteIfAvailable(realm) {
+				edge.deleted = true
+				edge.syncState?.actionNeeded = "delete"
+				realm?.delete(edge)
+			}
+		} else {
+			throw "Exception: Edge does not link from this item"
+		}
+	}
+
+	public func unlink(_ item: Item, type edgeType: String? = nil, all: Bool = true) throws {
+		guard let targetID: Int = item.get("uid") else {
 			return
 		}
 
-		let edges: [Relationship] = get(propertyName) ?? []
-		if (!edges.map { $0.objectMemriID }.contains(objectID)) {
-			let newEdge = Relationship(subjectID, objectID, "Label", "Note")
-			let newEdges = edges + [newEdge]
-			set("appliesTo", newEdges)
-		} else {
-			throw "Could note create Edge, already exists"
-		}
+		let edgeQuery = edgeType != nil ? "type = '\(edgeType!)' and " : ""
+		let query = "deleted = false and \(edgeQuery) targetItemID = '\(targetID)'"
+		let results = allEdges.filter(query)
 
-		//        // Check that the property exists to avoid hard crash
-		//        guard let schema = self.objectSchema[propertyName] else {
-		//            throw "Exception: Invalid property access of \(item) for \(self)"
-		//        }
-		//        guard let objectID: String = item.get("memriID") else {
-		//            throw "no memriID"
-		//        }
-//
-		//        if schema.isArray {
-		//            // Get list and append
-		//            var list = dataItemListToArray(self[propertyName] as Any)
-//
-		//            if !list.map{$0.memriID}.contains(objectID){
-		//                list.append(item)
-		//                print(list)
-		//                self.set(propertyName, list as Any)
-		//            }
-		//            else {
-		//                print("Could not set edge, already exists")
-		//            }
-		//        }
-		//        else {
-		//            self.set(propertyName, item)
-		//        }
+		if results.count > 0 {
+			realmWriteIfAvailable(realm) {
+				if all {
+					for edge in results {
+						edge.deleted = true
+						edge.syncState?.actionNeeded = "delete"
+					}
+				} else if let edge = results.first {
+					edge.deleted = true
+					edge.syncState?.actionNeeded = "delete"
+				}
+			}
+		}
 	}
 
 	/// Toggle boolean property
@@ -333,13 +634,7 @@ public class Item: SchemaItem {
 	///   - rhs: Item 2
 	/// - Returns: boolean indicating equality
 	public static func == (lhs: Item, rhs: Item) -> Bool {
-		lhs.memriID == rhs.memriID
-	}
-
-	/// Generate a new UUID, which are used by swift to identify objects
-	/// - Returns: UUID string with "0xNEW" prepended
-	public class func generateUUID() -> String {
-		"Memri\(UUID().uuidString)"
+		lhs.uid.value == rhs.uid.value
 	}
 
 	/// Reads Items from file
@@ -377,34 +672,145 @@ public class Item: SchemaItem {
 	}
 }
 
-class Relationship: Object {
-	@objc dynamic var objectMemriID: String = Item.generateUUID()
-	@objc dynamic var subjectMemriID: String = Item.generateUUID()
-
-	@objc dynamic var objectType: String = "unknown"
-	@objc dynamic var subjectType: String = "unknown"
-
-	required init() {}
-
-	init(_ subjectMemriID: String = Item.generateUUID(),
-		 _ objectMemriID: String = Item.generateUUID(),
-		 _ subjectType: String = "unknown", _ objectType: String = "unknown") {
-		self.objectMemriID = objectMemriID
-		self.subjectMemriID = subjectMemriID
-		self.objectType = objectType
-		self.subjectType = subjectType
+extension RealmSwift.Results where Element == Edge {
+	private enum Direction {
+		case source, target
 	}
 
-	// maybe we dont need this
-	//    @objc dynamic var objectType:String = Item.generateUUID()
-	//    @objc dynamic var subectType:String = Item.generateUUID()
+	private func lookup<T: Object>(type: T.Type? = nil, dir: Direction = .target) -> Results<T>? {
+		guard count > 0 else {
+			return nil
+		}
 
-	/// Deserializes Item from json decoder
-	/// - Parameter decoder: Decoder object
-	/// - Throws: Decoding error
-	//    required public convenience init(from decoder: Decoder) throws{
-	//        self.init()
-	//        objectUid = try decoder.decodeIfPresent("objectUid") ?? objectUid
-	//        subjectUid = try decoder.decodeIfPresent("subjectUid") ?? subjectUid
+		var listType = type
+		if listType == nil {
+			let strType = dir == .target ? first?.targetItemType : first?.sourceItemType
+			if let strType = strType, let itemType = ItemFamily(rawValue: strType) {
+				listType = itemType.getType() as? T.Type
+			}
+		}
+
+		guard let finalType = listType else {
+			return nil
+		}
+
+		do {
+			let realm = try Realm()
+			let filter = "uid = "
+				+ compactMap {
+					if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID.value) {
+						return String(value)
+					}
+					return nil
+				}.joined(separator: " or uid = ")
+			return realm.objects(finalType).filter(filter)
+		} catch {
+			debugHistory.error("\(error)")
+			return nil
+		}
+	}
+
+	// TODO: support for heterogenous edge lists
+
+	func items<T: Item>(type: T.Type? = nil) -> Results<T>? { lookup(type: type) }
+	func targets<T: Item>(type: T.Type? = nil) -> Results<T>? { lookup(type: type) }
+	func sources<T: Item>(type: T.Type? = nil) -> Results<T>? { lookup(type: type, dir: .source) }
+
+	func itemsArray<T: Item>(type _: T.Type? = T.self) -> [T] {
+		var result = [T]()
+
+		for edge in self {
+			if let target = edge.target() as? T {
+				result.append(target)
+			}
+		}
+
+		return result
+	}
+
+	//    #warning("Toby, how do Ranges work exactly?")
+	//    #warning("@Ruben I think this achieves what you want")
+	//    // TODO: views.removeSubrange((currentViewIndex + 1)...)
+	//    func removeEdges(ofType type: String, withOrderMatchingBounds orderBounds: PartialRangeFrom<Int>) {
+	//        edges(type)?.filter("order > \(orderBounds.lowerBound)").forEach { edge in
+	//            do {
+	//                try self.unlink(edge)
+	//            } catch {
+	//                // log errors in unlinking here
+	//            }
+	//        }
 	//    }
+}
+
+public enum EdgeSequencePosition {
+	case first
+	case last
+	case before(Edge)
+	case after(Edge)
+	case number(Int)
+}
+
+extension memri.Edge {
+	override public var description: String {
+		"Edge (\(type ?? "")\(label != nil ? ":\(label ?? "")" : "")): \(sourceItemType ?? ""):\(sourceItemID.value ?? 0) -> \(targetItemType ?? ""):\(targetItemID.value ?? 0)"
+	}
+
+	var targetType: Object.Type? {
+		ItemFamily(rawValue: targetItemType ?? "")?.getType() as? Object.Type
+	}
+
+	var sourceType: Item.Type? {
+		ItemFamily(rawValue: sourceItemType ?? "")?.getType() as? Item.Type
+	}
+
+	func item<T: Item>(type: T.Type? = T.self) -> T? {
+		target(type: type)
+	}
+
+	func target<T: Object>(type _: T.Type? = T.self) -> T? {
+		do {
+			let realm = try Realm()
+			if let itemType = targetType {
+				return realm.object(ofType: itemType, forPrimaryKey: targetItemID) as? T
+			} else {
+				throw "Could not resolve edge target: \(self)"
+			}
+		} catch {
+			debugHistory.error("\(error)")
+		}
+
+		return nil
+	}
+
+	func source<T: Item>(type _: T.Type? = T.self) -> T? {
+		do {
+			let realm = try Realm()
+			if let itemType = sourceType {
+				return realm.object(ofType: itemType, forPrimaryKey: sourceItemID) as? T
+			} else {
+				throw "Could not resolve edge source: \(self)"
+			}
+		} catch {
+			debugHistory.error("\(error)")
+		}
+
+		return nil
+	}
+
+	convenience init(type: String = "edge", source: (String, Int), target: (String, Int),
+					 sequence: Int? = nil, label: String? = nil, action: String? = nil) {
+		self.init()
+
+		self.type = type
+		sourceItemType = source.0
+		sourceItemID.value = source.1
+		targetItemType = target.0
+		targetItemID.value = target.1
+		self.sequence.value = sequence
+		self.label = label
+
+		if let action = action {
+			syncState?.actionNeeded = action
+		}
+	}
 }

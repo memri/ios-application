@@ -52,24 +52,27 @@ struct ListRendererView: View {
 	var selectedIndices: Binding<Set<Int>> {
 		Binding<Set<Int>>(
 			get: { [] },
-			set: { self.context.cascadingView.userState.set("selection", $0.compactMap { self.context.items[safe: $0] }) }
+			set: {
+				self.context.cascadingView?.userState?
+					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+			}
 		)
 	}
 
 	let name = "list"
 
 	var renderConfig: CascadingListConfig {
-		context.cascadingView.renderConfig as? CascadingListConfig ?? CascadingListConfig()
+		context.cascadingView?.renderConfig as? CascadingListConfig ?? CascadingListConfig()
 	}
 
 	var body: some View {
 		let context = self.context
 
 		return VStack {
-			if context.cascadingView.resultSet.count == 0 {
+			if context.cascadingView?.resultSet.count == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(context.cascadingView.emptyResultText)
+					Text(context.cascadingView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)
@@ -79,10 +82,10 @@ struct ListRendererView: View {
 				.padding(.top, 40)
 				Spacer()
 			} else {
-				ASTableView(editMode: context.currentSession.isEditMode, section:
+				ASTableView(editMode: context.currentSession?.isEditMode ?? false, section:
 					ASSection(id: 0,
 							  data: context.items,
-							  dataID: \.memriID,
+							  dataID: \.uid.value,
 							  selectedItems: selectedIndices,
 							  onSwipeToDelete: { _, item, callback in
 							  	context.executeAction(ActionDelete(context), with: item)
@@ -105,6 +108,6 @@ struct ListRendererView: View {
 
 struct ListRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		ListRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		ListRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

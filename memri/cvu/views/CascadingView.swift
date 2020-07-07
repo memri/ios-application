@@ -30,27 +30,36 @@ public class CascadingView: Cascadable, ObservableObject {
 		} else {
 			// Missing datasource on sessionview, that should never happen (I think)
 			// TODO: ERROR REPORTING
-
-			return CascadingDatasource([], ViewArguments(), Datasource())
+			debugHistory.error("Unexpected state")
+			return CascadingDatasource([], nil, Datasource())
 		}
 	}
 
-	var userState: UserState {
-		sessionView.userState ?? UserState(onFirstSave: { args in
-			realmWriteIfAvailable(self.sessionView.realm) {
-				self.sessionView.userState = args
-			}
-        })
+	var userState: UserState? {
+		if let args = sessionView.userState { return args }
+		do {
+			let args = try Cache.createItem(UserState.self, values: [:])
+			sessionView.set("userState", args)
+			return args
+		} catch {
+			debugHistory.error("Exception: Unable to create user state for session view: \(error)")
+			return nil
+		}
+		// cascadeProperty("viewArguments",
 	}
 
 	// TODO: let this cascade when the use case for it arrises
-	override var viewArguments: ViewArguments {
+	override var viewArguments: ViewArguments? {
 		get {
-			sessionView.viewArguments ?? ViewArguments(onFirstSave: { args in
-				realmWriteIfAvailable(self.sessionView.realm) {
-					self.sessionView.viewArguments = args
-				}
-            })
+			if let args = sessionView.viewArguments { return args }
+			do {
+				let args = try Cache.createItem(ViewArguments.self, values: [:])
+				sessionView.set("viewArguments", args)
+				return args
+			} catch {
+				debugHistory.error("Exception: Unable to create arguments for session view: \(error)")
+				return nil
+			}
 			// cascadeProperty("viewArguments", )
 		}
 		set(value) {
@@ -67,7 +76,7 @@ public class CascadingView: Cascadable, ObservableObject {
 		localCache["resultSet"] = resultSet
 
 		// Filter the results
-		let ft = userState.get("filterText") ?? ""
+		let ft = userState?.get("filterText") ?? ""
 		if resultSet.filterText != ft {
 			filterText = ft
 		}
@@ -87,7 +96,7 @@ public class CascadingView: Cascadable, ObservableObject {
 		}
 		set(value) {
 			localCache.removeValue(forKey: value) // Remove renderConfig reference
-			userState.set("activeRenderer", value)
+			userState?.set("activeRenderer", value)
 		}
 	}
 
@@ -124,8 +133,8 @@ public class CascadingView: Cascadable, ObservableObject {
 				.fetchDefinitions(name: String(name), type: "renderer") ?? [])
 		}
 
-		for def in renderDef {
-			do {
+		do {
+			for def in renderDef {
 				if let parsedRenderDef = try context?.views.parseDefinition(def) as? CVUParsedRendererDefinition {
 					if parsedRenderDef.domain == "user" {
 						let insertPoint: Int = {
@@ -139,25 +148,27 @@ public class CascadingView: Cascadable, ObservableObject {
 					}
 				} else {
 					// TODO: Error logging
-					debugHistory.error("Exception: Unable to cascade render config")
+					debugHistory.warn("Exception: Unable to cascade render config")
 				}
-			} catch {
-				// TODO: Error logging
-				debugHistory.error("\(error)")
 			}
+
+			if let allRenderers = allRenderers, let RenderConfigType = allRenderers.allConfigTypes[activeRenderer] {
+				// swiftformat:disable:next redundantInit
+				let renderConfig = RenderConfigType.init(stack,
+														 try ViewArguments.clone(viewArguments, managed: false))
+				// Not actively preventing conflicts in namespace - assuming chance to be low
+				localCache[activeRenderer] = renderConfig
+				return renderConfig
+			} else {
+				// TODO: Error Logging
+				throw "Exception: Unable to cascade render config"
+			}
+		} catch {
+			// TODO: Error logging
+			debugHistory.error("\(error)")
 		}
 
-		if let allRenderers = allRenderers, let RenderConfigType = allRenderers.allConfigTypes[activeRenderer] {
-			// swiftformat:disable:next redundantInit
-			let renderConfig = RenderConfigType.init(stack, viewArguments)
-			// Not actively preventing conflicts in namespace - assuming chance to be low
-			localCache[activeRenderer] = renderConfig
-			return renderConfig
-		} else {
-			// TODO: Error Logging
-			debugHistory.error("Exception: Unable to cascade render config")
-			return CascadingRenderConfig([], ViewArguments())
-		}
+		return CascadingRenderConfig([])
 	}
 
 	private var _emptyResultTextTemp: String?
@@ -174,7 +185,7 @@ public class CascadingView: Cascadable, ObservableObject {
 	private var _titleTemp: String?
 	var title: String {
 		get {
-			_titleTemp ?? cascadeProperty("title", type: String.self)?.nilIfBlank ?? cascadeProperty("titleIfNil") ?? ""
+			_titleTemp ?? cascadeProperty("title", type: String.self) ?? ""
 		}
 		set(newTitle) {
 			if newTitle == "" { _titleTemp = nil }
@@ -195,18 +206,18 @@ public class CascadingView: Cascadable, ObservableObject {
 
 	var filterText: String {
 		get {
-			userState.get("filterText") ?? ""
+			userState?.get("filterText") ?? ""
 		}
 		set(newFilter) {
 			// Don't update the filter when it's already set
 			if newFilter.count > 0, _titleTemp != nil,
-				userState.get("filterText") == newFilter {
+				userState?.get("filterText") == newFilter {
 				return
 			}
 
 			// Store the new value
-			if (userState.get("filterText") ?? "") != newFilter {
-				userState.set("filterText", newFilter)
+			if (userState?.get("filterText") ?? "") != newFilter {
+				userState?.set("filterText", newFilter)
 			}
 
 			// If this is a multi item result set
@@ -221,7 +232,7 @@ public class CascadingView: Cascadable, ObservableObject {
 				print("Warn: Filtering for single items not Implemented Yet!")
 			}
 
-			if userState.get("filterText") == "" {
+			if userState?.get("filterText") == "" {
 				title = ""
 				subtitle = ""
 				emptyResultText = ""
@@ -234,24 +245,23 @@ public class CascadingView: Cascadable, ObservableObject {
 				// Temporarily hide the subtitle
 				// subtitle = " " // TODO how to clear the subtitle ??
 
-				emptyResultText = "No results found using '\(userState.get("filterText") ?? "")'"
+				emptyResultText = "No results found using '\(userState?.get("filterText") ?? "")'"
 			}
 		}
 	}
 
 	var searchMatchText: String {
 		get {
-			userState.get("searchMatchText") ?? ""
+			userState?.get("searchMatchText") ?? ""
 		}
 		set(newValue) {
-			userState.set("searchMatchText", newValue)
+			userState?.set("searchMatchText", newValue)
 		}
 	}
 
-	init(_ sessionView: SessionView,
-		 _ cascadeStack: [CVUParsedDefinition]) {
+	init(_ sessionView: SessionView, _ cascadeStack: [CVUParsedDefinition]) {
 		self.sessionView = sessionView
-		super.init(cascadeStack, ViewArguments())
+		super.init(cascadeStack)
 	}
 
 	subscript(propName: String) -> Any? {
@@ -302,8 +312,7 @@ public class CascadingView: Cascadable, ObservableObject {
 		var result: Any? = source
 
 		if let expr = source as? Expression {
-			let args = viewArguments ?? ViewArguments()
-			result = try expr.execute(args)
+			result = try expr.execute(viewArguments)
 		}
 
 		if let viewName = result as? String {
@@ -370,9 +379,11 @@ public class CascadingView: Cascadable, ObservableObject {
 
 						if let inheritedView = parsedDef["inherit"] {
 							let args = sessionView.viewArguments
-							let view = try inherit(inheritedView, args, context, sessionView)
-
-							parse(view, domain)
+							if let view = try inherit(inheritedView, args, context, sessionView) {
+								parse(view, domain)
+							} else {
+								throw "Exception: Unable to inherit view from \(inheritedView)"
+							}
 						}
 					}
 				} else {
@@ -390,7 +401,9 @@ public class CascadingView: Cascadable, ObservableObject {
 		// Find views based on datatype
 		for domain in ["user", "session", "defaults"] {
 			if domain == "session" {
-				parse(sessionView.viewDefinition, domain)
+				if let viewDef = sessionView.viewDefinition {
+					parse(viewDef, domain)
+				}
 				continue
 			}
 
@@ -399,7 +412,6 @@ public class CascadingView: Cascadable, ObservableObject {
 					parse(def, domain)
 				} else if domain != "user" {
 					debugHistory.warn("Could not find definition for '\(needle)' in domain '\(domain)'")
-					print("Could not find definition for '\(needle)' in domain '\(domain)'")
 				}
 			}
 		}

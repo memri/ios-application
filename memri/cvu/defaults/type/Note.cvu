@@ -8,8 +8,7 @@
 }
 
 Note {
-    title: "{.title}"
-    titleIfNil: "Untitled"
+    title: {{.title or "Untitled" }}
     defaultRenderer: richTextEditor
     editActionButton: toggleEditMode
     filterButtons: [

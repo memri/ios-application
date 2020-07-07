@@ -12,8 +12,8 @@ import RealmSwift
 public class Expression: CVUToString {
 	let code: String
 	let startInStringMode: Bool
-	var lookup: (ExprLookupNode, ViewArguments) throws -> Any?
-	var execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any?
+	var lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
+	var execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
 
 	var context: MemriContext?
 
@@ -37,8 +37,8 @@ public class Expression: CVUToString {
 	}
 
 	init(_ code: String, startInStringMode: Bool,
-		 lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any?,
-		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any?) {
+		 lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
+		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
 		self.code = code
 		self.startInStringMode = startInStringMode
 		self.lookup = lookup
@@ -57,7 +57,7 @@ public class Expression: CVUToString {
 			var sequence = node.sequence
 			if let lastProperty = sequence.popLast() as? ExprVariableNode {
 				let lookupNode = ExprLookupNode(sequence: sequence)
-				let lookupValue = try lookup(lookupNode, ViewArguments())
+				let lookupValue = try lookup(lookupNode, nil)
 
 				if let context = context {
 					if let obj = lookupValue as? UserState {
@@ -96,6 +96,11 @@ public class Expression: CVUToString {
 				if let dataItem = try lookup(lookupNode, viewArguments) as? Item {
 					if let propType = dataItem.objectSchema[lastProperty.name]?.type {
 						return (propType, dataItem, lastProperty.name)
+					} else if let propType = PropertyType(rawValue: 7) {
+						#warning("This requires a local version a browsable schema that describes the types of edges")
+						//                        if let item = dataItem.edge(lastProperty.name)?.item() {
+						return (propType, dataItem, lastProperty.name)
+						//                        }
 					}
 				}
 			}
@@ -124,7 +129,8 @@ public class Expression: CVUToString {
 
 	public func execForReturnType<T>(_: T.Type = T.self, args: ViewArguments? = nil) throws -> T? {
 		if !parsed { try parse() }
-		let value = try interpreter?.execute(args ?? ViewArguments())
+
+		let value = try interpreter?.execute(args)
 
 		if value == nil { return nil }
 		if let value = value as? T { return value }
@@ -139,6 +145,6 @@ public class Expression: CVUToString {
 	public func execute(_ args: ViewArguments? = nil) throws -> Any? {
 		if !parsed { try parse() }
 
-		return try interpreter?.execute(args ?? ViewArguments())
+		return try interpreter?.execute(args)
 	}
 }

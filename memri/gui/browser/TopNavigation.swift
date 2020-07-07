@@ -41,24 +41,16 @@ public struct TopNavigation: View {
 	}
 
 	private func openAllViewsOfSession() {
-		let memriID = context.currentSession.memriID
-		let view = """
-		{
-		    "title": "Views in current session",
-		    "datasource": {
-		        "query": "SessionView AND session.uid = '\(memriID)'",
-		    }
+		do {
+			try ActionOpenViewByName.exec(context, ["name": "views-in-current-session"])
+		} catch {
+			debugHistory.error("Unable to open views for session: \(error)")
 		}
-		"""
-
-		// TODO:
-		do { try ActionOpenView.exec(context, ["view": view]) }
-		catch {}
 	}
 
 	private func createTitleActionSheet() -> ActionSheet {
 		var buttons: [ActionSheet.Button] = []
-		let isNamed = context.currentSession.currentView.name != nil
+		let isNamed = context.currentSession?.currentView?.name != nil
 
 		// TODO: or copyFromView
 		buttons.append(isNamed
@@ -91,7 +83,7 @@ public struct TopNavigation: View {
 	}
 
 	public var body: some View {
-		let backButton = context.currentSession.hasHistory ? ActionBack(context) : nil
+		let backButton = context.currentSession?.hasHistory ?? false ? ActionBack(context) : nil
 		let context = self.context
 
 		return VStack(alignment: .leading, spacing: 0) {
@@ -172,12 +164,12 @@ public struct TopNavigation: View {
 				// TODO: this should not be a setting but a user defined view that works on all
 				if context.item != nil || context.items.count > 0 &&
 					context.settings.getBool("user/general/gui/showEditButton") != false &&
-					context.cascadingView.editActionButton != nil {
-					ActionButton(action: context.cascadingView.editActionButton)
+					context.cascadingView?.editActionButton != nil {
+					ActionButton(action: context.cascadingView?.editActionButton)
 						.font(Font.system(size: 19, weight: .semibold))
 				}
 
-				if context.currentSession.isEditMode {
+				if context.currentSession?.isEditMode ?? false {
 					Button(action: { withAnimation { self.context.executeAction(ActionDelete(self.context)) } }) {
 						Image(systemName: "trash")
 							.fixedSize()
@@ -188,7 +180,7 @@ public struct TopNavigation: View {
 					}
 				}
 
-				ActionButton(action: context.cascadingView.actionButton)
+				ActionButton(action: context.cascadingView?.actionButton)
 					.font(Font.system(size: 22, weight: .semibold))
 
 				if !inSubView {
@@ -207,8 +199,10 @@ public struct TopNavigation: View {
 		}
 		.padding(.bottom, 0)
 		.centeredOverlayWithinBoundsPreferenceKey {
-			Button(action: { self.showingTitleActions = true }) {
-				Text(context.cascadingView.title)
+			Button(action: {
+				self.showingTitleActions = true
+            }) {
+				Text(context.cascadingView?.title ?? "")
 					.font(.headline)
 					.foregroundColor(Color(hex: "#333"))
 					.truncationMode(.tail)
@@ -256,6 +250,6 @@ private extension View {
 
 struct Topnavigation_Previews: PreviewProvider {
 	static var previews: some View {
-		TopNavigation().environmentObject(RootContext(name: "", key: "").mockBoot())
+		TopNavigation().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

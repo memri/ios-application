@@ -44,10 +44,8 @@ public class ResultSet: ObservableObject {
 		// TODO: this is called very often, needs caching
 
 		let (typeName, filter) = cache.parseQuery(datasource.query ?? "")
-
 		if let type = ItemFamily(rawValue: typeName) {
-			let primKey = type.getPrimaryKey()
-			if (filter ?? "").match("^AND \(primKey) = '.*?'$").count > 0 {
+			if (filter ?? "").match("^AND uid = .*?$").count > 0 {
 				return false
 			}
 		}
@@ -85,7 +83,7 @@ public class ResultSet: ObservableObject {
 	///  Items
 	/// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
 	/// - Throws: empty query error
-	func load(_ callback: (_ error: Error?) -> Void) throws {
+	func load(_ callback: (_ error: Error?) throws -> Void) throws {
 		// Only execute one loading process at the time
 		if !isLoading {
 			// Validate datasource
@@ -100,7 +98,7 @@ public class ResultSet: ObservableObject {
 			updateUI()
 
 			// Execute the query
-			cache.query(datasource) { (error, result) -> Void in
+			try cache.query(datasource) { (error, result) -> Void in
 				if let result = result {
 					// Set data and count
 					items = result
@@ -119,13 +117,13 @@ public class ResultSet: ObservableObject {
 					isLoading = false
 
 					// Done
-					callback(nil)
+					try callback(nil)
 				} else if error != nil {
 					// Set loading state to error
 					isLoading = false
 
 					// Done with errors
-					callback(error)
+					try callback(error)
 				}
 
 				// Make sure the loading state is updated in the UI

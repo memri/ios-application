@@ -122,7 +122,7 @@ class ExprParser {
 		guard case ExprToken.Period = peekCurrentToken() else {
 			throw ExprParseErrors.UnexpectedToken(lastToken!)
 		}
-		return try parseIdentifier(ExprVariableNode(name: "__DEFAULT__"))
+		return try parseIdentifier(ExprVariableNode(name: "@@DEFAULT@@"))
 	}
 
 	func parseOperator() throws -> ExprNode {
@@ -187,11 +187,23 @@ class ExprParser {
 			if case ExprToken.BracketOpen = peekCurrentToken() {
 				_ = popCurrentToken()
 
-				let exp = try parseLookupExpression()
-				sequence.append(ExprLookupNode(sequence: [exp]))
+				guard var lastVar = sequence.last as? ExprVariableNode else {
+					throw ExprParseErrors.ExpectedIdentifier
+				}
 
-				guard case ExprToken.BracketClose = popCurrentToken() else {
-					throw ExprParseErrors.ExpectedCharacter("]")
+				if case ExprToken.BracketClose = peekCurrentToken() {
+					_ = popCurrentToken()
+					lastVar.list = .list
+					sequence[sequence.count - 1] = lastVar
+				} else {
+					let exp = try parseLookupExpression()
+					lastVar.list = .list
+					sequence[sequence.count - 1] = lastVar
+					sequence.append(ExprLookupNode(sequence: [exp]))
+
+					guard case ExprToken.BracketClose = popCurrentToken() else {
+						throw ExprParseErrors.ExpectedCharacter("]")
+					}
 				}
 			}
 
@@ -201,10 +213,14 @@ class ExprParser {
 				break
 			}
 
-			if case let ExprToken.Identifier(name, _) = popCurrentToken() {
+			let nextToken = peekCurrentToken()
+			if case let ExprToken.Identifier(name, _) = nextToken {
+				_ = popCurrentToken()
 				sequence.append(ExprVariableNode(name: name))
-			} else if case ExprToken.EOF = lastToken! {
+			} else if case ExprToken.EOF = nextToken {
 				return ExprLookupNode(sequence: sequence)
+			} else if sequence.count == 1, case is ExprVariableNode = sequence[0] {
+				break
 			} else {
 				throw ExprParseErrors.ExpectedIdentifier
 			}

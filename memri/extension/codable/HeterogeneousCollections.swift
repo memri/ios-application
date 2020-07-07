@@ -21,7 +21,7 @@ protocol ClassFamily: Decodable {
 
 /// Discriminator key enum used to retrieve discriminator fields in JSON payloads.
 enum Discriminator: String, CodingKey {
-	case type
+	case _type
 }
 
 class ClassWrapper<T: ClassFamily, U: Decodable>: Decodable {

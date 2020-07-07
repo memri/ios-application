@@ -40,7 +40,7 @@ struct MapRendererView: View {
 	let name = "map"
 
 	var renderConfig: CascadingMapConfig {
-		(context.cascadingView.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
+		(context.cascadingView?.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
 	}
 
 	var useMapBox: Bool { context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false }
@@ -64,6 +64,6 @@ struct MapRendererView: View {
 
 struct MapRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		MapRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		MapRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

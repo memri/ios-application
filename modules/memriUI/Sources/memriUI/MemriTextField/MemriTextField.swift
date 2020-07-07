@@ -79,7 +79,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
 	}
 
 	// Modifier
-	func onEditingBegan(_ callback: @escaping () -> Void) -> Self {
+	public func onEditingBegan(_ callback: @escaping () -> Void) -> Self {
 		var this = self
 		this.onEditingBeganCallback = callback
 		return this
@@ -237,8 +237,8 @@ public extension MemriTextField where Value == Double {
 	}
 }
 
-public extension MemriTextField {
-	func textFieldFont(_ font: UIFont) -> Self {
+extension MemriTextField {
+	public func textFieldFont(_ font: UIFont) -> Self {
 		var this = self
 		this.font = font
 		return this
@@ -253,12 +253,6 @@ extension TextAlignment {
 		case .trailing: return .right
 		}
 	}
-}
-
-func assignIfChanged<T: Equatable>(_ theVar: inout T, newValue: T)
-{
-	guard newValue != theVar else { return }
-	theVar = newValue
 }
 
 func assignIfChanged<Object: AnyObject, T: Equatable>(_ object: Object, _ keyPath: ReferenceWritableKeyPath<Object, T>, newValue: T)

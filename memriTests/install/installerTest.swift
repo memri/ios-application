@@ -24,7 +24,7 @@ class installerTest: XCTestCase {
 		let fileManager = FileManager()
 		try fileManager.removeItem(atPath: dbPath)
 
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
 		XCTAssertEqual(root.realm.objects(AuditItem.self).filter("action = 'install'").first!.action, "install")

@@ -59,7 +59,7 @@ struct ChartRendererView: View {
 	let type: ChartType
 
 	var renderConfig: CascadingChartConfig {
-		(context.cascadingView.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([], ViewArguments())
+		(context.cascadingView?.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([])
 	}
 
 	var missingDataView: some View {
@@ -79,8 +79,13 @@ struct ChartRendererView: View {
 		return nil
 	}
 
-	func resolveExpression<T>(_ expression: Expression?, toType _: T.Type = T.self, forItem dataItem: Item) -> T? {
-		try? expression?.execForReturnType(T.self, args: ViewArguments([".": dataItem]))
+	func resolveExpression<T>(_ expression: Expression?,
+							  toType _: T.Type = T.self,
+							  forItem dataItem: Item) -> T? {
+		let args = try? ViewArguments
+			.clone(context.cascadingView?.viewArguments, [".": dataItem], managed: false)
+
+		return try? expression?.execForReturnType(T.self, args: args)
 	}
 
 	var chartTitleView: some View {
@@ -152,6 +157,6 @@ struct ChartRendererView: View {
 
 struct ChartRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		ChartRendererView(type: .bar).environmentObject(RootContext(name: "", key: "").mockBoot())
+		ChartRendererView(type: .bar).environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

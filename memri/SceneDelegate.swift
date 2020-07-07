@@ -18,31 +18,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		// This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
 
 		// Create the SwiftUI view that provides the window contents.
-		let context = RootContext(name: "Memri GUI", key: "ABCDEF")
-		let application = Application().environmentObject(context as MemriContext)
+		do {
+			let context = try RootContext(name: "Memri GUI", key: "ABCDEF")
+			let application = Application().environmentObject(context as MemriContext)
 
-		do { try context.boot() }
-		catch {
+			try context.boot()
+
+			// Use a UIHostingController as window root view controller.
+			guard let windowScene = scene as? UIWindowScene else { return }
+
+			let window = UIWindow(windowScene: windowScene)
+			window.rootViewController = UIHostingController(rootView: application)
+
+			#if targetEnvironment(macCatalyst)
+				if let titlebar = windowScene.titlebar {
+					titlebar.titleVisibility = .hidden
+					titlebar.toolbar = nil
+				}
+			#endif
+
+			self.window = window
+			window.makeKeyAndVisible()
+		} catch {
 			// TODO: Error Handling (show fatal error on screen)
 			print(error)
 			exit(1)
 		}
-
-		// Use a UIHostingController as window root view controller.
-		guard let windowScene = scene as? UIWindowScene else { return }
-
-		let window = UIWindow(windowScene: windowScene)
-		window.rootViewController = UIHostingController(rootView: application)
-
-		#if targetEnvironment(macCatalyst)
-			if let titlebar = windowScene.titlebar {
-				titlebar.titleVisibility = .hidden
-				titlebar.toolbar = nil
-			}
-		#endif
-
-		self.window = window
-		window.makeKeyAndVisible()
 	}
 
 	func sceneDidDisconnect(_: UIScene) {

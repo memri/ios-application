@@ -120,7 +120,7 @@ class DebugHistory: ObservableObject {
 			))
 		}
 
-		print("\(time()) INFO: \(message)")
+		print("\(time()) INFO: \(message.replace("\n", "\n    "))")
 	}
 
 	func warn(_ message: String /* , _ cascadingView:ComputedView */ ) {
@@ -138,7 +138,7 @@ class DebugHistory: ObservableObject {
 			showErrorConsole = true
 		}
 
-		print("\(time()) WARNING: \(message)")
+		print("\(time()) WARNING: \(message.replace("\n", "\n    "))")
 	}
 
 	func error(_ message: String /* , _ cascadingView:ComputedView */ ) {
@@ -156,7 +156,7 @@ class DebugHistory: ObservableObject {
 			showErrorConsole = true
 		}
 
-		print("\(time()) WARNING: \(message)")
+		print("\(time()) ERROR: \(message.replace("\n", "\n    "))")
 	}
 
 	func clear() {
@@ -261,6 +261,6 @@ struct DebugConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
 	static var previews: some View {
-		DebugConsole().environmentObject(RootContext(name: "", key: "").mockBoot())
+		DebugConsole().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

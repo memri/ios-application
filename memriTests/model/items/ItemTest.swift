@@ -7,6 +7,7 @@
 //
 
 @testable import memri
+import RealmSwift
 import XCTest
 
 class ItemTest: XCTestCase {
@@ -18,7 +19,7 @@ class ItemTest: XCTestCase {
 		// Put teardown code here. This method is called after the invocation of each test method in the class.
 	}
 
-	func testDeserializeItem() {
+	func testDeserializeItem() throws {
 		let data = Data("""
 		{
 		    "memriID": "0x012345",
@@ -28,7 +29,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item: Item = try! MemriJSONDecoder.decode(Item.self, from: data)
+		let item: Item = try MemriJSONDecoder.decode(Item.self, from: data)
 
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -39,7 +40,7 @@ class ItemTest: XCTestCase {
 		XCTAssertEqual(item.get("version"), 10)
 	}
 
-	func testGetString() {
+	func testGetString() throws {
 		let data = Data("""
 		{
 		    "memriID": "0x012345",
@@ -49,7 +50,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item: Item = try! MemriJSONDecoder.decode(Item.self, from: data)
+		let item: Item = try MemriJSONDecoder.decode(Item.self, from: data)
 
 		let formatter = DateFormatter()
 		formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
@@ -80,7 +81,7 @@ class ItemTest: XCTestCase {
 		XCTAssertEqual(item.starred, true)
 	}
 
-	func testMerge() {
+	func testMerge() throws {
 		let data1 = Data("""
 		{
 		    "memriID": "0x012345",
@@ -90,7 +91,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item1: Item = try! MemriJSONDecoder.decode(Item.self, from: data1)
+		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let data2 = Data("""
 		{
@@ -99,7 +100,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item2: Item = try! MemriJSONDecoder.decode(Item.self, from: data2)
+		let item2: Item = try MemriJSONDecoder.decode(Item.self, from: data2)
 
 		item1.merge(item2)
 
@@ -109,7 +110,7 @@ class ItemTest: XCTestCase {
 		XCTAssertEqual(item1.get("version"), 10)
 	}
 
-	func testSafeMergeVersion() {
+	func testSafeMergeVersion() throws {
 		let data1 = Data("""
 		{
 		    "memriID": "0x012345",
@@ -119,7 +120,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item1: Item = try! MemriJSONDecoder.decode(Item.self, from: data1)
+		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let data2 = Data("""
 		{
@@ -129,14 +130,14 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item2: Item = try! MemriJSONDecoder.decode(Item.self, from: data2)
+		let item2: Item = try MemriJSONDecoder.decode(Item.self, from: data2)
 
 		XCTAssertEqual(item1.safeMerge(item1), false)
 		XCTAssertEqual(item2.safeMerge(item1), false)
 		XCTAssertEqual(item1.safeMerge(item2), true)
 	}
 
-	func testSafeMergeUpdateFields() {
+	func testSafeMergeUpdateFields() throws {
 		let data1 = Data("""
 		{
 		    "memriID": "0x012345",
@@ -146,7 +147,7 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item1: Item = try! MemriJSONDecoder.decode(Item.self, from: data1)
+		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let data2 = Data("""
 		{
@@ -156,14 +157,14 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item2: Item = try! MemriJSONDecoder.decode(Item.self, from: data2)
+		let item2: Item = try MemriJSONDecoder.decode(Item.self, from: data2)
 
 		item1.syncState?.updatedFields.append("starred")
 
 		XCTAssertEqual(item1.safeMerge(item2), false)
 	}
 
-	func testAccess() {
+	func testAccess() throws {
 		let data1 = Data("""
 		{
 		    "memriID": "0x012345",
@@ -173,11 +174,159 @@ class ItemTest: XCTestCase {
 		}
 		""".utf8
 		)
-		let item1: Item = try! MemriJSONDecoder.decode(Item.self, from: data1)
+		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let dt = item1.dateAccessed
 		item1.access()
 		XCTAssertNotEqual(dt, item1.dateAccessed)
+	}
+
+	func testLinkAndUnlink() throws {
+		let data1 = Data("""
+		{
+		    "memriID": "0x012345",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10
+		}
+		""".utf8
+		)
+		let item1: Person = try MemriJSONDecoder.decode(Person.self, from: data1)
+
+		let data2 = Data("""
+		{
+		    "memriID": "0x012346",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version":9
+		}
+		""".utf8
+		)
+		let item2: Person = try MemriJSONDecoder.decode(Person.self, from: data2)
+
+		do {
+			_ = try item1.link(item2, type: "relationships")
+			XCTAssertEqual(item2.relationships?.first, item2)
+
+			_ = try item1.unlink(item2, type: "relationships")
+			XCTAssertNotEqual(item2.relationships?.first, item2)
+		} catch {
+			XCTFail("\(error)")
+		}
+	}
+
+	func createDataset() throws -> Person {
+		let data1 = Data("""
+		[
+		{
+		    "memriID": "1",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Abhi"
+		},
+		{
+		    "memriID": "2",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Bernie"
+		},
+		{
+		    "memriID": "3",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Coolio"
+		},
+		{
+		    "memriID": "4",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Dufus"
+		},
+		{
+		    "memriID": "5",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Edward"
+		},
+		{
+		    "memriID": "6",
+		    "starred": true,
+		    "dateCreated": "2020-04-10T11:11:11Z",
+		    "version": 10,
+		    "firstName": "Fiona"
+		}
+		]
+		""".utf8
+		)
+		let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
+
+		let realm = try Realm()
+		realmWriteIfAvailable(realm) {
+			for item in items {
+				realm.add(item, update: .modified)
+			}
+		}
+
+		do {
+			_ = try items[0].link(items[1], type: "brother")
+			_ = try items[0].link(items[2], type: "father")
+			_ = try items[0].link(items[3], type: "sister")
+			_ = try items[1].link(items[3], type: "aunt")
+			_ = try items[1].link(items[4], type: "family")
+			_ = try items[2].link(items[1], type: "cousin")
+			_ = try items[2].link(items[5], type: "mother")
+		} catch {
+			XCTFail("\(error)")
+		}
+
+		return items[0]
+	}
+
+	func testEdgesSingle() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge("father")?.item(type: Person.self)?.firstName, "Coolio")
+	}
+
+	func testEdgesSingleExpanded() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge("family")?.item(type: Person.self)?.firstName, "Bernie")
+	}
+
+	func testEdgesMulti() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge(["sister", "father"])?.item(type: Person.self)?.firstName, "Coolio")
+	}
+
+	func testEdgesMultiExpanded() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge(["aunt", "family"])?.item(type: Person.self)?.firstName, "Bernie")
+	}
+
+	func testEdgeSingle() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edges("father")?.items()?.count, 1)
+	}
+
+	func testEdgeSingleExpanded() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edges("family")?.items()?.count, 3)
+	}
+
+	func testEdgeMulti() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge("brother")?.item()?.edges(["sister", "aunt"])?.items()?.count, 1)
+		XCTAssertEqual(person.edge("father")?.item()?.edges(["sister", "aunt"])?.items()?.count, 0)
+	}
+
+	func testEdgeMultiExpanded() throws {
+		let person = try createDataset()
+		XCTAssertEqual(person.edge("brother")?.item()?.edges(["aunt", "family"])?.items()?.count, 2)
+		XCTAssertEqual(person.edge("father")?.item()?.edges(["aunt", "family"])?.items()?.count, 2)
 	}
 
 	//    func testPerformanceExample() throws {

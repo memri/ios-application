@@ -1,1813 +1,939 @@
 [
+    { "_type": "Setting", "key": "defaults/general/gui/showEditButton", "value": true},
+    { "_type": "Setting", "key": "defaults/general/gui/showDateAgo", "value": true},
+    { "_type": "Setting", "key": "defaults/general/gui/useMapBox", "value": false},
+    { "_type": "Setting", "key": "defaults/formatting/date", "value": "yyyy/MM/dd HH:mm"},
+    { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost.charlesproxy.com:3030"},
+    { "_type": "Setting", "key": "defaults/pod/username", "value": ""},
+    { "_type": "Setting", "key": "defaults/pod/password", "value": ""},
+    { "_type": "Setting", "key": "defaults/debug/autoShowErrorConsole", "value": false},
     {
-        "type": "Importer",
+        "_type": "NavigationItem",
+        "type": "heading",
+        "title": "General"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "notes",
+        "view": "all-notes"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "shopping notes",
+        "view": "shopping-notes"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "people",
+        "view": "all-people"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "photos",
+        "view": "all-photos"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "addresses",
+        "view": "all-addresses"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "log",
+        "view": "all-audit-items"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "labels",
+        "view": "all-labels"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "sessions",
+        "view": "all-sessions"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "importers",
+        "view": "all-importers"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "importer instances",
+        "view": "all-importer-instances"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "indexers",
+        "view": "all-indexers"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "indexer instances",
+        "view": "all-indexer-instances"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "views",
+        "view": "all-sessionviews"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "heading",
+        "title": "Macros"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "starred",
+        "view": "filter-starred"
+    },
+    {
+        "_type": "Importer",
         "name": "iCloud notes",
         "datatype": "Note",
         "icon": "cloud"
     },
     {
-        "type": "Importer",
+        "_type": "Importer",
         "name": "Evernote notes",
         "datatype": "Note",
         "bundleImage": "evernote-icon"
     },
     {
-        "type": "Indexer",
+        "_type": "Indexer",
         "name": "Geolocation indexer",
-        "indexerDescription": "Enriches datatypes with geographic coordinates with their corresponding cities and countries",
+        "itemDescription": "Enriches datatypes with geographic coordinates with their corresponding cities and countries",
         "icon": "mappin.and.ellipse"
     },
     {
-        "type": "Indexer",
+        "_type": "Indexer",
         "name": "Note Label Indexer",
         "query": "Note",
         "runDestination": "ios",
-        "indexerDescription": "This indexer extracts labels from notes. You can specify aliases in the labels to add keywords that are used to match against.",
+        "itemDescription": "This indexer extracts labels from notes. You can specify aliases in the labels to add keywords that are used to match against.",
         "icon": "text.badge.plus"
     },
     {
-        "type": "Note",
+        "_type": "Note",
         "title": "Note1",
         "content": "Greenhouse green house green-house",
         "icon": "mappin.and.ellipse"
     },
     {
-        "type": "Note",
+        "_type": "Note",
         "title": "Note2",
         "content": "some random note",
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0001.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0001.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0002.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0002.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "uid": 500,
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0004.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0004.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0005.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0005.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0006.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0006.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0007.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0007.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0008.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0008.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0009.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0009.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0010.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0010.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0011.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0011.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0012.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0012.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0013.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0013.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0014.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0014.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0015.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0015.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0016.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0016.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0017.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0017.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0018.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0018.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0019.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0019.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0020.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0020.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0021.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0021.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0022.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0022.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0023.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0023.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0024.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0024.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0025.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0025.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0026.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0026.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0027.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0027.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0028.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0028.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0029.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0029.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0030.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0030.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0031.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0031.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0032.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0032.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0033.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0033.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0034.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0034.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0035.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0035.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0036.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0036.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0037.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0037.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0038.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0038.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0039.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0039.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0040.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0040.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0041.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0041.jpg"}}
+        ]
     },
     {
-        "type": "Photo",
+        "_type": "Photo",
         "width": 250,
         "height": 250,
-        "file": {"uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0042.jpg"},
-        "includes": [{"memriID": "0x013"}]
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 3},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0042.jpg"}}
+        ]
     },
     {
-        "memriID": "0x013",
-        "type": "Person",
+        "_type": "Photo",
+        "uid": 501,
+        "width": 250,
+        "height": 250,
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 2},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Michael_Douglas/Michael_Douglas_0005.jpg"}}
+        ]
+    },
+    {
+        "_type": "Photo",
+        "uid": 502,
+        "width": 250,
+        "height": 250,
+        "allEdges": [
+            {"type":"includes", "itemType": "Person", "uid": 1},
+            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Norah_Jones/Norah_Jones_0007.jpg"}}
+        ]
+    },
+    { "_type": "Label", "uid": 1000, "name": "Green house", "color": "#047a0a", "aliases": ["green house", "green-house"] },
+    { "_type": "Label", "uid": 1001, "name": "Soccer team", "color": "#83ac06" },
+    { "_type": "Label", "uid": 1002, "name": "Friends from University", "color": "#ffd966" },
+    { "_type": "Label", "uid": 1015, "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
+    { "_type": "Label", "uid": 1016, "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
+    { "_type": "Label", "uid": 1017, "name": "Government", "color": "#835506" },
+    { "_type": "PhoneNumber", "type": "mobile", "uid": 1003, "phoneNumber": "0654271340" },
+    { "_type": "Website", "uid": 1004, "type": "blog", "url": "www.revolutionairyblog.com" },
+    { "_type": "Website", "uid": 1005, "type": "website", "url": "www.eagleve.com" },
+    { "_type": "Company", "uid": 1006, "type": "freelance", "name": "eagle solutions" },
+    { "_type": "PublicKey", "uid": 1007, "name": "PGP Email", "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517" },
+    { "_type": "OnlineProfile", "uid": 1008, "type": "twitter", "handle": "@eagleve91" },
+    { "_type": "OnlineProfile", "uid": 1009, "type": "facebook", "handle": "@eagleve2393" },
+    { "_type": "Diet", "uid": 1010, "type": "Vegan", "additions": "egg" },
+    { "_type": "Diet", "uid": 1011, "type": "Gluten Free", "additions": "sourdough" },
+    { "_type": "MedicalCondition", "uid": 1012, "type": "Psoriasis" },
+    { "_type": "Address", "uid": 1013, "type": "Home",
+        "city": "Washington, DC",
+        "state": "NW",
+        "street": "1600 Pennsylvania Ave",
+        "postalCode": "20500",
+        "allEdges": [
+            {"type":"location", "target": {"_type": "Location", "latitude": -37.81, "longitude": 144.96 }},
+            {"type":"labels", "itemType": "Label", "uid": 1017},
+            {"type":"country", "itemType": "Country", "uid": 1401}
+        ]
+    },
+    { "_type": "Address", "uid": 1014, "type": "Work",
+        "city": "Paris",
+        "state": "",
+        "street": "45 Rue de la plage",
+        "postalCode": "EL29",
+        "allEdges": [
+            {"type":"location", "target": {"_type": "Location", "latitude": -37.83, "longitude": 144.96 }},
+            {"type":"country", "itemType": "Country", "uid": 1402}
+        ]
+    },
+    {
+        "uid": 3,
+        "_type": "Person",
         "firstName": "Eve",
         "lastName": "Eagle",
-        "age": 97,
+        "birthDate": 1593777745298,
         "starred": true,
         "height": 185,
         "shoulderWidth": 42,
         "armLength": 73,
-        "relations": [{"memriID":"0x011"},{"memriID":"0x012"}],
-        "profilePicture": {
-            "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"
-        },
-        "labels": [
-            { "type": "label", "name": "Green house", "color": "#047a0a", "aliases": ["green house", "green-house"] },
-            { "type": "label", "name": "Soccer team", "color": "#83ac06" },
-            { "type": "label", "name": "Friends from University", "color": "#ffd966" }
+        "allEdges": [
+            {"type":"me", "itemType": "Person", "uid": 3},
+            {"type":"relations", "itemType": "Person", "uid": 2},
+            {"type":"relations", "itemType": "Person", "uid": 1},
+            {"type":"profilePicture", "itemType": "Photo", "uid": 500},
+            {"type":"labels", "itemType": "Label", "uid": 1000},
+            {"type":"labels", "itemType": "Label", "uid": 1001},
+            {"type":"labels", "itemType": "Label", "uid": 1002},
+            {"type":"phoneNumbers", "itemType": "PhoneNumber", "uid": 1003},
+            {"type":"websites", "itemType": "Website", "uid": 1004},
+            {"type":"websites", "itemType": "Website", "uid": 1005},
+            {"type":"companies", "itemType": "Company", "uid": 1006},
+            {"type":"publicKeys", "itemType": "PublicKey", "uid": 1007},
+            {"type":"onlineProfiles", "itemType": "OnlineProfile", "uid": 1008},
+            {"type":"onlineProfiles", "itemType": "OnlineProfile", "uid": 1009},
+            {"type":"diets", "itemType": "Diet", "uid": 1010},
+            {"type":"diets", "itemType": "Diet", "uid": 1011},
+            {"type":"medicalConditions", "itemType": "MedicalCondition", "uid": 1012},
+            {"type":"addresses", "label": "Home", "itemType": "Address", "uid": 1013},
+            {"type":"addresses", "label": "Holiday home in France", "itemType": "Address", "uid": 1014},
         ],
-        "phoneNumbers": [
-            {
-                "type": "mobile",
-                "number": "0654271340"
-            }
-        ],
-        "websites": [
-            {
-                "type": "blog",
-                "url": "www.revolutionairyblog.com"
-            },
-            {
-                "type": "website",
-                "url": "www.eagleve.com"
-            }
-        ],
-        "companies": [
-            {
-                "type": "freelance",
-                "name": "eagle solutions"
-            }
-        ],
-        "publicKeys":[
-            {
-                "name": "PGP Email",
-                "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517"
-            }
-        ],
-        "onlineProfiles":[
-            {
-                "type": "twitter",
-                "handle": "@eagleve91"
-            },
-            {
-                "type": "facebook",
-                "handle": "@eagleve2393"
-            }
-        ],
-        "diets":[
-            {
-                "name": "Vegan",
-                "additions": ["egg"]
-            },
-            {
-                "name": "Gluten Free",
-                "additions": ["sourdough"]
-            }
-        ],
-        "medicalConditions":[
-            {
-                "name": "Psoriasis"
-            }
-        ],
-        "addresses":  [
-            {
-                "type": "Home",
-                "location": {
-                    "latitude": -37.81,
-                    "longitude": 144.96
-                }
-            },
-            {
-                "type": "Work",
-                "location": {
-                    "latitude": -37.83,
-                    "longitude": 144.96
-                }
-            }
-        ],
-        "syncState": {
-            "version": 1
-        }
+        "version": 1
     },
     {
-        "memriID": "0x012",
-        "type": "Person",
+        "uid": 2,
+        "_type": "Person",
         "firstName": "Bob",
         "lastName": "Brown",
-        "age": 37,
+        "birthDate": 1593777745298,
         "height": 197,
-        "relations": [{"memriID":"0x011"}],
-        "profilePicture": {
-            "uri": "/tmp/lfw/Michael_Douglas/Michael_Douglas_0005.jpg"
-        },
-        "labels": [
-            { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
-            { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
+        "allEdges": [
+            {"type":"relations", "itemType": "Person", "uid": 1},
+            {"type":"profilePicture", "itemType": "Photo", "uid": 501},
+            {"type":"labels", "itemType": "Label", "uid": 1015},
+            {"type":"labels", "itemType": "Label", "uid": 1016},
         ],
-        "syncState": {
-            "version": 1
-        }
+        "version": 1
     },
     {
-        "memriID": "0x011",
-        "type": "Person",
+        "uid": 1,
+        "_type": "Person",
         "firstName": "Alice",
         "lastName": "Awesome",
-        "age": 21,
+        "birthDate": 1593777745298,
         "height": 141,
-        "dateCreated": "1996-12-20T00:39:57Z",
-        "profilePicture": {
-            "uri": "/tmp/lfw/Norah_Jones/Norah_Jones_0007.jpg"
-        },
+        "dateCreated": 1593777745298,
         "starred": true,
-        "labels": [
-            { "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
-            { "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
+        "allEdges": [
+            {"type":"profilePicture", "itemType": "Photo", "uid": 502},
+            {"type":"labels", "itemType": "Label", "uid": 1015},
+            {"type":"labels", "itemType": "Label", "uid": 1016},
         ],
-        "syncState": {
-            "version": 1
-        }
-    },
-    {
-        "name": "Afghanistan",
-        "type": "Country",
-        "memriID": "Afghanistan"
-    },
-    {
-        "name": "Akrotiri",
-        "type": "Country",
-        "memriID": "Akrotiri"
-    },
-    {
-        "name": "Albania",
-        "type": "Country",
-        "memriID": "Albania"
-    },
-    {
-        "name": "Algeria",
-        "type": "Country",
-        "memriID": "Algeria"
-    },
-    {
-        "name": "American Samoa",
-        "type": "Country",
-        "memriID": "American Samoa"
-    },
-    {
-        "name": "Andorra",
-        "type": "Country",
-        "memriID": "Andorra"
-    },
-    {
-        "name": "Angola",
-        "type": "Country",
-        "memriID": "Angola"
-    },
-    {
-        "name": "Anguilla",
-        "type": "Country",
-        "memriID": "Anguilla"
-    },
-    {
-        "name": "Antarctica",
-        "type": "Country",
-        "memriID": "Antarctica"
-    },
-    {
-        "name": "Antigua and Barbuda",
-        "type": "Country",
-        "memriID": "Antigua and Barbuda"
-    },
-    {
-        "name": "Argentina",
-        "type": "Country",
-        "memriID": "Argentina"
-    },
-    {
-        "name": "Armenia",
-        "type": "Country",
-        "memriID": "Armenia"
-    },
-    {
-        "name": "Aruba",
-        "type": "Country",
-        "memriID": "Aruba"
-    },
-    {
-        "name": "Ashmore and Cartier Islands",
-        "type": "Country",
-        "memriID": "Ashmore and Cartier Islands"
-    },
-    {
-        "name": "Australia",
-        "type": "Country",
-        "memriID": "Australia"
-    },
-    {
-        "name": "Austria",
-        "type": "Country",
-        "memriID": "Austria"
-    },
-    {
-        "name": "Azerbaijan",
-        "type": "Country",
-        "memriID": "Azerbaijan"
-    },
-    {
-        "name": "Bahamas, The",
-        "type": "Country",
-        "memriID": "Bahamas, The"
-    },
-    {
-        "name": "Bahrain",
-        "type": "Country",
-        "memriID": "Bahrain"
-    },
-    {
-        "name": "Bangladesh",
-        "type": "Country",
-        "memriID": "Bangladesh"
-    },
-    {
-        "name": "Barbados",
-        "type": "Country",
-        "memriID": "Barbados"
-    },
-    {
-        "name": "Bassas da India",
-        "type": "Country",
-        "memriID": "Bassas da India"
-    },
-    {
-        "name": "Belarus",
-        "type": "Country",
-        "memriID": "Belarus"
-    },
-    {
-        "name": "Belgium",
-        "type": "Country",
-        "memriID": "Belgium"
-    },
-    {
-        "name": "Belize",
-        "type": "Country",
-        "memriID": "Belize"
-    },
-    {
-        "name": "Benin",
-        "type": "Country",
-        "memriID": "Benin"
-    },
-    {
-        "name": "Bermuda",
-        "type": "Country",
-        "memriID": "Bermuda"
-    },
-    {
-        "name": "Bhutan",
-        "type": "Country",
-        "memriID": "Bhutan"
-    },
-    {
-        "name": "Bolivia",
-        "type": "Country",
-        "memriID": "Bolivia"
-    },
-    {
-        "name": "Bosnia and Herzegovina",
-        "type": "Country",
-        "memriID": "Bosnia and Herzegovina"
-    },
-    {
-        "name": "Botswana",
-        "type": "Country",
-        "memriID": "Botswana"
-    },
-    {
-        "name": "Bouvet Island",
-        "type": "Country",
-        "memriID": "Bouvet Island"
-    },
-    {
-        "name": "Brazil",
-        "type": "Country",
-        "memriID": "Brazil"
-    },
-    {
-        "name": "British Indian Ocean Territory",
-        "type": "Country",
-        "memriID": "British Indian Ocean Territory"
-    },
-    {
-        "name": "British Virgin Islands",
-        "type": "Country",
-        "memriID": "British Virgin Islands"
-    },
-    {
-        "name": "Brunei",
-        "type": "Country",
-        "memriID": "Brunei"
-    },
-    {
-        "name": "Bulgaria",
-        "type": "Country",
-        "memriID": "Bulgaria"
-    },
-    {
-        "name": "Burkina Faso",
-        "type": "Country",
-        "memriID": "Burkina Faso"
-    },
-    {
-        "name": "Burma",
-        "type": "Country",
-        "memriID": "Burma"
-    },
-    {
-        "name": "Burundi",
-        "type": "Country",
-        "memriID": "Burundi"
-    },
-    {
-        "name": "Cambodia",
-        "type": "Country",
-        "memriID": "Cambodia"
-    },
-    {
-        "name": "Cameroon",
-        "type": "Country",
-        "memriID": "Cameroon"
-    },
-    {
-        "name": "Canada",
-        "type": "Country",
-        "memriID": "Canada"
-    },
-    {
-        "name": "Cape Verde",
-        "type": "Country",
-        "memriID": "Cape Verde"
-    },
-    {
-        "name": "Cayman Islands",
-        "type": "Country",
-        "memriID": "Cayman Islands"
-    },
-    {
-        "name": "Central African Republic",
-        "type": "Country",
-        "memriID": "Central African Republic"
-    },
-    {
-        "name": "Chad",
-        "type": "Country",
-        "memriID": "Chad"
-    },
-    {
-        "name": "Chile",
-        "type": "Country",
-        "memriID": "Chile"
-    },
-    {
-        "name": "China",
-        "type": "Country",
-        "memriID": "China"
-    },
-    {
-        "name": "Christmas Island",
-        "type": "Country",
-        "memriID": "Christmas Island"
-    },
-    {
-        "name": "Clipperton Island",
-        "type": "Country",
-        "memriID": "Clipperton Island"
-    },
-    {
-        "name": "Cocos (Keeling) Islands",
-        "type": "Country",
-        "memriID": "Cocos (Keeling) Islands"
-    },
-    {
-        "name": "Colombia",
-        "type": "Country",
-        "memriID": "Colombia"
-    },
-    {
-        "name": "Comoros",
-        "type": "Country",
-        "memriID": "Comoros"
-    },
-    {
-        "name": "Congo, Democratic Republic of the",
-        "type": "Country",
-        "memriID": "Congo, Democratic Republic of the"
-    },
-    {
-        "name": "Congo, Republic of the",
-        "type": "Country",
-        "memriID": "Congo, Republic of the"
-    },
-    {
-        "name": "Cook Islands",
-        "type": "Country",
-        "memriID": "Cook Islands"
-    },
-    {
-        "name": "Coral Sea Islands",
-        "type": "Country",
-        "memriID": "Coral Sea Islands"
-    },
-    {
-        "name": "Costa Rica",
-        "type": "Country",
-        "memriID": "Costa Rica"
-    },
-    {
-        "name": "Cote d'Ivoire",
-        "type": "Country",
-        "memriID": "Cote d'Ivoire"
-    },
-    {
-        "name": "Croatia",
-        "type": "Country",
-        "memriID": "Croatia"
-    },
-    {
-        "name": "Cuba",
-        "type": "Country",
-        "memriID": "Cuba"
-    },
-    {
-        "name": "Cyprus",
-        "type": "Country",
-        "memriID": "Cyprus"
-    },
-    {
-        "name": "Czech Republic",
-        "type": "Country",
-        "memriID": "Czech Republic"
-    },
-    {
-        "name": "Denmark",
-        "type": "Country",
-        "memriID": "Denmark"
-    },
-    {
-        "name": "Dhekelia",
-        "type": "Country",
-        "memriID": "Dhekelia"
-    },
-    {
-        "name": "Djibouti",
-        "type": "Country",
-        "memriID": "Djibouti"
-    },
-    {
-        "name": "Dominica",
-        "type": "Country",
-        "memriID": "Dominica"
-    },
-    {
-        "name": "Dominican Republic",
-        "type": "Country",
-        "memriID": "Dominican Republic"
-    },
-    {
-        "name": "Ecuador",
-        "type": "Country",
-        "memriID": "Ecuador"
-    },
-    {
-        "name": "Egypt",
-        "type": "Country",
-        "memriID": "Egypt"
-    },
-    {
-        "name": "El Salvador",
-        "type": "Country",
-        "memriID": "El Salvador"
-    },
-    {
-        "name": "Equatorial Guinea",
-        "type": "Country",
-        "memriID": "Equatorial Guinea"
-    },
-    {
-        "name": "Eritrea",
-        "type": "Country",
-        "memriID": "Eritrea"
-    },
-    {
-        "name": "Estonia",
-        "type": "Country",
-        "memriID": "Estonia"
-    },
-    {
-        "name": "Ethiopia",
-        "type": "Country",
-        "memriID": "Ethiopia"
-    },
-    {
-        "name": "Europa Island",
-        "type": "Country",
-        "memriID": "Europa Island"
-    },
-    {
-        "name": "Falkland Islands (Islas Malvinas)",
-        "type": "Country",
-        "memriID": "Falkland Islands (Islas Malvinas)"
-    },
-    {
-        "name": "Faroe Islands",
-        "type": "Country",
-        "memriID": "Faroe Islands"
-    },
-    {
-        "name": "Fiji",
-        "type": "Country",
-        "memriID": "Fiji"
-    },
-    {
-        "name": "Finland",
-        "type": "Country",
-        "memriID": "Finland"
-    },
-    {
-        "name": "France",
-        "type": "Country",
-        "memriID": "France"
-    },
-    {
-        "name": "French Guiana",
-        "type": "Country",
-        "memriID": "French Guiana"
-    },
-    {
-        "name": "French Polynesia",
-        "type": "Country",
-        "memriID": "French Polynesia"
-    },
-    {
-        "name": "French Southern and Antarctic Lands",
-        "type": "Country",
-        "memriID": "French Southern and Antarctic Lands"
-    },
-    {
-        "name": "Gabon",
-        "type": "Country",
-        "memriID": "Gabon"
-    },
-    {
-        "name": "Gambia, The",
-        "type": "Country",
-        "memriID": "Gambia, The"
-    },
-    {
-        "name": "Gaza Strip",
-        "type": "Country",
-        "memriID": "Gaza Strip"
-    },
-    {
-        "name": "Georgia",
-        "type": "Country",
-        "memriID": "Georgia"
-    },
-    {
-        "name": "Germany",
-        "type": "Country",
-        "memriID": "Germany",
-        "starred": true
-    },
-    {
-        "name": "Ghana",
-        "type": "Country",
-        "memriID": "Ghana"
-    },
-    {
-        "name": "Gibraltar",
-        "type": "Country",
-        "memriID": "Gibraltar"
-    },
-    {
-        "name": "Glorioso Islands",
-        "type": "Country",
-        "memriID": "Glorioso Islands"
-    },
-    {
-        "name": "Greece",
-        "type": "Country",
-        "memriID": "Greece"
-    },
-    {
-        "name": "Greenland",
-        "type": "Country",
-        "memriID": "Greenland"
-    },
-    {
-        "name": "Grenada",
-        "type": "Country",
-        "memriID": "Grenada"
-    },
-    {
-        "name": "Guadeloupe",
-        "type": "Country",
-        "memriID": "Guadeloupe"
-    },
-    {
-        "name": "Guam",
-        "type": "Country",
-        "memriID": "Guam"
-    },
-    {
-        "name": "Guatemala",
-        "type": "Country",
-        "memriID": "Guatemala"
-    },
-    {
-        "name": "Guernsey",
-        "type": "Country",
-        "memriID": "Guernsey"
-    },
-    {
-        "name": "Guinea",
-        "type": "Country",
-        "memriID": "Guinea"
-    },
-    {
-        "name": "Guinea-Bissau",
-        "type": "Country",
-        "memriID": "Guinea-Bissau"
-    },
-    {
-        "name": "Guyana",
-        "type": "Country",
-        "memriID": "Guyana"
-    },
-    {
-        "name": "Haiti",
-        "type": "Country",
-        "memriID": "Haiti"
-    },
-    {
-        "name": "Heard Island and McDonald Islands",
-        "type": "Country",
-        "memriID": "Heard Island and McDonald Islands"
-    },
-    {
-        "name": "Holy See (Vatican City)",
-        "type": "Country",
-        "memriID": "Holy See (Vatican City)"
-    },
-    {
-        "name": "Honduras",
-        "type": "Country",
-        "memriID": "Honduras"
-    },
-    {
-        "name": "Hong Kong",
-        "type": "Country",
-        "memriID": "Hong Kong"
-    },
-    {
-        "name": "Hungary",
-        "type": "Country",
-        "memriID": "Hungary"
-    },
-    {
-        "name": "Iceland",
-        "type": "Country",
-        "memriID": "Iceland"
-    },
-    {
-        "name": "India",
-        "type": "Country",
-        "memriID": "India"
-    },
-    {
-        "name": "Indonesia",
-        "type": "Country",
-        "memriID": "Indonesia"
-    },
-    {
-        "name": "Iran",
-        "type": "Country",
-        "memriID": "Iran"
-    },
-    {
-        "name": "Iraq",
-        "type": "Country",
-        "memriID": "Iraq"
-    },
-    {
-        "name": "Ireland",
-        "type": "Country",
-        "memriID": "Ireland"
-    },
-    {
-        "name": "Isle of Man",
-        "type": "Country",
-        "memriID": "Isle of Man"
-    },
-    {
-        "name": "Israel",
-        "type": "Country",
-        "memriID": "Israel"
-    },
-    {
-        "name": "Italy",
-        "type": "Country",
-        "memriID": "Italy"
-    },
-    {
-        "name": "Jamaica",
-        "type": "Country",
-        "memriID": "Jamaica"
-    },
-    {
-        "name": "Jan Mayen",
-        "type": "Country",
-        "memriID": "Jan Mayen"
-    },
-    {
-        "name": "Japan",
-        "type": "Country",
-        "memriID": "Japan"
-    },
-    {
-        "name": "Jersey",
-        "type": "Country",
-        "memriID": "Jersey"
-    },
-    {
-        "name": "Jordan",
-        "type": "Country",
-        "memriID": "Jordan"
-    },
-    {
-        "name": "Juan de Nova Island",
-        "type": "Country",
-        "memriID": "Juan de Nova Island"
-    },
-    {
-        "name": "Kazakhstan",
-        "type": "Country",
-        "memriID": "Kazakhstan"
-    },
-    {
-        "name": "Kenya",
-        "type": "Country",
-        "memriID": "Kenya"
-    },
-    {
-        "name": "Kiribati",
-        "type": "Country",
-        "memriID": "Kiribati"
-    },
-    {
-        "name": "Korea, North",
-        "type": "Country",
-        "memriID": "Korea, North"
-    },
-    {
-        "name": "Korea, South",
-        "type": "Country",
-        "memriID": "Korea, South"
-    },
-    {
-        "name": "Kuwait",
-        "type": "Country",
-        "memriID": "Kuwait"
-    },
-    {
-        "name": "Kyrgyzstan",
-        "type": "Country",
-        "memriID": "Kyrgyzstan"
-    },
-    {
-        "name": "Laos",
-        "type": "Country",
-        "memriID": "Laos"
-    },
-    {
-        "name": "Latvia",
-        "type": "Country",
-        "memriID": "Latvia"
-    },
-    {
-        "name": "Lebanon",
-        "type": "Country",
-        "memriID": "Lebanon"
-    },
-    {
-        "name": "Lesotho",
-        "type": "Country",
-        "memriID": "Lesotho"
-    },
-    {
-        "name": "Liberia",
-        "type": "Country",
-        "memriID": "Liberia"
-    },
-    {
-        "name": "Libya",
-        "type": "Country",
-        "memriID": "Libya"
-    },
-    {
-        "name": "Liechtenstein",
-        "type": "Country",
-        "memriID": "Liechtenstein"
-    },
-    {
-        "name": "Lithuania",
-        "type": "Country",
-        "memriID": "Lithuania"
-    },
-    {
-        "name": "Luxembourg",
-        "type": "Country",
-        "memriID": "Luxembourg"
-    },
-    {
-        "name": "Macau",
-        "type": "Country",
-        "memriID": "Macau"
-    },
-    {
-        "name": "Macedonia",
-        "type": "Country",
-        "memriID": "Macedonia"
-    },
-    {
-        "name": "Madagascar",
-        "type": "Country",
-        "memriID": "Madagascar"
-    },
-    {
-        "name": "Malawi",
-        "type": "Country",
-        "memriID": "Malawi"
-    },
-    {
-        "name": "Malaysia",
-        "type": "Country",
-        "memriID": "Malaysia"
-    },
-    {
-        "name": "Maldives",
-        "type": "Country",
-        "memriID": "Maldives"
-    },
-    {
-        "name": "Mali",
-        "type": "Country",
-        "memriID": "Mali"
-    },
-    {
-        "name": "Malta",
-        "type": "Country",
-        "memriID": "Malta"
-    },
-    {
-        "name": "Marshall Islands",
-        "type": "Country",
-        "memriID": "Marshall Islands"
-    },
-    {
-        "name": "Martinique",
-        "type": "Country",
-        "memriID": "Martinique"
-    },
-    {
-        "name": "Mauritania",
-        "type": "Country",
-        "memriID": "Mauritania"
-    },
-    {
-        "name": "Mauritius",
-        "type": "Country",
-        "memriID": "Mauritius"
-    },
-    {
-        "name": "Mayotte",
-        "type": "Country",
-        "memriID": "Mayotte"
-    },
-    {
-        "name": "Mexico",
-        "type": "Country",
-        "memriID": "Mexico"
-    },
-    {
-        "name": "Micronesia, Federated States of",
-        "type": "Country",
-        "memriID": "Micronesia, Federated States of"
-    },
-    {
-        "name": "Moldova",
-        "type": "Country",
-        "memriID": "Moldova"
-    },
-    {
-        "name": "Monaco",
-        "type": "Country",
-        "memriID": "Monaco"
-    },
-    {
-        "name": "Mongolia",
-        "type": "Country",
-        "memriID": "Mongolia"
-    },
-    {
-        "name": "Montserrat",
-        "type": "Country",
-        "memriID": "Montserrat"
-    },
-    {
-        "name": "Morocco",
-        "type": "Country",
-        "memriID": "Morocco"
-    },
-    {
-        "name": "Mozambique",
-        "type": "Country",
-        "memriID": "Mozambique"
-    },
-    {
-        "name": "Namibia",
-        "type": "Country",
-        "memriID": "Namibia"
-    },
-    {
-        "name": "Nauru",
-        "type": "Country",
-        "memriID": "Nauru"
-    },
-    {
-        "name": "Navassa Island",
-        "type": "Country",
-        "memriID": "Navassa Island"
-    },
-    {
-        "name": "Nepal",
-        "type": "Country",
-        "memriID": "Nepal"
-    },
-    {
-        "name": "Netherlands",
-        "type": "Country",
-        "memriID": "Netherlands",
-        "starred": true
-    },
-    {
-        "name": "Netherlands Antilles",
-        "type": "Country",
-        "memriID": "Netherlands Antilles"
-    },
-    {
-        "name": "New Caledonia",
-        "type": "Country",
-        "memriID": "New Caledonia"
-    },
-    {
-        "name": "New Zealand",
-        "type": "Country",
-        "memriID": "New Zealand"
-    },
-    {
-        "name": "Nicaragua",
-        "type": "Country",
-        "memriID": "Nicaragua"
-    },
-    {
-        "name": "Niger",
-        "type": "Country",
-        "memriID": "Niger"
-    },
-    {
-        "name": "Nigeria",
-        "type": "Country",
-        "memriID": "Nigeria"
-    },
-    {
-        "name": "Niue",
-        "type": "Country",
-        "memriID": "Niue"
-    },
-    {
-        "name": "Norfolk Island",
-        "type": "Country",
-        "memriID": "Norfolk Island"
-    },
-    {
-        "name": "Northern Mariana Islands",
-        "type": "Country",
-        "memriID": "Northern Mariana Islands"
-    },
-    {
-        "name": "Norway",
-        "type": "Country",
-        "memriID": "Norway"
-    },
-    {
-        "name": "Oman",
-        "type": "Country",
-        "memriID": "Oman"
-    },
-    {
-        "name": "Pakistan",
-        "type": "Country",
-        "memriID": "Pakistan"
-    },
-    {
-        "name": "Palau",
-        "type": "Country",
-        "memriID": "Palau"
-    },
-    {
-        "name": "Panama",
-        "type": "Country",
-        "memriID": "Panama"
-    },
-    {
-        "name": "Papua New Guinea",
-        "type": "Country",
-        "memriID": "Papua New Guinea"
-    },
-    {
-        "name": "Paracel Islands",
-        "type": "Country",
-        "memriID": "Paracel Islands"
-    },
-    {
-        "name": "Paraguay",
-        "type": "Country",
-        "memriID": "Paraguay"
-    },
-    {
-        "name": "Peru",
-        "type": "Country",
-        "memriID": "Peru"
-    },
-    {
-        "name": "Philippines",
-        "type": "Country",
-        "memriID": "Philippines"
-    },
-    {
-        "name": "Pitcairn Islands",
-        "type": "Country",
-        "memriID": "Pitcairn Islands"
-    },
-    {
-        "name": "Poland",
-        "type": "Country",
-        "memriID": "Poland"
-    },
-    {
-        "name": "Portugal",
-        "type": "Country",
-        "memriID": "Portugal"
-    },
-    {
-        "name": "Puerto Rico",
-        "type": "Country",
-        "memriID": "Puerto Rico"
-    },
-    {
-        "name": "Qatar",
-        "type": "Country",
-        "memriID": "Qatar"
-    },
-    {
-        "name": "Reunion",
-        "type": "Country",
-        "memriID": "Reunion"
-    },
-    {
-        "name": "Romania",
-        "type": "Country",
-        "memriID": "Romania"
-    },
-    {
-        "name": "Russia",
-        "type": "Country",
-        "memriID": "Russia"
-    },
-    {
-        "name": "Rwanda",
-        "type": "Country",
-        "memriID": "Rwanda"
-    },
-    {
-        "name": "Saint Helena",
-        "type": "Country",
-        "memriID": "Saint Helena"
-    },
-    {
-        "name": "Saint Kitts and Nevis",
-        "type": "Country",
-        "memriID": "Saint Kitts and Nevis"
-    },
-    {
-        "name": "Saint Lucia",
-        "type": "Country",
-        "memriID": "Saint Lucia"
-    },
-    {
-        "name": "Saint Pierre and Miquelon",
-        "type": "Country",
-        "memriID": "Saint Pierre and Miquelon"
-    },
-    {
-        "name": "Saint Vincent and the Grenadines",
-        "type": "Country",
-        "memriID": "Saint Vincent and the Grenadines"
-    },
-    {
-        "name": "Samoa",
-        "type": "Country",
-        "memriID": "Samoa"
-    },
-    {
-        "name": "San Marino",
-        "type": "Country",
-        "memriID": "San Marino"
-    },
-    {
-        "name": "Sao Tome and Principe",
-        "type": "Country",
-        "memriID": "Sao Tome and Principe"
-    },
-    {
-        "name": "Saudi Arabia",
-        "type": "Country",
-        "memriID": "Saudi Arabia"
-    },
-    {
-        "name": "Senegal",
-        "type": "Country",
-        "memriID": "Senegal"
-    },
-    {
-        "name": "Serbia and Montenegro",
-        "type": "Country",
-        "memriID": "Serbia and Montenegro"
-    },
-    {
-        "name": "Seychelles",
-        "type": "Country",
-        "memriID": "Seychelles"
-    },
-    {
-        "name": "Sierra Leone",
-        "type": "Country",
-        "memriID": "Sierra Leone"
-    },
-    {
-        "name": "Singapore",
-        "type": "Country",
-        "memriID": "Singapore"
-    },
-    {
-        "name": "Slovakia",
-        "type": "Country",
-        "memriID": "Slovakia"
-    },
-    {
-        "name": "Slovenia",
-        "type": "Country",
-        "memriID": "Slovenia"
-    },
-    {
-        "name": "Solomon Islands",
-        "type": "Country",
-        "memriID": "Solomon Islands"
-    },
-    {
-        "name": "Somalia",
-        "type": "Country",
-        "memriID": "Somalia"
-    },
-    {
-        "name": "South Africa",
-        "type": "Country",
-        "memriID": "South Africa"
-    },
-    {
-        "name": "South Georgia and the South Sandwich Islands",
-        "type": "Country",
-        "memriID": "South Georgia and the South Sandwich Islands"
-    },
-    {
-        "name": "Spain",
-        "type": "Country",
-        "memriID": "Spain"
-    },
-    {
-        "name": "Spratly Islands",
-        "type": "Country",
-        "memriID": "Spratly Islands"
-    },
-    {
-        "name": "Sri Lanka",
-        "type": "Country",
-        "memriID": "Sri Lanka"
-    },
-    {
-        "name": "Sudan",
-        "type": "Country",
-        "memriID": "Sudan"
-    },
-    {
-        "name": "Suriname",
-        "type": "Country",
-        "memriID": "Suriname"
-    },
-    {
-        "name": "Svalbard",
-        "type": "Country",
-        "memriID": "Svalbard"
-    },
-    {
-        "name": "Swaziland",
-        "type": "Country",
-        "memriID": "Swaziland"
-    },
-    {
-        "name": "Sweden",
-        "type": "Country",
-        "memriID": "Sweden"
-    },
-    {
-        "name": "Switzerland",
-        "type": "Country",
-        "memriID": "Switzerland"
-    },
-    {
-        "name": "Syria",
-        "type": "Country",
-        "memriID": "Syria"
-    },
-    {
-        "name": "Taiwan",
-        "type": "Country",
-        "memriID": "Taiwan"
-    },
-    {
-        "name": "Tajikistan",
-        "type": "Country",
-        "memriID": "Tajikistan"
-    },
-    {
-        "name": "Tanzania",
-        "type": "Country",
-        "memriID": "Tanzania"
-    },
-    {
-        "name": "Thailand",
-        "type": "Country",
-        "memriID": "Thailand"
-    },
-    {
-        "name": "Timor-Leste",
-        "type": "Country",
-        "memriID": "Timor-Leste"
-    },
-    {
-        "name": "Togo",
-        "type": "Country",
-        "memriID": "Togo"
-    },
-    {
-        "name": "Tokelau",
-        "type": "Country",
-        "memriID": "Tokelau"
-    },
-    {
-        "name": "Tonga",
-        "type": "Country",
-        "memriID": "Tonga"
-    },
-    {
-        "name": "Trinidad and Tobago",
-        "type": "Country",
-        "memriID": "Trinidad and Tobago"
-    },
-    {
-        "name": "Tromelin Island",
-        "type": "Country",
-        "memriID": "Tromelin Island"
-    },
-    {
-        "name": "Tunisia",
-        "type": "Country",
-        "memriID": "Tunisia"
-    },
-    {
-        "name": "Turkey",
-        "type": "Country",
-        "memriID": "Turkey"
-    },
-    {
-        "name": "Turkmenistan",
-        "type": "Country",
-        "memriID": "Turkmenistan"
-    },
-    {
-        "name": "Turks and Caicos Islands",
-        "type": "Country",
-        "memriID": "Turks and Caicos Islands"
-    },
-    {
-        "name": "Tuvalu",
-        "type": "Country",
-        "memriID": "Tuvalu"
-    },
-    {
-        "name": "Uganda",
-        "type": "Country",
-        "memriID": "Uganda"
-    },
-    {
-        "name": "Ukraine",
-        "type": "Country",
-        "memriID": "Ukraine"
-    },
-    {
-        "name": "United Arab Emirates",
-        "type": "Country",
-        "memriID": "United Arab Emirates"
-    },
-    {
-        "name": "United Kingdom",
-        "type": "Country",
-        "memriID": "United Kingdom"
-    },
-    {
-        "name": "United States",
-        "type": "Country",
-        "memriID": "United States",
-        "starred": true
-    },
-    {
-        "name": "Uruguay",
-        "type": "Country",
-        "memriID": "Uruguay"
-    },
-    {
-        "name": "Uzbekistan",
-        "type": "Country",
-        "memriID": "Uzbekistan"
-    },
-    {
-        "name": "Vanuatu",
-        "type": "Country",
-        "memriID": "Vanuatu"
-    },
-    {
-        "name": "Venezuela",
-        "type": "Country",
-        "memriID": "Venezuela"
-    },
-    {
-        "name": "Vietnam",
-        "type": "Country",
-        "memriID": "Vietnam"
-    },
-    {
-        "name": "Virgin Islands",
-        "type": "Country",
-        "memriID": "Virgin Islands"
-    },
-    {
-        "name": "Wake Island",
-        "type": "Country",
-        "memriID": "Wake Island"
-    },
-    {
-        "name": "Wallis and Futuna",
-        "type": "Country",
-        "memriID": "Wallis and Futuna"
-    },
-    {
-        "name": "West Bank",
-        "type": "Country",
-        "memriID": "West Bank"
-    },
-    {
-        "name": "Western Sahara",
-        "type": "Country",
-        "memriID": "Western Sahara"
-    },
-    {
-        "name": "Yemen",
-        "type": "Country",
-        "memriID": "Yemen"
-    },
-    {
-        "name": "Zambia",
-        "type": "Country",
-        "memriID": "Zambia"
-    },
-    {
-        "name": "Zimbabwe",
-        "type": "Country",
-        "memriID": "Zimbabwe"
-    },
-    {
-        "memriID": "0x01",
-        "type": "Note",
+        "version": 1
+    },
+    { "name": "Afghanistan", "_type": "Country" },
+    { "name": "Akrotiri", "_type": "Country" },
+    { "name": "Albania", "_type": "Country" },
+    { "name": "Algeria", "_type": "Country" },
+    { "name": "American Samoa", "_type": "Country" },
+    { "name": "Andorra", "_type": "Country" },
+    { "name": "Angola", "_type": "Country" },
+    { "name": "Anguilla", "_type": "Country" },
+    { "name": "Antarctica", "_type": "Country" },
+    { "name": "Antigua and Barbuda", "_type": "Country" },
+    { "name": "Argentina", "_type": "Country" },
+    { "name": "Armenia", "_type": "Country" },
+    { "name": "Aruba", "_type": "Country" },
+    { "name": "Ashmore and Cartier Islands", "_type": "Country" },
+    { "name": "Australia", "_type": "Country" },
+    { "name": "Austria", "_type": "Country" },
+    { "name": "Azerbaijan", "_type": "Country" },
+    { "name": "Bahamas, The", "_type": "Country" },
+    { "name": "Bahrain", "_type": "Country" },
+    { "name": "Bangladesh", "_type": "Country" },
+    { "name": "Barbados", "_type": "Country" },
+    { "name": "Bassas da India", "_type": "Country" },
+    { "name": "Belarus", "_type": "Country" },
+    { "name": "Belgium", "_type": "Country" },
+    { "name": "Belize", "_type": "Country" },
+    { "name": "Benin", "_type": "Country" },
+    { "name": "Bermuda", "_type": "Country" },
+    { "name": "Bhutan", "_type": "Country" },
+    { "name": "Bolivia", "_type": "Country" },
+    { "name": "Bosnia and Herzegovina", "_type": "Country" },
+    { "name": "Botswana", "_type": "Country" },
+    { "name": "Bouvet Island", "_type": "Country" },
+    { "name": "Brazil", "_type": "Country" },
+    { "name": "British Indian Ocean Territory", "_type": "Country" },
+    { "name": "British Virgin Islands", "_type": "Country" },
+    { "name": "Brunei", "_type": "Country" },
+    { "name": "Bulgaria", "_type": "Country" },
+    { "name": "Burkina Faso", "_type": "Country" },
+    { "name": "Burma", "_type": "Country" },
+    { "name": "Burundi", "_type": "Country" },
+    { "name": "Cambodia", "_type": "Country" },
+    { "name": "Cameroon", "_type": "Country" },
+    { "name": "Canada", "_type": "Country" },
+    { "name": "Cape Verde", "_type": "Country" },
+    { "name": "Cayman Islands", "_type": "Country" },
+    { "name": "Central African Republic", "_type": "Country" },
+    { "name": "Chad", "_type": "Country" },
+    { "name": "Chile", "_type": "Country" },
+    { "name": "China", "_type": "Country" },
+    { "name": "Christmas Island", "_type": "Country" },
+    { "name": "Clipperton Island", "_type": "Country" },
+    { "name": "Cocos (Keeling) Islands", "_type": "Country" },
+    { "name": "Colombia", "_type": "Country" },
+    { "name": "Comoros", "_type": "Country" },
+    { "name": "Congo, Democratic Republic of the", "_type": "Country" },
+    { "name": "Congo, Republic of the", "_type": "Country" },
+    { "name": "Cook Islands", "_type": "Country" },
+    { "name": "Coral Sea Islands", "_type": "Country" },
+    { "name": "Costa Rica", "_type": "Country" },
+    { "name": "Cote d'Ivoire", "_type": "Country" },
+    { "name": "Croatia", "_type": "Country" },
+    { "name": "Cuba", "_type": "Country" },
+    { "name": "Cyprus", "_type": "Country" },
+    { "name": "Czech Republic", "_type": "Country" },
+    { "name": "Denmark", "_type": "Country" },
+    { "name": "Dhekelia", "_type": "Country" },
+    { "name": "Djibouti", "_type": "Country" },
+    { "name": "Dominica", "_type": "Country" },
+    { "name": "Dominican Republic", "_type": "Country" },
+    { "name": "Ecuador", "_type": "Country" },
+    { "name": "Egypt", "_type": "Country" },
+    { "name": "El Salvador", "_type": "Country" },
+    { "name": "Equatorial Guinea", "_type": "Country" },
+    { "name": "Eritrea", "_type": "Country" },
+    { "name": "Estonia", "_type": "Country" },
+    { "name": "Ethiopia", "_type": "Country" },
+    { "name": "Europa Island", "_type": "Country" },
+    { "name": "Falkland Islands (Islas Malvinas)", "_type": "Country" },
+    { "name": "Faroe Islands", "_type": "Country" },
+    { "name": "Fiji", "_type": "Country" },
+    { "name": "Finland", "_type": "Country" },
+    { "name": "France", "_type": "Country", "uid": 1402 },
+    { "name": "French Guiana", "_type": "Country" },
+    { "name": "French Polynesia", "_type": "Country" },
+    { "name": "French Southern and Antarctic Lands", "_type": "Country" },
+    { "name": "Gabon", "_type": "Country" },
+    { "name": "Gambia, The", "_type": "Country" },
+    { "name": "Gaza Strip", "_type": "Country" },
+    { "name": "Georgia", "_type": "Country" },
+    { "name": "Germany", "_type": "Country", "starred": true },
+    { "name": "Ghana", "_type": "Country" },
+    { "name": "Gibraltar", "_type": "Country" },
+    { "name": "Glorioso Islands", "_type": "Country" },
+    { "name": "Greece", "_type": "Country" },
+    { "name": "Greenland", "_type": "Country" },
+    { "name": "Grenada", "_type": "Country" },
+    { "name": "Guadeloupe", "_type": "Country" },
+    { "name": "Guam", "_type": "Country" },
+    { "name": "Guatemala", "_type": "Country" },
+    { "name": "Guernsey", "_type": "Country" },
+    { "name": "Guinea", "_type": "Country" },
+    { "name": "Guinea-Bissau", "_type": "Country" },
+    { "name": "Guyana", "_type": "Country" },
+    { "name": "Haiti", "_type": "Country" },
+    { "name": "Heard Island and McDonald Islands", "_type": "Country" },
+    { "name": "Holy See (Vatican City)", "_type": "Country" },
+    { "name": "Honduras", "_type": "Country" },
+    { "name": "Hong Kong", "_type": "Country" },
+    { "name": "Hungary", "_type": "Country" },
+    { "name": "Iceland", "_type": "Country" },
+    { "name": "India", "_type": "Country" },
+    { "name": "Indonesia", "_type": "Country" },
+    { "name": "Iran", "_type": "Country" },
+    { "name": "Iraq", "_type": "Country" },
+    { "name": "Ireland", "_type": "Country" },
+    { "name": "Isle of Man", "_type": "Country" },
+    { "name": "Israel", "_type": "Country" },
+    { "name": "Italy", "_type": "Country" },
+    { "name": "Jamaica", "_type": "Country" },
+    { "name": "Jan Mayen", "_type": "Country" },
+    { "name": "Japan", "_type": "Country" },
+    { "name": "Jersey", "_type": "Country" },
+    { "name": "Jordan", "_type": "Country" },
+    { "name": "Juan de Nova Island", "_type": "Country" },
+    { "name": "Kazakhstan", "_type": "Country" },
+    { "name": "Kenya", "_type": "Country" },
+    { "name": "Kiribati", "_type": "Country" },
+    { "name": "Korea, North", "_type": "Country" },
+    { "name": "Korea, South", "_type": "Country" },
+    { "name": "Kuwait", "_type": "Country" },
+    { "name": "Kyrgyzstan", "_type": "Country" },
+    { "name": "Laos", "_type": "Country" },
+    { "name": "Latvia", "_type": "Country" },
+    { "name": "Lebanon", "_type": "Country" },
+    { "name": "Lesotho", "_type": "Country" },
+    { "name": "Liberia", "_type": "Country" },
+    { "name": "Libya", "_type": "Country" },
+    { "name": "Liechtenstein", "_type": "Country" },
+    { "name": "Lithuania", "_type": "Country" },
+    { "name": "Luxembourg", "_type": "Country" },
+    { "name": "Macau", "_type": "Country" },
+    { "name": "Macedonia", "_type": "Country" },
+    { "name": "Madagascar", "_type": "Country" },
+    { "name": "Malawi", "_type": "Country" },
+    { "name": "Malaysia", "_type": "Country" },
+    { "name": "Maldives", "_type": "Country" },
+    { "name": "Mali", "_type": "Country" },
+    { "name": "Malta", "_type": "Country" },
+    { "name": "Marshall Islands", "_type": "Country" },
+    { "name": "Martinique", "_type": "Country" },
+    { "name": "Mauritania", "_type": "Country" },
+    { "name": "Mauritius", "_type": "Country" },
+    { "name": "Mayotte", "_type": "Country" },
+    { "name": "Mexico", "_type": "Country" },
+    { "name": "Micronesia, Federated States of", "_type": "Country" },
+    { "name": "Moldova", "_type": "Country" },
+    { "name": "Monaco", "_type": "Country" },
+    { "name": "Mongolia", "_type": "Country" },
+    { "name": "Montserrat", "_type": "Country" },
+    { "name": "Morocco", "_type": "Country" },
+    { "name": "Mozambique", "_type": "Country" },
+    { "name": "Namibia", "_type": "Country" },
+    { "name": "Nauru", "_type": "Country" },
+    { "name": "Navassa Island", "_type": "Country" },
+    { "name": "Nepal", "_type": "Country" },
+    { "name": "Netherlands", "_type": "Country", "starred": true },
+    { "name": "Netherlands Antilles", "_type": "Country" },
+    { "name": "New Caledonia", "_type": "Country" },
+    { "name": "New Zealand", "_type": "Country" },
+    { "name": "Nicaragua", "_type": "Country" },
+    { "name": "Niger", "_type": "Country" },
+    { "name": "Nigeria", "_type": "Country" },
+    { "name": "Niue", "_type": "Country" },
+    { "name": "Norfolk Island", "_type": "Country" },
+    { "name": "Northern Mariana Islands", "_type": "Country" },
+    { "name": "Norway", "_type": "Country" },
+    { "name": "Oman", "_type": "Country" },
+    { "name": "Pakistan", "_type": "Country" },
+    { "name": "Palau", "_type": "Country" },
+    { "name": "Panama", "_type": "Country" },
+    { "name": "Papua New Guinea", "_type": "Country" },
+    { "name": "Paracel Islands", "_type": "Country" },
+    { "name": "Paraguay", "_type": "Country" },
+    { "name": "Peru", "_type": "Country" },
+    { "name": "Philippines", "_type": "Country" },
+    { "name": "Pitcairn Islands", "_type": "Country" },
+    { "name": "Poland", "_type": "Country" },
+    { "name": "Portugal", "_type": "Country" },
+    { "name": "Puerto Rico", "_type": "Country" },
+    { "name": "Qatar", "_type": "Country" },
+    { "name": "Reunion", "_type": "Country" },
+    { "name": "Romania", "_type": "Country" },
+    { "name": "Russia", "_type": "Country" },
+    { "name": "Rwanda", "_type": "Country" },
+    { "name": "Saint Helena", "_type": "Country" },
+    { "name": "Saint Kitts and Nevis", "_type": "Country" },
+    { "name": "Saint Lucia", "_type": "Country" },
+    { "name": "Saint Pierre and Miquelon", "_type": "Country" },
+    { "name": "Saint Vincent and the Grenadines", "_type": "Country" },
+    { "name": "Samoa", "_type": "Country" },
+    { "name": "San Marino", "_type": "Country" },
+    { "name": "Sao Tome and Principe", "_type": "Country" },
+    { "name": "Saudi Arabia", "_type": "Country" },
+    { "name": "Senegal", "_type": "Country" },
+    { "name": "Serbia and Montenegro", "_type": "Country" },
+    { "name": "Seychelles", "_type": "Country" },
+    { "name": "Sierra Leone", "_type": "Country" },
+    { "name": "Singapore", "_type": "Country" },
+    { "name": "Slovakia", "_type": "Country" },
+    { "name": "Slovenia", "_type": "Country" },
+    { "name": "Solomon Islands", "_type": "Country" },
+    { "name": "Somalia", "_type": "Country" },
+    { "name": "South Africa", "_type": "Country" },
+    { "name": "South Georgia and the South Sandwich Islands", "_type": "Country" },
+    { "name": "Spain", "_type": "Country" },
+    { "name": "Spratly Islands", "_type": "Country" },
+    { "name": "Sri Lanka", "_type": "Country" },
+    { "name": "Sudan", "_type": "Country" },
+    { "name": "Suriname", "_type": "Country" },
+    { "name": "Svalbard", "_type": "Country" },
+    { "name": "Swaziland", "_type": "Country" },
+    { "name": "Sweden", "_type": "Country" },
+    { "name": "Switzerland", "_type": "Country" },
+    { "name": "Syria", "_type": "Country" },
+    { "name": "Taiwan", "_type": "Country" },
+    { "name": "Tajikistan", "_type": "Country" },
+    { "name": "Tanzania", "_type": "Country" },
+    { "name": "Thailand", "_type": "Country" },
+    { "name": "Timor-Leste", "_type": "Country" },
+    { "name": "Togo", "_type": "Country" },
+    { "name": "Tokelau", "_type": "Country" },
+    { "name": "Tonga", "_type": "Country" },
+    { "name": "Trinidad and Tobago", "_type": "Country" },
+    { "name": "Tromelin Island", "_type": "Country" },
+    { "name": "Tunisia", "_type": "Country" },
+    { "name": "Turkey", "_type": "Country" },
+    { "name": "Turkmenistan", "_type": "Country" },
+    { "name": "Turks and Caicos Islands", "_type": "Country" },
+    { "name": "Tuvalu", "_type": "Country" },
+    { "name": "Uganda", "_type": "Country" },
+    { "name": "Ukraine", "_type": "Country" },
+    { "name": "United Arab Emirates", "_type": "Country" },
+    { "name": "United Kingdom", "_type": "Country" },
+    { "name": "United States", "_type": "Country", "starred": true, "uid":1401 },
+    { "name": "Uruguay", "_type": "Country" },
+    { "name": "Uzbekistan", "_type": "Country" },
+    { "name": "Vanuatu", "_type": "Country" },
+    { "name": "Venezuela", "_type": "Country" },
+    { "name": "Vietnam", "_type": "Country" },
+    { "name": "Virgin Islands", "_type": "Country" },
+    { "name": "Wake Island", "_type": "Country" },
+    { "name": "Wallis and Futuna", "_type": "Country" },
+    { "name": "West Bank", "_type": "Country" },
+    { "name": "Western Sahara", "_type": "Country" },
+    { "name": "Yemen", "_type": "Country" },
+    { "name": "Zambia", "_type": "Country" },
+    { "name": "Zimbabwe", "_type": "Country" },
+    {
+        "_type": "Note",
         "content": "Shopping list\n- potatoes\n- mayonaise",
         "starred": true,
-        "labels": [
-            { "memriID":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
-            { "memriID":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
-            {
-                "name": "Soccer team",
-                "color": "#83ac06",
-                "memriID": "0x0124"
-            }
+        "dateModified": 1593777745298,
+        "allEdges": [
+            {"type":"labels", "itemType": "Label", "uid": 1015},
+            {"type":"labels", "itemType": "Label", "uid": 1016}
         ],
-        "dateModified": "2020-04-10T11:11:11Z",
-        "syncState": {
-            "isPartiallyLoaded": true,
-            "version": 1
-        }
+        "_partial": true,
+        "version": 1
     },
     {
-        "memriID": "0x02",
-        "type": "Note",
+        "_type": "Note",
         "content": "To read list\nAge of surveillance capitalism",
-        "labels": [
-            { "memriID":"0x101", "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
-            { "memriID":"0x102", "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" }
+        "allEdges": [
+            {"type":"labels", "itemType": "Label", "uid": 1015},
+            {"type":"labels", "itemType": "Label", "uid": 1016}
         ],
-        "dateModified": "2020-04-14T03:10:11Z",
-        "syncState": {
-            "version": 1
-        }
+        "dateModified": 1593777745298,
+        "version": 1
     },
     {
-        "memriID": "0x03",
-        "type": "Note",
+        "_type": "Note",
         "content": "Ideas for memri\nprivacy by design, digital memory",
         "starred": true,
-        "dateModified": "2020-04-10T11:11:11Z",
-        "syncState": {
-            "version": 1
-        }
+        "dateModified": 1593777745298,
+        "version": 1
     },
     {
-        "memriID": "0x04",
-        "type": "Note",
+        "_type": "Note",
         "content": "Love letter\nRoses are red, violets are blue",
-        "dateModified": "2020-04-10T11:11:11Z",
-        "syncState": {
-            "version": 1
-        }
+        "dateModified": 1593777745298,
+        "version": 1
     },
     {
-        "memriID": "0x05",
-        "type": "Note",
+        "_type": "Note",
         "content": "Notes to self\nBe in time with hour administration",
-        "dateModified": "2011-11-11T11:11:11Z",
-        "syncState": {
-            "version": 1
-        }
+        "dateModified": 1593777745298,
+        "version": 1
     }
 ]

@@ -6,8 +6,6 @@
 //  Copyright © 2020 memri. All rights reserved.
 //
 
-import Foundation
-
 /**
  *  Codextended
  *  Copyright (c) John Sundell 2019

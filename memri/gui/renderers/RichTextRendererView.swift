@@ -7,7 +7,6 @@
 //
 
 import Combine
-import memriUI
 import SwiftUI
 import UIKit
 
@@ -34,7 +33,8 @@ struct _RichTextEditor: View {
 	@ObservedObject public var dataItem: Item
 
 	var editModeBinding: Binding<Bool> {
-		Binding<Bool>(get: { self.context.currentSession.isEditMode }, set: { self.context.currentSession.isEditMode = $0 })
+		Binding<Bool>(get: { self.context.currentSession?.isEditMode ?? false },
+					  set: { self.context.currentSession?.isEditMode = $0 })
 	}
 
 	let filterText: Binding<String>
@@ -56,15 +56,18 @@ struct RichTextRendererView: View {
 	@EnvironmentObject var context: MemriContext
 
 	var renderConfig: CascadingRichTextEditorConfig
-		= CascadingRichTextEditorConfig([], ViewArguments())
+		= CascadingRichTextEditorConfig([])
 
 	var body: some View {
-		let dataItem = self.context.cascadingView.resultSet.singletonItem
+		let dataItem = self.context.cascadingView?.resultSet.singletonItem
 
 		return VStack(spacing: 0) {
 			dataItem.map { dataItem in
 				_RichTextEditor(dataItem: dataItem,
-								filterText: $context.cascadingView.filterText)
+								filterText: Binding<String>(
+									get: { self.context.cascadingView?.filterText ?? "" },
+									set: { self.context.cascadingView?.filterText = $0 }
+								))
 			}
 		}
 	}
@@ -72,6 +75,6 @@ struct RichTextRendererView: View {
 
 struct RichTextRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		RichTextRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		RichTextRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

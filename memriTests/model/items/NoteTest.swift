@@ -18,15 +18,15 @@ class HTMLNoteTest: XCTestCase {
 	}
 
 	func testExample() throws {
-		var filePath = Bundle.main.url(forResource: "exampleNote2", withExtension: "html")
-		let contents = try! String(contentsOf: filePath!)
+		let filePath = Bundle.main.url(forResource: "exampleNote2", withExtension: "html")
+		let contents = try String(contentsOf: filePath!)
 
 		let htmlData = NSString(string: contents).data(using: String.Encoding.unicode.rawValue)
 		let options = [NSAttributedString.DocumentReadingOptionKey.documentType:
 			NSAttributedString.DocumentType.html]
-		let attributedString = try? NSMutableAttributedString(data: htmlData ?? Data(),
-															  options: options,
-															  documentAttributes: nil)
+		let attributedString = try NSMutableAttributedString(data: htmlData ?? Data(),
+															 options: options,
+															 documentAttributes: nil)
 
 		dump(attributedString)
 
