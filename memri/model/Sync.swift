@@ -268,9 +268,11 @@ class Sync {
 						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
 						markAsDone(itemQueue)
 						markAsDone(edgeQueue)
-					}
 
-					self.schedule()
+						self.schedule()
+					} else {
+						self.schedule(long: true)
+					}
 				}
 			} catch {
 				debugHistory.error("Could not sync to pod: \(error)")

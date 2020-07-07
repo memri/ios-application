@@ -220,7 +220,7 @@ public class PodAPI {
 		try MemriJSONEncoder.encode(AnyCodable(result))
 	}
 
-	func simplify(_ item: SchemaItem) -> [String: Any] {
+	func simplify(_ item: SchemaItem, create: Bool = false) -> [String: Any] {
 		let updatedFields = item.syncState?.updatedFields
 		var result: [String: Any] = [
 			"_type": item.genericType,
@@ -230,7 +230,7 @@ public class PodAPI {
 		for prop in properties {
 			if prop.name == "syncState" || prop.name == "deleted" || prop.name == "allEdges" {
 				// Ignore
-			} else if updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
+			} else if create || updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
 				if prop.type == .object {
 					debugHistory.warn("Unexpected object schema")
 				} else {
@@ -242,7 +242,7 @@ public class PodAPI {
 		return result
 	}
 
-	func simplify(_ edge: Edge) -> [String: Any] {
+	func simplify(_ edge: Edge, create _: Bool = false) -> [String: Any] {
 		var result = [String: Any]()
 
 		let properties = edge.objectSchema.properties
@@ -251,12 +251,15 @@ public class PodAPI {
 				|| prop.name == "targetItemType" || prop.name == "targetItemID"
 				|| prop.name == "sourceItemType" || prop.name == "sourceItemID" {
 				// Ignore
+			} else if prop.name == "type" {
+				result["_type"] = edge[prop.name]
 			} else {
+				#warning("Implement checking for updatedfields")
 				result[prop.name] = edge[prop.name]
 			}
 		}
 
-		if let _ = edge.item() {
+		if let _ = edge.target() {
 			result["_source"] = edge.sourceItemID
 			result["_target"] = edge.targetItemID
 		} else {
@@ -301,10 +304,10 @@ public class PodAPI {
 					 deleteEdges: [Edge]?,
 					 _ callback: @escaping (_ error: Error?) -> Void) throws {
 		var result = [String: Any]()
-		if createItems?.count ?? 0 > 0 { result["createItems"] = createItems?.map { simplify($0) } }
+		if createItems?.count ?? 0 > 0 { result["createItems"] = createItems?.map { simplify($0, create: true) } }
 		if updateItems?.count ?? 0 > 0 { result["updateItems"] = updateItems?.map { simplify($0) } }
 		if deleteItems?.count ?? 0 > 0 { result["deleteItems"] = deleteItems?.map { simplify($0) } }
-		if createEdges?.count ?? 0 > 0 { result["createEdges"] = createEdges?.map { simplify($0) } }
+		if createEdges?.count ?? 0 > 0 { result["createEdges"] = createEdges?.map { simplify($0, create: true) } }
 		if updateEdges?.count ?? 0 > 0 { result["updateEdges"] = updateEdges?.map { simplify($0) } }
 		if deleteEdges?.count ?? 0 > 0 { result["deleteEdges"] = deleteEdges?.map { simplify($0) } }
 
