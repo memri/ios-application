@@ -8,7 +8,7 @@
         }
         {
             section: dates
-            fields: dateCreated dateModified dateAccessed changelog
+            exclude: dateCreated dateModified dateAccessed changelog
             readOnly: true
         }
     ]
