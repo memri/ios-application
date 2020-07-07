@@ -249,33 +249,33 @@ struct GeneralEditorSection: View {
         let spacing = sectionStyle.spacing ?? 0
         let padding = sectionStyle.padding
         
-        if isEmpty {
-            return Section(header: EmptyView(), content: { EmptyView() })
-        }
-        else {
-            return Section(
-                header: Group {
-                    if showTitle {
-                        HStack(alignment: .bottom) {
-                            Text(title)
-                                .generalEditorHeader()
+        return Section(
+            header: Group {
+                if showTitle && !isEmpty{
+                    HStack(alignment: .bottom) {
+                        Text(title)
+                            .generalEditorHeader()
 
-                            if action != nil {
-                                Spacer()
-                                // NOTE: Allowed force unwrapping
-                                ActionButton(action: action)
-                                    .foregroundColor(Color(hex: "#777"))
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .padding(.bottom, 10)
-                            }
-                        }.padding(.trailing, 20)
-                    }
-                    else {
-                        EmptyView()
-                    }
-                },
-                
-                content: {
+                        if action != nil {
+                            Spacer()
+                            // NOTE: Allowed force unwrapping
+                            ActionButton(action: action)
+                                .foregroundColor(Color(hex: "#777"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .padding(.bottom, 10)
+                        }
+                    }.padding(.trailing, 20)
+                }
+                else {
+                    EmptyView()
+                }
+            },
+            
+            content: {
+                if isEmpty {
+                    EmptyView()
+                }
+                else {
                     if dividers { Divider() }
                     
                     // If a render group is defined in the render config
@@ -383,8 +383,9 @@ struct GeneralEditorSection: View {
                     }
                     
                     if dividers { Divider() }
-                })
-        }
+                }
+            }
+        )
 	}
 
     func getProperties(_ item: Item, _ exclude: [String]?, _ used: [String]) -> [String] {
