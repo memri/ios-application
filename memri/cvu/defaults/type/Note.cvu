@@ -120,8 +120,7 @@ Note[] {
             
             HStack {
                 Text {
-                    text: "{.title}"
-                    nilText: "Untitled Note"
+                    text: {{.title or "Untitled Note"}}
                     font: 18 semibold
                     color: #333
                     padding: 0 0 0 0
@@ -135,7 +134,7 @@ Note[] {
                 }
             }
             Text {
-                text: "{.textContent}"
+                text: "{.content}"
                 removeWhiteSpace: true
                 maxChar: 100
                 color: #555

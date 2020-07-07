@@ -44,10 +44,6 @@ public class Item: SchemaItem {
 		edges("changelog")?.items(type: AuditItem.self)
 	}
 
-	var labels: Results<Label>? {
-		edges("labels")?.items(type: Label.self)
-	}
-
 	required init() {
 		super.init()
 

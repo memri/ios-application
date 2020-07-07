@@ -895,7 +895,8 @@
     { "name": "Zimbabwe", "_type": "Country" },
     {
         "_type": "Note",
-        "content": "Shopping list\n- potatoes\n- mayonaise",
+        "title": "Shopping list",
+        "content": "- potatoes<br />- mayonaise",
         "starred": true,
         "dateModified": 1593777745298,
         "allEdges": [
@@ -907,7 +908,8 @@
     },
     {
         "_type": "Note",
-        "content": "To read list\nAge of surveillance capitalism",
+        "title": "To read list",
+        "content": "Age of surveillance capitalism",
         "allEdges": [
             {"type":"labels", "itemType": "Label", "uid": 1015},
             {"type":"labels", "itemType": "Label", "uid": 1016}
@@ -917,20 +919,23 @@
     },
     {
         "_type": "Note",
-        "content": "Ideas for memri\nprivacy by design, digital memory",
+        "title": "Ideas for memri",
+        "content": "privacy by design, digital memory",
         "starred": true,
         "dateModified": 1593777745298,
         "version": 1
     },
     {
         "_type": "Note",
-        "content": "Love letter\nRoses are red, violets are blue",
+        "title": "Love letter",
+        "content": "Roses are red, violets are blue",
         "dateModified": 1593777745298,
         "version": 1
     },
     {
         "_type": "Note",
-        "content": "Notes to self\nBe in time with hour administration",
+        "title": "Notes to self",
+        "content": "Be in time with hour administration",
         "dateModified": 1593777745298,
         "version": 1
     }
