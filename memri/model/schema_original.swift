@@ -39,8 +39,8 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
 	case typeCVUStoredDefinition = "CVUStoredDefinition"
 	case typeImporter = "Importer"
 	case typeIndexer = "Indexer"
-	case typeImporterInstance = "ImporterInstance"
-	case typeIndexerInstance = "IndexerInstance"
+	case typeImporterRun = "ImporterRun"
+	case typeIndexerRun = "IndexerRun"
 
 	static var discriminator: Discriminator = .type
 
@@ -70,8 +70,8 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
 		case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
 		case .typeImporter: return Color(hex: "#93c47d")
 		case .typeIndexer: return Color(hex: "#93c47d")
-		case .typeImporterInstance: return Color(hex: "#93c47d")
-		case .typeIndexerInstance: return Color(hex: "#93c47d")
+		case .typeImporterRun: return Color(hex: "#93c47d")
+		case .typeIndexerRun: return Color(hex: "#93c47d")
 		}
 	}
 
@@ -112,8 +112,8 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
 		case .typeCVUStoredDefinition: return CVUStoredDefinition.self
 		case .typeImporter: return Importer.self
 		case .typeIndexer: return Indexer.self
-		case .typeImporterInstance: return ImporterInstance.self
-		case .typeIndexerInstance: return IndexerInstance.self
+		case .typeImporterRun: return ImporterRun.self
+		case .typeIndexerRun: return IndexerRun.self
 		}
 	}
 }
@@ -127,7 +127,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
 
 // completion(try JSONDecoder().decode(family: ItemFamily.self, from: data))
 
-class Note: Item {
+public class Note: Item {
 	@objc dynamic var title: String? = ""
 	/// HTML
 	@objc dynamic var content: String?
@@ -136,8 +136,8 @@ class Note: Item {
 
 	override var genericType: String { "Note" }
 
-	let writtenBy = List<Relationship>()
-	let sharedWith = List<Relationship>()
+	let writtenBy = List<Edge>()
+	let sharedWith = List<Edge>()
 	let comments = List<Item>()
 
 	required init() {
@@ -465,7 +465,7 @@ class AuditItem: Item {
 	@objc dynamic var action: String?
 	override var genericType: String { "AuditItem" }
 
-	let appliesTo = List<Relationship>()
+	let appliesTo = List<Edge>()
 
 	required init() {
 		super.init()
@@ -492,7 +492,7 @@ class Label: Item {
 	@objc dynamic var color: String?
 	override var genericType: String { "Label" }
 
-	let appliesTo = List<Relationship>() // TODO: make two-way binding in realm
+	let appliesTo = List<Edge>() // TODO: make two-way binding in realm
 
 	required init() {
 		super.init()
@@ -524,7 +524,7 @@ class Photo: Item {
 
 	override var genericType: String { "Photo" }
 
-	let includes = List<Relationship>() // e.g. person, object, recipe, etc
+	let includes = List<Edge>() // e.g. person, object, recipe, etc
 
 	required init() {
 		super.init()
@@ -555,7 +555,7 @@ class Video: Item {
 	let duration = RealmOptional<Int>()
 	override var genericType: String { "Video" }
 
-	let includes = List<Relationship>() // e.g. person, object, recipe, etc
+	let includes = List<Edge>() // e.g. person, object, recipe, etc
 
 	required init() {
 		super.init()
@@ -586,7 +586,7 @@ class Audio: Item {
 	let duration = RealmOptional<Int>()
 	override var genericType: String { "Audio" }
 
-	let includes = List<Relationship>() // e.g. person, object, recipe, etc
+	let includes = List<Edge>() // e.g. person, object, recipe, etc
 
 	required init() {
 		super.init()
@@ -615,7 +615,7 @@ class Importer: Item {
 	@objc dynamic var icon: String = ""
 	@objc dynamic var bundleImage: String = ""
 
-	let runs = List<ImporterInstance>()
+	let runs = List<ImporterRun>()
 
 	required init() {
 		super.init()
@@ -637,8 +637,8 @@ class Importer: Item {
 	}
 }
 
-class ImporterInstance: Item {
-	override var genericType: String { "ImporterInstance" }
+class ImporterRun: Item {
+	override var genericType: String { "ImporterRun" }
 	@objc dynamic var name: String = "unknown importer run"
 	@objc dynamic var datatype: String = "unknown"
 	@objc dynamic var importer: Importer?
@@ -662,15 +662,16 @@ class ImporterInstance: Item {
 	}
 }
 
-class Indexer: Item {
+public class Indexer: Item {
 	override var genericType: String { "Indexer" }
 	@objc dynamic var name: String = ""
-	@objc dynamic var indexerDescription: String = ""
+	@objc dynamic var itemDescription: String = ""
 	@objc dynamic var query: String = ""
 	@objc dynamic var icon: String = ""
 	@objc dynamic var bundleImage: String = ""
+	@objc dynamic var runDestination: String = ""
 
-	let runs = List<IndexerInstance>() // e.g. person, object, recipe, etc
+	let runs = List<IndexerRun>() // e.g. person, object, recipe, etc
 
 	required init() {
 		super.init()
@@ -682,9 +683,10 @@ class Indexer: Item {
 		jsonErrorHandling(decoder) {
 			name = try decoder.decodeIfPresent("name") ?? name
 			query = try decoder.decodeIfPresent("query") ?? query
-			indexerDescription = try decoder.decodeIfPresent("indexerDescription") ?? indexerDescription
+			itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
 			icon = try decoder.decodeIfPresent("icon") ?? icon
 			bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
+			runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
 
 			decodeIntoList(decoder, "runs", self.runs)
 
@@ -693,11 +695,12 @@ class Indexer: Item {
 	}
 }
 
-class IndexerInstance: Item {
-	override var genericType: String { "IndexerInstance" }
+public class IndexerRun: Item {
+	override var genericType: String { "IndexerRun" }
 	@objc dynamic var name: String = "unknown indexer instance"
 	@objc dynamic var query: String = ""
 	@objc dynamic var indexer: Indexer?
+	@objc dynamic var progress: Int = -1
 
 	required init() {
 		super.init()
@@ -723,7 +726,7 @@ public class NavigationItem: Item {
 	/// Name of the view it opens
 	@objc dynamic var view: String?
 	/// Defines the position in the navigation
-	@objc dynamic var order: Int = 0
+	@objc dynamic var sequence: Int = 0
 
 	///     0 = Item
 	///     1 = Heading
@@ -736,7 +739,7 @@ public class NavigationItem: Item {
 		jsonErrorHandling(decoder) {
 			self.title = try decoder.decodeIfPresent("title") ?? self.title
 			self.view = try decoder.decodeIfPresent("view") ?? self.view
-			self.order = try decoder.decodeIfPresent("order") ?? self.order
+			self.order = try decoder.decodeIfPresent("sequence") ?? self.order
 			self.type = try decoder.decodeIfPresent("type") ?? self.type
 		}
 	}
@@ -773,7 +776,7 @@ public class Setting: Item {
 }
 
 /// Collection of settings that are grouped based on who defined them
-class SettingCollection: Item {
+class SettingsCollection: Item {
 	/// Type that represent who created the setting: Default/User/Device
 	@objc dynamic var type: String = ""
 
@@ -881,6 +884,8 @@ public class SchemaItem: Object, Codable, Identifiable, ObservableObject {
 	let changelog = List<AuditItem>()
 	/// Labels assigned to / associated with this Item
 	let labels = List<memri.Label>()
+	/// A collection of all edges this Item is connected to
+	let allEdges = List<Edge>()
 
 	/// Object descirbing syncing information about this object like loading state, versioning, etc.
 	@objc dynamic var syncState: SyncState? = SyncState()

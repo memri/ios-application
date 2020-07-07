@@ -15,27 +15,27 @@ struct ContextPaneForeground: View {
 
 	var body: some View {
 		let context = self.context
-		let labels = context.cascadingView.resultSet.singletonItem?.labels ?? List<Label>()
-
+		let labels = context.cascadingView?.resultSet
+			.singletonItem?.edges("label")?.itemsArray(type: Label.self) ?? []
 		let addLabelAction = ActionNoop(context)
 
 		return
 			ScrollView(.vertical) {
 				VStack(alignment: .leading) {
 					VStack(alignment: .leading) {
-						Text(context.cascadingView.title) // TODO: make this generic
+						Text(context.cascadingView?.title ?? "") // TODO: make this generic
 							.font(.system(size: 23, weight: .regular, design: .default))
 							.fontWeight(.bold)
 							.opacity(0.75)
 							.padding(.horizontal, paddingLeft)
 							.padding(.vertical, 5)
-						Text(context.cascadingView.subtitle)
+						Text(context.cascadingView?.subtitle ?? "")
 							.font(.body)
 							.opacity(0.75)
 							.padding(.horizontal, paddingLeft)
 
 						HStack {
-							ForEach(context.cascadingView.contextButtons, id: \.self) { actionItem in
+							ForEach(context.cascadingView?.contextButtons ?? [], id: \.self) { actionItem in
 								ActionButton(action: actionItem)
 							}
 						}
@@ -62,7 +62,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.cascadingView.actionItems, id: \.self) { actionItem in
+						ForEach(context.cascadingView?.actionItems ?? [], id: \.self) { actionItem in
 							Button(action: {
 								context.executeAction(actionItem)
                     }) {
@@ -87,7 +87,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.cascadingView.navigateItems, id: \.self) { navigateItem in
+						ForEach(context.cascadingView?.navigateItems ?? [], id: \.self) { navigateItem in
 							Button(action: {
 								context.executeAction(navigateItem)
                     }) {
@@ -116,7 +116,7 @@ struct ContextPaneForeground: View {
 							Button(action: {
 								context.executeAction(addLabelAction, with: labelItem)
                     }) {
-								Text(labelItem.name)
+								Text(labelItem.name ?? "")
 									.foregroundColor(.black)
 									.opacity(0.6)
 									.font(.system(size: 20, weight: .regular, design: .default))
@@ -150,6 +150,6 @@ struct ContextPaneForeground: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
 	static var previews: some View {
-		ContextPaneForeground().environmentObject(RootContext(name: "", key: "").mockBoot())
+		ContextPaneForeground().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

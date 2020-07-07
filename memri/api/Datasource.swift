@@ -15,6 +15,13 @@ protocol UniqueString {
 }
 
 public class Datasource: Object, UniqueString {
+	let uid = RealmOptional<Int>()
+
+	/// Primary key used in the realm database of this Item
+	override public static func primaryKey() -> String? {
+		"uid"
+	}
+
 	/// Retrieves the query which is used to load data from the pod
 	@objc dynamic var query: String?
 
@@ -43,8 +50,8 @@ public class Datasource: Object, UniqueString {
 		return result.joined(separator: ":")
 	}
 
-	init(query: String) {
-		super.init()
+	convenience init(query: String) {
+		self.init()
 		self.query = query
 	}
 
@@ -53,7 +60,7 @@ public class Datasource: Object, UniqueString {
 	}
 
 	public class func fromCVUDefinition(_ def: CVUParsedDatasourceDefinition,
-										_ viewArguments: ViewArguments?) throws -> Datasource {
+										_ viewArguments: ViewArguments? = nil) throws -> Datasource {
 		func getValue<T>(_ name: String) throws -> T? {
 			if let expr = def[name] as? Expression {
 				do {
@@ -67,7 +74,7 @@ public class Datasource: Object, UniqueString {
 			return def[name] as? T
 		}
 
-		return Datasource(value: [
+		return try Cache.createItem(Datasource.self, values: [
 			"selector": def.selector ?? "[datasource]",
 			"query": try getValue("query") ?? "",
 			"sortProperty": try getValue("sortProperty") ?? "",
@@ -119,7 +126,7 @@ public class CascadingDatasource: Cascadable, UniqueString {
 	}
 
 	init(_ cascadeStack: [CVUParsedDatasourceDefinition],
-		 _ viewArguments: ViewArguments,
+		 _ viewArguments: ViewArguments? = nil,
 		 _ datasource: Datasource) {
 		self.datasource = datasource
 		super.init(cascadeStack, viewArguments)

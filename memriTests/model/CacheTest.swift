@@ -10,11 +10,16 @@
 import XCTest
 
 class CacheTest: XCTestCase {
-	var testCache: Cache = Cache(PodAPI("test"))
+	var testCache: Cache
+
+	override init() {
+		testCache = try! Cache(PodAPI("test"))
+
+		super.init()
+	}
 
 	override func setUp() {
 		// reset cache
-		testCache = Cache(PodAPI("test"))
 		testCache.scheduleUIUpdate = { _ in }
 	}
 
@@ -22,28 +27,32 @@ class CacheTest: XCTestCase {
 		// Put teardown code here. This method is called after the invocation of each test method in the class.
 	}
 
-	func testCacheInstall() {
+	func getCountry(_ name: String) -> Country? {
+		testCache.realm.objects(Country.self).filter("name = '\(name)'").first
+	}
+
+	func testCacheInstall() throws {
 		// Also tests getItemById
-		testCache.install()
+		try testCache.install()
 		XCTAssertTrue(testCache.realm.objects(Country.self).count > 0)
 	}
 
-	func testGetItem() {
-		testCache.install()
-		XCTAssertEqual(getItem("Country", "Aruba")?.getString("name"), "Aruba")
+	func testGetItem() throws {
+		try testCache.install()
+		XCTAssertEqual(getCountry("Aruba")?.getString("name"), "Aruba")
 	}
 
-	func testEmptyQuery() {
-		testCache.query(Datasource(query: "")) { _, items in
+	func testEmptyQuery() throws {
+		try testCache.query(Datasource(query: "")) { _, items in
 			XCTAssertEqual(items, nil)
 		}
 	}
 
-	func testTypeQuery() {
-		testCache.install()
+	func testTypeQuery() throws {
+		try testCache.install()
 
 		for dtype in ItemFamily.allCases {
-			testCache.query(Datasource(query: dtype.rawValue)) { _, items in
+			try testCache.query(Datasource(query: dtype.rawValue)) { _, items in
 				if let result = items {
 					XCTAssertTrue(result.allSatisfy { item in item.genericType == dtype.rawValue })
 				} else {
@@ -72,23 +81,23 @@ class CacheTest: XCTestCase {
 		XCTAssertTrue(type3 == "note"); XCTAssertTrue(filter3 == "x == 40")
 	}
 
-	func testGetResultSet() {
-		testCache.install()
+	func testGetResultSet() throws {
+		try testCache.install()
 		// TODO: not sure what this should test yet
 		_ = testCache.getResultSet(Datasource(query: "*"))
 	}
 
-	func testAddToCache() {
+	func testAddToCache() throws {
 		let note = Note()
-		_ = try! testCache.addToCache(note)
+		_ = try testCache.addToCache(note)
 		// TODO: what to test here
 	}
 
-	func testAddToCacheConflicts() {
-		testCache.install()
+	func testAddToCacheConflicts() throws {
+		try testCache.install()
 		// TODO: FIX
 		//        let item: Country = testCache.getItemById("country", "Aruba")
-		//        let cachedNote = try! testCache.addToCache(note)
+		//        let cachedNote = try testCache.addToCache(note)
 		//        item.set("starred", true)
 //
 		//        let item2: Country = testCache.getItemById("country", "Aruba")
@@ -99,7 +108,7 @@ class CacheTest: XCTestCase {
 		//        item2.set("starred", true)
 		//        item2.set("starred", true)
 //
-		//        let cachedNote = try! testCache.addToCache(note2)
+		//        let cachedNote = try testCache.addToCache(note2)
 //
 //
 //
@@ -111,36 +120,36 @@ class CacheTest: XCTestCase {
 		//        // should conflict when local and server is changed
 //
 		//        let note = Note()
-		//        let cachedNote = try! testCache.addToCache(note)
+		//        let cachedNote = try testCache.addToCache(note)
 
 		// TODO: what to test here
 	}
 
-	func testDelete() {
-		testCache.install()
-		let item = getItem("Country", "Aruba")
+	func testDelete() throws {
+		try testCache.install()
+		let item = getCountry("Aruba")
 		testCache.delete(item!)
-		let item2 = getItem("Country", "Aruba")
+		let item2 = getCountry("Aruba")
 		XCTAssertTrue(item2?.deleted == true || item2 == nil)
 	}
 
-	func testDeleteMulti() {
-		testCache.install()
-		let items = [getItem("Country", "Aruba")!,
-					 getItem("Country", "Antarctica")!]
+	func testDeleteMulti() throws {
+		try testCache.install()
+		let items = [getCountry("Aruba")!,
+					 getCountry("Antarctica")!]
 
 		testCache.delete(items)
 
-		let items2 = [getItem("Country", "Aruba"),
-					  getItem("Country", "Antarctica")]
+		let items2 = [getCountry("Aruba"),
+					  getCountry("Antarctica")]
 
 		XCTAssertTrue(items2.allSatisfy { $0?.deleted == true || $0 == nil })
 	}
 
-	func testDuplicate() {
-		testCache.install()
-		let item = getItem("Country", "Aruba")
-		let copy = try! testCache.duplicate(item!)
+	func testDuplicate() throws {
+		try testCache.install()
+		let item = getCountry("Aruba")
+		let copy = try testCache.duplicate(item!)
 		let cls = item!.getType()
 
 		for prop in item!.objectSchema.properties {

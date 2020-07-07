@@ -20,7 +20,7 @@ extension MemriContext {
 			throw "Cannot find find family \(stringType)"
 		}
 
-		guard let ItemType = ItemFamily.getType(family)() as? Object.Type else {
+		guard let ItemType = ItemFamily.getType(family)() as? Item.Type else {
 			throw "Cannot find family \(stringType)"
 		}
 
@@ -28,9 +28,7 @@ extension MemriContext {
 		initArgs.removeValue(forKey: "type")
 
 		// swiftformat:disable:next redundantInit
-		guard let item = ItemType.init() as? Item else {
-			throw "Cannot cast type \(ItemType) to Item"
-		}
+		let item = try Cache.createItem(ItemType, values: [:])
 
 		// TODO: fill item
 		for prop in item.objectSchema.properties {
@@ -42,8 +40,9 @@ extension MemriContext {
 					if let v = viewArguments {
 						propValue = try expr.execute(v) as Any
 					} else {
-						let viewArgs = ViewArguments(cascadingView.viewArguments.asDict())
-						viewArgs.set(".", dataItem)
+						let viewArgs = try ViewArguments.clone(cascadingView?.viewArguments,
+															   [".": dataItem as Any],
+															   managed: false)
 						propValue = try expr.execute(viewArgs) as Any
 					}
 				} else {
@@ -65,7 +64,7 @@ extension MemriContext {
 
 			// preprocess arg
 			if let expr = inputValue as? Expression {
-				argValue = try expr.execute(viewArguments ?? cascadingView.viewArguments) as Any
+				argValue = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
 			} else {
 				argValue = inputValue
 			}
@@ -77,14 +76,15 @@ extension MemriContext {
 				finalValue = dataItem
 			} else if let dict = argValue as? [String: Any] {
 				if action.argumentTypes[argName] == ViewArguments.self {
-					finalValue = ViewArguments(dict)
+					finalValue = try ViewArguments.fromDict(dict)
 				} else if action.argumentTypes[argName] == ItemFamily.self {
 					finalValue = try getItem(dict, dataItem, viewArguments)
 				} else if action.argumentTypes[argName] == SessionView.self {
-					let viewDef = CVUParsedViewDefinition(Item.generateUUID())
+					let viewDef = CVUParsedViewDefinition(UUID().uuidString)
 					viewDef.parsed = dict
 
-					finalValue = SessionView(value: ["viewDefinition": viewDef])
+					finalValue = try Cache.createItem(SessionView.self,
+													  values: ["viewDefinition": viewDef])
 				} else {
 					throw "Does not recognize argumentType \(argName)"
 				}
@@ -112,7 +112,7 @@ extension MemriContext {
 		}
 
 		// Last element of arguments array is the context data item
-		args["dataItem"] = dataItem ?? cascadingView.resultSet.singletonItem as Any
+		args["dataItem"] = dataItem ?? cascadingView?.resultSet.singletonItem as Any
 
 		return args
 	}
@@ -281,7 +281,7 @@ public class Action: HashableClass, CVUToString {
 				let value = try expr.execForReturnType(T.self, args: viewArguments)
 				return value
 			} catch {
-				print("ACTION ERROR: \(error)")
+				debugHistory.error("Could not execute Action expression: \(error)")
 				// TODO: Refactor: Error reporting
 				return nil
 			}
@@ -356,7 +356,7 @@ public enum ActionFamily: String, CaseIterable {
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
 		showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-		link, closePopup, unlink, multiAction, noop, runIndexerInstance, runImporterInstance,
+		link, closePopup, unlink, multiAction, noop, runIndexerRun, runImporterRun,
 		setProperty
 
 	func getType() -> Action.Type {
@@ -384,8 +384,8 @@ public enum ActionFamily: String, CaseIterable {
 		case .link: return ActionLink.self
 		case .unlink: return ActionUnlink.self
 		case .multiAction: return ActionMultiAction.self
-		case .runIndexerInstance: return ActionRunIndexerInstance.self
-		case .runImporterInstance: return ActionRunImporterInstance.self
+		case .runIndexerRun: return ActionRunIndexerRun.self
+		case .runImporterRun: return ActionRunImporterRun.self
 		case .setProperty: return ActionSetProperty.self
 		case .noop: fallthrough
 		default: return ActionNoop.self
@@ -432,13 +432,15 @@ class ActionBack: Action, ActionExec {
 	}
 
 	func exec(_: [String: Any]) throws {
-		let session = context.currentSession
-
-		if session.currentViewIndex == 0 {
-			print("Warn: Can't go back. Already at earliest view in session")
+		if let session = context.currentSession {
+			if session.currentViewIndex == 0 {
+				print("Warn: Can't go back. Already at earliest view in session")
+			} else {
+				realmWriteIfAvailable(context.realm) { session.currentViewIndex -= 1 }
+				context.scheduleCascadingViewUpdate()
+			}
 		} else {
-			realmWriteIfAvailable(context.realm) { session.currentViewIndex -= 1 }
-			context.scheduleCascadingViewUpdate()
+			// TODO: Error Handling?
 		}
 	}
 
@@ -462,14 +464,11 @@ class ActionAddItem: Action, ActionExec {
 
 	func exec(_ arguments: [String: Any]) throws {
 		if let dataItem = arguments["template"] as? Item {
-			// Copy template
-			let copy = try context.cache.duplicate(dataItem)
-
-			// Add the new item to the cache
-			_ = try context.cache.addToCache(copy)
-
+//			// Copy template
+//			let copy = try context.cache.duplicate(dataItem)
+			#warning("Test that this creates a unique node")
 			// Open view with the now managed copy
-			try ActionOpenView.exec(context, ["dataItem": copy])
+			try ActionOpenView.exec(context, ["dataItem": dataItem])
 		} else {
 			// TODO: Error handling
 			// TODO: User handling
@@ -494,32 +493,38 @@ class ActionOpenView: Action, ActionExec {
 	}
 
 	func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil) throws {
-		let session = context.currentSession
-
-		// Merge arguments into view
-		if let dict = arguments?.asDict() {
-			if let viewArguments = view.viewArguments {
-				view.viewArguments = ViewArguments(viewArguments.asDict()
-					.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any])
+		if let session = context.currentSession {
+			// Merge arguments into view
+			if let dict = arguments?.asDict() {
+				if let viewArguments = view.viewArguments {
+					view.set("viewArguments", try ViewArguments.fromDict(viewArguments.asDict()
+							.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any]))
+				}
 			}
+
+			// Add view to session
+			try session.setCurrentView(view)
+
+			// Set accessed date to now
+			view.access()
+
+			// Recompute view
+			try context.updateCascadingView() // scheduleCascadingViewUpdate()
+		} else {
+			// TODO: Error Handling
 		}
-
-		// Add view to session
-		session.setCurrentView(view)
-
-		// Set accessed date to now
-		view.access()
-
-		// Recompute view
-		try context.updateCascadingView() // scheduleCascadingViewUpdate()
 	}
 
 	private func openView(_ context: MemriContext, _ item: Item, with arguments: ViewArguments? = nil) throws {
+		guard let uid = item.uid.value else { throw "Uninitialized item" }
+
 		// Create a new view
-		let view = SessionView(value: ["datasource": Datasource(value: [
+		let view = try Cache.createItem(SessionView.self, values: [:])
+		let datasource = try Cache.createItem(Datasource.self, values: [
 			// Set the query options to load the item
-			"query": "\(item.genericType) AND memriID = '\(item.memriID)'",
-		])])
+			"query": "\(item.genericType) AND uid = \(uid)",
+		])
+		_ = try view.link(datasource, type: "datasource")
 
 		// Open the view
 		try openView(context, view: view, with: arguments)
@@ -787,13 +792,15 @@ class ActionForward: Action, ActionExec {
 	}
 
 	func exec(_: [String: Any]) throws {
-		let session = context.currentSession
-
-		if session.currentViewIndex == session.views.count - 1 {
-			print("Warn: Can't go forward. Already at last view in session")
+		if let session = context.currentSession {
+			if session.currentViewIndex == (session.views?.count ?? 0) - 1 {
+				print("Warn: Can't go forward. Already at last view in session")
+			} else {
+				realmWriteIfAvailable(context.cache.realm) { session.currentViewIndex += 1 }
+				context.scheduleCascadingViewUpdate()
+			}
 		} else {
-			realmWriteIfAvailable(context.cache.realm) { session.currentViewIndex += 1 }
-			context.scheduleCascadingViewUpdate()
+			// TODO: Error handling?
 		}
 	}
 
@@ -812,11 +819,14 @@ class ActionForwardToFront: Action, ActionExec {
 	}
 
 	func exec(_: [String: Any]) throws {
-		let session = context.currentSession
-		realmWriteIfAvailable(context.cache.realm) {
-			session.currentViewIndex = session.views.count - 1
+		if let session = context.currentSession {
+			realmWriteIfAvailable(context.cache.realm) {
+				session.currentViewIndex = (session.views?.count ?? 0) - 1
+			}
+			context.scheduleCascadingViewUpdate()
+		} else {
+			// TODO: Error handling
 		}
-		context.scheduleCascadingViewUpdate()
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
@@ -835,21 +845,23 @@ class ActionBackAsSession: Action, ActionExec {
 	}
 
 	func exec(_: [String: Any]) throws {
-		let session = context.currentSession
-
-		if session.currentViewIndex == 0 {
-			throw "Warn: Can't go back. Already at earliest view in session"
-		} else {
-			if let duplicateSession = try context.cache.duplicate(session as Item) as? Session {
-				realmWriteIfAvailable(context.cache.realm) {
-					duplicateSession.currentViewIndex -= 1
-				}
-
-				try ActionOpenSession.exec(context, ["session": duplicateSession])
+		if let session = context.currentSession {
+			if session.currentViewIndex == 0 {
+				throw "Warn: Can't go back. Already at earliest view in session"
 			} else {
-				// TODO: Error handling
-				throw ActionError.Warning(message: "Cannot execute ActionBackAsSession, duplicating currentSession resulted in a different type")
+				if let duplicateSession = try context.cache.duplicate(session as Item) as? Session {
+					realmWriteIfAvailable(context.cache.realm) {
+						duplicateSession.currentViewIndex -= 1
+					}
+
+					try ActionOpenSession.exec(context, ["session": duplicateSession])
+				} else {
+					// TODO: Error handling
+					throw ActionError.Warning(message: "Cannot execute ActionBackAsSession, duplicating currentSession resulted in a different type")
+				}
 			}
+		} else {
+			// TODO: Error handling
 		}
 	}
 
@@ -870,10 +882,12 @@ class ActionOpenSession: Action, ActionExec {
 	}
 
 	func openSession(_ context: MemriContext, _ session: Session) {
-		let sessions = context.sessions // TODO: generalize
-
-		// Add view to session and set it as current
-		sessions.setCurrentSession(session)
+		if let sessions = context.sessions { // TODO: generalize
+			// Add view to session and set it as current
+			sessions.setCurrentSession(session)
+		} else {
+			// TODO: Error handling
+		}
 
 		// Recompute view
 		context.scheduleCascadingViewUpdate()
@@ -943,29 +957,22 @@ class ActionOpenSessionByName: Action, ActionExec {
 			guard let def = fromDB as? CVUParsedSessionDefinition else {
 				// TODO: Error handling
 				throw "Exception: Cannot open session with name \(name) " +
-					"cannot be casted as CVUParsedSessionDefinition"
+					"cannot be cast as CVUParsedSessionDefinition"
 			}
 
-			let session = Session()
-			guard let viewDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition] else {
+			let session = try Cache.createItem(Session.self)
+			guard let parsedDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition],
+				parsedDefs.count > 0 else {
 				throw "Exception: Session \(name) has no views."
 			}
 
-			var list: [SessionView] = []
-			for viewDef in viewDefs {
-				list.append(SessionView(value: [
-					"viewDefinition": CVUStoredDefinition(
-						value: ["definition": viewDef.toCVUString(0, "    ")]
-					),
-					"viewArguments": viewArguments as Any?,
-				]))
+			for parsed in parsedDefs {
+				let view = try SessionView.fromCVUDefinition(
+					parsed: parsed,
+					viewArguments: viewArguments
+				)
+				_ = try session.link(view, type: "views")
 			}
-
-			if list.count == 0 {
-				throw "Exception: Session \(name) has no views."
-			}
-
-			session["views"] = list
 
 			// Open the view
 			ActionOpenSession(context).openSession(context, session)
@@ -998,7 +1005,7 @@ class ActionDelete: Action, ActionExec {
 		//            }
 		//        }
 
-		if let selection: [Item] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
 			context.cache.delete(selection)
 			context.scheduleCascadingViewUpdate(immediate: true)
 		} else if let dataItem = arguments["dataItem"] as? Item {
@@ -1020,7 +1027,7 @@ class ActionDuplicate: Action, ActionExec {
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
-		if let selection: [Item] = context.cascadingView.userState.get("selection"), selection.count > 0 {
+		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
 			try selection.forEach { item in try ActionAddItem.exec(context, ["dataItem": item]) }
 		} else if let item = arguments["dataItem"] as? Item {
 			try ActionAddItem.exec(context, ["dataItem": item])
@@ -1035,18 +1042,22 @@ class ActionDuplicate: Action, ActionExec {
 	}
 }
 
-class ActionRunImporterInstance: Action, ActionExec {
+class ActionRunImporterRun: Action, ActionExec {
+	override var defaultValues: [String: Any] { [
+		"argumentTypes": ["importerRun": ItemFamily.self],
+	] }
+
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runImporterInstance", arguments: arguments, values: values)
+		super.init(context, "runImporterRun", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
 		// TODO: parse options
 
-		if let importerInstance = arguments["importerInstance"] as? ImporterInstance {
-			let cachedImporterInstance = try context.cache.addToCache(importerInstance)
+		if let run = arguments["importerRun"] as? ImporterRun {
+			guard let uid = run.uid.value else { throw "Uninitialized import run" }
 
-			context.podAPI.runImporterInstance(cachedImporterInstance.uid) { error, _ in
+			context.podAPI.runImporterRun(uid) { error, _ in
 				if let error = error {
 					print("Cannot execute actionImport: \(error)")
 				}
@@ -1055,71 +1066,71 @@ class ActionRunImporterInstance: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionRunImporterInstance(context).exec(arguments) }
+		execWithoutThrow { try ActionRunImporterRun(context).exec(arguments) }
 	}
 }
 
-class ActionRunIndexerInstance: Action, ActionExec {
+class ActionRunIndexerRun: Action, ActionExec {
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runIndexerInstance", arguments: arguments, values: values)
+		super.init(context, "runIndexerRun", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
 		// TODO: parse options
 
-		guard let indexerInstance = arguments["indexerInstance"] as? IndexerInstance else {
-			throw "Error, no memriID"
+		guard let run = arguments["indexerRun"] as? IndexerRun else {
+			throw "Exception: no indexer run passed"
 		}
 
-		if indexerInstance.indexer?.runDestination == "ios" {
-			try runLocal(indexerInstance)
+		if run.indexer?.runDestination == "ios" {
+			try runLocal(run)
 		} else {
 			// First make sure the indexer exists
 
-			//            print("starting IndexerInstance with memrID \(memriID)")
-			indexerInstance.set("progress", 0)
+			//            print("starting IndexerRun with memrID \(memriID)")
+			run.set("progress", 0)
 			context.scheduleUIUpdate()
 			// TODO: indexerInstance items should have been automatically created already by now
 
-			func getAndrunIndexerInstance(_ tries: Int) {
+			func getAndRunIndexerRun(_ tries: Int) {
 				if tries > 20 {
 					return
 				}
-				let uid: Int? = indexerInstance.get("uid")
+				let uid: Int? = run.get("uid")
 				if uid == 0 || uid == nil {
 					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-						getAndrunIndexerInstance(tries + 1)
+						getAndRunIndexerRun(tries + 1)
 					}
 				} else {
-					runIndexerInstance(indexerInstance, uid!)
+					runIndexerRun(run, uid!)
 				}
 			}
-			getAndrunIndexerInstance(0)
+			getAndRunIndexerRun(0)
 		}
 	}
 
-	func runIndexerInstance(_ indexerInstance: IndexerInstance, _ uid: Int) {
+	func runIndexerRun(_ run: IndexerRun, _ uid: Int) {
 		let start = Date()
 
 		Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
 			let timePassed = Int(Date().timeIntervalSince(start))
 			print("polling indexerInstance")
 			self.context.podAPI.get(uid) { error, data in
-				if let updatedInstance = data as? IndexerInstance {
+				if let updatedInstance = data as? IndexerRun {
 					if let progress: Int = updatedInstance.get("progress") {
 						if timePassed > 5 || progress >= 100 {
 							timer.invalidate()
 						} else {
 							print("setting random progress")
 							let randomProgress = Int.random(in: 1 ... 20)
-							indexerInstance.set("progress", randomProgress)
+							run.set("progress", randomProgress)
 							self.context.scheduleUIUpdate()
 
-							let p: Int? = indexerInstance.get("progress")
-							print(p)
+							let p: Int? = run.get("progress")
+							p.map { print($0) }
 						}
 					} else {
-						print("ERROR, could not get progress \(error)")
+						print("ERROR, could not get progress: \(String(describing: error))")
 						timer.invalidate()
 					}
 				} else {
@@ -1130,22 +1141,21 @@ class ActionRunIndexerInstance: Action, ActionExec {
 		}
 	}
 
-	func runLocal(_ indexerInstance: IndexerInstance) throws {
+	func runLocal(_ indexerInstance: IndexerRun) throws {
 		guard let query: String = indexerInstance.indexer?.get("query") else {
-			throw "Cannot execute IndexerInstance \(indexerInstance), no query specified"
+			throw "Cannot execute IndexerRun \(indexerInstance), no query specified"
 		}
 		let ds = Datasource(query: query)
 
-		context.cache.query(ds) { (_, result) -> Void in
-
+		try context.cache.query(ds) { (_, result) -> Void in
 			if let items = result {
-				self.context.indexerAPI.execute(indexerInstance, items)
+				try self.context.indexerAPI.execute(indexerInstance, items)
 			}
 		}
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
-		execWithoutThrow { try ActionRunIndexerInstance(context).exec(arguments) }
+		execWithoutThrow { try ActionRunIndexerRun(context).exec(arguments) }
 	}
 }
 
@@ -1182,11 +1192,12 @@ class ActionSetProperty: Action, ActionExec {
 		}
 
 		// Check that the property exists to avoid hard crash
-		guard let _ = subject.objectSchema[propertyName] else {
+		guard subject.objectSchema[propertyName] != nil else {
 			throw "Exception: Invalid property access of \(propertyName) for \(subject)"
 		}
 
 		#warning("Ask Toby for how to cast this")
+		#warning("@Ruben not sure what you're asking here")
 		subject.set(propertyName, arguments["value"])
 
 		// TODO: refactor

@@ -30,6 +30,8 @@ class CVUSerializer {
 				if p.truncatingRemainder(dividingBy: 1) == 0 {
 					return "\(Int(p))"
 				}
+				//            } else if let p = p as? Bool {
+				//                return p ? "true" : "false"
 			} else if let p = p as? CGFloat {
 				if p.truncatingRemainder(dividingBy: 1) == 0 {
 					return "\(Int(p))"

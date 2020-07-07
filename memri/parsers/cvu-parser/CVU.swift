@@ -11,13 +11,13 @@ import Foundation
 public class CVU {
 	let code: String
 	let context: MemriContext
-	private let lookup: (ExprLookupNode, ViewArguments) throws -> Any
-	private let execFunc: (ExprLookupNode, [Any], ViewArguments) throws -> Any
+	private let lookup: (ExprLookupNode, ViewArguments?) throws -> Any
+	private let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any
 	private var parsed: [CVUParsedDefinition]?
 
 	init(_ code: String, _ context: MemriContext,
-		 lookup: @escaping (ExprLookupNode, ViewArguments) throws -> Any,
-		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments) throws -> Any) {
+		 lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any,
+		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any) {
 		self.context = context
 		self.code = code
 		self.lookup = lookup

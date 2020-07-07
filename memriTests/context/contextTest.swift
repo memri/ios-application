@@ -19,22 +19,22 @@ class contextTest: XCTestCase {
 	}
 
 	func testBooting() throws {
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
-		XCTAssertEqual(root.cascadingView.sessionView.viewDefinition!.selector, "[view]")
+		XCTAssertEqual(root.cascadingView?.sessionView.viewDefinition!.selector, "[view]")
 	}
 
 	func testSubContext() throws {
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
-		let sub = root.createSubContext(Session())
+		let sub = try root.createSubContext(Session())
 
-		XCTAssertEqual(sub.cascadingView.sessionView.viewDefinition, nil)
+		XCTAssertEqual(sub.cascadingView?.sessionView.viewDefinition, nil)
 	}
 
 	func testDynamicProperties() throws {
-		let root = RootContext(name: "", key: "")
+		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
 		root.showSessionSwitcher = true

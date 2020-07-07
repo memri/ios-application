@@ -19,9 +19,9 @@ import SwiftUI
 
 let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x: JSONEncoder, y: JSONDecoder) in
 	var encoder = JSONEncoder()
-	encoder.dateEncodingStrategy = .iso8601
+	encoder.dateEncodingStrategy = .millisecondsSince1970
 	var decoder = JSONDecoder()
-	decoder.dateDecodingStrategy = .iso8601
+	decoder.dateDecodingStrategy = .millisecondsSince1970
 
 	return (encoder, decoder)
 }()
@@ -39,7 +39,7 @@ func serialize(_ a: AnyCodable) throws -> String {
 }
 
 func stringFromFile(_ file: String, _ ext: String = "json") throws -> String {
-	print("Reading from file \(file).\(ext)")
+	debugHistory.info("Reading from file \(file).\(ext)")
 	let fileURL = Bundle.main.url(forResource: file, withExtension: ext)
 	if let fileURL = fileURL {
 		let jsonString = try String(contentsOf: fileURL, encoding: String.Encoding.utf8)
@@ -144,51 +144,51 @@ func serializeJSON(_ encode: (_ encoder: JSONEncoder) throws -> Data) -> String?
 	return json
 }
 
-func decodeIntoList<T: Decodable>(_ decoder: Decoder, _ key: String, _ list: RealmSwift.List<T>) {
-	do {
-		if let parsed: [T] = try decoder.decodeIfPresent(key) {
-			for item in parsed {
-				list.append(item)
-			}
-		}
-	} catch {
-		print("Failed to decode into list \(error)")
-	}
-}
+// func decodeIntoList<T: Decodable>(_ decoder: Decoder, _ key: String, _ list: RealmSwift.List<T>) {
+//	do {
+//		if let parsed: [T] = try decoder.decodeIfPresent(key) {
+//			for item in parsed {
+//				list.append(item)
+//			}
+//		}
+//	} catch {
+//		print("Failed to decode into list \(error)")
+//	}
+// }
 
-func decodeEdges<T: Item>(_ decoder: Decoder, _ key: String, _: T.Type,
-						  _ edgeList: RealmSwift.List<Relationship>, _ subject: Item) {
+func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
 	do {
-		let objects: [T]? = try decoder.decodeIfPresent(key)
-		if let objects = objects {
-			for object in objects {
-				do { _ = try globalCache?.addToCache(object) }
-				catch {
-					// TODO: Error logging
-				}
-				let edge = Relationship(subject.memriID, object.memriID, subject.genericType, object.genericType)
-				edgeList.append(edge)
+		if let edges: [Edge] = try decoder.decodeIfPresent(key) {
+			for edge in edges {
+				edge.sourceItemType = source.genericType
+				edge.sourceItemID.value = source.uid.value
 			}
+
+			source[key] = edges
 		}
 	} catch {
 		debugHistory.error("\(error)")
 	}
 }
 
-func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
-	// TODO: Refactor, Error Handling , _ error:(error) -> Void  ??
-	do {
-		if let realm = realm {
-			if !realm.isInWriteTransaction {
-				// TODO: Error handling (this can happen for instance if you pass a
-				// non existing property string to dataItem.set())
-				try! realm.write { try doWrite() }
-			} else {
-				try doWrite()
-			}
+func realmWriteIfAvailableThrows(_ realm: Realm?, _ doWrite: () throws -> Void) throws {
+	if let realm = realm {
+		if !realm.isInWriteTransaction {
+			// TODO: Error handling (this can happen for instance if you pass a
+			// non existing property string to dataItem.set())
+			try realm.write { try doWrite() }
 		} else {
 			try doWrite()
 		}
+	} else {
+		try doWrite()
+	}
+}
+
+func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
+	// TODO: Refactor, Error Handling , _ error:(error) -> Void  ??
+	do {
+		try realmWriteIfAvailableThrows(realm, doWrite)
 	} catch {
 		debugHistory.error("Realm Error: \(error)")
 	}
@@ -218,79 +218,58 @@ func withRealm(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
 ///   - type: realm type
 ///   - memriID: item memriID
 /// - Returns: retrieved item. If the item does not exist, returns nil.
-func getItem(_ type: String, _ memriID: String) -> Item? {
+func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
 		return withRealm { realm in
-			realm.object(ofType: item() as! Object.Type, forPrimaryKey: memriID)
+			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
 		} as? Item
 	}
 	return nil
 }
 
-func getItem(_ edge: Relationship) -> Item? {
-	if let family = ItemFamily(rawValue: edge.objectType) {
-		return withRealm { realm in
-			realm.object(ofType: family.getType() as! Object.Type,
-						 forPrimaryKey: edge.objectMemriID)
-		} as? Item
-	}
-	return nil
-}
+//
+// func getItem(_ edge: Edge) -> Item? {
+//	if let family = ItemFamily(rawValue: edge.targetType) {
+//		return withRealm { realm in
+//			realm.object(ofType: family.getType() as! Object.Type,
+//						 forPrimaryKey: edge.objectMemriID)
+//		} as? Item
+//	}
+//	return nil
+// }
 
-func dataItemListToArray(_ object: Any) -> [Item] {
-	var collection: [Item] = []
-
-	if let list = object as? List<Note> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Label> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Photo> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Video> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Audio> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<File> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Person> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<AuditItem> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Sessions> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<PhoneNumber> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Website> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Location> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Address> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Country> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Company> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<PublicKey> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<OnlineProfile> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Diet> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<MedicalCondition> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Session> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<SessionView> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<CVUStoredDefinition> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Importer> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Indexer> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<ImporterInstance> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<IndexerInstance> { list.forEach { collection.append($0) } }
-	else if let list = object as? List<Relationship> {
-		withRealm { realm -> Void in
-			for edge in list {
-				let objectType = edge.objectType
-				let objectId = edge.objectMemriID
-
-				if let family = ItemFamily(rawValue: objectType),
-					let type = family.getType() as? Object.Type {
-					if let item = realm.object(ofType: type, forPrimaryKey: objectId) as? Item {
-						collection.append(item)
-					} else {
-						// TODO: Error handling
-						debugHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-						print("Could not find object of type \(type) with memriID \(objectId)")
-					}
-				} else {
-					// TODO: user warning
-					debugHistory.error("Unknown type \(objectType) for dataItem \(objectId)")
-					print("Unknown type \(objectType) for dataItem \(objectId)")
-				}
-			}
-		}
-	}
-
-	return collection
-}
+// func dataItemListToArray(_ object: Any) -> [Item] {
+//	var collection: [Item] = []
+//
+//	if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<File> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Location> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<MedicalCondition> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Importer> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<ImporterRun> { list.forEach { collection.append($0) } }
+//	else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
+//    else if let list = object as? Results<Edge> { return list.itemsArray() }
+//
+//	return collection
+// }

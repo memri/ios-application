@@ -73,7 +73,7 @@ class MapHelper {
 					let newLocation = Location()
 					newLocation.set("latitude", location.coordinate.latitude)
 					newLocation.set("longitude", location.coordinate.longitude)
-					address.location = newLocation
+					_ = try address.link(newLocation, type: "location")
 				}
 			}
 			self?.addressLookupResults[address] = location

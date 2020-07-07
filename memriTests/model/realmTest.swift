@@ -25,7 +25,7 @@ class realmTest: XCTestCase {
 		#endif
 
 		Realm.Configuration.defaultConfiguration = config
-		let realm = try! Realm()
+		_ = try! Realm()
 	}
 
 	func testPerformanceExample() throws {

@@ -65,14 +65,17 @@ struct ThumbnailRendererView: View {
 	var selectedIndices: Binding<Set<Int>> {
 		Binding<Set<Int>>(
 			get: { [] },
-			set: { self.context.cascadingView.userState.set("selection", $0.compactMap { self.context.items[safe: $0] }) }
+			set: {
+				self.context.cascadingView?.userState?
+					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+			}
 		)
 	}
 
 	var name: String = "thumbnail"
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
@@ -116,7 +119,7 @@ struct ThumbnailRendererView: View {
 				self.renderConfig.render(item: dataItem)
 					.environmentObject(self.context)
 
-				if self.context.currentSession.editMode && !state.isSelected {
+				if self.context.currentSession?.editMode ?? false && !state.isSelected {
 					Color.white.opacity(0.15)
 				}
 				if state.isSelected {
@@ -141,10 +144,10 @@ struct ThumbnailRendererView: View {
 
 	var body: some View {
 		VStack {
-			if context.cascadingView.resultSet.count == 0 {
+			if (context.cascadingView?.resultSet.count ?? 0) == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView.emptyResultText)
+					Text(self.context.cascadingView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)
@@ -157,18 +160,17 @@ struct ThumbnailRendererView: View {
 				ASCollectionView(section: section)
 					.layout(self.layout)
 					.alwaysBounceVertical()
-					.environment(\.editMode, $context.currentSession.swiftUIEditMode)
+					.environment(\.editMode, Binding<EditMode>(
+						get: { self.context.currentSession?.swiftUIEditMode ?? EditMode.inactive },
+						set: { self.context.currentSession?.swiftUIEditMode = $0 }
+					))
 			}
 		}
-	}
-
-	func onTap(action: Action, dataItem: Item) {
-		context.executeAction(action, with: dataItem)
 	}
 }
 
 struct ThumbnailRendererView_Previews: PreviewProvider {
 	static var previews: some View {
-		ThumbnailRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
+		ThumbnailRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

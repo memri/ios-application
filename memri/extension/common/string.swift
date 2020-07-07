@@ -116,17 +116,13 @@ extension String: Error {
 		}
 	}
 
-	mutating func capitalizeFirstLetter() {
-		self = capitalizingFirst()
-	}
-
 	func removeHTML() -> String {
 		replacingOccurrences(of: "<[^>]+>", with: "",
 							 options: .regularExpression,
 							 range: nil)
 	}
 
-	func camelCaseToTitleCase() -> String {
+	public func camelCaseToTitleCase() -> String {
 		split { $0.isWhitespace }.map { $0.capitalizingFirst() }.joined(separator: " ")
 	}
 
@@ -134,11 +130,6 @@ extension String: Error {
 	var nilIfBlank: String? {
 		guard contains(where: { !$0.isWhitespace }) else { return nil }
 		return self
-	}
-
-	// Return real length of String. it's not absolute equal String.characters.count
-	func nsLength() -> Int {
-		NSString(string: self).length
 	}
 }
 

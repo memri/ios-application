@@ -11,15 +11,19 @@ import SwiftUI
 struct Browser: View {
 	@EnvironmentObject var context: MemriContext
 
+	var activeRenderer: AnyView {
+		allRenderers?.allViews[context.cascadingView?.activeRenderer ?? ""] ?? AnyView(Spacer())
+	}
+
 	var body: some View {
 		ZStack {
 			VStack(alignment: .center, spacing: 0) {
 				TopNavigation()
 					.background(Color(.systemBackground))
-				allRenderers?.allViews[self.context.cascadingView.activeRenderer]
+				activeRenderer
 					.fullHeight().layoutPriority(1)
 				Search()
-				if self.context.currentSession.showFilterPanel {
+				if self.context.currentSession?.showFilterPanel ?? false {
 					FilterPanel()
 				}
 			}
@@ -31,6 +35,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
 	static var previews: some View {
-		Browser().environmentObject(RootContext(name: "", key: "").mockBoot())
+		Browser().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

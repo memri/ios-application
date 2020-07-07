@@ -22,32 +22,24 @@ public class Installer {
 
 		// TODO: Refactor: check version??
 		if installLogs.count == 0 {
-			print("Installing defaults in the database")
-
-			// Load default navigation items in database
-			context.navigation.install()
-
-			// Load default settings in database
-			try context.settings.install()
+			debugHistory.info("Installing defaults in the database")
 
 			// Load default objects in database
-			context.cache.install()
+			try context.cache.install()
 
 			// Load default views in database
 			context.views.context = context
 			try context.views.install()
 
 			// Load default sessions in database
-			try context.sessions.install(context)
+			try context.sessions?.install(context)
 
 			// Installation complete
-			try realm.write {
-				realm.create(AuditItem.self, value: [
-					"action": "install",
-					"date": Date(),
-					"contents": try serialize(["version": "1.0"]),
-				])
-			}
+			_ = try Cache.createItem(AuditItem.self, values: [
+				"action": "install",
+				"date": Date(),
+				"contents": try serialize(["version": "1.0"]),
+			])
 		}
 
 		try callback()

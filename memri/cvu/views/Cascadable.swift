@@ -10,7 +10,7 @@ import CoreGraphics
 import Foundation
 
 public class Cascadable {
-	var viewArguments: ViewArguments
+	var viewArguments: ViewArguments?
 	var cascadeStack: [CVUParsedDefinition]
 	var localCache = [String: Any?]()
 
@@ -154,7 +154,7 @@ public class Cascadable {
 		return result
 	}
 
-	init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments) {
+	init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments? = nil) {
 		self.viewArguments = viewArguments
 		self.cascadeStack = cascadeStack
 	}

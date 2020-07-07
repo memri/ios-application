@@ -18,10 +18,10 @@ struct ContextPane: View {
     }) var offset: CGFloat = .zero
 
 	var isVisible: Bool {
-		get { context.currentSession.showContextPane }
+		get { context.currentSession?.showContextPane ?? false }
 		nonmutating set {
 			realmWriteIfAvailable(self.context.realm) {
-				self.context.currentSession.showContextPane = newValue
+				self.context.currentSession?.showContextPane = newValue
 				self.context.scheduleUIUpdate(immediate: true)
 			}
 		}
@@ -86,6 +86,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
 	static var previews: some View {
-		ContextPane().environmentObject(RootContext(name: "", key: "").mockBoot())
+		ContextPane().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

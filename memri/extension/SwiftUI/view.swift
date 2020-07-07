@@ -187,31 +187,38 @@ extension View {
 		return AnyView(self)
 	}
 
+	@ViewBuilder
 	func `if`<Content: View>(_ conditional: Bool, content: (Self) -> Content) -> some View {
-		if conditional { return AnyView(content(self)) }
-		else { return AnyView(self) }
+		if conditional {
+			content(self)
+		} else {
+			self
+		}
 	}
 
-	// TODO: Refactor: use only one path to draw this (is that possible?)
 	func border(width: [CGFloat], color: Color) -> some View {
-		var x: AnyView = AnyView(self)
-		if width[0] > 0 {
-			x = AnyView(x.overlay(EdgeBorder(width: width[0], edge: .top).foregroundColor(color)))
-		}
-		if width[1] > 0 {
-			x = AnyView(x.overlay(EdgeBorder(width: width[1], edge: .trailing).foregroundColor(color)))
-		}
-		if width[2] > 0 {
-			x = AnyView(x.overlay(EdgeBorder(width: width[2], edge: .bottom).foregroundColor(color)))
-		}
-		if width[3] > 0 {
-			x = AnyView(x.overlay(EdgeBorder(width: width[3], edge: .leading).foregroundColor(color)))
-		}
-
-		return x
+		overlay(
+			GeometryReader { geom in
+				Path { path in
+					if let topEdge = width[safe: 0], topEdge > 0 {
+						path.addRect(CGRect(x: 0, y: 0, width: geom.size.width, height: topEdge))
+					}
+					if let bottomEdge = width[safe: 2], bottomEdge > 0 {
+						path.addRect(CGRect(x: 0, y: geom.size.height - bottomEdge, width: geom.size.width, height: bottomEdge))
+					}
+					if let leftEdge = width[safe: 3], leftEdge > 0 {
+						path.addRect(CGRect(x: 0, y: 0, width: leftEdge, height: geom.size.height))
+					}
+					if let rightEdge = width[safe: 1], rightEdge > 0 {
+						path.addRect(CGRect(x: geom.size.width - rightEdge, y: 0, width: rightEdge, height: geom.size.height))
+					}
+				}
+				.fill(color)
+			}
+		)
 	}
 
-	func border(width: CGFloat, edge: SwiftUI.Edge, color: Color) -> some View {
+	public func border(width: CGFloat, edge: SwiftUI.Edge, color: Color) -> some View {
 		overlay(
 			EdgeBorder(width: width, edge: edge).foregroundColor(color)
 		)

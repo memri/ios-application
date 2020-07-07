@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import memriUI
 import RealmSwift
 import SwiftUI
 
@@ -21,8 +20,8 @@ public struct UIElementView: SwiftUI.View {
 	public init(_ gui: UIElement, _ dataItem: Item, _ viewArguments: ViewArguments? = nil) {
 		from = gui
 		item = dataItem
-		self.viewArguments = viewArguments ?? ViewArguments()
 
+		self.viewArguments = viewArguments ?? ViewArguments() // This is already a copy
 		self.viewArguments.set(".", dataItem)
 	}
 
@@ -39,8 +38,11 @@ public struct UIElementView: SwiftUI.View {
 	}
 
 	public func getImage(_ propName: String) -> UIImage {
-		if let file: File? = get(propName) {
-			return file?.asUIImage ?? UIImage()
+		if let file: File = get(propName) {
+			return file.asUIImage ?? UIImage()
+		}
+		if let photo: Photo? = get(propName), let file = photo?.file {
+			return file.asUIImage ?? UIImage()
 		}
 
 		return UIImage()
@@ -53,9 +55,8 @@ public struct UIElementView: SwiftUI.View {
 		return Image(systemName: "exclamationmark.bubble")
 	}
 
-	public func getList(_: String) -> [Item] {
-		let x: [Item]? = get("list")
-		return x ?? []
+	public func getList(_ key: String) -> [Item] {
+		get(key, type: [Item].self) ?? []
 	}
 
 	private func resize(_ view: SwiftUI.Image) -> AnyView {
@@ -231,7 +232,7 @@ public struct UIElementView: SwiftUI.View {
 							context: self.context,
 							viewName: from.getString("viewName"),
 							dataItem: self.item,
-							args: ViewArguments(get("arguments") ?? [:] as [String: Any])
+							viewArguments: try? ViewArguments(get("arguments") ?? [:] as [String: Any])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
@@ -242,7 +243,7 @@ public struct UIElementView: SwiftUI.View {
 								// Find out why datasource is not parsed
 
 								if let parsed: [String: Any?] = get("view") {
-									let parsedViewDef = CVUParsedViewDefinition(Item.generateUUID())
+									let parsedViewDef = CVUParsedViewDefinition("[view = '\(UUID().uuidString)']")
 									parsedViewDef.parsed = parsed
 									do {
 										let sessionView = try SessionView.fromCVUDefinition(parsed: parsedViewDef)
@@ -252,13 +253,12 @@ public struct UIElementView: SwiftUI.View {
 									}
 									return SessionView()
 								} else {
-									print("Failed to make subview (not defined), creating empty one instead")
 									debugHistory.error("Failed to make subview (not defined), creating empty one instead")
 									return SessionView()
 								}
 							}(),
 							dataItem: self.item,
-							args: ViewArguments(get("arguments") ?? [:] as [String: Any])
+							viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [String: Any]())
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
@@ -354,7 +354,10 @@ public struct UIElementView: SwiftUI.View {
 			if propName == "" {
 				Text("Invalid property value set on TextField")
 			} else {
-				_RichTextEditor(dataItem: dataItem, filterText: $context.cascadingView.filterText)
+				_RichTextEditor(dataItem: dataItem, filterText: Binding<String>(
+					get: { self.context.cascadingView?.filterText ?? "" },
+					set: { self.context.cascadingView?.filterText = $0 }
+				))
 					.generalEditorInput()
 			}
 		}

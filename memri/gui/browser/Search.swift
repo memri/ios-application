@@ -7,7 +7,6 @@
 //
 
 import Combine
-import memriUI
 import SwiftUI
 
 struct Search: View {
@@ -17,13 +16,16 @@ struct Search: View {
 		VStack(spacing: 0) {
 			Divider().background(Color(hex: "#efefef"))
 			HStack {
-				MemriTextField(value: $context.cascadingView.filterText,
-							   placeholder: context.cascadingView.searchHint,
+				MemriTextField(value: Binding<String>(
+					get: { self.context.cascadingView?.filterText ?? "" },
+					set: { self.context.cascadingView?.filterText = $0 }
+				),
+							   placeholder: context.cascadingView?.searchHint ?? "",
 							   showPrevNextButtons: false)
 					.layoutPriority(-1)
-				Text(context.cascadingView.searchMatchText)
+				Text(context.cascadingView?.searchMatchText ?? "")
 
-				ForEach(context.cascadingView.filterButtons, id: \.self) { filterButton in
+				ForEach(context.cascadingView?.filterButtons ?? [], id: \.self) { filterButton in
 					ActionButton(action: filterButton)
 						.font(Font.system(size: 20, weight: .medium))
 				}
@@ -77,6 +79,6 @@ private struct BoundsPreferenceKey: PreferenceKey {
 
 struct Search_Previews: PreviewProvider {
 	static var previews: some View {
-		Search().environmentObject(RootContext(name: "", key: "").mockBoot())
+		Search().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

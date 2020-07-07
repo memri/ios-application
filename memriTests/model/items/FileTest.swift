@@ -32,7 +32,7 @@ class FileTest: XCTestCase {
 
 	func testCache() throws {
 		var _: String? = try testFile.read()
-		let cached: String? = try InMemoryObjectCache.get("testfile.txt") as? String
+		let cached: String? = InMemoryObjectCache.get("testfile.txt") as? String
 		XCTAssertTrue(cached == "test string\n")
 	}
 

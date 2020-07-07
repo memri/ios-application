@@ -7,34 +7,34 @@
 import Foundation
 import RealmSwift
 
-public class UserState: Object, CVUToString {
-	@objc dynamic var memriID: String = Item.generateUUID()
+public class UserState: SchemaItem, CVUToString {
 	@objc dynamic var state: String = ""
 
-	var onFirstSave: ((UserState) -> Void)?
+	private var cacheID = UUID().uuidString
 
-	convenience init(_ dict: [String: Any]) {
-		self.init()
-
-		do { try InMemoryObjectCache.set(memriID, dict) }
-		catch {
-			// TODO: Refactor error reporting
-		}
+	/// Primary key used in the realm database of this Item
+	override public static func primaryKey() -> String? {
+		"uid"
 	}
 
-	convenience init(onFirstSave: @escaping (UserState) -> Void) {
+	convenience init(_ dict: [String: Any]) throws {
 		self.init()
-		self.onFirstSave = onFirstSave
+		try storeInCache(dict)
+		persist()
 	}
 
-	func get<T>(_ propName: String) -> T? {
+	private func storeInCache(_ dict: [String: Any]) throws {
+		try InMemoryObjectCache.set("UserState:\(uid.value != nil ? "\(uid)" : cacheID)", dict)
+	}
+
+	private func getFromCache() -> [String: Any]? {
+		InMemoryObjectCache.get("UserState:\(uid.value != nil ? "\(uid)" : cacheID)") as? [String: Any]
+	}
+
+	func get<T>(_ propName: String, type _: T.Type = T.self) -> T? {
 		let dict = asDict()
 
-		if let lookup = dict[propName] as? [String: Any?], lookup["memriID"] != nil {
-			let x: Item? = getItem(lookup["type"] as? String ?? "",
-								   lookup["memriID"] as? String ?? "")
-			return x as? T
-		} else if dict[propName] == nil {
+		if dict[propName] == nil {
 			return nil
 		}
 
@@ -42,21 +42,15 @@ public class UserState: Object, CVUToString {
 	}
 
 	func set<T>(_ propName: String, _ newValue: T?, persist: Bool = true) {
-		if let event = onFirstSave {
-			event(self)
-			onFirstSave = nil
+		var dict = asDict()
+		dict[propName] = newValue
+
+		do { try storeInCache(dict) }
+		catch {
+			/* TODO: ERROR HANDLIGNN */
+			debugHistory.warn("Unable to store user state property \(propName)")
+			return
 		}
-
-		var x = asDict()
-
-		if let newValue = newValue as? Item {
-			x[propName] = ["type": newValue.genericType, "memriID": newValue.memriID]
-		} else {
-			x[propName] = newValue
-		}
-
-		do { try globalInMemoryObjectCache.set(memriID, x) }
-		catch { /* TODO: ERROR HANDLIGNN */ }
 
 		if persist { scheduleWrite() }
 	}
@@ -66,11 +60,19 @@ public class UserState: Object, CVUToString {
 		let stored: [String: AnyCodable] = try unserialize(state) ?? [:]
 		var dict = [String: Any]()
 
-		for (key, value) in stored {
-			dict[key] = value.value
+		for (key, wrapper) in stored {
+			if let lookup = wrapper.value as? [String: Any?], lookup["___"] != nil {
+				if let itemType = lookup["_type"] as? String, let uid = lookup["_uid"] as? Int {
+					dict[key] = getItem(itemType, uid)
+				} else {
+					debugHistory.warn("Could not expand item. View may not load as expected")
+				}
+			} else {
+				dict[key] = wrapper.value
+			}
 		}
 
-		try InMemoryObjectCache.set(memriID, dict)
+		try storeInCache(dict)
 		return dict
 	}
 
@@ -92,16 +94,20 @@ public class UserState: Object, CVUToString {
 		}
 	}
 
-	private func persist() {
+	func persist() {
 		if realm == nil { return }
 
-		if let x = InMemoryObjectCache.get(memriID) as? [String: Any?] {
+		if let x = getFromCache() {
 			realmWriteIfAvailable(realm) {
 				do {
 					var values: [String: AnyCodable?] = [:]
 
 					for (key, value) in x {
-						if let value = value as? AnyCodable {
+						if let value = value as? Item {
+							values[key] = ["_type": value.genericType,
+										   "_uid": value.uid.value as Any,
+										   "___": true]
+						} else if let value = value as? AnyCodable {
 							values[key] = value
 						} else {
 							values[key] = AnyCodable(value)
@@ -130,23 +136,45 @@ public class UserState: Object, CVUToString {
 	}
 
 	public func asDict() -> [String: Any] {
-		var x: [String: Any]?
-		x = InMemoryObjectCache.get(memriID) as? [String: Any]
-		do { if x == nil { x = try transformToDict() } } catch { return [:] } // TODO: refactor: handle error
-		return x ?? [:]
+		if let cached = getFromCache() {
+			return cached
+		} else {
+			do {
+				return try transformToDict()
+			} catch {
+				debugHistory.error("Could not unserialize state object: \(error)")
+				return [:]
+			} // TODO: refactor: handle error
+		}
 	}
 
 	public func merge(_ state: UserState) throws {
 		let dict = asDict().merging(state.asDict(), uniquingKeysWith: { _, new in new })
-		try InMemoryObjectCache.set(memriID, dict as [String: Any])
-	}
-
-	public func clone() -> UserState {
-		UserState(asDict())
+		try storeInCache(dict as [String: Any])
+		persist()
 	}
 
 	func toCVUString(_ depth: Int, _ tab: String) -> String {
 		CVUSerializer.dictToString(asDict(), depth, tab)
+	}
+
+	public class func clone(_ viewArguments: ViewArguments? = nil,
+							_ values: [String: Any]? = nil,
+							managed: Bool = true) throws -> UserState {
+		var dict = viewArguments?.asDict() ?? [:]
+		if let values = values {
+			dict.merge(values, uniquingKeysWith: { _, r in r })
+		}
+
+		if managed { return try UserState.fromDict(dict) }
+		else { return try UserState(dict) }
+	}
+
+	public class func fromDict(_ dict: [String: Any]) throws -> UserState {
+		let userState = try Cache.createItem(UserState.self, values: [:])
+		try InMemoryObjectCache.set("UserState:\(userState.uid)", dict)
+		userState.persist()
+		return userState
 	}
 }
 

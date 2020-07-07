@@ -6,7 +6,6 @@
 //
 
 import ASCollectionView
-import memriUI
 import SwiftUI
 
 struct NavigationWrapper<Content: View>: View {
@@ -231,7 +230,6 @@ struct NavigationItemView: View {
 	@EnvironmentObject var context: MemriContext
 
 	var item: NavigationItem
-
 	var hide: () -> Void
 
 	var body: some View {
@@ -244,7 +242,7 @@ struct NavigationItemView: View {
 				self.hide()
 			}
         }) {
-			Text(item.title.firstUppercased)
+			Text(item.title?.firstUppercased ?? "")
 				.font(.system(size: 18, weight: .regular))
 				.padding(.vertical, 10)
 				.padding(.horizontal, 35)
@@ -290,6 +288,6 @@ struct NavigationLineView: View {
 
 struct Navigation_Previews: PreviewProvider {
 	static var previews: some View {
-		Navigation().environmentObject(RootContext(name: "", key: "").mockBoot())
+		Navigation().environmentObject(try! RootContext(name: "", key: "").mockBoot())
 	}
 }

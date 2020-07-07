@@ -46,9 +46,37 @@ public struct ExprNegationNode: ExprNode {
 }
 
 public struct ExprVariableNode: ExprNode {
-	public let name: String
+	enum ExprVariableType: String, CaseIterable {
+		case reverseEdge = "_~"
+		case reverseEdgeItem = "~"
+		case edge = "_"
+		case propertyOrItem = ""
+	}
+
+	enum ExprVariableList {
+		case list
+		case single
+	}
+
+	var name: String
+	var type: ExprVariableType = .propertyOrItem
+	var list: ExprVariableList = .single
+
+	public init(name: String) {
+		self.name = name
+
+		// TODO: This could be optimized by moving it into the expression parser
+		for varType in ExprVariableType.allCases {
+			if self.name.starts(with: varType.rawValue) {
+				type = varType
+				self.name = String(self.name.suffix(self.name.count - varType.rawValue.count))
+				break
+			}
+		}
+	}
+
 	public var description: String {
-		"VariableNode(\(name))"
+		"VariableNode(\(name), type:\(type), list:\(list))"
 	}
 }
 

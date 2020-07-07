@@ -1,8 +1,6 @@
 //
 //  settings.swift
-//  memri
 //
-//  Created by Ruben Daniels on 4/1/20.
 //  Copyright © 2020 memri. All rights reserved.
 //
 
@@ -15,93 +13,30 @@ public class Settings {
 	/// Realm database object
 	let realm: Realm
 	/// Default settings
-	var defaults: SettingCollection = SettingCollection()
-	/// Device settings
-	var device: SettingCollection = SettingCollection()
-	/// User defined settings
-	var user: SettingCollection = SettingCollection()
+	var settings: Results<Setting>
 
 	/// Init settings with the relam database
 	/// - Parameter rlm: realm database object
 	init(_ realm: Realm) {
 		self.realm = realm
-	}
-
-	/// Load all settings from the local realm database
-	/// - Parameter callback: function that is called after completing loading the settings
-	public func load(_ callback: () throws -> Void) throws {
-		// TODO: This could probably be optimized, but lets first get familiar with the process
-
-		let allSettings = realm.objects(SettingCollection.self)
-		if allSettings.count > 0 {
-			for i in 0 ... allSettings.count - 1 {
-				switch allSettings[i].type {
-				case "defaults": defaults = allSettings[i]
-				case "device": device = allSettings[i]
-				case "user": user = allSettings[i]
-				default:
-					print("Error: Invalid settings found \(allSettings[i].type)")
-				}
-			}
-		} else {
-			debugHistory.error("Error: Settings are not initialized")
-		}
-
-		try callback()
+		settings = realm.objects(Setting.self)
 	}
 
 	// TODO: Refactor this so that the default settings are always used if not found in Realm.
 	// Otherwise anytime we add a new setting the get function will return nil instead of the default
 
-	/// Initialize SettingsCollection objects for default, device and user-settings. Populate them by reading the default settings from
-	/// disk and updating the empty SettingCollections.
-	public func install() throws {
-		let defaults = SettingCollection(value: ["type": "defaults", "memriID": "settingsDefaults"])
-		let device = SettingCollection(value: ["type": "device", "memriID": "settingsDevice"])
-		let user = SettingCollection(value: ["type": "user", "memriID": "settingsUser"])
-
-		do {
-			try realm.write {
-				realm.add(defaults, update: .modified)
-				realm.add(device, update: .modified)
-				realm.add(user, update: .modified)
-			}
-		} catch {
-			debugHistory.error("\(error)")
-		}
-
-		// Load default settings from disk
-		do {
-			let jsonData = try jsonDataFromFile("default_settings")
-			let values = try MemriJSONDecoder.decode([String: AnyCodable].self, from: jsonData)
-			for (key, value) in values {
-				try defaults.setSetting(key, value)
-			}
-
-			try device.setSetting("/name", "iphone")
-		} catch {
-			debugHistory.error("Failed to install settings: \(error)")
-		}
-		try load {}
-	}
-
 	/// Get setting from path
 	/// - Parameter path: path of the setting
 	/// - Returns: setting value
 	public func get<T: Decodable>(_ path: String, type _: T.Type = T.self) -> T? {
-		let (collection, query) = parse(path)
-
 		do {
-			if let collection = collection {
-				if let value: T = try collection.getSetting(query) {
-					return value
-				} else if let value: T = try defaults.getSetting(query) {
+			for path in try getSearchPaths(path) {
+				if let value: T = try getSetting(path) {
 					return value
 				}
-				return nil
 			}
 		} catch {
-			debugHistory.error("Could not fetch setting: \(error)")
+			print("Could not fetch setting '\(path)': \(error)")
 		}
 
 		return nil
@@ -128,24 +63,18 @@ public class Settings {
 		get(path) ?? nil
 	}
 
-	private func parse(_ path: String) -> (collection: SettingCollection?, query: String) {
+	private func getSearchPaths(_ path: String) throws -> [String] {
 		let splits = path.split(separator: "/")
 		let type = splits.first
 		let query = splits.dropFirst().joined(separator: "/")
-		var collection: SettingCollection?
-		if let type = type {
-			if type == "user" {
-				collection = user
-			} else if type == "device" {
-				collection = device
-			} else {
-				debugHistory.warn("Could not find settings collection: \(type)")
-			}
-		} else {
-			collection = user
-		}
 
-		return (collection, query)
+		if type == "device" {
+			return ["\(try Cache.getDeviceID())/\(query)", "defaults/\(query)"]
+		} else if type == "user" {
+			return ["user/\(query)", "defaults/\(query)"]
+		} else {
+			return ["defaults/\(query)"]
+		}
 	}
 
 	/// Sets the value of a setting for the given path. Also responsible for saving the setting to the permanent storage
@@ -153,22 +82,56 @@ public class Settings {
 	///   - path: path used to store the setting
 	///   - value: setting value
 	public func set(_ path: String, _ value: Any) {
-		let (collection, query) = parse(path)
-
-		var codableValue = value as? AnyCodable
-		if codableValue == nil {
-			codableValue = AnyCodable(value)
-		}
-
-		if let collection = collection, let codableValue = codableValue {
-			do {
-				try collection.setSetting(query, codableValue)
-			} catch {
-				debugHistory.error("\(error)")
-				print(error)
+		do {
+			let searchPaths = try getSearchPaths(path)
+			if searchPaths.count == 1 {
+				throw "Missing scope 'user' or 'device' as the start of the path"
 			}
+			try setSetting(searchPaths[0], value as? AnyCodable ?? AnyCodable(value))
+		} catch {
+			debugHistory.error("\(error)")
+			print(error)
+		}
+	}
+
+	/// get setting for given path
+	/// - Parameter path: path for the setting
+	/// - Returns: setting value
+	public func getSetting<T: Decodable>(_ path: String) throws -> T? {
+		let item = settings.first(where: { $0.key == path })
+
+		if let item = item, let json = item.json {
+			let output: T? = try unserialize(json)
+			return output
 		} else {
-			debugHistory.warn("failed to set setting with path \(path) and value \(value)")
+			return nil
+		}
+	}
+
+	/// Get setting as String for given path
+	/// - Parameter path: path for the setting
+	/// - Returns: setting value as String
+	public func getSettingString(_ path: String) throws -> String {
+		String(try getSetting(path) ?? "")
+	}
+
+	/// Sets a setting to the value passed.Also responsible for saving the setting to the permanent storage
+	/// - Parameters:
+	///   - path: path of the setting
+	///   - value: setting Value
+	public func setSetting(_ path: String, _ value: AnyCodable) throws {
+		realmWriteIfAvailable(realm) {
+			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
+				s.json = try serialize(value)
+				s.syncState?.actionNeeded = "update"
+				if !(s.syncState?.updatedFields.contains("settings") ?? false) {
+					s.syncState?.updatedFields.append("settings")
+				}
+
+				#warning("Missing AuditItem for the change")
+			} else {
+				_ = try Cache.createItem(Setting.self, values: ["key": path, "json": serialize(value)])
+			}
 		}
 	}
 

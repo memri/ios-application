@@ -41,10 +41,6 @@ extension String {
 		return firstLineString
 	}
 
-	func secondLineString() -> String? {
-		withoutFirstLine().firstLineString()
-	}
-
 	func withoutFirstLine() -> String {
 		guard !isEmpty else { return "" }
 		let firstLineRange = lineRange(for: startIndex ... startIndex)

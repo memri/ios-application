@@ -19,15 +19,15 @@
 //        // Put teardown code here. This method is called after the invocation of each test method in the class.
 //    }
 //
-//    func testLoadEmptySessionFromJson() {
-//        let session =  try! Session.from_json("empty_session")
+//    func testLoadEmptySessionFromJson() throws {
+//        let session =  try Session.from_json("empty_session")
 //        XCTAssert(session.currentView.rendererName == "List")
 //        XCTAssert(session.currentView.resultSet.data == [])
 //    }
 //
-//    func testLoadEmptySessionsFromJson(){
+//    func testLoadEmptySessionsFromJson() throws {
 //        // load multiple
-//        let sessions =  try! Sessions.fromJSONFile("empty_sessions")
+//        let sessions =  try Sessions.fromJSONFile("empty_sessions")
 //        print(sessions.currentSession.currentView.resultSet.data[0].properties)
 //        XCTAssert(sessions.currentSession.currentView.resultSet.data.count > 0)
 //        XCTAssert(sessions.currentSession.currentView.actionButton!.actionName == "add")

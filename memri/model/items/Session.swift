@@ -21,14 +21,15 @@ public class Session: SchemaSession {
 	}
 
 	func postInit() {
-		if realm != nil {
+		if realm != nil, let views = views {
 			for view in views {
 				decorate(view)
 			}
 
 			rlmTokens.append(observe { objectChange in
 				if case .change = objectChange {
-					self.objectWillChange.send()
+					#warning("Modify this to support Combine properly")
+//					self.objectWillChange.send()
 				}
             })
 		}
@@ -36,7 +37,7 @@ public class Session: SchemaSession {
 
 	func decorate(_ view: SessionView) {
 		// Set the .session property on views for easy querying
-		if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
+		if view.session == nil { realmWriteIfAvailable(realm) { view.set("session", self) } }
 
 		// Observe and process changes for UI updates
 		if realm != nil {
@@ -47,7 +48,8 @@ public class Session: SchemaSession {
 
 			rlmTokens.append(view.observe { objectChange in
 				if case .change = objectChange {
-					self.objectWillChange.send()
+					#warning("Modify this to support Combine properly")
+//					self.objectWillChange.send()
 				}
             })
 		}
@@ -81,8 +83,8 @@ public class Session: SchemaSession {
 		currentViewIndex > 0
 	}
 
-	public var currentView: SessionView {
-		views.count > 0 ? views[currentViewIndex] : SessionView()
+	public var currentView: SessionView? {
+		views?[currentViewIndex]
 	}
 
 	//    deinit {
@@ -93,40 +95,47 @@ public class Session: SchemaSession {
 	//        }
 	//    }
 
-	public func setCurrentView(_ view: SessionView) {
-		if let index = views.firstIndex(of: view) {
-			realmWriteIfAvailable(realm) {
+	public func setCurrentView(_ view: SessionView) throws {
+		guard let views = views else { return }
+
+		realmWriteIfAvailable(realm) {
+			if let index = views.firstIndex(of: view) {
 				currentViewIndex = index
-			}
-		} else {
-			realmWriteIfAvailable(realm) {
+			} else {
 				// Remove all items after the current index
-				views.removeSubrange((currentViewIndex + 1)...)
+				if let list = edges("views")?.sorted(byKeyPath: "sequence") {
+					for i in stride(from: list.count - 1, to: currentViewIndex, by: -1) {
+						try self.unlink(list[i])
+					}
+				}
 
 				// Add the view to the session
-				views.append(view)
-
-				// Update the index pointer
-				currentViewIndex = views.count - 1
+				if let edge = try self.link(view, type: "views", order: .last),
+					let index = edges("views")?.index(of: edge) {
+					// Update the index pointer
+					currentViewIndex = index
+				} else {
+					throw "Could not set current view"
+				}
 			}
-
-			decorate(view)
 		}
+
+		decorate(view)
 	}
 
 	public func takeScreenShot() {
 		if let view = UIApplication.shared.windows[0].rootViewController?.view {
 			if let uiImage = view.takeScreenShot() {
-				if screenshot == nil {
-					let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
-
-					realmWriteIfAvailable(realm) {
-						doIt()
-					}
-				}
-
 				do {
-					try screenshot?.write(uiImage)
+					if screenshot == nil {
+						let file = try Cache.createItem(File.self,
+														values: ["uri": File.generateFilePath()])
+						set("screenshot", file)
+					}
+
+					if let screenshot = screenshot {
+						try screenshot.write(uiImage)
+					}
 				} catch {
 					debugHistory.error("Unable to write screenshot: \(error)")
 				}
@@ -142,16 +151,25 @@ public class Session: SchemaSession {
 		let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
 			.map { try SessionView.fromCVUDefinition(parsed: $0) }
 
-		return Session(value: [
+		let session = try Cache.createItem(Session.self, values: [
 			"selector": (def.selector ?? "[session]") as Any,
 			"name": (def["name"] as? String ?? "") as Any,
 			"currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
 			"showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
 			"showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
 			"editMode": (def["editMode"] as? Bool ?? false) as Any,
-			"screenshot": def["screenshot"] as? File as Any,
-			"views": views,
 		])
+
+		if let screenshot = def["screenshot"] as? File {
+			session.set("screenshot", screenshot)
+		}
+		if views.count > 0 {
+			for view in views {
+				_ = try session.link(view, type: "views")
+			}
+		}
+
+		return session
 	}
 
 	public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
@@ -166,7 +184,7 @@ public class Session: SchemaSession {
 	}
 
 	public static func == (lt: Session, rt: Session) -> Bool {
-		lt.memriID == rt.memriID
+		lt.uid.value == rt.uid.value
 	}
 }
 

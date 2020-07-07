@@ -82,11 +82,11 @@ class FilterPanelRendererButton: Action, ActionExec {
 	}
 
 	override func isActive() -> Bool? {
-		context.cascadingView.activeRenderer == rendererName
+		context.cascadingView?.activeRenderer == rendererName
 	}
 
 	func exec(_: [String: Any]) {
-		context.cascadingView.activeRenderer = rendererName
+		context.cascadingView?.activeRenderer = rendererName
 		context.scheduleUIUpdate { _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
 	}
 }
@@ -121,7 +121,7 @@ protocol CascadingRendererDefaults {
 //    }
 
 public class CascadingRenderConfig: Cascadable {
-	required init(_ cascadeStack: [CVUParsedRendererDefinition] = [], _ viewArguments: ViewArguments = .init()) {
+	required init(_ cascadeStack: [CVUParsedRendererDefinition] = [], _ viewArguments: ViewArguments? = nil) {
 		super.init(cascadeStack, viewArguments)
 	}
 
@@ -156,9 +156,9 @@ public class CascadingRenderConfig: Cascadable {
 		return nil
 	}
 
-	public func render(item: Item, group: String = "*",
+	public func render(item: Item?, group: String = "*",
 					   arguments: ViewArguments? = nil) -> UIElementView {
-		func doRender(_ renderGroup: RenderGroup) -> UIElementView {
+		func doRender(_ renderGroup: RenderGroup, _ item: Item) -> UIElementView {
 			if let body = renderGroup.body {
 				if let s = self as? CascadingRendererDefaults {
 					s.setDefaultValues(body)
@@ -169,10 +169,10 @@ public class CascadingRenderConfig: Cascadable {
 			return UIElementView(UIElement(.Empty), item)
 		}
 
-		if let renderGroup = getRenderGroup(group) {
-			return doRender(renderGroup)
+		if let item = item, let renderGroup = getRenderGroup(group) {
+			return doRender(renderGroup, item)
 		} else {
-			return UIElementView(UIElement(.Empty), item)
+			return UIElementView(UIElement(.Empty), item ?? Item())
 		}
 	}
 }

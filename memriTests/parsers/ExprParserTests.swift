@@ -65,7 +65,7 @@ class ExprParserTests: XCTestCase {
 
 		let result = try parse(snippet)
 
-		XCTAssertEqual(result.description, "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(__DEFAULT__), VariableNode(bar)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar), VariableNode(foo)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere)])))")
+		XCTAssertEqual(result.description, "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(@@DEFAULT@@), VariableNode(bar)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar), VariableNode(foo)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere)])))")
 	}
 
 	func testDotLookup() throws {
@@ -73,7 +73,7 @@ class ExprParserTests: XCTestCase {
 
 		let result = try parse(snippet)
 
-		XCTAssertEqual(result.description, "LookupNode([VariableNode(__DEFAULT__)])")
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@)])")
 	}
 
 	func testMinusPlusModifier() throws {
@@ -116,6 +116,46 @@ class ExprParserTests: XCTestCase {
 		XCTAssertEqual(result.description, "ConditionNode(condition: NumberNode(0.0), trueExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)), falseExp: ConditionNode(condition: NumberNode(1.0), trueExp: ConditionNode(condition: StringNode(), trueExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)), falseExp: StringNode(yes)), falseExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0))))")
 	}
 
+	func testSelfUsageInSubExpression() throws {
+		let snippet = ".relation[. = me].firstName"
+
+		let result = try parse(snippet)
+
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(relation, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single)]), rhs: LookupNode([VariableNode(me, type:propertyOrItem, list:single)]))]), VariableNode(firstName, type:propertyOrItem, list:single)])")
+	}
+
+	func testLookupItems() throws {
+		let snippet = ".sibling[]"
+
+		let result = try parse(snippet)
+
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(sibling, type:propertyOrItem, list:list)])")
+	}
+
+	func testLookupReverseEdgeItems() throws {
+		let snippet = ".~sibling"
+
+		let result = try parse(snippet)
+
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(sibling, type:reverseEdgeItem, list:single)])")
+	}
+
+	func testLookupEdges() throws {
+		let snippet = "._sibling"
+
+		let result = try parse(snippet)
+
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(sibling, type:edge, list:single)])")
+	}
+
+	func testLookupReverseEdges() throws {
+		let snippet = "._~sibling[]"
+
+		let result = try parse(snippet)
+
+		XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(sibling, type:reverseEdge, list:list)])")
+	}
+
 	func testStringModeStartWithString() throws {
 		let snippet = "Hello {fetchName()}!"
 
@@ -137,7 +177,7 @@ class ExprParserTests: XCTestCase {
 
 		print(result.description)
 
-		XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(__DEFAULT__), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(__DEFAULT__), VariableNode(lastName)])])")
+		XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(lastName)])])")
 	}
 
 	func testStringModeStartWithExpression() throws {
@@ -154,14 +194,14 @@ class ExprParserTests: XCTestCase {
 	}
 
 	func testStringModeWithQuote() throws {
-		let snippet = "Photo AND ANY includes.memriID = '{.memriID}'"
+		let snippet = "Photo AND ANY includes.uid = {.uid}"
 
 		let lexer = ExprLexer(input: snippet, startInStringMode: true)
 		let tokens = try lexer.tokenize()
 		let parser = ExprParser(tokens)
 		let result = try parser.parse()
 		print(result.description)
-		XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Photo AND ANY includes.memriID = '), LookupNode([VariableNode(__DEFAULT__), VariableNode(memriID)]), StringNode(')])")
+		XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Photo AND ANY includes.uid = ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(uid)]), StringNode()])")
 	}
 
 	func testExample() throws {

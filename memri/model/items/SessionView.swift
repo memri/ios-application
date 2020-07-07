@@ -13,7 +13,7 @@ import SwiftUI
 
 extension SessionView {
 	override var computedTitle: String {
-		if let value = name { return value }
+		if let value = name, value != "" { return value }
 		//        else if let rendererName = self.rendererName {
 		//            return "A \(rendererName) showing: \(self.datasource?.query ?? "")"
 		//        }
@@ -26,11 +26,15 @@ extension SessionView {
 	func mergeState(_ view: SessionView) throws {
 		realmWriteIfAvailable(realm) {
 			if let us = view.userState {
-				if userState == nil { userState = UserState() }
+				if userState == nil {
+					self.set("userState", try Cache.createItem(UserState.self))
+				}
 				try userState?.merge(us)
 			}
 			if let args = view.viewArguments {
-				if viewArguments == nil { viewArguments = ViewArguments() }
+				if viewArguments == nil {
+					self.set("viewArguments", try Cache.createItem(ViewArguments.self))
+				}
 				try viewArguments?.merge(args)
 			}
 		}
@@ -52,24 +56,32 @@ extension SessionView {
 		if ds == nil, let src = parsed?["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
 			ds = try Datasource.fromCVUDefinition(src, viewArguments)
 		}
-		if userState == nil { us = (parsed?["userState"] as? UserState)?.clone() }
-		if viewArguments == nil { args = (parsed?["viewArguments"] as? ViewArguments)?.clone() }
+		if userState == nil {
+			us = try UserState.clone(parsed?["userState"] as? UserState)
+		}
+		if viewArguments == nil {
+			args = try ViewArguments.clone(parsed?["viewArguments"] as? ViewArguments)
+		}
 
-		var values: [String: Any?] = [
+		let view = try Cache.createItem(SessionView.self, values: [
 			"selector": parsed?.selector ?? stored?.selector ?? "[view]",
 			"name": parsed?["name"] as? String ?? stored?.name ?? "",
-			"viewDefinition": stored ?? CVUStoredDefinition(value: [
+		])
+
+		var toStore = stored
+		if stored == nil {
+			toStore = try Cache.createItem(CVUStoredDefinition.self, values: [
 				"type": "view",
 				"selector": parsed?.selector,
 				"domain": parsed?.domain,
 				"definition": parsed?.toCVUString(0, "    "),
-			]),
-		]
+			])
+		}
+		if let toStore = toStore { view.set("viewDefinition", toStore) }
+		if let args = args { view.set("viewArguments", args) }
+		if let us = us { view.set("userState", us) }
+		if let ds = ds { view.set("datasource", ds) }
 
-		if let args = args { values["viewArguments"] = args }
-		if let us = us { values["userState"] = us }
-		if let ds = ds { values["datasource"] = ds }
-
-		return SessionView(value: values)
+		return view
 	}
 }

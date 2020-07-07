@@ -546,11 +546,6 @@ extension MemriTextEditor_UIKit {
 }
 
 extension MemriTextEditor_UIKit {
-	func helper_selectionHasUnorderedList() -> Bool {
-		let string = (textStorage.string as NSString).substring(with: selectedRange) as NSString
-		return ListType.unorderedList.checkIfHasMatch(in: string)
-	}
-
 	func helper_makeSelectionList(type: ListType) {
 		// Find the range of selected lines
 		// var startOfFirstLine: Int = 0, endOfLastLine: Int = 0

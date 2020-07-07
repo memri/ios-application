@@ -37,13 +37,9 @@ public class Views {
 		languages.load(definitions)
 	}
 
-	public func install() throws {
-		// Load the default views from the package
-		try loadStandardViewSetIntoDatabase()
-	}
-
 	// TODO: Refactor: distinguish between views and sessions
-	public func loadStandardViewSetIntoDatabase() throws {
+	// Load the default views from the package
+	public func install() throws {
 		guard let context = context else {
 			throw "Context is not set"
 		}
@@ -68,12 +64,16 @@ public class Views {
 
 			// Loop over lookup table with named views
 			for def in parsedDefinitions {
-				var values = [
+				var values: [String: Any?] = [
 					"selector": def.selector,
 					"name": def.name,
-					"domain": "defaults", // TODO: Refactor, is it default or defaults
+					"domain": "defaults",
 					"definition": def.description,
 				]
+
+				guard let selector = def.selector else {
+					throw "Exception: selector on parsed CVU is not defined"
+				}
 
 				if def is CVUParsedViewDefinition {
 					values["type"] = "view"
@@ -87,11 +87,9 @@ public class Views {
 				else if def is CVUParsedSessionDefinition { values["type"] = "session" }
 				else { throw "Exception: unknown definition" }
 
-				values["memriID"] = "defaults:" + (def.selector ?? "unknown")
-
 				// Store definition
-				try realm.write { realm.create(CVUStoredDefinition.self,
-											   value: values, update: .modified) }
+				_ = try Cache.createItem(CVUStoredDefinition.self, values: values,
+										 unique: "selector = '\(selector)' and domain = 'defaults'")
 			}
 		} catch {
 			if let error = error as? CVUParseErrors {
@@ -132,34 +130,49 @@ public class Views {
 		}
 	}
 
-	func resolveRelationship(_: Relationship) throws -> Item {
+	func resolveEdge(_: Edge) throws -> Item {
 		// TODO: REFACTOR: implement
 		throw "not implemented"
 	}
 
-	func getGlobalReference(_ name: String, viewArguments: ViewArguments) throws -> Any? {
+	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
 		// Fetch the value of the right property on the right object
 		switch name {
+		case "setting":
+			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
+				#warning("Toby, how can we re-architect this?")
+				if let value = args?[0] as? String {
+					if let x = Settings.get(value, type: Double.self) { return x }
+					else if let x = Settings.get(value, type: Int.self) { return x }
+					else if let x = Settings.get(value, type: String.self) { return x }
+					else if let x = Settings.get(value, type: Bool.self) { return x }
+				}
+				return ""
+			}
+			#warning("@Ruben: I don't quite understand what this is doing... it returns a function, is it meant to return the result instead?? If so should be `return f()`")
+			return f
+		case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
 		case "context": return context
 		case "sessions": return context?.sessions
 		case "currentSession": fallthrough
-		case "session": return context?.currentSession
+		case "session":
+			return context?.currentSession
 		case "view": return context?.cascadingView
 		case "dataItem":
-			if let itemRef: Item = viewArguments.get(".") {
+			if let itemRef: Item = viewArguments?.get(".") {
 				return itemRef
-			} else if let item = context?.cascadingView.resultSet.singletonItem {
+			} else if let item = context?.cascadingView?.resultSet.singletonItem {
 				return item
 			} else {
 				throw "Exception: Missing object for property getter"
 			}
 		default:
-			if let value: Any = viewArguments.get(name) { return value }
+			if let value: Any = viewArguments?.get(name) { return value }
 			throw "Exception: Unknown object for property getter: \(name)"
 		}
 	}
 
-	func lookupValueOfVariables(lookup: ExprLookupNode, viewArguments: ViewArguments) throws -> Any? {
+	func lookupValueOfVariables(lookup: ExprLookupNode, viewArguments: ViewArguments?) throws -> Any? {
 		let x = try lookupValueOfVariables(
 			lookup: lookup,
 			viewArguments: viewArguments,
@@ -169,13 +182,13 @@ public class Views {
 	}
 
 	func lookupValueOfVariables(lookup: ExprLookupNode,
-								viewArguments: ViewArguments,
+								viewArguments: ViewArguments?,
 								isFunction: Bool = false) throws -> Any? {
 		var value: Any?
 		var first = true
 
 		// TODO: support language lookup: {$name}
-		// TODO: support viewArguments lookup: {name}
+		// TODO: support .label.~label to get all items that share at least one label with dataItem
 
 		recursionCounter += 1
 
@@ -188,96 +201,135 @@ public class Views {
 		for node in lookup.sequence {
 			i += 1
 
-			if isFunction, i == lookup.sequence.count {
-				value = (value as? Item)?.functions[(node as? ExprVariableNode)?.name ?? ""]
-				if value == nil {
-					// TODO: parse [blah]
-					recursionCounter = 0
-					let message = "Exception: Invalid function call. Could not find"
-					throw "\(message) \((node as? ExprVariableNode)?.name ?? "")"
-				}
-				break
-			}
-
 			if let node = node as? ExprVariableNode {
 				if first {
-					let name = node.name == "__DEFAULT__" ? "dataItem" : node.name
+					// TODO: move to CVU validator??
+					if node.list == .list || node.type != .propertyOrItem {
+						throw "Unexpected edge lookup. No source specified"
+					}
+
+					let name = node.name == "@@DEFAULT@@" ? "dataItem" : node.name
 					do {
 						value = try getGlobalReference(name, viewArguments: viewArguments)
 						first = false
+
+						if isFunction, i == lookup.sequence.count {
+							break
+						}
+
 					} catch {
 						recursionCounter = 0
 						throw error
 					}
-				} else {
-					if let dataItem = value as? Item {
-						if dataItem.objectSchema[node.name] == nil {
-							// TODO: Warn
-							print("Invalid property access '\(node.name)'")
-							debugHistory.warn("Invalid property access '\(node.name)'")
-							recursionCounter -= 1
-							return nil
-						} else {
-							value = dataItem[node.name]
-						}
-					} else if let v = value as? String {
-						switch node.name {
-						case "uppercased": value = v.uppercased()
-						case "lowercased": value = v.lowercased()
-						case "camelCaseToWords": value = v.camelCaseToWords()
-						case "plural": value = v + "s" // TODO:
-						case "firstUppercased": value = v.capitalizingFirst()
-						default:
-							// TODO: Warn
-							break
-						}
-					} else if let v = value as? RealmSwift.List<Relationship> {
-						switch node.name {
-						case "count": value = v.count
-						case "first": value = v.first
-						case "last": value = v.last
-						//                        case "sum": value = v.sum
-						case "min": value = v.min
-						case "max": value = v.max
-						default:
-							// TODO: Warn
-							break
-						}
-					} else if let v = value as? RealmSwift.ListBase {
-						switch node.name {
-						case "count": value = v.count
-						default:
-							// TODO: Warn
-							break
-						}
-					} else if let v = value as? MemriContext {
-						value = v[node.name]
-					} else if let v = value as? UserState {
-						value = v.get(node.name)
-					} else if let v = value as? CascadingView {
-						value = v[node.name]
-					} else if let v = value as? CascadingDatasource {
-						value = v[node.name]
+				} else if isFunction, i == lookup.sequence.count {
+					value = (value as? Item)?.functions[node.name]
+					if value == nil {
+						// TODO: parse [blah]
+						recursionCounter = 0
+						let message = "Exception: Invalid function call. Could not find"
+						throw "\(message) \(node.name)"
 					}
-					// CascadingRenderer??
-					else if let v = value as? Object {
-						if v.objectSchema[node.name] == nil {
-							// TODO: error handling
-							recursionCounter = 0
-							throw "No variable with name \(node.name)"
+					break
+				} else if let dataItem = value as? Item {
+					switch node.name {
+					case "genericType": value = dataItem.genericType
+					default:
+						if node.list == .single {
+							switch node.type {
+							case .reverseEdge: value = dataItem.reverseEdge(node.name)
+							case .reverseEdgeItem: value = dataItem.reverseEdge(node.name)?.source()
+							case .edge: value = dataItem.edge(node.name)
+							case .propertyOrItem: value = dataItem.get(node.name)
+							}
 						} else {
-							value = v[node.name] // How to handle errors?
+							switch node.type {
+							case .reverseEdge: value = dataItem.reverseEdges(node.name)
+							case .reverseEdgeItem: value = dataItem.reverseEdges(node.name)?.sources()
+							case .edge: value = dataItem.edges(node.name)
+							case .propertyOrItem: value = dataItem.edges(node.name)?.items()
+							}
 						}
+					}
+				} else if let v = value as? String {
+					switch node.name {
+					case "uppercased": value = v.uppercased()
+					case "lowercased": value = v.lowercased()
+					case "camelCaseToWords": value = v.camelCaseToWords()
+					case "plural": value = v + "s" // TODO:
+					case "firstUppercased": value = v.capitalizingFirst()
+					default:
+						// TODO: Warn
+						debugHistory.warn("Could not find property \(node.name) on string")
+					}
+				} else if let v = value as? Edge {
+					switch node.name {
+					case "source": value = v.source()
+					case "target": value = v.target()
+					case "item": value = v.item()
+					case "label": value = v.label
+					case "type": value = v.type
+					case "sequence": value = v.sequence
+					default:
+						// TODO: Warn
+						debugHistory.warn("Could not find property \(node.name) on edge")
+					}
+				} else if let v = value as? RealmSwift.Results<Edge> {
+					switch node.name {
+					case "count": value = v.count
+					case "first": value = v.first
+					case "last": value = v.last
+					//                        case "sum": value = v.sum
+					case "min": value = v.min
+					case "max": value = v.max
+					case "items": value = v.items()
+					default:
+						// TODO: Warn
+						debugHistory.warn("Could not find property \(node.name) on list of edges")
+					}
+				} else if let v = value as? RealmSwift.ListBase {
+					switch node.name {
+					case "count": value = v.count
+					default:
+						// TODO: Warn
+						debugHistory.warn("Could not find property \(node.name) on list")
+					}
+				} else if let v = value as? MemriContext {
+					value = v[node.name]
+				} else if let v = value as? UserState {
+					value = v.get(node.name)
+				} else if let v = value as? CascadingView {
+					value = v[node.name]
+				} else if let v = value as? CascadingDatasource {
+					value = v[node.name]
+				}
+				// CascadingRenderer??
+				else if let v = value as? Object {
+					if v.objectSchema[node.name] == nil {
+						// TODO: error handling
+						recursionCounter = 0
+						throw "No variable with name \(node.name)"
+					} else {
+						value = v[node.name] // How to handle errors?
 					}
 				}
 			}
 			// .addresses[primary = true] || [0]
-			else if let _ = node as? ExprLookupNode {
-				// TODO: REFACTOR: parse and query
-			}
+			else if let node = node as? ExprLookupNode {
+				// TODO: This is implemented very slowly first. Let's think about an optimization
 
-			if let edge = value as? Relationship {
-				value = try resolveRelationship(edge)
+				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
+				let list = dataItemListToArray(value as Any)
+				let args = try ViewArguments.clone(viewArguments, managed: false)
+				let expr = node.sequence[0]
+
+				for item in list {
+					args.set(".", item)
+					if let hasFound = try interpret.execSingle(expr, args),
+						ExprInterpreter.evaluateBoolean(hasFound) {
+						value = item
+						break
+					}
+				}
 			}
 		}
 
@@ -286,21 +338,6 @@ public class Views {
 			value = Views.formatDate(date)
 		}
 
-		// TODO: check for string mode
-		//        // Get the image uri from a file
-		//        else if let file = value as? File {
-		//            if T.self == String.self {
-		//                value = file.uri
-		//            }
-		//        }
-
-		//        if let lastPart = lastPart, lastObject?.objectSchema[lastPart]?.isArray ?? false,
-		//           let className = lastObject?.objectSchema[lastPart]?.objectClassName {
-//
-		//            // Convert Realm List into Array
-		//            value = ItemFamily(rawValue: className.lowercased())!.getCollection(value as Any)
-		//        }
-
 		recursionCounter -= 1
 
 		return value
@@ -308,13 +345,17 @@ public class Views {
 
 	func executeFunction(lookup: ExprLookupNode,
 						 args: [Any?],
-						 viewArguments: ViewArguments) throws -> Any? {
+						 viewArguments: ViewArguments?) throws -> Any? {
 		let f = try lookupValueOfVariables(lookup: lookup,
 										   viewArguments: viewArguments,
 										   isFunction: true)
 
-		if let f = f as? ([Any?]?) -> Any {
-			return f(args) as Any?
+		if let f = f {
+			if let f = f as? ([Any?]?) -> Any? {
+				return f(args) as Any?
+			} else {
+				throw "Could not find function to execute: \(lookup.description)"
+			}
 		}
 
 		let x: String? = nil
@@ -344,7 +385,7 @@ public class Views {
 
 	// TODO: REfactor return list of definitions
 	func parseDefinition(_ viewDef: CVUStoredDefinition?) throws -> CVUParsedDefinition? {
-		guard let viewDef = viewDef else {
+		guard let viewDef = viewDef, let strDef = viewDef.definition else {
 			throw "Exception: Missing CVU definition"
 		}
 
@@ -352,14 +393,14 @@ public class Views {
 			throw "Exception: Missing Context"
 		}
 
-		let cached = InMemoryObjectCache.get("memriID: \(viewDef.memriID)")
+		let cached = InMemoryObjectCache.get(strDef)
 		if let cached = cached as? CVU {
 			return try cached.parse().first
 		} else if let definition = viewDef.definition {
 			let viewDefParser = CVU(definition, context,
 									lookup: lookupValueOfVariables,
 									execFunc: executeFunction)
-			try InMemoryObjectCache.set("memriID: \(viewDef.memriID)", viewDefParser)
+			try InMemoryObjectCache.set(strDef, viewDefParser)
 
 			if let firstDefinition = try viewDefParser.parse().first {
 				// TODO: potentially turn this off to optimize
@@ -389,23 +430,27 @@ public class Views {
 			throw "Exception: MemriContext is not defined in views"
 		}
 
-		let viewFromSession = sessionView ?? context.sessions.currentSession.currentView
-		let cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
+		var cascadingView: CascadingView
+		if let viewFromSession = sessionView ?? context.sessions?.currentSession?.currentView {
+			cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
+		} else {
+			throw "Unable to find currentView"
+		}
 
 		// TODO: REFACTOR: move these to a better place (context??)
 
 		// turn off editMode when navigating
-		if context.sessions.currentSession.isEditMode == true {
+		if context.sessions?.currentSession?.isEditMode == true {
 			realmWriteIfAvailable(realm) {
-				context.sessions.currentSession.isEditMode = false
+				context.sessions?.currentSession?.isEditMode = false
 			}
 		}
 
 		// hide filterpanel if view doesnt have a button to open it
-		if context.sessions.currentSession.showFilterPanel {
+		if context.sessions?.currentSession?.showFilterPanel ?? false {
 			if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
 				realmWriteIfAvailable(realm) {
-					context.sessions.currentSession.showFilterPanel = false
+					context.sessions?.currentSession?.showFilterPanel = false
 				}
 			}
 		}
@@ -414,13 +459,17 @@ public class Views {
 	}
 
 	// TODO: Refactor: Consider caching cascadingView based on the type of the item
-	public func renderItemCell(with dataItem: Item,
+	public func renderItemCell(with dataItem: Item?,
 							   search rendererNames: [String] = [],
 							   inView viewOverride: String? = nil,
-							   use viewArguments: ViewArguments = ViewArguments()) -> UIElementView {
+							   use viewArguments: ViewArguments? = nil) -> UIElementView {
 		do {
 			guard let context = self.context else {
 				throw "Exception: MemriContext is not defined in views"
+			}
+
+			guard let dataItem = dataItem else {
+				throw "Exception: No item is passed to render cell"
 			}
 
 			func searchForRenderer(in viewDefinition: CVUStoredDefinition) throws -> Bool {
@@ -505,7 +554,8 @@ public class Views {
 
 			// TODO: Refactor: Log error to the user
 			return UIElementView(UIElement(.Text,
-										   properties: ["text": "Could not render this view"]), dataItem)
+										   properties: ["text": "Could not render this view"]),
+								 dataItem ?? Item())
 		}
 	}
 }
