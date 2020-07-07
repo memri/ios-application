@@ -70,7 +70,7 @@ class FilterPanelRendererButton: Action, ActionExec {
 
 	required init(_ context: MemriContext, name: String, order: Int, title: String, icon: String,
 				  canDisplayResults: @escaping (_ items: [Item]) -> Bool) {
-		rendererName = name
+        self.rendererName = name
 		self.order = order
 		self.canDisplayResults = canDisplayResults
 

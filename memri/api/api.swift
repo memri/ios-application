@@ -371,8 +371,6 @@ public class PodAPI {
 			let type = matches[1]
 			let uid = matches[2]
 
-			print("Requesting single \(type) with memriID \(uid)")
-
 			data = """
 			{
 			  "_type": "\(type)",
@@ -380,7 +378,6 @@ public class PodAPI {
 			}
 			""".data(using: .utf8)
 		} else if let type = query.match(#"^(\w+)$"#)[safe: 1] {
-			print("Requesting query result of \(type): \(queryOptions.query ?? "")")
 			data = """
 			{
 			  "_type": "\(type)"

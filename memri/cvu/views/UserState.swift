@@ -24,11 +24,13 @@ public class UserState: SchemaItem, CVUToString {
 	}
 
 	private func storeInCache(_ dict: [String: Any]) throws {
-		try InMemoryObjectCache.set("UserState:\(uid.value != nil ? "\(uid)" : cacheID)", dict)
+        let id = uid.value != nil ? "\(uid.value ?? -99)" : cacheID
+        return try InMemoryObjectCache.set("UserState:\(id)", dict)
 	}
 
 	private func getFromCache() -> [String: Any]? {
-		InMemoryObjectCache.get("UserState:\(uid.value != nil ? "\(uid)" : cacheID)") as? [String: Any]
+        let id = uid.value != nil ? "\(uid.value ?? -99)" : cacheID
+        return InMemoryObjectCache.get("UserState:\(id)") as? [String: Any]
 	}
 
 	func get<T>(_ propName: String, type _: T.Type = T.self) -> T? {
