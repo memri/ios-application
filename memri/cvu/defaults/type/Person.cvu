@@ -245,7 +245,7 @@ Person {
         }
         
         picturesOfPerson {
-            sectionTitle: "Photos of {.computedTitle()}"
+            title: "Photos of {.computedTitle()}"
         
             SubView {
                 minHeight: 165

@@ -410,7 +410,7 @@ public class Item: SchemaItem {
 				edge.targetItemID.value = targetID
 				edge.targetItemType = item.genericType
 				edge.sequence.value = sequenceNumber
-				edge.label = label
+				edge.edgeLabel = label
 
 				if edge.syncState?.actionNeeded == nil {
 					edge.syncState?.actionNeeded = "update"
@@ -742,7 +742,7 @@ public enum EdgeSequencePosition {
 
 extension memri.Edge {
 	override public var description: String {
-		"Edge (\(type ?? "")\(label != nil ? ":\(label ?? "")" : "")): \(sourceItemType ?? ""):\(sourceItemID.value ?? 0) -> \(targetItemType ?? ""):\(targetItemID.value ?? 0)"
+		"Edge (\(type ?? "")\(edgeLabel != nil ? ":\(edgeLabel ?? "")" : "")): \(sourceItemType ?? ""):\(sourceItemID.value ?? 0) -> \(targetItemType ?? ""):\(targetItemID.value ?? 0)"
 	}
 
 	var targetType: Object.Type? {
@@ -820,7 +820,7 @@ extension memri.Edge {
 		targetItemType = target.0
 		targetItemID.value = target.1
 		self.sequence.value = sequence
-		self.label = label
+		self.edgeLabel = label
 
 		if let action = action {
 			syncState?.actionNeeded = action

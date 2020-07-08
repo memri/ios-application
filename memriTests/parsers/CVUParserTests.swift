@@ -696,8 +696,7 @@ class CVUParserTests: XCTestCase {
 		    [renderer = generalEditor] {
 
 		        picturesOfPerson: {
-		            sectionTitle: "Photos of {.computedTitle()}"
-		            foreach: false
+		            title: "Photos of {.computedTitle()}"
 
 		            SubView {
 		                view: {

@@ -265,7 +265,7 @@ public class Views {
 					case "source": value = v.source()
 					case "target": value = v.target()
 					case "item": value = v.item()
-					case "label": value = v.label
+					case "label": value = v.edgeLabel
 					case "type": value = v.type
 					case "sequence": value = v.sequence
 					default:

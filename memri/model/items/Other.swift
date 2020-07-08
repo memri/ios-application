@@ -32,7 +32,7 @@ extension Note {
 
 extension PhoneNumber {
 	override var computedTitle: String {
-		phoneNumberWithAreaCode ?? ""
+		phoneNumber ?? ""
 	}
 }
 

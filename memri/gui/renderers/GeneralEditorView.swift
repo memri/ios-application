@@ -411,7 +411,7 @@ struct GeneralEditorSection: View {
 		try? ViewArguments([
 			"subject": item as Any,
 			"readOnly": !(context.currentSession?.isEditMode ?? false),
-			"sectionTitle": groupKey.camelCaseToWords().uppercased(),
+			"title": groupKey.camelCaseToWords().uppercased(),
 			"displayName": name.camelCaseToWords().capitalizingFirst(),
 			"name": name,
 			"edge": edge as Any,
@@ -456,7 +456,7 @@ struct GeneralEditorSection: View {
         let allPadding = getValue(groupKey, s["padding"] as Any?, CGFloat.self) ?? 0
         
         return SectionStyle(
-            title: getValue(groupKey, s["title"] as Any?, String.self),
+            title: getValue(groupKey, s["title"] as Any?, String.self)?.uppercased(),
             dividers: getValue(groupKey, s["dividers"] as Any?, Bool.self),
             showTitle: getValue(groupKey, s["showTitle"] as Any?, Bool.self),
             action: getValue(groupKey, s["action"] as Any?, Action.self),

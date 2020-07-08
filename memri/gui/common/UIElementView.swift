@@ -130,7 +130,7 @@ public struct UIElementView: SwiftUI.View {
 								.generalEditorCaption()
 						}
 						.fullWidth()
-						.padding(.bottom, 10)
+						.padding(.bottom, self.get("nopadding") != true ? 10 : 0)
 						.padding(.leading, self.get("nopadding") != true ? 36 : 0)
 						.padding(.trailing, self.get("nopadding") != true ? 36 : 0)
 						.clipped()

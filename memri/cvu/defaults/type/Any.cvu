@@ -19,8 +19,9 @@
     
     [renderer = generalEditor] {
         EditorRow {
-            spacing: 5
-            padding: 10 0 10 0
+            nopadding: true
+            padding: 5 0 5 36
+/*            spacing: 5*/
             
             HStack {
                 alignment: center
