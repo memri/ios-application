@@ -174,7 +174,7 @@ public class UserState: SchemaItem, CVUToString {
 
 	public class func fromDict(_ dict: [String: Any]) throws -> UserState {
 		let userState = try Cache.createItem(UserState.self, values: [:])
-		try InMemoryObjectCache.set("UserState:\(userState.uid)", dict)
+        try userState.storeInCache(dict)
 		userState.persist()
 		return userState
 	}
