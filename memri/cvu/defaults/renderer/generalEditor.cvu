@@ -1,6 +1,6 @@
 [renderer = generalEditor] {
     layout: [
-        { section: labels, edges: label }
+        { section: labels }
         {
             section: other
             fields: *
@@ -20,17 +20,15 @@
     }
     
     labels {
-        foreach: false
-        
         EditorRow {
             Text {
-                show: {{ !.labels }}
+                show: {{ !.label }}
                 text: "No labels yet"
                 padding: 10 0 5 0
                 color: #777
             }
             FlowStack {
-                list: {{ .labels[] }}
+                list: {{ .label[] }}
             
                 Button {
                     press: openViewByName {
@@ -58,8 +56,7 @@
     }
     
     dates {
-        foreach: false
-        sectionTitle: ""
+        showTitle: false
         
         Text {
             alignment: center

@@ -193,7 +193,7 @@ Person {
         ]
 
         profilePicture {
-            sectionTitle: ""
+            showTitle: false
         
             ZStack {
                 alignment: center
@@ -245,7 +245,6 @@ Person {
         }
         
         picturesOfPerson {
-            foreach: false
             sectionTitle: "Photos of {.computedTitle()}"
         
             SubView {
@@ -273,19 +272,19 @@ Person {
         }
         
         labels {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
         
             VStack {
                 padding: 10 36 5 36
             
                 Text {
-                    show: {{ !.labels }}
+                    show: {{ !.label }}
                     text: "no labels yet"
                 }
                 
                 FlowStack {
-                    list: {{ .labels[] }}
+                    list: {{ .label[] }}
                 
                     button {
                         press: openViewByName {

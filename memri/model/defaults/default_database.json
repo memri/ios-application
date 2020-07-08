@@ -543,7 +543,7 @@
     { "_type": "Label", "uid": 1015, "name": "Daily Log", "color": "#83ac06", "comment": "Stuff I write about daily" },
     { "_type": "Label", "uid": 1016, "name": "Polis", "color": "#ffd966", "comment": "Everything about polis" },
     { "_type": "Label", "uid": 1017, "name": "Government", "color": "#835506" },
-    { "_type": "PhoneNumber", "type": "mobile", "uid": 1003, "phoneNumber": "0654271340" },
+    { "_type": "PhoneNumber", "type": "mobile", "uid": 1003, "phoneNumberWithAreaCode": "0654271340" },
     { "_type": "Website", "uid": 1004, "type": "blog", "url": "www.revolutionairyblog.com" },
     { "_type": "Website", "uid": 1005, "type": "website", "url": "www.eagleve.com" },
     { "_type": "Company", "uid": 1006, "type": "freelance", "name": "eagle solutions" },
@@ -584,8 +584,8 @@
         "armLength": 73,
         "allEdges": [
             {"type":"me", "itemType": "Person", "uid": 3},
-            {"type":"relation", "itemType": "Person", "uid": 2},
-            {"type":"relation", "itemType": "Person", "uid": 1},
+            {"type":"relationship", "itemType": "Person", "uid": 2},
+            {"type":"relationship", "itemType": "Person", "uid": 1},
             {"type":"profilePicture", "itemType": "Photo", "uid": 500},
             {"type":"label", "itemType": "Label", "uid": 1000},
             {"type":"label", "itemType": "Label", "uid": 1001},
@@ -613,7 +613,7 @@
         "birthDate": 1593777745298,
         "height": 197,
         "allEdges": [
-            {"type":"relation", "itemType": "Person", "uid": 1},
+            {"type":"relationship", "itemType": "Person", "uid": 1},
             {"type":"profilePicture", "itemType": "Photo", "uid": 501},
             {"type":"label", "itemType": "Label", "uid": 1015},
             {"type":"label", "itemType": "Label", "uid": 1016},

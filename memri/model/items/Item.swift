@@ -131,23 +131,7 @@ public class Item: SchemaItem {
 
 			return ""
 		} else {
-			let val = self[name]
-
-			if let str = val as? String {
-				return str
-			} else if let val = val as? Bool {
-				return String(val)
-			} else if let val = val as? Int {
-				return String(val)
-			} else if let val = val as? Double {
-				return String(val)
-			} else if let val = val as? Date {
-				let formatter = DateFormatter()
-				formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
-				return formatter.string(from: val)
-			} else {
-				return ""
-			}
+            return ExprInterpreter.evaluateString(self[name], "")
 		}
 	}
 
@@ -723,6 +707,16 @@ extension RealmSwift.Results where Element == Edge {
 
 		return result
 	}
+    
+    func edgeArray() -> [Edge] {
+        var result = [Edge]()
+
+        for edge in self {
+            result.append(edge)
+        }
+
+        return result
+    }
 
 	//    #warning("Toby, how do Ranges work exactly?")
 	//    #warning("@Ruben I think this achieves what you want")

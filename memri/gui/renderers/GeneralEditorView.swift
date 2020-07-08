@@ -51,9 +51,11 @@ struct GeneralEditorLayoutItem {
     var dict: [String:Any]
     var viewArguments: ViewArguments? = nil
     
-    func get<T>(_ propName:String, _ type:T.Type = T.self) -> T? {
-        var result:Any? = nil
-        
+    func has(_ propName: String) -> Bool {
+        return dict[propName] != nil
+    }
+    
+    func get<T>(_ propName:String, _ type:T.Type = T.self, _ item:Item? = nil) -> T? {
         guard let propValue = dict[propName] else {
             if propName == "section" {
                 print("ERROR")
@@ -62,10 +64,12 @@ struct GeneralEditorLayoutItem {
             return nil
         }
         
+        var value:Any? = propValue
+        
         // Execute expression to get the right value
         if let expr = propValue as? Expression {
             do {
-                result = try expr.execute(viewArguments) as? T
+                value = try expr.execute(viewArguments)
             } catch {
                 // TODO: Refactor error handling
                 debugHistory.error("Could note compute layout property \(propName)\n"
@@ -77,15 +81,23 @@ struct GeneralEditorLayoutItem {
                 return nil
             }
         }
-        else {
-            result = propValue as? T
+        
+        if T.self == [Edge].self {
+            if value is [Edge] {
+                return value as? T
+            }
+            else if let value = value as? String {
+                return item?.edges(value)?.edgeArray() as? T
+            }
+            else if let value = value as? [String] {
+                return item?.edges(value)?.edgeArray() as? T
+            }
+        }
+        else if T.self == [String].self && value is String {
+            return [value] as? T
         }
         
-        if T.self == [String].self && result is String {
-            return [result] as? T
-        }
-        
-        return result as? T
+        return value as? T
     }
 }
 
@@ -150,11 +162,7 @@ struct GeneralEditorView: View {
                 result.append(contentsOf: list)
             }
             if let list = item.get("exclude", [String].self) {
-                for field in list {
-                    if let index = result.firstIndex(of: field) {
-                        result.remove(at: index)
-                    }
-                }
+                result.append(contentsOf: list)
             }
         }
         return result
@@ -231,27 +239,28 @@ struct GeneralEditorSection: View {
         let renderConfig = self.renderConfig
         let editMode = context.currentSession?.isEditMode ?? false
         let fields:[String] = (layoutSection.get("fields", String.self) == "*"
-            ? getProperties(item, layoutSection.get("exclude", [String].self), usedFields)
+            ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
-        let edges:[String] = layoutSection.get("edges", [String].self) ?? []
+        let edges = layoutSection.get("edges", [Edge].self, item) ?? []
         let groupKey = layoutSection.get("section", String.self) ?? ""
         
         let sectionStyle = self.sectionStyle(groupKey)
         let readOnly = self.layoutSection.get("readOnly", Bool.self) ?? false
-        let listHasItems = edges.count > 0 && item.edge(groupKey) != nil
-        let isEmpty = edges.count > 0 && fields.count == 0 && !listHasItems && !editMode
+        let isEmpty = self.layoutSection.has("edges") && edges.count == 0 && fields.count == 0 && !editMode
         let hasGroup = renderConfig.hasGroup(groupKey)
         
         let title = (hasGroup ? sectionStyle.title : nil) ?? groupKey.camelCaseToWords().uppercased()
-        let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? true)
+        let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? false)
         let showTitle = sectionStyle.showTitle ?? true
-        let action = editMode && !readOnly && edges.count > 0 ? getAction(groupKey) : nil
+        let action = editMode
+            ? sectionStyle.action ?? (!readOnly && edges.count > 0 ? getAction(groupKey) : nil)
+            : nil
         let spacing = sectionStyle.spacing ?? 0
         let padding = sectionStyle.padding
         
         return Section(
             header: Group {
-                if showTitle && !isEmpty{
+                if showTitle && !isEmpty {
                     HStack(alignment: .bottom) {
                         Text(title)
                             .generalEditorHeader()
@@ -312,7 +321,7 @@ struct GeneralEditorSection: View {
                                 }
                                 // Render the edges
                                 if edges.count > 0 {
-                                    ForEach<Results<Edge>, Edge, UIElementView>(item.edges(edges)!, id: \.self) { edge in
+                                    ForEach<[Edge], Edge, UIElementView>(edges, id: \.self) { edge in
                                         let targetItem = edge.item()
                                         return renderConfig.render(
                                             item: targetItem,
@@ -341,7 +350,6 @@ struct GeneralEditorSection: View {
                         // Render groups with the default render row
                         if fields.count > 0 {
                             ForEach(fields, id: \.self) { field in
-
                                 DefaultGeneralEditorRow(
                                     context: self._context,
                                     item: self.item,
@@ -359,7 +367,7 @@ struct GeneralEditorSection: View {
                         if edges.count > 0 {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: spacing) {
-                                    ForEach<Results<Edge>, Edge, ItemCell>(item.edges(edges)!, id: \.self) { edge in
+                                    ForEach<[Edge], Edge, ItemCell>(edges, id: \.self) { edge in
                                         let targetItem = edge.item()
                                         return ItemCell(
                                             item: targetItem,
@@ -388,10 +396,9 @@ struct GeneralEditorSection: View {
         )
 	}
 
-    func getProperties(_ item: Item, _ exclude: [String]?, _ used: [String]) -> [String] {
+    func getProperties(_ item: Item, _ used: [String]) -> [String] {
 		item.objectSchema.properties.filter {
-			!(exclude?.contains($0.name) ?? false)
-				&& !used.contains($0.name)
+			!used.contains($0.name)
 				&& !$0.isArray
 		}.map { $0.name }
 	}
@@ -489,47 +496,52 @@ struct DefaultGeneralEditorRow: View {
 	var body: some View {
 		// Get the type from the schema, because when the value is nil the type cannot be determined
 		let propType = item.objectSchema[prop]?.type
+        let propValue = self.item[self.prop]
 
 		return VStack(spacing: 0) {
-			VStack(alignment: .leading, spacing: 4) {
-				Text(prop
-					.camelCaseToWords()
-					.lowercased()
-					.capitalizingFirst()
-				)
-				.generalEditorLabel()
+            if propValue == nil && readOnly {
+                EmptyView()
+            }
+            else {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(prop
+                        .camelCaseToWords()
+                        .lowercased()
+                        .capitalizingFirst()
+                    )
+                    .generalEditorLabel()
 
-				if renderConfig.hasGroup(prop) {
-					renderConfig.render(item: item, group: prop, arguments: arguments)
-				} else if readOnly {
-					if [.string, .bool, .date, .int, .double].contains(propType) {
-						defaultRow(self.item.getString(self.prop))
-					} else if propType == .object {
-						if self.item[self.prop] is Item {
-							MemriButton(context: self._context,
-										item: self.item[self.prop] as! Item)
-						} else {
-							defaultRow()
-						}
-					} else { defaultRow() }
-				} else {
-					if propType == .string { stringRow() }
-					else if propType == .bool { boolRow() }
-					else if propType == .date { dateRow() }
-					else if propType == .int { intRow() }
-					else if propType == .double { doubleRow() }
-					else if propType == .object { defaultRow() }
-					else { defaultRow() }
-				}
-			}
-			.fullWidth()
-			.padding(.bottom, 10)
-			.padding(.horizontal, 36)
-			.background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
+                    if renderConfig.hasGroup(prop) {
+                        renderConfig.render(item: item, group: prop, arguments: arguments)
+                    } else if readOnly {
+                        if [.string, .bool, .date, .int, .double].contains(propType) {
+                            defaultRow(ExprInterpreter.evaluateString(propValue, ""))
+                        } else if propType == .object {
+                            if propValue is Item {
+                                MemriButton(context: self._context, item: propValue as! Item)
+                            } else {
+                                defaultRow()
+                            }
+                        } else { defaultRow() }
+                    } else {
+                        if propType == .string { stringRow() }
+                        else if propType == .bool { boolRow() }
+                        else if propType == .date { dateRow() }
+                        else if propType == .int { intRow() }
+                        else if propType == .double { doubleRow() }
+                        else if propType == .object { defaultRow() }
+                        else { defaultRow() }
+                    }
+                }
+                .fullWidth()
+                .padding(.bottom, 10)
+                .padding(.horizontal, 36)
+                .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
 
-			if !isLast {
-				Divider().padding(.leading, 35)
-			}
+                if !isLast {
+                    Divider().padding(.leading, 35)
+                }
+            }
 		}
 	}
 
