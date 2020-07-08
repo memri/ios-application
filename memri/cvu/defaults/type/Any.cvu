@@ -20,7 +20,7 @@
     [renderer = generalEditor] {
         EditorRow {
             nopadding: true
-            padding: 5 0 5 36
+            padding: 5 36 5 36
 /*            spacing: 5*/
             
             HStack {

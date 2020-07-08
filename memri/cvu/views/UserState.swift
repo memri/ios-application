@@ -107,8 +107,12 @@ public class UserState: SchemaItem, CVUToString {
 					for (key, value) in x {
 						if let value = value as? Item {
 							values[key] = ["_type": value.genericType,
-										   "_uid": value.uid.value as Any,
+                                           "_uid": value.uid.value as Any,
 										   "___": true]
+                        } else if let value = value as? [Item] {
+                            values[key] = AnyCodable(value.map { ["_type": $0.genericType,
+                                                                  "_uid": $0.uid.value as Any,
+                                                                  "___": true] })
 						} else if let value = value as? AnyCodable {
 							values[key] = value
 						} else {

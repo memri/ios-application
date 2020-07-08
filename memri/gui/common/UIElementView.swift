@@ -450,17 +450,8 @@ public struct UIElementView: SwiftUI.View {
 		let dataItem: Item? = get("value")
 		let (_, propItem, propName) = from.getType("value", item, viewArguments)
 		let emptyValue = get("empty") ?? "Pick a value"
-
-		var datasource: Datasource
-		if let def = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-			do { datasource = try Datasource.fromCVUDefinition(def, viewArguments) }
-			catch {
-				debugHistory.warn("\(error)")
-				datasource = Datasource()
-			}
-		} else {
-			datasource = Datasource()
-		}
+        let query = get("query", type: String.self)
+        let renderer = get("renderer", type: String.self)
 
 		return Picker(
 			item: item,
@@ -469,7 +460,8 @@ public struct UIElementView: SwiftUI.View {
 			emptyValue: emptyValue,
 			propItem: propItem,
 			propName: propName,
-			datasource: datasource
+            renderer: renderer,
+            query: query ?? ""
 		)
 	}
 

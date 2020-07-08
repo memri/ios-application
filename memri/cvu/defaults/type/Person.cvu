@@ -227,8 +227,7 @@ Person {
                         maxHeight: 140
                         show: {{!readOnly}}
                     
-                        Button {
-                            press: add
+                        Action {
                             cornerRadius: 25
                             maxWidth: 50
                             maxHeight: 50
@@ -236,8 +235,23 @@ Person {
                             color: #434343
                             align: center
                             font: 14 regular
-                        
-                            Text { text: "Edit" }
+                            
+                            press: openViewByName {
+                                renderAs: popup
+                                title: "Edit"
+                                
+                                arguments: {
+                                    name: "choose-item-by-query"
+                                    viewArguments: {
+                                        query: "Photo AND ANY allEdges.targetItemID = {.uid}"
+                                        type: Photo
+                                        renderer: "thumbnail"
+                                        subject: {{.}}
+                                        property: "profilePicture"
+                                        title: "Choose a photo"
+                                    }
+                                }
+                            }
                         }
                     }
                 }

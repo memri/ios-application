@@ -230,7 +230,7 @@ public class Item: SchemaItem {
 
 		// Should this create a temporary edge for which item() is source() ?
 		return realm?.objects(Edge.self)
-			.filter("targetItemID = \(uid) AND type = '\(edgeType)").first
+			.filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)").first
 	}
 
 	public func edges(_ edgeType: String) -> Results<Edge>? {
@@ -242,7 +242,7 @@ public class Item: SchemaItem {
 			return edges(collection)
 		}
 
-		return allEdges.filter("type = '\(edgeType)'")
+		return allEdges.filter("deleted = false AND type = '\(edgeType)'")
 	}
 
 	public func edges(_ edgeTypes: [String]) -> Results<Edge>? {
@@ -273,7 +273,7 @@ public class Item: SchemaItem {
 			return edge(collection)
 		}
 
-		return allEdges.filter("type = '\(edgeType)'").first
+		return allEdges.filter("deleted = false AND type = '\(edgeType)'").first
 	}
 
 	public func edge(_ edgeTypes: [String]) -> Edge? {
@@ -331,7 +331,7 @@ public class Item: SchemaItem {
 			}
 
 			let beforeBeforeEdge = edges
-				.filter("sequence < \(beforeNumber)")
+				.filter("deleted = false AND sequence < \(beforeNumber)")
 				.sorted(byKeyPath: "sequence", ascending: true)
 				.first
 
@@ -354,7 +354,7 @@ public class Item: SchemaItem {
 			}
 
 			let afterAfterEdge = edges
-				.filter("sequence < \(afterNumber)")
+				.filter("deleted = false AND sequence < \(afterNumber)")
 				.sorted(byKeyPath: "sequence", ascending: true)
 				.first
 
@@ -455,7 +455,7 @@ public class Item: SchemaItem {
 		}
 
 		let edgeQuery = edgeType != nil ? "type = '\(edgeType!)' and " : ""
-		let query = "deleted = false and \(edgeQuery) targetItemID = '\(targetID)'"
+		let query = "deleted = false and \(edgeQuery) targetItemID = \(targetID)"
 		let results = allEdges.filter(query)
 
 		if results.count > 0 {

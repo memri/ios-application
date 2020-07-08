@@ -74,7 +74,13 @@ extension MemriContext {
 			// TODO: add cases for argValue = Item, ViewArgument
 			if let dataItem = argValue as? Item {
 				finalValue = dataItem
-			} else if let dict = argValue as? [String: Any] {
+			} else if var dict = argValue as? [String: Any] {
+                for (key, value) in dict {
+                    if let expr = value as? Expression {
+                        dict[key] = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
+                    }
+                }
+                
 				if action.argumentTypes[argName] == ViewArguments.self {
 					finalValue = try ViewArguments.fromDict(dict)
 				} else if action.argumentTypes[argName] == ItemFamily.self {
@@ -86,8 +92,22 @@ extension MemriContext {
 					finalValue = try Cache.createItem(SessionView.self,
 													  values: ["viewDefinition": viewDef])
 				} else {
-					throw "Does not recognize argumentType \(argName)"
+					throw "Exception: Unknown argument type specified in action definition \(argName)"
 				}
+            } else if action.argumentTypes[argName] == ViewArguments.self {
+                if let viewArgs = argValue as? ViewArguments {
+                    var dict = viewArgs.asDict()
+                    for (key, value) in dict {
+                        if let expr = value as? Expression {
+                            dict[key] = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
+                        }
+                    }
+                    
+                    finalValue = try ViewArguments.fromDict(dict)
+                }
+                else {
+                    throw "Exception: Could not parse \(argName)"
+                }
 			} else if action.argumentTypes[argName] == Bool.self {
 				finalValue = ExprInterpreter.evaluateBoolean(argValue)
 			} else if action.argumentTypes[argName] == String.self {
@@ -100,12 +120,11 @@ extension MemriContext {
 				finalValue = argValue ?? []
 			} else if action.argumentTypes[argName] == AnyObject.self {
 				finalValue = argValue ?? nil
-			}
 			// TODO: are nil values allowed?
-			else if argValue == nil {
+            } else if argValue == nil {
 				finalValue = nil
 			} else {
-				throw "Does not recognize argumentType \(argName):\(action.argumentTypes[argName] ?? Void.self)"
+				throw "Exception: Unknown argument type specified in action definition \(argName):\(action.argumentTypes[argName] ?? Void.self)"
 			}
 
 			args[argName] = finalValue
@@ -203,7 +222,7 @@ public class Action: HashableClass, CVUToString {
 
 	var defaultValues: [String: Any] { [:] }
 	let baseValues: [String: Any] = [
-		"icon": "exclamationmark.triangle",
+		"icon": "",
 		"renderAs": RenderType.button,
 		"showTitle": false,
 		"opensView": false,
@@ -1191,13 +1210,6 @@ class ActionSetProperty: Action, ActionExec {
 			throw "Exception: property is not set to a string"
 		}
 
-		// Check that the property exists to avoid hard crash
-		guard subject.objectSchema[propertyName] != nil else {
-			throw "Exception: Invalid property access of \(propertyName) for \(subject)"
-		}
-
-		#warning("Ask Toby for how to cast this")
-		#warning("@Ruben not sure what you're asking here")
 		subject.set(propertyName, arguments["value"])
 
 		// TODO: refactor
@@ -1231,21 +1243,7 @@ class ActionLink: Action, ActionExec {
 			throw "Exception: selected data item is not passed"
 		}
 
-		// Check that the property exists to avoid hard crash
-		guard let schema = subject.objectSchema[propertyName] else {
-			throw "Exception: Invalid property access of \(propertyName) for \(subject)"
-		}
-
-		if schema.isArray {
-			// Get list and append
-			var list = dataItemListToArray(subject[propertyName] as Any)
-
-			list.append(selected)
-
-			subject.set(propertyName, list as Any)
-		} else {
-			subject.set(propertyName, selected)
-		}
+        _ = try subject.link(selected, type: propertyName)
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
@@ -1277,23 +1275,7 @@ class ActionUnlink: Action, ActionExec {
 			throw "Exception: selected data item is not passed"
 		}
 
-		// Check that the property exists to avoid hard crash
-		guard let schema = subject.objectSchema[propertyName] else {
-			throw "Exception: Invalid property access of \(propertyName) for \(subject)"
-		}
-
-		if schema.isArray {
-			// Get list and append
-			var list = dataItemListToArray(subject[propertyName] as Any)
-
-			list.removeAll(where: { item in
-				item == selected
-            })
-
-			subject.set(propertyName, list as Any)
-		} else {
-			subject.set(propertyName, nil)
-		}
+        _ = try subject.unlink(selected, type: propertyName)
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()

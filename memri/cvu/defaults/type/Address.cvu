@@ -78,11 +78,7 @@ Address[] {
                         title: "Select a country"
                         value: {{.country}}
                         defaultValue: "{me.address[primary = true].country}"
-                        
-                        [datasource = pod] {
-                            query: "Country"
-                            sortProperty: name
-                        }
+                        query: "Country"
                     }
                 }
             }

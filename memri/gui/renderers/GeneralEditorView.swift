@@ -253,7 +253,9 @@ struct GeneralEditorSection: View {
         let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? false)
         let showTitle = sectionStyle.showTitle ?? true
         let action = editMode
-            ? sectionStyle.action ?? (!readOnly && edges.count > 0 ? getAction(groupKey) : nil)
+            ? sectionStyle.action ?? (!readOnly && edges.count > 0
+                ? getAction(edgeType: edges[0].type ?? "", itemType: edges[0].targetItemType ?? "")
+                : nil)
             : nil
         let spacing = sectionStyle.spacing ?? 0
         let padding = sectionStyle.padding
@@ -373,7 +375,7 @@ struct GeneralEditorSection: View {
                                             item: targetItem,
                                             rendererNames: ["generalEditor"],
                                             arguments: self._args(groupKey: groupKey,
-                                                                  name: groupKey,
+                                                                  name: edge.type ?? "",
                                                                   value: targetItem,
                                                                   item: self.item,
                                                                   edge: edge)
@@ -419,19 +421,18 @@ struct GeneralEditorSection: View {
 		].merging(renderConfig.viewArguments?.asDict() ?? [:], uniquingKeysWith: { l, _ in l }))
 	}
     
-    func getAction(_ groupKey:String) -> Action {
-        let className = item.objectSchema[groupKey]?.objectClassName ?? ""
-
+    func getAction(edgeType:String, itemType:String) -> Action {
         return ActionOpenViewByName(
             context,
             arguments: [
                 "name": "choose-item-by-query",
                 "viewArguments": try? ViewArguments.fromDict([
-                    "query": className,
-                    "type": className,
+                    "query": itemType,
+                    "type": edgeType,
                     "subject": item,
-                    "property": groupKey,
-                    "title": "Choose a \(className)",
+                    "renderer": "list",
+                    "property": edgeType,
+                    "title": "Choose a \(itemType)",
                     "dataItem": item,
                 ]),
             ],

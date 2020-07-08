@@ -1,5 +1,5 @@
 .choose-item-by-query {
-    title: {{ title }} /*or "Choose a {type}" }}*/
+    title: {{ title or "Choose a {type}" }}
     editMode: true
     
     editActionButton: toggleEditMode
@@ -10,13 +10,30 @@
             }
         }
         
-    defaultRenderer:list
+    defaultRenderer: {{ renderer or "list" }}
+    
+    /* TODO this breaks when removing the : */
+    userstate: {
+        selection: {{ selection }}
+    }
     
     [datasource = pod] {
        query: "{query}"
     }
     
     [renderer = list]{
+        press: [
+            link {
+                arguments {
+                    subject: {{subject}}
+                    property: {{property}}
+                }
+            }
+            closePopup
+        ]
+    }
+    
+    [renderer = thumbnail]{
         press: [
             link {
                 arguments {

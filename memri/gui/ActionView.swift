@@ -64,8 +64,8 @@ struct ActionButtonView: View {
 				self.execute?()
 			}
         }) {
-			if icon != "" {
-				Image(systemName: icon)
+			if icon != "" || title == nil {
+                Image(systemName: icon == "" ? "exclamationmark.triangle" : icon)
 					.fixedSize()
 					.padding(.horizontal, 5)
 					.padding(.vertical, 5)
@@ -74,7 +74,7 @@ struct ActionButtonView: View {
 				//                    .border(Color.red, width: 1)
 			}
 
-			if title != nil && action.getBool("showTitle") {
+			if title != nil && (icon == "" || action.getBool("showTitle")) {
 				// NOTE: Allowed force unwrapping (logic)
 				Text(title ?? "")
 					.font(.subheadline)
