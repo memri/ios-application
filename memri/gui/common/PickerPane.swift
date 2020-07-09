@@ -78,8 +78,9 @@ struct PickerPane: View {
                 "showCloseButton": true,
                 "subject": propItem,
                 "renderer": renderer ?? "list",
-                "property": propName,
+                "edgeType": propName,
                 "title": title,
+                "distinct": true,
                 "selection": [item],
                 "query": query
             ])

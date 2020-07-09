@@ -243,11 +243,12 @@ Person {
                                 arguments: {
                                     name: "choose-item-by-query"
                                     viewArguments: {
-                                        query: "Photo AND ANY allEdges.targetItemID = {.uid}"
+                                        query: "Photo" /* AND ANY allEdges.targetItemID = {.uid} */
                                         type: Photo
                                         renderer: "thumbnail"
                                         subject: {{.}}
-                                        property: "profilePicture"
+                                        edgeType: "profilePicture"
+                                        distinct: true
                                         title: "Choose a photo"
                                     }
                                 }

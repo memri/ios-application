@@ -383,6 +383,10 @@ public class Item: SchemaItem {
 		guard item.objectSchema["uid"] != nil, let targetID: Int = item["uid"] as? Int else {
 			throw "Exception: Missing uid on target"
 		}
+        
+        guard edgeType != "" else {
+            throw "Exception: Edge type is not set"
+        }
 
 		let query = "deleted = false and type = '\(edgeType)'"
 			+ (distinct ? "" : " and targetItemID = \(targetID)")
@@ -453,6 +457,10 @@ public class Item: SchemaItem {
 		guard let targetID: Int = item.get("uid") else {
 			return
 		}
+        
+        guard edgeType != "" else {
+            throw "Exception: Edge type is not set"
+        }
 
 		let edgeQuery = edgeType != nil ? "type = '\(edgeType!)' and " : ""
 		let query = "deleted = false and \(edgeQuery) targetItemID = \(targetID)"

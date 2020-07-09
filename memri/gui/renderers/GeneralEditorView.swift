@@ -270,7 +270,7 @@ struct GeneralEditorSection: View {
                         if action != nil {
                             Spacer()
                             // NOTE: Allowed force unwrapping
-                            ActionButton(action: action)
+                            ActionButton(action: action, item: item)
                                 .foregroundColor(Color(hex: "#777"))
                                 .font(.system(size: 18, weight: .semibold))
                                 .padding(.bottom, 10)
@@ -431,7 +431,7 @@ struct GeneralEditorSection: View {
                     "type": edgeType,
                     "subject": item,
                     "renderer": "list",
-                    "property": edgeType,
+                    "edgeType": edgeType,
                     "title": "Choose a \(itemType)",
                     "dataItem": item,
                 ]),

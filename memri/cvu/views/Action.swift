@@ -1223,7 +1223,7 @@ class ActionSetProperty: Action, ActionExec {
 
 class ActionLink: Action, ActionExec {
 	override var defaultValues: [String: Any] { [
-		"argumentTypes": ["subject": ItemFamily.self, "property": String.self],
+        "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "distinct": Bool.self],
 	] }
 
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
@@ -1231,19 +1231,21 @@ class ActionLink: Action, ActionExec {
 	}
 
 	func exec(_ arguments: [String: Any]) throws {
-		guard let subject = arguments["subject"] as? Item else {
+        guard let subject = arguments["subject"] as? Item else {
 			throw "Exception: subject is not set"
 		}
 
-		guard let propertyName = arguments["property"] as? String else {
-			throw "Exception: property is not set to a string"
+		guard let edgeType = arguments["edgeType"] as? String else {
+			throw "Exception: edgeType is not set to a string"
 		}
 
 		guard let selected = arguments["dataItem"] as? Item else {
 			throw "Exception: selected data item is not passed"
 		}
+        
+        let distinct = arguments["distinct"] as? Bool ?? false
 
-        _ = try subject.link(selected, type: propertyName)
+        _ = try subject.link(selected, type: edgeType, distinct: distinct)
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
@@ -1256,7 +1258,7 @@ class ActionLink: Action, ActionExec {
 
 class ActionUnlink: Action, ActionExec {
 	override var defaultValues: [String: Any] { [
-		"argumentTypes": ["subject": ItemFamily.self, "property": String.self],
+        "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "all": Bool.self],
 	] }
 
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
@@ -1267,15 +1269,17 @@ class ActionUnlink: Action, ActionExec {
 		guard let subject = arguments["subject"] as? Item else {
 			throw "Exception: subject is not set"
 		}
-		guard let propertyName = arguments["property"] as? String else {
-			throw "Exception: property is not set to a string"
+		guard let edgeType = arguments["edgeType"] as? String else {
+			throw "Exception: edgeType is not set to a string"
 		}
 
 		guard let selected = arguments["dataItem"] as? Item else {
 			throw "Exception: selected data item is not passed"
 		}
+        
+        let all = arguments["all"] as? Bool ?? false
 
-        _ = try subject.unlink(selected, type: propertyName)
+        _ = try subject.unlink(selected, type: edgeType, all: all)
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()

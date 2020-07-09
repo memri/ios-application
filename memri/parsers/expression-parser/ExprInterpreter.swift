@@ -35,6 +35,10 @@ class ExprInterpreter {
 		else if let x = x as? [Double] { return x.count > 0 }
 		else if let x = x as? [String] { return x.count > 0 }
 		else if let x = x as? [Bool] { return x.count > 0 }
+        else if let x = x as? [Edge] { return x.count > 0 }
+        else if let x = x as? [Item] { return x.count > 0 }
+        else if let x = x as? Results<Edge> { return x.count > 0 }
+        else if let x = x as? Results<Item> { return x.count > 0 }
 		else if x == nil { return false }
 		else { return true }
 	}

@@ -166,19 +166,29 @@ public class UserState: SchemaItem, CVUToString {
 
 	public class func clone(_ viewArguments: ViewArguments? = nil,
 							_ values: [String: Any]? = nil,
-							managed: Bool = true) throws -> UserState {
+							managed: Bool = true,
+                            item: Item? = nil) throws -> UserState {
 		var dict = viewArguments?.asDict() ?? [:]
 		if let values = values {
 			dict.merge(values, uniquingKeysWith: { _, r in r })
 		}
 
-		if managed { return try UserState.fromDict(dict) }
+        if managed { return try UserState.fromDict(dict, item: item) }
 		else { return try UserState(dict) }
 	}
 
-	public class func fromDict(_ dict: [String: Any]) throws -> UserState {
+	public class func fromDict(_ dict: [String: Any], item: Item? = nil) throws -> UserState {
 		let userState = try Cache.createItem(UserState.self, values: [:])
-        try userState.storeInCache(dict)
+        
+        // Resolve expressions
+        var dct = dict
+        for (key, value) in dct {
+            if let expr = value as? Expression {
+                dct[key] = try expr.execute(ViewArguments([".": item as Any]))
+            }
+        }
+        
+        try userState.storeInCache(dct)
 		userState.persist()
 		return userState
 	}

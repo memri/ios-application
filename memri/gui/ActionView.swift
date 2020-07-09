@@ -12,6 +12,7 @@ struct ActionButton: View {
 	@EnvironmentObject var context: MemriContext
 
 	var action: Action?
+    var item: Item? = nil
 
 	// TODO: Refactor: can this be created more efficiently?
 	var body: some View {
@@ -30,7 +31,7 @@ struct ActionButton: View {
 		// NOTE: Allowed force unwrappings (logic)
 		switch action.getRenderAs(context.cascadingView?.viewArguments) {
 		case .popup:
-			return AnyView(ActionPopupButton(action: action))
+            return AnyView(ActionPopupButton(action: action, item: item))
 		case .button:
 			return AnyView(ActionButtonView(action: action) {
 				self.context.executeAction(action)
@@ -88,6 +89,7 @@ struct ActionPopupButton: View {
 	@EnvironmentObject var context: MemriContext
 
 	var action: Action
+    var item: Item? = nil
 
 	@State var isShowing = false
 
@@ -95,9 +97,9 @@ struct ActionPopupButton: View {
 		ActionButtonView(action: self.action, execute: {
 			self.isShowing = true
         })
-			.sheet(isPresented: $isShowing) {
-				ActionPopup(action: self.action).environmentObject(self.context)
-			}
+        .sheet(isPresented: $isShowing) {
+            ActionPopup(action: self.action, item: self.item).environmentObject(self.context)
+        }
 	}
 }
 
@@ -106,6 +108,7 @@ struct ActionPopup: View {
 	@Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
 
 	var action: Action
+    var item: Item? = nil
 
 	var body: some View {
 		// TODO: refactor: this list item needs to be removed when we close the popup in any way
@@ -113,16 +116,15 @@ struct ActionPopup: View {
 			self.presentationMode.wrappedValue.dismiss()
 		}
 
-		let args = action.arguments["viewArguments"] as? ViewArguments ?? {
-			try! ViewArguments.fromDict([:])
-		}()
+        let viewArguments = action.arguments["viewArguments"] as? ViewArguments
+        let args = try! ViewArguments.clone(viewArguments, item: item)
 
 		args.set("showCloseButton", true)
 
 		// TODO: is this still needed? Need test cases
 		// TODO: this is now set back on variables["."] there is something wrong in the architecture
 		//      that is causing this
-		let dataItem = args.get(".") ?? Item() // TODO: Refactor: Error handling
+//		let dataItem = args.get(".") ?? Item() // TODO: Refactor: Error handling
 
 		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
 		if action.name == .openView {
@@ -130,7 +132,7 @@ struct ActionPopup: View {
 				return SubView(
 					context: self.context,
 					view: view, // TODO: refactor: consider adding .closePopup to all press actions
-					dataItem: dataItem,
+					dataItem: item,
 					viewArguments: args
 				)
 			} else {
@@ -141,7 +143,7 @@ struct ActionPopup: View {
 				return SubView(
 					context: self.context,
 					viewName: viewName,
-					dataItem: dataItem,
+					dataItem: item,
 					viewArguments: args
 				)
 			} else {
@@ -153,7 +155,7 @@ struct ActionPopup: View {
 		return SubView(
 			context: self.context,
 			viewName: "catch-all-view",
-			dataItem: dataItem,
+			dataItem: item,
 			viewArguments: args
 		)
 	}

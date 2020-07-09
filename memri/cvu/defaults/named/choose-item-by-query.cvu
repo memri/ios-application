@@ -26,7 +26,8 @@
             link {
                 arguments {
                     subject: {{subject}}
-                    property: {{property}}
+                    edgeType: {{edgeType}}
+                    distinct: {{distinct}}
                 }
             }
             closePopup
@@ -38,7 +39,8 @@
             link {
                 arguments {
                     subject: {{subject}}
-                    property: {{property}}
+                    edgeType: {{edgeType}}
+                    distinct: {{distinct}}
                 }
             }
             closePopup

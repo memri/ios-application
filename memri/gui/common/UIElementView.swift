@@ -144,12 +144,12 @@ public struct UIElementView: SwiftUI.View {
 							Divider().padding(.leading, 35)
 						}
 					}
-				} else if from.type == .EditorLabel {
+				} else if from.type == .EditorLabel {   
 					HStack(alignment: .center, spacing: 15) {
 						Button(action: {
 							let args: [String: Any?] = [
 								"subject": self.context.item, // self.item,
-								"property": self.viewArguments.get("name"),
+								"edgeType": self.viewArguments.get("name"),
 							]
 							let action = ActionUnlink(self.context, arguments: args)
 							self.context.executeAction(action, with: self.item, using: self.viewArguments)
@@ -272,7 +272,7 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .SecureField {
 				} else if from.type == .Action {
-					ActionButton(action: get("press") ?? Action(context, "noop"))
+					ActionButton(action: get("press") ?? Action(context, "noop"), item: item)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .MemriButton {
 					MemriButton(item: self.item)

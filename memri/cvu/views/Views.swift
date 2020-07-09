@@ -167,7 +167,8 @@ public class Views {
 			}
 		default:
 			if let value: Any = viewArguments?.get(name) { return value }
-			throw "Exception: Unknown object for property getter: \(name)"
+            return nil
+//			throw "Exception: Unknown object for property getter: \(name)"
 		}
 	}
 
@@ -199,7 +200,7 @@ public class Views {
 		var i = 0
 		for node in lookup.sequence {
 			i += 1
-
+            
 			if let node = node as? ExprVariableNode {
 				if first {
 					// TODO: move to CVU validator??
@@ -330,6 +331,10 @@ public class Views {
 					}
 				}
 			}
+            
+            if value == nil {
+                break
+            }
 		}
 
 		// Format a date

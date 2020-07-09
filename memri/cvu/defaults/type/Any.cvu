@@ -32,7 +32,7 @@
                     press: unlink {
                         arguments: {
                             subject: {{subject}}
-                            property: {{name}}
+                            edgeType: {{name}}
                         }
                     }
                     show: {{!readOnly}}
