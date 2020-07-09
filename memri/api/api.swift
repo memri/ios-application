@@ -423,8 +423,42 @@ public class PodAPI {
 						items = try MemriJSONDecoder
 							.decode(family: ItemFamily.self, from: data)
 					}
-
-					callback(nil, items)
+                    
+                    
+                    if let items_ = items {
+                        let uids = items_.compactMap {$0.uid.value}
+                        let data2 = uids.description.data(using: .utf8)
+                        self.http(.POST, path: "items_with_edges", body: data2) { error, data in
+                            do {
+                                if let error = error {
+                                    debugHistory.error("Could not connect to pod: \n\(error)")
+                                    callback(error, nil)
+                                } else if let data = data {
+                                    var items2: [Item]?
+                                    try JSONErrorReporter {
+                                        items2 = try MemriJSONDecoder
+                                            .decode(family: ItemFamily.self, from: data)
+                                    }
+                                    
+                                    callback(nil, items2)
+                                }
+                            }
+                            catch {
+                                debugHistory.error("Could not connect to pod: \n\(error)")
+                                callback(error, nil)
+                            }
+                        }
+                    }
+                        
+                    else {
+                        callback(nil, nil)
+                        return
+                    }
+                    
+                    //cache.createEdge
+                    //add edge to item.allEdges (append)
+                    
+//					callback(nil, items)
 				} catch {
 					debugHistory.error("Could not connect to pod: \n\(error)")
 					callback(error, nil)

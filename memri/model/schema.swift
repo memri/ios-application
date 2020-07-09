@@ -728,7 +728,7 @@ public class Edge : Object, Codable {
         self.init()
         
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            type = try decoder.decodeIfPresent("_type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
             syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
@@ -737,7 +737,7 @@ public class Edge : Object, Codable {
             targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
-            try parseTargetDict(try decoder.decodeIfPresent("target"))
+            try parseTargetDict(try decoder.decodeIfPresent("_target"))
         }
     }
 }
@@ -830,6 +830,8 @@ public class Indexer : Item {
     @objc dynamic var bundleImage:String? = nil
     /// TBD
     @objc dynamic var runDestination:String? = nil
+    /// TBD
+    @objc dynamic var indexerClass:String? = nil
 
     /// TBD
     var indexerRun: Results<IndexerRun>? {
@@ -845,6 +847,7 @@ public class Indexer : Item {
             query = try decoder.decodeIfPresent("query") ?? query
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
             runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
+            indexerClass = try decoder.decodeIfPresent("indexerClass") ?? indexerClass
 
             try self.superDecode(from: decoder)
         }
@@ -857,6 +860,8 @@ public class IndexerRun : Item {
     @objc dynamic var name:String? = nil
     /// TBD
     @objc dynamic var query:String? = nil
+    /// TBD
+    @objc dynamic var targetDataType:String? = nil
     /// TBD
     let progress = RealmOptional<Int>()
 
@@ -871,6 +876,7 @@ public class IndexerRun : Item {
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             query = try decoder.decodeIfPresent("query") ?? query
+            targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
             progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
 
             try self.superDecode(from: decoder)
@@ -938,6 +944,8 @@ public class Address : Item {
     @objc dynamic var street:String? = nil
     /// TBD
     @objc dynamic var type:String? = nil
+    /// TBD
+    @objc dynamic var locationWasAutomaticLookupWithHash:String? = nil
 
     /// TBD
     var country: Country? {
@@ -949,10 +957,6 @@ public class Address : Item {
     var location: Location? {
         edge("location")?.target(type:Location.self)
     }
-    
-    // This value is set if the location was automatically filled.
-    // It is used to check if the lookup hash (based on the address string) has changed - if so lookup will be done again
-    @objc dynamic var locationWasAutomaticLookupWithHash: String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
@@ -963,6 +967,7 @@ public class Address : Item {
             state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
             type = try decoder.decodeIfPresent("type") ?? type
+            locationWasAutomaticLookupWithHash = try decoder.decodeIfPresent("locationWasAutomaticLookupWithHash") ?? locationWasAutomaticLookupWithHash
 
             try self.superDecode(from: decoder)
         }
