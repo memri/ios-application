@@ -280,14 +280,16 @@ class Sync {
 				) { (error) -> Void in
 					self.syncing = false
 
-					if error == nil {
+					if let error = error {
+                        debugHistory.error("Could not sync to pod: \(error)")
+                        self.schedule(long: true)
+                    }
+                    else {
 						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
 						markAsDone(itemQueue)
 						markAsDone(edgeQueue)
 
 						self.schedule()
-					} else {
-						self.schedule(long: true)
 					}
 				}
 			} catch {

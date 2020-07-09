@@ -220,15 +220,18 @@ public class PodAPI {
 		try MemriJSONEncoder.encode(AnyCodable(result))
 	}
 
-	func simplify(_ item: SchemaItem, create: Bool = false) -> [String: Any] {
+	func simplify(_ item: SchemaItem, create: Bool = false) throws -> [String: Any] {
 		let updatedFields = item.syncState?.updatedFields
 		var result: [String: Any] = [
 			"_type": item.genericType,
+            "uid": item.uid
 		]
+//        print(item.uid.value ?? 0)
 
 		let properties = item.objectSchema.properties
+        let exclude = ["syncState", "deleted", "allEdges", "uid"]
 		for prop in properties {
-			if prop.name == "syncState" || prop.name == "deleted" || prop.name == "allEdges" {
+            if exclude.contains(prop.name) {
 				// Ignore
 			} else if create || updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
 				if prop.type == .object {
@@ -238,18 +241,21 @@ public class PodAPI {
 				}
 			}
 		}
+        
+        guard result["uid"] is Int else {
+            throw "Exception: Item does not have uid set: \(item)"
+        }
 
 		return result
 	}
 
-	func simplify(_ edge: Edge, create _: Bool = false) -> [String: Any] {
+	func simplify(_ edge: Edge, create _: Bool = false) throws -> [String: Any] {
 		var result = [String: Any]()
 
 		let properties = edge.objectSchema.properties
+        let exclude = ["syncState", "deleted", "targetItemType", "targetItemID", "sourceItemType", "sourceItemID"]
 		for prop in properties {
-			if prop.name == "syncState" || prop.name == "deleted"
-				|| prop.name == "targetItemType" || prop.name == "targetItemID"
-				|| prop.name == "sourceItemType" || prop.name == "sourceItemID" {
+			if exclude.contains(prop.name) {
 				// Ignore
 			} else if prop.name == "type" {
 				result["_type"] = edge[prop.name]
@@ -266,6 +272,11 @@ public class PodAPI {
 			// Database is corrupt
 			debugHistory.warn("Database corruption; edge to nowhere")
 		}
+        
+        guard result["_source"] != nil && result["_target"] != nil && result["_target"] != nil else {
+            print(result)
+            throw "Exception: Edge is not properly formed: \(edge)"
+        }
 
 		return result
 	}
@@ -303,13 +314,26 @@ public class PodAPI {
 					 updateEdges: [Edge]?,
 					 deleteEdges: [Edge]?,
 					 _ callback: @escaping (_ error: Error?) -> Void) throws {
+        
 		var result = [String: Any]()
-		if createItems?.count ?? 0 > 0 { result["createItems"] = createItems?.map { simplify($0, create: true) } }
-		if updateItems?.count ?? 0 > 0 { result["updateItems"] = updateItems?.map { simplify($0) } }
-		if deleteItems?.count ?? 0 > 0 { result["deleteItems"] = deleteItems?.map { simplify($0) } }
-		if createEdges?.count ?? 0 > 0 { result["createEdges"] = createEdges?.map { simplify($0, create: true) } }
-		if updateEdges?.count ?? 0 > 0 { result["updateEdges"] = updateEdges?.map { simplify($0) } }
-		if deleteEdges?.count ?? 0 > 0 { result["deleteEdges"] = deleteEdges?.map { simplify($0) } }
+		if createItems?.count ?? 0 > 0 {
+            result["createItems"] = try createItems?.map { try simplify($0, create: true) }
+        }
+		if updateItems?.count ?? 0 > 0 {
+            result["updateItems"] = try updateItems?.map { try simplify($0) }
+        }
+		if deleteItems?.count ?? 0 > 0 {
+            result["deleteItems"] = try deleteItems?.map { try simplify($0) }
+        }
+		if createEdges?.count ?? 0 > 0 {
+            result["createEdges"] = try createEdges?.map { try simplify($0, create: true) }
+        }
+		if updateEdges?.count ?? 0 > 0 {
+            result["updateEdges"] = try updateEdges?.map { try simplify($0) }
+        }
+		if deleteEdges?.count ?? 0 > 0 {
+            result["deleteEdges"] = try deleteEdges?.map { try simplify($0) }
+        }
 
 		http(.POST, path: "bulk_action", body: try toJSON(result)) { error, _ in
 			callback(error)
