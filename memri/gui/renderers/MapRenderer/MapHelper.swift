@@ -93,6 +93,8 @@ class MapHelper {
                         "longitude": location.coordinate.longitude
                     ])
                     address.locationWasAutomaticLookupWithHash = String(lookupHash)
+                    
+                    try address.location.map { try address.unlink($0) }
 					_ = try address.link(newLocation, type: "location")
 				}
 			}
