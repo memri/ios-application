@@ -103,15 +103,15 @@ public class Session: SchemaSession {
 				currentViewIndex = index
 			} else {
 				// Remove all items after the current index
-				if let list = edges("views")?.sorted(byKeyPath: "sequence") {
+				if let list = edges("view")?.sorted(byKeyPath: "sequence") {
 					for i in stride(from: list.count - 1, to: currentViewIndex, by: -1) {
 						try self.unlink(list[i])
 					}
 				}
 
 				// Add the view to the session
-				if let edge = try self.link(view, type: "views", order: .last),
-					let index = edges("views")?.index(of: edge) {
+				if let edge = try self.link(view, type: "view", order: .last),
+					let index = edges("view")?.index(of: edge) {
 					// Update the index pointer
 					currentViewIndex = index
 				} else {
@@ -151,21 +151,23 @@ public class Session: SchemaSession {
 		let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
 			.map { try SessionView.fromCVUDefinition(parsed: $0) }
 
-		let session = try Cache.createItem(Session.self, values: [
-			"selector": (def.selector ?? "[session]") as Any,
-			"name": (def["name"] as? String ?? "") as Any,
-			"currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
-			"showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
-			"showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
-			"editMode": (def["editMode"] as? Bool ?? false) as Any,
-		])
+        let values:[String:Any?] = [
+            "selector": (def.selector ?? "[session]"),
+            "name": (def["name"] as? String ?? ""),
+            "currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
+            "showFilterPanel": (def["showFilterPanel"] as? Bool ?? false),
+            "showContextPane": (def["showContextPane"] as? Bool ?? false),
+            "editMode": (def["editMode"] as? Bool ?? false),
+        ]
+        
+		let session = try Cache.createItem(Session.self, values: values)
 
 		if let screenshot = def["screenshot"] as? File {
 			session.set("screenshot", screenshot)
 		}
 		if views.count > 0 {
 			for view in views {
-				_ = try session.link(view, type: "views")
+				_ = try session.link(view, type: "view")
 			}
 		}
 

@@ -167,7 +167,8 @@ public class Views {
 			}
 		default:
 			if let value: Any = viewArguments?.get(name) { return value }
-			throw "Exception: Unknown object for property getter: \(name)"
+            return nil
+//			throw "Exception: Unknown object for property getter: \(name)"
 		}
 	}
 
@@ -176,7 +177,7 @@ public class Views {
 			lookup: lookup,
 			viewArguments: viewArguments,
 			isFunction: false
-		)
+        )
 		return x
 	}
 
@@ -199,7 +200,7 @@ public class Views {
 		var i = 0
 		for node in lookup.sequence {
 			i += 1
-
+            
 			if let node = node as? ExprVariableNode {
 				if first {
 					// TODO: move to CVU validator??
@@ -256,6 +257,7 @@ public class Views {
 					case "camelCaseToWords": value = v.camelCaseToWords()
 					case "plural": value = v + "s" // TODO:
 					case "firstUppercased": value = v.capitalizingFirst()
+                    case "plainString": value = v.strippingHTMLtags()
 					default:
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on string")
@@ -265,7 +267,7 @@ public class Views {
 					case "source": value = v.source()
 					case "target": value = v.target()
 					case "item": value = v.item()
-					case "label": value = v.label
+					case "label": value = v.edgeLabel
 					case "type": value = v.type
 					case "sequence": value = v.sequence
 					default:
@@ -317,7 +319,7 @@ public class Views {
 				// TODO: This is implemented very slowly first. Let's think about an optimization
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
-				let list = dataItemListToArray(value as Any)
+				let list = dataItemListToArray(value)
 				let args = try ViewArguments.clone(viewArguments, managed: false)
 				let expr = node.sequence[0]
 
@@ -330,6 +332,10 @@ public class Views {
 					}
 				}
 			}
+            
+            if value == nil {
+                break
+            }
 		}
 
 		// Format a date

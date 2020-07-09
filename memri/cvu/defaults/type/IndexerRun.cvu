@@ -72,16 +72,17 @@ IndexerRun {
     ]
     
     [renderer = generalEditor] {
-        excluded: version starred
-        groups:  {
-            iconHeading: iconHeading
-            info: name run
-        }
-        
-        sequence: iconHeading info labels other dates
+        layout: [
+            { section: iconHeading }
+            { section: info, exclude: name run }
+            { section: labels }
+            { section: other, fields: * }
+            { section: dates }
+        ]
         
         iconHeading {
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
             
             HStack{
                 align: center
@@ -102,7 +103,7 @@ IndexerRun {
                 Image {
                     align: center
                     show: {{!.indexer.icon and .indexer.bundleImage}}
-                    bundleImage: {{.importer.bundleImage}}
+                    bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
                     resizable: fill
                     minWidth: 100
@@ -114,8 +115,7 @@ IndexerRun {
         }
 
         info {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
             
             VStack {
                 Divider
@@ -143,7 +143,7 @@ IndexerRun {
                         
                         press: runIndexerRun {
                             arguments {
-                                indexerInstance: {{.}}
+                                indexerRun: {{.}}
                             }
                         }
                         

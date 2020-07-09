@@ -10,12 +10,12 @@ import RealmSwift
 class ExprInterpreter {
 	let ast: ExprNode
 	let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
-	let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
+	let execFunc: (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?
 	var stack: [Any] = []
 
 	init(_ ast: ExprNode,
 		 _ lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
-		 _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
+		 _ execFunc: @escaping (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?) {
 		self.ast = ast
 		self.lookup = lookup
 		self.execFunc = execFunc
@@ -35,6 +35,10 @@ class ExprInterpreter {
 		else if let x = x as? [Double] { return x.count > 0 }
 		else if let x = x as? [String] { return x.count > 0 }
 		else if let x = x as? [Bool] { return x.count > 0 }
+        else if let x = x as? [Edge] { return x.count > 0 }
+        else if let x = x as? [Item] { return x.count > 0 }
+        else if let x = x as? Results<Edge> { return x.count > 0 }
+        else if let x = x as? Results<Item> { return x.count > 0 }
 		else if x == nil { return false }
 		else { return true }
 	}
@@ -53,6 +57,11 @@ class ExprInterpreter {
 		else if let x = x as? Int { return String(x) }
 		else if let x = x as? Double { return String(x) }
 		else if let x = x as? String { return x }
+        else if let x = x as? Date {
+            let formatter = DateFormatter()
+            formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
+            return formatter.string(from: x)
+        }
 		else if x == nil { return defaultValue }
 		else { return defaultValue }
 	}
@@ -126,10 +135,10 @@ class ExprInterpreter {
 			let result = try execSingle(expr.exp, args)
 			return IP.evaluateNumber(result)
 		} else if let expr = expr as? ExprLookupNode {
-			let x = try lookup(expr, args)
+            let x = try lookup(expr, args)
 			return x
 		} else if let expr = expr as? ExprCallNode {
-			let fArgs: [Any] = try expr.arguments.map { try execSingle($0, args) as Any }
+			let fArgs: [Any?] = try expr.arguments.map { try execSingle($0, args) }
 			return try execFunc(expr.lookup, fArgs, args)
 		}
 

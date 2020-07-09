@@ -130,7 +130,7 @@ public struct UIElementView: SwiftUI.View {
 								.generalEditorCaption()
 						}
 						.fullWidth()
-						.padding(.bottom, 10)
+						.padding(.bottom, self.get("nopadding") != true ? 10 : 0)
 						.padding(.leading, self.get("nopadding") != true ? 36 : 0)
 						.padding(.trailing, self.get("nopadding") != true ? 36 : 0)
 						.clipped()
@@ -144,12 +144,12 @@ public struct UIElementView: SwiftUI.View {
 							Divider().padding(.leading, 35)
 						}
 					}
-				} else if from.type == .EditorLabel {
+				} else if from.type == .EditorLabel {   
 					HStack(alignment: .center, spacing: 15) {
 						Button(action: {
 							let args: [String: Any?] = [
 								"subject": self.context.item, // self.item,
-								"property": self.viewArguments.get("name"),
+								"edgeType": self.viewArguments.get("name"),
 							]
 							let action = ActionUnlink(self.context, arguments: args)
 							self.context.executeAction(action, with: self.item, using: self.viewArguments)
@@ -232,7 +232,7 @@ public struct UIElementView: SwiftUI.View {
 							context: self.context,
 							viewName: from.getString("viewName"),
 							dataItem: self.item,
-							viewArguments: try? ViewArguments(get("arguments") ?? [:] as [String: Any])
+							viewArguments: try? ViewArguments(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
@@ -258,7 +258,7 @@ public struct UIElementView: SwiftUI.View {
 								}
 							}(),
 							dataItem: self.item,
-							viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [String: Any]())
+                            viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
@@ -272,7 +272,7 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .SecureField {
 				} else if from.type == .Action {
-					ActionButton(action: get("press") ?? Action(context, "noop"))
+					ActionButton(action: get("press") ?? Action(context, "noop"), item: item)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .MemriButton {
 					MemriButton(item: self.item)
@@ -450,17 +450,8 @@ public struct UIElementView: SwiftUI.View {
 		let dataItem: Item? = get("value")
 		let (_, propItem, propName) = from.getType("value", item, viewArguments)
 		let emptyValue = get("empty") ?? "Pick a value"
-
-		var datasource: Datasource
-		if let def = from.properties["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-			do { datasource = try Datasource.fromCVUDefinition(def, viewArguments) }
-			catch {
-				debugHistory.warn("\(error)")
-				datasource = Datasource()
-			}
-		} else {
-			datasource = Datasource()
-		}
+        let query = get("query", type: String.self)
+        let renderer = get("renderer", type: String.self)
 
 		return Picker(
 			item: item,
@@ -469,7 +460,8 @@ public struct UIElementView: SwiftUI.View {
 			emptyValue: emptyValue,
 			propItem: propItem,
 			propName: propName,
-			datasource: datasource
+            renderer: renderer,
+            query: query ?? ""
 		)
 	}
 

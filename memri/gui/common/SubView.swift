@@ -20,10 +20,10 @@ public struct SubView: View {
 	// There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
 	// By only duplicating that line and setting session later, but I am too lazy to do that.
 	// TODO: Refactor
-	public init(context: MemriContext, viewName: String, dataItem: Item,
+	public init(context: MemriContext, viewName: String, dataItem: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-			let args = try ViewArguments.clone(viewArguments)
+            let args = try ViewArguments.clone(viewArguments, item: dataItem)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -49,7 +49,7 @@ public struct SubView: View {
 			)
 
 			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "views")
+			_ = try session.link(view, type: "view")
 
 			proxyMain = try context.createSubContext(session)
 			do { try proxyMain?.updateCascadingView() }
@@ -63,10 +63,10 @@ public struct SubView: View {
 		}
 	}
 
-	public init(context: MemriContext, view: SessionView, dataItem: Item,
+	public init(context: MemriContext, view: SessionView, dataItem: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-			let args = try ViewArguments.clone(viewArguments)
+			let args = try ViewArguments.clone(viewArguments, item: dataItem)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -80,7 +80,7 @@ public struct SubView: View {
 			view.set("viewArguments", args)
 
 			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "views")
+			_ = try session.link(view, type: "view")
 
 			proxyMain = try context.createSubContext(session)
 			try proxyMain?.updateCascadingView()

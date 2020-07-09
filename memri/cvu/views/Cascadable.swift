@@ -89,9 +89,52 @@ public class Cascadable {
 
 		return nil
 	}
+    
+    func cascadeList(_ name: String,
+                     uniqueKey: ([String:Any]) -> String?,
+                     merging: ([String:Any], [String:Any]) -> [String:Any]) -> [[String: Any]] {
+        
+        if let x = localCache[name] as? [[String: Any]] { return x }
+        
+        var result = [Any]()
+        var lut = [String:[String:Any]]()
+
+        for def in cascadeStack {
+            if let list = def[name] as? [[String:Any]] {
+                for item in list {
+                    if let key = uniqueKey(item) {
+                        if let y = lut[key] {
+                            lut[key] = merging(y, item)
+                        }
+                        else {
+                            lut[key] = item
+                            result.append(key)
+                        }
+                    }
+                    else {
+                        result.append(item)
+                    }
+                }
+            }
+        }
+
+        let list = result.map {
+            if let key = $0 as? String, let item = lut[key] {
+                return item
+            }
+            else if let item = $0 as? [String:Any] {
+                return item
+            }
+            return [:]
+        } as [[String:Any]]
+        
+        localCache[name] = list
+        
+        return list
+    }
 
 	// TODO: support deleting items
-	func cascadeList<T>(_ name: String, merge: Bool = true) -> [T] {
+    func cascadeList<T>(_ name: String, merge: Bool = true) -> [T] {
 		if let x = localCache[name] as? [T] { return x }
 
 		var result = [T]()

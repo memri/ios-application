@@ -14,9 +14,7 @@ protocol UniqueString {
 	var uniqueString: String { get }
 }
 
-public class Datasource: Object, UniqueString {
-	let uid = RealmOptional<Int>()
-
+public class Datasource: SchemaItem, UniqueString {
 	/// Primary key used in the realm database of this Item
 	override public static func primaryKey() -> String? {
 		"uid"
@@ -58,7 +56,11 @@ public class Datasource: Object, UniqueString {
 	required init() {
 		super.init()
 	}
-
+    
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+    
 	public class func fromCVUDefinition(_ def: CVUParsedDatasourceDefinition,
 										_ viewArguments: ViewArguments? = nil) throws -> Datasource {
 		func getValue<T>(_ name: String) throws -> T? {
@@ -119,9 +121,9 @@ public class CascadingDatasource: Cascadable, UniqueString {
 
 	func flattened() -> Datasource {
 		Datasource(value: [
-			"query": query as Any,
-			"sortProperty": sortProperty as Any,
-			"sortAscending": sortAscending as Any,
+			"query": query,
+			"sortProperty": sortProperty,
+			"sortAscending": sortAscending,
 		])
 	}
 

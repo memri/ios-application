@@ -52,8 +52,8 @@ struct _RichTextEditor: View {
 							isEditing: editModeBinding,
 							preferredHeight: nil,
 							onTextChanged: { newAttributedString in
-								htmlContentBinding?.wrappedValue = newAttributedString.toHTML()
-								plainContentBinding.wrappedValue = newAttributedString.string
+								self.htmlContentBinding?.wrappedValue = newAttributedString.toHTML()
+								self.plainContentBinding.wrappedValue = newAttributedString.string
                             })
 		}
 	}
@@ -81,23 +81,23 @@ struct RichTextRendererView: View {
 	// CONTENT
 	var contentBinding: Binding<String?> {
 		Binding<String?>(
-			get: { noteItem?.get("content") },
-			set: { noteItem?.set("content", $0) }
+			get: { self.noteItem?.get("content") },
+			set: { self.noteItem?.set("content", $0) }
 		)
 	}
 
 	var plainContentBinding: Binding<String?> {
 		Binding<String?>(
-			get: { noteItem?.get("textContent") },
-			set: { noteItem?.set("textContent", $0) }
+			get: { self.noteItem?.get("textContent") },
+			set: { self.noteItem?.set("textContent", $0) }
 		)
 	}
 
 	// TITLE
 	var titleBinding: Binding<String?> {
 		Binding<String?>(
-			get: { noteItem?.get("title") },
-			set: { noteItem?.set("title", $0) }
+			get: { self.noteItem?.get("title") },
+			set: { self.noteItem?.set("title", $0) }
 		)
 	}
 

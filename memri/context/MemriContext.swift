@@ -67,7 +67,16 @@ public class MemriContext: ObservableObject {
 		}
 	}
 
-	public var closeStack = [() -> Void]() // A stack of close actions of global popups
+	var closeStack = [Binding<PresentationMode>]() // A stack of bindings for the display state of presented popups
+    public func addToStack(_ isPresentedBinding: Binding<PresentationMode>) {
+        closeStack.append(isPresentedBinding)
+    }
+    public func closeLastInStack() {
+        if let lastVisibleIndex = closeStack.lastIndex(where: { $0.wrappedValue.isPresented }) {
+            closeStack[lastVisibleIndex].wrappedValue.dismiss()
+            closeStack = Array(closeStack.prefix(upTo: lastVisibleIndex))
+        }
+    }
 
 	private var scheduled: Bool = false
 	private var scheduledComputeView: Bool = false

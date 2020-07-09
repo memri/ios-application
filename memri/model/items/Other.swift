@@ -113,7 +113,7 @@ extension AuditItem {
 					 appliesTo: [Item]? = nil) throws {
 		self.init()
 		self.date = date ?? self.date
-		self.contents = contents ?? self.contents
+		self.content = content ?? self.content
 		self.action = action ?? self.action
 
 		if let appliesTo = appliesTo {

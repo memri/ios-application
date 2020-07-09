@@ -7,1369 +7,1402 @@
 //  Copyright © 2020 memri. All rights reserved.
 //
 
-import Combine
 import Foundation
-import RealmSwift
+import Combine
 import SwiftUI
+import RealmSwift
 
 public typealias List = RealmSwift.List
 
 // The family of all data item classes
 enum ItemFamily: String, ClassFamily, CaseIterable {
-	case typeAuditItem = "AuditItem"
-	case typeCVUStoredDefinition = "CVUStoredDefinition"
-	case typeCompany = "Company"
-	case typeCreativeWork = "CreativeWork"
-	case typeDigitalDocument = "DigitalDocument"
-	case typeComment = "Comment"
-	case typeNote = "Note"
-	case typeMediaObject = "MediaObject"
-	case typeAudio = "Audio"
-	case typePhoto = "Photo"
-	case typeVideo = "Video"
-	case typeDiet = "Diet"
-	case typeDownloader = "Downloader"
-	case typeEdge = "Edge"
-	case typeFile = "File"
-	case typeImporter = "Importer"
-	case typeImporterRun = "ImporterRun"
-	case typeIndexer = "Indexer"
-	case typeIndexerRun = "IndexerRun"
-	case typeLabel = "Label"
-	case typeLocation = "Location"
-	case typeAddress = "Address"
-	case typeCountry = "Country"
-	case typeMedicalCondition = "MedicalCondition"
-	case typeNavigationItem = "NavigationItem"
-	case typeOnlineProfile = "OnlineProfile"
-	case typePerson = "Person"
-	case typePhoneNumber = "PhoneNumber"
-	case typePublicKey = "PublicKey"
-	case typeSession = "Session"
-	case typeSessionView = "SessionView"
-	case typeSessions = "Sessions"
-	case typeSetting = "Setting"
-	case typeSyncState = "SyncState"
-	case typeViewArguments = "ViewArguments"
-	case typeWebsite = "Website"
-	case typeDatasource = "Datasource"
-	case typeUserState = "UserState"
+    case typeAuditItem = "AuditItem"
+    case typeCVUStoredDefinition = "CVUStoredDefinition"
+    case typeCompany = "Company"
+    case typeCreativeWork = "CreativeWork"
+    case typeDigitalDocument = "DigitalDocument"
+    case typeComment = "Comment"
+    case typeNote = "Note"
+    case typeMediaObject = "MediaObject"
+    case typeAudio = "Audio"
+    case typePhoto = "Photo"
+    case typeVideo = "Video"
+    case typeDatasource = "Datasource"
+    case typeDevice = "Device"
+    case typeDiet = "Diet"
+    case typeDownloader = "Downloader"
+    case typeEdge = "Edge"
+    case typeFile = "File"
+    case typeImporter = "Importer"
+    case typeImporterRun = "ImporterRun"
+    case typeIndexer = "Indexer"
+    case typeIndexerRun = "IndexerRun"
+    case typeLabel = "Label"
+    case typeLocation = "Location"
+    case typeAddress = "Address"
+    case typeCountry = "Country"
+    case typeMedicalCondition = "MedicalCondition"
+    case typeNavigationItem = "NavigationItem"
+    case typeOnlineProfile = "OnlineProfile"
+    case typePerson = "Person"
+    case typePhoneNumber = "PhoneNumber"
+    case typePublicKey = "PublicKey"
+    case typeSession = "Session"
+    case typeSessionView = "SessionView"
+    case typeSessions = "Sessions"
+    case typeSetting = "Setting"
+    case typeSyncState = "SyncState"
+    case typeUserState = "UserState"
+    case typeViewArguments = "ViewArguments"
+    case typeWebsite = "Website"
 
-	static var discriminator: Discriminator = ._type
+    static var discriminator: Discriminator = ._type
 
-	var backgroundColor: Color {
-		switch self {
-		case .typeAuditItem: return Color(hex: "#93c47d")
-		case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
-		case .typeCompany: return Color(hex: "#93c47d")
-		case .typeCreativeWork: return Color(hex: "#93c47d")
-		case .typeDigitalDocument: return Color(hex: "#93c47d")
-		case .typeComment: return Color(hex: "#93c47d")
-		case .typeNote: return Color(hex: "#93c47d")
-		case .typeMediaObject: return Color(hex: "#93c47d")
-		case .typeAudio: return Color(hex: "#93c47d")
-		case .typePhoto: return Color(hex: "#93c47d")
-		case .typeVideo: return Color(hex: "#93c47d")
-		case .typeDiet: return Color(hex: "#93c47d")
-		case .typeDownloader: return Color(hex: "#93c47d")
-		case .typeEdge: return Color(hex: "#93c47d")
-		case .typeFile: return Color(hex: "#93c47d")
-		case .typeImporter: return Color(hex: "#93c47d")
-		case .typeImporterRun: return Color(hex: "#93c47d")
-		case .typeIndexer: return Color(hex: "#93c47d")
-		case .typeIndexerRun: return Color(hex: "#93c47d")
-		case .typeLabel: return Color(hex: "#93c47d")
-		case .typeLocation: return Color(hex: "#93c47d")
-		case .typeAddress: return Color(hex: "#93c47d")
-		case .typeCountry: return Color(hex: "#93c47d")
-		case .typeMedicalCondition: return Color(hex: "#93c47d")
-		case .typeNavigationItem: return Color(hex: "#93c47d")
-		case .typeOnlineProfile: return Color(hex: "#93c47d")
-		case .typePerson: return Color(hex: "#93c47d")
-		case .typePhoneNumber: return Color(hex: "#93c47d")
-		case .typePublicKey: return Color(hex: "#93c47d")
-		case .typeSession: return Color(hex: "#93c47d")
-		case .typeSessionView: return Color(hex: "#93c47d")
-		case .typeSessions: return Color(hex: "#93c47d")
-		case .typeSetting: return Color(hex: "#93c47d")
-		case .typeSyncState: return Color(hex: "#93c47d")
-		case .typeViewArguments: return Color(hex: "#93c47d")
-		case .typeDatasource: return Color(hex: "#93c47d")
-		case .typeUserState: return Color(hex: "#93c47d")
-		case .typeWebsite: return Color(hex: "#93c47d")
-		}
-	}
+    var backgroundColor: Color {
+        switch self {
+        case .typeAuditItem: return Color(hex: "#93c47d")
+        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
+        case .typeCompany: return Color(hex: "#93c47d")
+        case .typeCreativeWork: return Color(hex: "#93c47d")
+        case .typeDigitalDocument: return Color(hex: "#93c47d")
+        case .typeComment: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
+        case .typeMediaObject: return Color(hex: "#93c47d")
+        case .typeAudio: return Color(hex: "#93c47d")
+        case .typePhoto: return Color(hex: "#93c47d")
+        case .typeVideo: return Color(hex: "#93c47d")
+        case .typeDatasource: return Color(hex: "#93c47d")
+        case .typeDevice: return Color(hex: "#93c47d")
+        case .typeDiet: return Color(hex: "#37af1c")
+        case .typeDownloader: return Color(hex: "#93c47d")
+        case .typeEdge: return Color(hex: "#93c47d")
+        case .typeFile: return Color(hex: "#93c47d")
+        case .typeImporter: return Color(hex: "#93c47d")
+        case .typeImporterRun: return Color(hex: "#93c47d")
+        case .typeIndexer: return Color(hex: "#93c47d")
+        case .typeIndexerRun: return Color(hex: "#93c47d")
+        case .typeLabel: return Color(hex: "#93c47d")
+        case .typeLocation: return Color(hex: "#93c47d")
+        case .typeAddress: return Color(hex: "#93c47d")
+        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeMedicalCondition: return Color(hex: "#3dc8e2")
+        case .typeNavigationItem: return Color(hex: "#93c47d")
+        case .typeOnlineProfile: return Color(hex: "#93c47d")
+        case .typePerson: return Color(hex: "#3a5eb2")
+        case .typePhoneNumber: return Color(hex: "#eccf23")
+        case .typePublicKey: return Color(hex: "#93c47d")
+        case .typeSession: return Color(hex: "#93c47d")
+        case .typeSessionView: return Color(hex: "#93c47d")
+        case .typeSessions: return Color(hex: "#93c47d")
+        case .typeSetting: return Color(hex: "#93c47d")
+        case .typeSyncState: return Color(hex: "#93c47d")
+        case .typeUserState: return Color(hex: "#93c47d")
+        case .typeViewArguments: return Color(hex: "#93c47d")
+        case .typeWebsite: return Color(hex: "#3d57e2")
+        }
+    }
 
-	var foregroundColor: Color {
-		switch self {
-		case .typeAuditItem: return Color(hex: "#fff")
-		case .typeCVUStoredDefinition: return Color(hex: "#fff")
-		case .typeCompany: return Color(hex: "#fff")
-		case .typeCreativeWork: return Color(hex: "#fff")
-		case .typeDigitalDocument: return Color(hex: "#fff")
-		case .typeComment: return Color(hex: "#fff")
-		case .typeNote: return Color(hex: "#fff")
-		case .typeMediaObject: return Color(hex: "#fff")
-		case .typeAudio: return Color(hex: "#fff")
-		case .typePhoto: return Color(hex: "#fff")
-		case .typeVideo: return Color(hex: "#fff")
-		case .typeDiet: return Color(hex: "#fff")
-		case .typeDownloader: return Color(hex: "#fff")
-		case .typeEdge: return Color(hex: "#fff")
-		case .typeFile: return Color(hex: "#fff")
-		case .typeImporter: return Color(hex: "#fff")
-		case .typeImporterRun: return Color(hex: "#fff")
-		case .typeIndexer: return Color(hex: "#fff")
-		case .typeIndexerRun: return Color(hex: "#fff")
-		case .typeLabel: return Color(hex: "#fff")
-		case .typeLocation: return Color(hex: "#fff")
-		case .typeAddress: return Color(hex: "#fff")
-		case .typeCountry: return Color(hex: "#fff")
-		case .typeMedicalCondition: return Color(hex: "#fff")
-		case .typeNavigationItem: return Color(hex: "#fff")
-		case .typeOnlineProfile: return Color(hex: "#fff")
-		case .typePerson: return Color(hex: "#fff")
-		case .typePhoneNumber: return Color(hex: "#fff")
-		case .typePublicKey: return Color(hex: "#fff")
-		case .typeSession: return Color(hex: "#fff")
-		case .typeSessionView: return Color(hex: "#fff")
-		case .typeSessions: return Color(hex: "#fff")
-		case .typeSetting: return Color(hex: "#fff")
-		case .typeSyncState: return Color(hex: "#fff")
-		case .typeViewArguments: return Color(hex: "#fff")
-		case .typeDatasource: return Color(hex: "#93c47d")
-		case .typeUserState: return Color(hex: "#93c47d")
-		case .typeWebsite: return Color(hex: "#fff")
-		}
-	}
+    var foregroundColor: Color {
+        switch self {
+        case .typeAuditItem: return Color(hex: "#ffffff")
+        case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
+        case .typeCompany: return Color(hex: "#ffffff")
+        case .typeCreativeWork: return Color(hex: "#ffffff")
+        case .typeDigitalDocument: return Color(hex: "#ffffff")
+        case .typeComment: return Color(hex: "#ffffff")
+        case .typeNote: return Color(hex: "#ffffff")
+        case .typeMediaObject: return Color(hex: "#ffffff")
+        case .typeAudio: return Color(hex: "#ffffff")
+        case .typePhoto: return Color(hex: "#ffffff")
+        case .typeVideo: return Color(hex: "#ffffff")
+        case .typeDatasource: return Color(hex: "#ffffff")
+        case .typeDevice: return Color(hex: "#ffffff")
+        case .typeDiet: return Color(hex: "#ffffff")
+        case .typeDownloader: return Color(hex: "#ffffff")
+        case .typeEdge: return Color(hex: "#ffffff")
+        case .typeFile: return Color(hex: "#ffffff")
+        case .typeImporter: return Color(hex: "#ffffff")
+        case .typeImporterRun: return Color(hex: "#ffffff")
+        case .typeIndexer: return Color(hex: "#ffffff")
+        case .typeIndexerRun: return Color(hex: "#ffffff")
+        case .typeLabel: return Color(hex: "#ffffff")
+        case .typeLocation: return Color(hex: "#ffffff")
+        case .typeAddress: return Color(hex: "#ffffff")
+        case .typeCountry: return Color(hex: "#ffffff")
+        case .typeMedicalCondition: return Color(hex: "#ffffff")
+        case .typeNavigationItem: return Color(hex: "#ffffff")
+        case .typeOnlineProfile: return Color(hex: "#ffffff")
+        case .typePerson: return Color(hex: "#ffffff")
+        case .typePhoneNumber: return Color(hex: "#ffffff")
+        case .typePublicKey: return Color(hex: "#ffffff")
+        case .typeSession: return Color(hex: "#ffffff")
+        case .typeSessionView: return Color(hex: "#ffffff")
+        case .typeSessions: return Color(hex: "#ffffff")
+        case .typeSetting: return Color(hex: "#ffffff")
+        case .typeSyncState: return Color(hex: "#ffffff")
+        case .typeUserState: return Color(hex: "#ffffff")
+        case .typeViewArguments: return Color(hex: "#ffffff")
+        case .typeWebsite: return Color(hex: "#ffffff")
+        }
+    }
 
-	func getPrimaryKey() -> String {
-		getType().primaryKey() ?? ""
-	}
+    func getPrimaryKey() -> String {
+        return self.getType().primaryKey() ?? ""
+    }
 
-	func getType() -> AnyObject.Type {
-		switch self {
-		case .typeAuditItem: return AuditItem.self
-		case .typeCVUStoredDefinition: return CVUStoredDefinition.self
-		case .typeCompany: return Company.self
-		case .typeCreativeWork: return CreativeWork.self
-		case .typeDigitalDocument: return DigitalDocument.self
-		case .typeComment: return Comment.self
-		case .typeNote: return Note.self
-		case .typeMediaObject: return MediaObject.self
-		case .typeAudio: return Audio.self
-		case .typePhoto: return Photo.self
-		case .typeVideo: return Video.self
-		case .typeDiet: return Diet.self
-		case .typeDownloader: return Downloader.self
-		case .typeEdge: return Edge.self
-		case .typeFile: return File.self
-		case .typeImporter: return Importer.self
-		case .typeImporterRun: return ImporterRun.self
-		case .typeIndexer: return Indexer.self
-		case .typeIndexerRun: return IndexerRun.self
-		case .typeLabel: return Label.self
-		case .typeLocation: return Location.self
-		case .typeAddress: return Address.self
-		case .typeCountry: return Country.self
-		case .typeMedicalCondition: return MedicalCondition.self
-		case .typeNavigationItem: return NavigationItem.self
-		case .typeOnlineProfile: return OnlineProfile.self
-		case .typePerson: return Person.self
-		case .typePhoneNumber: return PhoneNumber.self
-		case .typePublicKey: return PublicKey.self
-		case .typeSession: return Session.self
-		case .typeSessionView: return SessionView.self
-		case .typeSessions: return Sessions.self
-		case .typeSetting: return Setting.self
-		case .typeSyncState: return SyncState.self
-		case .typeViewArguments: return ViewArguments.self
-		case .typeDatasource: return Datasource.self
-		case .typeUserState: return UserState.self
-		case .typeWebsite: return Website.self
-		}
-	}
+    func getType() -> AnyObject.Type {
+        switch self {
+        case .typeAuditItem: return AuditItem.self
+        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
+        case .typeCompany: return Company.self
+        case .typeCreativeWork: return CreativeWork.self
+        case .typeDigitalDocument: return DigitalDocument.self
+        case .typeComment: return Comment.self
+        case .typeNote: return Note.self
+        case .typeMediaObject: return MediaObject.self
+        case .typeAudio: return Audio.self
+        case .typePhoto: return Photo.self
+        case .typeVideo: return Video.self
+        case .typeDatasource: return Datasource.self
+        case .typeDevice: return Device.self
+        case .typeDiet: return Diet.self
+        case .typeDownloader: return Downloader.self
+        case .typeEdge: return Edge.self
+        case .typeFile: return File.self
+        case .typeImporter: return Importer.self
+        case .typeImporterRun: return ImporterRun.self
+        case .typeIndexer: return Indexer.self
+        case .typeIndexerRun: return IndexerRun.self
+        case .typeLabel: return Label.self
+        case .typeLocation: return Location.self
+        case .typeAddress: return Address.self
+        case .typeCountry: return Country.self
+        case .typeMedicalCondition: return MedicalCondition.self
+        case .typeNavigationItem: return NavigationItem.self
+        case .typeOnlineProfile: return OnlineProfile.self
+        case .typePerson: return Person.self
+        case .typePhoneNumber: return PhoneNumber.self
+        case .typePublicKey: return PublicKey.self
+        case .typeSession: return Session.self
+        case .typeSessionView: return SessionView.self
+        case .typeSessions: return Sessions.self
+        case .typeSetting: return Setting.self
+        case .typeSyncState: return SyncState.self
+        case .typeUserState: return UserState.self
+        case .typeViewArguments: return ViewArguments.self
+        case .typeWebsite: return Website.self
+        }
+    }
 }
 
 /// Item is the baseclass for all of the data classes.
 public class SchemaItem: Object, Codable, Identifiable {
-	/// The unique identifier of the Item
-	let uid = RealmOptional<Int>()
-	/// Object describing syncing information about this object like loading state, versioning,
-	/// etc.
-	@objc dynamic var syncState: SyncState? = SyncState()
-	/// The last version loaded from the server.
-	@objc dynamic var version: Int = 0
-	/// Boolean whether the Item has been deleted.
-	@objc dynamic var deleted: Bool = false
-	/// Last access date of the Item.
-	@objc dynamic var dateAccessed: Date?
-	/// Creation date of the Item.
-	@objc dynamic var dateCreated: Date?
-	/// Last modification date of the Item.
-	@objc dynamic var dateModified: Date?
-	/// The identifier of an external source.
-	/// A collection of all edges this Item is connected to.
-	let allEdges = List<Edge>()
-	@objc dynamic var externalID: String? = nil
-	/// A description of the item.
-	@objc dynamic var itemDescription: String? = nil
-	/// Boolean whether the Item has been starred.
-	@objc dynamic var starred: Bool = false
+    /// A collection of all edges this Item is connected to.
+    let allEdges = List<Edge>()
+    /// Last access date of the Item.
+    @objc dynamic var dateAccessed:Date? = nil
+    /// Creation date of the Item.
+    @objc dynamic var dateCreated:Date? = nil
+    /// Last modification date of the Item.
+    @objc dynamic var dateModified:Date? = nil
+    /// Boolean whether the Item has been deleted.
+    @objc dynamic var deleted:Bool = false
+    /// The identifier of an external source.
+    @objc dynamic var externalID:String? = nil
+    /// A description of the item.
+    @objc dynamic var itemDescription:String? = nil
+    /// Boolean whether the Item has been starred.
+    @objc dynamic var starred:Bool = false
+    /// Object describing syncing information about this object like loading state, versioning,
+    /// etc.
+    @objc dynamic var syncState:SyncState? = SyncState()
+    /// The last version loaded from the server.
+    @objc dynamic var version:Int = 1
+    /// The unique identifier of the Item set by the pod.
+    let uid = RealmOptional<Int>()
 
-	public func superDecode(from decoder: Decoder) throws {
-		decodeEdges(decoder, "allEdges", self as! Item)
-		dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
-		dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
-		dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
-		deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-		externalID = try decoder.decodeIfPresent("externalID") ?? externalID
-		itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
-		starred = try decoder.decodeIfPresent("starred") ?? starred
-		syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-		version = try decoder.decodeIfPresent("version") ?? version
-		uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
-	}
+    public func superDecode(from decoder: Decoder) throws {
+            decodeEdges(decoder, "allEdges", self as! Item)
+            dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
+            dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
+            dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
+            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            externalID = try decoder.decodeIfPresent("externalID") ?? externalID
+            itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
+            starred = try decoder.decodeIfPresent("starred") ?? starred
+            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+            version = try decoder.decodeIfPresent("version") ?? version
+            uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
+    }
 
-	private enum CodingKeys: String, CodingKey {
-		case allEdges, dateAccessed, dateCreated, dateModified, deleted, externalID,
-			itemDescription, starred, syncState, version, uid
-	}
+    private enum CodingKeys: String, CodingKey {
+        case allEdges, dateAccessed, dateCreated, dateModified, deleted, externalID,
+            itemDescription, starred, syncState, version, uid
+    }
 }
 
 /// TBD
-public class AuditItem: Item {
-	/// Date of death.
-	@objc dynamic var date: Date?
-	/// The actual text content of a creativeWork.
-	@objc dynamic var contents: String?
-	/// TBD
-	@objc dynamic var action: String?
+public class AuditItem : Item {
+    /// Date of death.
+    @objc dynamic var date:Date? = nil
+    /// TBD
+    @objc dynamic var content:String? = nil
+    /// TBD
+    @objc dynamic var action:String? = nil
 
-	/// TBD
-	var appliesTo: [Item]? {
-		edges("appliesTo")?.itemsArray()
-	}
+    /// TBD
+    var appliesTo: [Item]? {
+        edges("appliesTo")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            date = try decoder.decodeIfPresent("date") ?? date
+            content = try decoder.decodeIfPresent("content") ?? content
+            action = try decoder.decodeIfPresent("action") ?? action
 
-		jsonErrorHandling(decoder) {
-			date = try decoder.decodeIfPresent("date") ?? date
-			contents = try decoder.decodeIfPresent("contents") ?? contents
-			action = try decoder.decodeIfPresent("action") ?? action
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class CVUStoredDefinition: Item {
-	/// TBD
-	@objc dynamic var definition: String?
-	/// TBD
-	@objc dynamic var domain: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var query: String?
-	/// TBD
-	@objc dynamic var selector: String?
-	/// TBD
-	@objc dynamic var type: String?
+public class CVUStoredDefinition : Item {
+    /// TBD
+    @objc dynamic var definition:String? = nil
+    /// TBD
+    @objc dynamic var domain:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var query:String? = nil
+    /// TBD
+    @objc dynamic var selector:String? = nil
+    /// TBD
+    @objc dynamic var type:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            definition = try decoder.decodeIfPresent("definition") ?? definition
+            domain = try decoder.decodeIfPresent("domain") ?? domain
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            selector = try decoder.decodeIfPresent("selector") ?? selector
+            type = try decoder.decodeIfPresent("type") ?? type
 
-		jsonErrorHandling(decoder) {
-			definition = try decoder.decodeIfPresent("definition") ?? definition
-			domain = try decoder.decodeIfPresent("domain") ?? domain
-			name = try decoder.decodeIfPresent("name") ?? name
-			query = try decoder.decodeIfPresent("query") ?? query
-			selector = try decoder.decodeIfPresent("selector") ?? selector
-			type = try decoder.decodeIfPresent("type") ?? type
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A business corporation.
-public class Company: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class Company : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// The most generic kind of creative work, including books, movies, photographs, software
 /// programs, etc.
-public class CreativeWork: Item {
-	/// An abstract is a short description that summarizes a CreativeWork.
-	@objc dynamic var abstract: String?
-	/// Date of first broadcast/publication.
-	@objc dynamic var datePublished: Date?
-	/// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-	/// typically delimited by commas.
-	@objc dynamic var keywords: String?
-	/// A license document that applies to this content, typically indicated by URL.
-	@objc dynamic var license: String?
-	/// A text that belongs to this item.
-	@objc dynamic var text: String?
+public class CreativeWork : Item {
+    /// An abstract is a short description that summarizes a CreativeWork.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// A license document that applies to this content, typically indicated by URL.
+    @objc dynamic var license:String? = nil
+    /// A text that belongs to this item.
+    @objc dynamic var text:String? = nil
 
-	/// A media object that encodes this CreativeWork. This property is a synonym for encoding.
-	var associatedMedia: Results<MediaObject>? {
-		edges("associatedMedia")?.items(type: MediaObject.self)
-	}
+    /// A media object that encodes this CreativeWork. This property is a synonym for encoding.
+    var associatedMedia: Results<MediaObject>? {
+        edges("associatedMedia")?.items(type:MediaObject.self)
+    }
 
-	/// An audio object.
-	var audio: Results<Audio>? {
-		edges("audio")?.items(type: Audio.self)
-	}
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
 
-	/// A citation or reference to another creative work, such as another publication, web page,
-	/// scholarly article, etc.
-	var citation: Results<CreativeWork>? {
-		edges("citation")?.items(type: CreativeWork.self)
-	}
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
 
-	/// The location depicted or described in the content. For example, the location in a
-	/// photograph or painting.
-	var contentLocation: Results<Location>? {
-		edges("contentLocation")?.items(type: Location.self)
-	}
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
 
-	/// The location where the CreativeWork was created, which may not be the same as the
-	/// location depicted in the CreativeWork.
-	var locationCreated: Results<Location>? {
-		edges("locationCreated")?.items(type: Location.self)
-	}
+    /// The location where the CreativeWork was created, which may not be the same as the
+    /// location depicted in the CreativeWork.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
 
-	/// A video object.
-	var video: Results<Video>? {
-		edges("video")?.items(type: Video.self)
-	}
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
 
-	/// The author of this content or rating.
-	var writtenBy: Results<Person>? {
-		edges("writtenBy")?.items(type: Person.self)
-	}
+    /// The author of this content or rating.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            license = try decoder.decodeIfPresent("license") ?? license
+            text = try decoder.decodeIfPresent("text") ?? text
 
-		jsonErrorHandling(decoder) {
-			abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-			datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-			keywords = try decoder.decodeIfPresent("keywords") ?? keywords
-			license = try decoder.decodeIfPresent("license") ?? license
-			text = try decoder.decodeIfPresent("text") ?? text
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// An electronic file or document.
-public class DigitalDocument: Item {
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+public class DigitalDocument : Item {
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
 
-		jsonErrorHandling(decoder) {
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A comment.
-public class Comment: Item {
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+public class Comment : Item {
+    /// TBD
+    @objc dynamic var content:String? = nil
+    /// TBD
+    @objc dynamic var textContent:String? = nil
 
-		jsonErrorHandling(decoder) {
-			try self.superDecode(from: decoder)
-		}
-	}
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A file containing a note.
-public class Note: Item {
-	/// TBD
-	@objc dynamic var title: String?
-	/// TBD
-	@objc dynamic var content: String?
-	/// TBD
-	@objc dynamic var textContent: String?
+public class Note : Item {
+    /// TBD
+    @objc dynamic var title:String? = nil
+    /// TBD
+    @objc dynamic var content:String? = nil
+    /// TBD
+    @objc dynamic var textContent:String? = nil
 
-	/// A comment on an item - for example, a comment on a blog post.
-	var comments: Results<Comment>? {
-		edges("comments")?.items(type: Comment.self)
-	}
+    /// TBD
+    var comment: Results<Comment>? {
+        edges("comment")?.items(type:Comment.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
 
-		jsonErrorHandling(decoder) {
-			title = try decoder.decodeIfPresent("title") ?? title
-			content = try decoder.decodeIfPresent("content") ?? content
-			textContent = try decoder.decodeIfPresent("textContent") ?? textContent
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A media object, such as an image, video, or audio object embedded in a web page or a
 /// downloadable dataset i.e. DataDownload. Note that a creative work may have many media objects
 /// associated with it on the same web page. For example, a page about a single song (MusicRecording)
 /// may have a music video (VideoObject), and a high and low bandwidth audio stream (2 AudioObject's).
-public class MediaObject: Item {
-	/// The endTime of something. For a reserved event or service, the time that it is expected
-	/// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
-	/// book from January to December. For media, including audio and video, it's the time offset of the
-	/// end of a clip within a larger file.
-	@objc dynamic var endTime: Date?
-	/// Location of the actual bytes of the media object, for example the image file or video
-	/// file.
-	@objc dynamic var fileLocation: String?
-	/// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
-	/// KB will be assumed.
-	@objc dynamic var fileSize: String?
-	/// The startTime of something. For a reserved event or service, the time that it is
-	/// expected to start. For actions that span a period of time, when the action was performed. e.g.
-	/// John wrote a book from January to December. For media, including audio and video, it's the time
-	/// offset of the start of a clip within a larger file.
-	@objc dynamic var startTime: Date?
-	/// The bitrate of the media object.
-	let bitrate = RealmOptional<Int>()
-	/// TBD
-	let duration = RealmOptional<Int>()
-	/// The height of the item.
-	let height = RealmOptional<Int>()
-	/// The width of the item.
-	let width = RealmOptional<Int>()
+public class MediaObject : Item {
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+    /// Location of the actual bytes of the media object, for example the image file or video
+    /// file.
+    @objc dynamic var fileLocation:String? = nil
+    /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
+    /// KB will be assumed.
+    @objc dynamic var fileSize:String? = nil
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The bitrate of the media object.
+    let bitrate = RealmOptional<Int>()
+    /// TBD
+    let duration = RealmOptional<Int>()
+    /// The height of the item.
+    let height = RealmOptional<Int>()
+    /// The width of the item.
+    let width = RealmOptional<Int>()
 
-	/// TBD
-	var file: File? {
-		edge("file")?.target(type: File.self)
-	}
+    /// TBD
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
 
-	/// TBD
-	var includes: [Item]? {
-		edges("includes")?.itemsArray()
-	}
+    /// TBD
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
+            fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
 
-		jsonErrorHandling(decoder) {
-			endTime = try decoder.decodeIfPresent("endTime") ?? endTime
-			fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
-			fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-			startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-			bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-			duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
-			height.value = try decoder.decodeIfPresent("height") ?? height.value
-			width.value = try decoder.decodeIfPresent("width") ?? width.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// An audio file.
-public class Audio: Item {
-	/// The caption for this object. For downloadable machine formats (closed caption, subtitles
-	/// etc.) use MediaObject and indicate the encodingFormat.
-	@objc dynamic var caption: String?
-	/// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
-	@objc dynamic var transcript: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// The bitrate of the media object.
-	let bitrate = RealmOptional<Int>()
-	/// TBD
-	let duration = RealmOptional<Int>()
+public class Audio : Item {
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The bitrate of the media object.
+    let bitrate = RealmOptional<Int>()
+    /// TBD
+    let duration = RealmOptional<Int>()
 
-	/// TBD
-	var file: File? {
-		edge("file")?.target(type: File.self)
-	}
+    /// TBD
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
 
-	/// TBD
-	var includes: [Item]? {
-		edges("includes")?.itemsArray()
-	}
+    /// TBD
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            name = try decoder.decodeIfPresent("name") ?? name
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
-		jsonErrorHandling(decoder) {
-			caption = try decoder.decodeIfPresent("caption") ?? caption
-			transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-			name = try decoder.decodeIfPresent("name") ?? name
-			bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-			duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// An image file.
-public class Photo: Item {
-	/// The caption for this object. For downloadable machine formats (closed caption, subtitles
-	/// etc.) use MediaObject and indicate the encodingFormat.
-	@objc dynamic var caption: String?
-	/// Exif data for this object.
-	@objc dynamic var exifData: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// The width of the item.
-	let width = RealmOptional<Int>()
-	/// The height of the item.
-	let height = RealmOptional<Int>()
+public class Photo : Item {
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// Exif data for this object.
+    @objc dynamic var exifData:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The width of the item.
+    let width = RealmOptional<Int>()
+    /// The height of the item.
+    let height = RealmOptional<Int>()
 
-	/// Thumbnail image for an image or video.
-	var thumbnail: File? {
-		edge("thumbnail")?.target(type: File.self)
-	}
+    /// Thumbnail image for an image or video.
+    var thumbnail: File? {
+        edge("thumbnail")?.target(type:File.self)
+    }
 
-	/// TBD
-	var file: File? {
-		edge("file")?.target(type: File.self)
-	}
+    /// TBD
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
 
-	/// TBD
-	var includes: [Item]? {
-		edges("includes")?.itemsArray()
-	}
+    /// TBD
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
+            name = try decoder.decodeIfPresent("name") ?? name
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
 
-		jsonErrorHandling(decoder) {
-			caption = try decoder.decodeIfPresent("caption") ?? caption
-			exifData = try decoder.decodeIfPresent("exifData") ?? exifData
-			name = try decoder.decodeIfPresent("name") ?? name
-			width.value = try decoder.decodeIfPresent("width") ?? width.value
-			height.value = try decoder.decodeIfPresent("height") ?? height.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A video file.
-public class Video: Item {
-	/// The caption for this object. For downloadable machine formats (closed caption, subtitles
-	/// etc.) use MediaObject and indicate the encodingFormat.
-	@objc dynamic var caption: String?
-	/// Exif data for this object.
-	@objc dynamic var exifData: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// The width of the item.
-	let width = RealmOptional<Int>()
-	/// The height of the item.
-	let height = RealmOptional<Int>()
-	/// TBD
-	let duration = RealmOptional<Int>()
+public class Video : Item {
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// Exif data for this object.
+    @objc dynamic var exifData:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The width of the item.
+    let width = RealmOptional<Int>()
+    /// The height of the item.
+    let height = RealmOptional<Int>()
+    /// TBD
+    let duration = RealmOptional<Int>()
 
-	/// Thumbnail image for an image or video.
-	var thumbnail: Results<File>? {
-		edges("thumbnail")?.items(type: File.self)
-	}
+    /// Thumbnail image for an image or video.
+    var thumbnail: Results<File>? {
+        edges("thumbnail")?.items(type:File.self)
+    }
 
-	/// TBD
-	var file: File? {
-		edge("file")?.target(type: File.self)
-	}
+    /// TBD
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
 
-	/// TBD
-	var includes: [Item]? {
-		edges("includes")?.itemsArray()
-	}
+    /// TBD
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
+            name = try decoder.decodeIfPresent("name") ?? name
+            width.value = try decoder.decodeIfPresent("width") ?? width.value
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
-		jsonErrorHandling(decoder) {
-			caption = try decoder.decodeIfPresent("caption") ?? caption
-			exifData = try decoder.decodeIfPresent("exifData") ?? exifData
-			name = try decoder.decodeIfPresent("name") ?? name
-			width.value = try decoder.decodeIfPresent("width") ?? width.value
-			height.value = try decoder.decodeIfPresent("height") ?? height.value
-			duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            try self.superDecode(from: decoder)
+        }
+    }
+}
 
-			try self.superDecode(from: decoder)
-		}
-	}
+/// A business corporation.
+public class Device : Item {
+    /// TBD
+    @objc dynamic var deviceID:String? = nil
+    /// TBD
+    @objc dynamic var make:String? = nil
+    /// TBD
+    @objc dynamic var manufacturer:String? = nil
+    /// TBD
+    @objc dynamic var model:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var dateAquired:Date? = nil
+    /// TBD
+    @objc dynamic var dateLost:Date? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            deviceID = try decoder.decodeIfPresent("deviceID") ?? deviceID
+            make = try decoder.decodeIfPresent("make") ?? make
+            manufacturer = try decoder.decodeIfPresent("manufacturer") ?? manufacturer
+            model = try decoder.decodeIfPresent("model") ?? model
+            name = try decoder.decodeIfPresent("name") ?? name
+            dateAquired = try decoder.decodeIfPresent("dateAquired") ?? dateAquired
+            dateLost = try decoder.decodeIfPresent("dateLost") ?? dateLost
+
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Diet: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// TBD
-	@objc dynamic var additions: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class Diet : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// TBD
+    @objc dynamic var addition:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            addition = try decoder.decodeIfPresent("addition") ?? addition
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			additions = try decoder.decodeIfPresent("additions") ?? additions
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Downloader: Item {
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+public class Downloader : Item {
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
 
-		jsonErrorHandling(decoder) {
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Edge: Object, Codable {
-	/// TBD
-	@objc dynamic var type: String? = nil
-	/// TBD
-	@objc dynamic var targetItemType: String? = nil
-	/// TBD
-	@objc dynamic var sourceItemType: String? = nil
-	/// TBD
-	@objc dynamic var label: String? = nil
-	/// Object describing syncing information about this object like loading state, versioning,
-	/// etc.
-	@objc dynamic var syncState: SyncState? = SyncState()
-	/// Boolean whether the Item has been deleted.
-	@objc dynamic var deleted: Bool = false
-	/// The last version loaded from the server.
-	@objc dynamic var version: Int = 0
-	/// TBD
-	let targetItemID = RealmOptional<Int>()
-	/// TBD
-	let sourceItemID = RealmOptional<Int>()
-	/// TBD
-	let sequence = RealmOptional<Int>()
+public class Edge : Object, Codable {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// TBD
+    @objc dynamic var targetItemType:String? = nil
+    /// TBD
+    @objc dynamic var sourceItemType:String? = nil
+    /// Object describing syncing information about this object like loading state, versioning,
+    /// etc.
+    @objc dynamic var syncState:SyncState? = SyncState()
+    /// Boolean whether the Item has been deleted.
+    @objc dynamic var deleted:Bool = false
+    /// The last version loaded from the server.
+    @objc dynamic var version:Int = 1
+    /// TBD
+    @objc dynamic var edgeLabel:String? = nil
+    /// TBD
+    let targetItemID = RealmOptional<Int>()
+    /// TBD
+    let sourceItemID = RealmOptional<Int>()
+    /// TBD
+    let sequence = RealmOptional<Int>()
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
+            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
+            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            version = try decoder.decodeIfPresent("version") ?? version
+            edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
+            targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
+            sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			label = try decoder.decodeIfPresent("label") ?? label
-			syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-			deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-			version = try decoder.decodeIfPresent("version") ?? version
-			targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
-			targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
-			sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
-
-			if let info: [String: AnyCodable] = try decoder.decodeIfPresent("target") {
-				guard let itemType = info["_type"]?.value as? String else {
-					throw "Invalid JSON, no _type specified for target: \(info)"
-				}
-
-				if let type = ItemFamily(rawValue: itemType)?.getType() as? Object.Type {
-					var values = [String: Any]()
-					for (key, value) in info { values[key] = value.value }
-
-					let item = try Cache.createItem(type, values: values)
-					if let uid = item["uid"] as? Int {
-						targetItemType = itemType
-						targetItemID.value = uid
-					} else {
-						throw "Unable to create target item in edge"
-					}
-				} else {
-					// TODO: error handling
-				}
-			}
-		}
-	}
+            try parseTargetDict(try decoder.decodeIfPresent("target"))
+        }
+    }
 }
 
 /// TBD
-public class File: Item {
-	/// The uri property represents the Uniform Resource Identifier (URI) of a resource.
-	@objc dynamic var uri: String?
+public class File : Item {
+    /// The uri property represents the Uniform Resource Identifier (URI) of a resource.
+    @objc dynamic var uri:String? = nil
 
-	/// TBD
-	var usedBy: [Item]? {
-		edges("usedBy")?.itemsArray()
-	}
+    /// TBD
+    var usedBy: [Item]? {
+        edges("usedBy")?.itemsArray()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            uri = try decoder.decodeIfPresent("uri") ?? uri
 
-		jsonErrorHandling(decoder) {
-			uri = try decoder.decodeIfPresent("uri") ?? uri
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Importer: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var dataType: String?
-	/// TBD
-	@objc dynamic var icon: String?
-	/// TBD
-	@objc dynamic var bundleImage: String?
+public class Importer : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var dataType:String? = nil
+    /// TBD
+    @objc dynamic var icon:String? = nil
+    /// TBD
+    @objc dynamic var bundleImage:String? = nil
 
-	/// TBD
-	var importerRuns: Results<ImporterRun>? {
-		edges("importerRuns")?.items(type: ImporterRun.self)
-	}
+    /// TBD
+    var importerRun: Results<ImporterRun>? {
+        edges("importerRun")?.items(type:ImporterRun.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            dataType = try decoder.decodeIfPresent("dataType") ?? dataType
+            icon = try decoder.decodeIfPresent("icon") ?? icon
+            bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-			dataType = try decoder.decodeIfPresent("dataType") ?? dataType
-			icon = try decoder.decodeIfPresent("icon") ?? icon
-			bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class ImporterRun: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var dataType: String?
+public class ImporterRun : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var dataType:String? = nil
 
-	/// TBD
-	var importer: Importer? {
-		edge("importer")?.target(type: Importer.self)
-	}
+    /// TBD
+    var importer: Importer? {
+        edge("importer")?.target(type:Importer.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            dataType = try decoder.decodeIfPresent("dataType") ?? dataType
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-			dataType = try decoder.decodeIfPresent("dataType") ?? dataType
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// An indexer enhances your personal data by inferring facts over existing data and adding those
 /// to the database.
-public class Indexer: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var icon: String?
-	/// TBD
-	@objc dynamic var query: String?
-	/// TBD
-	@objc dynamic var bundleImage: String?
-	/// TBD
-	@objc dynamic var runDestination: String?
+public class Indexer : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var icon:String? = nil
+    /// TBD
+    @objc dynamic var query:String? = nil
+    /// TBD
+    @objc dynamic var bundleImage:String? = nil
+    /// TBD
+    @objc dynamic var runDestination:String? = nil
 
-	/// TBD
-	var indexerRuns: Results<IndexerRun>? {
-		edges("indexerRuns")?.items(type: IndexerRun.self)
-	}
+    /// TBD
+    var indexerRun: Results<IndexerRun>? {
+        edges("indexerRun")?.items(type:IndexerRun.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            icon = try decoder.decodeIfPresent("icon") ?? icon
+            query = try decoder.decodeIfPresent("query") ?? query
+            bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
+            runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-			icon = try decoder.decodeIfPresent("icon") ?? icon
-			query = try decoder.decodeIfPresent("query") ?? query
-			bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
-			runDestination = try decoder.decodeIfPresent("runDestination") ?? runDestination
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A run of a certain Indexer.
-public class IndexerRun: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var query: String?
-	/// TBD
-	let progress = RealmOptional<Int>()
+public class IndexerRun : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var query:String? = nil
+    /// TBD
+    let progress = RealmOptional<Int>()
 
-	/// TBD
-	var indexer: Indexer? {
-		edge("indexer")?.target(type: Indexer.self)
-	}
+    /// TBD
+    var indexer: Indexer? {
+        edge("indexer")?.target(type:Indexer.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            query = try decoder.decodeIfPresent("query") ?? query
+            progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-			query = try decoder.decodeIfPresent("query") ?? query
-			progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Label: Item {
-	/// TBD
-	@objc dynamic var comment: String?
-	/// The color of this thing.
-	@objc dynamic var color: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class Label : Item {
+    /// The color of this thing.
+    @objc dynamic var color:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	/// TBD
-	var appliesTo: [Item]? {
-		edges("appliesTo")?.itemsArray()
-	}
+    /// TBD
+    var comment: Results<Comment>? {
+        edges("comment")?.items(type:Comment.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    /// TBD
+    var appliesTo: [Item]? {
+        edges("appliesTo")?.itemsArray()
+    }
 
-		jsonErrorHandling(decoder) {
-			comment = try decoder.decodeIfPresent("comment") ?? comment
-			color = try decoder.decodeIfPresent("color") ?? color
-			name = try decoder.decodeIfPresent("name") ?? name
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            color = try decoder.decodeIfPresent("color") ?? color
+            name = try decoder.decodeIfPresent("name") ?? name
 
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// The location of something.
-public class Location: Item {
-	/// TBD
-	let latitude = RealmOptional<Double>()
-	/// TBD
-	let longitude = RealmOptional<Double>()
+public class Location : Item {
+    /// TBD
+    let latitude = RealmOptional<Double>()
+    /// TBD
+    let longitude = RealmOptional<Double>()
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
+            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
 
-		jsonErrorHandling(decoder) {
-			latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
-			longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A postal address.
-public class Address: Item {
-	/// A city or town.
-	@objc dynamic var city: String?
-	/// The postal code. For example, 94043.
-	@objc dynamic var postalCode: String?
-	/// A state or province of a country.
-	@objc dynamic var state: String?
-	/// The street address. For example, 1600 Amphitheatre Pkwy.
-	@objc dynamic var street: String?
-	/// TBD
-	@objc dynamic var type: String?
+public class Address : Item {
+    /// A city or town.
+    @objc dynamic var city:String? = nil
+    /// The postal code. For example, 94043.
+    @objc dynamic var postalCode:String? = nil
+    /// A state or province of a country.
+    @objc dynamic var state:String? = nil
+    /// The street address. For example, 1600 Amphitheatre Pkwy.
+    @objc dynamic var street:String? = nil
+    /// TBD
+    @objc dynamic var type:String? = nil
 
-	/// TBD
-	var country: Country? {
-		edge("country")?.target(type: Country.self)
-	}
+    /// TBD
+    var country: Country? {
+        edge("country")?.target(type:Country.self)
+    }
 
-	/// The location of for example where the event is happening, an organization is located, or
-	/// where an action takes place.
-	var location: Location? {
-		edge("location")?.target(type: Location.self)
-	}
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Location? {
+        edge("location")?.target(type:Location.self)
+    }
+    
+    // This value is set if the location was automatically filled.
+    // It is used to check if the lookup hash (based on the address string) has changed - if so lookup will be done again
+    @objc dynamic var locationWasAutomaticLookupWithHash: String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            city = try decoder.decodeIfPresent("city") ?? city
+            postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
+            state = try decoder.decodeIfPresent("state") ?? state
+            street = try decoder.decodeIfPresent("street") ?? street
+            type = try decoder.decodeIfPresent("type") ?? type
 
-		jsonErrorHandling(decoder) {
-			city = try decoder.decodeIfPresent("city") ?? city
-			postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
-			state = try decoder.decodeIfPresent("state") ?? state
-			street = try decoder.decodeIfPresent("street") ?? street
-			type = try decoder.decodeIfPresent("type") ?? type
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Country: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class Country : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	/// TBD
-	var flag: File? {
-		edge("flag")?.target(type: File.self)
-	}
+    /// TBD
+    var flag: File? {
+        edge("flag")?.target(type:File.self)
+    }
 
-	/// The location of for example where the event is happening, an organization is located, or
-	/// where an action takes place.
-	var location: Location? {
-		edge("location")?.target(type: Location.self)
-	}
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Location? {
+        edge("location")?.target(type:Location.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class MedicalCondition: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class MedicalCondition : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class NavigationItem: Item {
-	/// TBD
-	@objc dynamic var title: String?
-	/// TBD
-	@objc dynamic var view: String?
-	/// TBD
-	@objc dynamic var type: String?
-	/// TBD
-	let sequence = RealmOptional<Int>()
+public class NavigationItem : Item {
+    /// TBD
+    @objc dynamic var title:String? = nil
+    /// TBD
+    @objc dynamic var sessionName:String? = nil
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// TBD
+    let sequence = RealmOptional<Int>()
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            sessionName = try decoder.decodeIfPresent("sessionName") ?? sessionName
+            type = try decoder.decodeIfPresent("type") ?? type
+            sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
-		jsonErrorHandling(decoder) {
-			title = try decoder.decodeIfPresent("title") ?? title
-			view = try decoder.decodeIfPresent("view") ?? view
-			type = try decoder.decodeIfPresent("type") ?? type
-			sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class OnlineProfile: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// TBD
-	@objc dynamic var handle: String?
+public class OnlineProfile : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// TBD
+    @objc dynamic var handle:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            handle = try decoder.decodeIfPresent("handle") ?? handle
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			handle = try decoder.decodeIfPresent("handle") ?? handle
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// A person (alive, dead, undead, or fictional).
-public class SchemaPerson: Item {
-	/// Date of birth.
-	@objc dynamic var birthDate: Date?
-	/// Email address.
-	@objc dynamic var email: String?
-	/// Date of death.
-	@objc dynamic var deathDate: Date?
-	/// Family name. In the U.S., the last name of an Person. This can be used along with
-	/// givenName instead of the name property.
-	@objc dynamic var firstName: String?
-	/// Given name. In the U.S., the first name of a Person. This can be used along with
-	/// familyName instead of the name property.
-	@objc dynamic var lastName: String?
-	/// The sexual orientation of a person.
-	@objc dynamic var gender: String?
-	/// The gender of a person.
-	@objc dynamic var sexualOrientation: String?
-	/// The height of the item.
-	let height = RealmOptional<Int>()
-	/// TBD
-	let shoulderWidth = RealmOptional<Double>()
-	/// TBD
-	let armLength = RealmOptional<Double>()
-//	/// TBD
-//	let age = RealmOptional<Double>()
+public class SchemaPerson : Item {
+    /// Date of birth.
+    @objc dynamic var birthDate:Date? = nil
+    /// Email address.
+    @objc dynamic var email:String? = nil
+    /// Date of death.
+    @objc dynamic var deathDate:Date? = nil
+    /// Family name. In the U.S., the last name of an Person. This can be used along with
+    /// givenName instead of the name property.
+    @objc dynamic var firstName:String? = nil
+    /// Given name. In the U.S., the first name of a Person. This can be used along with
+    /// familyName instead of the name property.
+    @objc dynamic var lastName:String? = nil
+    /// The sexual orientation of a person.
+    @objc dynamic var gender:String? = nil
+    /// The gender of a person.
+    @objc dynamic var sexualOrientation:String? = nil
+    /// The height of the item.
+    let height = RealmOptional<Int>()
+    /// TBD
+    let shoulderWidth = RealmOptional<Double>()
+    /// TBD
+    let armLength = RealmOptional<Double>()
 
-	/// Physical address of the event or place.
-	var addresses: Results<Address>? {
-		edges("addresses")?.items(type: Address.self)
-	}
+    /// Physical address of the event or place.
+    var address: Results<Address>? {
+        edges("address")?.items(type:Address.self)
+    }
 
-	/// The place where the person was born.
-	var birthPlace: Location? {
-		edge("birthPlace")?.target(type: Location.self)
-	}
+    /// The place where the person was born.
+    var birthPlace: Location? {
+        edge("birthPlace")?.target(type:Location.self)
+    }
 
-	/// The place where the person died.
-	var deathPlace: Location? {
-		edge("deathPlace")?.target(type: Location.self)
-	}
+    /// The place where the person died.
+    var deathPlace: Location? {
+        edge("deathPlace")?.target(type:Location.self)
+    }
 
-	/// TBD
-	var profilePicture: Photo? {
-		edge("profilePicture")?.target(type: Photo.self)
-	}
+    /// TBD
+    var profilePicture: Photo? {
+        edge("profilePicture")?.target(type:Photo.self)
+    }
 
-	/// A relation between two persons.
-	var relationships: Results<Person>? {
-		edges("relationships")?.items(type: Person.self)
-	}
+    /// A relation between two persons.
+    var relationship: Results<Person>? {
+        edges("relationship")?.items(type:Person.self)
+    }
 
-	/// TBD
-	var phoneNumbers: Results<PhoneNumber>? {
-		edges("phoneNumbers")?.items(type: PhoneNumber.self)
-	}
+    /// A phone number.
+    var hasPhoneNumber: Results<PhoneNumber>? {
+        edges("hasPhoneNumber")?.items(type:PhoneNumber.self)
+    }
 
-	/// TBD
-	var websites: Results<Website>? {
-		edges("websites")?.items(type: Website.self)
-	}
+    /// TBD
+    var website: Results<Website>? {
+        edges("website")?.items(type:Website.self)
+    }
 
-	/// TBD
-	var companies: Results<Company>? {
-		edges("companies")?.items(type: Company.self)
-	}
+    /// TBD
+    var company: Results<Company>? {
+        edges("company")?.items(type:Company.self)
+    }
 
-	/// TBD
-	var publicKeys: Results<PublicKey>? {
-		edges("publicKeys")?.items(type: PublicKey.self)
-	}
+    /// TBD
+    var publicKey: Results<PublicKey>? {
+        edges("publicKey")?.items(type:PublicKey.self)
+    }
 
-	/// TBD
-	var onlineProfiles: Results<OnlineProfile>? {
-		edges("onlineProfiles")?.items(type: OnlineProfile.self)
-	}
+    /// TBD
+    var onlineProfile: Results<OnlineProfile>? {
+        edges("onlineProfile")?.items(type:OnlineProfile.self)
+    }
 
-	/// TBD
-	var diets: Results<Diet>? {
-		edges("diets")?.items(type: Diet.self)
-	}
+    /// TBD
+    var diet: Results<Diet>? {
+        edges("diet")?.items(type:Diet.self)
+    }
 
-	/// TBD
-	var medicalConditions: Results<MedicalCondition>? {
-		edges("medicalConditions")?.items(type: MedicalCondition.self)
-	}
+    /// TBD
+    var medicalCondition: Results<MedicalCondition>? {
+        edges("medicalCondition")?.items(type:MedicalCondition.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            birthDate = try decoder.decodeIfPresent("birthDate") ?? birthDate
+            email = try decoder.decodeIfPresent("email") ?? email
+            deathDate = try decoder.decodeIfPresent("deathDate") ?? deathDate
+            firstName = try decoder.decodeIfPresent("firstName") ?? firstName
+            lastName = try decoder.decodeIfPresent("lastName") ?? lastName
+            gender = try decoder.decodeIfPresent("gender") ?? gender
+            sexualOrientation = try decoder.decodeIfPresent("sexualOrientation") ?? sexualOrientation
+            height.value = try decoder.decodeIfPresent("height") ?? height.value
+            shoulderWidth.value = try decoder.decodeIfPresent("shoulderWidth") ?? shoulderWidth.value
+            armLength.value = try decoder.decodeIfPresent("armLength") ?? armLength.value
 
-		jsonErrorHandling(decoder) {
-			birthDate = try decoder.decodeIfPresent("birthDate") ?? birthDate
-			email = try decoder.decodeIfPresent("email") ?? email
-			deathDate = try decoder.decodeIfPresent("deathDate") ?? deathDate
-			firstName = try decoder.decodeIfPresent("firstName") ?? firstName
-			lastName = try decoder.decodeIfPresent("lastName") ?? lastName
-			gender = try decoder.decodeIfPresent("gender") ?? gender
-			sexualOrientation = try decoder.decodeIfPresent("sexualOrientation") ?? sexualOrientation
-			height.value = try decoder.decodeIfPresent("height") ?? height.value
-			shoulderWidth.value = try decoder.decodeIfPresent("shoulderWidth") ?? shoulderWidth.value
-			armLength.value = try decoder.decodeIfPresent("armLength") ?? armLength.value
-//			age.value = try decoder.decodeIfPresent("age") ?? age.value
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class PhoneNumber: Item {
-	/// A phone number.
-	@objc dynamic var phoneNumber: String?
-	/// TBD
-	@objc dynamic var type: String?
+public class PhoneNumber : Item {
+    /// A phone number with an area code.
+    @objc dynamic var phoneNumber:String? = nil
+    /// TBD
+    @objc dynamic var type:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
+            type = try decoder.decodeIfPresent("type") ?? type
 
-		jsonErrorHandling(decoder) {
-			phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
-			type = try decoder.decodeIfPresent("type") ?? type
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class PublicKey: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// TBD
-	@objc dynamic var key: String?
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class PublicKey : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// TBD
+    @objc dynamic var key:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            key = try decoder.decodeIfPresent("key") ?? key
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			key = try decoder.decodeIfPresent("key") ?? key
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class SchemaSession: Item {
-	/// TBD
-	@objc dynamic var currentViewIndex: Int = 0
-	/// TBD
-	@objc dynamic var editMode: Bool = false
-	/// The name of the item.
-	@objc dynamic var name: String?
-	/// TBD
-	@objc dynamic var showContextPane: Bool = false
-	/// TBD
-	@objc dynamic var showFilterPanel: Bool = false
+public class SchemaSession : Item {
+    /// TBD
+    @objc dynamic var currentViewIndex:Int = 0
+    /// TBD
+    @objc dynamic var editMode:Bool = false
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// TBD
+    @objc dynamic var showContextPane:Bool = false
+    /// TBD
+    @objc dynamic var showFilterPanel:Bool = false
 
-	/// TBD
-	var screenshot: File? {
-		edge("screenshot")?.target(type: File.self)
-	}
+    /// TBD
+    var screenshot: File? {
+        edge("screenshot")?.target(type:File.self)
+    }
 
-	/// TBD
-	var views: Results<SessionView>? {
-		edges("views")?.sorted(byKeyPath: "sequence").items(type: SessionView.self)
-	}
+    /// TBD
+    var views: Results<SessionView>? {
+        edges("view")?.sorted(byKeyPath: "sequence").items(type:SessionView.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
+            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
+            name = try decoder.decodeIfPresent("name") ?? name
+            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
+            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
 
-		jsonErrorHandling(decoder) {
-			currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-			editMode = try decoder.decodeIfPresent("editMode") ?? editMode
-			name = try decoder.decodeIfPresent("name") ?? name
-			showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
-			showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class SessionView: Item {
-	/// The name of the item.
-	@objc dynamic var name: String?
+public class SessionView : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
 
-	/// TBD
-	var datasource: Datasource? {
-		edge("datasource")?.target(type: Datasource.self)
-	}
+    /// TBD
+    var datasource: Datasource? {
+        edge("datasource")?.target(type:Datasource.self)
+    }
 
-	/// TBD
-	var session: Session? {
-		edge("session")?.target(type: Session.self)
-	}
+    /// TBD
+    var session: Session? {
+        edge("session")?.target(type:Session.self)
+    }
 
-	/// TBD
-	var userState: UserState? {
-		edge("userState")?.target(type: UserState.self)
-	}
+    /// TBD
+    var userState: UserState? {
+        edge("userState")?.target(type:UserState.self)
+    }
 
-	/// TBD
-	var viewDefinition: CVUStoredDefinition? {
-		edge("viewDefinition")?.target(type: CVUStoredDefinition.self)
-	}
+    /// TBD
+    var viewDefinition: CVUStoredDefinition? {
+        edge("viewDefinition")?.target(type:CVUStoredDefinition.self)
+    }
 
-	/// TBD
-	var viewArguments: ViewArguments? {
-		edge("viewArguments")?.target(type: ViewArguments.self)
-	}
+    /// TBD
+    var viewArguments: ViewArguments? {
+        edge("viewArguments")?.target(type:ViewArguments.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
 
-		jsonErrorHandling(decoder) {
-			name = try decoder.decodeIfPresent("name") ?? name
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class SchemaSessions: Item {
-	/// TBD
-	@objc dynamic var currentSessionIndex: Int = 0
+public class SchemaSessions : Item {
+    /// TBD
+    @objc dynamic var currentSessionIndex:Int = 0
 
-	/// TBD
-	var sessions: Results<Session>? {
-		edges("sessions")?.sorted(byKeyPath: "sequence").items(type: Session.self)
-	}
+    /// TBD
+    var sessions: Results<Session>? {
+        edges("session")?.sorted(byKeyPath: "sequence").items(type:Session.self)
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
 
-		jsonErrorHandling(decoder) {
-			currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
-public class Setting: Item {
-	/// TBD
-	@objc dynamic var key: String?
-	/// TBD
-	@objc dynamic var json: String?
+public class Setting : Item {
+    /// TBD
+    @objc dynamic var key:String? = nil
+    /// TBD
+    @objc dynamic var json:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            key = try decoder.decodeIfPresent("key") ?? key
+            json = try decoder.decodeIfPresent("json") ?? json
 
-		jsonErrorHandling(decoder) {
-			key = try decoder.decodeIfPresent("key") ?? key
-			json = try decoder.decodeIfPresent("json") ?? json
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 /// TBD
 public class SyncState: Object, Codable {
-	let updatedFields = List<String>()
-	/// TBD
-	@objc dynamic var isPartiallyLoaded: Bool = false
-	/// TBD
-	@objc dynamic var actionNeeded: String? = nil
-	/// TBD
-	@objc dynamic var changedInThisSession: Bool = false
+    let updatedFields = List<String>()
+    /// TBD
+    @objc dynamic var isPartiallyLoaded:Bool = false
+    /// TBD
+    @objc dynamic var actionNeeded:String? = nil
+    /// TBD
+    @objc dynamic var changedInThisSession:Bool = false
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
-
-		jsonErrorHandling(decoder) {
-			isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-			actionNeeded = try decoder.decodeIfPresent("actionNeeded") ?? actionNeeded
-			changedInThisSession = try decoder.decodeIfPresent("changedInThisSession") ?? changedInThisSession
-		}
-	}
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
+            actionNeeded = try decoder.decodeIfPresent("actionNeeded") ?? actionNeeded
+            changedInThisSession = try decoder.decodeIfPresent("changedInThisSession") ?? changedInThisSession
+        }
+    }
 }
 
 /// TBD
-public class Website: Item {
-	/// TBD
-	@objc dynamic var type: String?
-	/// URL of the item.
-	@objc dynamic var url: String?
+public class Website : Item {
+    /// TBD
+    @objc dynamic var type:String? = nil
+    /// URL of the item.
+    @objc dynamic var url:String? = nil
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+            url = try decoder.decodeIfPresent("url") ?? url
 
-		jsonErrorHandling(decoder) {
-			type = try decoder.decodeIfPresent("type") ?? type
-			url = try decoder.decodeIfPresent("url") ?? url
-
-			try self.superDecode(from: decoder)
-		}
-	}
+            try self.superDecode(from: decoder)
+        }
+    }
 }
 
 func dataItemListToArray(_ object: Any) -> [Item] {
-	var collection: [Item] = []
+    var collection: [Item] = []
 
-	if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Comment> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<MediaObject> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Downloader> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Edge> { return list.itemsArray() }
-	else if let list = object as? Results<File> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Importer> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<ImporterRun> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Location> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<MedicalCondition> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<NavigationItem> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
-	else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
+    if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Comment> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<MediaObject> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Device> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Downloader> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Edge> { return list.itemsArray() }
+    else if let list = object as? Results<File> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Importer> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<ImporterRun> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Location> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<MedicalCondition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<NavigationItem> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
 
-	return collection
+    return collection
 }

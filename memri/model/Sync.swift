@@ -86,7 +86,7 @@ class Sync {
 			] as? [String: String])
 
 			audititem.uid.value = try Cache.incrementUID()
-			audititem.contents = String(data: data, encoding: .utf8) ?? ""
+			audititem.content = String(data: data, encoding: .utf8) ?? ""
 			audititem.action = "query"
 			audititem.date = Date()
 
@@ -124,63 +124,65 @@ class Sync {
 	}
 
 	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
-		debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
-
 		// Only execute queries once per session until we fix syncing
-		if recentQueries[datasource.uniqueString] != true {
-			// Call out to the pod with the query
-			podAPI.query(datasource) { error, items in
-				if let items = items {
-					if let cache = self.cache {
-						self.recentQueries[datasource.uniqueString] = true
+        guard recentQueries[datasource.uniqueString] != true else {
+            return
+        }
+        
+        debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
+        
+        // Call out to the pod with the query
+        podAPI.query(datasource) { error, items in
+            if let items = items {
+                if let cache = self.cache {
+                    self.recentQueries[datasource.uniqueString] = true
 
-						// Find resultset that belongs to this query
-						let resultSet = cache.getResultSet(datasource)
-						//                    if resultSet.count == 1 { return }
+                    // Find resultset that belongs to this query
+                    let resultSet = cache.getResultSet(datasource)
+                    //                    if resultSet.count == 1 { return }
 
-						// The result that we'll add to resultset
-						var result: [Item] = []
+                    // The result that we'll add to resultset
+                    var result: [Item] = []
 
-						for item in items {
-							// TODO: handle sync errors
-							do {
-								//                                #warning("Remove this when the new backend is in place")
-								//                                if !["Indexer", "IndexerRun", "Importer", "ImporterRun"].contains(item.genericType) {
-								let cachedItem = try cache.addToCache(item)
-								if cachedItem.syncState?.actionNeeded != "deleted" {
-									// Add item to result
-									result.append(cachedItem)
-								}
-								// Ignore items marked for deletion
-								//                                }
-							} catch {
-								print("\(error)")
-							}
-						}
+                    for item in items {
+                        // TODO: handle sync errors
+                        do {
+                            //                                #warning("Remove this when the new backend is in place")
+                            //                                if !["Indexer", "IndexerRun", "Importer", "ImporterRun"].contains(item.genericType) {
+                            let cachedItem = try cache.addToCache(item)
+                            if cachedItem.syncState?.actionNeeded != "deleted" {
+                                // Add item to result
+                                result.append(cachedItem)
+                            }
+                            // Ignore items marked for deletion
+                            //                                }
+                        } catch {
+                            print("\(error)")
+                        }
+                    }
 
-						// Find added items
-						// TODO: this could be skipped by re-executing resultSet.load()
-						for item in resultSet.items {
-							if item.syncState?.actionNeeded == "create" {
-								result.append(item)
-							}
-						}
+                    // Find added items
+                    // TODO: this could be skipped by re-executing resultSet.load()
+                    for item in resultSet.items {
+                        if item.syncState?.actionNeeded == "create" {
+                            result.append(item)
+                        }
+                    }
 
-						// Update resultset with the new results
-						resultSet.forceItemsUpdate(result)
+                    // Update resultset with the new results
+                    resultSet.forceItemsUpdate(result)
 
-						// We no longer need to process this log item
-						realmWriteIfAvailable(self.realm) {
-							audititem.setSyncStateActionNeeded("")
-						}
-						// TODO: consider deleting the log item
-					}
-				} else {
-					// Ignore errors (we'll retry next time)
-					// TODO: consider resorting so that it is not retried too often
-				}
-			}
-		}
+                    // We no longer need to process this log item
+                    realmWriteIfAvailable(self.realm) {
+                        audititem.setSyncStateActionNeeded("")
+                    }
+                    // TODO: consider deleting the log item
+                }
+            } else {
+                // Ignore errors (we'll retry next time)
+                // TODO: consider resorting so that it is not retried too often
+            }
+        }
 	}
 
 	/// Schedule a syncing round
@@ -209,21 +211,23 @@ class Sync {
 		}
 	}
 
-	private func syncToPod() {
+	public func syncToPod() {
 		syncing = true
 
-		var found = false
+		var found = 0
 		var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
 		var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
 
 		// Items
 		for itemType in ItemFamily.allCases {
+            if itemType == .typeUserState { continue }
+            
 			if let type = itemType.getType() as? SchemaItem.Type {
 				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
 				for item in items {
 					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
 						itemQueue[action]?.append(item)
-						found = true
+						found += 1
 					}
 				}
 			}
@@ -234,7 +238,7 @@ class Sync {
 		for edge in edges {
 			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
 				edgeQueue[action]?.append(edge)
-				found = true
+				found += 1
 			}
 		}
 
@@ -243,18 +247,30 @@ class Sync {
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
 						if let item = item as? SchemaItem {
-							item.syncState?.actionNeeded = ""
-							item.syncState?.updatedFields.removeAll()
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
 						} else if let item = item as? Edge {
-							item.syncState?.actionNeeded = ""
-							item.syncState?.updatedFields.removeAll()
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
 						}
 					}
 				}
 			}
 		}
 
-		if found {
+		if found > 0 {
+            debugHistory.info("Syncing to pod with \(found) changes")
+            
 			do {
 				try podAPI.sync(
 					createItems: itemQueue["create"],
@@ -266,13 +282,17 @@ class Sync {
 				) { (error) -> Void in
 					self.syncing = false
 
-					if error == nil {
+					if let error = error {
+                        debugHistory.error("Could not sync to pod: \(error)")
+                        self.schedule(long: true)
+                    }
+                    else {
 						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
 						markAsDone(itemQueue)
 						markAsDone(edgeQueue)
-					}
 
-					self.schedule()
+						self.schedule()
+					}
 				}
 			} catch {
 				debugHistory.error("Could not sync to pod: \(error)")

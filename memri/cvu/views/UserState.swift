@@ -23,12 +23,14 @@ public class UserState: SchemaItem, CVUToString {
 		persist()
 	}
 
-	private func storeInCache(_ dict: [String: Any]) throws {
-		try InMemoryObjectCache.set("UserState:\(uid.value != nil ? "\(uid)" : cacheID)", dict)
+	private func storeInCache(_ dict: [String: Any?]) throws {
+		let id = uid.value != nil ? "\(uid.value ?? -99)" : cacheID
+		return try InMemoryObjectCache.set("UserState:\(id)", dict)
 	}
 
-	private func getFromCache() -> [String: Any]? {
-		InMemoryObjectCache.get("UserState:\(uid.value != nil ? "\(uid)" : cacheID)") as? [String: Any]
+	private func getFromCache() -> [String: Any?]? {
+		let id = uid.value != nil ? "\(uid.value ?? -99)" : cacheID
+		return InMemoryObjectCache.get("UserState:\(id)") as? [String: Any?]
 	}
 
 	func get<T>(_ propName: String, type _: T.Type = T.self) -> T? {
@@ -55,8 +57,8 @@ public class UserState: SchemaItem, CVUToString {
 		if persist { scheduleWrite() }
 	}
 
-	private func transformToDict() throws -> [String: Any] {
-		if state == "" { return [String: Any]() }
+	private func transformToDict() throws -> [String: Any?] {
+		if state == "" { return [String: Any?]() }
 		let stored: [String: AnyCodable] = try unserialize(state) ?? [:]
 		var dict = [String: Any]()
 
@@ -105,8 +107,12 @@ public class UserState: SchemaItem, CVUToString {
 					for (key, value) in x {
 						if let value = value as? Item {
 							values[key] = ["_type": value.genericType,
-										   "_uid": value.uid.value as Any,
+                                           "_uid": value.uid.value,
 										   "___": true]
+                        } else if let value = value as? [Item] {
+                            values[key] = AnyCodable(value.map { ["_type": $0.genericType,
+                                                                  "_uid": $0.uid.value,
+                                                                  "___": true] })
 						} else if let value = value as? AnyCodable {
 							values[key] = value
 						} else {
@@ -135,7 +141,7 @@ public class UserState: SchemaItem, CVUToString {
 		return x
 	}
 
-	public func asDict() -> [String: Any] {
+	public func asDict() -> [String: Any?] {
 		if let cached = getFromCache() {
 			return cached
 		} else {
@@ -150,7 +156,7 @@ public class UserState: SchemaItem, CVUToString {
 
 	public func merge(_ state: UserState) throws {
 		let dict = asDict().merging(state.asDict(), uniquingKeysWith: { _, new in new })
-		try storeInCache(dict as [String: Any])
+		try storeInCache(dict as [String: Any?])
 		persist()
 	}
 
@@ -160,19 +166,29 @@ public class UserState: SchemaItem, CVUToString {
 
 	public class func clone(_ viewArguments: ViewArguments? = nil,
 							_ values: [String: Any]? = nil,
-							managed: Bool = true) throws -> UserState {
+							managed: Bool = true,
+                            item: Item? = nil) throws -> UserState {
 		var dict = viewArguments?.asDict() ?? [:]
 		if let values = values {
 			dict.merge(values, uniquingKeysWith: { _, r in r })
 		}
 
-		if managed { return try UserState.fromDict(dict) }
+        if managed { return try UserState.fromDict(dict, item: item) }
 		else { return try UserState(dict) }
 	}
 
-	public class func fromDict(_ dict: [String: Any]) throws -> UserState {
+	public class func fromDict(_ dict: [String: Any], item: Item? = nil) throws -> UserState {
 		let userState = try Cache.createItem(UserState.self, values: [:])
-		try InMemoryObjectCache.set("UserState:\(userState.uid)", dict)
+        
+        // Resolve expressions
+        var dct = dict
+        for (key, value) in dct {
+            if let expr = value as? Expression {
+                dct[key] = try expr.execute(ViewArguments([".": item]))
+            }
+        }
+        
+        try userState.storeInCache(dct)
 		userState.persist()
 		return userState
 	}
