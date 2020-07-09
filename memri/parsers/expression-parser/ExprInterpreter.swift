@@ -135,7 +135,7 @@ class ExprInterpreter {
 			let result = try execSingle(expr.exp, args)
 			return IP.evaluateNumber(result)
 		} else if let expr = expr as? ExprLookupNode {
-			let x = try lookup(expr, args)
+            let x = try lookup(expr, args)
 			return x
 		} else if let expr = expr as? ExprCallNode {
 			let fArgs: [Any] = try expr.arguments.map { try execSingle($0, args) as Any }

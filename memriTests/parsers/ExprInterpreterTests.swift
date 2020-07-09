@@ -140,6 +140,23 @@ class ExprInterpreterTests: XCTestCase {
 
 		XCTAssertEqual(result as! Bool, false)
 	}
+    
+    func testNegationWithLookup() throws {
+        let snippet = "!.label"
+
+        let tree = try parse(snippet)
+        let interpreter = ExprInterpreter(
+            tree,
+            { lookup, _ in
+                return nil
+            },
+            { lookup, args, _ in
+                return true
+            })
+        let result = try interpreter.execute()
+
+        XCTAssertEqual(result as! Bool, false)
+    }
 
 	func testStringEscaping() throws {
 		let snippet = "'asdadsasd\\'asdasd'"
