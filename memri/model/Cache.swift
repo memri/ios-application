@@ -372,7 +372,7 @@ public class Cache {
 					// Try to merge without overwriting local changes
 					if !item.safeMerge(cachedItem) {
 						// Merging failed
-						throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+                        throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? "")"
 					}
 				}
 

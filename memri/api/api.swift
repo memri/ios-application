@@ -226,7 +226,7 @@ public class PodAPI {
 			"_type": item.genericType,
             "uid": item.uid
 		]
-        print("\(item.genericType) \(item.uid.value ?? 0)")
+//        print("\(item.genericType) \(item.uid.value ?? 0)")
 
 		let properties = item.objectSchema.properties
         let exclude = ["syncState", "deleted", "allEdges", "uid"]
