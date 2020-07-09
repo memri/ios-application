@@ -366,7 +366,7 @@ Person[] {
         addItem {
             arguments: {
                 template: {
-                    type: Person
+                    _type: Person
                 }
             }
         }

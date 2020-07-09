@@ -84,9 +84,10 @@ IndexerRun {
             showTitle: false
             dividers: false
             
-            HStack{
+            HStack {
                 align: center
                 padding: 20 0 20 0
+                show: {{ .indexer.icon or .indexer.bundleImage }}
                 
                 Image {
                     /** todo, this padding is hacky but necessary now*/
@@ -102,7 +103,7 @@ IndexerRun {
                 
                 Image {
                     align: center
-                    show: {{!.indexer.icon and .indexer.bundleImage}}
+                    show: {{!.indexer.icon}}
                     bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
                     resizable: fill
@@ -116,11 +117,14 @@ IndexerRun {
 
         info {
             showTitle: false
+            dividers: false
             
             VStack {
                 Divider
                 EditorRow {
                     title: "Name"
+                    readOnly: true
+                    
                     Text {
                         text: {{.name}}
                     }
@@ -201,7 +205,7 @@ IndexerRun[] {
         addItem {
             arguments {
                 template {
-                    type: IndexerRunInstance
+                    _type: IndexerRunInstance
                     name: {{.name}}
                 }
             }

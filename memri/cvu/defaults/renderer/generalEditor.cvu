@@ -57,6 +57,7 @@
     
     dates {
         showTitle: false
+        dividers: false
         
         Text {
             alignment: center

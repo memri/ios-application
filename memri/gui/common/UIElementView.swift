@@ -117,6 +117,8 @@ public struct UIElementView: SwiftUI.View {
 				} else if from.type == .EditorRow {
 					VStack(spacing: 0) {
 						VStack(alignment: .leading, spacing: 4) {
+                            #warning("readWrite mode is not implemented")
+                            
 							if self.has("title") && self.get("nopadding") != true {
 								Text(LocalizedStringKey(self.get("title") ?? ""
 										.camelCaseToWords()
