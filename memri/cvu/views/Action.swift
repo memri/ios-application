@@ -1109,13 +1109,13 @@ class ActionRunIndexerRun: Action, ActionExec {
 			// TODO: indexerInstance items should have been automatically created already by now
 
 			func getAndRunIndexerRun(_ tries: Int) {
-				if tries > 20 {
+				if tries > 5 {
 					return
 				}
 				let uid: Int? = run.get("uid")
 				if run.syncState?.actionNeeded == "create" {
                     context.cache.sync.syncToPod()
-					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+					DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
 						getAndRunIndexerRun(tries + 1)
 					}
 				} else {
@@ -1141,17 +1141,18 @@ class ActionRunIndexerRun: Action, ActionExec {
 			print("polling indexerInstance")
 			self.context.podAPI.get(uid) { error, data in
 				if let updatedInstance = data as? IndexerRun {
+                    
+                    do{
+                        try self.context.cache.addToCache(updatedInstance)
+                    }
+                    catch {
+                        print("Could not add \(updatedInstance) to cache")
+                    }
 					if let progress: Int = updatedInstance.get("progress") {
-						if timePassed > 5 || progress >= 100 {
+                        self.context.scheduleUIUpdate()
+                        print("progress \(progress)")
+						if timePassed > 20 || progress >= 100 {
 							timer.invalidate()
-						} else {
-							print("setting random progress")
-							let randomProgress = Int.random(in: 1 ... 20)
-							run.set("progress", randomProgress)
-							self.context.scheduleUIUpdate()
-
-							let p: Int? = run.get("progress")
-							p.map { print($0) }
 						}
 					} else {
 						print("ERROR, could not get progress: \(String(describing: error))")
