@@ -162,7 +162,7 @@ ImporterRun[] {
         addItem {
             arguments {
                 template {
-                    type: ImporterRunInstance
+                    _type: ImporterRunInstance
                     name: {{.name}}
                 }
             }

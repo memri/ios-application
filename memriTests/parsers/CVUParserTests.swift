@@ -741,7 +741,7 @@ class CVUParserTests: XCTestCase {
 		        press: addItem {
 		            arguments: {
 		                template: {
-		                    type: "ImporterRun"
+		                    _type: "ImporterRun"
 		                    name: {{.name}}
 		                }
 		            }

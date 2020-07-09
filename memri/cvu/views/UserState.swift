@@ -165,7 +165,7 @@ public class UserState: SchemaItem, CVUToString {
 	}
 
 	public class func clone(_ viewArguments: ViewArguments? = nil,
-							_ values: [String: Any]? = nil,
+							_ values: [String: Any?]? = nil,
 							managed: Bool = true,
                             item: Item? = nil) throws -> UserState {
 		var dict = viewArguments?.asDict() ?? [:]

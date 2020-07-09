@@ -12,7 +12,7 @@ extension MemriContext {
 	private func getItem(_ dict: [String: Any?], _ dataItem: Item?,
 						 _ viewArguments: ViewArguments? = nil) throws -> Item {
 		// TODO: refactor: move to function
-		guard let stringType = dict["type"] as? String else {
+		guard let stringType = dict["_type"] as? String else {
 			throw "Missing type attribute to indicate the type of the data item"
 		}
 
@@ -24,33 +24,19 @@ extension MemriContext {
 			throw "Cannot find family \(stringType)"
 		}
 
-		var initArgs = dict
-		initArgs.removeValue(forKey: "type")
+        var values = [String:Any?]()
+        if let uid = dict["uid"] as? Int { values["uid"] = uid }
+		
+        var initArgs = dict
+		initArgs.removeValue(forKey: "_type")
+        initArgs.removeValue(forKey: "uid")
 
 		// swiftformat:disable:next redundantInit
-		let item = try Cache.createItem(ItemType, values: [:])
+		let item = try Cache.createItem(ItemType, values: values)
 
 		// TODO: fill item
-		for prop in item.objectSchema.properties {
-			if prop.name != ItemType.primaryKey(),
-				let inputValue = initArgs[prop.name] {
-				let propValue: Any
-
-				if let expr = inputValue as? Expression {
-					if let v = viewArguments {
-						propValue = try expr.execute(v)
-					} else {
-						let viewArgs = try ViewArguments.clone(cascadingView?.viewArguments,
-															   [".": dataItem],
-															   managed: false)
-						propValue = try expr.execute(viewArgs)
-					}
-				} else {
-					propValue = inputValue
-				}
-
-				item.set(prop.name, propValue)
-			}
+		for (propName, propValue) in initArgs {
+            item.set(propName, propValue)
 		}
 
 		return item
@@ -83,6 +69,13 @@ extension MemriContext {
                 for (key, value) in dict {
                     if let expr = value as? Expression {
                         dict[key] = try expr.execute(viewArgs)
+                    }
+                    else if var list = value as? [Any?] {
+                        for i in 0..<list.count {
+                            if let expr = list[i] as? Expression {
+                                list[i] = try expr.execute(viewArgs)
+                            }
+                        }
                     }
                 }
                 
