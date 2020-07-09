@@ -288,7 +288,7 @@ public class PodAPI {
 	/// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
 	public func get(_ uid: Int,
 					_ callback: @escaping (_ error: Error?, _ item: Item?) -> Void) {
-		http(path: "items/\(uid)") { error, data in
+		http(path: "item_with_edges/\(uid)") { error, data in
 			if let data = data {
 				// TODO: Refactor: Error handling
 				let result: [Item]? = try? MemriJSONDecoder

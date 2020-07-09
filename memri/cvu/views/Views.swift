@@ -12,6 +12,7 @@ public class Views {
 
 	private var recursionCounter = 0
 	private var realm: Realm
+    private var cancellable: AnyCancellable?
 
 	init(_ rlm: Realm) {
 		realm = rlm
@@ -22,6 +23,11 @@ public class Views {
 		context = mn
 
 		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
+        
+        // Subscribe to changes in CVUStoredDefinition
+        cancellable = context?.cache.subscribe(query: "CVUStoredDefinition AND domain='user'").sink { items in
+            1+1
+        }
 
 		// Done
 		try callback()

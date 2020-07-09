@@ -509,17 +509,6 @@ public class Cache {
 		return 1_000_000_001
 	}
 
-	#warning("@Toby how to work with Swift subscribers properly")
-	public class func subscribe(_: Item) /* some promise */ {
-		// Implement using polling
-		// Unsubscribe is handled on the promise, I presume
-	}
-
-	public class func subscribe(_: Datasource) /* some promise */ {
-		// Implement using polling
-		// Unsubscribe is handled on the promise, I presume
-	}
-
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
 		// Check if this is a new item or an existing one
 		if let syncState = newerItem.syncState {

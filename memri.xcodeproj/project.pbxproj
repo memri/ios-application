@@ -157,6 +157,7 @@
 		866F87DD2456AD76000E5FAB /* person.0x011.json in Resources */ = {isa = PBXBuildFile; fileRef = 866F87D72456AD76000E5FAB /* person.0x011.json */; };
 		866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */; };
 		8672C27C2497F35A006F0D42 /* CustomRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8672C27B2497F35A006F0D42 /* CustomRenderer.swift */; };
+		867527BA24B76F5B002B5006 /* CachePubSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867527B924B76F5B002B5006 /* CachePubSub.swift */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
 		86865D38244996AA0010271A /* FlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* FlowStack.swift */; };
@@ -412,6 +413,7 @@
 		866F87D72456AD76000E5FAB /* person.0x011.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x011.json; sourceTree = "<group>"; };
 		866F87EB24572525000E5FAB /* ThumbGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbGridRendererView.swift; sourceTree = "<group>"; };
 		8672C27B2497F35A006F0D42 /* CustomRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomRenderer.swift; sourceTree = "<group>"; };
+		867527B924B76F5B002B5006 /* CachePubSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachePubSub.swift; sourceTree = "<group>"; };
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* FlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowStack.swift; sourceTree = "<group>"; };
@@ -911,6 +913,7 @@
 				869789E924344A530003756B /* schema_original.swift */,
 				861C52C124A5A9B100B3230C /* schema.swift */,
 				8665ADD8241A8387005B3FA5 /* Cache.swift */,
+				867527B924B76F5B002B5006 /* CachePubSub.swift */,
 				868EF696247784C600C0375F /* ResultSet.swift */,
 				86A5D8392437321700F8FAD8 /* Sync.swift */,
 				5D78D071242531BE00F7BD3B /* MainNavigation.swift */,
@@ -1627,6 +1630,7 @@
 				C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */,
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
+				867527BA24B76F5B002B5006 /* CachePubSub.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
