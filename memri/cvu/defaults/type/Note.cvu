@@ -134,7 +134,7 @@ Note[] {
                 }
             }
             Text {
-                text: "{.content}"
+                text: "{.content.plainString}"
                 removeWhiteSpace: true
                 maxChar: 100
                 color: #555
@@ -159,7 +159,7 @@ Note[] {
             alignment: center
             
             Text {
-                text: "{.content}"
+                text: "{.content.plainString}"
                 allowNil: true
                 maxChar: 100
                 color: #333

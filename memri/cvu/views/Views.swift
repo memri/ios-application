@@ -257,6 +257,7 @@ public class Views {
 					case "camelCaseToWords": value = v.camelCaseToWords()
 					case "plural": value = v + "s" // TODO:
 					case "firstUppercased": value = v.capitalizingFirst()
+                    case "plainString": value = v.strippingHTMLtags()
 					default:
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on string")
