@@ -44,15 +44,33 @@ class MapHelper {
 	}
 
 	func getLocationForAddress(address: Address) -> (currentResult: CLLocation?, lookupPublisher: AnyPublisher<CLLocation?, Never>?) {
-		if let knownLocation = addressLookupResults[address] {
+        // Make new lookup
+        let addressString = address.computedTitle
+        let lookupHash = addressString.hashValue
+        
+        // Check if the address holds a valid location
+        if let location = address.location,
+           let latitude = location.latitude.value,
+           let longitude = location.longitude.value {
+            let clLocation = CLLocation(latitude: latitude, longitude: longitude)
+            if let oldLookupHash = address.locationWasAutomaticLookupWithHash {
+                // This was an automatic lookup - check it's still current
+                if oldLookupHash == String(lookupHash) { return (clLocation, nil) }
+            } else {
+                // No old lookup hash, this location is user-defined
+                return (clLocation, nil)
+            }
+        }
+        
+        // Check lookups in progress
+        if let knownLocation = addressLookupResults[lookupHash] {
 			// Successful lookup already completed
 			return (knownLocation, nil)
-		} else if let existingLookup = addressLookupPublishers[address] {
+		} else if let existingLookup = addressLookupPublishers[lookupHash] {
 			// Lookup already in progress
 			return (nil, existingLookup)
 		}
 		// Make new lookup
-		let addressString = address.computedTitle
 		let lookup = lookupAddress(string: addressString)
 			.map { (mapItem) -> CLLocation? in
 				// Find the first placemark that has a location value
@@ -63,7 +81,7 @@ class MapHelper {
 			.multicast(subject: PassthroughSubject())
 			.autoconnect()
 			.eraseToAnyPublisher()
-		addressLookupPublishers[address] = lookup
+		addressLookupPublishers[lookupHash] = lookup
 
 		// When it finishes, cache the value and remove the publisher
 		lookup.sink { [weak self] location in
@@ -74,11 +92,12 @@ class MapHelper {
                         "latitude": location.coordinate.latitude,
                         "longitude": location.coordinate.longitude
                     ])
+                    address.locationWasAutomaticLookupWithHash = String(lookupHash)
 					_ = try address.link(newLocation, type: "location")
 				}
 			}
-			self?.addressLookupResults[address] = location
-			self?.addressLookupPublishers[address] = nil
+			self?.addressLookupResults[lookupHash] = location
+			self?.addressLookupPublishers[lookupHash] = nil
 		}.store(in: &cancellableBag)
 		return (nil, lookup)
 	}
@@ -86,6 +105,6 @@ class MapHelper {
 	var cancellableBag = Set<AnyCancellable>()
 
 	// TODO: Persist the address lookups back to the dataItem
-	var addressLookupResults: [Address: CLLocation] = [:]
-	var addressLookupPublishers: [Address: AnyPublisher<CLLocation?, Never>] = [:]
+	var addressLookupResults: [Int: CLLocation] = [:]
+	var addressLookupPublishers: [Int: AnyPublisher<CLLocation?, Never>] = [:]
 }
