@@ -65,12 +65,8 @@ struct PickerPane: View {
 	let query: String
 
 	var body: some View {
-		self.context.closeStack.append {
-			self.presentationMode.wrappedValue.dismiss()
-		}
-
 		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
-		return SubView(
+		SubView(
 			context: self.context,
 			viewName: "choose-item-by-query",
 			dataItem: self.item,
@@ -85,5 +81,8 @@ struct PickerPane: View {
                 "query": query
             ])
 		)
+        .onAppear {
+            self.context.addToStack(self.presentationMode)
+        }
 	}
 }

@@ -115,9 +115,6 @@ class MapModel {
 	var addressLookupCancellables: [Address: AnyCancellable] = [:]
 
 	func lookupAddress(_ address: Address) -> CLLocation? {
-		if let location = address.location, let latitude = location.latitude.value, let longitude = location.longitude.value {
-			return CLLocation(latitude: latitude, longitude: longitude)
-		}
 		let (currentResult, lookupPublisher) = MapHelper.shared.getLocationForAddress(address: address)
 		if let location = currentResult { return location }
 

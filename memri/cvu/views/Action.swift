@@ -1196,7 +1196,7 @@ class ActionClosePopup: Action, ActionExec {
 	}
 
 	func exec(_: [String: Any]) throws {
-		(context.closeStack.removeLast())()
+        context.closeLastInStack()
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {

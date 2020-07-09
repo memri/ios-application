@@ -139,3 +139,16 @@ extension RangeReplaceableCollection where Element == Character {
 		return first.uppercased() + dropFirst()
 	}
 }
+
+extension String {
+    func strippingHTMLtags() -> String {
+        // First replace br/p with a newline
+        self.replacingOccurrences(of: "<br[^>]*>|<p[^>]*>", with: "\n",
+                             options: .regularExpression,
+                             range: nil)
+        // Remove all html tags
+            .replacingOccurrences(of: "<[^>]+>", with: "",
+                                         options: .regularExpression,
+                                         range: nil)
+    }
+}
