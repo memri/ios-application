@@ -211,7 +211,7 @@ class Sync {
 		}
 	}
 
-	private func syncToPod() {
+	public func syncToPod() {
 		syncing = true
 
 		var found = 0

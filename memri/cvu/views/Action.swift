@@ -1120,7 +1120,8 @@ class ActionRunIndexerRun: Action, ActionExec {
 					return
 				}
 				let uid: Int? = run.get("uid")
-				if uid == 0 || uid == nil {
+				if run.syncState?.actionNeeded == "create" {
+                    context.cache.sync.syncToPod()
 					DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
 						getAndRunIndexerRun(tries + 1)
 					}
@@ -1135,16 +1136,6 @@ class ActionRunIndexerRun: Action, ActionExec {
 	func runIndexerRun(_ run: IndexerRun, _ uid: Int) {
 		let start = Date()
         
-        // Create Indexer
-        do {
-            try self.context.podAPI.sync(run) { error in
-                print(error)
-            }
-        }
-        catch  {
-            print("Could not create indexerRun \(run)")
-        }
-
             
         self.context.podAPI.runIndexerRun(uid) { error, data in
             print(error)
