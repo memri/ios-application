@@ -48,7 +48,7 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
 
 struct GeneralEditorLayoutItem {
     var id = UUID()
-    var dict: [String:Any]
+    var dict: [String:Any?]
     var viewArguments: ViewArguments? = nil
     
     func has(_ propName: String) -> Bool {

@@ -232,7 +232,7 @@ public struct UIElementView: SwiftUI.View {
 							context: self.context,
 							viewName: from.getString("viewName"),
 							dataItem: self.item,
-							viewArguments: try? ViewArguments(get("arguments") ?? [:] as [String: Any])
+							viewArguments: try? ViewArguments(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
@@ -258,7 +258,7 @@ public struct UIElementView: SwiftUI.View {
 								}
 							}(),
 							dataItem: self.item,
-							viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [String: Any]())
+                            viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
