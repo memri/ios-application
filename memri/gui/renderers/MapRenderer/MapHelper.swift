@@ -70,9 +70,10 @@ class MapHelper {
 			if let location = location {
 				// Update the address with the location (avoid future lookups)
 				realmWriteIfAvailable(self?.realm) {
-					let newLocation = Location()
-					newLocation.set("latitude", location.coordinate.latitude)
-					newLocation.set("longitude", location.coordinate.longitude)
+                    let newLocation = try Cache.createItem(Location.self, values: [
+                        "latitude": location.coordinate.latitude,
+                        "longitude": location.coordinate.longitude
+                    ])
 					_ = try address.link(newLocation, type: "location")
 				}
 			}

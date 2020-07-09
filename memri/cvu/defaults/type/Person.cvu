@@ -172,20 +172,28 @@ Person {
     /* end include */
     
     [renderer = generalEditor] {
-         groups {
-             profilePicture: profilePicture
-             names: firstName lastName
-             picturesOfPerson: picturesOfPerson
-         }
-        
-         sequence: profilePicture labels names picturesOfPerson phoneNumbers relations addresses websites companies diets medicalConditions publicKeys onlineProfiles other dates
-        
-        /*excluded: profilePicture labels names picturesOfPerson phoneNumbers*/
-        
-        /*readOnly:*/
-        
+        layout: [
+            { section: profilePicture }
+            { section: labels }
+            { section: names, fields: firstName lastName }
+            { section: picturesOfPerson }
+            { section: phoneNumbers, edges: hasPhoneNumber }
+/*            { section: family, edges: family, show: {{ .family[] }} }*/
+/*            { section: relationships, edges: {{ .relationship[.type != family] }} }*/
+            { section: relationships, edges: relationship }
+            { section: addresses, edges: address }
+            { section: websites, edges: website }
+            { section: companies, edges: company }
+            { section: diets, edges: diet }
+            { section: medicalConditions, edges: medicalCondition }
+            { section: publicKeys, edges: publicKey }
+            { section: onlineProfiles, edges: onlineProfile }
+            { section: other, fields: * }
+            { section: dates }
+        ]
+
         profilePicture {
-            sectionTitle: ""
+            showTitle: false
         
             ZStack {
                 alignment: center
@@ -219,8 +227,7 @@ Person {
                         maxHeight: 140
                         show: {{!readOnly}}
                     
-                        Button {
-                            press: add
+                        Action {
                             cornerRadius: 25
                             maxWidth: 50
                             maxHeight: 50
@@ -228,8 +235,24 @@ Person {
                             color: #434343
                             align: center
                             font: 14 regular
-                        
-                            Text { text: "Edit" }
+                            
+                            press: openViewByName {
+                                renderAs: popup
+                                title: "Edit"
+                                
+                                arguments: {
+                                    name: "choose-item-by-query"
+                                    viewArguments: {
+                                        query: "Photo" /* AND ANY allEdges.targetItemID = {.uid} */
+                                        type: Photo
+                                        renderer: "thumbnail"
+                                        subject: {{.}}
+                                        edgeType: "profilePicture"
+                                        distinct: true
+                                        title: "Choose a photo"
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -237,8 +260,7 @@ Person {
         }
         
         picturesOfPerson {
-            foreach: false
-            sectionTitle: "Photos of {.computedTitle()}"
+            title: "Photos of {.computedTitle()}"
         
             SubView {
                 minHeight: 165
@@ -265,19 +287,19 @@ Person {
         }
         
         labels {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
         
             VStack {
                 padding: 10 36 5 36
             
                 Text {
-                    show: {{ !.labels }}
+                    show: {{ !.label }}
                     text: "no labels yet"
                 }
                 
                 FlowStack {
-                    list: {{ .labels[] }}
+                    list: {{ .label[] }}
                 
                     button {
                         press: openViewByName {

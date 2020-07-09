@@ -17,7 +17,8 @@ struct Picker: View {
 	let emptyValue: String
 	let propItem: Item
 	let propName: String
-	let datasource: Datasource
+    let renderer: String?
+	let query: String
 
 	@State var isShowing = false
 
@@ -42,13 +43,15 @@ struct Picker: View {
 				propItem: self.propItem,
 				propName: self.propName,
 				selected: self.selected,
-				datasource: self.datasource
+                renderer: self.renderer,
+				query: self.query
 			).environmentObject(self.context)
 		}
 		.generalEditorInput()
 	}
 }
 
+// TODO this could be merged with subview in some way
 struct PickerPane: View {
 	@EnvironmentObject var context: MemriContext
 	@Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
@@ -58,50 +61,8 @@ struct PickerPane: View {
 	let propItem: Item
 	let propName: String
 	let selected: Item?
-	let datasource: Datasource
-
-	func getSessionView() -> SessionView {
-		do {
-			return try SessionView.fromCVUDefinition(
-				stored: CVUStoredDefinition(value: ["definition": """
-				    [view] {
-				        title: "\(title)"
-
-				        [renderer = list] {
-				    try!                        press: [
-				                link {
-				                    arguments {
-				                        subject: {{subject}}
-				                        property: \(propName)
-				                    }
-				                }
-				                closePopup
-				            ]
-				        }
-
-				        [renderer = thumbnail] {
-				            press: [
-				                link {
-				                    arguments {
-				                        subject: {{subject}}
-				                        property: \(propName)
-				                    }
-				                }
-				                closePopup
-				            ]
-				        }
-				    }
-				"""]),
-				userState: UserState([
-					"selection": [["type": item.genericType, "uid": item.uid]],
-				]),
-				datasource: datasource
-			)
-		} catch {
-			debugHistory.error("Subview: \(error)")
-			return SessionView()
-		}
-	}
+    let renderer: String?
+	let query: String
 
 	var body: some View {
 		self.context.closeStack.append {
@@ -111,9 +72,18 @@ struct PickerPane: View {
 		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection
 		return SubView(
 			context: self.context,
-			view: getSessionView(),
+			viewName: "choose-item-by-query",
 			dataItem: self.item,
-			viewArguments: try! ViewArguments.fromDict(["showCloseButton": true, "subject": propItem])
+			viewArguments: try! ViewArguments.fromDict([
+                "showCloseButton": true,
+                "subject": propItem,
+                "renderer": renderer ?? "list",
+                "edgeType": propName,
+                "title": title,
+                "distinct": true,
+                "selection": [item],
+                "query": query
+            ])
 		)
 	}
 }

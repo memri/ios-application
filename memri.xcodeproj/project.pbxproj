@@ -53,7 +53,7 @@
 		5D4768E0247D24B800008CA2 /* exampleNote.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4768DF247D24B700008CA2 /* exampleNote.html */; };
 		5D4768E4247D274800008CA2 /* NoteTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4768E3247D274800008CA2 /* NoteTest.swift */; };
 		5D4768E5247D28F800008CA2 /* exampleNote.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4768DF247D24B700008CA2 /* exampleNote.html */; };
-		5D47BCFD24911A0000126126 /* IndexerInstance.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D47BCFC24911A0000126126 /* IndexerInstance.cvu */; };
+		5D47BCFD24911A0000126126 /* IndexerRun.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D47BCFC24911A0000126126 /* IndexerRun.cvu */; };
 		5D487F22244073DF00B50202 /* UIElementView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D487F21244073DF00B50202 /* UIElementView.swift */; };
 		5D487F242440772100B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
 		5D487F252440772D00B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
@@ -323,7 +323,7 @@
 		5D44D52B24589E7E004796BA /* NavigationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationTest.swift; sourceTree = "<group>"; };
 		5D4768DF247D24B700008CA2 /* exampleNote.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = exampleNote.html; sourceTree = "<group>"; };
 		5D4768E3247D274800008CA2 /* NoteTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteTest.swift; sourceTree = "<group>"; };
-		5D47BCFC24911A0000126126 /* IndexerInstance.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexerInstance.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		5D47BCFC24911A0000126126 /* IndexerRun.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = IndexerRun.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5D487F21244073DF00B50202 /* UIElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElementView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D487F232440772100B50202 /* list_item_component.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = list_item_component.json; sourceTree = "<group>"; };
 		5D487F262440776700B50202 /* ItemRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ItemRendererTest.swift; path = memriTests/data/ItemRendererTest.swift; sourceTree = SOURCE_ROOT; };
@@ -1108,7 +1108,7 @@
 				86CDB47E246A4570007EAE67 /* Note.cvu */,
 				5D5327D8248FA59C001FF168 /* Importer.cvu */,
 				5D5327DC248FF2AA001FF168 /* ImporterInstance.cvu */,
-				5D47BCFC24911A0000126126 /* IndexerInstance.cvu */,
+				5D47BCFC24911A0000126126 /* IndexerRun.cvu */,
 				5D5327DA248FD03E001FF168 /* Indexer.cvu */,
 				5DAFB6182479525900719160 /* AuditItem.cvu */,
 				5DAFB61A2479526100719160 /* Label.cvu */,
@@ -1405,7 +1405,7 @@
 				5D599BC723F2B77700F218A0 /* LaunchScreen.storyboard in Resources */,
 				86CDB4742469C49F007EAE67 /* macro_views.json in Resources */,
 				8699AA30247BCF2B00EC85C0 /* defaults.cvu in Resources */,
-				5D47BCFD24911A0000126126 /* IndexerInstance.cvu in Resources */,
+				5D47BCFD24911A0000126126 /* IndexerRun.cvu in Resources */,
 				C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */,
 				5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */,
 				8656461A24238BB000D071B4 /* notes_from_server.json in Resources */,
@@ -1871,7 +1871,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1905,7 +1905,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2096,7 +2096,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

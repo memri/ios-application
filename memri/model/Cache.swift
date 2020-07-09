@@ -162,7 +162,7 @@ public class Cache {
 							source: item,
 							target: target,
 							type: edgeType,
-							label: edgeDict["label"] as? String,
+							label: edgeDict["edgeLabel"] as? String,
 							sequence: edgeDict["sequence"] as? Int
 						)
 					} else {
@@ -177,7 +177,7 @@ public class Cache {
 							source: item,
 							target: (itemType, itemUID),
 							type: edgeType,
-							label: edgeDict["label"] as? String,
+							label: edgeDict["edgeLabel"] as? String,
 							sequence: edgeDict["sequence"] as? Int
 						)
 					}
@@ -641,7 +641,7 @@ public class Cache {
 				"sourceItemType": source.genericType,
 				"sourceItemID": source.uid.value,
 				"type": edgeType,
-				"label": label,
+				"edgeLabel": label,
 				"sequence": sequence,
 				"dateCreated": Date(),
 			]

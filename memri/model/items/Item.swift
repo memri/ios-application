@@ -44,10 +44,6 @@ public class Item: SchemaItem {
 		edges("changelog")?.items(type: AuditItem.self)
 	}
 
-	var labels: Results<Label>? {
-		edges("labels")?.items(type: Label.self)
-	}
-
 	required init() {
 		super.init()
 
@@ -135,23 +131,7 @@ public class Item: SchemaItem {
 
 			return ""
 		} else {
-			let val = self[name]
-
-			if let str = val as? String {
-				return str
-			} else if let val = val as? Bool {
-				return String(val)
-			} else if let val = val as? Int {
-				return String(val)
-			} else if let val = val as? Double {
-				return String(val)
-			} else if let val = val as? Date {
-				let formatter = DateFormatter()
-				formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
-				return formatter.string(from: val)
-			} else {
-				return ""
-			}
+            return ExprInterpreter.evaluateString(self[name], "")
 		}
 	}
 
@@ -250,7 +230,7 @@ public class Item: SchemaItem {
 
 		// Should this create a temporary edge for which item() is source() ?
 		return realm?.objects(Edge.self)
-			.filter("targetItemID = \(uid) AND type = '\(edgeType)").first
+			.filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)").first
 	}
 
 	public func edges(_ edgeType: String) -> Results<Edge>? {
@@ -262,7 +242,7 @@ public class Item: SchemaItem {
 			return edges(collection)
 		}
 
-		return allEdges.filter("type = '\(edgeType)'")
+		return allEdges.filter("deleted = false AND type = '\(edgeType)'")
 	}
 
 	public func edges(_ edgeTypes: [String]) -> Results<Edge>? {
@@ -293,7 +273,7 @@ public class Item: SchemaItem {
 			return edge(collection)
 		}
 
-		return allEdges.filter("type = '\(edgeType)'").first
+		return allEdges.filter("deleted = false AND type = '\(edgeType)'").first
 	}
 
 	public func edge(_ edgeTypes: [String]) -> Edge? {
@@ -351,7 +331,7 @@ public class Item: SchemaItem {
 			}
 
 			let beforeBeforeEdge = edges
-				.filter("sequence < \(beforeNumber)")
+				.filter("deleted = false AND sequence < \(beforeNumber)")
 				.sorted(byKeyPath: "sequence", ascending: true)
 				.first
 
@@ -374,7 +354,7 @@ public class Item: SchemaItem {
 			}
 
 			let afterAfterEdge = edges
-				.filter("sequence < \(afterNumber)")
+				.filter("deleted = false AND sequence < \(afterNumber)")
 				.sorted(byKeyPath: "sequence", ascending: true)
 				.first
 
@@ -403,6 +383,10 @@ public class Item: SchemaItem {
 		guard item.objectSchema["uid"] != nil, let targetID: Int = item["uid"] as? Int else {
 			throw "Exception: Missing uid on target"
 		}
+        
+        guard edgeType != "" else {
+            throw "Exception: Edge type is not set"
+        }
 
 		let query = "deleted = false and type = '\(edgeType)'"
 			+ (distinct ? "" : " and targetItemID = \(targetID)")
@@ -430,7 +414,7 @@ public class Item: SchemaItem {
 				edge.targetItemID.value = targetID
 				edge.targetItemType = item.genericType
 				edge.sequence.value = sequenceNumber
-				edge.label = label
+				edge.edgeLabel = label
 
 				if edge.syncState?.actionNeeded == nil {
 					edge.syncState?.actionNeeded = "update"
@@ -473,9 +457,13 @@ public class Item: SchemaItem {
 		guard let targetID: Int = item.get("uid") else {
 			return
 		}
+        
+        guard edgeType != "" else {
+            throw "Exception: Edge type is not set"
+        }
 
 		let edgeQuery = edgeType != nil ? "type = '\(edgeType!)' and " : ""
-		let query = "deleted = false and \(edgeQuery) targetItemID = '\(targetID)'"
+		let query = "deleted = false and \(edgeQuery) targetItemID = \(targetID)"
 		let results = allEdges.filter(query)
 
 		if results.count > 0 {
@@ -727,6 +715,16 @@ extension RealmSwift.Results where Element == Edge {
 
 		return result
 	}
+    
+    func edgeArray() -> [Edge] {
+        var result = [Edge]()
+
+        for edge in self {
+            result.append(edge)
+        }
+
+        return result
+    }
 
 	//    #warning("Toby, how do Ranges work exactly?")
 	//    #warning("@Ruben I think this achieves what you want")
@@ -752,7 +750,7 @@ public enum EdgeSequencePosition {
 
 extension memri.Edge {
 	override public var description: String {
-		"Edge (\(type ?? "")\(label != nil ? ":\(label ?? "")" : "")): \(sourceItemType ?? ""):\(sourceItemID.value ?? 0) -> \(targetItemType ?? ""):\(targetItemID.value ?? 0)"
+		"Edge (\(type ?? "")\(edgeLabel != nil ? ":\(edgeLabel ?? "")" : "")): \(sourceItemType ?? ""):\(sourceItemID.value ?? 0) -> \(targetItemType ?? ""):\(targetItemID.value ?? 0)"
 	}
 
 	var targetType: Object.Type? {
@@ -796,6 +794,29 @@ extension memri.Edge {
 
 		return nil
 	}
+    
+    func parseTargetDict(_ dict:[String:AnyCodable]?) throws {
+        guard let dict = dict else { return }
+        
+        guard let itemType = dict["_type"]?.value as? String else {
+            throw "Invalid JSON, no _type specified for target: \(dict)"
+        }
+
+        guard let type = ItemFamily(rawValue: itemType)?.getType() as? Object.Type else {
+            throw "Invalid target item type specificed: \(itemType)"
+        }
+        
+        var values = [String: Any]()
+        for (key, value) in dict { values[key] = value.value }
+
+        let item = try Cache.createItem(type, values: values)
+        if let uid = item["uid"] as? Int {
+            targetItemType = itemType
+            targetItemID.value = uid
+        } else {
+            throw "Unable to create target item in edge"
+        }
+    }
 
 	convenience init(type: String = "edge", source: (String, Int), target: (String, Int),
 					 sequence: Int? = nil, label: String? = nil, action: String? = nil) {
@@ -807,7 +828,7 @@ extension memri.Edge {
 		targetItemType = target.0
 		targetItemID.value = target.1
 		self.sequence.value = sequence
-		self.label = label
+		self.edgeLabel = label
 
 		if let action = action {
 			syncState?.actionNeeded = action

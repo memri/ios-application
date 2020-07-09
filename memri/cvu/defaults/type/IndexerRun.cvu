@@ -72,16 +72,16 @@ IndexerRun {
     ]
     
     [renderer = generalEditor] {
-        excluded: version starred
-        groups:  {
-            iconHeading: iconHeading
-            info: name run
-        }
-        
-        sequence: iconHeading info labels other dates
+        layout: [
+            { section: iconHeading }
+            { section: info, exclude: name run }
+            { section: labels }
+            { section: other, fields: *, exclude: version starred }
+            { section: dates }
+        ]
         
         iconHeading {
-            sectionTitle: ""
+            title: ""
             
             HStack{
                 align: center
@@ -114,8 +114,7 @@ IndexerRun {
         }
 
         info {
-            foreach: false
-            sectionTitle: ""
+            title: ""
             
             VStack {
                 Divider

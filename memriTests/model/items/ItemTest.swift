@@ -205,11 +205,11 @@ class ItemTest: XCTestCase {
 		let item2: Person = try MemriJSONDecoder.decode(Person.self, from: data2)
 
 		do {
-			_ = try item1.link(item2, type: "relationships")
-			XCTAssertEqual(item2.relationships?.first, item2)
+			_ = try item1.link(item2, type: "relationship")
+			XCTAssertEqual(item2.relationship?.first, item2)
 
-			_ = try item1.unlink(item2, type: "relationships")
-			XCTAssertNotEqual(item2.relationships?.first, item2)
+			_ = try item1.unlink(item2, type: "relationship")
+			XCTAssertNotEqual(item2.relationship?.first, item2)
 		} catch {
 			XCTFail("\(error)")
 		}

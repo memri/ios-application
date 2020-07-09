@@ -22,17 +22,83 @@ let registerGeneralEditorRenderer = {
 class CascadingGeneralEditorConfig: CascadingRenderConfig {
 	var type: String? = "generalEditor"
 
-	var groups: [String: [String]] {
-		cascadeDict("groups", forceArray: true)
+	var layout: [GeneralEditorLayoutItem] {
+        cascadeList(
+            "layout",
+            uniqueKey: { $0["section"] as? String ?? "" },
+            merging: { old, new in
+                var result = old
+                for (key, value) in new {
+                    if old[key] == nil { result[key] = value }
+                    else if key == "exclude" {
+                        if var dict = old[key] as? [String] {
+                            result[key] = dict.append(contentsOf: new[key] as? [String] ?? [])
+                        }
+                    }
+                }
+                
+                return result
+            }
+        )
+        .map { dict -> GeneralEditorLayoutItem in
+            GeneralEditorLayoutItem(dict:dict, viewArguments: self.viewArguments)
+        }
 	}
+}
 
-	var readOnly: [String] { cascadeList("readOnly") }
-	var excluded: [String] { cascadeList("excluded") }
-	var sequence: [String] { cascadeList("sequence", merge: false) }
-
-	public func allGroupValues() -> [String] {
-		groups.values.flatMap { Array($0) }
-	}
+struct GeneralEditorLayoutItem {
+    var id = UUID()
+    var dict: [String:Any]
+    var viewArguments: ViewArguments? = nil
+    
+    func has(_ propName: String) -> Bool {
+        return dict[propName] != nil
+    }
+    
+    func get<T>(_ propName:String, _ type:T.Type = T.self, _ item:Item? = nil) -> T? {
+        guard let propValue = dict[propName] else {
+            if propName == "section" {
+                print("ERROR")
+            }
+            
+            return nil
+        }
+        
+        var value:Any? = propValue
+        
+        // Execute expression to get the right value
+        if let expr = propValue as? Expression {
+            do {
+                value = try expr.execute(viewArguments)
+            } catch {
+                // TODO: Refactor error handling
+                debugHistory.error("Could note compute layout property \(propName)\n"
+                    + "Arguments: [\(viewArguments?.asDict().keys.description ?? "")]\n"
+                    + (expr.startInStringMode
+                        ? "Expression: \"\(expr.code)\"\n"
+                        : "Expression: \(expr.code)\n")
+                    + "Error: \(error)")
+                return nil
+            }
+        }
+        
+        if T.self == [Edge].self {
+            if value is [Edge] {
+                return value as? T
+            }
+            else if let value = value as? String {
+                return item?.edges(value)?.edgeArray() as? T
+            }
+            else if let value = value as? [String] {
+                return item?.edges(value)?.edgeArray() as? T
+            }
+        }
+        else if T.self == [String].self && value is String {
+            return [value] as? T
+        }
+        
+        return value as? T
+    }
 }
 
 struct GeneralEditorView: View {
@@ -40,81 +106,65 @@ struct GeneralEditorView: View {
 
 	var name: String = "generalEditor"
 
-	var renderConfig: CascadingGeneralEditorConfig? {
-		context.cascadingView?.renderConfig as? CascadingGeneralEditorConfig
-	}
+    var body: some View {
+        let item = getItem()
+        let layout = getLayout()
+        let renderConfig = getRenderConfig()
+        let usedFields = getUsedFields(layout)
 
-	var body: some View {
-		var item: Item
-		if let dataItem = context.cascadingView?.resultSet.singletonItem {
-			item = dataItem
-		} else {
-			debugHistory.warn("Could not load item from result set, creating empty item")
-			item = Item()
-		}
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                if renderConfig == nil {
+                    Text("Unable to render this view")
+                } else if layout.count > 0 {
+                    ForEach(layout, id: \.id) { layoutSection in
+                        GeneralEditorSection(
+                            item: item,
+                            renderConfig: renderConfig!,
+                            layoutSection: layoutSection,
+                            usedFields: usedFields
+                        )
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+    }
 
-		// TODO: Error Handling
-		let renderConfig = self.renderConfig
-		let groups = getGroups(item) ?? [:]
-		let sortedKeys = getSortedKeys(groups)
-
-		return ScrollView {
-			VStack(alignment: .leading, spacing: 0) {
-				if renderConfig == nil {
-					Text("Unable to render this view")
-				} else if groups.count > 0 {
-					ForEach(sortedKeys, id: \.self) { groupKey in
-						GeneralEditorSection(
-							item: item,
-							renderConfig: renderConfig!,
-							groupKey: groupKey,
-							groups: groups
-						)
-					}
-				}
-			}
-			.frame(maxWidth: .infinity, maxHeight: .infinity)
-		}
-	}
-
-	func getGroups(_ item: Item) -> [String: [String]]? {
-		let renderConfig = self.renderConfig
-		let groups = renderConfig?.groups ?? [:]
-		var filteredGroups: [String: [String]] = [:]
-		let objectSchema = item.objectSchema
-		var alreadyUsed: [String] = []
-
-		for (key, value) in groups {
-			if value.first != key { alreadyUsed = alreadyUsed + value }
-		}
-
-		(Array(groups.keys) + objectSchema.properties.map { $0.name }).filter {
-			return (groups[$0] != nil || objectSchema[$0]?.isArray ?? false)
-				&& !(renderConfig?.excluded.contains($0) ?? false)
-				&& !alreadyUsed.contains($0)
-		}.forEach {
-			filteredGroups[$0] = groups[$0] ?? [$0]
-		}
-
-		return filteredGroups.count > 0 ? filteredGroups : nil
-	}
-
-	func getSortedKeys(_ groups: [String: [String]]) -> [String] {
-		var keys = renderConfig?.sequence ?? []
-		for k in groups.keys {
-			if !keys.contains(k) {
-				keys.append(k)
-			}
-		}
-
-		keys = keys.filter { !(self.renderConfig?.excluded.contains($0) ?? true) }
-
-		if !keys.contains("other") {
-			keys.append("other")
-		}
-
-		return keys
-	}
+    func getLayout() -> [GeneralEditorLayoutItem] {
+        if let l = getRenderConfig()?.layout {
+            return l
+        }
+        else {
+            return [GeneralEditorLayoutItem(dict: ["section": "other", "fields": "*"])]
+        }
+    }
+    
+    func getItem() -> Item {
+        if let dataItem = context.cascadingView?.resultSet.singletonItem {
+            return dataItem
+        } else {
+            debugHistory.warn("Could not load item from result set, creating empty item")
+            return Item()
+        }
+    }
+    
+    func getRenderConfig() -> CascadingGeneralEditorConfig? {
+        context.cascadingView?.renderConfig as? CascadingGeneralEditorConfig
+    }
+    
+    func getUsedFields(_ layout: [GeneralEditorLayoutItem]) -> [String] {
+        var result = [String]()
+        for item in layout {
+            if let list = item.get("fields", [String].self) {
+                result.append(contentsOf: list)
+            }
+            if let list = item.get("exclude", [String].self) {
+                result.append(contentsOf: list)
+            }
+        }
+        return result
+    }
 }
 
 struct GeneralEditorView_Previews: PreviewProvider {
@@ -138,123 +188,175 @@ struct GeneralEditorSection: View {
 
 	var item: Item
 	var renderConfig: CascadingGeneralEditorConfig
-	var groupKey: String
-	var groups: [String: [String]]
+    var layoutSection: GeneralEditorLayoutItem
+    var usedFields: [String]
 
 	var body: some View {
-		let renderConfig = self.renderConfig
-		let editMode = self.context.currentSession?.isEditMode ?? false
-		let properties = groupKey == "other"
-			? self.getProperties(item)
-			: self.groups[self.groupKey] ?? []
-		let groupIsList = self.groups[self.groupKey] == nil && item.objectSchema[groupKey] == nil
-		let showDividers = self.hasSectionTitle(groupKey)
-		let listHasItems = groupIsList && item.edge(groupKey) != nil
+        let renderConfig = self.renderConfig
+        let editMode = context.currentSession?.isEditMode ?? false
+        let fields:[String] = (layoutSection.get("fields", String.self) == "*"
+            ? getProperties(item, usedFields)
+            : layoutSection.get("fields", [String].self)) ?? []
+        let edges = layoutSection.get("edges", [Edge].self, item) ?? []
+        let groupKey = layoutSection.get("section", String.self) ?? ""
+        
+        let sectionStyle = self.sectionStyle(groupKey)
+        let readOnly = self.layoutSection.get("readOnly", Bool.self) ?? false
+        let isEmpty = self.layoutSection.has("edges") && edges.count == 0 && fields.count == 0 && !editMode
+        let hasGroup = renderConfig.hasGroup(groupKey)
+        
+        let title = (hasGroup ? sectionStyle.title : nil) ?? groupKey.camelCaseToWords().uppercased()
+        let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? false)
+        let showTitle = sectionStyle.showTitle ?? true
+        let action = editMode
+            ? sectionStyle.action ?? (!readOnly && edges.count > 0
+                ? getAction(edgeType: edges[0].type ?? "", itemType: edges[0].targetItemType ?? "")
+                : nil)
+            : nil
+        let spacing = sectionStyle.spacing ?? 0
+        let padding = sectionStyle.padding
+        
+        return Section(
+            header: Group {
+                if showTitle && !isEmpty {
+                    HStack(alignment: .bottom) {
+                        Text(title)
+                            .generalEditorHeader()
 
-		return Section(header: self.getHeader(groupIsList, listHasItems)) {
-			if groupIsList && !listHasItems && !editMode {
-				EmptyView()
-			}
-			// Render using a view specified renderer
-			else if renderConfig.hasGroup(groupKey) {
-				if showDividers { Divider() }
-
-				if self.isDescriptionForGroup(groupKey) {
-					renderConfig.render(
-						item: item,
-						group: groupKey,
-						arguments: self._args(groupKey: self.groupKey,
-											  name: groupKey,
-											  item: self.item)
-					)
-				} else {
-					if groupIsList {
-						item.edges(groupKey).map { edges in
-							ForEach<Results<Edge>, Edge, UIElementView>(edges, id: \.self) { edge in
-								let otherItem = edge.item()
-								return self.renderConfig.render(
-									item: otherItem,
-									group: self.groupKey,
-									arguments: self._args(groupKey: self.groupKey,
-														  value: otherItem,
-														  item: otherItem,
-														  edge: edge)
-								)
-							}
-						}
-					} else {
-						// TODO: Error handling
-						ForEach(groups[groupKey] ?? [], id: \.self) { groupElement in
-							self.renderConfig.render(
-								item: self.item,
-								group: self.groupKey,
-								arguments: self._args(groupKey: self.groupKey,
-													  name: groupElement,
-													  item: self.item)
-							)
-						}
-					}
-				}
-
-				if showDividers { Divider() }
-			}
-			// Render lists with their default renderer
-			else if groupIsList {
-				Divider()
-				ScrollView {
-					VStack(alignment: .leading, spacing: 0) {
-						ForEach<Results<Edge>, Edge, ItemCell>(item.edges(groupKey)!, id: \.self) { edge in
-							let item = edge.item()
-							return ItemCell(
-								item: item,
-								rendererNames: ["generalEditor"],
-								arguments: self._args(groupKey: self.groupKey,
-													  name: self.groupKey,
-													  value: item,
-													  item: self.item,
-													  edge: edge)
-							)
-						}
-					}
-					//                        .padding(.top, 10)
-				}
-				.frame(maxHeight: 1000)
-				.fixedSize(horizontal: false, vertical: true)
-
-				Divider()
-			}
-			// Render groups with the default render row
-			else {
-				Divider()
-				ForEach(properties, id: \.self) { prop in
-
-					// TODO: Refactor: rows that are single links to an item
-
-					DefaultGeneralEditorRow(
-						context: self._context,
-						item: self.item,
-						prop: prop,
-						readOnly: !editMode || renderConfig.readOnly.contains(prop),
-						isLast: properties.last == prop,
-						renderConfig: renderConfig,
-						arguments: self._args(name: prop,
-											  value: self.item.get(prop),
-											  item: self.item)
-					)
-				}
-				Divider()
-			}
-		}
+                        if action != nil {
+                            Spacer()
+                            // NOTE: Allowed force unwrapping
+                            ActionButton(action: action, item: item)
+                                .foregroundColor(Color(hex: "#777"))
+                                .font(.system(size: 18, weight: .semibold))
+                                .padding(.bottom, 10)
+                        }
+                    }.padding(.trailing, 20)
+                }
+                else {
+                    EmptyView()
+                }
+            },
+            
+            content: {
+                if isEmpty {
+                    EmptyView()
+                }
+                else {
+                    if dividers { Divider() }
+                    
+                    // If a render group is defined in the render config
+                    if hasGroup {
+                        
+                        // Add spacing between the render elements
+                        VStack(alignment: .leading, spacing: spacing) {
+                                
+                            // layoutSection describes a render group defined in the render config
+                            if fields.count == 0 && edges.count == 0 {
+                                // TODO error when group doesnt exist?
+                                
+                                renderConfig.render(
+                                    item: self.item,
+                                    group: groupKey,
+                                    arguments: self._args(groupKey: groupKey,
+                                                          name: groupKey,
+                                                          item: self.item)
+                                )
+                            }
+                            // Render boths fields and edges in the same section
+                            else {
+                                // Render the fields
+                                if fields.count > 0 {
+                                    ForEach(fields, id: \.self) { field in
+                                        renderConfig.render(
+                                            item: self.item,
+                                            group: groupKey,
+                                            arguments: self._args(groupKey: groupKey,
+                                                                  name: field,
+                                                                  item: self.item)
+                                        )
+                                    }
+                                }
+                                // Render the edges
+                                if edges.count > 0 {
+                                    ForEach<[Edge], Edge, UIElementView>(edges, id: \.self) { edge in
+                                        let targetItem = edge.item()
+                                        return renderConfig.render(
+                                            item: targetItem,
+                                            group: groupKey,
+                                            arguments: self._args(groupKey: groupKey,
+                                                                  value: targetItem,
+                                                                  item: targetItem,
+                                                                  edge: edge)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        .padding(EdgeInsets(top: padding[0],
+                                            leading: padding[3],
+                                            bottom: padding[2],
+                                            trailing: padding[1]))
+                    }
+                    
+                    else if fields.count == 0 && edges.count == 0 {
+                        // Error
+                    }
+                        
+                    // Default renderers
+                    else {
+                        // Render groups with the default render row
+                        if fields.count > 0 {
+                            ForEach(fields, id: \.self) { field in
+                                DefaultGeneralEditorRow(
+                                    context: self._context,
+                                    item: self.item,
+                                    prop: field,
+                                    readOnly: !editMode || readOnly,
+                                    isLast: fields.last == field,
+                                    renderConfig: renderConfig,
+                                    arguments: self._args(name: field,
+                                                          value: self.item.get(field),
+                                                          item: self.item)
+                                )
+                            }
+                        }
+                        // Render lists with their default renderer
+                        if edges.count > 0 {
+                            ScrollView {
+                                VStack(alignment: .leading, spacing: spacing) {
+                                    ForEach<[Edge], Edge, ItemCell>(edges, id: \.self) { edge in
+                                        let targetItem = edge.item()
+                                        return ItemCell(
+                                            item: targetItem,
+                                            rendererNames: ["generalEditor"],
+                                            arguments: self._args(groupKey: groupKey,
+                                                                  name: edge.type ?? "",
+                                                                  value: targetItem,
+                                                                  item: self.item,
+                                                                  edge: edge)
+                                        )
+                                    }
+                                }
+                                .padding(EdgeInsets(top: padding[0],
+                                                    leading: padding[3],
+                                                    bottom: padding[2],
+                                                    trailing: padding[1]))
+                            }
+                            .frame(maxHeight: 1000)
+                            .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                    
+                    if dividers { Divider() }
+                }
+            }
+        )
 	}
 
-	//    func getArray(_ item: Item, _ prop: String) -> [Item] {
-	//        dataItemListToArray(item[prop] ?? [])
-	//    }
-
-	func getProperties(_ item: Item) -> [String] {
+    func getProperties(_ item: Item, _ used: [String]) -> [String] {
 		item.objectSchema.properties.filter {
-			!self.renderConfig.excluded.contains($0.name)
-				&& !self.renderConfig.allGroupValues().contains($0.name)
+			!used.contains($0.name)
 				&& !$0.isArray
 		}.map { $0.name }
 	}
@@ -267,104 +369,74 @@ struct GeneralEditorSection: View {
 		try? ViewArguments([
 			"subject": item as Any,
 			"readOnly": !(context.currentSession?.isEditMode ?? false),
-			"sectionTitle": groupKey.camelCaseToWords().uppercased(),
+			"title": groupKey.camelCaseToWords().uppercased(),
 			"displayName": name.camelCaseToWords().capitalizingFirst(),
 			"name": name,
 			"edge": edge as Any,
 			".": item as Any,
 		].merging(renderConfig.viewArguments?.asDict() ?? [:], uniquingKeysWith: { l, _ in l }))
 	}
+    
+    func getAction(edgeType:String, itemType:String) -> Action {
+        return ActionOpenViewByName(
+            context,
+            arguments: [
+                "name": "choose-item-by-query",
+                "viewArguments": try? ViewArguments.fromDict([
+                    "query": itemType,
+                    "type": edgeType,
+                    "subject": item,
+                    "renderer": "list",
+                    "edgeType": edgeType,
+                    "title": "Choose a \(itemType)",
+                    "dataItem": item,
+                ]),
+            ],
+            values: [
+                "icon": "plus",
+                "renderAs": RenderType.popup,
+            ]
+        )
+    }
+    
+    struct SectionStyle {
+        let title: String?
+        let dividers: Bool?
+        let showTitle:Bool?
+        let action:Action?
+        let spacing:CGFloat?
+        let padding:[CGFloat]
+    }
 
-	func hasSectionTitle(_ groupKey: String) -> Bool {
-		renderConfig.getGroupOptions(groupKey)["sectionTitle"] as? String != ""
+	func sectionStyle(_ groupKey: String) -> SectionStyle {
+        let s = renderConfig.getGroupOptions(groupKey)
+        let allPadding = getValue(groupKey, s["padding"] as Any?, CGFloat.self) ?? 0
+        
+        return SectionStyle(
+            title: getValue(groupKey, s["title"] as Any?, String.self)?.uppercased(),
+            dividers: getValue(groupKey, s["dividers"] as Any?, Bool.self),
+            showTitle: getValue(groupKey, s["showTitle"] as Any?, Bool.self),
+            action: getValue(groupKey, s["action"] as Any?, Action.self),
+            spacing: getValue(groupKey, s["spacing"] as Any?, CGFloat.self),
+            padding: getValue(groupKey, s["padding"] as Any?, [CGFloat].self)
+                ?? [allPadding, allPadding, allPadding, allPadding]
+        )
 	}
 
-	func getSectionTitle(_ groupKey: String) -> String? {
-		let title = renderConfig.getGroupOptions(groupKey)["sectionTitle"]
-
-		if let title = title as? String {
-			return title
-		} else if let expr = title as? Expression {
-			let args = _args(groupKey: self.groupKey, name: self.groupKey, item: item)
+    func getValue<T>(_ groupKey:String, _ value: Any?, _:T.Type = T.self) -> T? {
+        if value == nil { return nil }
+        
+		if let expr = value as? Expression {
+			let args = _args(groupKey: groupKey, name: groupKey, item: item)
 			do {
-				return try expr.execForReturnType(args: args)
+                return try expr.execForReturnType(T.self, args: args)
 			} catch {
 				debugHistory.error("\(error)")
 				return nil
 			}
 		}
 
-		return nil
-	}
-
-	func isDescriptionForGroup(_ groupKey: String) -> Bool {
-		if !renderConfig.hasGroup(groupKey) { return false }
-		return renderConfig.getGroupOptions(groupKey)["foreach"] as? Bool == false
-	}
-
-	//    func getType(_ groupKey:String) -> String {
-	//        renderConfig.renderDescription?[groupKey]?.type ?? ""
-	//    }
-
-	func getHeader(_ isArray: Bool, _ listHasItems: Bool) -> some View {
-		let editMode = context.currentSession?.isEditMode ?? false
-		let className = item.objectSchema[groupKey]?.objectClassName ?? ""
-		let readOnly = renderConfig.readOnly.contains(groupKey)
-
-		let action = isArray && editMode && !readOnly
-			? ActionOpenViewByName(context,
-								   arguments: [
-								   	"name": "choose-item-by-query",
-								   	"viewArguments": try? ViewArguments.fromDict([
-								   		"query": className,
-								   		"type": className,
-								   		"subject": item,
-								   		"property": groupKey,
-								   		"title": "Choose a \(className)",
-								   		"dataItem": item,
-								   	]),
-								   ],
-								   values: [
-								   	"icon": "plus",
-								   	"renderAs": RenderType.popup,
-								   ])
-			: nil
-
-		return Group {
-			if isArray && !listHasItems && !editMode {
-				EmptyView()
-			} else if renderConfig.hasGroup(groupKey) {
-				if self.hasSectionTitle(groupKey) {
-					self.constructSectionHeader(
-						title: self.getSectionTitle(groupKey) ?? groupKey,
-						action: action
-					)
-				} else {
-					EmptyView()
-				}
-			} else {
-				self.constructSectionHeader(
-					title: (groupKey == "other" && groups.count == 0) ? "all" : groupKey,
-					action: action
-				)
-			}
-		}
-	}
-
-	func constructSectionHeader(title: String, action: Action? = nil) -> some View {
-		HStack(alignment: .bottom) {
-			Text(title.camelCaseToWords().uppercased())
-				.generalEditorHeader()
-
-			if action != nil {
-				Spacer()
-				// NOTE: Allowed force unwrapping
-				ActionButton(action: action!)
-					.foregroundColor(Color(hex: "#777"))
-					.font(.system(size: 18, weight: .semibold))
-					.padding(.bottom, 10)
-			}
-		}.padding(.trailing, 20)
+		return value as? T
 	}
 }
 
@@ -381,47 +453,52 @@ struct DefaultGeneralEditorRow: View {
 	var body: some View {
 		// Get the type from the schema, because when the value is nil the type cannot be determined
 		let propType = item.objectSchema[prop]?.type
+        let propValue:Any? = self.item.get(self.prop)
 
 		return VStack(spacing: 0) {
-			VStack(alignment: .leading, spacing: 4) {
-				Text(prop
-					.camelCaseToWords()
-					.lowercased()
-					.capitalizingFirst()
-				)
-				.generalEditorLabel()
+            if propValue == nil && readOnly {
+                EmptyView()
+            }
+            else {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(prop
+                        .camelCaseToWords()
+                        .lowercased()
+                        .capitalizingFirst()
+                    )
+                    .generalEditorLabel()
 
-				if renderConfig.hasGroup(prop) {
-					renderConfig.render(item: item, group: prop, arguments: arguments)
-				} else if readOnly {
-					if [.string, .bool, .date, .int, .double].contains(propType) {
-						defaultRow(self.item.getString(self.prop))
-					} else if propType == .object {
-						if self.item[self.prop] is Item {
-							MemriButton(context: self._context,
-										item: self.item[self.prop] as! Item)
-						} else {
-							defaultRow()
-						}
-					} else { defaultRow() }
-				} else {
-					if propType == .string { stringRow() }
-					else if propType == .bool { boolRow() }
-					else if propType == .date { dateRow() }
-					else if propType == .int { intRow() }
-					else if propType == .double { doubleRow() }
-					else if propType == .object { defaultRow() }
-					else { defaultRow() }
-				}
-			}
-			.fullWidth()
-			.padding(.bottom, 10)
-			.padding(.horizontal, 36)
-			.background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
+                    if renderConfig.hasGroup(prop) {
+                        renderConfig.render(item: item, group: prop, arguments: arguments)
+                    } else if readOnly {
+                        if [.string, .bool, .date, .int, .double].contains(propType) {
+                            defaultRow(ExprInterpreter.evaluateString(propValue, ""))
+                        } else if propType == .object {
+                            if propValue is Item {
+                                MemriButton(context: self._context, item: propValue as! Item)
+                            } else {
+                                defaultRow()
+                            }
+                        } else { defaultRow() }
+                    } else {
+                        if propType == .string { stringRow() }
+                        else if propType == .bool { boolRow() }
+                        else if propType == .date { dateRow() }
+                        else if propType == .int { intRow() }
+                        else if propType == .double { doubleRow() }
+                        else if propType == .object { defaultRow() }
+                        else { defaultRow() }
+                    }
+                }
+                .fullWidth()
+                .padding(.bottom, 10)
+                .padding(.horizontal, 36)
+                .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
 
-			if !isLast {
-				Divider().padding(.leading, 35)
-			}
+                if !isLast {
+                    Divider().padding(.leading, 35)
+                }
+            }
 		}
 	}
 

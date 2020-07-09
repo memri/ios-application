@@ -72,18 +72,17 @@ ImporterRun {
     ]
     
     [renderer = generalEditor] {
-        groups:  {
-            iconHeading: iconHeading
-            run: run
-            name: name
-        }
-
-        sequence: iconHeading name run labels other dates
-        excluded: version dateCreated dateModified dateAccessed changeLog
-        readOnly: name
+        layout: [
+            { section: iconHeading }
+            { section: name, readOnly: true }
+            { section: run }
+            { section: labels }
+            { section: other, fields: *, exclude: version starred }
+            { section: dates }
+        ]
         
         iconHeading {
-            sectionTitle: ""
+            title: ""
             
             HStack{
                 align: center
@@ -115,7 +114,7 @@ ImporterRun {
 
         run {
             foreach: false
-            sectionTitle: ""
+            title: ""
             
             VStack {
                 HStack {
