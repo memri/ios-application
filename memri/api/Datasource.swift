@@ -121,9 +121,9 @@ public class CascadingDatasource: Cascadable, UniqueString {
 
 	func flattened() -> Datasource {
 		Datasource(value: [
-			"query": query as Any,
-			"sortProperty": sortProperty as Any,
-			"sortAscending": sortAscending as Any,
+			"query": query,
+			"sortProperty": sortProperty,
+			"sortAscending": sortAscending,
 		])
 	}
 

@@ -107,11 +107,11 @@ public class UserState: SchemaItem, CVUToString {
 					for (key, value) in x {
 						if let value = value as? Item {
 							values[key] = ["_type": value.genericType,
-                                           "_uid": value.uid.value as Any,
+                                           "_uid": value.uid.value,
 										   "___": true]
                         } else if let value = value as? [Item] {
                             values[key] = AnyCodable(value.map { ["_type": $0.genericType,
-                                                                  "_uid": $0.uid.value as Any,
+                                                                  "_uid": $0.uid.value,
                                                                   "___": true] })
 						} else if let value = value as? AnyCodable {
 							values[key] = value
@@ -184,7 +184,7 @@ public class UserState: SchemaItem, CVUToString {
         var dct = dict
         for (key, value) in dct {
             if let expr = value as? Expression {
-                dct[key] = try expr.execute(ViewArguments([".": item as Any]))
+                dct[key] = try expr.execute(ViewArguments([".": item]))
             }
         }
         

@@ -16,11 +16,11 @@ class CVUParser {
 	var lastToken: CVUToken?
 
 	private let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
-	private let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
+	private let execFunc: (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?
 
 	init(_ tokens: [CVUToken], _ context: MemriContext,
 		 lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
-		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
+		 execFunc: @escaping (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?) {
 		self.context = context
 		self.tokens = tokens
 		self.lookup = lookup
@@ -364,7 +364,7 @@ class CVUParser {
 				lastKey = nil
 			case .Nil:
 				let x: String? = nil
-				stack.append(x as Any)
+				stack.append(x)
 			case let .Number(value, _, _):
 				stack.append(forUIElement ? CGFloat(value) : value)
 			case let .String(value, _, _):

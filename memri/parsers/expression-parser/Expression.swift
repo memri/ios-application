@@ -13,7 +13,7 @@ public class Expression: CVUToString {
 	let code: String
 	let startInStringMode: Bool
 	var lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
-	var execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
+	var execFunc: (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?
 
 	var context: MemriContext?
 
@@ -38,7 +38,7 @@ public class Expression: CVUToString {
 
 	init(_ code: String, startInStringMode: Bool,
 		 lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
-		 execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
+		 execFunc: @escaping (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?) {
 		self.code = code
 		self.startInStringMode = startInStringMode
 		self.lookup = lookup

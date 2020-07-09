@@ -319,7 +319,7 @@ public class Views {
 				// TODO: This is implemented very slowly first. Let's think about an optimization
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
-				let list = dataItemListToArray(value as Any)
+				let list = dataItemListToArray(value)
 				let args = try ViewArguments.clone(viewArguments, managed: false)
 				let expr = node.sequence[0]
 

@@ -369,13 +369,13 @@ struct GeneralEditorSection: View {
 			   item: Item?,
 			   edge: Edge? = nil) -> ViewArguments? {
 		try? ViewArguments([
-			"subject": item as Any,
+			"subject": item,
 			"readOnly": !(context.currentSession?.isEditMode ?? false),
 			"title": groupKey.camelCaseToWords().uppercased(),
 			"displayName": name.camelCaseToWords().capitalizingFirst(),
 			"name": name,
-			"edge": edge as Any,
-			".": item as Any,
+			"edge": edge,
+			".": item,
 		].merging(renderConfig.viewArguments?.asDict() ?? [:], uniquingKeysWith: { l, _ in l }))
 	}
     

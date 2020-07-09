@@ -59,17 +59,17 @@ public class Item: SchemaItem {
 		}
 		functions["edge"] = { args in
 			if let edgeType = args?[0] as? String {
-				return self.edge(edgeType) as Any
+				return self.edge(edgeType)
 			} else if let edgeTypes = args?[0] as? [String] {
-				return self.edge(edgeTypes) as Any
+				return self.edge(edgeTypes)
 			}
 			return nil
 		}
 		functions["edges"] = { args in
 			if let edgeType = args?[0] as? String {
-				return self.edges(edgeType) as Any
+				return self.edges(edgeType)
 			} else if let edgeTypes = args?[0] as? [String] {
-				return self.edges(edgeTypes) as Any
+				return self.edges(edgeTypes)
 			}
 
 			return nil

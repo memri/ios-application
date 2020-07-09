@@ -151,14 +151,16 @@ public class Session: SchemaSession {
 		let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
 			.map { try SessionView.fromCVUDefinition(parsed: $0) }
 
-		let session = try Cache.createItem(Session.self, values: [
-			"selector": (def.selector ?? "[session]") as Any,
-			"name": (def["name"] as? String ?? "") as Any,
-			"currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
-			"showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
-			"showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
-			"editMode": (def["editMode"] as? Bool ?? false) as Any,
-		])
+        let values:[String:Any?] = [
+            "selector": (def.selector ?? "[session]"),
+            "name": (def["name"] as? String ?? ""),
+            "currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
+            "showFilterPanel": (def["showFilterPanel"] as? Bool ?? false),
+            "showContextPane": (def["showContextPane"] as? Bool ?? false),
+            "editMode": (def["editMode"] as? Bool ?? false),
+        ]
+        
+		let session = try Cache.createItem(Session.self, values: values)
 
 		if let screenshot = def["screenshot"] as? File {
 			session.set("screenshot", screenshot)

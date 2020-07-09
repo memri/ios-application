@@ -9,7 +9,7 @@ import RealmSwift
 import SwiftUI
 
 extension MemriContext {
-	private func getItem(_ dict: [String: Any], _ dataItem: Item?,
+	private func getItem(_ dict: [String: Any?], _ dataItem: Item?,
 						 _ viewArguments: ViewArguments? = nil) throws -> Item {
 		// TODO: refactor: move to function
 		guard let stringType = dict["type"] as? String else {
@@ -38,12 +38,12 @@ extension MemriContext {
 
 				if let expr = inputValue as? Expression {
 					if let v = viewArguments {
-						propValue = try expr.execute(v) as Any
+						propValue = try expr.execute(v)
 					} else {
 						let viewArgs = try ViewArguments.clone(cascadingView?.viewArguments,
-															   [".": dataItem as Any],
+															   [".": dataItem],
 															   managed: false)
-						propValue = try expr.execute(viewArgs) as Any
+						propValue = try expr.execute(viewArgs)
 					}
 				} else {
 					propValue = inputValue
@@ -60,7 +60,7 @@ extension MemriContext {
 								_ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
         let viewArgs = try ViewArguments.clone(viewArguments ?? cascadingView?.viewArguments,
-                                           [".": dataItem as Any],
+                                           [".": dataItem],
                                            managed: false, item: dataItem)
         
         var args = [String: Any?]()
@@ -225,8 +225,8 @@ public class Action: HashableClass, CVUToString {
 		defaultValues["argumentTypes"] as? [String: Any.Type] ?? [:]
 	}
 
-	var defaultValues: [String: Any] { [:] }
-	let baseValues: [String: Any] = [
+	var defaultValues: [String: Any?] { [:] }
+	let baseValues: [String: Any?] = [
 		"icon": "",
 		"renderAs": RenderType.button,
 		"showTitle": false,
@@ -439,11 +439,11 @@ public enum ActionProperties: String, CaseIterable {
 }
 
 protocol ActionExec {
-	func exec(_ arguments: [String: Any]) throws
+	func exec(_ arguments: [String: Any?]) throws
 }
 
 class ActionBack: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "chevron.left",
 		"opensView": true,
 		"color": Color(hex: "#434343"),
@@ -455,7 +455,7 @@ class ActionBack: Action, ActionExec {
 		super.init(context, "back", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
 			if session.currentViewIndex == 0 {
 				print("Warn: Can't go back. Already at earliest view in session")
@@ -468,13 +468,13 @@ class ActionBack: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionBack(context).exec(arguments) }
 	}
 }
 
 class ActionAddItem: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "plus",
 		"argumentTypes": ["template": ItemFamily.self],
 		"opensView": true,
@@ -486,7 +486,7 @@ class ActionAddItem: Action, ActionExec {
 		super.init(context, "addItem", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		if let dataItem = arguments["template"] as? Item {
 //			// Copy template
 //			let copy = try context.cache.duplicate(dataItem)
@@ -500,13 +500,13 @@ class ActionAddItem: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionAddItem(context).exec(arguments) }
 	}
 }
 
 class ActionOpenView: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
 		"withAnimation": false,
 		"opensView": true,
@@ -522,7 +522,7 @@ class ActionOpenView: Action, ActionExec {
 			if let dict = arguments?.asDict() {
 				if let viewArguments = view.viewArguments {
 					view.set("viewArguments", try ViewArguments.fromDict(viewArguments.asDict()
-							.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any]))
+							.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?]))
 				}
 			}
 
@@ -554,7 +554,7 @@ class ActionOpenView: Action, ActionExec {
 		try openView(context, view: view, with: arguments)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		//        let selection = context.cascadingView.userState.get("selection") as? [Item]
 		let dataItem = arguments["dataItem"] as? Item
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
@@ -572,13 +572,13 @@ class ActionOpenView: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionOpenView(context).exec(arguments) }
 	}
 }
 
 class ActionOpenViewByName: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
 		"withAnimation": false,
 		"opensView": true,
@@ -588,7 +588,7 @@ class ActionOpenViewByName: Action, ActionExec {
 		super.init(context, "openViewByName", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
 		if let name = arguments["name"] as? String {
@@ -609,13 +609,13 @@ class ActionOpenViewByName: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionOpenViewByName(context).exec(arguments) }
 	}
 }
 
 class ActionToggleEditMode: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "pencil",
 		"binding": Expression("currentSession.editMode"),
 		"activeColor": Color(hex: "#6aa84f"),
@@ -627,17 +627,17 @@ class ActionToggleEditMode: Action, ActionExec {
 		super.init(context, "toggleEditMode", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		// Do Nothing
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionToggleEditMode(context).exec(arguments) }
 	}
 }
 
 class ActionToggleFilterPanel: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "rhombus.fill",
 		"binding": Expression("currentSession.showFilterPanel"),
 		"activeColor": Color(hex: "#6aa84f"),
@@ -647,18 +647,18 @@ class ActionToggleFilterPanel: Action, ActionExec {
 		super.init(context, "toggleFilterPanel", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		// Hide Keyboard
 		dismissCurrentResponder()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionToggleFilterPanel(context).exec(arguments) }
 	}
 }
 
 class ActionStar: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "star.fill",
 		"binding": Expression("dataItem.starred"),
 	] }
@@ -668,7 +668,7 @@ class ActionStar: Action, ActionExec {
 	}
 
 	// TODO: selection handling for binding
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		//        if let item = arguments["dataItem"] as? Item {
 		//            var selection:[Item] = context.cascadingView.userState.get("selection") ?? []
 		//            let toValue = !item.starred
@@ -690,13 +690,13 @@ class ActionStar: Action, ActionExec {
 		//        }
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionStar(context).exec(arguments) }
 	}
 }
 
 class ActionShowStarred: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "star.fill",
 		"binding": Expression("view.userState.showStarred"),
 		"opensView": true,
@@ -708,7 +708,7 @@ class ActionShowStarred: Action, ActionExec {
 		super.init(context, "showStarred", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		do {
 			if let binding = self.binding, try !binding.isTrue() {
 				try ActionOpenViewByName.exec(context, ["name": "filter-starred"])
@@ -724,13 +724,13 @@ class ActionShowStarred: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionShowStarred(context).exec(arguments) }
 	}
 }
 
 class ActionShowContextPane: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "ellipsis",
 		"binding": Expression("currentSession.showContextPane"),
 	] }
@@ -739,18 +739,18 @@ class ActionShowContextPane: Action, ActionExec {
 		super.init(context, "showContextPane", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		// Hide Keyboard
 		dismissCurrentResponder()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionShowContextPane(context).exec(arguments) }
 	}
 }
 
 class ActionShowNavigation: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "line.horizontal.3",
 		"binding": Expression("context.showNavigation"),
 		"inactiveColor": Color(hex: "#434343"),
@@ -760,18 +760,18 @@ class ActionShowNavigation: Action, ActionExec {
 		super.init(context, "showNavigation", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		// Hide Keyboard
 		dismissCurrentResponder()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionShowNavigation(context).exec(arguments) }
 	}
 }
 
 class ActionSchedule: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "alarm",
 	] }
 
@@ -779,15 +779,15 @@ class ActionSchedule: Action, ActionExec {
 		super.init(context, "schedule", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		//        ActionSchedule.exec(context, arguments:arguments)
 	}
 
-	class func exec(_: MemriContext, _: [String: Any]) throws {}
+	class func exec(_: MemriContext, _: [String: Any?]) throws {}
 }
 
 class ActionShowSessionSwitcher: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"icon": "ellipsis",
 		"binding": Expression("context.showSessionSwitcher"),
 		"color": Color(hex: "#CCC"),
@@ -797,17 +797,17 @@ class ActionShowSessionSwitcher: Action, ActionExec {
 		super.init(context, "showSessionSwitcher", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		//        ActionShowSessionSwitcher.exec(context, arguments:arguments)
 	}
 
-	class func exec(_: MemriContext, _: [String: Any]) throws {
+	class func exec(_: MemriContext, _: [String: Any?]) throws {
 		// Do Nothing
 	}
 }
 
 class ActionForward: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"opensView": true,
 	] }
 
@@ -815,7 +815,7 @@ class ActionForward: Action, ActionExec {
 		super.init(context, "forward", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
 			if session.currentViewIndex == (session.views?.count ?? 0) - 1 {
 				print("Warn: Can't go forward. Already at last view in session")
@@ -828,13 +828,13 @@ class ActionForward: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionForward(context).exec(arguments) }
 	}
 }
 
 class ActionForwardToFront: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"opensView": true,
 	] }
 
@@ -842,7 +842,7 @@ class ActionForwardToFront: Action, ActionExec {
 		super.init(context, "forwardToFront", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
 			realmWriteIfAvailable(context.cache.realm) {
 				session.currentViewIndex = (session.views?.count ?? 0) - 1
@@ -853,13 +853,13 @@ class ActionForwardToFront: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionForwardToFront(context).exec(arguments) }
 	}
 }
 
 class ActionBackAsSession: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"opensView": true,
 		"withAnimation": false,
 	] }
@@ -868,7 +868,7 @@ class ActionBackAsSession: Action, ActionExec {
 		super.init(context, "backAsSession", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
 			if session.currentViewIndex == 0 {
 				throw "Warn: Can't go back. Already at earliest view in session"
@@ -889,13 +889,13 @@ class ActionBackAsSession: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionBackAsSession(context).exec(arguments) }
 	}
 }
 
 class ActionOpenSession: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["session": Session.self, "viewArguments": ViewArguments.self],
 		"opensView": true,
 		"withAnimation": false,
@@ -929,7 +929,7 @@ class ActionOpenSession: Action, ActionExec {
 
 	/// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
 	/// reorders it on top
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		if let item = arguments["session"] {
 			if let session = item as? Session {
 				openSession(context, session)
@@ -947,14 +947,14 @@ class ActionOpenSession: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionOpenSession(context).exec(arguments) }
 	}
 }
 
 // TODO: How to deal with viewArguments in sessions
 class ActionOpenSessionByName: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
 		"opensView": true,
 		"withAnimation": false,
@@ -964,7 +964,7 @@ class ActionOpenSessionByName: Action, ActionExec {
 		super.init(context, "openSessionByName", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
 		guard let name = arguments["name"] as? String else {
@@ -1006,7 +1006,7 @@ class ActionOpenSessionByName: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionOpenSessionByName(context).exec(arguments) }
 	}
 }
@@ -1016,7 +1016,7 @@ class ActionDelete: Action, ActionExec {
 		super.init(context, "delete", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 //
 		//        // TODO this should happen automatically in ResultSet
 		//        //        self.context.items.remove(atOffsets: indexSet)
@@ -1040,7 +1040,7 @@ class ActionDelete: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionDelete(context).exec(arguments) }
 	}
 }
@@ -1050,7 +1050,7 @@ class ActionDuplicate: Action, ActionExec {
 		super.init(context, "duplicate", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
 			try selection.forEach { item in try ActionAddItem.exec(context, ["dataItem": item]) }
 		} else if let item = arguments["dataItem"] as? Item {
@@ -1061,13 +1061,13 @@ class ActionDuplicate: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionDuplicate(context).exec(arguments) }
 	}
 }
 
 class ActionRunImporterRun: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["importerRun": ItemFamily.self],
 	] }
 
@@ -1075,7 +1075,7 @@ class ActionRunImporterRun: Action, ActionExec {
 		super.init(context, "runImporterRun", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		// TODO: parse options
 
 		if let run = arguments["importerRun"] as? ImporterRun {
@@ -1089,7 +1089,7 @@ class ActionRunImporterRun: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionRunImporterRun(context).exec(arguments) }
 	}
 }
@@ -1099,7 +1099,7 @@ class ActionRunIndexerRun: Action, ActionExec {
 		super.init(context, "runIndexerRun", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		// TODO: parse options
 		guard let run = arguments["indexerRun"] as? memri.IndexerRun else {
 			throw "Exception: no indexer run passed"
@@ -1185,7 +1185,7 @@ class ActionRunIndexerRun: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionRunIndexerRun(context).exec(arguments) }
 	}
 }
@@ -1195,17 +1195,17 @@ class ActionClosePopup: Action, ActionExec {
 		super.init(context, "closePopup", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
         context.closeLastInStack()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
 	}
 }
 
 class ActionSetProperty: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["subject": ItemFamily.self, "property": String.self, "value": AnyObject.self],
 	] }
 
@@ -1213,7 +1213,7 @@ class ActionSetProperty: Action, ActionExec {
 		super.init(context, "setProperty", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		guard let subject = arguments["subject"] as? Item else {
 			throw "Exception: subject is not set"
 		}
@@ -1228,13 +1228,13 @@ class ActionSetProperty: Action, ActionExec {
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionLink(context).exec(arguments) }
 	}
 }
 
 class ActionLink: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
         "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "distinct": Bool.self],
 	] }
 
@@ -1242,7 +1242,7 @@ class ActionLink: Action, ActionExec {
 		super.init(context, "link", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
         guard let subject = arguments["subject"] as? Item else {
 			throw "Exception: subject is not set"
 		}
@@ -1263,13 +1263,13 @@ class ActionLink: Action, ActionExec {
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionLink(context).exec(arguments) }
 	}
 }
 
 class ActionUnlink: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
         "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "all": Bool.self],
 	] }
 
@@ -1277,7 +1277,7 @@ class ActionUnlink: Action, ActionExec {
 		super.init(context, "unlink", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		guard let subject = arguments["subject"] as? Item else {
 			throw "Exception: subject is not set"
 		}
@@ -1297,13 +1297,13 @@ class ActionUnlink: Action, ActionExec {
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionUnlink(context).exec(arguments) }
 	}
 }
 
 class ActionMultiAction: Action, ActionExec {
-	override var defaultValues: [String: Any] { [
+	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["actions": [Action].self],
 		"opensView": true,
 	] }
@@ -1312,7 +1312,7 @@ class ActionMultiAction: Action, ActionExec {
 		super.init(context, "multiAction", arguments: arguments, values: values)
 	}
 
-	func exec(_ arguments: [String: Any]) throws {
+	func exec(_ arguments: [String: Any?]) throws {
 		guard let actions = arguments["actions"] as? [Action] else {
 			throw "Cannot execute ActionMultiAction: no actions passed in arguments"
 		}
@@ -1322,7 +1322,7 @@ class ActionMultiAction: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionMultiAction(context).exec(arguments) }
 	}
 }
@@ -1332,11 +1332,11 @@ class ActionNoop: Action, ActionExec {
 		super.init(context, "noop", arguments: arguments, values: values)
 	}
 
-	func exec(_: [String: Any]) throws {
+	func exec(_: [String: Any?]) throws {
 		// do nothing
 	}
 
-	class func exec(_ context: MemriContext, _ arguments: [String: Any]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionClosePopup(context).exec(arguments) }
 	}
 }
