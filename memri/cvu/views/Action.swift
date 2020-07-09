@@ -1077,8 +1077,7 @@ class ActionRunIndexerRun: Action, ActionExec {
 
 	func exec(_ arguments: [String: Any]) throws {
 		// TODO: parse options
-
-		guard let run = arguments["indexerRun"] as? IndexerRun else {
+		guard let run = arguments["indexerRun"] as? memri.IndexerRun else {
 			throw "Exception: no indexer run passed"
 		}
 
@@ -1111,6 +1110,23 @@ class ActionRunIndexerRun: Action, ActionExec {
 
 	func runIndexerRun(_ run: IndexerRun, _ uid: Int) {
 		let start = Date()
+        
+        // Create Indexer
+        do {
+            try self.context.podAPI.sync(run) { error in
+                print(error)
+            }
+        }
+        catch  {
+            print("Could not create indexerRun \(run)")
+        }
+
+            
+        self.context.podAPI.runIndexerRun(uid) { error, data in
+            print(error)
+            print(data)
+            
+        }
 
 		Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
 			let timePassed = Int(Date().timeIntervalSince(start))

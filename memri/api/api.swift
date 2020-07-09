@@ -426,7 +426,7 @@ public class PodAPI {
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
 	public func runIndexerRun(_ uid: Int,
 							  _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
-		http(.PUT, path: "index/\(uid)") { error, _ in
+		http(.POST, path: "run_service/indexers/\(uid)") { error, _ in
 			callback(error, error == nil)
 		}
 	}

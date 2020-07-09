@@ -143,7 +143,7 @@ IndexerRun {
                         
                         press: runIndexerRun {
                             arguments {
-                                indexerInstance: {{.}}
+                                indexerRun: {{.}}
                             }
                         }
                         
