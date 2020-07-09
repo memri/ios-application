@@ -57,19 +57,19 @@ extension MemriContext {
 	}
 
 	private func buildArguments(_ action: Action, _ dataItem: Item?,
-								_ viewArguments: ViewArguments? = nil) throws -> [String: Any] {
+								_ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
         let viewArgs = try ViewArguments.clone(viewArguments ?? cascadingView?.viewArguments,
                                            [".": dataItem as Any],
                                            managed: false, item: dataItem)
         
-        var args = [String: Any]()
+        var args = [String: Any?]()
 		for (argName, inputValue) in action.arguments {
 			var argValue: Any?
 
 			// preprocess arg
 			if let expr = inputValue as? Expression {
-				argValue = try expr.execute() as Any
+				argValue = try expr.execute(viewArgs)
 			} else {
 				argValue = inputValue
 			}
@@ -79,10 +79,10 @@ extension MemriContext {
 			// TODO: add cases for argValue = Item, ViewArgument
 			if let dataItem = argValue as? Item {
 				finalValue = dataItem
-			} else if var dict = argValue as? [String: Any] {
+			} else if var dict = argValue as? [String: Any?] {
                 for (key, value) in dict {
                     if let expr = value as? Expression {
-                        dict[key] = try expr.execute(viewArgs) as Any
+                        dict[key] = try expr.execute(viewArgs)
                     }
                 }
                 
@@ -104,7 +104,7 @@ extension MemriContext {
                     var dict = viewArgs.asDict()
                     for (key, value) in dict {
                         if let expr = value as? Expression {
-                            dict[key] = try expr.execute(viewArgs) as Any
+                            dict[key] = try expr.execute(viewArgs)
                         }
                     }
                     
@@ -136,7 +136,7 @@ extension MemriContext {
 		}
 
 		// Last element of arguments array is the context data item
-		args["dataItem"] = dataItem ?? cascadingView?.resultSet.singletonItem as Any
+		args["dataItem"] = dataItem ?? cascadingView?.resultSet.singletonItem
 
 		return args
 	}

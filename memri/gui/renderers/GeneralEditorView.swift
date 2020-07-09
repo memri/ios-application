@@ -197,6 +197,8 @@ struct GeneralEditorSection: View {
         let fields:[String] = (layoutSection.get("fields", String.self) == "*"
             ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
+        let edgeNames = layoutSection.get("edges", [String].self, item) ?? []
+        let edgeType = layoutSection.get("type", String.self, item)
         let edges = layoutSection.get("edges", [Edge].self, item) ?? []
         let groupKey = layoutSection.get("section", String.self) ?? ""
         
@@ -209,8 +211,8 @@ struct GeneralEditorSection: View {
         let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? false)
         let showTitle = sectionStyle.showTitle ?? true
         let action = editMode
-            ? sectionStyle.action ?? (!readOnly && edges.count > 0
-                ? getAction(edgeType: edges[0].type ?? "", itemType: edges[0].targetItemType ?? "")
+            ? sectionStyle.action ?? (!readOnly && edgeType != nil /* TODO support multiple / many types*/
+                ? getAction(edgeType: edgeNames[0], itemType: edgeType ?? "")
                 : nil)
             : nil
         let spacing = sectionStyle.spacing ?? 0
