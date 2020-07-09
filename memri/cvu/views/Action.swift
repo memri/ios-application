@@ -58,13 +58,18 @@ extension MemriContext {
 
 	private func buildArguments(_ action: Action, _ dataItem: Item?,
 								_ viewArguments: ViewArguments? = nil) throws -> [String: Any] {
-		var args = [String: Any]()
+		
+        let viewArgs = try ViewArguments.clone(viewArguments ?? cascadingView?.viewArguments,
+                                           [".": dataItem as Any],
+                                           managed: false, item: dataItem)
+        
+        var args = [String: Any]()
 		for (argName, inputValue) in action.arguments {
 			var argValue: Any?
 
 			// preprocess arg
 			if let expr = inputValue as? Expression {
-				argValue = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
+				argValue = try expr.execute() as Any
 			} else {
 				argValue = inputValue
 			}
@@ -77,7 +82,7 @@ extension MemriContext {
 			} else if var dict = argValue as? [String: Any] {
                 for (key, value) in dict {
                     if let expr = value as? Expression {
-                        dict[key] = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
+                        dict[key] = try expr.execute(viewArgs) as Any
                     }
                 }
                 
@@ -99,7 +104,7 @@ extension MemriContext {
                     var dict = viewArgs.asDict()
                     for (key, value) in dict {
                         if let expr = value as? Expression {
-                            dict[key] = try expr.execute(viewArguments ?? cascadingView?.viewArguments) as Any
+                            dict[key] = try expr.execute(viewArgs) as Any
                         }
                     }
                     
