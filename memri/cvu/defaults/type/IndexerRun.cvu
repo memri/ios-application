@@ -76,12 +76,13 @@ IndexerRun {
             { section: iconHeading }
             { section: info, exclude: name run }
             { section: labels }
-            { section: other, fields: *, exclude: version starred }
+            { section: other, fields: * }
             { section: dates }
         ]
         
         iconHeading {
-            title: ""
+            showTitle: false
+            dividers: false
             
             HStack{
                 align: center
@@ -102,7 +103,7 @@ IndexerRun {
                 Image {
                     align: center
                     show: {{!.indexer.icon and .indexer.bundleImage}}
-                    bundleImage: {{.importer.bundleImage}}
+                    bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
                     resizable: fill
                     minWidth: 100
@@ -114,7 +115,7 @@ IndexerRun {
         }
 
         info {
-            title: ""
+            showTitle: false
             
             VStack {
                 Divider

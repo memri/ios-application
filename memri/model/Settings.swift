@@ -123,12 +123,14 @@ public class Settings {
 		realmWriteIfAvailable(realm) {
 			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
 				s.json = try serialize(value)
-				s.syncState?.actionNeeded = "update"
-				if !(s.syncState?.updatedFields.contains("settings") ?? false) {
-					s.syncState?.updatedFields.append("settings")
-				}
-
-				#warning("Missing AuditItem for the change")
+                
+                if s.syncState?.actionNeeded != "create" {
+                    s.syncState?.actionNeeded = "update"
+                    if !(s.syncState?.updatedFields.contains("json") ?? false) {
+                        s.syncState?.updatedFields.append("json")
+                    }
+                    #warning("Missing AuditItem for the change")
+                }
 			} else {
 				_ = try Cache.createItem(Setting.self, values: ["key": path, "json": serialize(value)])
 			}

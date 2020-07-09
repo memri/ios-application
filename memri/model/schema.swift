@@ -217,7 +217,7 @@ public class SchemaItem: Object, Codable, Identifiable {
     /// etc.
     @objc dynamic var syncState:SyncState? = SyncState()
     /// The last version loaded from the server.
-    @objc dynamic var version:Int = 0
+    @objc dynamic var version:Int = 1
     /// The unique identifier of the Item set by the pod.
     let uid = RealmOptional<Int>()
 
@@ -714,7 +714,7 @@ public class Edge : Object, Codable {
     /// Boolean whether the Item has been deleted.
     @objc dynamic var deleted:Bool = false
     /// The last version loaded from the server.
-    @objc dynamic var version:Int = 0
+    @objc dynamic var version:Int = 1
     /// TBD
     @objc dynamic var edgeLabel:String? = nil
     /// TBD

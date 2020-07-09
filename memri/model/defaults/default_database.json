@@ -3,7 +3,7 @@
     { "_type": "Setting", "key": "defaults/general/gui/showDateAgo", "value": true},
     { "_type": "Setting", "key": "defaults/general/gui/useMapBox", "value": false},
     { "_type": "Setting", "key": "defaults/formatting/date", "value": "yyyy/MM/dd HH:mm"},
-    { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost:3030"},
+    { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost.charlesproxy.com:3030"},
     { "_type": "Setting", "key": "defaults/pod/username", "value": ""},
     { "_type": "Setting", "key": "defaults/pod/password", "value": ""},
     { "_type": "Setting", "key": "defaults/debug/autoShowErrorConsole", "value": false},

@@ -77,12 +77,12 @@ ImporterRun {
             { section: name, readOnly: true }
             { section: run }
             { section: labels }
-            { section: other, fields: *, exclude: version starred }
+            { section: other, fields: * }
             { section: dates }
         ]
         
         iconHeading {
-            title: ""
+            showTitle: false
             
             HStack{
                 align: center
@@ -113,8 +113,7 @@ ImporterRun {
         }
 
         run {
-            foreach: false
-            title: ""
+            showTitle: false
             
             VStack {
                 HStack {
