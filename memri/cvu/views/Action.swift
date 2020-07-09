@@ -1149,17 +1149,19 @@ class ActionRunIndexerRun: Action, ActionExec {
 			self.context.podAPI.get(uid) { error, data in
 				if let updatedInstance = data as? IndexerRun {
 					if let progress: Int = updatedInstance.get("progress") {
-						if timePassed > 5 || progress >= 100 {
+                        print("progress \(progress)")
+						if timePassed > 100 || progress >= 100 {
 							timer.invalidate()
-						} else {
-							print("setting random progress")
-							let randomProgress = Int.random(in: 1 ... 20)
-							run.set("progress", randomProgress)
-							self.context.scheduleUIUpdate()
-
-							let p: Int? = run.get("progress")
-							p.map { print($0) }
 						}
+//                        else {
+//							print("setting random progress")
+//							let randomProgress = Int.random(in: 1 ... 20)
+//							run.set("progress", randomProgress)
+//							self.context.scheduleUIUpdate()
+//
+//							let p: Int? = run.get("progress")
+//							p.map { print($0) }
+//						}
 					} else {
 						print("ERROR, could not get progress: \(String(describing: error))")
 						timer.invalidate()
