@@ -92,7 +92,7 @@ Indexer[] {
             addItem {
                 arguments {
                     template {
-                        type: IndexerRun
+                        _type: IndexerRun
                         name: {{.name}}
                         indexer: {{.}}
                     }

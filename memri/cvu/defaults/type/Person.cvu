@@ -177,17 +177,17 @@ Person {
             { section: labels }
             { section: names, fields: firstName lastName }
             { section: picturesOfPerson }
-            { section: phoneNumbers, edges: hasPhoneNumber }
+            { section: phoneNumbers, edges: hasPhoneNumber, type: PhoneNumber }
 /*            { section: family, edges: family, show: {{ .family[] }} }*/
 /*            { section: relationships, edges: {{ .relationship[.type != family] }} }*/
-            { section: relationships, edges: relationship }
-            { section: addresses, edges: address }
-            { section: websites, edges: website }
-            { section: companies, edges: company }
-            { section: diets, edges: diet }
-            { section: medicalConditions, edges: medicalCondition }
-            { section: publicKeys, edges: publicKey }
-            { section: onlineProfiles, edges: onlineProfile }
+            { section: relationships, edges: relationship, type: Person }
+            { section: addresses, edges: address, type: Address }
+            { section: websites, edges: website, type: Website }
+            { section: companies, edges: company, type: Company }
+            { section: diets, edges: diet, type: Diet }
+            { section: medicalConditions, edges: medicalCondition, type: MedicalCondition }
+            { section: publicKeys, edges: publicKey, type: PublicKey }
+            { section: onlineProfiles, edges: onlineProfile, type: OnlineProfile }
             { section: other, fields: * }
             { section: dates }
         ]
@@ -366,7 +366,7 @@ Person[] {
         addItem {
             arguments: {
                 template: {
-                    type: Person
+                    _type: Person
                 }
             }
         }

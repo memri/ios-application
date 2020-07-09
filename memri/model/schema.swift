@@ -949,6 +949,10 @@ public class Address : Item {
     var location: Location? {
         edge("location")?.target(type:Location.self)
     }
+    
+    // This value is set if the location was automatically filled.
+    // It is used to check if the lookup hash (based on the address string) has changed - if so lookup will be done again
+    @objc dynamic var locationWasAutomaticLookupWithHash: String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()

@@ -117,6 +117,8 @@ public struct UIElementView: SwiftUI.View {
 				} else if from.type == .EditorRow {
 					VStack(spacing: 0) {
 						VStack(alignment: .leading, spacing: 4) {
+                            #warning("readWrite mode is not implemented")
+                            
 							if self.has("title") && self.get("nopadding") != true {
 								Text(LocalizedStringKey(self.get("title") ?? ""
 										.camelCaseToWords()
@@ -232,7 +234,7 @@ public struct UIElementView: SwiftUI.View {
 							context: self.context,
 							viewName: from.getString("viewName"),
 							dataItem: self.item,
-							viewArguments: try? ViewArguments(get("arguments") ?? [:] as [String: Any])
+							viewArguments: try? ViewArguments(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
@@ -258,7 +260,7 @@ public struct UIElementView: SwiftUI.View {
 								}
 							}(),
 							dataItem: self.item,
-							viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [String: Any]())
+                            viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [:])
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}

@@ -10,12 +10,12 @@ import RealmSwift
 class ExprInterpreter {
 	let ast: ExprNode
 	let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
-	let execFunc: (ExprLookupNode, [Any], ViewArguments?) throws -> Any?
+	let execFunc: (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?
 	var stack: [Any] = []
 
 	init(_ ast: ExprNode,
 		 _ lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
-		 _ execFunc: @escaping (ExprLookupNode, [Any], ViewArguments?) throws -> Any?) {
+		 _ execFunc: @escaping (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?) {
 		self.ast = ast
 		self.lookup = lookup
 		self.execFunc = execFunc
@@ -135,10 +135,10 @@ class ExprInterpreter {
 			let result = try execSingle(expr.exp, args)
 			return IP.evaluateNumber(result)
 		} else if let expr = expr as? ExprLookupNode {
-			let x = try lookup(expr, args)
+            let x = try lookup(expr, args)
 			return x
 		} else if let expr = expr as? ExprCallNode {
-			let fArgs: [Any] = try expr.arguments.map { try execSingle($0, args) as Any }
+			let fArgs: [Any?] = try expr.arguments.map { try execSingle($0, args) }
 			return try execFunc(expr.lookup, fArgs, args)
 		}
 

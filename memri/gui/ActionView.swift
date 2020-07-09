@@ -112,9 +112,7 @@ struct ActionPopup: View {
 
 	var body: some View {
 		// TODO: refactor: this list item needs to be removed when we close the popup in any way
-		self.context.closeStack.append {
-			self.presentationMode.wrappedValue.dismiss()
-		}
+        self.context.addToStack(self.presentationMode)
 
         let viewArguments = action.arguments["viewArguments"] as? ViewArguments
         let args = try! ViewArguments.clone(viewArguments, item: item)

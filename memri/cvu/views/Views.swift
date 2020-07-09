@@ -177,7 +177,7 @@ public class Views {
 			lookup: lookup,
 			viewArguments: viewArguments,
 			isFunction: false
-		)
+        )
 		return x
 	}
 
@@ -257,6 +257,7 @@ public class Views {
 					case "camelCaseToWords": value = v.camelCaseToWords()
 					case "plural": value = v + "s" // TODO:
 					case "firstUppercased": value = v.capitalizingFirst()
+                    case "plainString": value = v.strippingHTMLtags()
 					default:
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on string")
@@ -318,7 +319,7 @@ public class Views {
 				// TODO: This is implemented very slowly first. Let's think about an optimization
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
-				let list = dataItemListToArray(value as Any)
+				let list = dataItemListToArray(value)
 				let args = try ViewArguments.clone(viewArguments, managed: false)
 				let expr = node.sequence[0]
 

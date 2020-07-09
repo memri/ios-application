@@ -59,17 +59,17 @@ public class Item: SchemaItem {
 		}
 		functions["edge"] = { args in
 			if let edgeType = args?[0] as? String {
-				return self.edge(edgeType) as Any
+				return self.edge(edgeType)
 			} else if let edgeTypes = args?[0] as? [String] {
-				return self.edge(edgeTypes) as Any
+				return self.edge(edgeTypes)
 			}
 			return nil
 		}
 		functions["edges"] = { args in
 			if let edgeType = args?[0] as? String {
-				return self.edges(edgeType) as Any
+				return self.edges(edgeType)
 			} else if let edgeTypes = args?[0] as? [String] {
-				return self.edges(edgeTypes) as Any
+				return self.edges(edgeTypes)
 			}
 
 			return nil
@@ -97,24 +97,6 @@ public class Item: SchemaItem {
 	required init(from _: Decoder) throws {
 		super.init()
 	}
-
-//
-//	/// @private
-//	public func superDecode(from decoder: Decoder) throws {
-//		uid = try decoder.decodeIfPresent("uid") ?? uid
-//		memriID = try decoder.decodeIfPresent("memriID") ?? memriID
-//		starred = try decoder.decodeIfPresent("starred") ?? starred
-//		deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-//		version = try decoder.decodeIfPresent("version") ?? version
-//		syncState = try decoder.decodeIfPresent("syncState") ?? syncState
-//
-//		dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
-//		dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
-//		dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
-//
-//		decodeIntoList(decoder, "changelog", changelog)
-//		decodeIntoList(decoder, "labels", labels)
-//	}
 
 	public func cast() -> Self {
 		self
@@ -191,7 +173,11 @@ public class Item: SchemaItem {
 				self[name] = value
 			} else if let obj = value as? Object {
 				_ = try self.link(obj, type: name, distinct: true)
-			}
+			} else if let list = value as? [Object] {
+                for obj in list {
+                    _ = try self.link(obj, type: name)
+                }
+            }
 		}
 	}
 

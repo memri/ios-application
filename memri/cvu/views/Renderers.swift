@@ -58,7 +58,7 @@ public class Renderers {
 }
 
 class FilterPanelRendererButton: Action, ActionExec {
-	private var defaults: [String: Any] { [
+	private var defaults: [String: Any?] { [
 		"activeColor": Color(hex: "#6aa84f"),
 		"activeBackgroundColor": Color(hex: "#eee"),
 		"title": "Unnamed Renderer",
@@ -85,7 +85,7 @@ class FilterPanelRendererButton: Action, ActionExec {
 		context.cascadingView?.activeRenderer == rendererName
 	}
 
-	func exec(_: [String: Any]) {
+	func exec(_: [String: Any?]) {
 		context.cascadingView?.activeRenderer = rendererName
 		context.scheduleUIUpdate { _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
 	}
