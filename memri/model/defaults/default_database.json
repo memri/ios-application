@@ -3,7 +3,7 @@
     { "_type": "Setting", "key": "defaults/general/gui/showDateAgo", "value": true},
     { "_type": "Setting", "key": "defaults/general/gui/useMapBox", "value": false},
     { "_type": "Setting", "key": "defaults/formatting/date", "value": "yyyy/MM/dd HH:mm"},
-    { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost.charlesproxy.com:3030"},
+    { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost:3030"},
     { "_type": "Setting", "key": "defaults/pod/username", "value": ""},
     { "_type": "Setting", "key": "defaults/pod/password", "value": ""},
     { "_type": "Setting", "key": "defaults/debug/autoShowErrorConsole", "value": false},
@@ -116,6 +116,7 @@
     {
         "_type": "Indexer",
         "name": "Geolocation indexer",
+        "indexerClass": "GeoIndexer",
         "itemDescription": "Enriches datatypes with geographic coordinates with their corresponding cities and countries",
         "icon": "mappin.and.ellipse"
     },
@@ -571,6 +572,16 @@
         "allEdges": [
             {"type":"country", "itemType": "Country", "uid": 1402}
         ]
+    },
+    { "_type": "Address", "uid": 100013, "type": "Indexer example",
+        "allEdges": [
+            {"type":"location", "itemType": "Location", "uid": 100017},
+        ]
+    },
+    { "_type": "Location",
+        "uid": 100017,
+        "latitude": -37.81,
+        "longitude": 144.96
     },
     {
         "uid": 3,

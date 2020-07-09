@@ -125,9 +125,10 @@ class Sync {
 
 	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
 		// Only execute queries once per session until we fix syncing
-        guard recentQueries[datasource.uniqueString] != true else {
-            return
-        }
+        #warning("Uncomment this")
+//        guard recentQueries[datasource.uniqueString] != true else {
+//            return
+//        }
         
         debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
         

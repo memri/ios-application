@@ -533,6 +533,7 @@ public class Item: SchemaItem {
 			let updatedFields = syncState.updatedFields
 
 			// Compare all updated properties and make sure they are the same
+            #warning("properly implment this for edges")
 			for fieldName in updatedFields {
 				if !isEqualProperty(fieldName, item) { return false }
 			}
@@ -571,7 +572,7 @@ public class Item: SchemaItem {
 		let properties = objectSchema.properties
 		for prop in properties {
 			// Exclude SyncState
-			if prop.name == "SyncState" {
+            if prop.name == "SyncState" || prop.name == "uid" {
 				continue
 			}
 
@@ -593,6 +594,7 @@ public class Item: SchemaItem {
 				}
 			}
 		}
+        #warning("Implement edge merging")
 	}
 
 	/// update the dateAccessed property to the current date

@@ -337,8 +337,8 @@ public class Cache {
 		}
 
 		do {
-			if let newerItem = try mergeWithCache(item) {
-				return newerItem
+			if let cachedItem = try mergeWithCache(item) {
+				return cachedItem
 			}
 
 			// Add item to realm
@@ -362,25 +362,21 @@ public class Cache {
 			// Fetch item from the cache to double check
 			if let cachedItem: Item = getItem(item.genericType, uid) {
 				// Do nothing when the version is not higher then what we already have
-				if !syncState.isPartiallyLoaded,
-					item.version <= cachedItem.version {
+				if item.version <= cachedItem.version {
 					return cachedItem
 				}
 
 				// Check if there are local changes
-				if syncState.actionNeeded != "" {
+                if cachedItem.syncState?.actionNeeded != "" {
 					// Try to merge without overwriting local changes
-					if !item.safeMerge(cachedItem) {
+					if !cachedItem.safeMerge(item) {
 						// Merging failed
                         throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? 0)"
 					}
+                    return cachedItem
 				}
-
-				// If the item is partially loaded, then lets not overwrite the database
-				if syncState.isPartiallyLoaded {
-					// Merge in the properties from cachedItem that are not already set
-					item.merge(cachedItem, true)
-				}
+                // Merge in the properties from cachedItem that are not already set
+                cachedItem.merge(item)
 			}
 			return nil
 		} else {
