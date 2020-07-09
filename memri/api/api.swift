@@ -390,7 +390,7 @@ public class PodAPI {
 
 		http(.POST, path: "search_by_fields", body: data) { error, data in
 			if let error = error {
-				debugHistory.error("Could not load data from pod: \n\(error)")
+				debugHistory.error("Could not connect to pod: \n\(error)")
 				callback(error, nil)
 			} else if let data = data {
 				do {
@@ -402,7 +402,7 @@ public class PodAPI {
 
 					callback(nil, items)
 				} catch {
-					debugHistory.error("Could not load data from pod: \n\(error)")
+					debugHistory.error("Could not connect to pod: \n\(error)")
 					callback(error, nil)
 				}
 			}

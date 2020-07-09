@@ -111,8 +111,6 @@ struct GeneralEditorView: View {
         let layout = getLayout()
         let renderConfig = getRenderConfig()
         let usedFields = getUsedFields(layout)
-//        let groups = getGroups(item) ?? [:]
-//        let sortedKeys = getSortedKeys(groups)
 
         return ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -167,46 +165,6 @@ struct GeneralEditorView: View {
         }
         return result
     }
-    
-
-//	func getGroups(_ item: Item) -> [String: [String]]? {
-//		let renderConfig = self.renderConfig
-//		let groups = renderConfig?.groups ?? [:]
-//		var filteredGroups: [String: [String]] = [:]
-//		let objectSchema = item.objectSchema
-//		var alreadyUsed: [String] = []
-//
-//		for (key, value) in groups {
-//			if value.first != key { alreadyUsed = alreadyUsed + value }
-//		}
-//
-//		(Array(groups.keys) + objectSchema.properties.map { $0.name }).filter {
-//			return (groups[$0] != nil || objectSchema[$0]?.isArray ?? false)
-//				&& !(renderConfig?.excluded.contains($0) ?? false)
-//				&& !alreadyUsed.contains($0)
-//		}.forEach {
-//			filteredGroups[$0] = groups[$0] ?? [$0]
-//		}
-//
-//		return filteredGroups.count > 0 ? filteredGroups : nil
-//	}
-//
-//	func getSortedKeys(_ groups: [String: [String]]) -> [String] {
-//		var keys = renderConfig?.sequence ?? []
-//		for k in groups.keys {
-//			if !keys.contains(k) {
-//				keys.append(k)
-//			}
-//		}
-//
-//		keys = keys.filter { !(self.renderConfig?.excluded.contains($0) ?? true) }
-//
-//		if !keys.contains("other") {
-//			keys.append("other")
-//		}
-//
-//		return keys
-//	}
 }
 
 struct GeneralEditorView_Previews: PreviewProvider {
@@ -232,8 +190,6 @@ struct GeneralEditorSection: View {
 	var renderConfig: CascadingGeneralEditorConfig
     var layoutSection: GeneralEditorLayoutItem
     var usedFields: [String]
-//	var groupKey: String
-//	var groups: [String: [String]]
 
 	var body: some View {
         let renderConfig = self.renderConfig
@@ -497,7 +453,7 @@ struct DefaultGeneralEditorRow: View {
 	var body: some View {
 		// Get the type from the schema, because when the value is nil the type cannot be determined
 		let propType = item.objectSchema[prop]?.type
-        let propValue = self.item[self.prop]
+        let propValue:Any? = self.item.get(self.prop)
 
 		return VStack(spacing: 0) {
             if propValue == nil && readOnly {

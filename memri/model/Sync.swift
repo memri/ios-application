@@ -214,7 +214,7 @@ class Sync {
 	private func syncToPod() {
 		syncing = true
 
-		var found = false
+		var found = 0
 		var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
 		var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
 
@@ -225,7 +225,7 @@ class Sync {
 				for item in items {
 					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
 						itemQueue[action]?.append(item)
-						found = true
+						found += 1
 					}
 				}
 			}
@@ -236,7 +236,7 @@ class Sync {
 		for edge in edges {
 			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
 				edgeQueue[action]?.append(edge)
-				found = true
+				found += 1
 			}
 		}
 
@@ -245,18 +245,30 @@ class Sync {
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
 						if let item = item as? SchemaItem {
-							item.syncState?.actionNeeded = ""
-							item.syncState?.updatedFields.removeAll()
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
 						} else if let item = item as? Edge {
-							item.syncState?.actionNeeded = ""
-							item.syncState?.updatedFields.removeAll()
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
 						}
 					}
 				}
 			}
 		}
 
-		if found {
+		if found > 0 {
+            debugHistory.info("Syncing to pod with \(found) changes")
+            
 			do {
 				try podAPI.sync(
 					createItems: itemQueue["create"],
