@@ -226,7 +226,7 @@ public class PodAPI {
 			"_type": item.genericType,
             "uid": item.uid
 		]
-//        print(item.uid.value ?? 0)
+        print("\(item.genericType) \(item.uid.value ?? 0)")
 
 		let properties = item.objectSchema.properties
         let exclude = ["syncState", "deleted", "allEdges", "uid"]
@@ -253,7 +253,7 @@ public class PodAPI {
 		var result = [String: Any]()
 
 		let properties = edge.objectSchema.properties
-        let exclude = ["syncState", "deleted", "targetItemType", "targetItemID", "sourceItemType", "sourceItemID"]
+        let exclude = ["version", "syncState", "deleted", "targetItemType", "targetItemID", "sourceItemType", "sourceItemID"]
 		for prop in properties {
 			if exclude.contains(prop.name) {
 				// Ignore

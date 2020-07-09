@@ -220,6 +220,8 @@ class Sync {
 
 		// Items
 		for itemType in ItemFamily.allCases {
+            if itemType == .typeUserState { continue }
+            
 			if let type = itemType.getType() as? SchemaItem.Type {
 				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
 				for item in items {
