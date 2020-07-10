@@ -25,8 +25,9 @@ public class Views {
 		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
         
         // Subscribe to changes in CVUStoredDefinition
-        cancellable = context?.cache.subscribe(query: "CVUStoredDefinition AND domain='user'").sink { items in
-            1+1
+        #warning("Add a setting to control this (turn on and off)")
+        cancellable = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+            self.reloadViews(items)
         }
 
 		// Done
@@ -107,6 +108,7 @@ public class Views {
 		}
 	}
 
+    #warning("This should be moved elsewhere")
 	public class func formatDate(_ date: Date?) -> String {
 		let showAgoDate: Bool? = Settings.get("user/general/gui/showDateAgo")
 
@@ -135,11 +137,24 @@ public class Views {
 			return "never"
 		}
 	}
-
-	func resolveEdge(_: Edge) throws -> Item {
-		// TODO: REFACTOR: implement
-		throw "not implemented"
-	}
+    
+    func reloadViews(_ items:[Item]) {
+//        guard let defs = items as? [CVUStoredDefinition] else {
+//            return
+//        }
+        
+        // This may not be needed
+//        // Determine whether the current view needs reloading
+//        for def in defs {
+//            var selectors = [String]()
+//            if let stack = context?.cascadingView?.cascadeStack {
+//                for parsed in stack { selectors.append(parsed.selectors) }
+//                ...
+//            }
+//        }
+        
+        context?.scheduleCascadingViewUpdate()
+    }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
 		// Fetch the value of the right property on the right object

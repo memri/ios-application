@@ -125,7 +125,7 @@ class Sync {
 
 	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
 		// Only execute queries once per session until we fix syncing
-        #warning("Uncomment this")
+        
 //        guard recentQueries[datasource.uniqueString] != true else {
 //            return
 //        }
@@ -142,42 +142,26 @@ class Sync {
                     let resultSet = cache.getResultSet(datasource)
                     //                    if resultSet.count == 1 { return }
 
-                    // The result that we'll add to resultset
-                    var result: [Item] = []
-
                     for item in items {
                         // TODO: handle sync errors
                         do {
-                            //                                #warning("Remove this when the new backend is in place")
-                            //                                if !["Indexer", "IndexerRun", "Importer", "ImporterRun"].contains(item.genericType) {
-                            let cachedItem = try cache.addToCache(item)
-                            if cachedItem.syncState?.actionNeeded != "deleted" {
-                                // Add item to result
-                                result.append(cachedItem)
-                            }
-                            // Ignore items marked for deletion
-                            //                                }
+                            _ = try cache.addToCache(item)
                         } catch {
-                            print("\(error)")
+                            debugHistory.error("\(error)")
                         }
                     }
 
-                    // Find added items
-                    // TODO: this could be skipped by re-executing resultSet.load()
-                    for item in resultSet.items {
-                        if item.syncState?.actionNeeded == "create" {
-                            result.append(item)
-                        }
+                    do {
+                        // Update resultset with the new results
+                        try resultSet.reload()
+                    } catch {
+                        debugHistory.error("\(error)")
                     }
-
-                    // Update resultset with the new results
-                    resultSet.forceItemsUpdate(result)
 
                     // We no longer need to process this log item
                     realmWriteIfAvailable(self.realm) {
-                        audititem.setSyncStateActionNeeded("")
+                        self.realm.delete(audititem)
                     }
-                    // TODO: consider deleting the log item
                 }
             } else {
                 // Ignore errors (we'll retry next time)

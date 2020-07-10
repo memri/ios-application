@@ -175,6 +175,9 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
                                         if case .delete = self.event, !item.deleted { continue }
                                         else if case .create = self.event { continue }
                                     }
+                                    else {
+                                        continue
+                                    }
                                 }
                                 else { // Create
                                     if case .update = self.event { continue }
@@ -186,7 +189,9 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
                             }
                         }
                         
-                        _ = self.subscriber?.receive(changes)
+                        if changes.count > 0 {
+                            _ = self.subscriber?.receive(changes)
+                        }
                     }
                     catch let error {
                         debugHistory.warn("Received error polling item: \(error)")

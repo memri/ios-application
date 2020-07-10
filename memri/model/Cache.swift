@@ -213,7 +213,7 @@ public class Cache {
 	/// - Parameters:
 	///   - datasource: datasource for the query, containing datatype(s), filters, sortInstructions etc.
 	///   - callback: action exectued on the result
-	public func query(_ datasource: Datasource,
+    public func query(_ datasource: Datasource, syncWithRemote:Bool = true,
 					  _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void) throws {
 		// Do nothing when the query is empty. Should not happen.
 		let q = datasource.query ?? ""
@@ -225,7 +225,7 @@ public class Cache {
 			try callback("Empty Query", nil)
 		} else {
 			// Schedule the query to sync from the pod
-			sync.syncQuery(datasource)
+            if syncWithRemote { sync.syncQuery(datasource) }
 
 			// Parse query
 			let (typeName, filter) = parseQuery(q)
