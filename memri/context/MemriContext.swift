@@ -392,6 +392,9 @@ public class SubContext: MemriContext {
 ///  different way to represent the data. For instance an application that is focussed on voice-first instead of gui-first.
 public class RootContext: MemriContext {
 	private var cancellable: AnyCancellable?
+    
+    #warning("@Toby how can we tell when the sub context is done and how can we clear it?")
+    var subContexts = [SubContext]()
 
 	// TODO: Refactor: Should installer be moved to rootmain?
 
@@ -439,7 +442,9 @@ public class RootContext: MemriContext {
 	}
 
 	public func createSubContext(_ session: Session) throws -> MemriContext {
-		try SubContext(name: "Proxy", self, session)
+		let subContext = try SubContext(name: "Proxy", self, session)
+        subContexts.append(subContext)
+        return subContext
 	}
 
 	public func boot() throws {

@@ -6,6 +6,7 @@
 
 import Foundation
 import RealmSwift
+import Combine
 
 /// This class stores the settings used in the memri app. Settings may include things like how to format dates, whether to show certain
 /// buttons by default, etc.
@@ -14,6 +15,9 @@ public class Settings {
 	let realm: Realm
 	/// Default settings
 	var settings: Results<Setting>
+    
+    private var listeners = [String: [UUID]]()
+    private var callbacks = [UUID: (Any?) -> Void]()
 
 	/// Init settings with the relam database
 	/// - Parameter rlm: realm database object
@@ -64,7 +68,8 @@ public class Settings {
 	}
 
 	private func getSearchPaths(_ path: String) throws -> [String] {
-		let splits = path.split(separator: "/")
+        let p = path.first == "/" ? String(path.suffix(path.count - 1)) : path
+		let splits = p.split(separator: "/")
 		let type = splits.first
 		let query = splits.dropFirst().joined(separator: "/")
 
@@ -88,6 +93,7 @@ public class Settings {
 				throw "Missing scope 'user' or 'device' as the start of the path"
 			}
 			try setSetting(searchPaths[0], value as? AnyCodable ?? AnyCodable(value))
+            fire(searchPaths[0], (value as? AnyCodable)?.value ?? value)
 		} catch {
 			debugHistory.error("\(error)")
 			print(error)
@@ -97,7 +103,7 @@ public class Settings {
 	/// get setting for given path
 	/// - Parameter path: path for the setting
 	/// - Returns: setting value
-	public func getSetting<T: Decodable>(_ path: String) throws -> T? {
+    public func getSetting<T: Decodable>(_ path: String, type: T.Type = T.self) throws -> T? {
 		let item = settings.first(where: { $0.key == path })
 
 		if let item = item, let json = item.json {
@@ -136,7 +142,38 @@ public class Settings {
 			}
 		}
 	}
-
+    
+    private func fire(_ path:String, _ value:Any?) {
+        if let list = self.listeners[path] {
+            for id in list {
+                if let f = self.callbacks[id] {
+                    f(value)
+                }
+            }
+        }
+    }
+    
+    func addListener<T:Decodable>(_ path:String, _ id:UUID, type: T.Type = T.self, _ f: @escaping (Any?) -> Void) throws {
+        guard let normalizedPath = try getSearchPaths(path).first else {
+            throw "Invalid path"
+        }
+        
+        if self.listeners[normalizedPath] == nil { self.listeners[normalizedPath] = [] }
+        if !(self.listeners[normalizedPath]?.contains(id) ?? false) {
+            self.listeners[normalizedPath]?.append(id)
+            self.callbacks[id] = f
+            
+            if let value = get(path, type:T.self) {
+                fire(normalizedPath, value)
+            }
+        }
+    }
+    
+    func removeListener(_ path:String, _ id:UUID) {
+        self.listeners[path]?.removeAll(where: { $0 == id })
+        self.callbacks.removeValue(forKey: id)
+    }
+    
 	/// Get *global* setting value for given path
 	/// - Parameter path: global setting path
 	/// - Returns: setting value

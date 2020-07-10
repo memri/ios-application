@@ -12,6 +12,8 @@ public class Views {
 
 	private var recursionCounter = 0
 	private var realm: Realm
+    private var CVUWatcher: AnyCancellable? = nil
+    private var settingWatcher: AnyCancellable? = nil
 
 	init(_ rlm: Realm) {
 		realm = rlm
@@ -22,10 +24,29 @@ public class Views {
 		context = mn
 
 		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
+        
+        settingWatcher = context?.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
+            if let value = $0 as? Bool {
+                if value && self.CVUWatcher == nil {
+                    self.listenForChanges()
+                }
+                else if !value, let c = self.CVUWatcher {
+                    c.cancel()
+                    self.CVUWatcher = nil
+                }
+            }
+        }
 
 		// Done
 		try callback()
 	}
+    
+    public func listenForChanges() {
+        // Subscribe to changes in CVUStoredDefinition
+        CVUWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+            self.reloadViews(items)
+        }
+    }
 
 	// TODO: refactor when implementing settings UI call this when changing the language
 	public func setCurrentLanguage(_ language: String) throws {
@@ -101,6 +122,7 @@ public class Views {
 		}
 	}
 
+    #warning("This should be moved elsewhere")
 	public class func formatDate(_ date: Date?) -> String {
 		let showAgoDate: Bool? = Settings.get("user/general/gui/showDateAgo")
 
@@ -129,11 +151,24 @@ public class Views {
 			return "never"
 		}
 	}
-
-	func resolveEdge(_: Edge) throws -> Item {
-		// TODO: REFACTOR: implement
-		throw "not implemented"
-	}
+    
+    func reloadViews(_ items:[Item]) {
+//        guard let defs = items as? [CVUStoredDefinition] else {
+//            return
+//        }
+        
+        // This may not be needed
+//        // Determine whether the current view needs reloading
+//        for def in defs {
+//            var selectors = [String]()
+//            if let stack = context?.cascadingView?.cascadeStack {
+//                for parsed in stack { selectors.append(parsed.selectors) }
+//                ...
+//            }
+//        }
+        
+        context?.scheduleCascadingViewUpdate()
+    }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
 		// Fetch the value of the right property on the right object

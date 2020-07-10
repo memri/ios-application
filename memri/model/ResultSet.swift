@@ -83,7 +83,7 @@ public class ResultSet: ObservableObject {
 	///  Items
 	/// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
 	/// - Throws: empty query error
-	func load(_ callback: (_ error: Error?) throws -> Void) throws {
+    func load(syncWithRemote:Bool = true, _ callback: (_ error: Error?) throws -> Void) throws {
 		// Only execute one loading process at the time
 		if !isLoading {
 			// Validate datasource
@@ -98,7 +98,7 @@ public class ResultSet: ObservableObject {
 			updateUI()
 
 			// Execute the query
-			try cache.query(datasource) { (error, result) -> Void in
+            try cache.query(datasource, syncWithRemote: syncWithRemote) { (error, result) -> Void in
 				if let result = result {
 					// Set data and count
 					items = result
@@ -134,18 +134,8 @@ public class ResultSet: ObservableObject {
 
 	/// Force update the items property, recompute the counts and reapply filters
 	/// - Parameter result: the new items
-	func forceItemsUpdate(_ result: [Item]) {
-		// Set data and count
-		items = result
-		count = items.count
-
-		// Resapply filter
-		if _unfilteredItems != nil {
-			_unfilteredItems = nil
-			filter()
-		}
-
-		updateUI()
+	func reload() throws {
+        try load(syncWithRemote: false) {_ in}
 	}
 
 	private func updateUI() {

@@ -236,6 +236,8 @@ public class PodAPI {
 			} else if create || updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
 				if prop.type == .object {
 					debugHistory.warn("Unexpected object schema")
+                } else if prop.type == .date, let date = item[prop.name] as? Date {
+                    result[prop.name] = Int(date.timeIntervalSince1970 * 1000)
 				} else {
 					result[prop.name] = item[prop.name]
 				}
@@ -288,7 +290,7 @@ public class PodAPI {
 	/// - Remark: Note that it is not necessary to specify the type here as the pod has a global namespace for uids
 	public func get(_ uid: Int,
 					_ callback: @escaping (_ error: Error?, _ item: Item?) -> Void) {
-		http(path: "items/\(uid)") { error, data in
+        http(.POST, path: "item_with_edges/\(uid)") { error, data in
 			if let data = data {
 				// TODO: Refactor: Error handling
 				let result: [Item]? = try? MemriJSONDecoder

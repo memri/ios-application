@@ -213,7 +213,7 @@ public class Cache {
 	/// - Parameters:
 	///   - datasource: datasource for the query, containing datatype(s), filters, sortInstructions etc.
 	///   - callback: action exectued on the result
-	public func query(_ datasource: Datasource,
+    public func query(_ datasource: Datasource, syncWithRemote:Bool = true,
 					  _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void) throws {
 		// Do nothing when the query is empty. Should not happen.
 		let q = datasource.query ?? ""
@@ -225,7 +225,7 @@ public class Cache {
 			try callback("Empty Query", nil)
 		} else {
 			// Schedule the query to sync from the pod
-			sync.syncQuery(datasource)
+            if syncWithRemote { sync.syncQuery(datasource) }
 
 			// Parse query
 			let (typeName, filter) = parseQuery(q)
@@ -505,17 +505,6 @@ public class Cache {
 		return 1_000_000_001
 	}
 
-	#warning("@Toby how to work with Swift subscribers properly")
-	public class func subscribe(_: Item) /* some promise */ {
-		// Implement using polling
-		// Unsubscribe is handled on the promise, I presume
-	}
-
-	public class func subscribe(_: Datasource) /* some promise */ {
-		// Implement using polling
-		// Unsubscribe is handled on the promise, I presume
-	}
-
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
 		// Check if this is a new item or an existing one
 		if let syncState = newerItem.syncState {
@@ -571,7 +560,17 @@ public class Cache {
 				let excluded = ["uid", "dateCreated", "dateAccessed", "dateModified"]
 				for prop in properties {
 					if !excluded.contains(prop.name), values[prop.name] != nil {
-						fromCache[prop.name] = values[prop.name] as Any?
+                        if prop.type == .date {
+                            if let date = values[prop.name] as? Int {
+                                fromCache[prop.name] = Date(timeIntervalSince1970: Double(date/1000))
+                            }
+                            else {
+                                throw "Invalid date received for \(prop.name) got \(String(describing: values[prop.name] ?? "") )"
+                            }
+                        }
+                        else {
+                            fromCache[prop.name] = values[prop.name] as Any?
+                        }
 					}
 				}
 				fromCache["dateModified"] = Date()
