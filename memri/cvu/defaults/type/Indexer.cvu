@@ -89,12 +89,13 @@ Indexer[] {
 
     [renderer = list] {
         press:
-            addDataItem {
+            addItem {
                 arguments {
                     template {
-                        type: IndexerInstance
+                        _type: IndexerRun
                         name: {{.name}}
                         indexer: {{.}}
+                        targetDataType: "Address"
                     }
                 }
             }
@@ -131,16 +132,21 @@ Indexer[] {
                 rowInset: 12 20 -12 20
     
     
-
-                Text {
-                    text: "{.name}"
-                    font: 18 semibold
-                    color: #333
-                    padding: 0 0 3 0
+                HStack {
+                    Text {
+                        text: "{.name}"
+                        font: 18 semibold
+                        color: #333
+                        padding: 0 0 3 0
+                    }
+                    Text {
+                        show: {{.runDestination="ios"}}
+                        text: "   (Local)"
+                    }
                 }
                 HStack {
                     Text {
-                        text: "{.indexerDescription}"
+                        text: "{.itemDescription}"
                         removeWhiteSpace: true
                         maxChar: 100
                         color: #555

@@ -14,8 +14,6 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     
     static var shared = SensorManager()
 
-    private var realm: Realm?
-    
     //
     // Core Location Manager
     //
@@ -90,14 +88,14 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
                 //
                 if CLLocationManager.significantLocationChangeMonitoringAvailable() {
                     self.usingSignificantLocationChangeMonitoring = true                // This could be a user setting, but it's default for now
-                    print("Significant Change Location Servics Enabled")
+                    debugHistory.info("Significant Change Location Servics Enabled")
                 } else {
                     self.coreLocationManager?.desiredAccuracy = kCLLocationAccuracyBest // This could be a user setting
                     self.coreLocationManager?.distanceFilter = kCLDistanceFilterNone    // This could be a user setting
-                    print("Location Servics Enabled")
+                    debugHistory.info("Location Servics Enabled")
                 }
             } else {
-                print("Location Services Not Available")
+                debugHistory.info("Location Services Not Available")
             }
         #endif
     }
@@ -112,18 +110,10 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     }
     
     private func persistLocation(location: CLLocation) {
-        // TODO - Implement
-        //        do {
-        //            try realm?.add("TODO")
-        //        } catch {
-        //            print(error.localizedDescription)
-        //        }
-        //
-        // Need to create the location "table" if it does not exist
-        // Need to save the location
-        // It may be convenient to create a managed object that mapped easily to a CLLocation object?
-        //
-        print(location)
+        _ = try? Cache.createItem(Location.self, values: [
+            "latitude": location.coordinate.latitude,
+            "longitude": location.coordinate.longitude
+        ])
     }
     
     //
@@ -131,14 +121,13 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     //
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("LocationManager Did Update: \(locations.count) new locations found")
         for aLocation in locations {
             self.persistLocation(location: aLocation)
         }
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("LocationManager: Error = \(error.localizedDescription)")
+        debugHistory.error("LocationManager: Error = \(error.localizedDescription)")
     }
     
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -146,18 +135,18 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
             //
             // Location services are currently denied
             //
-            print("Location services are denied")
+            debugHistory.info("Location services are denied")
         } else if status == .restricted {
             //
             // Cannot use location services at all
             //
-            print("Location services are restricted")
+            debugHistory.info("Location services are restricted")
         } else if status == . notDetermined {
             //
             // Let's ask for full autnorization
             //
             manager.requestAlwaysAuthorization()
-            print("Location services being requested")
+            debugHistory.info("Location services being requested")
         } else {
             //
             // The user has authorized either .authorizedAlways or .authorizedWhenInUse
@@ -167,7 +156,7 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
             } else {
                 manager.startUpdatingLocation()
             }
-            print("Location services starting updates")
+            debugHistory.info("Location services starting updates")
         }
     }
     

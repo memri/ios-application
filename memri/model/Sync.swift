@@ -9,285 +9,310 @@
 import Foundation
 import RealmSwift
 
-/// This class represent the state of syncing for a DataItem, it keeps tracks of the multiple versions of a DataItem on the server and
-/// what actions are needed to sync the DataItem with the latest version on the pod
-class SyncState: Object, Codable {
-    // Whether the data item is loaded partially and requires a full load
-    @objc dynamic var isPartiallyLoaded:Bool = false
-    
-    // What action is needed on this data item to sync with the pod
-    // Enum: "create", "delete", "update"
-    @objc dynamic var actionNeeded:String = ""
-    
-    // Which fields to update
-    let updatedFields = List<String>()
-    
-    //
-    @objc dynamic var changedInThisSession = false
-    
-    public convenience required init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-        }
-    }
-    
-    required init() {
-        super.init()
-    }
-}
+///// This class represent the state of syncing for a Item, it keeps tracks of the multiple versions of a Item on the server and
+///// what actions are needed to sync the Item with the latest version on the pod
+// class SyncState: Object, Codable {
+//	// Whether the data item is loaded partially and requires a full load
+//	@objc dynamic var isPartiallyLoaded: Bool = false
+//
+//	// What action is needed on this data item to sync with the pod
+//	// Enum: "create", "delete", "update"
+//	@objc dynamic var actionNeeded: String = ""
+//
+//	// Which fields to update
+//	let updatedFields = List<String>()
+//
+//	//
+//	@objc dynamic var changedInThisSession = false
+//
+//	public required convenience init(from decoder: Decoder) throws {
+//		self.init()
+//
+//		jsonErrorHandling(decoder) {
+//			isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
+//		}
+//	}
+//
+//	required init() {
+//		super.init()
+//	}
+// }
 
-/// Based on a query, Sync checks whether it still has the latest version of the resulting DataItems. It does this asynchronous and in the
+/// Based on a query, Sync checks whether it still has the latest version of the resulting Items. It does this asynchronous and in the
 /// background, items are updated automatically.
 class Sync {
-    
-    /// PodAPI Object to use for executing queries
-    private var podAPI: PodAPI
-    /// The local realm database
-    private var realm: Realm
-    /// Cache Object used to fetch resultsets
-    public var cache: Cache? = nil
-    
-    private var scheduled: Bool = false
-    private var syncing: Bool = false
-    private var backgroundSyncing: Bool = false
-    
-    private var recentQueries = [String:Bool]()
-    
-    /// Initialization of the cache
-    /// - Parameters:
-    ///   - api: api Object
-    ///   - rlm: local Realm database object
-    init(_ api:PodAPI, _ rlm:Realm) {
-        podAPI = api
-        realm = rlm
-        
-        // Periodically sync data from the pod
-        //TODO
-        
-        // Schedule syncing to the pod to see if there are any jobs that remain
-        schedule()
-        
-        // Run any priority syncs in the background
-        prioritySyncAll()
-    }
-    
-    /// Schedule a query to sync the resulting DataItems from the pod
-    /// - Parameter datasource: QueryOptions used to perform the query
-    public func syncQuery(_ datasource:Datasource) {
-        // TODO if this query was executed recently, considering postponing action
-        do {
-            // Store query in a log item
-            let audititem = AuditItem()
-            let data = try MemriJSONEncoder.encode([ // TODO move this to Datasource
-                "query": datasource.query,
-                "sortProperty": datasource.sortProperty,
-                "sortAscending": datasource.sortAscending.value ?? false ? "true" : "false"
-            ] as? [String:String])
-            
-            audititem.contents = String(data: data, encoding: .utf8) ?? ""
-            audititem.action = "query"
-            audititem.date = Date()
-            
-            // Set syncstate to "fetch" in order to get priority treatment for querying
-            audititem.syncState?.actionNeeded = "fetch"
-            
-            // Add to realm
-            realmWriteIfAvailable(realm) { realm.add(audititem) }
-            
-            // Execute query with priority
-            prioritySync(datasource, audititem)
-        }
-        catch{
-            print("syncQuery failed: \(error)")
-        }
-    }
-    
-    public func clearSyncCache(){
-        recentQueries = [:]
-    }
-    
-    private func prioritySyncAll() {
-        //
-        if !backgroundSyncing {
-            
-            //
-            backgroundSyncing = true
-            
-            // TODO make async in order to not hurt init when cache is not set
-            
-            // Execute query objects
-//            prioritySync()
-            
-            //
-            backgroundSyncing = false
-        }
-    }
-    
-    private func prioritySync(_ datasource:Datasource, _ audititem:AuditItem) {
-        
-        print("Syncing from pod with query: \(datasource.query ?? "")")
-        
-        // Only execute queries once per session until we fix syncing
-        if recentQueries[datasource.uniqueString] != true {
-            
-            // Call out to the pod with the query
-            podAPI.query(datasource) { (error, items) in
-                if let items = items {
+	/// PodAPI Object to use for executing queries
+	private var podAPI: PodAPI
+	/// The local realm database
+	private var realm: Realm
+	/// Cache Object used to fetch resultsets
+	public var cache: Cache?
 
-                    if let cache = self.cache {
-                        
-                        self.recentQueries[datasource.uniqueString] = true
+	private var scheduled: Int = 0
+	private var syncing: Bool = false
+	private var backgroundSyncing: Bool = false
 
-                        // Find resultset that belongs to this query
-                        let resultSet = cache.getResultSet(datasource)
-    //                    if resultSet.count == 1 { return }
+	private var recentQueries = [String: Bool]()
 
-                        // The result that we'll add to resultset
-                        var result:[DataItem] = []
+	/// Initialization of the cache
+	/// - Parameters:
+	///   - api: api Object
+	///   - rlm: local Realm database object
+	init(_ api: PodAPI, _ rlm: Realm) {
+		podAPI = api
+		realm = rlm
 
-                        for item in items {
-                            // TODO handle sync errors
-                            do {
-                                let cachedItem = try cache.addToCache(item)
-                                if cachedItem.syncState?.actionNeeded != "deleted" {
-                                    // Add item to result
-                                    result.append(cachedItem)
-                                }
-                                // Ignore items marked for deletion
-                            }
-                            catch {
-                                print("\(error)")
-                            }
+		// Periodically sync data from the pod
+		// TODO:
+
+		// Schedule syncing to the pod to see if there are any jobs that remain
+		schedule()
+
+		// Run any priority syncs in the background
+		prioritySyncAll()
+	}
+
+	/// Schedule a query to sync the resulting Items from the pod
+	/// - Parameter datasource: QueryOptions used to perform the query
+	public func syncQuery(_ datasource: Datasource) {
+		// TODO: if this query was executed recently, considering postponing action
+		do {
+			// Store query in a log item
+			let audititem = AuditItem()
+			let data = try MemriJSONEncoder.encode([ // TODO: move this to Datasource
+				"query": datasource.query,
+				"sortProperty": datasource.sortProperty,
+				"sortAscending": datasource.sortAscending.value ?? false ? "true" : "false",
+			] as? [String: String])
+
+			audititem.uid.value = try Cache.incrementUID()
+			audititem.content = String(data: data, encoding: .utf8) ?? ""
+			audititem.action = "query"
+			audititem.date = Date()
+
+			// Set syncstate to "fetch" in order to get priority treatment for querying
+			audititem.syncState?.actionNeeded = "fetch"
+
+			// Add to realm
+			realmWriteIfAvailable(realm) { realm.add(audititem) }
+
+			// Execute query with priority
+			prioritySync(datasource, audititem)
+		} catch {
+			print("syncQuery failed: \(error)")
+		}
+	}
+
+	public func clearSyncCache() {
+		recentQueries = [:]
+	}
+
+	private func prioritySyncAll() {
+		//
+		if !backgroundSyncing {
+			//
+			backgroundSyncing = true
+
+			// TODO: make async in order to not hurt init when cache is not set
+
+			// Execute query objects
+			//            prioritySync()
+
+			//
+			backgroundSyncing = false
+		}
+	}
+
+	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
+		// Only execute queries once per session until we fix syncing
+        
+//        guard recentQueries[datasource.uniqueString] != true else {
+//            return
+//        }
+        
+        debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
+        
+        // Call out to the pod with the query
+        podAPI.query(datasource) { error, items in
+            if let items = items {
+                if let cache = self.cache {
+                    self.recentQueries[datasource.uniqueString] = true
+
+                    // Find resultset that belongs to this query
+                    let resultSet = cache.getResultSet(datasource)
+                    //                    if resultSet.count == 1 { return }
+
+                    for item in items {
+                        // TODO: handle sync errors
+                        do {
+                            _ = try cache.addToCache(item)
+                        } catch {
+                            debugHistory.error("\(error)")
                         }
+                    }
 
-                        // Find added items
-                        // TODO this could be skipped by re-executing resultSet.load()
-                        for item in resultSet.items {
-                            if item.syncState?.actionNeeded == "create" {
-                                result.append(item)
-                            }
-                        }
-
+                    do {
                         // Update resultset with the new results
-                        resultSet.forceItemsUpdate(result)
-
-                        // We no longer need to process this log item
-                        realmWriteIfAvailable(self.realm){
-                            audititem.setSyncStateActionNeeded("")
-                        }
-                        // TODO consider deleting the log item
+                        try resultSet.reload()
+                    } catch {
+                        debugHistory.error("\(error)")
                     }
 
+                    // We no longer need to process this log item
+                    realmWriteIfAvailable(self.realm) {
+                        audititem.setSyncStateActionNeeded("")
+                    }
                 }
-                else {
-                    // Ignore errors (we'll retry next time)
-                    // TODO consider resorting so that it is not retried too often
-                }
+            } else {
+                // Ignore errors (we'll retry next time)
+                // TODO: consider resorting so that it is not retried too often
             }
         }
-    }
-    
-    /// Schedule a syncing round
-    /// - Remark: currently calls mock code
-    /// - TODO: implement syncToPod()
-    public func schedule(){
-        // Don't schedule when we are already scheduled
-        if !scheduled {
+	}
+
+	/// Schedule a syncing round
+	/// - Remark: currently calls mock code
+	/// - TODO: implement syncToPod()
+	public func schedule(long: Bool = false) {
+		// Don't schedule when we are already scheduled
+		if scheduled == 0 || !long && scheduled == 2 {
+			// Prevent multiple calls to the dispatch queue
+			scheduled = long ? 2 : 1
+
+			// Wait 100ms before syncing (should this be longer?)
+			DispatchQueue.main.asyncAfter(deadline: .now() + (long ? 18000 : 0.1)) {
+				if self.syncing {
+					self.scheduled = 0
+					self.schedule()
+					return
+				}
+
+				// Reset scheduled
+				self.scheduled = 0
+
+				// Start syncing local data to the pod
+				self.syncToPod()
+			}
+		}
+	}
+
+	public func syncToPod() {
+		syncing = true
+
+		var found = 0
+		var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
+		var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
+
+		// Items
+		for itemType in ItemFamily.allCases {
+            if itemType == .typeUserState { continue }
             
-            // Prevent multiple calls to the dispatch queue
-            scheduled = true
+			if let type = itemType.getType() as? SchemaItem.Type {
+				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
+				for item in items {
+					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
+						itemQueue[action]?.append(item)
+						found += 1
+					}
+				}
+			}
+		}
+
+		// Edges
+		let edges = realm.objects(Edge.self).filter("syncState.actionNeeded != ''")
+		for edge in edges {
+			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
+				edgeQueue[action]?.append(edge)
+				found += 1
+			}
+		}
+
+		func markAsDone(_ list: [String: Any]) {
+			realmWriteIfAvailable(realm) {
+				for (_, sublist) in list {
+					for item in sublist as? [Any] ?? [] {
+						if let item = item as? SchemaItem {
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
+						} else if let item = item as? Edge {
+                            if item.syncState?.actionNeeded == "delete" {
+                                realm.delete(item)
+                            }
+                            else {
+                                item.syncState?.actionNeeded = ""
+                                item.syncState?.updatedFields.removeAll()
+                            }
+						}
+					}
+				}
+			}
+		}
+
+		if found > 0 {
+            debugHistory.info("Syncing to pod with \(found) changes")
             
-            // Wait 100ms before syncing (should this be longer?)
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                
-                // Reset scheduled
-                self.scheduled = false
-                
-                // Start syncing local data to the pod
-                self.syncToPod()
-            }
-        }
-    }
-    
-    private func syncToPod(){
-        syncing = true
-        
-        // TODO how to get the right info in SyncState (perhaps in the change binder)
-        
-        // Loop through syncstate objects (ignore "fetch" and "")
-        
-        // Fetch the data item
-        
-        // call execute
-        
-        // call next
-        
-        syncing = false
-    }
-    
-    private func syncFromPod() {
-        // TODO
-    }
-    
-    
-    /// - Remark: Currently unused
-    /// - TODO: Implement and document
-    /// - Parameters:
-    ///   - item:
-    ///   - callback:
-    /// - Throws:
-    public func execute(_ item:DataItem, callback: @escaping (_ error:Error?, _ success:Bool) -> Void) throws {
-        if let syncState = item.syncState {
-            switch syncState.actionNeeded {
-            case "create":
-                podAPI.create(item) { (error, id) -> Void in
-                    if error != nil { return callback(error, false) }
-                    
-                    // Set the new id from the server
-                    if let id = id {
-                        item.uid = id
-                        callback(nil, true)
+			do {
+				try podAPI.sync(
+					createItems: itemQueue["create"],
+					updateItems: itemQueue["update"],
+					deleteItems: itemQueue["delete"],
+					createEdges: edgeQueue["create"],
+					updateEdges: edgeQueue["update"],
+					deleteEdges: edgeQueue["delete"]
+				) { (error) -> Void in
+					self.syncing = false
+
+					if let error = error {
+                        debugHistory.error("Could not sync to pod: \(error)")
+                        self.schedule(long: true)
                     }
                     else {
-                        callback(nil, false)
-                    }
-                    
-                }
-            case "delete":
-                podAPI.remove(item.getString("memriID")) { (error, success) -> Void in
-                    if (error == nil) {
-                        // Remove from local storage
-                        realmWriteIfAvailable(self.realm){
-                            self.realm.add(item) // , update: .modified
-                        }
-                    callback(error, success)
-                    }
-                }
-            case "update":
-                podAPI.update(item) { (error, version:Int?) -> Void in
-                    if let version = version {
-                        item.version = version
-                        item.syncState?.actionNeeded = "" // TODO make sure it hasnt changed??
-                        
-                        callback(nil, true)
-                    }
-                    else {
-                        callback(error, false)
-                    }
-                }
+						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
+						markAsDone(itemQueue)
+						markAsDone(edgeQueue)
 
-            case "fetch":
-                // TODO
-                break
-            default:
-                // Ignore unknown tasks
-                print("Unknown sync state action: \(item.syncState?.actionNeeded ?? "")")
-            }
-        }
-        else {
-            throw "No syncState deifned"
-        }
-    }
+						self.schedule()
+					}
+				}
+			} catch {
+				debugHistory.error("Could not sync to pod: \(error)")
+			}
+		} else {
+			schedule(long: true)
+		}
+	}
+
+	private func syncFromPod() {
+		// TODO:
+	}
+
+//	/// - Remark: Currently unused
+//	/// - TODO: Implement and document
+//	/// - Parameters:
+//	///   - item:
+//	///   - callback:
+//	/// - Throws:
+//	public func execute(_ item: Item, callback: @escaping (_ error: Error?, _ success: Bool) -> Void) throws {
+//		if let syncState = item.syncState {
+//			switch syncState.actionNeeded {
+//			case "create", "delete", "update":
+//				try podAPI.sync(item) { (error, _) -> Void in
+//					if error != nil { return callback(error, false) }
+//				}
+//			case "fetch":
+//				// TODO:
+//				break
+//			default:
+//				// Ignore unknown tasks
+//				print("Unknown sync state action: \(item.syncState?.actionNeeded ?? "")")
+//			}
+//		} else {
+//			throw "No syncState defined"
+//		}
+//	}
 }

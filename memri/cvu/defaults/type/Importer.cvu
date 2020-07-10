@@ -88,10 +88,10 @@ Importer[] {
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = thumbnail] {
-        press: addDataItem {
+        press: addItem {
             arguments {
                 template {
-                    type: ImporterInstance
+                    _type: ImporterRun
                     name: {{.name}}
                     importer: {{.}}
                 }

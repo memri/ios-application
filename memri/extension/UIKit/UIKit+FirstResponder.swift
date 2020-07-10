@@ -9,37 +9,27 @@
 import Foundation
 import UIKit
 
-func dismissCurrentResponder() {
-    UIApplication.shared.windows.first?.findFirstResponder()?.resignFirstResponder()
+public func dismissCurrentResponder() {
+	UIApplication.shared.windows.first?.findFirstResponder()?.resignFirstResponder()
 }
 
-extension UIViewController
-{
-    func findFirstResponder() -> UIView?
-    {
-        view.findFirstResponder()
-    }
+extension UIViewController {
+	public func findFirstResponder() -> UIView? {
+		view.findFirstResponder()
+	}
 }
 
-
-extension UIView
-{
-    func findFirstResponder() -> UIView?
-    {
-        if isFirstResponder
-        {
-            return self
-        }
-        else
-        {
-            for subview in subviews
-            {
-                if let found = subview.findFirstResponder()
-                {
-                    return found
-                }
-            }
-        }
-        return nil
-    }
+extension UIView {
+	public func findFirstResponder() -> UIView? {
+		if isFirstResponder {
+			return self
+		} else {
+			for subview in subviews {
+				if let found = subview.findFirstResponder() {
+					return found
+				}
+			}
+		}
+		return nil
+	}
 }

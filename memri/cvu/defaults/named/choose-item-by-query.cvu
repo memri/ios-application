@@ -1,16 +1,21 @@
 .choose-item-by-query {
-    title: {{ title }} /*or "Choose a {type}" }}*/
+    title: {{ title or "Choose a {type}" }}
     editMode: true
     
     editActionButton: toggleEditMode
     actionButton:
-        addDataItem {
+        addItem {
             arguments {
                 type: {{type}}
             }
         }
         
-    defaultRenderer:list
+    defaultRenderer: {{ renderer or "list" }}
+    
+    /* TODO this breaks when removing the : */
+    userstate: {
+        selection: {{ selection }}
+    }
     
     [datasource = pod] {
        query: "{query}"
@@ -21,7 +26,21 @@
             link {
                 arguments {
                     subject: {{subject}}
-                    property: {{property}}
+                    edgeType: {{edgeType}}
+                    distinct: {{distinct}}
+                }
+            }
+            closePopup
+        ]
+    }
+    
+    [renderer = thumbnail]{
+        press: [
+            link {
+                arguments {
+                    subject: {{subject}}
+                    edgeType: {{edgeType}}
+                    distinct: {{distinct}}
                 }
             }
             closePopup

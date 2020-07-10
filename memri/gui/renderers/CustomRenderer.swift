@@ -4,44 +4,44 @@
 //  Copyright © 2020 memri. All rights reserved.
 //
 
-import Foundation
 import Combine
+import Foundation
 import SwiftUI
 
 let registerCustomRenderer = {
-    Renderers.register(
-        name: "custom",
-        title: "",
-        order: 0,
-        icon: "",
-        view: AnyView(CustomRendererView()),
-        renderConfigType: CascadingCustomConfig.self,
-        canDisplayResults: { items -> Bool in false }
-    )
+	Renderers.register(
+		name: "custom",
+		title: "",
+		order: 0,
+		icon: "",
+		view: AnyView(CustomRendererView()),
+		renderConfigType: CascadingCustomConfig.self,
+		canDisplayResults: { _ -> Bool in false }
+	)
 }
 
 class CascadingCustomConfig: CascadingRenderConfig {
-    var type: String? = "custom"
+	var type: String? = "custom"
 }
 
 struct CustomRendererView: View {
-    @EnvironmentObject var context: MemriContext
-    
-    let name = "custom"
-    
-    var renderConfig: CascadingCustomConfig? {
-        self.context.cascadingView.renderConfig as? CascadingCustomConfig
-    }
-    
-    var body: some View {
-        return VStack{
-            self.renderConfig?.render(item: self.context.item ?? DataItem())
-        }
-    }
+	@EnvironmentObject var context: MemriContext
+
+	let name = "custom"
+
+	var renderConfig: CascadingCustomConfig? {
+		context.cascadingView?.renderConfig as? CascadingCustomConfig
+	}
+
+	var body: some View {
+		VStack {
+			self.renderConfig?.render(item: self.context.item ?? Item())
+		}
+	}
 }
 
 struct CustomRendererView_Previews: PreviewProvider {
-    static var previews: some View {
-        CustomRendererView().environmentObject(RootContext(name: "", key: "").mockBoot())
-    }
+	static var previews: some View {
+		CustomRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+	}
 }

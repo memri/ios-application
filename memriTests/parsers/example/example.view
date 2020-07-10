@@ -102,7 +102,7 @@
     all: "Alle"
 }
  
-.defaultButtonsForDataItem {
+.defaultButtonsForItem {
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
@@ -176,7 +176,7 @@ Person {
     defaultRenderer: generalEditor
     
     include:
-        "defaultButtonsForDataItem" { type: "Person" }
+        "defaultButtonsForItem" { type: "Person" }
     
     [renderer = "generalEditor"] {
          groups {
@@ -350,7 +350,7 @@ Person[] {
     }
     
     actionButton:
-        addDataItem {
+        addItem {
             arguments: {
                 template: {
                     type: "Person"

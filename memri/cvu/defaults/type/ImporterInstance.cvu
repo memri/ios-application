@@ -1,13 +1,13 @@
 [session = all-importer-instances] {
     [view] {
-        title: "All ImporterInstances"
+        title: "All ImporterRuns"
         [datasource = pod] {
-            query: "ImporterInstance"
+            query: "ImporterRun"
         }
     }
 }
 
-ImporterInstance {
+ImporterRun {
     title: "{.name} importer run"
     defaultRenderer: generalEditor
     editActionButton: toggleEditMode
@@ -72,18 +72,17 @@ ImporterInstance {
     ]
     
     [renderer = generalEditor] {
-        groups:  {
-            iconHeading: iconHeading
-            run: run
-            name: name
-        }
-
-        sequence: iconHeading name run labels other dates
-        excluded: version dateCreated dateModified dateAccessed changeLog
-        readOnly: name
+        layout: [
+            { section: iconHeading }
+            { section: name, readOnly: true }
+            { section: run }
+            { section: labels }
+            { section: other, fields: * }
+            { section: dates }
+        ]
         
         iconHeading {
-            sectionTitle: ""
+            showTitle: false
             
             HStack{
                 align: center
@@ -114,8 +113,7 @@ ImporterInstance {
         }
 
         run {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
             
             VStack {
                 HStack {
@@ -125,9 +123,9 @@ ImporterInstance {
                     Button {
                         margin: 5 5 5 35
                         
-                        press: import {
+                        press: runImporterRun {
                             arguments {
-                                importerInstance: {{.}}
+                                importerRun: {{.}}
                             }
                         }
                         
@@ -147,24 +145,24 @@ ImporterInstance {
     }
 }
 
-ImporterInstance[] {
+ImporterRun[] {
     name: "all-importer-instances"
-    title: "All ImporterInstances"
-    emptyResultText: "There are no ImporterInstances"
+    title: "All ImporterRuns"
+    emptyResultText: "There are no ImporterRuns"
     defaultRenderer: thumbnail
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
-        query: "ImporterInstance"
+        query: "ImporterRun"
         sortProperty: dateModified
         sortAscending: false
     }
     
     actionButton:
-        addDataItem {
+        addItem {
             arguments {
                 template {
-                    type: ImporterInstanceInstance
+                    _type: ImporterRunInstance
                     name: {{.name}}
                 }
             }

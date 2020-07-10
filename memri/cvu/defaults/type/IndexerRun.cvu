@@ -1,13 +1,13 @@
 [session = all-indexer-instances] {
     [view] {
-        title: "All IndexerInstances"
+        title: "All IndexerRuns"
         [datasource = pod] {
-            query: "IndexerInstance"
+            query: "IndexerRun"
         }
     }
 }
 
-IndexerInstance {
+IndexerRun {
     title: "{.name}"
     defaultRenderer: generalEditor
     editActionButton: toggleEditMode
@@ -72,20 +72,22 @@ IndexerInstance {
     ]
     
     [renderer = generalEditor] {
-        excluded: version starred
-        groups:  {
-            iconHeading: iconHeading
-            info: name run
-        }
-        
-        sequence: iconHeading info labels other dates
+        layout: [
+            { section: iconHeading }
+            { section: info, exclude: name run }
+            { section: labels }
+            { section: other, fields: * }
+            { section: dates }
+        ]
         
         iconHeading {
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
             
-            HStack{
+            HStack {
                 align: center
                 padding: 20 0 20 0
+                show: {{ .indexer.icon or .indexer.bundleImage }}
                 
                 Image {
                     /** todo, this padding is hacky but necessary now*/
@@ -101,8 +103,8 @@ IndexerInstance {
                 
                 Image {
                     align: center
-                    show: {{!.indexer.icon and .indexer.bundleImage}}
-                    bundleImage: {{.importer.bundleImage}}
+                    show: {{!.indexer.icon}}
+                    bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
                     resizable: fill
                     minWidth: 100
@@ -114,20 +116,22 @@ IndexerInstance {
         }
 
         info {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
             
             VStack {
                 Divider
                 EditorRow {
                     title: "Name"
+                    readOnly: true
+                    
                     Text {
                         text: {{.name}}
                     }
                 }
                 EditorRow {
                     Text {
-                        text: {{.indexer.indexerDescription}}
+                        text: {{.indexer.itemDescription}}
                         font: 14 regular
                         color: #555
                         padding: 8 36 8 0
@@ -141,14 +145,35 @@ IndexerInstance {
                     Button {
                         margin: 0 5 10 35
                         
-                        press: import {
+                        press: runIndexerRun {
                             arguments {
-                                importerInstance: {{.}}
+                                indexerRun: {{.}}
                             }
                         }
                         
                         Text {
                             text: "START RUN"
+                            font: 16 semibold
+                            color: #fff
+                            padding: 5 8 5 8
+                            cornerRadius: 5
+                            background: #70ba6c
+                        }
+                    }
+                    
+                    Button {
+                        margin: 0 5 10 35
+                        
+                        press: setProperty {
+                            arguments {
+                                subject: {{.}}
+                                property: progress
+                                value: 565
+                            }
+                        }
+                        
+                        Text {
+                            text: "TEST"
                             font: 16 semibold
                             color: #fff
                             padding: 5 8 5 8
@@ -163,24 +188,24 @@ IndexerInstance {
     }
 }
 
-IndexerInstance[] {
+IndexerRun[] {
     name: "all-indexer-instances"
-    title: "All IndexerInstances"
-    emptyResultText: "There are no IndexerInstances"
+    title: "All IndexerRuns"
+    emptyResultText: "There are no IndexerRuns"
     defaultRenderer: thumbnail
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
-        query: "IndexerInstance"
+        query: "IndexerRun"
         sortProperty: dateModified
         sortAscending: false
     }
 
     actionButton:
-        addDataItem {
+        addItem {
             arguments {
                 template {
-                    type: IndexerInstanceInstance
+                    _type: IndexerRunInstance
                     name: {{.name}}
                 }
             }
