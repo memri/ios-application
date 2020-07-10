@@ -12,7 +12,8 @@ public class Views {
 
 	private var recursionCounter = 0
 	private var realm: Realm
-    private var cancellable: AnyCancellable?
+    private var CVUWatcher: AnyCancellable? = nil
+    private var settingWatcher: AnyCancellable? = nil
 
 	init(_ rlm: Realm) {
 		realm = rlm
@@ -24,15 +25,28 @@ public class Views {
 
 		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
         
-        // Subscribe to changes in CVUStoredDefinition
-        #warning("Add a setting to control this (turn on and off)")
-        cancellable = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
-            self.reloadViews(items)
+        settingWatcher = context?.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
+            if let value = $0 as? Bool {
+                if value && self.CVUWatcher == nil {
+                    self.listenForChanges()
+                }
+                else if !value, let c = self.CVUWatcher {
+                    c.cancel()
+                    self.CVUWatcher = nil
+                }
+            }
         }
 
 		// Done
 		try callback()
 	}
+    
+    public func listenForChanges() {
+        // Subscribe to changes in CVUStoredDefinition
+        CVUWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+            self.reloadViews(items)
+        }
+    }
 
 	// TODO: refactor when implementing settings UI call this when changing the language
 	public func setCurrentLanguage(_ language: String) throws {

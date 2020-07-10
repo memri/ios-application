@@ -7,6 +7,7 @@
     { "_type": "Setting", "key": "defaults/pod/username", "value": ""},
     { "_type": "Setting", "key": "defaults/pod/password", "value": ""},
     { "_type": "Setting", "key": "defaults/debug/autoShowErrorConsole", "value": false},
+    { "_type": "Setting", "key": "defaults/debug/autoReloadCVU", "value": true},
     {
         "_type": "NavigationItem",
         "type": "heading",

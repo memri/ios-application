@@ -160,7 +160,7 @@ class Sync {
 
                     // We no longer need to process this log item
                     realmWriteIfAvailable(self.realm) {
-                        self.realm.delete(audititem)
+                        audititem.setSyncStateActionNeeded("")
                     }
                 }
             } else {

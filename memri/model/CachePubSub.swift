@@ -226,7 +226,7 @@ struct QueryPublisher: Publisher {
     }
     
     func receive<S>(subscriber: S) where S : Subscriber,
-        S.Failure == QueryPublisher.Failure, S.Input == [Item] {
+        S.Failure == QueryPublisher.Failure, S.Input == QueryPublisher.Output {
             
         // TODO
         let subscription = QuerySubscription(

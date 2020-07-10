@@ -134,10 +134,6 @@ class DebugHistory: ObservableObject {
 			))
 		}
 
-		if Settings.get("device/debug/autoShowErrorConsole") ?? false {
-			showErrorConsole = true
-		}
-
 		print("\(time()) WARNING: \(message.replace("\n", "\n    "))")
 	}
 

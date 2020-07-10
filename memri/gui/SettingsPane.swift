@@ -40,20 +40,6 @@ struct SettingsPane: View {
 	var body: some View {
 		NavigationView {
 			Form {
-				//                Section(header: Text("General")) {
-				//                    DatePicker(selection: getBinding("/user/formatting/date"), in: ...Date(), displayedComponents: .date) {
-				//                        Text("Date Format")
-				//                    }
-//
-				//                    Picker(selection: $citySelected, label: Text("Choose a city:")) {
-				//                        ForEach(0 ..< Self.cities.count) {
-				//                            Text(Self.cities[$0])
-				//                        }
-				//                    }
-				//                    if addOwnCity {
-				//                        TextField("Enter your own city" ,text: $ownCity)
-				//                    }
-				//                }
 				NavigationLink(destination: Form {
 					Section(
 						header: Text("Pod Connection"),
@@ -126,8 +112,11 @@ struct SettingsPane: View {
 						header: Text("Debug")
 					) {
 						Toggle(isOn: getBinding("/device/debug/autoShowErrorConsole")) {
-							Text("Automatically pop up the debug console")
+							Text("Automatically pop up the debug console on errors")
 						}
+                        Toggle(isOn: getBinding("/device/debug/autoReloadCVU")) {
+                            Text("Automatically reload CVU when it changes")
+                        }
 					}
                 }) {
 					Text("Debug")

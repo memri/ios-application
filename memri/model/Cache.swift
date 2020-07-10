@@ -560,7 +560,17 @@ public class Cache {
 				let excluded = ["uid", "dateCreated", "dateAccessed", "dateModified"]
 				for prop in properties {
 					if !excluded.contains(prop.name), values[prop.name] != nil {
-						fromCache[prop.name] = values[prop.name] as Any?
+                        if prop.type == .date {
+                            if let date = values[prop.name] as? Int {
+                                fromCache[prop.name] = Date(timeIntervalSince1970: Double(date/1000))
+                            }
+                            else {
+                                throw "Invalid date received for \(prop.name) got \(String(describing: values[prop.name] ?? "") )"
+                            }
+                        }
+                        else {
+                            fromCache[prop.name] = values[prop.name] as Any?
+                        }
 					}
 				}
 				fromCache["dateModified"] = Date()
