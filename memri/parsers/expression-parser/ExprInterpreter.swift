@@ -59,7 +59,7 @@ class ExprInterpreter {
 		else if let x = x as? String { return x }
         else if let x = x as? Date {
             let formatter = DateFormatter()
-            formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
+            formatter.dateFormat = Settings.shared.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
             return formatter.string(from: x)
         }
 		else if x == nil { return defaultValue }

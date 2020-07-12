@@ -124,14 +124,14 @@ public class Views {
 
     #warning("This should be moved elsewhere")
 	public class func formatDate(_ date: Date?) -> String {
-		let showAgoDate: Bool? = Settings.get("user/general/gui/showDateAgo")
+        let showAgoDate: Bool? = Settings.shared.get("user/general/gui/showDateAgo")
 
 		if let date = date {
 			// Compare against 36 hours ago
 			if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
 				let dateFormatter = DateFormatter()
 
-				dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.dateFormat = Settings.shared.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
 				dateFormatter.locale = Locale(identifier: "en_US")
 				dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
@@ -177,10 +177,10 @@ public class Views {
 			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
 				#warning("@Toby - how can we re-architect this?")
 				if let value = args?[0] as? String {
-					if let x = Settings.get(value, type: Double.self) { return x }
-					else if let x = Settings.get(value, type: Int.self) { return x }
-					else if let x = Settings.get(value, type: String.self) { return x }
-					else if let x = Settings.get(value, type: Bool.self) { return x }
+					if let x = Settings.shared.get(value, type: Double.self) { return x }
+					else if let x = Settings.shared.get(value, type: Int.self) { return x }
+					else if let x = Settings.shared.get(value, type: String.self) { return x }
+					else if let x = Settings.shared.get(value, type: Bool.self) { return x }
 				}
 				return ""
 			}

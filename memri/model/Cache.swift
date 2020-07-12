@@ -90,7 +90,7 @@ public class Cache {
 		podAPI = api
 
 		// Create scheduler objects
-		sync = Sync(podAPI, realm)
+		sync = Sync(podAPI)
 		sync.cache = self
 	}
 

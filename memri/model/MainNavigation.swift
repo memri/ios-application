@@ -19,10 +19,10 @@ public class MainNavigation: ObservableObject {
 
 	var filterText: String {
 		get {
-			Settings.get("device/navigation/filterText") ?? ""
+            Settings.shared.get("device/navigation/filterText") ?? ""
 		}
 		set(newFilter) {
-			Settings.set("device/navigation/filterText", newFilter)
+			Settings.shared.set("device/navigation/filterText", newFilter)
 
 			scheduleUIUpdate?(nil)
 		}

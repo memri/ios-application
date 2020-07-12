@@ -11,6 +11,8 @@ import Combine
 /// This class stores the settings used in the memri app. Settings may include things like how to format dates, whether to show certain
 /// buttons by default, etc.
 public class Settings {
+    /// Shared settings that can be used from the main thread
+    static var shared: Settings = Settings()
 	/// Realm database object
 	let realm: Realm
 	/// Default settings
@@ -21,7 +23,7 @@ public class Settings {
 
 	/// Init settings with the relam database
 	/// - Parameter rlm: realm database object
-	init(_ realm: Realm) {
+	init(_ realm: Realm = try! Realm()) {
 		self.realm = realm
 		settings = realm.objects(Setting.self)
 	}
@@ -173,24 +175,4 @@ public class Settings {
         self.listeners[path]?.removeAll(where: { $0 == id })
         self.callbacks.removeValue(forKey: id)
     }
-    
-	/// Get *global* setting value for given path
-	/// - Parameter path: global setting path
-	/// - Returns: setting value
-	public class func get<T: Decodable>(_ path: String, type _: T.Type = T.self) -> T? {
-		globalSettings?.get(path)
-	}
-
-	/// Get *global* setting value for given path
-	/// - Parameter path: global setting path
-	///   - value: setting value for the given path
-	public class func set(_ path: String, _ value: Any) {
-		if let globalSettings = globalSettings {
-			return globalSettings.set(path, value)
-		} else {
-			debugHistory.error("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
-		}
-	}
 }
-
-var globalSettings: Settings?

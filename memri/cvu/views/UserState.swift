@@ -17,7 +17,8 @@ public class UserState: SchemaItem, CVUToString {
 		"uid"
 	}
 
-	convenience init(_ dict: [String: Any]) throws {
+	convenience init(_ dict: [String: Any?]) throws {
+        #warning("@Ruben - was this [String: Any] for a reason? The project wouldn't build for me until I changed this")
 		self.init()
 		try storeInCache(dict)
 		persist()
@@ -177,7 +178,8 @@ public class UserState: SchemaItem, CVUToString {
 		else { return try UserState(dict) }
 	}
 
-	public class func fromDict(_ dict: [String: Any], item: Item? = nil) throws -> UserState {
+	public class func fromDict(_ dict: [String: Any?], item: Item? = nil) throws -> UserState {
+        #warning("@Ruben - was this [String: Any] for a reason? The project wouldn't build for me until I changed this")
 		let userState = try Cache.createItem(UserState.self, values: [:])
         
         // Resolve expressions
