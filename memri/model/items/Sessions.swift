@@ -61,7 +61,7 @@ public class Sessions: SchemaSessions {
 	}
 
 	public func setCurrentSession(_ session: Session) {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			if let edge = try link(session, type: "session", order: .last),
 				let index = edges("session")?.index(of: edge) {
 				// Update the index pointer
@@ -115,7 +115,7 @@ public class Sessions: SchemaSessions {
 			}
 		}
 
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			doMerge()
 		}
 	}

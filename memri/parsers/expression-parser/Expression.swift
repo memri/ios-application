@@ -65,7 +65,7 @@ public class Expression: CVUToString {
 								!ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
 						return
 					} else if let obj = lookupValue as? Object {
-						realmWriteIfAvailable(context.realm) {
+						realmWrite(context.realm) {
 							obj[lastProperty.name] =
 								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
 						}
@@ -73,7 +73,7 @@ public class Expression: CVUToString {
 					}
 					// TODO: FIX: Implement LookUpAble
 					else if let obj = lookupValue as? MemriContext {
-						realmWriteIfAvailable(context.realm) {
+						realmWrite(context.realm) {
 							obj[lastProperty.name] =
 								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
 						}

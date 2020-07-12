@@ -46,61 +46,6 @@ class Sync {
 	/// Cache Object used to fetch resultsets
 	public var cache: Cache?
     
-    
-    private var realmAccessQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
-    private func realmRead(_ doRead: @escaping (Realm) throws -> Void) {
-        realmAccessQueue.async {
-			autoreleasepool {
-				do {
-					let realmInstance = try Realm()
-					try doRead(realmInstance)
-				} catch {
-					// Implement me
-				}
-			}
-        }
-    }
-    
-	private func realmWrite<T: ThreadConfined>(_ object: T, _ doWrite: @escaping (Realm, T) throws -> Void) {
-		if object.realm != nil {
-			// Handle managed object
-			let wrappedObject = ThreadSafeReference(to: object) // Managed instance, needs to be passed safely
-			realmWrite(wrappedObject, doWrite)
-			return
-		} else {
-			// Handle unmanaged object
-			realmAccessQueue.async {
-				autoreleasepool {
-					do {
-						let realmInstance = try Realm()
-						try realmInstance.write {
-							try doWrite(realmInstance, object)
-						}
-					} catch {
-						// Implement me
-					}
-				}
-			}
-		}
-    }
-	
-	
-	private func realmWrite<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
-		realmAccessQueue.async {
-			autoreleasepool {
-				do {
-					let realmInstance = try Realm()
-					guard let threadSafeObject = realmInstance.resolve(objectReference) else { return }
-					try realmInstance.write {
-						try doWrite(realmInstance, threadSafeObject)
-					}
-				} catch {
-					// Implement me
-				}
-			}
-		}
-	}
-    
 
 	private var scheduled: Int = 0
 	private var syncing: Bool = false
@@ -146,7 +91,7 @@ class Sync {
 			// Set syncstate to "fetch" in order to get priority treatment for querying
 			audititem.syncState?.actionNeeded = "fetch"
 			// Add to realm
-			realmWrite(audititem) { realm, audititem in
+			realmWriteAsync(audititem) { realm, audititem in
 				realm.add(audititem)
 			}
 			
@@ -213,7 +158,7 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-                    self.realmWrite(audititem) { _, audititem in
+                    realmWriteAsync(audititem) { _, audititem in
                         audititem.setSyncStateActionNeeded("")
                     }
                 }
@@ -255,7 +200,7 @@ class Sync {
 			for (_, sublist) in list {
 				for item in sublist as? [Any] ?? [] {
 					if let item = item as? ThreadSafeReference<SchemaItem> {
-						self.realmWrite(item) { realm, item in
+						realmWriteAsync(item) { realm, item in
 							if item.syncState?.actionNeeded == "delete" {
 								realm.delete(item)
 							}
@@ -265,7 +210,7 @@ class Sync {
 							}
 						}
 					} else if let item = item as? ThreadSafeReference<Edge> {
-						self.realmWrite(item) { realm, item in
+						realmWriteAsync(item) { realm, item in
 							if item.syncState?.actionNeeded == "delete" {
 								realm.delete(item)
 							}
@@ -279,7 +224,7 @@ class Sync {
 			}
 		}
         
-        realmRead { (realm) in
+        realmReadAsync { (realm) in
             #warning("@Ruben, I have added this guard check here to avoid starting again if already syncing... but not sure if it should be there?")
             guard !self.syncing else { return }
             self.syncing = true

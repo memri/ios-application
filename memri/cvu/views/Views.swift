@@ -481,7 +481,7 @@ public class Views {
 
 		// turn off editMode when navigating
 		if context.sessions?.currentSession?.isEditMode == true {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) {
 				context.sessions?.currentSession?.isEditMode = false
 			}
 		}
@@ -489,7 +489,7 @@ public class Views {
 		// hide filterpanel if view doesnt have a button to open it
 		if context.sessions?.currentSession?.showFilterPanel ?? false {
 			if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
-				realmWriteIfAvailable(realm) {
+				realmWrite(realm) {
 					context.sessions?.currentSession?.showFilterPanel = false
 				}
 			}

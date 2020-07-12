@@ -453,7 +453,7 @@ class ActionBack: Action, ActionExec {
 			if session.currentViewIndex == 0 {
 				print("Warn: Can't go back. Already at earliest view in session")
 			} else {
-				realmWriteIfAvailable(context.realm) { session.currentViewIndex -= 1 }
+				realmWrite(context.realm) { session.currentViewIndex -= 1 }
 				context.scheduleCascadingViewUpdate()
 			}
 		} else {
@@ -670,7 +670,7 @@ class ActionStar: Action, ActionExec {
 		//                selection.append(item)
 		//            }
 //
-		//            realmWriteIfAvailable(context.cache.realm, {
+		//            realmWrite(context.cache.realm, {
 		//                for item in selection { item.starred = toValue }
 		//            })
 //
@@ -813,7 +813,7 @@ class ActionForward: Action, ActionExec {
 			if session.currentViewIndex == (session.views?.count ?? 0) - 1 {
 				print("Warn: Can't go forward. Already at last view in session")
 			} else {
-				realmWriteIfAvailable(context.cache.realm) { session.currentViewIndex += 1 }
+				realmWrite(context.cache.realm) { session.currentViewIndex += 1 }
 				context.scheduleCascadingViewUpdate()
 			}
 		} else {
@@ -837,7 +837,7 @@ class ActionForwardToFront: Action, ActionExec {
 
 	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
-			realmWriteIfAvailable(context.cache.realm) {
+			realmWrite(context.cache.realm) {
 				session.currentViewIndex = (session.views?.count ?? 0) - 1
 			}
 			context.scheduleCascadingViewUpdate()
@@ -867,7 +867,7 @@ class ActionBackAsSession: Action, ActionExec {
 				throw "Warn: Can't go back. Already at earliest view in session"
 			} else {
 				if let duplicateSession = try context.cache.duplicate(session as Item) as? Session {
-					realmWriteIfAvailable(context.cache.realm) {
+					realmWrite(context.cache.realm) {
 						duplicateSession.currentViewIndex -= 1
 					}
 

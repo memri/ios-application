@@ -219,7 +219,7 @@ public class MemriContext: ObservableObject {
 					"action": "update",
 				])
 				_ = try item.link(auditItem, type: "changelog")
-				realmWriteIfAvailable(realm) { syncState.changedInThisSession = false }
+				realmWrite(realm) { syncState.changedInThisSession = false }
 			} else {
 				print("Could not log update, no Item found")
 			}

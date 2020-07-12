@@ -37,7 +37,7 @@ public class Session: SchemaSession {
 
 	func decorate(_ view: SessionView) {
 		// Set the .session property on views for easy querying
-		if view.session == nil { realmWriteIfAvailable(realm) { view.set("session", self) } }
+		if view.session == nil { realmWrite(realm) { view.set("session", self) } }
 
 		// Observe and process changes for UI updates
 		if realm != nil {
@@ -60,7 +60,7 @@ public class Session: SchemaSession {
 			editMode
 		}
 		set {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) {
 				self.editMode = newValue
 			}
 		}
@@ -72,7 +72,7 @@ public class Session: SchemaSession {
 			else { return .inactive }
 		}
 		set(value) {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) {
 				if value == .active { self.editMode = true }
 				else { self.editMode = false }
 			}
@@ -98,7 +98,7 @@ public class Session: SchemaSession {
 	public func setCurrentView(_ view: SessionView) throws {
 		guard let views = views else { return }
 
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			if let index = views.firstIndex(of: view) {
 				currentViewIndex = index
 			} else {

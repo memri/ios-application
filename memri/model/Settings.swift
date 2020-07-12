@@ -128,7 +128,7 @@ public class Settings {
 	///   - path: path of the setting
 	///   - value: setting Value
 	public func setSetting(_ path: String, _ value: AnyCodable) throws {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
 				s.json = try serialize(value)
                 

@@ -171,30 +171,80 @@ func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
 	}
 }
 
-func realmWriteIfAvailableThrows(_ realm: Realm?, _ doWrite: () throws -> Void) throws {
-	if let realm = realm {
-		if !realm.isInWriteTransaction {
-			// TODO: Error handling (this can happen for instance if you pass a
-			// non existing property string to dataItem.set())
-			try realm.write { try doWrite() }
-		} else {
-			try doWrite()
+
+let realmReadQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
+let realmWriteQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
+func realmReadAsync(_ doRead: @escaping (Realm) throws -> Void) {
+	realmReadQueue.async {
+		autoreleasepool {
+			do {
+				let realmInstance = try Realm()
+				try doRead(realmInstance)
+			} catch {
+				// Implement me
+			}
 		}
-	} else {
-		try doWrite()
 	}
 }
 
-func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
+func realmWriteAsync<T: ThreadConfined>(_ object: T, _ doWrite: @escaping (Realm, T) throws -> Void) {
+	if object.realm != nil {
+		// Handle managed object
+		let wrappedObject = ThreadSafeReference(to: object) // Managed instance, needs to be passed safely
+		realmWriteAsync(wrappedObject, doWrite)
+		return
+	} else {
+		// Handle unmanaged object
+		realmWriteQueue.async {
+			autoreleasepool {
+				do {
+					let realmInstance = try Realm()
+					try realmInstance.write {
+						try doWrite(realmInstance, object)
+					}
+				} catch {
+					// Implement me
+				}
+			}
+		}
+	}
+}
+
+
+func realmWriteAsync<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
+	realmWriteQueue.async {
+		autoreleasepool {
+			do {
+				let realmInstance = try Realm()
+				guard let threadSafeObject = realmInstance.resolve(objectReference) else { return }
+				try realmInstance.write {
+					try doWrite(realmInstance, threadSafeObject)
+				}
+			} catch {
+				// Implement me
+			}
+		}
+	}
+}
+
+func realmTryWrite(_ realm: Realm = try! Realm.init(), _ doWrite: () throws -> Void) throws {
+	guard !realm.isInWriteTransaction else {
+		try doWrite()
+		return
+	}
+	try realm.write { try doWrite() }
+}
+
+func realmWrite(_ realm: Realm = try! Realm.init(), _ doWrite: () throws -> Void) {
 	// TODO: Refactor, Error Handling , _ error:(error) -> Void  ??
 	do {
-		try realmWriteIfAvailableThrows(realm, doWrite)
+		try realmTryWrite(realm, doWrite)
 	} catch {
 		debugHistory.error("Realm Error: \(error)")
 	}
 }
 
-func withRealm(_ doThis: (_ realm: Realm) -> Void) {
+func realmRead(_ doThis: (_ realm: Realm) -> Void) {
 	do {
 		let realm = try Realm()
 		doThis(realm)
@@ -203,7 +253,7 @@ func withRealm(_ doThis: (_ realm: Realm) -> Void) {
 	}
 }
 
-func withRealm(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
+func realmRead(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
 	do {
 		let realm = try Realm()
 		return doThis(realm)
@@ -222,7 +272,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
-		return withRealm { realm in
+		return realmRead { realm in
 			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
 		} as? Item
 	}
@@ -232,7 +282,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 //
 // func getItem(_ edge: Edge) -> Item? {
 //	if let family = ItemFamily(rawValue: edge.targetType) {
-//		return withRealm { realm in
+//		return realmRead { realm in
 //			realm.object(ofType: family.getType() as! Object.Type,
 //						 forPrimaryKey: edge.objectMemriID)
 //		} as? Item

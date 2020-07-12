@@ -44,7 +44,7 @@ struct FilterPanel: View {
 	}
 
 	private func toggleAscending() {
-		realmWriteIfAvailable(context.realm) {
+		realmWrite(context.realm) {
 			self.context.currentSession?.currentView?.datasource?.sortAscending.value
 				= !(self.context.cascadingView?.datasource.sortAscending ?? true)
 		}
@@ -52,7 +52,7 @@ struct FilterPanel: View {
 	}
 
 	private func changeOrderProperty(_ fieldName: String) {
-		realmWriteIfAvailable(context.realm) {
+		realmWrite(context.realm) {
 			self.context.currentSession?.currentView?.datasource?.sortProperty = fieldName
 		}
 		context.scheduleCascadingViewUpdate()

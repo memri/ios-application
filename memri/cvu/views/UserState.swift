@@ -101,7 +101,7 @@ public class UserState: SchemaItem, CVUToString {
 		if realm == nil { return }
 
 		if let x = getFromCache() {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) {
 				do {
 					var values: [String: AnyCodable?] = [:]
 

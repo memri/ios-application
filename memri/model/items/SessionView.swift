@@ -24,7 +24,7 @@ extension SessionView {
 	}
 
 	func mergeState(_ view: SessionView) throws {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			if let us = view.userState {
 				if userState == nil {
 					self.set("userState", try Cache.createItem(UserState.self))

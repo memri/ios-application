@@ -182,7 +182,7 @@ public class Cache {
 						)
 					}
 
-					realmWriteIfAvailable(realm) {
+					realmWrite(realm) {
 						item.allEdges.append(edge)
 					}
 				}
@@ -405,7 +405,7 @@ public class Cache {
 							}
 						}
 
-						realmWriteIfAvailable(self.realm) { doAction() }
+						realmWrite(self.realm) { doAction() }
 					}
 					self.scheduleUIUpdate?(nil)
 				}
@@ -429,7 +429,7 @@ public class Cache {
 	/// - Remark: All methods and properties must throw when deleted = true;
 	public func delete(_ item: Item) {
 		if !item.deleted {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) {
 				item.deleted = true
 				item.syncState?.actionNeeded = "delete"
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
@@ -441,7 +441,7 @@ public class Cache {
 	/// sets delete to true in the syncstate, for an array of items
 	/// - Parameter items: items to be deleted
 	public func delete(_ items: [Item]) {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			for item in items {
 				if !item.deleted {
 					item.deleted = true
@@ -483,7 +483,7 @@ public class Cache {
 		let realm = try Realm()
 		if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
 			if let lastUID = Int(setting.json ?? "") {
-				realmWriteIfAvailable(realm) {
+				realmWrite(realm) {
 					setting.json = String(lastUID + 1)
 				}
 				return (lastUID + 1)
@@ -495,7 +495,7 @@ public class Cache {
 		// As an exception we are not using Cache.createItem here because it should
 		// not be synced to the backend
 
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			realm.create(Setting.self, value: [
 				"uid": -1,
 				"json": String(1_000_000_001),
@@ -539,7 +539,7 @@ public class Cache {
 											unique: String? = nil) throws -> T {
 		let realm = try Realm()
 		var item: T?
-		try realmWriteIfAvailableThrows(realm) {
+		try realmTryWrite(realm) {
 			var dict = values
 
 			// TODO:
@@ -623,7 +623,7 @@ public class Cache {
 								 label: String? = nil, sequence: Int? = nil) throws -> Edge {
 		let realm = try Realm()
 		var edge: Edge?
-		try realmWriteIfAvailableThrows(realm) {
+		try realmTryWrite(realm) {
 			// TODO:
 			// Always overwrite (see also link())
 
