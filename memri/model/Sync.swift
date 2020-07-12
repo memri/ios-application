@@ -50,31 +50,56 @@ class Sync {
     private var realmAccessQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
     private func realmRead(_ doRead: @escaping (Realm) throws -> Void) {
         realmAccessQueue.async {
-            do {
-                let realmInstance = try Realm()
-                try doRead(realmInstance)
-            } catch {
-                
-            }
+			autoreleasepool {
+				do {
+					let realmInstance = try Realm()
+					try doRead(realmInstance)
+				} catch {
+					// Implement me
+				}
+			}
         }
     }
     
-    private func realmWrite(_ doWrite: @escaping (Realm) throws -> Void) {
-        realmAccessQueue.async {
-            do {
-                let realmInstance = try Realm()
-                guard !realmInstance.isInWriteTransaction else {
-                    try doWrite(realmInstance)
-                    return
-                }
-                try realmInstance.write {
-                    try doWrite(realmInstance)
-                }
-            } catch {
-                // Implement me
-            }
-        }
+	private func realmWrite<T: ThreadConfined>(_ object: T, _ doWrite: @escaping (Realm, T) throws -> Void) {
+		if object.realm != nil {
+			// Handle managed object
+			let wrappedObject = ThreadSafeReference(to: object) // Managed instance, needs to be passed safely
+			realmWrite(wrappedObject, doWrite)
+			return
+		} else {
+			// Handle unmanaged object
+			realmAccessQueue.async {
+				autoreleasepool {
+					do {
+						let realmInstance = try Realm()
+						try realmInstance.write {
+							try doWrite(realmInstance, object)
+						}
+					} catch {
+						// Implement me
+					}
+				}
+			}
+		}
     }
+	
+	
+	private func realmWrite<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
+		realmAccessQueue.async {
+			autoreleasepool {
+				do {
+					let realmInstance = try Realm()
+					guard let threadSafeObject = realmInstance.resolve(objectReference) else { return }
+					try realmInstance.write {
+						try doWrite(realmInstance, threadSafeObject)
+					}
+				} catch {
+					// Implement me
+				}
+			}
+		}
+	}
     
 
 	private var scheduled: Int = 0
@@ -112,22 +137,21 @@ class Sync {
 				"sortProperty": datasource.sortProperty,
 				"sortAscending": datasource.sortAscending.value ?? false ? "true" : "false",
 			] as? [String: String])
-
+			
 			audititem.uid.value = try Cache.incrementUID()
 			audititem.content = String(data: data, encoding: .utf8) ?? ""
 			audititem.action = "query"
 			audititem.date = Date()
-
+			
 			// Set syncstate to "fetch" in order to get priority treatment for querying
 			audititem.syncState?.actionNeeded = "fetch"
-
 			// Add to realm
-            realmWrite { realm in
-                realm.add(audititem)
-            }
-
+			realmWrite(audititem) { realm, audititem in
+				realm.add(audititem)
+			}
+			
 			// Execute query with priority
-			prioritySync(datasource, audititem)
+			self.prioritySync(datasource, audititem)
 		} catch {
 			print("syncQuery failed: \(error)")
 		}
@@ -189,7 +213,7 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-                    self.realmWrite { _ in
+                    self.realmWrite(audititem) { _, audititem in
                         audititem.setSyncStateActionNeeded("")
                     }
                 }
@@ -228,25 +252,27 @@ class Sync {
 
 	public func syncToPod() {
 		func markAsDone(_ list: [String: Any]) {
-			realmWrite { realm in
-				for (_, sublist) in list {
-					for item in sublist as? [Any] ?? [] {
-						if let item = item as? SchemaItem {
-                            if item.syncState?.actionNeeded == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
-                            }
-						} else if let item = item as? Edge {
-                            if item.syncState?.actionNeeded == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
-                            }
+			for (_, sublist) in list {
+				for item in sublist as? [Any] ?? [] {
+					if let item = item as? ThreadSafeReference<SchemaItem> {
+						self.realmWrite(item) { realm, item in
+							if item.syncState?.actionNeeded == "delete" {
+								realm.delete(item)
+							}
+							else {
+								item.syncState?.actionNeeded = ""
+								item.syncState?.updatedFields.removeAll()
+							}
+						}
+					} else if let item = item as? ThreadSafeReference<Edge> {
+						self.realmWrite(item) { realm, item in
+							if item.syncState?.actionNeeded == "delete" {
+								realm.delete(item)
+							}
+							else {
+								item.syncState?.actionNeeded = ""
+								item.syncState?.updatedFields.removeAll()
+							}
 						}
 					}
 				}
@@ -285,10 +311,18 @@ class Sync {
                     found += 1
                 }
             }
+			
+			let safeItemQueue = itemQueue.mapValues {
+				$0.map { ThreadSafeReference(to: $0) }
+			}
+			
+			let safeEdgeQueue = edgeQueue.mapValues {
+				$0.map { ThreadSafeReference(to: $0) }
+			}
             
+			
             if found > 0 {
                 debugHistory.info("Syncing to pod with \(found) changes")
-                
                 do {
                     try self.podAPI.sync(
                         createItems: itemQueue["create"],
@@ -306,8 +340,8 @@ class Sync {
                         }
                         else {
                             #warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
-                            markAsDone(itemQueue)
-                            markAsDone(edgeQueue)
+                            markAsDone(safeItemQueue)
+                            markAsDone(safeEdgeQueue)
                             
                             self.schedule()
                         }
