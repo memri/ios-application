@@ -12,7 +12,7 @@ public class Views {
 
 	private var recursionCounter = 0
 	private var realm: Realm
-    private var CVUWatcher: AnyCancellable? = nil
+    private var cvuWatcher: AnyCancellable? = nil
     private var settingWatcher: AnyCancellable? = nil
 
 	init(_ rlm: Realm) {
@@ -27,12 +27,12 @@ public class Views {
         
         settingWatcher = context?.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
             if let value = $0 as? Bool {
-                if value && self.CVUWatcher == nil {
+                if value && self.cvuWatcher == nil {
                     self.listenForChanges()
                 }
-                else if !value, let c = self.CVUWatcher {
+                else if !value, let c = self.cvuWatcher {
                     c.cancel()
-                    self.CVUWatcher = nil
+                    self.cvuWatcher = nil
                 }
             }
         }
@@ -43,7 +43,7 @@ public class Views {
     
     public func listenForChanges() {
         // Subscribe to changes in CVUStoredDefinition
-        CVUWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+        cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
             self.reloadViews(items)
         }
     }
