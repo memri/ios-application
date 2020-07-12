@@ -227,7 +227,8 @@ func realmWriteAsync<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @e
 	}
 }
 
-func realmTryWrite(_ realm: Realm = try! Realm.init(), _ doWrite: () throws -> Void) throws {
+func realmTryWrite(_ realm: Realm? = nil, _ doWrite: () throws -> Void) throws {
+	let realm = try realm ?? Realm.init()
 	guard !realm.isInWriteTransaction else {
 		try doWrite()
 		return
@@ -235,7 +236,7 @@ func realmTryWrite(_ realm: Realm = try! Realm.init(), _ doWrite: () throws -> V
 	try realm.write { try doWrite() }
 }
 
-func realmWrite(_ realm: Realm = try! Realm.init(), _ doWrite: () throws -> Void) {
+func realmWrite(_ realm: Realm? = nil, _ doWrite: () throws -> Void) {
 	// TODO: Refactor, Error Handling , _ error:(error) -> Void  ??
 	do {
 		try realmTryWrite(realm, doWrite)
