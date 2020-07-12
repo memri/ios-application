@@ -169,8 +169,17 @@ public class Item: SchemaItem {
 	///   - value: value
 	public func set(_ name: String, _ value: Any?) {
 		realmWriteIfAvailable(realm) {
-			if self.objectSchema[name] != nil {
-				self[name] = value
+			if let schema = self.objectSchema[name] {
+				switch schema.type {
+				case .int:
+					self[name] = value as? Int
+				case .float:
+					self[name] = value as? Float
+				case .double:
+					self[name] = value as? Double
+				default:
+					self[name] = value
+				}
 			} else if let obj = value as? Object {
 				_ = try self.link(obj, type: name, distinct: true)
 			} else if let list = value as? [Object] {
