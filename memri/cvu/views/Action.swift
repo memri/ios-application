@@ -374,7 +374,7 @@ public enum ActionFamily: String, CaseIterable {
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
 		showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
 		link, closePopup, unlink, multiAction, noop, runIndexerRun, runImporterRun,
-		setProperty
+		setProperty, setSetting
 
 	func getType() -> Action.Type {
 		switch self {
@@ -404,6 +404,7 @@ public enum ActionFamily: String, CaseIterable {
 		case .runIndexerRun: return ActionRunIndexerRun.self
 		case .runImporterRun: return ActionRunImporterRun.self
 		case .setProperty: return ActionSetProperty.self
+        case .setSetting: return ActionSetSetting.self
 		case .noop: fallthrough
 		default: return ActionNoop.self
 		}
@@ -1223,9 +1224,37 @@ class ActionSetProperty: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
-		execWithoutThrow { try ActionLink(context).exec(arguments) }
+		execWithoutThrow { try ActionSetProperty(context).exec(arguments) }
 	}
 }
+
+class ActionSetSetting: Action, ActionExec {
+    override var defaultValues: [String: Any?] { [
+        "argumentTypes": ["path": String.self, "value": Any.self],
+    ] }
+
+    required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+        super.init(context, "setSetting", arguments: arguments, values: values)
+    }
+
+    func exec(_ arguments: [String: Any?]) throws {
+        guard let path = arguments["path"] as? String else {
+            throw "Exception: missing path to set setting"
+        }
+
+        let value = arguments["value"]
+
+        Settings.set(path, value as Any)
+
+        // TODO: refactor
+        ((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
+    }
+
+    class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+        execWithoutThrow { try ActionSetSetting(context).exec(arguments) }
+    }
+}
+
 
 class ActionLink: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
