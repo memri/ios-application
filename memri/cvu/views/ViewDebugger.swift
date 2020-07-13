@@ -187,10 +187,13 @@ struct DebugConsole: View {
 							.font(.system(size: 14, weight: .semibold))
 							.padding(EdgeInsets(top: 5, leading: 10, bottom: 5, trailing: 10))
 							.foregroundColor(Color(hex: "555"))
+                        Spacer()
 						Button(action: { self.scrollPosition = .top }) {
 							Text("scroll to top")
 						}
-						Spacer()
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(Color(hex: "#999"))
+                        .padding(10)
 						Button(action: { self.history.clear() }) {
 							Text("clear")
 						}
