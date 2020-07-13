@@ -381,7 +381,7 @@ public class PodAPI {
 	///   - queryOptions: Object describing what to query and how to return the results
 	///   - callback: Function that is called when the task is completed either with the results, or  an error
 	/// - Remark: The query language is a WIP
-	public func query(_ queryOptions: Datasource,
+    public func query(_ queryOptions: Datasource, withEdges:Bool = true,
 					  _ callback: @escaping (_ error: Error?, _ result: [Item]?) -> Void) {
 		// TODO: Can no longer detect whether the data item is synced
 		//        if queryOptions.query!.test(#"^-\d+"#) { // test for uid that is negative
@@ -426,29 +426,33 @@ public class PodAPI {
 							.decode(family: ItemFamily.self, from: data)
 					}
                     
-                    
                     if let items_ = items {
-                        let uids = items_.compactMap {$0.uid.value}
-                        let data2 = uids.description.data(using: .utf8)
-                        self.http(.POST, path: "items_with_edges", body: data2) { error, data in
-                            do {
-                                if let error = error {
+                        if withEdges {
+                            let uids = items_.compactMap {$0.uid.value}
+                            let data2 = uids.description.data(using: .utf8)
+                            self.http(.POST, path: "items_with_edges", body: data2) { error, data in
+                                do {
+                                    if let error = error {
+                                        debugHistory.error("Could not connect to pod: \n\(error)")
+                                        callback(error, nil)
+                                    } else if let data = data {
+                                        var items2: [Item]?
+                                        try JSONErrorReporter {
+                                            items2 = try MemriJSONDecoder
+                                                .decode(family: ItemFamily.self, from: data)
+                                        }
+                                        
+                                        callback(nil, items2)
+                                    }
+                                }
+                                catch {
                                     debugHistory.error("Could not connect to pod: \n\(error)")
                                     callback(error, nil)
-                                } else if let data = data {
-                                    var items2: [Item]?
-                                    try JSONErrorReporter {
-                                        items2 = try MemriJSONDecoder
-                                            .decode(family: ItemFamily.self, from: data)
-                                    }
-                                    
-                                    callback(nil, items2)
                                 }
                             }
-                            catch {
-                                debugHistory.error("Could not connect to pod: \n\(error)")
-                                callback(error, nil)
-                            }
+                        }
+                        else {
+                            callback(nil, items)
                         }
                     }
                         

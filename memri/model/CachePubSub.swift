@@ -158,7 +158,7 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
         // TODO: make this an option?
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             
-            self.cache.podAPI.query(Datasource(query: self.query)) { error, items in
+            self.cache.podAPI.query(Datasource(query: self.query), withEdges: false) { error, items in
                 if let error = error {
                     debugHistory.warn("Received error polling item: \(error)")
                 }
