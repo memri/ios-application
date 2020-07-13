@@ -172,20 +172,7 @@ func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
 }
 
 
-let realmReadQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
-let realmWriteQueue = DispatchQueue(label: "memri.sync.realm", qos: .utility)
-func realmReadAsync(_ doRead: @escaping (Realm) throws -> Void) {
-	realmReadQueue.async {
-		autoreleasepool {
-			do {
-				let realmInstance = try Realm()
-				try doRead(realmInstance)
-			} catch {
-				// Implement me
-			}
-		}
-	}
-}
+let realmWriteQueue = DispatchQueue(label: "memri.sync.realm.write", qos: .utility)
 
 func realmWriteAsync<T: ThreadConfined>(_ object: T, _ doWrite: @escaping (Realm, T) throws -> Void) {
 	if object.realm != nil {
