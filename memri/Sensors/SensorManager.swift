@@ -52,10 +52,8 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
     // Turn off tracking
     public func locationTrackingDisabledByUser() {
         UserDefaults.standard.set(false, forKey: self.locationTrackingEnabledByUserKey)
+        // We keep any recorded data always
         self.tearDownCoreLocationManager()
-        //
-        // TODO - what to do about any collected data?
-        //
     }
 
     private func tearDownCoreLocationManager() {
