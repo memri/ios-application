@@ -167,7 +167,7 @@ public class Views {
 //            }
 //        }
         
-        context?.scheduleCascadingViewUpdate()
+        self.context?.scheduleCascadingViewUpdate()
     }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {

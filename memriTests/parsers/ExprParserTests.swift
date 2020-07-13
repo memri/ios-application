@@ -179,6 +179,20 @@ class ExprParserTests: XCTestCase {
 
 		XCTAssertEqual(result.description, "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(lastName)])])")
 	}
+    
+    #warning("This does not work, find out why and fix")
+    func testStringModeUsingOr() throws {
+        let snippet = "{.title or \"test\"} — {.content.plainString}"
+
+        let lexer = ExprLexer(input: snippet, startInStringMode: true)
+        let tokens = try lexer.tokenize()
+        let parser = ExprParser(tokens)
+        let result = try parser.parse()
+
+        print(result.description)
+
+        XCTAssertEqual(result.description, "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode( Hello)])")
+    }
 
 	func testStringModeStartWithExpression() throws {
 		let snippet = "{fetchName()} Hello"

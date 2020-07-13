@@ -99,7 +99,7 @@ struct ListRendererView: View {
 						if let press = self.renderConfig.press {
 							context.executeAction(press, with: context.items[safe: index])
 						}
-                        })
+                    })
 					.alwaysBounce()
 			}
 		}

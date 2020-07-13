@@ -9,6 +9,7 @@ import RealmSwift
 import SwiftUI
 
 public class UIElement: CVUToString {
+    var id = UUID()
 	var type: UIElementFamily
 	var children: [UIElement] = []
 	var properties: [String: Any?] = [:] // TODO: ViewParserDefinitionContext
