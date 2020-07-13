@@ -8,9 +8,11 @@
 import Darwin
 import SwiftUI
 import UIKit
+import Combine
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 	var window: UIWindow?
+    var settingWatcher: AnyCancellable? = nil
 
 	func scene(_ scene: UIScene, willConnectTo _: UISceneSession, options _: UIScene.ConnectionOptions) {
 		// Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -22,7 +24,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 			let context = try RootContext(name: "Memri GUI", key: "ABCDEF")
 			let application = Application().environmentObject(context as MemriContext)
 
-			try context.boot()
+            try context.boot() {
+                self.settingWatcher = context.settings.subscribe("device/sensors/location/track", type:Bool.self).sink {
+                    if let value = $0 as? Bool {
+                        if value {
+                            SensorManager.shared.locationTrackingEnabledByUser()
+                        }
+                        else {
+                            SensorManager.shared.locationTrackingDisabledByUser()
+                        }
+                    }
+                }
+            }
 
 			// Use a UIHostingController as window root view controller.
 			guard let windowScene = scene as? UIWindowScene else { return }

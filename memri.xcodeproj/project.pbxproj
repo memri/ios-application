@@ -253,6 +253,7 @@
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8630B2B2418609200C36D6F /* ContextPane.swift */; };
+		C892B3E824A5455D006707EC /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892B3E724A5455D006707EC /* SensorManager.swift */; };
 		C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8A6F73B241993AD00FF8183 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -514,6 +515,7 @@
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
 		C806E06D2426694300C050E9 /* ContextPaneBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneBackground.swift; sourceTree = "<group>"; };
 		C8630B2B2418609200C36D6F /* ContextPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPane.swift; sourceTree = "<group>"; };
+		C892B3E724A5455D006707EC /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
 		C8A6F7342419926600FF8183 /* nl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nl; path = nl.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C8A6F736241992ED00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		C8A6F73A241993AD00FF8183 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -774,6 +776,7 @@
 				5D1A3E62240704BF00A0583B /* extension */,
 				5D599BC223F2B77700F218A0 /* Preview Content */,
 				C8A6F7332419907D00FF8183 /* Resources */,
+				C892B3E924A5530D006707EC /* Sensors */,
 				5D599BBA23F2B77500F218A0 /* AppDelegate.swift */,
 				5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */,
 				5D599BC823F2B77700F218A0 /* Info.plist */,
@@ -1261,6 +1264,14 @@
 			path = UIKit;
 			sourceTree = "<group>";
 		};
+		C892B3E924A5530D006707EC /* Sensors */ = {
+			isa = PBXGroup;
+			children = (
+				C892B3E724A5455D006707EC /* SensorManager.swift */,
+			);
+			path = Sensors;
+			sourceTree = "<group>";
+		};
 		C8A6F7332419907D00FF8183 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1622,6 +1633,7 @@
 				5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 				5D38DE19240577BA00FF9B70 /* Views.swift in Sources */,
+				C892B3E824A5455D006707EC /* SensorManager.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* Item.swift in Sources */,
 				86CDB46C24698DB7007EAE67 /* NSAttributedString.swift in Sources */,
@@ -1879,7 +1891,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
-				DEVELOPMENT_TEAM = K92CHY7KDL;
+				DEVELOPMENT_TEAM = L6T8QV3DHS;
 				ENABLE_PREVIEWS = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",

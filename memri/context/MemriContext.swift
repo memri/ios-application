@@ -447,7 +447,7 @@ public class RootContext: MemriContext {
         return subContext
 	}
 
-	public func boot() throws {
+    public func boot(_ callback:(() -> Void)? = nil) throws {
 		// Make sure memri is installed properly
 		try installer.installIfNeeded(self) {
 			#if targetEnvironment(simulator)
@@ -468,6 +468,8 @@ public class RootContext: MemriContext {
 
 				// Load current view
 				try self.updateCascadingView()
+                
+                callback?()
 			}
 		}
 	}

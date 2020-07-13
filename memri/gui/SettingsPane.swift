@@ -98,6 +98,18 @@ struct SettingsPane: View {
                 }) {
 					Text("User Interface")
 				}
+                
+                NavigationLink(destination: Form {
+                    Section(
+                        header: Text("Sensors")
+                    ) {
+                        Toggle(isOn: getBinding("/device/sensors/location/track")) {
+                            Text("Track and store location")
+                        }
+                    }
+                }) {
+                    Text("Sensors")
+                }
 
 				NavigationLink(destination: Form {
 					Section(header: Text("Internationalization")) {
