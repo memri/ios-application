@@ -469,8 +469,8 @@ public struct UIElementView: SwiftUI.View {
 
 	var renderChildren: some View {
 		Group {
-			ForEach(0 ..< from.children.count) { index in
-				UIElementView(self.from.children[index], self.item, self.viewArguments)
+            ForEach(from.children, id: \.id) { uiElement in
+				UIElementView(uiElement, self.item, self.viewArguments)
 			}
 		}
 	}

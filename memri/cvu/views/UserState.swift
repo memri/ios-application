@@ -18,7 +18,6 @@ public class UserState: SchemaItem, CVUToString {
 	}
 
 	convenience init(_ dict: [String: Any?]) throws {
-		#warning("@Ruben - I changed this to [String: Any?] to match the function it calls (storeInCache). My xcode wouldn't build the project without this change")
 		self.init()
 		try storeInCache(dict)
 		persist()
@@ -178,7 +177,7 @@ public class UserState: SchemaItem, CVUToString {
 		else { return try UserState(dict) }
 	}
 
-	public class func fromDict(_ dict: [String: Any], item: Item? = nil) throws -> UserState {
+	public class func fromDict(_ dict: [String: Any?], item: Item? = nil) throws -> UserState {
 		let userState = try Cache.createItem(UserState.self, values: [:])
         
         // Resolve expressions
