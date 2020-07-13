@@ -87,9 +87,9 @@ struct ListRendererView: View {
 							  data: context.items,
 							  dataID: \.uid.value,
 							  selectedItems: selectedIndices,
-							  onSwipeToDelete: { _, item, callback in
+							  onSwipeToDelete: { _, item in
 							  	context.executeAction(ActionDelete(context), with: item)
-							  	callback(true)
+							  	return true
 							  }) { dataItem, _ in
 						self.renderConfig.render(item: dataItem)
 							.frame(maxWidth: .infinity, alignment: .leading)

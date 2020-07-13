@@ -141,8 +141,8 @@ struct FilterPanel: View {
 				.padding(.bottom, 1)
 
 				ASTableView(section:
-					ASSection(id: 0, container: {
-						$0
+					ASSection(id: 0, container: { content, _ in
+						content
 							.padding(.horizontal)
 							.padding(.vertical, 6)
                     }) {

@@ -156,7 +156,7 @@ public class MemriTextEditor_UIKit: UITextView {
 
 	override public func layoutSubviews() {
 		if let header = header {
-			header.frame = CGRect(x: preferredContentInset.left, y: 5, width: bounds.width - preferredContentInset.left - preferredContentInset.right, height: headerSize)
+			header.frame = CGRect(x: preferredContentInset.left + 5, y: 5, width: bounds.width - preferredContentInset.left - preferredContentInset.right - 10, height: headerSize)
 		}
 		textContainerInset = preferredContentInset
 		super.layoutSubviews()

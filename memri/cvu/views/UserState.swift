@@ -17,7 +17,8 @@ public class UserState: SchemaItem, CVUToString {
 		"uid"
 	}
 
-	convenience init(_ dict: [String: Any]) throws {
+	convenience init(_ dict: [String: Any?]) throws {
+		#warning("@Ruben - I changed this to [String: Any?] to match the function it calls (storeInCache). My xcode wouldn't build the project without this change")
 		self.init()
 		try storeInCache(dict)
 		persist()
