@@ -33,7 +33,8 @@ Address[] {
     }
     
     [renderer = map] {
-        addressKey: self
+		address: {{.self}}
+		label: "{.computedTitle()}"
     }
     
     [renderer = generalEditor] {

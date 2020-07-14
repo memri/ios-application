@@ -12,6 +12,7 @@ import SwiftUI
 struct LineChartModel {
 	var sets: [ChartSetXY]
 	var showValueLabels: Bool = true
+	var lineWidth: CGFloat = 0
 	var hideGridLines: Bool = false
 	var forceMinYOfZero: Bool = true
 
@@ -22,7 +23,7 @@ struct LineChartModel {
 				return ChartDataEntry(x: indexedPoint.x, y: indexedPoint.y, data: ChartEntryInfo(dataIndex: originalDataIndex, label: indexedPoint.label))
       })
 			dataSet.drawValuesEnabled = showValueLabels
-			dataSet.lineWidth = 0
+			dataSet.lineWidth = lineWidth
 			dataSet.valueFormatter = ChartLabelFormatter()
 			dataSet.valueFont = UIFont.systemFont(ofSize: 14)
 			return dataSet

@@ -21,10 +21,12 @@ struct TimelineItemView: View {
     }
     var body: some View {
         VStack(alignment: .leading) {
-            HStack {
+			HStack(alignment: .lastTextBaseline) {
                 icon
                 Text(title)
+					.bold()
             }
+			.font(.headline)
             subtitle.map {
                 Text($0)
                     .font(.caption)

@@ -27,9 +27,9 @@ class CascadingMapConfig: CascadingRenderConfig {
 	var longPress: Action? { cascadeProperty("longPress") }
 	var press: Action? { cascadeProperty("press") }
 
-	var locationKey: String { cascadeProperty("locationKey") ?? "coordinate" }
-	var addressKey: String { cascadeProperty("addressKey") ?? "address" }
-	var labelKey: String { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
+	var location: Expression? { cascadeProperty("location", type: Expression.self) }
+	var address: Expression? { cascadeProperty("address", type: Expression.self) }
+	var label: Expression? { cascadeProperty("label", type: Expression.self) }
 
 	var mapStyle: MapStyle { MapStyle(fromString: cascadeProperty("mapStyle")) }
 }
@@ -42,14 +42,30 @@ struct MapRendererView: View {
 	var renderConfig: CascadingMapConfig {
 		(context.cascadingView?.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
 	}
+	
+	func resolveExpression<T>(_ expression: Expression?,
+							  toType _: T.Type = T.self,
+							  forItem dataItem: Item) -> T? {
+		let args = try? ViewArguments
+			.clone(context.cascadingView?.viewArguments, [".": dataItem], managed: false)
+		
+		return try? expression?.execForReturnType(T.self, args: args)
+	}
 
 	var useMapBox: Bool { context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false }
 
 	var body: some View {
 		let config = MapViewConfig(dataItems: context.items,
-								   locationKey: renderConfig.locationKey,
-								   addressKey: renderConfig.addressKey,
-								   labelKey: renderConfig.labelKey,
+								   locationResolver: {
+									self.resolveExpression(renderConfig.location, forItem: $0)
+								   },
+								   addressResolver: {
+									self.resolveExpression(renderConfig.address, toType: List<Address>.self, forItem: $0)
+									?? self.resolveExpression(renderConfig.address, toType: Address.self, forItem: $0)
+								   },
+								   labelResolver: {
+									self.resolveExpression(renderConfig.label, forItem: $0)
+								   },
 								   mapStyle: renderConfig.mapStyle,
 								   onPress: self.onPress)
 

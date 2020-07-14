@@ -265,8 +265,10 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
 				} else if from.type == .Map {
-					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
-							config: .init(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address"))
+					#warning("TODO: Fix map uielement")
+					Text("TEMPORARILY DISABLED")
+//					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
+//							config: .init(dataItems: [self.item], location: {  }, addressKey: get("addressKey") ?? "address"))
 						.background(Color(.secondarySystemBackground))
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Picker {

@@ -440,15 +440,15 @@ Person[] {
     }
     
     [renderer = map] {
-        addressKey: addresses
-        labelKey: firstName
+		address: {{.address[]}}
+		labelKey: "{.firstName}"
     }
     
     [renderer = chart] {
         chartTitle: "People by height" /* Use this to override the auto-generated chart title */
         
         label: "{.firstName}" /* used for bar chart (also provides label on line chart) */
-        yAxis: "{.height}"
+		yAxis: {{.height}}
         
         hideGridlines: true
         yAxisStartAtZero: true /* use this to force y-Axis to start at zero (vs fitting data)*/
@@ -461,8 +461,8 @@ Person[] {
         chartTitle: "Height vs. Age"
         chartSubtitle: "A demo of dynamically graphing your data."
         
-        xAxis: "{.age}" /* Feeling old? Try "{.age - 10}" to give everyone back a decade ;) */
-        yAxis: "{.height}"
+		xAxis: {{.age()}} /* Feeling old? Try {{.age() - 10}} to give everyone back a decade ;) */
+		yAxis: {{.height}}
         label: "{.firstName}" /* The label to show over the point */
         
         /* line chart ignores sort (automatically sorted by x-axis) */

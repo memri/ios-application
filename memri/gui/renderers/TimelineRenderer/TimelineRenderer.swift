@@ -12,7 +12,7 @@ import ASCollectionView
 class CascadingTimelineConfig: CascadingRenderConfig {
 	var type: String? = "calendar.timeline"
 	
-	//	var press: Action? { cascadeProperty("press") }
+	var press: Action? { cascadeProperty("press") }
 	var detailLevel: TimelineModel.DetailLevel = .day
 	var mostRecentFirst: Bool = true
 	
@@ -45,6 +45,17 @@ struct TimelineRenderer: View {
             return ASSection<Date>(id: group.date, data: group.items) { element, cellContext in
                 renderElement(element)
             }
+			.onSelectSingle({ (index) in
+				guard let element = group.items[safe: index] else { return }
+				if element.isGroup {
+					#warning("TODO")
+					print("IMPLEMENT ME - this should open a list that's filtered to this day/hour (same level as timeline)")
+				} else {
+					if let press = self.renderConfig.press {
+						context.executeAction(press, with: context.items[safe: index])
+					}
+				}
+			})
             .sectionHeader {
                 VStack(spacing: 0) {
                     smallString(forDate: group.date).map { string in
@@ -80,6 +91,7 @@ struct TimelineRenderer: View {
     
     @ViewBuilder
     func renderElement(_ element: TimelineElement) -> some View {
+		#warning("TODO - use CVU")
         if element.isGroup {
                                 TimelineItemView(
                                     icon: { () -> Image in
@@ -93,7 +105,7 @@ struct TimelineRenderer: View {
                                     highlighted: false,
                                     backgroundColor: { () -> Color in
                                         switch element.itemType {
-                                        case "Note": return Color(hex: "ffdf62")
+										case "Note": return Color.blue
                                         default: return .green
                                         }
                                     }()
@@ -122,7 +134,7 @@ struct TimelineRenderer: View {
                                     highlighted: false,
 									backgroundColor: { () -> Color in
 										switch element.itemType {
-										case "Note": return Color(hex: "ffdf62")
+										case "Note": return Color.blue
 										default: return .green
 										}
 									}()

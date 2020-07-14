@@ -90,6 +90,7 @@ struct CalendarView: View {
                     VStack(spacing: 0) {
                         Spacer()
                         Text(calendarHelper.dayString(for: day))
+							.foregroundColor(calendarHelper.isToday(day) ? .red : Color(.label))
                         Circle().fill(hasItemOnDay(day) ? Color.red : Color.clear)
                             .frame(width: 10, height: 10)
                             .padding(4)
@@ -112,6 +113,7 @@ struct CalendarView: View {
 			formatter.timeStyle = .none
 			// handle press on day
 			print("Pressed on day: \(formatter.string(from: day))")
+			#warning("TODO - this should open a list that's filtered to items on this day")
 		}
     }
     

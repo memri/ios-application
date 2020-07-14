@@ -27,3 +27,18 @@ struct MapView: View {
 		#endif
 	}
 }
+
+import CoreLocation
+
+struct MapViewConfig {
+	var dataItems: [Item] = []
+	var locationResolver: (Item) -> CLLocation?
+	var addressResolver: (Item) -> Any?
+	var labelResolver: (Item) -> String?
+	var maxInitialZoom: Double = 16
+	var mapStyle: MapStyle = .street
+	
+	var onPress: ((Item) -> Void)?
+	
+	@Environment(\.colorScheme) var colorScheme
+}

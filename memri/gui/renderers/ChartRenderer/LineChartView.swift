@@ -34,6 +34,7 @@ struct LineChartSwiftUIView: UIViewRepresentable {
 
 	func updateUIView(_ chartView: LineChartView, context _: Context) {
 		chartView.data = model.generateData()
+		chartView.notifyDataSetChanged()
 	}
 
 	func makeCoordinator() -> Coordinator {

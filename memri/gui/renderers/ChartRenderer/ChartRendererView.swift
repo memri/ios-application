@@ -42,6 +42,8 @@ class CascadingChartConfig: CascadingRenderConfig {
 	var xAxisExpression: Expression? { cascadeProperty("xAxis", type: Expression.self) }
 	var yAxisExpression: Expression? { cascadeProperty("yAxis", type: Expression.self) }
 	var labelExpression: Expression? { cascadeProperty("label", type: Expression.self) }
+	
+	var lineWidth: CGFloat { cascadePropertyAsCGFloat("lineWidth") ?? 0 }
 
 	var yAxisStartAtZero: Bool { cascadeProperty("yAxisStartAtZero") ?? false }
 	var hideGridLines: Bool { cascadeProperty("hideGridlines") ?? false }
@@ -136,7 +138,7 @@ struct ChartRendererView: View {
                                                                    })
 			return VStack(spacing: 0) {
 				chartTitleView
-				LineChartSwiftUIView(model: LineChartModel(sets: [data], hideGridLines: renderConfig.hideGridLines, forceMinYOfZero: renderConfig.yAxisStartAtZero),
+				LineChartSwiftUIView(model: LineChartModel(sets: [data], lineWidth: renderConfig.lineWidth, hideGridLines: renderConfig.hideGridLines, forceMinYOfZero: renderConfig.yAxisStartAtZero),
 									 onPress: { self.onPress(index: $0) })
 			}
 			.padding(10)

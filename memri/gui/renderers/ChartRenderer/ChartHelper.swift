@@ -13,7 +13,9 @@ struct ChartHelper {
 		let points = items.compactMap { (item) -> ChartPointXY? in
 			guard
 				let x: Double = xAxis(item),
-				let y: Double = yAxis(item)
+				let y: Double = yAxis(item),
+				!x.isNaN,
+				!y.isNaN
 			else { return nil }
 			let label: String? = labelKey.flatMap { $0(item) }
 			return ChartPointXY(x: x, y: y, label: label, itemID: item.getString("uid"))
@@ -25,7 +27,8 @@ struct ChartHelper {
 		let points = items.compactMap { (item) -> ChartPointLabelledY? in
 			guard
 				let label: String = labelKey(item),
-				let y: Double = yAxis(item)
+				let y: Double = yAxis(item),
+				!y.isNaN
 			else { return nil }
 			return ChartPointLabelledY(label: label, y: y, itemID: item.getString("uid"))
 		}

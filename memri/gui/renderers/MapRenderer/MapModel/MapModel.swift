@@ -46,30 +46,10 @@ class MapModel {
 			}
 		}
 	}
-
-	var locationKey: String? {
-		didSet {
-			if locationKey != oldValue {
-				updateModel()
-			}
-		}
-	}
-
-	var addressKey: String? {
-		didSet {
-			if addressKey != oldValue {
-				updateModel()
-			}
-		}
-	}
-
-	var labelKey: String = "name" {
-		didSet {
-			if labelKey != oldValue {
-				updateModel()
-			}
-		}
-	}
+	
+	var locationResolver: ((Item) -> CLLocation?)?
+	var addressResolver: ((Item) -> Any?)?
+	var labelResolver: ((Item) -> String?)?
 
 	func updateModel() {
 		updateQueue.send()
@@ -81,35 +61,32 @@ class MapModel {
 	func _updateModel() {
 		let newItems = dataItems.flatMap { dataItem -> [MapItem] in
 			let locations: [CLLocation] = resolveItem(dataItem: dataItem)
-			let label: String = dataItem.hasProperty(labelKey) ? (dataItem.get(labelKey) ?? "") : ""
+			let labelString: String = labelResolver?(dataItem) ?? ""
 			return locations.map {
-				return MapItem(label: label, coordinate: $0.coordinate, dataItem: dataItem)
+				return MapItem(label: labelString, coordinate: $0.coordinate, dataItem: dataItem)
 			}
 		}
 		items = newItems
 	}
 
 	func resolveItem(dataItem: Item) -> [CLLocation] {
-		if let locationKey = locationKey, dataItem.hasProperty(locationKey) {
-			if let location: CLLocation = dataItem.get(locationKey) {
-				// Has a coordinate value
-				return [location]
-			}
+		if let location = locationResolver?(dataItem) {
+			// Has a coordinate value
+			return [location]
 		}
-
-		if let addressKey = addressKey, dataItem.hasProperty(addressKey) {
-			if let addresses: List<Address> = dataItem.get(addressKey) {
-				let resolvedLocations = addresses.compactMap { self.lookupAddress($0) }
-				if !resolvedLocations.isEmpty {
-					return Array(resolvedLocations)
-				}
-			} else if let address: Address = dataItem.get(addressKey) {
-				if let location = lookupAddress(address) {
-					return [location]
-				}
-			}
+		
+		let addresses: [Address]
+		if let addressesList = addressResolver?(dataItem) as? List<Address> {
+			addresses = Array(addressesList)
+		} else if let address = addressResolver?(dataItem) as? Address {
+			addresses = [address]
+		} else {
+			return []
 		}
-		return []
+		let resolvedLocations = addresses.compactMap { self.lookupAddress($0) }
+		guard !resolvedLocations.isEmpty else { return [] }
+		
+		return resolvedLocations
 	}
 
 	var addressLookupCancellables: [Address: AnyCancellable] = [:]

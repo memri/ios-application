@@ -133,12 +133,12 @@ public class Expression: CVUToString {
 		let value = try interpreter?.execute(args)
 
 		if value == nil { return nil }
-		if let value = value as? T { return value }
 		if T.self == Bool.self { return ExprInterpreter.evaluateBoolean(value) as? T }
 		if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == Int.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == String.self { return ExprInterpreter.evaluateString(value) as? T }
 		if T.self == Date.self { return ExprInterpreter.evaluateDateTime(value) as? T }
+		if let value = value as? T { return value }
 
 		return nil
 	}

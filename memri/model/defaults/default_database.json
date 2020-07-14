@@ -590,7 +590,7 @@
         "_type": "Person",
         "firstName": "Eve",
         "lastName": "Eagle",
-        "birthDate": 1593777745298,
+        "birthDate": 793777745298,
         "starred": true,
         "height": 185,
         "shoulderWidth": 42,
@@ -623,7 +623,7 @@
         "_type": "Person",
         "firstName": "Bob",
         "lastName": "Brown",
-        "birthDate": 1593777745298,
+        "birthDate": 543777745298,
         "height": 197,
         "allEdges": [
             {"type":"relationship", "itemType": "Person", "uid": 1},
@@ -638,7 +638,7 @@
         "_type": "Person",
         "firstName": "Alice",
         "lastName": "Awesome",
-        "birthDate": 1593777745298,
+        "birthDate": 890775545298,
         "height": 141,
         "dateCreated": 1593777745298,
         "starred": true,
@@ -911,7 +911,7 @@
         "title": "Shopping list",
         "content": "- potatoes<br />- mayonaise",
         "starred": true,
-        "dateModified": 1593777745298,
+        "dateModified": 1593710745298,
         "allEdges": [
             {"type":"label", "itemType": "Label", "uid": 1015},
             {"type":"label", "itemType": "Label", "uid": 1016}
@@ -935,14 +935,14 @@
         "title": "Ideas for memri",
         "content": "privacy by design, digital memory",
         "starred": true,
-        "dateModified": 1593777745298,
+        "dateModified": 1593677745298,
         "version": 1
     },
     {
         "_type": "Note",
         "title": "Love letter",
         "content": "Roses are red, violets are blue",
-        "dateModified": 1593177945298,
+        "dateModified": 1593147945298,
         "version": 1
     },
     {
