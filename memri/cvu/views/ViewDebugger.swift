@@ -148,7 +148,7 @@ class DebugHistory: ObservableObject {
 			))
 		}
 
-		if Settings.get("device/debug/autoShowErrorConsole") ?? false {
+		if Settings.shared.get("device/debug/autoShowErrorConsole") ?? false {
 			showErrorConsole = true
 		}
 

@@ -59,7 +59,7 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
         // Poll every second
         // TODO: make this an option?
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-			guard globalSettings?.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
+			guard Settings.shared.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
 				#warning("TODO: When the setting is re-enabled we need to recreate the pubsub")
 				timer.invalidate()
 				return
@@ -161,7 +161,7 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
         // Poll every second
         // TODO: make this an option?
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-			guard globalSettings?.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
+			guard Settings.shared.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
 				#warning("TODO: When the setting is re-enabled we need to recreate the pubsub")
 				timer.invalidate()
 				return

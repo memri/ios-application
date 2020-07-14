@@ -1244,7 +1244,7 @@ class ActionSetSetting: Action, ActionExec {
 
         let value = arguments["value"]
 
-        Settings.set(path, value as Any)
+		Settings.shared.set(path, value as Any)
 
         // TODO: refactor
         ((context as? SubContext)?.parent ?? context).scheduleUIUpdate()

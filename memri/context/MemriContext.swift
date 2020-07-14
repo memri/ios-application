@@ -436,9 +436,6 @@ public class RootContext: MemriContext {
 
 		cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
 		navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
-
-		// Make settings global so it can be reached everywhere
-		globalSettings = settings
 	}
 
 	public func createSubContext(_ session: Session) throws -> MemriContext {
