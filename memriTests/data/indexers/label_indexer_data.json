@@ -1,0 +1,12 @@
+[
+    {
+        "type": "Note",
+        "title": "Example note",
+        "content": "Note"
+    },
+    {
+        "type": "Note",
+        "title": "Example note",
+        "content": "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n<meta http-equiv=\"Content-Style-Type\" content=\"text/css\">\n<title></title>\n<meta name=\"Generator\" content=\"Cocoa HTML Writer\">\n<style type=\"text/css\">\np.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px \"Times New Roman\"; color: #000000; -webkit-text-stroke: #000000}\np.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px \".AppleSystemUIFont\"; color: #000000; -webkit-text-stroke: #000000}\np.p3 {margin: 0.0px 0.0px 0.0px 0.0px; font: 18.0px \".AppleSystemUIFont\"; color: #000000; -webkit-text-stroke: #000000; min-height: 21.5px}\nspan.s1 {font-family: \"Times New Roman\"; font-weight: normal; font-style: normal; font-size: 18.00px; font-kerning: none}\nspan.s2 {font-family: \".SFUI-Regular\"; font-weight: normal; font-style: normal; font-size: 18.00px; font-kerning: none}\n</style>\n</head>\n<body>\n<p class=\"p1\"><span class=\"s1\">Garden</span></p>\n<p class=\"p2\"><span class=\"s2\"><br>\n</span></p>\n<p class=\"p2\"><span class=\"s2\"><br>\n</span></p>\n<p class=\"p1\"><span class=\"s1\">• Water the flowers</span></p>\n<p class=\"p1\"><span class=\"s1\">• Clean the patio</span></p>\n<p class=\"p1\"><span class=\"s1\">• Fix the broken glass in the greenhouse</span></p>\n<p class=\"p3\"><span class=\"s2\"></span><br></p>\n</body>\n</html>\n"
+    }
+]

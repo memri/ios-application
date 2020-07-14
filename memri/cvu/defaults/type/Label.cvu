@@ -13,7 +13,7 @@ Label[]: {
     emptyResultText: "You have not added any labels yet"
     defaultRenderer: thumbnail
     
-    actionButton: addDataItem {
+    actionButton: addItem {
         arguments: {
             type: "label"
             name: "new label"
@@ -60,6 +60,8 @@ Label[]: {
     }
     
     [renderer = thumbnail] {
+        spacing: 10
+        edgeInset: 10
         VStack {
             VStack {
                 spacing: 5

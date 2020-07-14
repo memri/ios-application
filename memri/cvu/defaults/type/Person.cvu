@@ -26,7 +26,7 @@
     all: "Alle"
 }
  
-.defaultButtonsForDataItem {
+.defaultButtonsForItem {
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
@@ -100,7 +100,7 @@ Person {
     defaultRenderer: generalEditor
     
     /*include:
-        "defaultButtonsForDataItem" { type: Person }*/
+        "defaultButtonsForItem" { type: Person }*/
     
     editActionButton: toggleEditMode
     filterButtons: [
@@ -172,20 +172,28 @@ Person {
     /* end include */
     
     [renderer = generalEditor] {
-         groups {
-             profilePicture: profilePicture
-             names: firstName lastName
-             picturesOfPerson: picturesOfPerson
-         }
-        
-         sequence: profilePicture labels names picturesOfPerson phoneNumbers relations addresses websites companies diets medicalConditions publicKeys onlineProfiles other dates
-        
-         /*excluded: profilePicture labels names picturesOfPerson phoneNumbers*/
-        
-        /*readOnly:*/
-        
+        layout: [
+            { section: profilePicture }
+            { section: labels }
+            { section: names, fields: firstName lastName }
+            { section: picturesOfPerson }
+            { section: phoneNumbers, edges: hasPhoneNumber, type: PhoneNumber }
+/*            { section: family, edges: family, show: {{ .family[] }} }*/
+/*            { section: relationships, edges: non-family }*/
+            { section: relationships, edges: relationship, type: Person }
+            { section: addresses, edges: address, type: Address }
+            { section: websites, edges: website, type: Website }
+            { section: companies, edges: company, type: Company }
+            { section: diets, edges: diet, type: Diet }
+            { section: medicalConditions, edges: medicalCondition, type: MedicalCondition }
+            { section: publicKeys, edges: publicKey, type: PublicKey }
+            { section: onlineProfiles, edges: onlineProfile, type: OnlineProfile }
+            { section: other, fields: * }
+            { section: dates }
+        ]
+
         profilePicture {
-            sectionTitle: ""
+            showTitle: false
         
             ZStack {
                 alignment: center
@@ -219,8 +227,7 @@ Person {
                         maxHeight: 140
                         show: {{!readOnly}}
                     
-                        Button {
-                            press: add
+                        Action {
                             cornerRadius: 25
                             maxWidth: 50
                             maxHeight: 50
@@ -228,8 +235,24 @@ Person {
                             color: #434343
                             align: center
                             font: 14 regular
-                        
-                            Text { text: "Edit" }
+                            
+                            press: openViewByName {
+                                renderAs: popup
+                                title: "Edit"
+                                
+                                arguments: {
+                                    name: "choose-item-by-query"
+                                    viewArguments: {
+                                        query: "Photo" /* AND ANY allEdges.targetItemID = {.uid} */
+                                        type: Photo
+                                        renderer: "thumbnail"
+                                        subject: {{.}}
+                                        edgeType: "profilePicture"
+                                        distinct: true
+                                        title: "Choose a photo"
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -237,53 +260,53 @@ Person {
         }
         
         picturesOfPerson {
-            foreach: false
-            sectionTitle: "Photos of {.computedTitle()}"
+            title: "Photos of {.computedTitle()}"
         
             SubView {
                 minHeight: 165
                 
                 view {
-                    defaultRenderer: thumbnail.grid
+                    defaultRenderer: thumbnail.horizontalgrid
                     
                     [datasource = pod] {
-                        query: "Photo AND ANY includes.objectMemriID = '{.memriID}'"
+                        query: "Photo AND ANY allEdges.targetItemID = {.uid}"
                     }
                     
-                    [renderer = thumbnail] {
-                        columns: 5
-                        itemInset: 0
+                    [renderer = thumbnail.horizontalgrid] {
+                        columns: 2
+                        edgeInset: 0
+                        allowBounce: false
                     }
                 }
                 arguments: {
                     toolbar: false
                     searchbar: false
-                    readonly: true
+                    readOnly: true
                 }
             }
         }
         
         labels {
-            foreach: false
-            sectionTitle: ""
+            showTitle: false
+            dividers: false
         
-            VSTack {
+            VStack {
                 padding: 10 36 5 36
             
                 Text {
-                    show: {{!.labels.count}}
+                    show: {{ !.label }}
                     text: "no labels yet"
                 }
                 
                 FlowStack {
-                    list: {{.labels}}
+                    list: {{ .label[] }}
                 
                     button {
                         press: openViewByName {
                             name: "all-items-with-label"
                             arguments: {
-                                name: "Soccer team"
-                                memriID: 0x0124
+                                name: "{.name}"
+                                uid: {{.uid}}
                             }
                         }
                     
@@ -331,19 +354,19 @@ Person {
 
 Person[] {
     title: "All People"
-    defaultRenderer: list
+    defaultRenderer: thumbnail
     emptyResultText: "There are no people here yet"
     
      [datasource = pod] {
-        query: "person"
+        query: "Person"
         sortProperty: dateModified
     }
     
     actionButton:
-        addDataItem {
+        addItem {
             arguments: {
                 template: {
-                    type: Person
+                    _type: Person
                 }
             }
         }
@@ -383,7 +406,7 @@ Person[] {
                         padding: 0 0 3 0
                     }
                     Text {
-                        text: "{relationships[target = me].edgeLabel}"
+                        text: "{.relation[.firstName = 'Alice'].lastName}"
                         font: 14 regular
                         color: #888
                         padding: 0 0 5 0
@@ -392,5 +415,56 @@ Person[] {
             }
         }
         
+    }
+    
+    [renderer = thumbnail] {
+        spacing: 10
+        edgeInset: 10
+        
+        VStack {
+            alignment: center
+            
+            Image {
+                image: {{.profilePicture}}
+                cornerRadius: 10
+                resizable: fit
+            }
+            Text {
+                text: "{.firstName} {.lastName}"
+                font: 12 semibold
+                textAlign: center
+                color: #333
+                padding: 3 0 0 0
+            }
+        }
+    }
+    
+    [renderer = map] {
+        addressKey: addresses
+        labelKey: firstName
+    }
+    
+    [renderer = chart] {
+        chartTitle: "People by height" /* Use this to override the auto-generated chart title */
+        
+        label: "{.firstName}" /* used for bar chart (also provides label on line chart) */
+        yAxis: "{.height}"
+        
+        hideGridlines: true
+        yAxisStartAtZero: true /* use this to force y-Axis to start at zero (vs fitting data)*/
+        
+        sortProperty: height
+        sortAscending: true
+    }
+    
+    [renderer = chart.line] {
+        chartTitle: "Height vs. Age"
+        chartSubtitle: "A demo of dynamically graphing your data."
+        
+        xAxis: "{.age}" /* Feeling old? Try "{.age - 10}" to give everyone back a decade ;) */
+        yAxis: "{.height}"
+        label: "{.firstName}" /* The label to show over the point */
+        
+        /* line chart ignores sort (automatically sorted by x-axis) */
     }
 }

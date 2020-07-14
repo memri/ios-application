@@ -1,11 +1,17 @@
 [renderer = generalEditor] {
-    sequence: labels starred other dates
-    excluded: version deleted syncState memriID uid
-    readOnly: uid memriID
-    
-    groups {
-        dates: dateCreated dateModified dateAccessed changelog
-    }
+    layout: [
+        { section: labels }
+        {
+            section: other
+            fields: *
+            exclude: version deleted syncState uid externalID allEdges
+        }
+        {
+            section: dates
+            exclude: dateCreated dateModified dateAccessed changelog
+            readOnly: true
+        }
+    ]
     
     starred {
         Action {
@@ -14,24 +20,22 @@
     }
     
     labels {
-        foreach: false
-        
         EditorRow {
             Text {
-                show: {{!.labels.count}}
+                show: {{ !.label }}
                 text: "No labels yet"
                 padding: 10 0 5 0
                 color: #777
             }
             FlowStack {
-                list: {{.labels}}
+                list: {{ .label[] }}
             
                 Button {
                     press: openViewByName {
                         name: "all-items-with-label"
                         arguments: {
-                            name: "Soccer team"
-                            memriID: 0x0124
+                            name: "{.name}"
+                            uid: {{.uid}}
                         }
                     }
                 
@@ -52,8 +56,8 @@
     }
     
     dates {
-        foreach: false
-        sectionTitle: ""
+        showTitle: false
+        dividers: false
         
         Text {
             alignment: center

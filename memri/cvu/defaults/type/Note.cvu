@@ -8,8 +8,8 @@
 }
 
 Note {
-    title: "{.title}"
-    defaultRenderer: richTextEditor
+    title: {{.title or "Untitled" }}
+    defaultRenderer: custom
     editActionButton: toggleEditMode
     filterButtons: [
         openView {
@@ -78,25 +78,12 @@ Note {
     ]
     
     [renderer = custom] {
-        VStack {
-            padding: 10
-            spacing: 5
-
-            Textfield {
-                value: {{.title}}
-                hint: "Enter a title"
-/*                color: lightInputText*/
-                maxHeight: 50
-                border: #ff0 0
-                font: 14 semibold
-            }
-            RichTextfield {
-                value: {{.textContent}}
-/*                color: inputText*/
-                border: #ff0 0
-                padding: 0
-                font: 12 regular
-            }
+        RichTextfield {
+            htmlValue: {{.content}}
+            value: {{.textContent}}
+            title: {{.title}}
+            titleHint: "Untitled Note"
+            fontSize: 18
         }
     }
 }
@@ -115,11 +102,10 @@ Note[] {
     }
     
     actionButton:
-        addDataItem {
+        addItem {
             arguments {
                 template {
-                    type: Note
-                    title: "Untitled Note"
+                    _type: Note
                 }
             }
         }
@@ -132,14 +118,23 @@ Note[] {
             alignment: left
             spacing: 3
             
-            Text {
-                text: "{.title}"
-                font: 18 semibold
-                color: #333
-                padding: 0 0 0 0
+            HStack {
+                Text {
+                    text: {{.title or "Untitled Note"}}
+                    font: 18 semibold
+                    color: #333
+                    padding: 0 0 0 0
+                }
+                Image {
+                    systemName: "star.fill"
+                    font: 14
+                    color: #eecc00
+                    margin: 5
+                    show: {{.starred}}
+                }
             }
             Text {
-                text: "{.textContent}"
+                text: "{.content.plainString}"
                 removeWhiteSpace: true
                 maxChar: 100
                 color: #555
@@ -156,6 +151,7 @@ Note[] {
             
     [renderer = thumbnail] {
         edgeInset: 10 10 10 10
+        spacing: 10
         
         VStack {
             minWidth: 10
@@ -163,7 +159,8 @@ Note[] {
             alignment: center
             
             Text {
-                text: "{.textContent}"
+                text: "{.content.plainString}"
+                allowNil: true
                 maxChar: 100
                 color: #333
                 background: #fff
@@ -171,15 +168,25 @@ Note[] {
                 cornerRadius: 10
                 padding: 10
                 font: 9 regular
-                minHeight: 80
+                minHeight: 40
+                idealHeight: 80
                 align: left top
             }
-            Text {
-                text: "{.title}"
-                padding: 5 0 0 0
-                color: #333
-                font: 12 semibold
-                maxChar: 100
+            HStack {
+                Text {
+                    text: {{.title or "Untitled Note"}}
+                    padding: 5 0 0 0
+                    color: #333
+                    font: 12 semibold
+                    maxChar: 100
+                }
+                Image {
+                    systemName: "star.fill"
+                    font: 10
+                    color: #eecc00
+                    margin: 8 0 0 2
+                    show: {{.starred}}
+                }
             }
             Text {
                 text: "{.dateModified}"

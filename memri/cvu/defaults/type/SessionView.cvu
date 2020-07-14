@@ -6,6 +6,14 @@
         }
     }
 }
+ 
+[view = views-in-current-session] {
+    title: "Views in current session"
+    
+    [datasource = pod] {
+        "query": "SessionView AND ANY allEdges.targetItemID = {session.uid}"
+    }
+}
 
 SessionView[] {
     name: "all-sessionviews"
@@ -29,7 +37,7 @@ SessionView[] {
                 alignment: top
             
                 Text {
-                    text: "{.computedDescription()}"
+                    text: "{.computedTitle()}"
                     font: 18 semibold
                     color: #333
                     padding: 0 0 3 0
