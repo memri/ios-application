@@ -19,6 +19,16 @@ let registerCalendarRenderer = {
 		renderConfigType: CascadingCalendarConfig.self,
 		canDisplayResults: { _ -> Bool in true }
 	)
+	
+	Renderers.register(
+		name: "calendar.timeline",
+		title: "Timeline",
+		order: 500,
+		icon: "hourglass.bottomhalf.fill",
+		view: AnyView(TimelineRenderer()),
+		renderConfigType: CascadingTimelineConfig.self,
+		canDisplayResults: { _ -> Bool in true }
+	)
 }
 
 class CascadingCalendarConfig: CascadingRenderConfig {

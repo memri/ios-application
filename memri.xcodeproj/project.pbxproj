@@ -228,6 +228,10 @@
 		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
 		B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */; };
 		B881BECA24BD3C8B0016DBF5 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */; };
+		B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */; };
+		B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */; };
+		B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */; };
+		B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B881BED224BD4F4D0016DBF5 /* calendar.cvu */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -497,6 +501,10 @@
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
 		B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineModel.swift; sourceTree = "<group>"; };
+		B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineRenderer.swift; sourceTree = "<group>"; };
+		B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineItemView.swift; sourceTree = "<group>"; };
+		B881BED224BD4F4D0016DBF5 /* calendar.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = calendar.cvu; sourceTree = "<group>"; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -711,6 +719,7 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
+				B881BECB24BD4A930016DBF5 /* TimelineRenderer */,
 				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
@@ -1144,6 +1153,7 @@
 				5DAFB6142479524500719160 /* thumbnail.cvu */,
 				5DAFB6122479523B00719160 /* list.cvu */,
 				B8E0FBE324A4ADE3009C3C30 /* map.cvu */,
+				B881BED224BD4F4D0016DBF5 /* calendar.cvu */,
 				86FFD0BD24A2398F001BF14B /* chart.cvu */,
 			);
 			path = renderer;
@@ -1202,6 +1212,16 @@
 				B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */,
 			);
 			path = CalendarRenderer;
+			sourceTree = "<group>";
+		};
+		B881BECB24BD4A930016DBF5 /* TimelineRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */,
+				B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */,
+				B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */,
+			);
+			path = TimelineRenderer;
 			sourceTree = "<group>";
 		};
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
@@ -1423,6 +1443,7 @@
 			files = (
 				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
 				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
+				B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */,
 				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
@@ -1579,6 +1600,7 @@
 				C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */,
 				868EF63724766A8800C0375F /* ExprLexer.swift in Sources */,
 				B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */,
+				B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */,
 				5D4C71ED2445E44B00DF09E8 /* GeneralEditorView.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
@@ -1667,6 +1689,7 @@
 				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
 				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
 				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
+				B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,
@@ -1691,6 +1714,7 @@
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
 				B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
+				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,
