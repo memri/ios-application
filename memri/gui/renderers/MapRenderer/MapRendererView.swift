@@ -30,8 +30,8 @@ class CascadingMapConfig: CascadingRenderConfig {
 	var locationKey: String { cascadeProperty("locationKey") ?? "coordinate" }
 	var addressKey: String { cascadeProperty("addressKey") ?? "address" }
 	var labelKey: String { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
-
-	var mapStyle: MapStyle { MapStyle(fromString: cascadeProperty("mapStyle")) }
+    
+    var mapStyle: MapStyle { MapStyle(fromString: cascadeProperty("mapStyle")) }
 }
 
 struct MapRendererView: View {
