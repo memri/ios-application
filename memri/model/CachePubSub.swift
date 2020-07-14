@@ -59,7 +59,11 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
         // Poll every second
         // TODO: make this an option?
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            
+			guard globalSettings?.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
+				#warning("TODO: When the setting is re-enabled we need to recreate the pubsub")
+				timer.invalidate()
+				return
+			}
             self.cache.podAPI.get(uid) { error, item in
                 if let error = error {
                     debugHistory.warn("Received error polling item: \(error)")
@@ -157,7 +161,12 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
         // Poll every second
         // TODO: make this an option?
         Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            
+			guard globalSettings?.get("/user/cvuDev/enabled", type: Bool.self) ?? false else {
+				#warning("TODO: When the setting is re-enabled we need to recreate the pubsub")
+				timer.invalidate()
+				return
+			}
+			
             self.cache.podAPI.query(Datasource(query: self.query), withEdges: false) { error, items in
                 if let error = error {
                     debugHistory.warn("Received error polling item: \(error)")

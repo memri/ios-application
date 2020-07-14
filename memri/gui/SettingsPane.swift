@@ -75,6 +75,21 @@ struct SettingsPane: View {
                 }) {
 					Text("Pod Connection")
 				}
+				
+				NavigationLink(destination: Form {
+					Section(
+						header: Text("CVU development")
+					) {
+						HStack {
+							Text("Host:")
+								.frame(width: 100, alignment: .leading)
+							MemriTextField(value: getBinding("/user/cvuDev/host") as Binding<String>)
+						}
+						Toggle("Enable automatic updating", isOn: getBinding("/user/cvuDev/enabled") as Binding<Bool>)
+					}
+				}) {
+					Text("CVU development")
+				}
 
 				NavigationLink(destination: Form {
 					Section(

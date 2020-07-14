@@ -138,6 +138,7 @@ public class Expression: CVUToString {
 		if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == Int.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == String.self { return ExprInterpreter.evaluateString(value) as? T }
+		if T.self == Date.self { return ExprInterpreter.evaluateDateTime(value) as? T }
 
 		return nil
 	}

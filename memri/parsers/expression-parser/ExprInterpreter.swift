@@ -51,6 +51,10 @@ class ExprInterpreter {
 		else if x == nil { return .nan }
 		else { return .nan }
 	}
+	
+	class func evaluateDateTime(_ x: Any?) -> Date? {
+		return x as? Date
+	}
 
 	class func evaluateString(_ x: Any?, _ defaultValue: String = "") -> String {
 		if let x = x as? Bool { return x ? "true" : "false" }

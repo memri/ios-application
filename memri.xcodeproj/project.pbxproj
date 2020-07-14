@@ -226,6 +226,8 @@
 		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
 		B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */; };
 		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
+		B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */; };
+		B881BECA24BD3C8B0016DBF5 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -493,6 +495,8 @@
 		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
+		B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
+		B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -707,6 +711,7 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
+				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
 				8672C27B2497F35A006F0D42 /* CustomRenderer.swift */,
@@ -1190,6 +1195,15 @@
 			path = MemriTextField;
 			sourceTree = "<group>";
 		};
+		B881BEC624BD3C700016DBF5 /* CalendarRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */,
+				B881BEC824BD3C8B0016DBF5 /* CalendarView.swift */,
+			);
+			path = CalendarRenderer;
+			sourceTree = "<group>";
+		};
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1586,6 +1600,7 @@
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
+				B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */,
 				5D4320E8247E79890052B224 /* HorizonalLine.swift in Sources */,
 				B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
@@ -1621,6 +1636,7 @@
 				863CDB712441E69F000D7AC0 /* File.swift in Sources */,
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
 				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
+				B881BECA24BD3C8B0016DBF5 /* CalendarView.swift in Sources */,
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */,
 				B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */,
