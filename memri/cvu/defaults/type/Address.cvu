@@ -11,6 +11,7 @@
 Address[] {
     defaultRenderer: list
     filterButtons: showStarred toggleFilterPanel
+    editActionButton: toggleEditMode
 
     [renderer = list]{
         HStack {

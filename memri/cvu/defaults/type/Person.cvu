@@ -179,7 +179,7 @@ Person {
             { section: picturesOfPerson }
             { section: phoneNumbers, edges: hasPhoneNumber, type: PhoneNumber }
 /*            { section: family, edges: family, show: {{ .family[] }} }*/
-/*            { section: relationships, edges: {{ .relationship[.type != family] }} }*/
+/*            { section: relationships, edges: non-family }*/
             { section: relationships, edges: relationship, type: Person }
             { section: addresses, edges: address, type: Address }
             { section: websites, edges: website, type: Website }

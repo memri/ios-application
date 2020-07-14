@@ -76,11 +76,12 @@ extension View {
 			fallthrough
 		case "padding":
 			if let value = value as? [CGFloat] {
+                #warning("This errored while editing CVU. Why did the validator not catch this?")
 				return AnyView(padding(EdgeInsets(
-					top: value[0],
-					leading: value[3],
-					bottom: value[2],
-					trailing: value[1]
+                    top: value[safe: 0] ?? 0,
+					leading: value[safe: 3] ?? 0,
+					bottom: value[safe: 2] ?? 0,
+					trailing: value[safe: 1] ?? 0
 				))
 				)
 			} else if let value = value as? CGFloat {
