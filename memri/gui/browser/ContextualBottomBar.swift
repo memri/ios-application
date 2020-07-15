@@ -28,10 +28,7 @@ struct ContextualBottomBar: View {
 					Spacer()
 					if context.currentSession?.isEditMode ?? false {
 						Button(action: { withAnimation { self.context.executeAction(ActionDelete(self.context)) } }) {
-							HStack(alignment: .lastTextBaseline, spacing: 5) {
-								Image(systemName: "trash")
-								Text("Delete")
-							}
+							Image(systemName: "trash")
 							.fixedSize()
 							.font(.body)
 							.padding(5)
