@@ -193,7 +193,7 @@ struct GeneralEditorSection: View {
 
 	var body: some View {
         let renderConfig = self.renderConfig
-        let editMode = context.currentSession?.isEditMode ?? false
+        let editMode = context.currentSession?.editMode ?? false
         let fields:[String] = (layoutSection.get("fields", String.self) == "*"
             ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
@@ -370,7 +370,7 @@ struct GeneralEditorSection: View {
 			   edge: Edge? = nil) -> ViewArguments? {
 		try? ViewArguments([
 			"subject": item,
-			"readOnly": !(context.currentSession?.isEditMode ?? false),
+			"readOnly": !(context.currentSession?.editMode ?? false),
 			"title": groupKey.camelCaseToWords().uppercased(),
 			"displayName": name.camelCaseToWords().capitalizingFirst(),
 			"name": name,
@@ -514,7 +514,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -549,7 +549,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -565,7 +565,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}

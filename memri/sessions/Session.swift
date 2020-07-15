@@ -10,61 +10,51 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-public class Session: SchemaSession {
-	private var rlmTokens: [NotificationToken] = []
+public final class Session {
+    /// The name of the item.
+    var name:String? {
+        get { parsed["name"] }
+        set (value) { parsed["name"] = value }
+    }
+    /// TBD
+    var currentViewIndex:Int {
+        get { parsed["currentViewIndex"] ?? 0 }
+        set (value) { parsed["currentViewIndex"] = value }
+    }
+    /// TBD
+    var editMode:Bool {
+        get { parsed["editMode"] ?? false }
+        set (value) { parsed["editMode"] = value }
+    }
+    /// TBD
+    var showContextPane:Bool {
+        get { parsed["showContextPane"] ?? false }
+        set (value) { parsed["showContextPane"] = value }
+    }
+    /// TBD
+    var showFilterPanel:Bool  {
+        get { parsed["showFilterPanel"] ?? false }
+        set (value) { parsed["showFilterPanel"] = value }
+    }
+
+    /// TBD
+    var screenshot: File? {
+        withRealm { realm in
+            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+                .edge("screenshot")?.target(type:File.self)
+        }
+    }
+
+    var uid: Int
+    var parsed: CVUParsedSessionDefinition
+    
+    /// TBD
+    var views: [CascadingView]
+//        Results<SessionView>? {
+//        edges("view")?.sorted(byKeyPath: "sequence").items(type:SessionView.self)
+//    }
+    
 	private var cancellables: [AnyCancellable] = []
-
-	required init() {
-		super.init()
-
-		postInit()
-	}
-
-	func postInit() {
-		if realm != nil, let views = views {
-			for view in views {
-				decorate(view)
-			}
-
-			rlmTokens.append(observe { objectChange in
-				if case .change = objectChange {
-					#warning("Modify this to support Combine properly")
-//					self.objectWillChange.send()
-				}
-            })
-		}
-	}
-
-	func decorate(_ view: SessionView) {
-		// Set the .session property on views for easy querying
-		if view.session == nil { realmWriteIfAvailable(realm) { view.set("session", self) } }
-
-		// Observe and process changes for UI updates
-		if realm != nil {
-			// TODO: Refactor: What is the impact of this not happening in subviews
-			//                The impact is that for instance clicking on the showFilterPanel button
-			//                is not working. The UI won't update. Perhaps we need to implement
-			//                our own pub/sub structure. More thought is needed.
-
-			rlmTokens.append(view.observe { objectChange in
-				if case .change = objectChange {
-					#warning("Modify this to support Combine properly")
-//					self.objectWillChange.send()
-				}
-            })
-		}
-	}
-
-	var isEditMode: Bool {
-		get {
-			editMode
-		}
-		set {
-			realmWriteIfAvailable(realm) {
-				self.editMode = newValue
-			}
-		}
-	}
 
 	var swiftUIEditMode: EditMode {
 		get {
@@ -72,10 +62,8 @@ public class Session: SchemaSession {
 			else { return .inactive }
 		}
 		set(value) {
-			realmWriteIfAvailable(realm) {
-				if value == .active { self.editMode = true }
-				else { self.editMode = false }
-			}
+            if value == .active { self.editMode = true }
+            else { self.editMode = false }
 		}
 	}
 
@@ -83,17 +71,15 @@ public class Session: SchemaSession {
 		currentViewIndex > 0
 	}
 
-	public var currentView: SessionView? {
-		views?[currentViewIndex]
+	public var currentView: CascadingView? {
+        views[safe: currentViewIndex]
 	}
 
-	//    deinit {
-	//        if let realm = self.realm {
-	//            try! realm.write {
-	//                realm.delete(self)
-	//            }
-	//        }
-	//    }
+    init() {
+
+        // Fetch views and parse them
+        
+    }
 
 	public func setCurrentView(_ view: SessionView) throws {
 		guard let views = views else { return }

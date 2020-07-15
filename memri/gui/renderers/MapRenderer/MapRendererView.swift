@@ -24,14 +24,32 @@ let registerMapRenderer = {
 class CascadingMapConfig: CascadingRenderConfig {
 	var type: String? = "map"
 
-	var longPress: Action? { cascadeProperty("longPress") }
-	var press: Action? { cascadeProperty("press") }
+	var longPress: Action? {
+        get { cascadeProperty("longPress") }
+        set (value) { setState("longPress", value) }
+    }
+	var press: Action? {
+        get { cascadeProperty("press") }
+        set (value) { setState("press", value) }
+    }
 
-	var locationKey: String { cascadeProperty("locationKey") ?? "coordinate" }
-	var addressKey: String { cascadeProperty("addressKey") ?? "address" }
-	var labelKey: String { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
+	var locationKey: String {
+        get { cascadeProperty("locationKey") ?? "coordinate" }
+        set (value) { setState("locationKey", value) }
+    }
+	var addressKey: String {
+        get { cascadeProperty("addressKey") ?? "address" }
+        set (value) { setState("addressKey", value) }
+    }
+	var labelKey: String {
+        get { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
+        set (value) { setState("labelKey", value) }
+    }
     
-    var mapStyle: MapStyle { MapStyle(fromString: cascadeProperty("mapStyle")) }
+    var mapStyle: MapStyle {
+        get { MapStyle(fromString: cascadeProperty("mapStyle")) }
+        set (value) { setState("mapStyle", value) }
+    }
 }
 
 struct MapRendererView: View {

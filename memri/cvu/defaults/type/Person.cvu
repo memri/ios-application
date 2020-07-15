@@ -357,7 +357,7 @@ Person[] {
     defaultRenderer: thumbnail
     emptyResultText: "There are no people here yet"
     
-     [datasource = pod] {
+    [datasource = pod] {
         query: "Person"
         sortProperty: dateModified
     }

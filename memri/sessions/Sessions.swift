@@ -11,55 +11,36 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-public class Sessions: SchemaSessions {
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+public final class Sessions {
+    /// TBD
+    var currentSessionIndex:Int = 0
+    
+    var uid: Int
+    var parsed: CVUParsedSessionsDefinition
 
-		jsonErrorHandling(decoder) {
-			currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
-
-			try super.superDecode(from: decoder)
-		}
-
-		postInit()
-	}
-
-	private var rlmTokens: [NotificationToken] = []
-	private var cancellables: [AnyCancellable] = []
-
-	func postInit() {
-		guard let sessions = sessions else { return }
-
-		for session in sessions {
-			decorate(session)
-			session.postInit()
-		}
-	}
-
-	func decorate(_ session: Session) {
-		if realm != nil {
-			rlmTokens.append(session.observe { objectChange in
-				if case .change = objectChange {
-					#warning("Modify this to support Combine properly")
-//					self.objectWillChange.send()
-				}
-            })
-		}
-	}
-
+    /// TBD
+    var sessions: [Session]
+//        Results<Session>? {
+//        edges("session")?.sorted(byKeyPath: "sequence").items(type:Session.self)
+//    }
+    
+    private var cancellables: [AnyCancellable] = []
+    
 	var currentSession: Session? {
-		sessions?[currentSessionIndex]
+        sessions[safe: currentSessionIndex]
 	}
 
-	var currentView: SessionView? {
+	var currentView: CascadingView? {
 		currentSession?.currentView
 	}
 
-	public required init() {
-		super.init()
-		postInit()
-	}
-
+    init(_ state: CVUStateDefinition, _ views: Views) throws {
+        self.uid = state.uid.value
+        
+        parsed = try views.parseDefinition(state)
+        parsed.domain = "state"
+    }
+    
 	public func setCurrentSession(_ session: Session) {
 		realmWriteIfAvailable(realm) {
 			if let edge = try link(session, type: "session", order: .last),
@@ -107,33 +88,6 @@ public class Sessions: SchemaSessions {
 		throw "Installation is corrupt. Cannot recover."
 	}
 
-	public func merge(_ sessions: Sessions) throws {
-		func doMerge() {
-			let properties = objectSchema.properties
-			for prop in properties {
-				self[prop.name] = sessions[prop.name]
-			}
-		}
-
-		realmWriteIfAvailable(realm) {
-			doMerge()
-		}
-	}
-
-	/// Find a session using text
-	public func findSession(_: String) {}
-
 	/// Clear all sessions and create a new one
 	public func clear() {}
-
-	public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Sessions {
-		let jsonData = try jsonDataFromFile(file, ext)
-		let sessions: Sessions = try MemriJSONDecoder.decode(Sessions.self, from: jsonData)
-		return sessions
-	}
-
-	public class func fromJSONString(_ json: String) throws -> Sessions {
-		let sessions: Sessions = try MemriJSONDecoder.decode(Sessions.self, from: Data(json.utf8))
-		return sessions
-	}
 }

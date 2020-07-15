@@ -35,47 +35,49 @@ Note {
         showContextPane
     ]
     
-    contextButtons: star schedule
-    
-    actionItems: [
-        showOverlay { title: "Share with..." }
-        addToPanel { title: "Add to list..." }
-        duplicate { title: "Duplicate Note" }
-    ]
-    
-    navigateItems: [
-        openView {
-            title: "Timeline of this note"
-            arguments {
-                view: {
-                    defaultRenderer: timeline
-                    
-                     [datasource = pod] {
-                        query: "AuditItem appliesTo:{.id}"
-                        sortProperty: dateCreated
-                        sortAscending: true
-                    }
-                    
-                    [renderer = timeline] {
-                        timeProperty: dateCreated
+    contextPane {
+        buttons: star schedule
+        
+        actions: [
+            showOverlay { title: "Share with..." }
+            addToPanel { title: "Add to list..." }
+            duplicate { title: "Duplicate Note" }
+        ]
+        
+        navigate: [
+            openView {
+                title: "Timeline of this note"
+                arguments {
+                    view: {
+                        defaultRenderer: timeline
+                        
+                         [datasource = pod] {
+                            query: "AuditItem appliesTo:{.id}"
+                            sortProperty: dateCreated
+                            sortAscending: true
+                        }
+                        
+                        [renderer = timeline] {
+                            timeProperty: dateCreated
+                        }
                     }
                 }
             }
-        }
-        openViewByName {
-            title: "Starred notes"
-            arguments: {
-                name: "filter-starred"
-                viewArguments: {
-                    include: "all-notes"
+            openViewByName {
+                title: "Starred notes"
+                arguments: {
+                    name: "filter-starred"
+                    viewArguments: {
+                        include: "all-notes"
+                    }
                 }
             }
-        }
-        openViewByName {
-            title: "All notes"
-            name: "all-notes"
-        }
-    ]
+            openViewByName {
+                title: "All notes"
+                name: "all-notes"
+            }
+        ]
+    }
     
     [renderer = custom] {
         RichTextfield {

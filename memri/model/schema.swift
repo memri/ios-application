@@ -195,8 +195,18 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     }
 }
 
+public class SyncableItem: Object {
+    let _updated = List<String>()
+    /// TBD
+    @objc dynamic var _partial:Bool = false
+    /// TBD
+    @objc dynamic var _action:String? = nil
+    /// TBD
+    @objc dynamic var _changedInSession:Bool = false
+}
+
 /// Item is the baseclass for all of the data classes.
-public class SchemaItem: Object, Codable, Identifiable {
+public class SchemaItem: SyncableItem, Codable, Identifiable {
     /// A collection of all edges this Item is connected to.
     let allEdges = List<Edge>()
     /// Last access date of the Item.
@@ -213,9 +223,6 @@ public class SchemaItem: Object, Codable, Identifiable {
     @objc dynamic var itemDescription:String? = nil
     /// Boolean whether the Item has been starred.
     @objc dynamic var starred:Bool = false
-    /// Object describing syncing information about this object like loading state, versioning,
-    /// etc.
-    @objc dynamic var syncState:SyncState? = SyncState()
     /// The last version loaded from the server.
     @objc dynamic var version:Int = 1
     /// The unique identifier of the Item set by the pod.
@@ -230,7 +237,6 @@ public class SchemaItem: Object, Codable, Identifiable {
             externalID = try decoder.decodeIfPresent("externalID") ?? externalID
             itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
             starred = try decoder.decodeIfPresent("starred") ?? starred
-            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             version = try decoder.decodeIfPresent("version") ?? version
             uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
     }
@@ -268,6 +274,10 @@ public class AuditItem : Item {
     }
 }
 
+public class CVUStateDefinition : CVUStoredDefinition {
+    
+}
+
 /// TBD
 public class CVUStoredDefinition : Item {
     /// TBD
@@ -282,6 +292,17 @@ public class CVUStoredDefinition : Item {
     @objc dynamic var selector:String? = nil
     /// TBD
     @objc dynamic var type:String? = nil
+    
+    override var computedTitle: String {
+        if let value = name, value != "" { return value }
+        //        else if let rendererName = self.rendererName {
+        //            return "A \(rendererName) showing: \(self.datasource?.query ?? "")"
+        //        }
+        else if let query = datasource?.query {
+            return "Showing: \(query)"
+        }
+        return "[No Name]"
+    }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
@@ -1211,106 +1232,6 @@ public class PublicKey : Item {
 }
 
 /// TBD
-public class SchemaSession : Item {
-    /// TBD
-    @objc dynamic var currentViewIndex:Int = 0
-    /// TBD
-    @objc dynamic var editMode:Bool = false
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-    /// TBD
-    @objc dynamic var showContextPane:Bool = false
-    /// TBD
-    @objc dynamic var showFilterPanel:Bool = false
-
-    /// TBD
-    var screenshot: File? {
-        edge("screenshot")?.target(type:File.self)
-    }
-
-    /// TBD
-    var views: Results<SessionView>? {
-        edges("view")?.sorted(byKeyPath: "sequence").items(type:SessionView.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
-            name = try decoder.decodeIfPresent("name") ?? name
-            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
-            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SessionView : Item {
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-
-    /// TBD
-    var datasource: Datasource? {
-        edge("datasource")?.target(type:Datasource.self)
-    }
-
-    /// TBD
-    var session: Session? {
-        edge("session")?.target(type:Session.self)
-    }
-
-    /// TBD
-    var userState: UserState? {
-        edge("userState")?.target(type:UserState.self)
-    }
-
-    /// TBD
-    var viewDefinition: CVUStoredDefinition? {
-        edge("viewDefinition")?.target(type:CVUStoredDefinition.self)
-    }
-
-    /// TBD
-    var viewArguments: ViewArguments? {
-        edge("viewArguments")?.target(type:ViewArguments.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            name = try decoder.decodeIfPresent("name") ?? name
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SchemaSessions : Item {
-    /// TBD
-    @objc dynamic var currentSessionIndex:Int = 0
-
-    /// TBD
-    var sessions: Results<Session>? {
-        edges("session")?.sorted(byKeyPath: "sequence").items(type:Session.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
 public class Setting : Item {
     /// TBD
     @objc dynamic var key:String? = nil
@@ -1325,27 +1246,6 @@ public class Setting : Item {
             json = try decoder.decodeIfPresent("json") ?? json
 
             try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SyncState: Object, Codable {
-    let updatedFields = List<String>()
-    /// TBD
-    @objc dynamic var isPartiallyLoaded:Bool = false
-    /// TBD
-    @objc dynamic var actionNeeded:String? = nil
-    /// TBD
-    @objc dynamic var changedInThisSession:Bool = false
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-            actionNeeded = try decoder.decodeIfPresent("actionNeeded") ?? actionNeeded
-            changedInThisSession = try decoder.decodeIfPresent("changedInThisSession") ?? changedInThisSession
         }
     }
 }

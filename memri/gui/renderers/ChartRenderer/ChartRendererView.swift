@@ -34,17 +34,41 @@ let registerChartRenderer = {
 class CascadingChartConfig: CascadingRenderConfig {
 	var type: String? = "chart"
 
-	var press: Action? { cascadeProperty("press") }
+	var press: Action? {
+        get { cascadeProperty("press") }
+        set (value) { setState("press", value) }
+    }
 
-	var chartTitle: String? { cascadeProperty("chartTitle") }
-	var chartSubtitle: String? { cascadeProperty("chartSubtitle") }
+	var chartTitle: String? {
+        get { cascadeProperty("chartTitle") }
+        set (value) { setState("chartTitle", value) }
+    }
+	var chartSubtitle: String? {
+        get { cascadeProperty("chartSubtitle") }
+        set (value) { setState("chartSubtitle", value) }
+    }
 
-	var xAxisExpression: Expression? { cascadeProperty("xAxis", type: Expression.self) }
-	var yAxisExpression: Expression? { cascadeProperty("yAxis", type: Expression.self) }
-	var labelExpression: Expression? { cascadeProperty("label", type: Expression.self) }
+	var xAxisExpression: Expression? {
+        get { cascadeProperty("xAxis", type: Expression.self) }
+        set (value) { setState("xAxis", value) }
+    }
+	var yAxisExpression: Expression? {
+        get { cascadeProperty("yAxis", type: Expression.self) }
+        set (value) { setState("yAxis", value) }
+    }
+	var labelExpression: Expression? {
+        get { cascadeProperty("label", type: Expression.self) }
+        set (value) { setState("label", value) }
+    }
 
-	var yAxisStartAtZero: Bool { cascadeProperty("yAxisStartAtZero") ?? false }
-	var hideGridLines: Bool { cascadeProperty("hideGridlines") ?? false }
+	var yAxisStartAtZero: Bool {
+        get { cascadeProperty("yAxisStartAtZero") ?? false }
+        set (value) { setState("yAxisStartAtZero", value) }
+    }
+	var hideGridLines: Bool {
+        get { cascadeProperty("hideGridlines") ?? false }
+        set (value) { setState("hideGridlines", value) }
+    }
 }
 
 enum ChartType: String {

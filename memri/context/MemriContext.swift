@@ -22,12 +22,17 @@ var globalCache: Cache?
 
 public class MemriContext: ObservableObject {
 	public var name: String = ""
+    
+    @Published public var sessions: Sessions
+    
 	/// The current session that is active in the application
-	@Published public var currentSession: Session?
+    public var currentSession: Session? {
+        sessions?.currentSession
+    }
 
-	@Published public var cascadingView: CascadingView?
-
-	@Published public var sessions: Sessions?
+    public var cascadingView: CascadingView? {
+        sessions?.currentSession?.currentView
+    }
 
 	public var views: Views
 
@@ -402,10 +407,16 @@ public class RootContext: MemriContext {
 		let podAPI = PodAPI(key)
 		let cache = try Cache(podAPI)
 		let realm = cache.realm
+        let views = Views(realm)
 
 		globalCache = cache // TODO: remove this and fix edges
 
 		MapHelper.shared.realm = realm // TODO: How to access realm in a better way?
+        
+        let sessionState = try Cache.createItem(
+            CVUStateDefinition.self,
+            values: ["uid": try Cache.getDeviceID()]
+        )
 
 		super.init(
 			name: name,
@@ -414,8 +425,8 @@ public class RootContext: MemriContext {
 			realm: realm,
 			settings: Settings(realm),
 			installer: Installer(realm),
-			sessions: try Cache.createItem(Sessions.self, values: ["uid": try Cache.getDeviceID()]),
-			views: Views(realm),
+			sessions: try Sessions(sessionState, views),
+			views: views,
 			navigation: MainNavigation(realm),
 			renderers: Renderers(),
 			indexerAPI: IndexerAPI()

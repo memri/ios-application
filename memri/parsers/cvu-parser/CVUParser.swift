@@ -313,13 +313,13 @@ class CVUParser {
 
 						addUIElement(type, &properties)
 						continue
-					} else if lvalue == "userstate" || lvalue == "viewarguments" {
+					} else if lvalue == "userstate" || lvalue == "viewarguments" || lvalue == "contextpane" {
 						var properties: [String: Any?] = [:]
 						if case CVUToken.CurlyBracketOpen = nextToken {
 							_ = popCurrentToken()
 							properties = try parseDict(value)
 						}
-						stack.append(try UserState(properties as [String: Any]))
+						stack.append(CVUParsedObjectDefinition(properties as [String: Any]))
 						continue
 					} else if case CVUToken.CurlyBracketOpen = nextToken {
 						// Do nothing

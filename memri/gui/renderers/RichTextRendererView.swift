@@ -36,8 +36,8 @@ struct _RichTextEditor: View {
 	var headingFontSize: CGFloat = 26
 
 	var editModeBinding: Binding<Bool> {
-		Binding<Bool>(get: { self.context.currentSession?.isEditMode ?? false },
-					  set: { self.context.currentSession?.isEditMode = $0 })
+		Binding<Bool>(get: { self.context.currentSession?.editMode ?? false },
+					  set: { self.context.currentSession?.editMode = $0 })
 	}
 
 	let filterText: Binding<String>
@@ -62,9 +62,18 @@ struct _RichTextEditor: View {
 class CascadingRichTextEditorConfig: CascadingRenderConfig {
 	var type: String? = "richTextEditor"
 
-	var titleHint: String? { cascadeProperty("titleHint") ?? "Untitled" }
-	var fontSize: CGFloat { cascadePropertyAsCGFloat("fontSize") ?? 18 }
-	var titleFontSize: CGFloat { cascadePropertyAsCGFloat("titleFontSize") ?? 26 }
+	var titleHint: String? {
+        get { cascadeProperty("titleHint") ?? "Untitled" }
+        set (value) { setState("titleHint", value) }
+    }
+	var fontSize: CGFloat {
+        get { cascadePropertyAsCGFloat("fontSize") ?? 18 }
+        set (value) { setState("fontSize", value) }
+    }
+	var titleFontSize: CGFloat {
+        get { cascadePropertyAsCGFloat("titleFontSize") ?? 26 }
+        set (value) { setState("titleFontSize", value) }
+    }
 }
 
 #warning("This renderer is currently specialised for Notes - it might make sense to utilise the custom renderer instead. The RichTextEditor CVU component has all this functionality.")

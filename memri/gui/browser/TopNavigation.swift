@@ -169,7 +169,7 @@ public struct TopNavigation: View {
 						.font(Font.system(size: 19, weight: .semibold))
 				}
 
-				if context.currentSession?.isEditMode ?? false {
+				if context.currentSession?.editMode ?? false {
 					Button(action: { withAnimation { self.context.executeAction(ActionDelete(self.context)) } }) {
 						Image(systemName: "trash")
 							.fixedSize()

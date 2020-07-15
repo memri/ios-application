@@ -34,11 +34,23 @@ let registerListRenderer = {
 class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
 	var type: String? = "list"
 
-	var longPress: Action? { cascadeProperty("longPress") }
-	var press: Action? { cascadeProperty("press") }
+	var longPress: Action? {
+        get { cascadeProperty("longPress") }
+        set (value) { setState("longPress", value) }
+    }
+	var press: Action? {
+        get {cascadeProperty("press") }
+        set (value) { setState("press", value) }
+    }
 
-	var slideLeftActions: [Action] { cascadeList("slideLeftActions") }
-	var slideRightActions: [Action] { cascadeList("slideRightActions") }
+	var slideLeftActions: [Action] {
+        get { cascadeList("slideLeftActions") }
+        set (value) { setState("slideLeftActions", value) }
+    }
+	var slideRightActions: [Action] {
+        get { cascadeList("slideRightActions") }
+        set (value) { setState("slideRightActions", value) }
+    }
 
 	public func setDefaultValues(_ element: UIElement) {
 		if element.properties["padding"] == nil {
@@ -53,7 +65,7 @@ struct ListRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.cascadingView?.userState?
+                self.context.cascadingView?.userState
 					.set("selection", $0.compactMap { self.context.items[safe: $0] })
 			}
 		)
@@ -82,7 +94,7 @@ struct ListRendererView: View {
 				.padding(.top, 40)
 				Spacer()
 			} else {
-				ASTableView(editMode: context.currentSession?.isEditMode ?? false, section:
+				ASTableView(editMode: context.currentSession?.editMode ?? false, section:
 					ASSection(id: 0,
 							  data: context.items,
 							  dataID: \.uid.value,

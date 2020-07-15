@@ -10,9 +10,16 @@ import CoreGraphics
 import Foundation
 
 public class Cascadable {
-	var viewArguments: ViewArguments?
+    var host: Cascadable?
 	var cascadeStack: [CVUParsedDefinition]
+    var tail: [CVUParsedDefinition]
+    var head: CVUParsedDefinition
 	var localCache = [String: Any?]()
+    
+    var viewArguments: ViewArguments? {
+        get { host?.viewArguments }
+        set (value) { host?.viewArguments = value }
+    }
 
 	private func execExpression<T>(_ expr: Expression) -> T? {
 		do {
@@ -47,6 +54,10 @@ public class Cascadable {
 			return result as? T
 		} else { return value as? T }
 	}
+    
+    func setState(_ propName:String, _ value:Any?) {
+        head[propName] = value
+    }
 
 	func cascadePropertyAsCGFloat(_ name: String) -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil
 		(cascadeProperty(name) as Double?).map { CGFloat($0) }
@@ -160,7 +171,7 @@ public class Cascadable {
 		localCache[name] = result
 		return result
 	}
-
+    
 	func cascadeDict<T>(_ name: String, _ defaultDict: [String: T] = [:],
 						forceArray: Bool = false) -> [String: T] {
 		if let x = localCache[name] as? [String: T] { return x }
@@ -197,8 +208,10 @@ public class Cascadable {
 		return result
 	}
 
-	init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments? = nil) {
-		self.viewArguments = viewArguments
-		self.cascadeStack = cascadeStack
+    init(_ head: CVUParsedDefinition, _ tail: [CVUParsedDefinition], _ host: Cascadable? = nil) {
+		self.host = host
+        self.cascadeStack = [head].append(membersOf: tail)
+        self.tail = tail
+        self.head = head
 	}
 }

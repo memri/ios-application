@@ -480,9 +480,9 @@ public class Views {
 		// TODO: REFACTOR: move these to a better place (context??)
 
 		// turn off editMode when navigating
-		if context.sessions?.currentSession?.isEditMode == true {
+		if context.sessions?.currentSession?.editMode == true {
 			realmWriteIfAvailable(realm) {
-				context.sessions?.currentSession?.isEditMode = false
+				context.sessions?.currentSession?.editMode = false
 			}
 		}
 
