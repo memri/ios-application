@@ -11,6 +11,7 @@
 Address[] {
     defaultRenderer: list
     filterButtons: showStarred toggleFilterPanel
+    editActionButton: toggleEditMode
 
     [renderer = list]{
         HStack {
@@ -95,7 +96,7 @@ Address {
     
     [renderer = generalEditor] {
         layout: [
-            { section: location }
+            { section: location, exclude: locationWasAutomaticLookupWithHash }
             { section: labels }
             { section: address, fields: street city state postalCode country }
             { section: other, fields: * }
