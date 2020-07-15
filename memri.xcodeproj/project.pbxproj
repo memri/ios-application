@@ -243,6 +243,8 @@
 		B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3824A1B10F0007C9EB /* UIColor.swift */; };
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
 		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
+		B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */; };
+		B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8BF6F4B24BEA3E60058067C /* messages.cvu */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
 		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
@@ -516,6 +518,8 @@
 		B88AAB3824A1B10F0007C9EB /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
+		B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageRenderer.swift; sourceTree = "<group>"; };
+		B8BF6F4B24BEA3E60058067C /* messages.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = messages.cvu; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
 		B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapView-Mapbox.swift"; sourceTree = "<group>"; };
@@ -724,6 +728,7 @@
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
 				8672C27B2497F35A006F0D42 /* CustomRenderer.swift */,
+				B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */,
 				B88AAB3424A1AEF80007C9EB /* GridRenderers */,
 				B88AAB3324A1AEEE0007C9EB /* MapRenderer */,
 				5D493FDD23FC15FF0034692B /* RichTextRendererView.swift */,
@@ -1154,6 +1159,7 @@
 				5DAFB6122479523B00719160 /* list.cvu */,
 				B8E0FBE324A4ADE3009C3C30 /* map.cvu */,
 				B881BED224BD4F4D0016DBF5 /* calendar.cvu */,
+				B8BF6F4B24BEA3E60058067C /* messages.cvu */,
 				86FFD0BD24A2398F001BF14B /* chart.cvu */,
 			);
 			path = renderer;
@@ -1479,6 +1485,7 @@
 				5DAFB6152479524500719160 /* thumbnail.cvu in Resources */,
 				B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
+				B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */,
 				5DAFB6382479533000719160 /* sessions.cvu in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */,
@@ -1697,6 +1704,7 @@
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
 				B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* ThumbnailRendererView.swift in Sources */,
+				B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */,
 				5DB8EC0424598FA30028FD2E /* CascadingView.swift in Sources */,
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */,
