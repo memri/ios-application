@@ -25,7 +25,14 @@ struct ThumbWaterfallRendererView: View {
 
 	var name: String = "thumbnail_waterfall"
 
-	@State var selectedItems: Set<Int> = []
+	var selectedIndices: Binding<Set<Int>> {
+		Binding<Set<Int>>(
+			get: { [] },
+			set: {
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
+			}
+		)
+	}
 
 	//    @Environment(\.editMode) private var editMode
 	//    var isEditing: Bool
@@ -47,7 +54,7 @@ struct ThumbWaterfallRendererView: View {
 	}
 
 	var section: ASCollectionViewSection<Int> {
-		ASCollectionViewSection(id: 0, data: context.items, selectedItems: $selectedItems) { dataItem, state in
+		ASCollectionViewSection(id: 0, data: context.items, selectedItems: selectedIndices) { dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
 				GeometryReader { geom in
 					// TODO: Error handling

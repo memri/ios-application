@@ -22,6 +22,7 @@ struct Browser: View {
 					.background(Color(.systemBackground))
 				activeRenderer
 					.fullHeight().layoutPriority(1)
+				ContextualBottomBar()
 				Search()
 				if self.context.currentSession?.showFilterPanel ?? false {
 					FilterPanel()

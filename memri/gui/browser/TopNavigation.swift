@@ -169,17 +169,6 @@ public struct TopNavigation: View {
 						.font(Font.system(size: 19, weight: .semibold))
 				}
 
-				if context.currentSession?.isEditMode ?? false {
-					Button(action: { withAnimation { self.context.executeAction(ActionDelete(self.context)) } }) {
-						Image(systemName: "trash")
-							.fixedSize()
-							.font(.system(size: 10, weight: .bold, design: .default))
-							.padding(.horizontal, 5)
-							.padding(.vertical, 8)
-							.foregroundColor(Color.red)
-					}
-				}
-
 				ActionButton(action: context.cascadingView?.actionButton)
 					.font(Font.system(size: 22, weight: .semibold))
 

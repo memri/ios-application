@@ -323,6 +323,11 @@ public class MemriContext: ObservableObject {
 		get { self["showNavigation"] as? Bool == true }
 		set(value) { self["showNavigation"] = value }
 	}
+	
+	public func setSelection(_ selection: [Item]) {
+		cascadingView?.userState?.set("selection", selection)
+		scheduleUIUpdate()
+	}
 
 	init(
 		name: String,

@@ -1023,7 +1023,7 @@ class ActionDelete: Action, ActionExec {
 		//            }
 		//        }
 
-		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
+		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), !selection.isEmpty {
 			context.cache.delete(selection)
 			context.scheduleCascadingViewUpdate(immediate: true)
 		} else if let dataItem = arguments["dataItem"] as? Item {

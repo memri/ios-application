@@ -66,8 +66,7 @@ struct ThumbnailRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.cascadingView?.userState?
-					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
 			}
 		)
 	}

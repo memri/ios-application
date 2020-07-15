@@ -37,14 +37,15 @@ struct MessageRenderer: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.cascadingView?.userState?
-					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
 			}
 		)
 	}
     
     @State var scrollPosition: ASTableViewScrollPosition? = .bottom
-    @State var editMode: Bool = false
+    var editMode: Bool {
+		context.currentSession?.isEditMode ?? false
+	}
     
     var dateFormatter: DateFormatter {
         let format = DateFormatter()
@@ -61,6 +62,7 @@ struct MessageRenderer: View {
             return MessageItem(id: item.id.hashValue,
 							   item: item,
                                timestamp: date,
+							   sender: sender,
 							   content: item.get("content", type: String.self)?.strippingHTMLtags() ?? "",
                                outgoing: sender == "To read list")
         }.sorted(by: { $0.timestamp < $1.timestamp })
@@ -73,9 +75,17 @@ struct MessageRenderer: View {
                     Spacer(minLength: editMode ? 5 : 40)
                 }
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(dateFormatter.string(from: item.timestamp))
-                        .font(.caption)
-                        .foregroundColor(Color(.secondaryLabel))
+					if !item.outgoing {
+						item.sender.map {
+							Text($0)
+								.lineLimit(1)
+								.font(Font.body.bold())
+						}
+					}
+					Text(dateFormatter.string(from: item.timestamp))
+						.lineLimit(1)
+						.font(.caption)
+						.foregroundColor(Color(.secondaryLabel))
                     Text(item.content)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
@@ -116,6 +126,7 @@ struct MessageRenderer: View {
         var id: Int
 		var item: Item
         var timestamp: Date
+		var sender: String?
         var content: String
         var outgoing: Bool
     }
