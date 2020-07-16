@@ -83,7 +83,7 @@ struct ChartRendererView: View {
 	let type: ChartType
 
 	var renderConfig: CascadingChartConfig {
-		(context.cascadingView?.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([])
+		(context.currentView?.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig([])
 	}
 
 	var missingDataView: some View {

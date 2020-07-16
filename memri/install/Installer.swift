@@ -32,7 +32,7 @@ public class Installer {
 			try context.views.install()
 
 			// Load default sessions in database
-			try context.sessions?.install(context)
+			try context.sessions.install(context)
 
 			// Installation complete
 			_ = try Cache.createItem(AuditItem.self, values: [

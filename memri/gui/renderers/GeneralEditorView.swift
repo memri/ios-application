@@ -141,7 +141,7 @@ struct GeneralEditorView: View {
     }
     
     func getItem() -> Item {
-        if let dataItem = context.cascadingView?.resultSet.singletonItem {
+        if let dataItem = context.currentView?.resultSet.singletonItem {
             return dataItem
         } else {
             debugHistory.warn("Could not load item from result set, creating empty item")
@@ -150,7 +150,7 @@ struct GeneralEditorView: View {
     }
     
     func getRenderConfig() -> CascadingGeneralEditorConfig? {
-        context.cascadingView?.renderConfig as? CascadingGeneralEditorConfig
+        context.currentView?.renderConfig as? CascadingGeneralEditorConfig
     }
     
     func getUsedFields(_ layout: [GeneralEditorLayoutItem]) -> [String] {
@@ -391,7 +391,7 @@ struct GeneralEditorSection: View {
                     "renderer": "list",
                     "edgeType": edgeType,
                     "title": "Choose a \(itemType)",
-                    "dataItem": item,
+                    "item": item,
                 ]),
             ],
             values: [

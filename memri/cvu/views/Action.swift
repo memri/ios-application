@@ -45,9 +45,8 @@ extension MemriContext {
 	private func buildArguments(_ action: Action, _ dataItem: Item?,
 								_ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
-        let viewArgs = try ViewArguments.clone(viewArguments ?? cascadingView?.viewArguments,
-                                           [".": dataItem],
-                                           managed: false, item: dataItem)
+        let viewArgs = try ViewArguments.from(viewArguments ?? currentView?.viewArguments, dataItem)
+        viewArgs.set(".", dataItem)
         
         var args = [String: Any?]()
 		for (argName, inputValue) in action.arguments {
@@ -80,28 +79,19 @@ extension MemriContext {
                 }
                 
 				if action.argumentTypes[argName] == ViewArguments.self {
-					finalValue = try ViewArguments.fromDict(dict)
+					finalValue = try ViewArguments(dict)
 				} else if action.argumentTypes[argName] == ItemFamily.self {
 					finalValue = try getItem(dict, dataItem, viewArguments)
-				} else if action.argumentTypes[argName] == SessionView.self {
+				} else if action.argumentTypes[argName] == CVUStateDefinition.self {
 					let viewDef = CVUParsedViewDefinition(UUID().uuidString)
 					viewDef.parsed = dict
-
-					finalValue = try Cache.createItem(SessionView.self,
-													  values: ["viewDefinition": viewDef])
+                    finalValue = try CVUStateDefinition.fromCVUParsedDefinition(viewDef)
 				} else {
 					throw "Exception: Unknown argument type specified in action definition \(argName)"
 				}
             } else if action.argumentTypes[argName] == ViewArguments.self {
                 if let viewArgs = argValue as? ViewArguments {
-                    var dict = viewArgs.asDict()
-                    for (key, value) in dict {
-                        if let expr = value as? Expression {
-                            dict[key] = try expr.execute(viewArgs)
-                        }
-                    }
-                    
-                    finalValue = try ViewArguments.fromDict(dict)
+                    finalValue = try ViewArguments.from(viewArgs, dataItem)
                 }
                 else {
                     throw "Exception: Could not parse \(argName)"
@@ -129,7 +119,7 @@ extension MemriContext {
 		}
 
 		// Last element of arguments array is the context data item
-		args["dataItem"] = dataItem ?? cascadingView?.resultSet.singletonItem
+		args["item"] = dataItem ?? currentView?.resultSet.singletonItem
 
 		return args
 	}
@@ -486,7 +476,7 @@ class ActionAddItem: Action, ActionExec {
 //			let copy = try context.cache.duplicate(dataItem)
 			#warning("Test that this creates a unique node")
 			// Open view with the now managed copy
-			try ActionOpenView.exec(context, ["dataItem": dataItem])
+			try ActionOpenView.exec(context, ["item": dataItem])
 		} else {
 			// TODO: Error handling
 			// TODO: User handling
@@ -501,7 +491,7 @@ class ActionAddItem: Action, ActionExec {
 
 class ActionOpenView: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
-		"argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
+		"argumentTypes": ["view": CVUStateDefinition.self, "viewArguments": ViewArguments.self],
 		"withAnimation": false,
 		"opensView": true,
 	] }
@@ -510,20 +500,14 @@ class ActionOpenView: Action, ActionExec {
 		super.init(context, "openView", arguments: arguments, values: values)
 	}
 
-	func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil) throws {
+	func openView(_ context: MemriContext, view: CVUStateDefinition, with arguments: ViewArguments? = nil) throws {
 		if let session = context.currentSession {
-			// Merge arguments into view
-			if let dict = arguments?.asDict() {
-				if let viewArguments = view.viewArguments {
-					view.set("viewArguments", try ViewArguments.fromDict(viewArguments.asDict()
-							.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?]))
-				}
-			}
-
 			// Add view to session
-			try session.setCurrentView(view)
-		} else {
+            try session.setCurrentView(view, arguments)
+		}
+        else {
 			// TODO: Error Handling
+            debugHistory.error("No session is active on context")
 		}
 	}
 
@@ -531,12 +515,17 @@ class ActionOpenView: Action, ActionExec {
 		guard let uid = item.uid.value else { throw "Uninitialized item" }
 
 		// Create a new view
-		let view = try Cache.createItem(SessionView.self, values: [:])
-		let datasource = try Cache.createItem(Datasource.self, values: [
-			// Set the query options to load the item
-			"query": "\(item.genericType) AND uid = \(uid)",
-		])
-		_ = try view.link(datasource, type: "datasource")
+		let view = try Cache.createItem(CVUStateDefinition.self, values: [
+            "type": "view",
+            "selector": "[view]",
+            "definition": """
+                [view] {
+                    [datasource = pod] {
+                        query: "\(item.genericType) AND uid = \(uid)"
+                    }
+                }
+            """
+        ])
 
 		// Open the view
 		try openView(context, view: view, with: arguments)
@@ -544,15 +533,15 @@ class ActionOpenView: Action, ActionExec {
 
 	func exec(_ arguments: [String: Any?]) throws {
 		//        let selection = context.cascadingView.userState.get("selection") as? [Item]
-		let dataItem = arguments["dataItem"] as? Item
+		let item = arguments["item"] as? Item
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
 		// if let selection = selection, selection.count > 0 { self.openView(context, selection) }
-		if let sessionView = arguments["view"] as? SessionView {
+		if let sessionView = arguments["view"] as? CVUStateDefinition {
 			try openView(context, view: sessionView, with: viewArguments)
-		} else if let item = dataItem as? SessionView {
+		} else if let item = item as? CVUStateDefinition {
 			try openView(context, view: item, with: viewArguments)
-		} else if let item = dataItem {
+		} else if let item = item {
 			try openView(context, item, with: viewArguments)
 		} else {
 			// TODO: Error handling
@@ -579,23 +568,33 @@ class ActionOpenViewByName: Action, ActionExec {
 	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
-        // TODO implement state being a session state
-        //        if parsed is CVUParsedSessionDefinition {
-        //            if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
-        //        }
-        
 		if let name = arguments["name"] as? String {
 			// Fetch a dynamic view based on its name
-			let stored = context.views.fetchDefinitions(name: name, type: "view").first
-			let parsed = try context.views.parseDefinition(stored)
-
-			let view = try SessionView.fromCVUDefinition(
-				parsed: parsed as? CVUParsedViewDefinition,
-				stored: stored,
-				viewArguments: viewArguments
-			)
-
-			try ActionOpenView(context).openView(context, view: view)
+            guard let stored = context.views.fetchDefinitions(name: name, type: "view").first else {
+                throw "No view found with the name \(name)"
+            }
+            
+            var view:CVUStateDefinition
+            if stored.type == "view" {
+                view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+            }
+            else if stored.type == "session" {
+                guard let parsed = try context.views.parseDefinition(stored) else {
+                    throw "Unable to parse state definition"
+                }
+                
+                if let list = parsed["views"] as? [CVUParsedViewDefinition], let p = list.first {
+                    view = try CVUStateDefinition.fromCVUParsedDefinition(p)
+                }
+                else {
+                    throw "Invalid definition type for \(name)"
+                }
+            }
+            else {
+                throw "Invalid definition type for \(name)"
+            }
+            
+            try ActionOpenView(context).openView(context, view: view, with: viewArguments)
 		} else {
 			// TODO: Error Handling
 			throw "Cannot execute ActionOpenViewByName, no name found in arguments."
@@ -662,7 +661,7 @@ class ActionStar: Action, ActionExec {
 
 	// TODO: selection handling for binding
 	func exec(_: [String: Any?]) throws {
-		//        if let item = arguments["dataItem"] as? Item {
+		//        if let item = arguments["item"] as? Item {
 		//            var selection:[Item] = context.cascadingView.userState.get("selection") ?? []
 		//            let toValue = !item.starred
 //
@@ -931,7 +930,7 @@ class ActionOpenSession: Action, ActionExec {
 				throw "Cannot execute openSession 'session' argmument cannot be casted to Session"
 			}
 		} else {
-			if let session = arguments["dataItem"] as? Session {
+			if let session = arguments["item"] as? Session {
 				openSession(context, session)
 			}
 
@@ -1025,7 +1024,7 @@ class ActionDelete: Action, ActionExec {
 		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
 			context.cache.delete(selection)
 			context.scheduleCascadingViewUpdate(immediate: true)
-		} else if let dataItem = arguments["dataItem"] as? Item {
+		} else if let dataItem = arguments["item"] as? Item {
 			context.cache.delete(dataItem)
 			context.scheduleCascadingViewUpdate(immediate: true)
 		} else {
@@ -1045,9 +1044,9 @@ class ActionDuplicate: Action, ActionExec {
 
 	func exec(_ arguments: [String: Any?]) throws {
 		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
-			try selection.forEach { item in try ActionAddItem.exec(context, ["dataItem": item]) }
-		} else if let item = arguments["dataItem"] as? Item {
-			try ActionAddItem.exec(context, ["dataItem": item])
+			try selection.forEach { item in try ActionAddItem.exec(context, ["item": item]) }
+		} else if let item = arguments["item"] as? Item {
+			try ActionAddItem.exec(context, ["item": item])
 		} else {
 			// TODO: Error handling
 			throw "Cannot execute ActionDupliate. The user either needs to make a selection, or a dataItem needs to be passed to this call."
@@ -1273,7 +1272,7 @@ class ActionLink: Action, ActionExec {
 			throw "Exception: edgeType is not set to a string"
 		}
 
-		guard let selected = arguments["dataItem"] as? Item else {
+		guard let selected = arguments["item"] as? Item else {
 			throw "Exception: selected data item is not passed"
 		}
         
@@ -1307,7 +1306,7 @@ class ActionUnlink: Action, ActionExec {
 			throw "Exception: edgeType is not set to a string"
 		}
 
-		guard let selected = arguments["dataItem"] as? Item else {
+		guard let selected = arguments["item"] as? Item else {
 			throw "Exception: selected data item is not passed"
 		}
         
@@ -1340,7 +1339,7 @@ class ActionMultiAction: Action, ActionExec {
 		}
 
 		for action in actions {
-			context.executeAction(action, with: arguments["dataItem"] as? Item)
+			context.executeAction(action, with: arguments["item"] as? Item)
 		}
 	}
 

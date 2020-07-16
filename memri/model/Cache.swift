@@ -316,7 +316,7 @@ public class Cache {
 			cancellables.append(resultSet.objectWillChange.sink { _ in
 				// TODO: Error handling
 				self.scheduleUIUpdate? { context in
-					context.cascadingView?.resultSet.datasource == resultSet.datasource
+					context.currentView?.resultSet.datasource == resultSet.datasource
 				}
             })
 

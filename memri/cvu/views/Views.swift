@@ -190,11 +190,11 @@ public class Views {
 		case "currentSession": fallthrough
 		case "session":
 			return context?.currentSession
-		case "view": return context?.cascadingView
-		case "dataItem":
+		case "view": return context?.currentView
+		case "item":
 			if let itemRef: Item = viewArguments?.get(".") {
 				return itemRef
-			} else if let item = context?.cascadingView?.resultSet.singletonItem {
+			} else if let item = context?.currentView?.resultSet.singletonItem {
 				return item
 			} else {
 				throw "Exception: Missing object for property getter"
@@ -242,7 +242,7 @@ public class Views {
 						throw "Unexpected edge lookup. No source specified"
 					}
 
-					let name = node.name == "@@DEFAULT@@" ? "dataItem" : node.name
+					let name = node.name == "@@DEFAULT@@" ? "item" : node.name
 					do {
 						value = try getGlobalReference(name, viewArguments: viewArguments)
 						first = false

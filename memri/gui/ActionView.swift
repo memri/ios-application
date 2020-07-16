@@ -29,7 +29,7 @@ struct ActionButton: View {
 		let action = self.action ?? ActionNoop(context)
 
 		// NOTE: Allowed force unwrappings (logic)
-		switch action.getRenderAs(context.cascadingView?.viewArguments) {
+		switch action.getRenderAs(context.currentView?.viewArguments) {
 		case .popup:
             return AnyView(ActionPopupButton(action: action, item: item))
 		case .button:

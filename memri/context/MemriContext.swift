@@ -27,11 +27,11 @@ public class MemriContext: ObservableObject {
     
 	/// The current session that is active in the application
     public var currentSession: Session? {
-        sessions?.currentSession
+        sessions.currentSession
     }
 
-    public var cascadingView: CascadingView? {
-        sessions?.currentSession?.currentView
+    public var currentView: CascadingView? {
+        sessions.currentSession?.currentView
     }
 
 	public var views: Views
@@ -54,7 +54,7 @@ public class MemriContext: ObservableObject {
 
 	public var items: [Item] {
 		get {
-			cascadingView?.resultSet.items ?? []
+			currentView?.resultSet.items ?? []
 		}
 		set {
 			// Do nothing
@@ -64,7 +64,7 @@ public class MemriContext: ObservableObject {
 
 	public var item: Item? {
 		get {
-			cascadingView?.resultSet.singletonItem
+			currentView?.resultSet.singletonItem
 		}
 		set {
 			// Do nothing
@@ -246,7 +246,7 @@ public class MemriContext: ObservableObject {
 		self.indexerAPI = indexerAPI
 
 		// TODO: FIX
-		self.cascadingView?.context = self
+		self.currentView?.context = self
 		self.indexerAPI.context = self
 	}
 }
@@ -318,7 +318,7 @@ public class RootContext: MemriContext {
 			indexerAPI: IndexerAPI()
 		)
 
-		cascadingView?.context = self
+		currentView?.context = self
 
 		let takeScreenShot = { () -> Void in
 			// Make sure to record a screenshot prior to session switching

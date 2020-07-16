@@ -37,10 +37,17 @@ public class CascadableDict: Cascadable {
         self.init(CVUParsedObjectDefinition(parsed), [], host)
     }
     
-    convenience init(_ cascadableDict: CascadableDict, item: Item) {
+    public class func from(_ cascadableDict: CascadableDict, _ item: Item) {
         #warning("Implement")
         throw "Not implemented"
 //        self.init(CVUParsedObjectDefinition(parsed), [], host)
+        
+        //                    var dict = viewArgs.asDict()
+        //                    for (key, value) in dict {
+        //                        if let expr = value as? Expression {
+        //                            dict[key] = try expr.execute(viewArgs)
+        //                        }
+        //                    }
     }
 }
 public typealias UserState = CascadableDict
@@ -54,7 +61,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var uid: Int
     
     var state: CVUStateDefinition? {
-        try withRealm { realm in
+        withReadRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -411,9 +418,18 @@ public class CascadingView: Cascadable, ObservableObject {
         }
 	}
     
+    override func setState(_ propName:String, _ value:Any?) {
+        super.setState(propName, value)
+        schedulePersist()
+    }
+    
+    func schedulePersist() {
+        session?.sessions?.schedulePersist()
+    }
+    
     #warning("Move to separate thread")
     public func persist() throws {
-        withRealm { realm in
+        try withWriteRealmThrows { realm in
             var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if stored == nil {
                 stored = try Cache.createItem(CVUStateDefinition.self, values: [])

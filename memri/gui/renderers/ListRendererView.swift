@@ -65,7 +65,7 @@ struct ListRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-                self.context.cascadingView?.userState
+                self.context.currentView?.userState
 					.set("selection", $0.compactMap { self.context.items[safe: $0] })
 			}
 		)
@@ -74,17 +74,17 @@ struct ListRendererView: View {
 	let name = "list"
 
 	var renderConfig: CascadingListConfig {
-		context.cascadingView?.renderConfig as? CascadingListConfig ?? CascadingListConfig()
+		context.currentView?.renderConfig as? CascadingListConfig ?? CascadingListConfig()
 	}
 
 	var body: some View {
 		let context = self.context
 
 		return VStack {
-			if context.cascadingView?.resultSet.count == 0 {
+			if context.currentView?.resultSet.count == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(context.cascadingView?.emptyResultText ?? "")
+					Text(context.currentView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)

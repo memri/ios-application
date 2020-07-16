@@ -82,11 +82,11 @@ class FilterPanelRendererButton: Action, ActionExec {
 	}
 
 	override func isActive() -> Bool? {
-		context.cascadingView?.activeRenderer == rendererName
+		context.currentView?.activeRenderer == rendererName
 	}
 
 	func exec(_: [String: Any?]) {
-		context.cascadingView?.activeRenderer = rendererName
+		context.currentView?.activeRenderer = rendererName
 		context.scheduleUIUpdate { _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
 	}
 }

@@ -34,7 +34,7 @@ struct ThumbWaterfallRendererView: View {
 	//    }
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+		context.currentView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
@@ -87,10 +87,10 @@ struct ThumbWaterfallRendererView: View {
 
 	var body: some View {
 		VStack {
-			if context.cascadingView?.resultSet.count == 0 {
+			if context.currentView?.resultSet.count == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView?.emptyResultText ?? "")
+					Text(self.context.currentView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)

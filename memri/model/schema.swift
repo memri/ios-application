@@ -275,6 +275,10 @@ public class AuditItem : Item {
 }
 
 public class CVUStateDefinition : CVUStoredDefinition {
+    required init () {
+        domain = "state"
+    }
+    
     public class func fromCVUStoredDefinition(_ stored:CVUStoredDefinition) throws -> CVUStateDefinition {
         try Cache.createItem(CVUStateDefinition.self, values: [
             "definition": stored.definition,

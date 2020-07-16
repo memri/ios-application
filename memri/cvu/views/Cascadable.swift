@@ -57,6 +57,7 @@ public class Cascadable {
     
     func setState(_ propName:String, _ value:Any?) {
         head[propName] = value
+        localCache.removeValue(forKey: propName)
     }
 
 	func cascadePropertyAsCGFloat(_ name: String) -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil

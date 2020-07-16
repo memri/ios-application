@@ -26,9 +26,9 @@ struct FilterPanel: View {
 	private func allOtherFields() -> [String] {
 		var list: [String] = []
 
-		if let item = context.cascadingView?.resultSet.items.first {
-			var excludeList = context.cascadingView?.sortFields
-			excludeList?.append(context.cascadingView?.datasource.sortProperty ?? "")
+		if let item = context.currentView?.resultSet.items.first {
+			var excludeList = context.currentView?.sortFields
+			excludeList?.append(context.currentView?.datasource.sortProperty ?? "")
 			excludeList?.append("uid")
 			excludeList?.append("deleted")
 
@@ -46,7 +46,7 @@ struct FilterPanel: View {
 	private func toggleAscending() {
 		realmWriteIfAvailable(context.realm) {
 			self.context.currentSession?.currentView?.datasource?.sortAscending.value
-				= !(self.context.cascadingView?.datasource.sortAscending ?? true)
+				= !(self.context.currentView?.datasource.sortAscending ?? true)
 		}
 		context.scheduleCascadingViewUpdate()
 	}
@@ -68,7 +68,7 @@ struct FilterPanel: View {
 	}
 
 	private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
-		if let currentCategory = context.cascadingView?.activeRenderer.split(separator: ".").first {
+		if let currentCategory = context.currentView?.activeRenderer.split(separator: ".").first {
 			return context.renderers.all
 				.map { (arg0) -> (String, FilterPanelRendererButton) in
 					let (key, value) = arg0
@@ -83,12 +83,12 @@ struct FilterPanel: View {
 	}
 
 	private func isActive(_ renderer: FilterPanelRendererButton) -> Bool {
-		context.cascadingView?.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
+		context.currentView?.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
 	}
 
 	var body: some View {
 		let context = self.context
-		let cascadingView = self.context.cascadingView
+		let cascadingView = self.context.currentView
 
 		return
 			HStack(alignment: .top, spacing: 0) {

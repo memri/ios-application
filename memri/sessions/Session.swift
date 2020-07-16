@@ -14,27 +14,27 @@ public final class Session : Equatable {
     /// The name of the item.
     var name:String? {
         get { parsed["name"] as? String }
-        set (value) { parsed["name"] = value }
+        set (value) { setState("name", value) }
     }
     /// TBD
     var currentViewIndex:Int {
         get { parsed["currentViewIndex"] as? Int ?? 0 }
-        set (value) { parsed["currentViewIndex"] = value }
+        set (value) { setState("currentViewIndex", value) }
     }
     /// TBD
     var editMode:Bool {
         get { parsed["editMode"] as? Bool ?? false }
-        set (value) { parsed["editMode"] = value }
+        set (value) { setState("editMode", value) }
     }
     /// TBD
     var showContextPane:Bool {
         get { parsed["showContextPane"] as? Bool ?? false }
-        set (value) { parsed["showContextPane"] = value }
+        set (value) { setState("showContextPane", value) }
     }
     /// TBD
     var showFilterPanel:Bool  {
         get { parsed["showFilterPanel"] as? Bool ?? false }
-        set (value) { parsed["showFilterPanel"] = value }
+        set (value) { setState("showFilterPanel", value) }
     }
 
     /// TBD
@@ -59,7 +59,7 @@ public final class Session : Equatable {
     var uid: Int
     var parsed: CVUParsedSessionDefinition
     var state: CVUStateDefinition? {
-        try withRealm { realm in
+        withReadRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -104,7 +104,7 @@ public final class Session : Equatable {
             throw "Unable to parse state definition"
         }
         
-        _ = try withRealm { realm in
+        try withReadRealmThrows { realm in
             self.parsed = p
            
             guard let storedViewStates = state.edges("view")?
@@ -120,9 +120,18 @@ public final class Session : Equatable {
        }
     }
     
+    private func setState(_ name:String, _ value: Any?) {
+        parsed[name] = value
+        schedulePersist()
+    }
+    
+    func schedulePersist() {
+        sessions?.schedulePersist()
+    }
+    
     #warning("Move to separate thread")
     public func persist() throws {
-        _ = try withRealm { realm in
+        try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored CVU. Creating a new one.")
@@ -156,7 +165,6 @@ public final class Session : Equatable {
                 }
             }
             
-            
             for view in views {
                 try view.persist()
                 
@@ -170,7 +178,10 @@ public final class Session : Equatable {
         }
     }
 
-	public func setCurrentView(_ state: CVUStateDefinition? = nil) throws {
+    public func setCurrentView (
+        _ state: CVUStateDefinition? = nil,
+        _ viewArguments: ViewArguments? = nil
+    ) throws {
 		guard let storedView = state ?? self.currentView?.state else {
             throw "Exception: Unable fetch stored CVU state"
         }
@@ -195,6 +206,12 @@ public final class Session : Equatable {
 		
         storedView.accessed()
         
+        #warning("Merge with existing viewArguments on view")
+        //.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?])
+        if let args = viewArguments {
+            currentView?.viewArguments = args
+        }
+        
         try currentView?.load { error in
             if error == nil, let item = currentView?.singleton {
                 item.accessed()
@@ -210,24 +227,29 @@ public final class Session : Equatable {
                 showFilterPanel = false
             }
         }
+        
+        schedulePersist()
     }
 
 	public func takeScreenShot() {
 		if let view = UIApplication.shared.windows[0].rootViewController?.view {
 			if let uiImage = view.takeScreenShot() {
-				do {
-                    if self.screenshot == nil {
-						let file = try Cache.createItem(File.self,
-                            values: ["uri": File.generateFilePath()]
-                        )
-                        self.screenshot = file
-					}
+                
+                #warning("Test this")
+                DispatchQueue.global(qos: .userInitiated).async {
+                    do {
+                        if self.screenshot == nil {
+                            let file = try Cache.createItem(File.self,
+                                values: ["uri": File.generateFilePath()]
+                            )
+                            self.screenshot = file
+                        }
 
-                    #warning("Move to separate thread")
-                    try self.screenshot?.write(uiImage)
-				} catch {
-					debugHistory.error("Unable to write screenshot: \(error)")
-				}
+                        try self.screenshot?.write(uiImage)
+                    } catch {
+                        debugHistory.error("Unable to write screenshot: \(error)")
+                    }
+                }
 
 				return
 			}

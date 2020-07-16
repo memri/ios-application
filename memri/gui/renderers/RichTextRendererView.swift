@@ -111,7 +111,7 @@ struct RichTextRendererView: View {
 	}
 
 	var body: some View {
-		let dataItem = self.context.cascadingView?.resultSet.singletonItem
+		let dataItem = self.context.currentView?.resultSet.singletonItem
 
 		return VStack(spacing: 0) {
 			dataItem.map { _ in
@@ -122,8 +122,8 @@ struct RichTextRendererView: View {
 								fontSize: renderConfig.fontSize,
 								headingFontSize: renderConfig.titleFontSize,
 								filterText: Binding<String>(
-									get: { self.context.cascadingView?.filterText ?? "" },
-									set: { self.context.cascadingView?.filterText = $0 }
+									get: { self.context.currentView?.filterText ?? "" },
+									set: { self.context.currentView?.filterText = $0 }
 								))
 			}
 		}

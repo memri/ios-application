@@ -81,7 +81,7 @@ struct ThumbnailRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.cascadingView?.userState?
+				self.context.currentView?.userState?
 					.set("selection", $0.compactMap { self.context.items[safe: $0] })
 			}
 		)
@@ -159,10 +159,10 @@ struct ThumbnailRendererView: View {
 
 	var body: some View {
 		VStack {
-			if (context.cascadingView?.resultSet.count ?? 0) == 0 {
+			if (context.currentView?.resultSet.count ?? 0) == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView?.emptyResultText ?? "")
+					Text(self.context.currentView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)

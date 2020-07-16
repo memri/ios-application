@@ -14,87 +14,87 @@ protocol UniqueString {
 	var uniqueString: String { get }
 }
 
-//public class Datasource: SchemaItem, UniqueString {
-//	/// Primary key used in the realm database of this Item
-//	override public static func primaryKey() -> String? {
-//		"uid"
-//	}
-//
-//	/// Retrieves the query which is used to load data from the pod
-//	@objc dynamic var query: String?
-//
-//	/// Retrieves the property that is used to sort on
-//	@objc dynamic var sortProperty: String?
-//
-//	/// Retrieves whether the sort direction
-//	/// - false sort descending
-//	/// - true sort ascending
-//	let sortAscending = RealmOptional<Bool>()
-//	/// Retrieves the number of items per page
-//	let pageCount = RealmOptional<Int>() // Todo move to ResultSet
-//
-//	let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
-//	/// Returns a string representation of the data in QueryOptions that is unique for that data
-//	/// Each QueryOptions object with the same data will return the same uniqueString
-//	var uniqueString: String {
-//		var result: [String] = []
-//
-//		result.append((query ?? "").sha256())
-//		result.append(sortProperty ?? "")
-//
-//		let sortAsc = sortAscending.value ?? true
-//		result.append(String(sortAsc))
-//
-//		return result.joined(separator: ":")
-//	}
-//
-//	convenience init(query: String) {
-//		self.init()
-//		self.query = query
-//	}
-//
-//	required init() {
-//		super.init()
-//	}
-//
-//    required init(from decoder: Decoder) throws {
-//        fatalError("init(from:) has not been implemented")
-//    }
-//
-//	public class func fromCVUDefinition(_ def: CVUParsedDatasourceDefinition,
-//										_ viewArguments: ViewArguments? = nil) throws -> Datasource {
-//		func getValue<T>(_ name: String) throws -> T? {
-//			if let expr = def[name] as? Expression {
-//				do {
-//					let x = try expr.execForReturnType(T.self, args: viewArguments)
-//					return x
-//				} catch {
-//					debugHistory.warn("\(error)")
-//					return nil
-//				}
-//			}
-//			return def[name] as? T
-//		}
-//
-//		return try Cache.createItem(Datasource.self, values: [
-//			"selector": def.selector ?? "[datasource]",
-//			"query": try getValue("query") ?? "",
-//			"sortProperty": try getValue("sortProperty") ?? "",
-//			"sortAscending": try getValue("sortAscending") ?? true,
-//		])
-//	}
-//}
+public class Datasource: SchemaItem, UniqueString {
+	/// Primary key used in the realm database of this Item
+	override public static func primaryKey() -> String? {
+		"uid"
+	}
+
+	/// Retrieves the query which is used to load data from the pod
+	@objc dynamic var query: String?
+
+	/// Retrieves the property that is used to sort on
+	@objc dynamic var sortProperty: String?
+
+	/// Retrieves whether the sort direction
+	/// - false sort descending
+	/// - true sort ascending
+	let sortAscending = RealmOptional<Bool>()
+	/// Retrieves the number of items per page
+	let pageCount = RealmOptional<Int>() // Todo move to ResultSet
+
+	let pageIndex = RealmOptional<Int>() // Todo move to ResultSet
+	/// Returns a string representation of the data in QueryOptions that is unique for that data
+	/// Each QueryOptions object with the same data will return the same uniqueString
+	var uniqueString: String {
+		var result: [String] = []
+
+		result.append((query ?? "").sha256())
+		result.append(sortProperty ?? "")
+
+		let sortAsc = sortAscending.value ?? true
+		result.append(String(sortAsc))
+
+		return result.joined(separator: ":")
+	}
+
+	convenience init(query: String) {
+		self.init()
+		self.query = query
+	}
+
+	required init() {
+		super.init()
+	}
+
+    required init(from decoder: Decoder) throws {
+        fatalError("init(from:) has not been implemented")
+    }
+
+	public class func fromCVUDefinition(_ def: CVUParsedDatasourceDefinition,
+										_ viewArguments: ViewArguments? = nil) throws -> Datasource {
+		func getValue<T>(_ name: String) throws -> T? {
+			if let expr = def[name] as? Expression {
+				do {
+					let x = try expr.execForReturnType(T.self, args: viewArguments)
+					return x
+				} catch {
+					debugHistory.warn("\(error)")
+					return nil
+				}
+			}
+			return def[name] as? T
+		}
+
+		return try Cache.createItem(Datasource.self, values: [
+			"selector": def.selector ?? "[datasource]",
+			"query": try getValue("query") ?? "",
+			"sortProperty": try getValue("sortProperty") ?? "",
+			"sortAscending": try getValue("sortAscending") ?? true,
+		])
+	}
+}
 
 public class CascadingDatasource: Cascadable, UniqueString {
 	/// Retrieves the query which is used to load data from the pod
 	var query: String? {
-        get { datasource.query ?? cascadeProperty("query") }
+        get { cascadeProperty("query") }
         set (value) { setState("query", value) }
 	}
 
 	/// Retrieves the property that is used to sort on
 	var sortProperty: String? {
-        get { datasource.sortProperty ?? cascadeProperty("sortProperty") }
+        get { cascadeProperty("sortProperty") }
         set (value) { setState("sortProperty", value) }
 	}
 
@@ -102,7 +102,7 @@ public class CascadingDatasource: Cascadable, UniqueString {
 	/// false sort descending
 	/// true sort ascending
 	var sortAscending: Bool? {
-        get { datasource.sortAscending.value ?? cascadeProperty("sortAscending") }
+        get { cascadeProperty("sortAscending") }
         set (value) { setState("sortAscending", value) }
 	}
 
@@ -119,14 +119,14 @@ public class CascadingDatasource: Cascadable, UniqueString {
 
 		return result.joined(separator: ":")
 	}
-//
-//	func flattened() -> Datasource {
-//		Datasource(value: [
-//			"query": query,
-//			"sortProperty": sortProperty,
-//			"sortAscending": sortAscending,
-//		])
-//	}
+
+	func flattened() -> Datasource {
+		Datasource(value: [
+			"query": query,
+			"sortProperty": sortProperty,
+			"sortAscending": sortAscending,
+		])
+	}
 //
 //	init(_ cascadeStack: [CVUParsedDatasourceDefinition],
 //		 _ viewArguments: ViewArguments? = nil,

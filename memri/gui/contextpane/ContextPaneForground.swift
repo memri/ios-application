@@ -15,7 +15,7 @@ struct ContextPaneForeground: View {
 
 	var body: some View {
 		let context = self.context
-		let labels = context.cascadingView?.resultSet
+		let labels = context.currentView?.resultSet
 			.singletonItem?.edges("label")?.itemsArray(type: Label.self) ?? []
 		let addLabelAction = ActionNoop(context)
 
@@ -23,19 +23,19 @@ struct ContextPaneForeground: View {
 			ScrollView(.vertical) {
 				VStack(alignment: .leading) {
 					VStack(alignment: .leading) {
-						Text(context.cascadingView?.title ?? "") // TODO: make this generic
+						Text(context.currentView?.title ?? "") // TODO: make this generic
 							.font(.system(size: 23, weight: .regular, design: .default))
 							.fontWeight(.bold)
 							.opacity(0.75)
 							.padding(.horizontal, paddingLeft)
 							.padding(.vertical, 5)
-						Text(context.cascadingView?.subtitle ?? "")
+						Text(context.currentView?.subtitle ?? "")
 							.font(.body)
 							.opacity(0.75)
 							.padding(.horizontal, paddingLeft)
 
 						HStack {
-							ForEach(context.cascadingView?.contextButtons ?? [], id: \.self) { actionItem in
+							ForEach(context.currentView?.contextButtons ?? [], id: \.self) { actionItem in
 								ActionButton(action: actionItem)
 							}
 						}
@@ -62,7 +62,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.cascadingView?.actionItems ?? [], id: \.self) { actionItem in
+						ForEach(context.currentView?.actionItems ?? [], id: \.self) { actionItem in
 							Button(action: {
 								context.executeAction(actionItem)
                     }) {
@@ -87,7 +87,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.cascadingView?.navigateItems ?? [], id: \.self) { navigateItem in
+						ForEach(context.currentView?.navigateItems ?? [], id: \.self) { navigateItem in
 							Button(action: {
 								context.executeAction(navigateItem)
                     }) {

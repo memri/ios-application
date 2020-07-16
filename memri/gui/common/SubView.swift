@@ -85,7 +85,7 @@ public struct SubView: View {
 			if self.toolbar {
 				TopNavigation(inSubView: true, showCloseButton: showCloseButton)
 			}
-			allRenderers?.allViews[self.proxyMain?.cascadingView?.activeRenderer ?? "list"]
+			allRenderers?.allViews[self.proxyMain?.currentView?.activeRenderer ?? "list"]
 				.fullHeight()
 
 			if self.searchbar {

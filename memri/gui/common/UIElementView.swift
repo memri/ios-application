@@ -383,8 +383,8 @@ public struct UIElementView: SwiftUI.View {
 
 		// Filter (unimplemented)
 		let filterTextBinding = Binding<String>(
-			get: { self.context.cascadingView?.filterText ?? "" },
-			set: { self.context.cascadingView?.filterText = $0 }
+			get: { self.context.currentView?.filterText ?? "" },
+			set: { self.context.currentView?.filterText = $0 }
 		)
 
 		return _RichTextEditor(htmlContentBinding: contentBinding,

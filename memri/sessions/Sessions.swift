@@ -14,14 +14,14 @@ import SwiftUI
 public final class Sessions : Equatable {
     /// TBD
     var currentSessionIndex:Int {
-        get { parsed["currentSessionIndex"] as? Int ?? 0 }
-        set (value) { parsed["currentSessionIndex"] = value }
+        get { parsed?["currentSessionIndex"] as? Int ?? 0 }
+        set (value) { setState("currentSessionIndex", value) }
     }
     
     var uid: Int
-    var parsed: CVUParsedSessionsDefinition
+    var parsed: CVUParsedSessionsDefinition? = nil
     var state: CVUStateDefinition? {
-        try withRealm { realm in
+        withReadRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -51,7 +51,7 @@ public final class Sessions : Equatable {
     private func load(_ context:MemriContext) throws {
         self.context = context
         
-        _ = try withRealm { realm in
+        try withReadRealmThrows { realm in
             guard
                 let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid),
                 let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition
@@ -74,6 +74,30 @@ public final class Sessions : Equatable {
         }
     }
     
+    private func setState(_ name:String, _ value: Any?) {
+        parsed?[name] = value
+        schedulePersist()
+    }
+    
+    private var scheduled = false
+    func schedulePersist() {
+        guard !scheduled else { return }
+        
+        scheduled = true
+        
+        DispatchQueue.global(qos: .userInitiated).async {
+            do { try self.persist() }
+            catch let error {
+                debugHistory.warn("Unable to persist session state: \(error)")
+            }
+            
+            self.scheduled = false
+            
+            // Update UI
+//            self.objectWillChange.send()
+        }
+    }
+    
 	public func setCurrentSession(_ state: CVUStateDefinition? = nil) throws {
         guard let storedSession = state ?? self.currentSession?.state else {
             throw "Exception: Unable fetch stored CVU state"
@@ -93,11 +117,13 @@ public final class Sessions : Equatable {
         }
         
         storedSession.accessed()
+        
+        schedulePersist()
 	}
     
     #warning("Move to separate thread")
     public func persist() throws {
-        _ = try withRealm { realm in
+        try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored CVU. Creating a new one.")
@@ -111,7 +137,7 @@ public final class Sessions : Equatable {
                 self.uid = uid
             }
             
-            state?.set("definition", parsed.toCVUString(0, "    "))
+            state?.set("definition", parsed?.toCVUString(0, "    "))
             
             for session in sessions {
                 try session.persist()
@@ -127,7 +153,7 @@ public final class Sessions : Equatable {
     }
 
 	public func install(_ context: MemriContext) throws {
-        _ = try withRealm { realm in
+        try withWriteRealmThrows { realm in
             
             let templateQuery = "selector = '[sessions = defaultSessions]'"
             guard
@@ -151,4 +177,8 @@ public final class Sessions : Equatable {
 
 	/// Clear all sessions and create a new one
 	public func clear() {}
+    
+    public static func == (lt: Sessions, rt: Sessions) -> Bool {
+        lt.uid == rt.uid
+    }
 }

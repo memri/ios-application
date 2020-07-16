@@ -30,7 +30,7 @@ struct CustomRendererView: View {
 	let name = "custom"
 
 	var renderConfig: CascadingCustomConfig? {
-		context.cascadingView?.renderConfig as? CascadingCustomConfig
+		context.currentView?.renderConfig as? CascadingCustomConfig
 	}
 
 	var body: some View {

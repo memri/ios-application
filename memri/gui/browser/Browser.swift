@@ -12,7 +12,7 @@ struct Browser: View {
 	@EnvironmentObject var context: MemriContext
 
 	var activeRenderer: AnyView {
-		allRenderers?.allViews[context.cascadingView?.activeRenderer ?? ""] ?? AnyView(Spacer())
+		allRenderers?.allViews[context.currentView?.activeRenderer ?? ""] ?? AnyView(Spacer())
 	}
 
 	var body: some View {

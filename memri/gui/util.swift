@@ -194,24 +194,36 @@ func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
 	}
 }
 
-//func withRealm(_ doThis: (_ realm: Realm) throws -> Void) throws {
-////	do {
-//		let realm = try Realm()
-//		try doThis(realm)
-////	} catch {
-////		debugHistory.error("\(error)")
-////	}
-//}
-
-func withRealm(_ doThis: (_ realm: Realm) throws -> Any?) throws -> Any? {
-//	do {
-		let realm = try Realm()
-		return try doThis(realm)
-//	} catch {
-//		debugHistory.error("\(error)")
-//	}
-//	return nil
+func withReadRealm(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
+    do { return try withReadRealmThrowsReturn(doThis) }
+    catch let error {
+        debugHistory.error("Could not read from realm: \(error)")
+        return nil
+    }
 }
+func withReadRealmThrows(_ doThis: (_ realm: Realm) throws -> Void) throws {
+    let realm = try Realm()
+    try doThis(realm)
+}
+func withReadRealmThrowsReturn(_ doThis: (_ realm: Realm) throws -> Any?) throws -> Any? {
+    let realm = try Realm()
+    return try doThis(realm)
+}
+func withWriteRealm(_ doThis: (_ realm: Realm) -> Void) {
+    do { try withWriteRealmThrows(doThis) }
+    catch let error {
+        debugHistory.error("Could not read from realm: \(error)")
+    }
+}
+func withWriteRealmThrows(_ doThis: (_ realm: Realm) throws -> Void) throws {
+    let realm = try Realm()
+    if !realm.isInWriteTransaction {
+        try realm.write { try doThis(realm) }
+    } else {
+        try doThis(realm)
+    }
+}
+
 
 /// retrieves item from realm by type and uid.
 /// - Parameters:
@@ -222,7 +234,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
-		return try withRealm { realm in
+		return withWriteRealm { realm in
 			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
 		} as? Item
 	}

@@ -58,7 +58,7 @@ struct MapRendererView: View {
 	let name = "map"
 
 	var renderConfig: CascadingMapConfig {
-		(context.cascadingView?.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
+		(context.currentView?.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
 	}
 
 	var useMapBox: Bool { context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false }

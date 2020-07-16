@@ -63,7 +63,7 @@ struct SettingsPane: View {
 						}
 						HStack {
 							Button(action: {
-								if let datasource = self.context.cascadingView?.sessionView.datasource {
+                                if let datasource = self.context.currentView?.datasource.flattened() {
 									self.context.cache.sync.clearSyncCache()
 									self.context.cache.sync.syncQuery(datasource)
 								}
