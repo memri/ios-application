@@ -266,7 +266,7 @@ public class SubContext: MemriContext {
 			realm: context.realm,
 			settings: context.settings,
 			installer: context.installer,
-			sessions: try Sessions(state, views),
+			sessions: try Sessions(state),
 			views: views,
 			navigation: context.navigation,
 			renderers: context.renderers,
@@ -276,6 +276,8 @@ public class SubContext: MemriContext {
 		closeStack = context.closeStack
 
 		views.context = self
+        
+        try sessions.load(self)
 	}
 }
 
@@ -355,6 +357,9 @@ public class RootContext: MemriContext {
 
 			// Load views configuration
 			try self.views.load(self) {
+                
+                try sessions.load(self)
+                
 				// Update view when sessions changes
 				self.cancellable = self.sessions?.objectWillChange.sink { _ in
 					self.scheduleUIUpdate()

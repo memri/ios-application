@@ -460,6 +460,8 @@ public class Cache {
 		let excludes = ["uid", "dateCreated", "dateAccessed", "dateModified", "starred",
 						"deleted", "syncState"]
 
+        #warning("Does not duplicate all edges")
+        
 		if let itemType = item.getType() {
 			var dict = [String: Any?]()
 

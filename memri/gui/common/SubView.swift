@@ -24,6 +24,7 @@ public struct SubView: View {
 				viewArguments: ViewArguments?) {
 		do {
             let args = try ViewArguments(viewArguments, item: dataItem)
+            args.set(".", dataItem)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -34,16 +35,23 @@ public struct SubView: View {
 			}
 
             do {
-                if let stored = context.views.fetchDefinitions(name: viewName, type: "view").first {
-                    let state = try CVUStateDefinition.fromCVUStoredDefinition(stored)
-                    proxyMain = try context.createSubContext(state)
-                    args.set(".", dataItem)
-                    proxyMain?.cascadingView.set("viewArguments", args)
-                    try proxyMain?.updateCascadingView()
-                }
-                else {
+                guard let stored = context.views.fetchDefinitions(name: viewName).first else {
                     throw "Could not fetch view by name: \(viewName)"
                 }
+                
+                var state:CVUStateDefinition = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+                if stored.type == "sessions" {
+                    
+                }
+                else if stored.type == "session" {
+                    
+                }
+                else stored.type == "view" {
+                    
+                }
+                
+                proxyMain = try context.createSubContext(state)
+                try proxyMain?.currentSession?.setCurrentView(nil, args)
             }
 			catch {
 				// TODO: Refactor error handling

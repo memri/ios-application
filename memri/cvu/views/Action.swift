@@ -452,7 +452,7 @@ class ActionBack: Action, ActionExec {
 		}
 	}
 
-	class func exec(_ context: MemriContext, arguments: [String: Any?]) throws {
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionBack(context).exec(arguments) }
 	}
 }
@@ -708,7 +708,7 @@ class ActionShowStarred: Action, ActionExec {
 				// openView("filter-starred", ["stateName": starButton.actionStateName as Any])
 			} else {
 				// Go back to the previous view
-				try ActionBack.exec(context, arguments: [:])
+				try ActionBack.exec(context, [:])
 			}
 		} catch {
 			// TODO: Error Handling
@@ -809,10 +809,10 @@ class ActionForward: Action, ActionExec {
 
 	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
-			if session.currentViewIndex == (session.views?.count ?? 0) - 1 {
+            if session.currentViewIndex == session.views.count - 1 {
 				print("Warn: Can't go forward. Already at last view in session")
 			} else {
-				realmWriteIfAvailable(context.cache.realm) { session.currentViewIndex += 1 }
+				session.currentViewIndex += 1
 				context.scheduleCascadingViewUpdate()
 			}
 		} else {
@@ -836,9 +836,7 @@ class ActionForwardToFront: Action, ActionExec {
 
 	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
-			realmWriteIfAvailable(context.cache.realm) {
-				session.currentViewIndex = (session.views?.count ?? 0) - 1
-			}
+            session.currentViewIndex = session.views.count - 1
 			context.scheduleCascadingViewUpdate()
 		} else {
 			// TODO: Error handling
@@ -865,12 +863,21 @@ class ActionBackAsSession: Action, ActionExec {
 			if session.currentViewIndex == 0 {
 				throw "Warn: Can't go back. Already at earliest view in session"
 			} else {
-				if let duplicateSession = try context.cache.duplicate(session as Item) as? Session {
-					realmWriteIfAvailable(context.cache.realm) {
-						duplicateSession.currentViewIndex -= 1
-					}
-
-					try ActionOpenSession.exec(context, ["session": duplicateSession])
+                if
+                    let state = session.state,
+                    let copy = try context.cache.duplicate(state as Item) as? CVUStateDefinition
+                {
+                    for view in session.views {
+                        if
+                            let state = view.state,
+                            let viewCopy = try context.cache.duplicate(state as Item) as? CVUStateDefinition
+                        {
+                            _ = try copy.link(viewCopy, type: "view", sequence: .last)
+                        }
+                    }
+                    
+					try ActionOpenSession.exec(context, ["session": copy])
+                    try ActionBack.exec(context, [:])
 				} else {
 					// TODO: Error handling
 					throw ActionError.Warning(message: "Cannot execute ActionBackAsSession, duplicating currentSession resulted in a different type")
@@ -888,7 +895,7 @@ class ActionBackAsSession: Action, ActionExec {
 
 class ActionOpenSession: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
-		"argumentTypes": ["session": Session.self, "viewArguments": ViewArguments.self],
+		"argumentTypes": ["session": CVUStateDefinition.self, "viewArguments": ViewArguments.self],
 		"opensView": true,
 		"withAnimation": false,
 	] }
@@ -897,16 +904,11 @@ class ActionOpenSession: Action, ActionExec {
 		super.init(context, "openSession", arguments: arguments, values: values)
 	}
 
-	func openSession(_ context: MemriContext, _ session: Session) {
-		if let sessions = context.sessions { // TODO: generalize
-			// Add view to session and set it as current
-			sessions.setCurrentSession(session)
-		} else {
-			// TODO: Error handling
-		}
-
-		// Recompute view
-		context.scheduleCascadingViewUpdate()
+	func openSession(_ session: CVUStateDefinition, _ args: ViewArguments? = nil) throws {
+		let sessions = context.sessions
+        
+        try sessions.setCurrentSession(session)
+        try sessions.currentSession?.setCurrentView(nil, args)
 	}
 
 	//    func openSession(_ context: MemriContext, _ name:String, _ variables:[String:Any]? = nil) throws {
@@ -922,16 +924,18 @@ class ActionOpenSession: Action, ActionExec {
 	/// Adds a view to the history of the currentSession and displays it. If the view was already part of the currentSession.views it
 	/// reorders it on top
 	func exec(_ arguments: [String: Any?]) throws {
+        let args = arguments["viewArguments"] as? ViewArguments
+        
 		if let item = arguments["session"] {
-			if let session = item as? Session {
-				openSession(context, session)
+			if let session = item as? CVUStateDefinition {
+				try openSession(session, args)
 			} else {
 				// TODO: Error handling
 				throw "Cannot execute openSession 'session' argmument cannot be casted to Session"
 			}
 		} else {
-			if let session = arguments["item"] as? Session {
-				openSession(context, session)
+			if let session = arguments["item"] as? CVUStateDefinition {
+				try openSession(session, args)
 			}
 
 			// TODO: Error handling
@@ -965,33 +969,14 @@ class ActionOpenSessionByName: Action, ActionExec {
 		}
 
 		do {
-			// Fetch and parse view from the database
-			let fromDB = try context.views
-				.parseDefinition(context.views.fetchDefinitions(name: name, type: "session").first)
-
-			// See if this is a session, if so take the last view
-			guard let def = fromDB as? CVUParsedSessionDefinition else {
-				// TODO: Error handling
-				throw "Exception: Cannot open session with name \(name) " +
-					"cannot be cast as CVUParsedSessionDefinition"
-			}
-
-			let session = try Cache.createItem(Session.self)
-			guard let parsedDefs = def["viewDefinitions"] as? [CVUParsedViewDefinition],
-				parsedDefs.count > 0 else {
-				throw "Exception: Session \(name) has no views."
-			}
-
-			for parsed in parsedDefs {
-				let view = try SessionView.fromCVUDefinition(
-					parsed: parsed,
-					viewArguments: viewArguments
-				)
-				_ = try session.link(view, type: "view")
-			}
+            guard let stored = context.views.fetchDefinitions(name: name, type: "session").first else {
+                throw "Exception: Cannot open session with name \(name). Unable to find view."
+            }
+            
+            let session = try CVUStateDefinition.fromCVUStoredDefinition(stored)
 
 			// Open the view
-			ActionOpenSession(context).openSession(context, session)
+			try ActionOpenSession(context).openSession(session, viewArguments)
 		} catch {
 			// TODO: Log error, Error handling
 			throw "Exception: Cannot open session by name \(name): \(error)"
@@ -1021,7 +1006,10 @@ class ActionDelete: Action, ActionExec {
 		//            }
 		//        }
 
-		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
+        if
+            let selection: [Item] = context.currentView?.userState.get("selection") as? [Item],
+            selection.count > 0
+        {
 			context.cache.delete(selection)
 			context.scheduleCascadingViewUpdate(immediate: true)
 		} else if let dataItem = arguments["item"] as? Item {

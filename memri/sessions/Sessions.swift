@@ -48,7 +48,7 @@ public final class Sessions : Equatable {
         self.uid = uid
     }
     
-    private func load(_ context:MemriContext) throws {
+    func load(_ context:MemriContext) throws {
         self.context = context
         
         try withReadRealmThrows { realm in

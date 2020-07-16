@@ -106,17 +106,30 @@ public final class Session : Equatable {
         
         try withReadRealmThrows { realm in
             self.parsed = p
-           
-            guard let storedViewStates = state.edges("view")?
-                .sorted(byKeyPath: "sequence").items(type: CVUStateDefinition.self) else {
-                    throw "No views found. Aborting" // TODO should this initialize a default view?
-            }
             
-            for viewState in storedViewStates {
-                views.append(try CascadingView(viewState, self))
+            // Either the views are encoded in the definition
+            if
+                let parsedViews = self.parsed["viewDefinitions"] as? [CVUParsedViewDefinition],
+                parsedViews.count > 0
+            {
+                for parsed in parsedViews {
+                    let view = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
+                    _ = try state.link(view, type: "view")
+                }
             }
-            
-            try setCurrentView()
+            // Or they are in the database linked as edges
+            else {
+                guard let storedViewStates = state.edges("view")?
+                    .sorted(byKeyPath: "sequence").items(type: CVUStateDefinition.self) else {
+                        throw "No views found. Aborting" // TODO should this initialize a default view?
+                }
+                
+                for viewState in storedViewStates {
+                    views.append(try CascadingView(viewState, self))
+                }
+                
+                try setCurrentView()
+            }
        }
     }
     
