@@ -19,13 +19,12 @@ public class Views {
 		realm = rlm
 	}
 
-	public func load(_ mn: MemriContext, _ callback: () throws -> Void) throws {
-		// Store context for use within createCascadingView)
-		context = mn
+	public func load(_ context: MemriContext, _ callback: () throws -> Void) throws {
+        self.context = context
 
-		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
+		try setCurrentLanguage(context.settings.get("user/language") ?? "English")
         
-        settingWatcher = context?.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
+        settingWatcher = context.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
             if let value = $0 as? Bool {
                 if value && self.CVUWatcher == nil {
                     self.listenForChanges()

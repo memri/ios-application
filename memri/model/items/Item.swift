@@ -170,6 +170,9 @@ public class Item: SchemaItem {
 	public func set(_ name: String, _ value: Any?) {
 		realmWriteIfAvailable(realm) {
 			if let schema = self.objectSchema[name] {
+                #warning("TODO implement, check for difference")
+//                state?.modified(["definition"])
+                
 				switch schema.type {
 				case .int:
 					self[name] = value as? Int
@@ -366,7 +369,7 @@ public class Item: SchemaItem {
 
 		return orderNumber
 	}
-
+    
 	/// When distinct is set to false multiple of the same relationship type are allowed
 	public func link(_ item: Object,
                      type edgeType: String = "edge",
@@ -611,11 +614,30 @@ public class Item: SchemaItem {
 	}
 
 	/// update the dateAccessed property to the current date
-	public func access() {
+	public func accessed() {
 		realmWriteIfAvailable(realm) {
 			self.dateAccessed = Date()
+            
+            let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
+            _ = try link(auditItem, type: "changelog")
 		}
 	}
+    
+    /// update the dateAccessed property to the current date
+    public func modified(_ updatedFields:[String]) {
+        #warning("Only do this once in a while. This is what syncState.changedInThisSession was for")
+        
+        realmWriteIfAvailable(realm) {
+            self.dateModified = Date()
+            self._updated.append(objectsIn: updatedFields)
+            
+            let auditItem = try Cache.createItem(
+                AuditItem.self,
+                values: ["action": "update", "content": try serialize(AnyCodable(Array(updatedFields)))]
+            )
+            _ = try link(auditItem, type: "changelog")
+        }
+    }
 
 	/// compare two dataItems
 	/// - Parameters:

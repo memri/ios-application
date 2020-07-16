@@ -11,7 +11,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-public final class Sessions {
+public final class Sessions : Equatable {
     /// TBD
     var currentSessionIndex:Int {
         get { parsed["currentSessionIndex"] as? Int ?? 0 }
@@ -20,17 +20,17 @@ public final class Sessions {
     
     var uid: Int
     var parsed: CVUParsedSessionsDefinition
-    var stored: CVUStoredDefinition? {
+    var state: CVUStateDefinition? {
         try withRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-        } as? CVUStoredDefinition
+        } as? CVUStateDefinition
     }
 
     /// TBD
     var sessions = [Session]()
+    var context: MemriContext? = nil
     
     private var cancellables: [AnyCancellable] = []
-    private var views: Views
     
 	var currentSession: Session? {
         sessions[safe: currentSessionIndex]
@@ -40,25 +40,21 @@ public final class Sessions {
 		currentSession?.currentView
 	}
 
-    init(_ state: CVUStateDefinition, _ views: Views) throws {
+    init(_ state: CVUStateDefinition) throws {
         guard let uid = state.uid.value else {
             throw "CVU state object is unmanaged"
         }
         
         self.uid = uid
-        self.views = views
-        
-        // Only load if installation has run
-        if state.definition != nil {
-            try load()
-        }
     }
     
-    private func load() throws {
+    private func load(_ context:MemriContext) throws {
+        self.context = context
+        
         _ = try withRealm { realm in
             guard
                 let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid),
-                let p = try views.parseDefinition(state) as? CVUParsedSessionsDefinition
+                let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition
             else {
                 throw "Unable to fetch CVU state definition"
             }
@@ -71,56 +67,57 @@ public final class Sessions {
             }
             
             for sessionState in storedSessionStates {
-                sessions.append(Session(sessionState))
+                sessions.append(try Session(sessionState, self))
             }
             
             try setCurrentSession()
         }
     }
     
-	public func setCurrentSession(_ session: Session? = nil) throws {
-        guard
-            let currentSession = session ?? self.currentSession,
-            let stored = self.stored,
-            let storedSession = currentSession.stored
-        else {
+	public func setCurrentSession(_ state: CVUStateDefinition? = nil) throws {
+        guard let storedSession = state ?? self.currentSession?.state else {
             throw "Exception: Unable fetch stored CVU state"
         }
         
-        if
-            let edge = try stored.link(storedSession, type: "session", sequence: .last),
-            let index = stored.edges("session")?.index(of: edge)
-        {
-            // Update the index pointer
+        // If the session already exists, we simply update the session index
+        if let index = sessions.firstIndex(where: { session in
+            session.uid == storedSession.uid.value
+        }) {
             currentSessionIndex = index
-        } else {
-            debugHistory.error("Unable to switch sessions")
-            return
         }
+        // Otherwise lets create a new session
+        else {
+            // Add session to list
+            sessions.append(try Session(storedSession, self))
+            currentSessionIndex = sessions.count - 1
+        }
+        
+        storedSession.accessed()
 	}
     
+    #warning("Move to separate thread")
     public func persist() throws {
         _ = try withRealm { realm in
-            var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-            if stored == nil {
-                stored = try Cache.createItem(CVUStateDefinition.self, values: [:])
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+            if state == nil {
+                debugHistory.warn("Could not find stored CVU. Creating a new one.")
                 
-                guard let uid = stored?.uid.value else {
+                state = try Cache.createItem(CVUStateDefinition.self, values: [:])
+                
+                guard let uid = state?.uid.value else {
                     throw "Exception: could not create stored definition"
                 }
                 
                 self.uid = uid
-                
-                // TODO Warn??
             }
             
-            stored?.set("definition", parsed.toCVUString(0, "    "))
+            state?.set("definition", parsed.toCVUString(0, "    "))
             
             for session in sessions {
                 try session.persist()
                 
-                if let s = session.stored {
-                    _ = try stored?.link(s, type: "session", sequence: .last, overwrite: false)
+                if let s = session.state {
+                    _ = try state?.link(s, type: "session", sequence: .last, overwrite: false)
                 }
                 else {
                     debugHistory.warn("Unable to store session. Missing stored CVU")
@@ -148,7 +145,7 @@ public final class Sessions {
                 _ = try stored.link(session, type: "session", sequence: .last)
             }
             
-            try load()
+            try load(context)
         }
 	}
 

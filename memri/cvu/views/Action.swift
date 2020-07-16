@@ -579,6 +579,11 @@ class ActionOpenViewByName: Action, ActionExec {
 	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
+        // TODO implement state being a session state
+        //        if parsed is CVUParsedSessionDefinition {
+        //            if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
+        //        }
+        
 		if let name = arguments["name"] as? String {
 			// Fetch a dynamic view based on its name
 			let stored = context.views.fetchDefinitions(name: name, type: "view").first

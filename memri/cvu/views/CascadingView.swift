@@ -53,10 +53,10 @@ public class CascadingView: Cascadable, ObservableObject {
     /// The uid of the CVUStateDefinition
     var uid: Int
     
-    var stored: CVUStoredDefinition? {
+    var state: CVUStateDefinition? {
         try withRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-        } as? CVUStoredDefinition
+        } as? CVUStateDefinition
     }
     
 	/// The name of the cascading view
@@ -340,11 +340,21 @@ public class CascadingView: Cascadable, ObservableObject {
 		set(newValue) { userState?.set("searchMatchText", newValue) }
 	}
 
-    init(_ state: CVUStateDefinition, context: MemriContext) throws {
-        self.uid = state.uid.value
+    init (_ state: CVUStateDefinition, _ session: Session) throws {
+        guard let uid = state.uid.value else {
+            throw "CVU state object is unmanaged"
+        }
+        
+        self.uid = uid
+        self.session = session
+        self.context = session.context
         
         var head = try context?.views.parseDefinition(state)
         head.domain = "state"
+        
+        guard head.definitionType == "view" else {
+            throw "Wrong type of definition passed: \(head.definitionType)"
+        }
         
 		super.init(head, [])
 	}
@@ -401,6 +411,7 @@ public class CascadingView: Cascadable, ObservableObject {
         }
 	}
     
+    #warning("Move to separate thread")
     public func persist() throws {
         withRealm { realm in
             var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
