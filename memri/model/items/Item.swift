@@ -368,9 +368,13 @@ public class Item: SchemaItem {
 	}
 
 	/// When distinct is set to false multiple of the same relationship type are allowed
-	public func link(_ item: Object, type edgeType: String = "edge",
-					 order: EdgeSequencePosition? = nil, label: String? = nil,
-					 distinct: Bool = false, overwrite: Bool = true) throws -> Edge? {
+	public func link(_ item: Object,
+                     type edgeType: String = "edge",
+					 sequence: EdgeSequencePosition? = nil,
+                     label: String? = nil,
+					 distinct: Bool = false,
+                     overwrite: Bool = true) throws -> Edge? {
+        
 		guard let _: Int = get("uid") else {
 			throw "Exception: Missing uid on source"
 		}
@@ -386,7 +390,7 @@ public class Item: SchemaItem {
 		let query = "deleted = false and type = '\(edgeType)'"
 			+ (distinct ? "" : " and targetItemID = \(targetID)")
 		var edge = allEdges.filter(query).first
-		let sequenceNumber: Int? = try determineSequenceNumber(edgeType, order)
+		let sequenceNumber: Int? = try determineSequenceNumber(edgeType, sequence)
 
 		realmWriteIfAvailable(realm) {
 			if item.realm == nil, let item = item as? Item {

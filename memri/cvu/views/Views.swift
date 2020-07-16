@@ -465,39 +465,6 @@ public class Views {
 		return nil
 	}
 
-	public func createCascadingView(_ sessionView: SessionView? = nil) throws -> CascadingView {
-		guard let context = self.context else {
-			throw "Exception: MemriContext is not defined in views"
-		}
-
-		var cascadingView: CascadingView
-		if let viewFromSession = sessionView ?? context.sessions?.currentSession?.currentView {
-			cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
-		} else {
-			throw "Unable to find currentView"
-		}
-
-		// TODO: REFACTOR: move these to a better place (context??)
-
-		// turn off editMode when navigating
-		if context.sessions?.currentSession?.editMode == true {
-			realmWriteIfAvailable(realm) {
-				context.sessions?.currentSession?.editMode = false
-			}
-		}
-
-		// hide filterpanel if view doesnt have a button to open it
-		if context.sessions?.currentSession?.showFilterPanel ?? false {
-			if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
-				realmWriteIfAvailable(realm) {
-					context.sessions?.currentSession?.showFilterPanel = false
-				}
-			}
-		}
-
-		return cascadingView
-	}
-
 	// TODO: Refactor: Consider caching cascadingView based on the type of the item
 	public func renderItemCell(with dataItem: Item?,
 							   search rendererNames: [String] = [],

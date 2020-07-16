@@ -144,117 +144,6 @@ public class MemriContext: ObservableObject {
 		}
 	}
 
-	public func updateCascadingView() throws {
-		try maybeLogUpdate()
-
-		// Fetch datasource if not yet parsed yet
-		guard let currentView = sessions?.currentView else {
-			throw "Exception: currentView is not set"
-		}
-
-		if currentView.datasource == nil {
-			if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
-				if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-					// TODO: this is at the wrong moment. Should be done after cascading
-					currentView.set("datasource",
-									try Datasource.fromCVUDefinition(ds, currentView.viewArguments))
-				} else {
-					throw "Exception: Missing datasource in session view"
-				}
-			} else {
-				throw "Exception: Unable to parse view definition"
-			}
-		}
-
-		guard let datasource = currentView.datasource else {
-			throw "Exception: Missing datasource in session view"
-		}
-
-		// Fetch the resultset associated with the current view
-		let resultSet = cache.getResultSet(datasource)
-
-		// If we can guess the type of the result based on the query, let's compute the view
-		if resultSet.determinedType != nil {
-			if self is RootContext { // if type(of: self) == RootMain.self {
-				debugHistory.info("Computing view "
-					+ (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
-			}
-
-			do {
-				// Calculate cascaded view
-				let cascadingView = try views.createCascadingView() // TODO: handle errors better
-
-				// Update current session
-				currentSession = sessions?.currentSession // TODO: filter to a single property
-
-				// Set the newly cascading view
-				self.cascadingView = cascadingView
-
-				// Load data in the resultset of the computed view
-				try self.cascadingView?.resultSet.load { error in
-					if let error = error {
-						// TODO: Refactor: Log warning to user
-						print("Error: could not load result: \(error)")
-					} else {
-						try maybeLogRead()
-
-						// Update the UI
-						scheduleUIUpdate()
-					}
-				}
-			} catch {
-				// TODO: Error handling
-				// TODO: User Error handling
-				debugHistory.error("\(error)")
-			}
-
-			// Update the UI
-			scheduleUIUpdate()
-		}
-		// Otherwise let's execute the query first
-		else {
-			// Updating the data in the resultset of the session view
-			try resultSet.load { error in
-
-				// Only update when data was retrieved successfully
-				if let error = error {
-					// TODO: Error handling
-					print("Error: could not load result: \(error)")
-				} else {
-					// Update the current view based on the new info
-					scheduleUIUpdate() // TODO: shouldn't this be setCurrentView??
-				}
-			}
-		}
-	}
-
-	private func maybeLogRead() throws {
-		if let item = cascadingView?.resultSet.singletonItem {
-			let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
-			_ = try item.link(auditItem, type: "changelog")
-		}
-	}
-
-	private func maybeLogUpdate() throws {
-		if cascadingView?.context == nil { return }
-
-		let syncState = cascadingView?.resultSet.singletonItem?.syncState
-		if let syncState = syncState, syncState.changedInThisSession {
-			let fields = syncState.updatedFields
-			// TODO: serialize
-			if let item = cascadingView?.resultSet.singletonItem {
-				let auditItem = try Cache.createItem(AuditItem.self, values: [
-					"contents": try serialize(AnyCodable(Array(fields))),
-					"action": "update",
-				])
-				_ = try item.link(auditItem, type: "changelog")
-				realmWriteIfAvailable(realm) { syncState.changedInThisSession = false }
-			} else {
-				print("Could not log update, no Item found")
-			}
-		}
-	}
-
 	public func getPropertyValue(_ name: String) -> Any {
 		let type: Mirror = Mirror(reflecting: self)
 
@@ -365,7 +254,7 @@ public class MemriContext: ObservableObject {
 public class SubContext: MemriContext {
 	let parent: MemriContext
 
-	init(name: String, _ context: MemriContext, _ session: Session) throws {
+	init(name: String, _ context: MemriContext, _ state: CVUStateDefinition) throws {
 		let views = Views(context.realm)
 
 		parent = context
@@ -377,9 +266,8 @@ public class SubContext: MemriContext {
 			realm: context.realm,
 			settings: context.settings,
 			installer: context.installer,
-			sessions: try Cache.createItem(Sessions.self),
+			sessions: try Sessions(state, views),
 			views: views,
-			//            cascadingView: context.cascadingView,
 			navigation: context.navigation,
 			renderers: context.renderers,
 			indexerAPI: context.indexerAPI
@@ -388,8 +276,6 @@ public class SubContext: MemriContext {
 		closeStack = context.closeStack
 
 		views.context = self
-
-		sessions?.setCurrentSession(session)
 	}
 }
 
@@ -452,8 +338,8 @@ public class RootContext: MemriContext {
 		globalSettings = settings
 	}
 
-	public func createSubContext(_ session: Session) throws -> MemriContext {
-		let subContext = try SubContext(name: "Proxy", self, session)
+    public func createSubContext(_ state: CVUStateDefinition) throws -> MemriContext {
+		let subContext = try SubContext(name: "Proxy", self, state)
         subContexts.append(subContext)
         return subContext
 	}
@@ -474,11 +360,9 @@ public class RootContext: MemriContext {
 					self.scheduleUIUpdate()
 				}
 
-				self.currentSession?.access()
-				self.currentSession?.currentView?.access()
-
 				// Load current view
-				try self.updateCascadingView()
+                self.currentSession?.setCurrentView()
+//                try self.cascadingView?.load()()
                 
                 callback?()
 			}

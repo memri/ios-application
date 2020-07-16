@@ -35,7 +35,19 @@ public class ResultSet: ObservableObject {
 				return String(typeName == "*" ? "mixed" : typeName)
 			}
 		}
-		return nil
+        
+        var foundType:String? = nil
+        for item in items {
+            if let f = foundType {
+                if foundType == item.genericType { continue }
+                else { return "mixed" }
+            }
+            else {
+                foundType = item.genericType
+            }
+        }
+        
+		return foundType
 	}
 
 	/// Boolean indicating whether the resultset is a collection of items or a single item

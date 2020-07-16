@@ -12,6 +12,7 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 	let name: String?
 	let selector: String?
 	var domain: String?
+    var definitionType: String { "" }
 
 	subscript(propName: String) -> Any? {
         get {
@@ -100,21 +101,34 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 //    }
 }
 
-public class CVUParsedObjectDefinition: CVUParsedDefinition {}
+public class CVUParsedObjectDefinition: CVUParsedDefinition {
+    override var definitionType: String { "object" }
+}
 
-public class CVUParsedDatasourceDefinition: CVUParsedDefinition {}
+public class CVUParsedDatasourceDefinition: CVUParsedDefinition {
+    override var definitionType: String { "datasource" }
+}
 
-public class CVUParsedStyleDefinition: CVUParsedDefinition {}
+public class CVUParsedStyleDefinition: CVUParsedDefinition {
+    override var definitionType: String { "style" }
+}
 
-public class CVUParsedLanguageDefinition: CVUParsedDefinition {}
+public class CVUParsedLanguageDefinition: CVUParsedDefinition {
+    override var definitionType: String { "language" }
+}
 
-public class CVUParsedColorDefinition: CVUParsedDefinition {}
+public class CVUParsedColorDefinition: CVUParsedDefinition {
+    override var definitionType: String { "color" }
+}
 
-public class CVUParsedRendererDefinition: CVUParsedDefinition {}
+public class CVUParsedRendererDefinition: CVUParsedDefinition {
+    override var definitionType: String { "renderer" }
+}
 
 public class CVUParsedViewDefinition: CVUParsedDefinition {
 	let type: String?
 	let query: ExprNode?
+    override var definitionType: String { "view" }
 
 	init(_ selector: String, name: String? = nil, type: String? = nil, query: ExprNode? = nil) {
 		self.type = type
@@ -124,6 +138,10 @@ public class CVUParsedViewDefinition: CVUParsedDefinition {
 	}
 }
 
-public class CVUParsedSessionDefinition: CVUParsedDefinition {}
+public class CVUParsedSessionDefinition: CVUParsedDefinition {
+    override var definitionType: String { "session" }
+}
 
-public class CVUParsedSessionsDefinition: CVUParsedDefinition {}
+public class CVUParsedSessionsDefinition: CVUParsedDefinition {
+    override var definitionType: String { "sessions" }
+}

@@ -522,12 +522,6 @@ class ActionOpenView: Action, ActionExec {
 
 			// Add view to session
 			try session.setCurrentView(view)
-
-			// Set accessed date to now
-			view.access()
-
-			// Recompute view
-			try context.updateCascadingView() // scheduleCascadingViewUpdate()
 		} else {
 			// TODO: Error Handling
 		}

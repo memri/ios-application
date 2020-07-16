@@ -194,23 +194,23 @@ func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
 	}
 }
 
-func withRealm(_ doThis: (_ realm: Realm) -> Void) {
-	do {
-		let realm = try Realm()
-		doThis(realm)
-	} catch {
-		debugHistory.error("\(error)")
-	}
-}
+//func withRealm(_ doThis: (_ realm: Realm) throws -> Void) throws {
+////	do {
+//		let realm = try Realm()
+//		try doThis(realm)
+////	} catch {
+////		debugHistory.error("\(error)")
+////	}
+//}
 
-func withRealm(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
-	do {
+func withRealm(_ doThis: (_ realm: Realm) throws -> Any?) throws -> Any? {
+//	do {
 		let realm = try Realm()
-		return doThis(realm)
-	} catch {
-		debugHistory.error("\(error)")
-	}
-	return nil
+		return try doThis(realm)
+//	} catch {
+//		debugHistory.error("\(error)")
+//	}
+//	return nil
 }
 
 /// retrieves item from realm by type and uid.
@@ -222,7 +222,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
-		return withRealm { realm in
+		return try withRealm { realm in
 			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
 		} as? Item
 	}

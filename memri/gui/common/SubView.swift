@@ -23,7 +23,7 @@ public struct SubView: View {
 	public init(context: MemriContext, viewName: String, dataItem: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-            let args = try ViewArguments.clone(viewArguments, item: dataItem)
+            let args = try ViewArguments(viewArguments, item: dataItem)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -33,26 +33,18 @@ public struct SubView: View {
 				throw "Exception: Too much nesting"
 			}
 
-			let stored = context.views.fetchDefinitions(name: viewName, type: "view").first
-			var parsed = try context.views.parseDefinition(stored)
-
-			if parsed is CVUParsedSessionDefinition {
-				if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
-			}
-
-			args.set(".", dataItem)
-
-			let view = try SessionView.fromCVUDefinition(
-				parsed: parsed as? CVUParsedViewDefinition,
-				stored: stored,
-				viewArguments: args
-			)
-
-			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "view")
-
-			proxyMain = try context.createSubContext(session)
-			do { try proxyMain?.updateCascadingView() }
+            do {
+                if let stored = context.views.fetchDefinitions(name: viewName, type: "view").first {
+                    let state = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+                    proxyMain = try context.createSubContext(state)
+                    args.set(".", dataItem)
+                    proxyMain?.cascadingView.set("viewArguments", args)
+                    try proxyMain?.updateCascadingView()
+                }
+                else {
+                    throw "Could not fetch view by name: \(viewName)"
+                }
+            }
 			catch {
 				// TODO: Refactor error handling
 				throw "Cannot update CascadingView \(self): \(error)"
@@ -63,10 +55,10 @@ public struct SubView: View {
 		}
 	}
 
-	public init(context: MemriContext, view: SessionView, dataItem: Item? = nil,
+	public init(context: MemriContext, view state: CVUStateDefinition, dataItem: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-			let args = try ViewArguments.clone(viewArguments, item: dataItem)
+			let args = try ViewArguments(viewArguments, item: dataItem)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -75,15 +67,11 @@ public struct SubView: View {
 			guard let context = context as? RootContext else {
 				throw "Exception: Too much nesting"
 			}
-
-			args.set(".", dataItem)
-			view.set("viewArguments", args)
-
-			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "view")
-
-			proxyMain = try context.createSubContext(session)
-			try proxyMain?.updateCascadingView()
+            
+            proxyMain = try context.createSubContext(state)
+            args.set(".", dataItem)
+            proxyMain?.cascadingView.set("viewArguments", args)
+            try proxyMain?.updateCascadingView()
 		} catch {
 			// TODO: Refactor error handling
 			debugHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")

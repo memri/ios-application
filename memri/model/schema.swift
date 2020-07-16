@@ -275,7 +275,27 @@ public class AuditItem : Item {
 }
 
 public class CVUStateDefinition : CVUStoredDefinition {
+    public class func fromCVUStoredDefinition(_ stored:CVUStoredDefinition) throws -> CVUStateDefinition {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": stored.definition,
+            "domain": "state",
+            "name": stored.name,
+            "query": stored.query,
+            "selector": stored.selector,
+            "type": stored.type
+        ])
+    }
     
+    public class func fromCVUParsedDefinition(_ parsed:CVUParsedDefinition) throws -> CVUStateDefinition {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": parsed.toCVUString(0, "    "),
+            "domain": "state",
+            "name": parsed.name,
+//            "query": stores.query,
+            "selector": parsed.selector,
+            "type": parsed.definitionType
+        ])
+    }
 }
 
 /// TBD

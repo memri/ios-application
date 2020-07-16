@@ -37,20 +37,27 @@ public class CascadableDict: Cascadable {
         self.init(CVUParsedObjectDefinition(parsed), [], host)
     }
     
-    convenience init(_ cascadableDict: CascadableDict) {
+    convenience init(_ cascadableDict: CascadableDict, item: Item) {
         #warning("Implement")
         throw "Not implemented"
 //        self.init(CVUParsedObjectDefinition(parsed), [], host)
     }
 }
-typealias UserState = CascadableDict
-typealias ViewArguments = CascadableDict
+public typealias UserState = CascadableDict
+public typealias ViewArguments = CascadableDict
 
 public class CascadingView: Cascadable, ObservableObject {
     var context: MemriContext?
+    var session: Session? = nil
     
     /// The uid of the CVUStateDefinition
     var uid: Int
+    
+    var stored: CVUStoredDefinition? {
+        try withRealm { realm in
+            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        } as? CVUStoredDefinition
+    }
     
 	/// The name of the cascading view
 	var name: String { cascadeProperty("name") ?? "" } // by copy??
@@ -162,7 +169,7 @@ public class CascadingView: Cascadable, ObservableObject {
             cascadeContext("userState", "userState", CVUParsedObjectDefinition.self)
         }
         set (value) {
-            setState("userState", value)
+            setState("userState", value.head)
         }
     }
 
@@ -173,7 +180,7 @@ public class CascadingView: Cascadable, ObservableObject {
             cascadeContext("viewArguments", "viewArguments", CVUParsedObjectDefinition.self)
         }
         set (value) {
-            setState("viewArguments", value)
+            setState("viewArguments", value.head)
         }
     }
 
@@ -396,9 +403,12 @@ public class CascadingView: Cascadable, ObservableObject {
     
     public func persist() throws {
         withRealm { realm in
-            var stored = realm.object(ofType: CVUStateDefinition.self, withPrimaryKey: uid)
+            var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if stored == nil {
                 stored = try Cache.createItem(CVUStateDefinition.self, values: [])
+                uid = stored.uid.value
+                
+                // TODO Warn??
             }
             
             stored?.set("definition", head.toCVUString(0, "    "))
@@ -406,9 +416,9 @@ public class CascadingView: Cascadable, ObservableObject {
     }
 
 	private func inherit(_ source: Any,
-							   _ viewArguments: ViewArguments?,
-							   _ context: MemriContext,
-							   _ sessionView: SessionView) throws -> CVUStoredDefinition? {
+                         _ viewArguments: ViewArguments?,
+                         _ context: MemriContext,
+                         _ sessionView: SessionView) throws -> CVUStoredDefinition? {
 		var result: Any? = source
 
 		if let expr = source as? Expression {
@@ -435,12 +445,12 @@ public class CascadingView: Cascadable, ObservableObject {
         cascadeStack = []
 
 		// Fetch query from the view from session
-		guard let datasource = head["datasourceDefinition"] else {
+        guard head["datasourceDefinition"] != nil else {
 			throw "Exception: Cannot compute a view without a query to fetch data"
 		}
 
 		// Look up the associated result set
-		let resultSet = context.cache.getResultSet(datasource)
+        let resultSet = context.cache.getResultSet(datasource.flattened())
 
 		// Determine whether this is a list or a single item resultset
 		var isList = resultSet.isList
@@ -522,5 +532,71 @@ public class CascadingView: Cascadable, ObservableObject {
 		if activeRenderer == nil {
 			throw "Exception: could not determine the active renderer for this view"
 		}
+        
+        // TODO is this needed for anything or should the tail property be removed?
+        tail = cascadeStack.suffix(cascadeStack.count - 1)
+        localCache = [:] // Reset local cache again since it was filled when we fetched datasource
+        
+        // Update the UI
+        context?.scheduleUIUpdate(immediate: true)
 	}
+    
+    public func reload() throws {
+        try self.resultSet.load { error in
+            if let error = error {
+                // TODO: Refactor: Log warning to user
+                debugHistory.error("Exception: could not load result: \(error)")
+            } else {
+                // Update the UI
+                scheduleUIUpdate()
+            }
+        }
+    }
+    
+    public func load(_ callback:(error) -> Void) throws {
+        guard head["datasourceDefinition"] != nil else {
+            throw "Exception: Missing datasource in view"
+        }
+
+        let resultSet = context?.cache.getResultSet(datasource.flattened())
+
+        // If we can guess the type of the result based on the query, let's compute the view
+        if resultSet.determinedType != nil {
+            if context is RootContext {
+                debugHistory.info("Computing view "
+                    + (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
+            }
+
+            do {
+                try cascade()
+
+                try self.resultSet.load { error in
+                    if let error = error {
+                        // TODO: Refactor: Log warning to user
+                        debugHistory.error("Exception: could not load result: \(error)")
+                    } else {
+                        // Update the UI
+                        scheduleUIUpdate()
+                    }
+                    
+                    callback(error)
+                }
+            } catch {
+                // TODO: Error handling
+                // TODO: User Error handling
+                debugHistory.error("\(error)")
+            }
+        }
+        // Otherwise let's execute the query first to be able to read the type from the data
+        else {
+            try resultSet.load { error in
+                if let error = error {
+                    // TODO: Error handling
+                    debugHistory.error("Exception: could not load result: \(error)")
+                } else {
+                    load(callback)
+                }
+            }
+        }
+    }
 }

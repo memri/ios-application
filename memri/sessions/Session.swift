@@ -18,7 +18,7 @@ public final class Session {
     }
     /// TBD
     var currentViewIndex:Int {
-        get { parsed["currentViewIndex"] ?? 0 }
+        get { parsed["currentViewIndex"] as? Int ?? 0 }
         set (value) { parsed["currentViewIndex"] = value }
     }
     /// TBD
@@ -47,12 +47,14 @@ public final class Session {
 
     var uid: Int
     var parsed: CVUParsedSessionDefinition
+    var stored: CVUStoredDefinition? {
+        try withRealm { realm in
+            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        } as? CVUStoredDefinition
+    }
     
     /// TBD
     var views: [CascadingView]
-//        Results<SessionView>? {
-//        edges("view")?.sorted(byKeyPath: "sequence").items(type:SessionView.self)
-//    }
     
 	private var cancellables: [AnyCancellable] = []
 
@@ -75,14 +77,98 @@ public final class Session {
         views[safe: currentViewIndex]
 	}
 
-    init() {
-
+    init(_ state: CVUStateDefinition) {
+        uid = state.uid.value
+        
         // Fetch views and parse them
         
+        //
+        //        edges("session")?.sorted(byKeyPath: "sequence").items(type:Session.self)
+        //
+        //        var parsed = try context.views.parseDefinition(stored)
+        //
+        //        if parsed is CVUParsedSessionDefinition {
+        //            if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
+        //        }
+        //
+        //
+        //        let state = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+        //        let view = try CascadingView(state, proxyMain)
+        //        view.set("viewArguments", args)
+        //
+        //
+        //        _ = try session.link(view, type: "view")
+        //
+        //        sessions?.setCurrentSession(session)
+        
     }
+    
+    public func persist() throws {
+        _ = try withRealm { realm in
+            var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+            if stored == nil {
+                stored = try Cache.createItem(CVUStateDefinition.self, values: [:])
+                
+                guard let uid = stored?.uid.value else {
+                    throw "Exception: could not create stored definition"
+                }
+                
+                self.uid = uid
+                
+                // TODO Warn??
+            }
+            
+            stored?.set("definition", parsed.toCVUString(0, "    "))
+                
+                // TODO views
+    //            if let screenshot = def["screenshot"] as? File {
+    //                session.set("screenshot", screenshot)
+    //            }
+            
+            for view in views {
+                try view.persist()
+                
+                if let s = view.stored {
+                    _ = try stored?.link(s, type: "view", sequence: .last, overwrite: false)
+                }
+                else {
+                    debugHistory.warn("Unable to store view. Missing stored CVU")
+                }
+            }
+        }
+    }
+    
+//    private func maybeLogRead() throws {
+//        if let item = cascadingView?.resultSet.singletonItem {
+//            let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
+//            _ = try item.link(auditItem, type: "changelog")
+//        }
+//    }
+//
+//    private func maybeLogUpdate() throws {
+//        if cascadingView?.context == nil { return }
+//
+//        let syncState = cascadingView?.resultSet.singletonItem?.syncState
+//        if let syncState = syncState, syncState.changedInThisSession {
+//            let fields = syncState.updatedFields
+//            // TODO: serialize
+//            if let item = cascadingView?.resultSet.singletonItem {
+//                let auditItem = try Cache.createItem(AuditItem.self, values: [
+//                    "contents": try serialize(AnyCodable(Array(fields))),
+//                    "action": "update",
+//                ])
+//                _ = try item.link(auditItem, type: "changelog")
+//                realmWriteIfAvailable(realm) { syncState.changedInThisSession = false }
+//            } else {
+//                print("Could not log update, no Item found")
+//            }
+//        }
+//    }
 
-	public func setCurrentView(_ view: SessionView) throws {
+	public func setCurrentView(_ view: CascadingView? = nil) throws {
 		guard let views = views else { return }
+        
+        // when view is not set (called during init) we (re)load the current view
 
 		realmWriteIfAvailable(realm) {
 			if let index = views.firstIndex(of: view) {
@@ -105,9 +191,69 @@ public final class Session {
 				}
 			}
 		}
+        
+        /*
+         
+             try context?.maybeLogUpdate()
+         
+             guard let cascadingView = sessions?.currentView else {
+                 throw "Exception: currentView is not set"
+             }
+         
+             // Update current session
+             currentSession = sessions?.currentSession // TODO: filter to a single property
+
+             // Set accessed date to now
+             view.access()
+
+             // Recompute view
+             try context.updateCascadingView() // scheduleCascadingViewUpdate()
+         
+            cascadingView.load { error in
+                try cascadingView.context?.maybeLogRead()
+            }
+         
+         self.currentSession?.access()
+         self.currentSession?.currentView?.access()
+            
+         */
 
 		decorate(view)
 	}
+    
+    #warning("Merge with setCurrentView above")
+    public func createCascadingView(_ sessionView: SessionView? = nil) throws -> CascadingView {
+        guard let context = self.context else {
+            throw "Exception: MemriContext is not defined in views"
+        }
+
+        var cascadingView: CascadingView
+        if let viewFromSession = sessionView ?? context.sessions?.currentSession?.currentView {
+            cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
+        } else {
+            throw "Unable to find currentView"
+        }
+
+        // TODO: REFACTOR: move these to a better place (context??)
+
+        // turn off editMode when navigating
+        if context.sessions?.currentSession?.editMode == true {
+            realmWriteIfAvailable(realm) {
+                context.sessions?.currentSession?.editMode = false
+            }
+        }
+
+        // hide filterpanel if view doesnt have a button to open it
+        if context.sessions?.currentSession?.showFilterPanel ?? false {
+            if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
+                realmWriteIfAvailable(realm) {
+                    context.sessions?.currentSession?.showFilterPanel = false
+                }
+            }
+        }
+
+        return cascadingView
+    }
 
 	public func takeScreenShot() {
 		if let view = UIApplication.shared.windows[0].rootViewController?.view {
@@ -131,44 +277,6 @@ public final class Session {
 		}
 
 		debugHistory.error("Unable to create screenshot")
-	}
-
-	public class func fromCVUDefinition(_ def: CVUParsedSessionDefinition) throws -> Session {
-		let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
-			.map { try SessionView.fromCVUDefinition(parsed: $0) }
-
-        let values:[String:Any?] = [
-            "selector": (def.selector ?? "[session]"),
-            "name": (def["name"] as? String ?? ""),
-            "currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
-            "showFilterPanel": (def["showFilterPanel"] as? Bool ?? false),
-            "showContextPane": (def["showContextPane"] as? Bool ?? false),
-            "editMode": (def["editMode"] as? Bool ?? false),
-        ]
-        
-		let session = try Cache.createItem(Session.self, values: values)
-
-		if let screenshot = def["screenshot"] as? File {
-			session.set("screenshot", screenshot)
-		}
-		if views.count > 0 {
-			for view in views {
-				_ = try session.link(view, type: "view")
-			}
-		}
-
-		return session
-	}
-
-	public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
-		let jsonData = try jsonDataFromFile(file, ext)
-		let session: Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)
-		return session
-	}
-
-	public class func fromJSONString(_ json: String) throws -> Session {
-		let session: Session = try MemriJSONDecoder.decode(Session.self, from: Data(json.utf8))
-		return session
 	}
 
 	public static func == (lt: Session, rt: Session) -> Bool {
