@@ -81,6 +81,13 @@ struct CalendarView: View {
     func hasItemOnDay(_ day: Date) -> Bool {
         datesWithItems.contains(day)
     }
+	
+	func itemsOnDay(_ day: Date) -> [Item] {
+		data.filter { item in
+			guard let dateTime = self.resolveExpression(renderConfig.dateTimeExpression, toType: Date.self, forItem: item) else { return false }
+			return calendarHelper.areOnSameDay(day, dateTime)
+		}
+	}
     
     func section(forMonth month: Date) -> ASSection<Date> {
 		let days = calendarHelper.getPaddedDays(forMonth: month)
@@ -112,8 +119,12 @@ struct CalendarView: View {
 			formatter.dateStyle = .long
 			formatter.timeStyle = .none
 			// handle press on day
-			print("Pressed on day: \(formatter.string(from: day))")
-			#warning("TODO - this should open a list that's filtered to items on this day")
+			let items = itemsOnDay(day)
+			let uids = items.compactMap { $0.uid }
+			
+			guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
+			
+			try? ActionOpenViewWithUIDs(context).exec(["itemType": itemType, "uids": uids])
 		}
     }
     

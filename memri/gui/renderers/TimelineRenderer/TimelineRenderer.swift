@@ -44,15 +44,16 @@ struct TimelineRenderer: View {
             let matchesNow = model.calendarHelper.isSameAsNow(group.date, byComponents: model.detailLevel.relevantComponents)
             return ASSection<Date>(id: group.date, data: group.items) { element, cellContext in
                 renderElement(element)
+					.if(group.items.count < 2) { $0.frame(minHeight: 35) }
             }
 			.onSelectSingle({ (index) in
 				guard let element = group.items[safe: index] else { return }
 				if element.isGroup {
-					#warning("TODO")
-					print("IMPLEMENT ME - this should open a list that's filtered to this day/hour (same level as timeline)")
+					let uids = element.items.compactMap { $0.uid }
+					try? ActionOpenViewWithUIDs(context).exec(["itemType": element.itemType, "uids": uids])
 				} else {
-					if let press = self.renderConfig.press {
-						context.executeAction(press, with: context.items[safe: index])
+					if let press = self.renderConfig.press, let item = element.items.first {
+						context.executeAction(press, with: item)
 					}
 				}
 			})
@@ -90,58 +91,19 @@ struct TimelineRenderer: View {
     }
     
     @ViewBuilder
-    func renderElement(_ element: TimelineElement) -> some View {
-		#warning("TODO - use CVU")
-        if element.isGroup {
-                                TimelineItemView(
-                                    icon: { () -> Image in
-                                        switch element.itemType {
-                                        case "Note": return Image(systemName: "square.and.pencil")
-                                        default: return Image(systemName: "paperplane")
-                                        }
-                                    }(),
-                                    title: "\(element.items.count)x \(element.itemType)",
-                                    subtitle: nil,
-                                    highlighted: false,
-                                    backgroundColor: { () -> Color in
-                                        switch element.itemType {
-										case "Note": return Color.blue
-                                        default: return .green
-                                        }
-                                    }()
-                                )
-                                .frame(maxWidth: .infinity, alignment: .leading)
-        } else {
-                                TimelineItemView(
-                                    icon: { () -> Image in
-										switch element.itemType {
-										case "Note": return Image(systemName: "square.and.pencil")
-										default: return Image(systemName: "paperplane")
-										}
-                                    }(),
-                                    title: { () -> String in
-                                        switch element.itemType {
-                                        case "Note": return element.items.first?.get("title", type: String.self) ?? "Untitled"
-										default: return element.itemType.camelCaseToTitleCase()
-                                        }
-                                    }(),
-									subtitle:  { () -> String? in
-										switch element.itemType {
-										case "Note": return element.items.first?.get("content", type: String.self).map { $0.strippingHTMLtags() } ?? "-"
-										default: return nil
-										}
-									}(),
-                                    highlighted: false,
-									backgroundColor: { () -> Color in
-										switch element.itemType {
-										case "Note": return Color.blue
-										default: return .green
-										}
-									}()
-                                )
-                                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
+	func renderElement(_ element: TimelineElement) -> some View {
+		if element.isGroup {
+			TimelineItemView(icon: Image(systemName: "rectangle.stack"),
+							 title: "\(element.items.count) \(element.itemType.camelCaseToTitleCase())\(element.items.count != 1 ? "s" : "")",
+							 backgroundColor: ItemFamily(rawValue: element.itemType)?.backgroundColor ?? .gray)
+				.frame(maxWidth: .infinity, alignment: .leading)
+			#warning("@Ruben: I couldn't figure out a way using current CVU options to provide a way to render for a `group` of items")
+		} else if let item = element.items.first {
+			self.renderConfig.render(item: item)
+				.frame(maxWidth: .infinity, alignment: .leading)
+				.environmentObject(context)
+		}
+	}
     
     var body: some View {
        ASCollectionView(sections: sections)
@@ -256,20 +218,3 @@ extension TimelineRenderer {
         }
     }
 }
-
-
-//    var color: Color {
-//        switch type {
-//        case "Photo": return .blue
-//        case "Person": return .orange
-//        default: return .green
-//        }
-//    }
-//    var icon: Image {
-//        switch type {
-//        case "Photo": return Image(systemName: "camera")
-//        case "Person": return Image(systemName: "person.circle")
-//        default: return Image(systemName: "paperplane")
-//        }
-//    }
-

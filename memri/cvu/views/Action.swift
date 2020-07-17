@@ -608,6 +608,72 @@ class ActionOpenViewByName: Action, ActionExec {
 	}
 }
 
+class ActionOpenViewWithUIDs: Action, ActionExec {
+	override var defaultValues: [String: Any?] { [
+		"argumentTypes": ["view": SessionView.self, "viewArguments": ViewArguments.self],
+		"withAnimation": false,
+		"opensView": true,
+	] }
+	
+	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+		super.init(context, "openView", arguments: arguments, values: values)
+	}
+	
+	func openView(_ context: MemriContext, view: SessionView, with arguments: ViewArguments? = nil) throws {
+		if let session = context.currentSession {
+			// Merge arguments into view
+			if let dict = arguments?.asDict() {
+				if let viewArguments = view.viewArguments {
+					view.set("viewArguments", try ViewArguments.fromDict(viewArguments.asDict()
+																			.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?]))
+				}
+			}
+			
+			// Add view to session
+			try session.setCurrentView(view)
+			
+			// Set accessed date to now
+			view.access()
+			
+			// Recompute view
+			try context.updateCascadingView() // scheduleCascadingViewUpdate()
+		} else {
+			// TODO: Error Handling
+		}
+	}
+	
+	private func openView(_ context: MemriContext, itemType: String, _ uids: [Int], with arguments: ViewArguments? = nil) throws {
+		guard !uids.isEmpty else { return }
+		// Create a new view
+		let view = try Cache.createItem(SessionView.self, values: [:])
+		let arrayString = "{\(uids.map { String($0) }.joined(separator: ","))}"
+		let datasource = try Cache.createItem(Datasource.self, values: [
+			// Set the query options to load the item
+			"query": "\(itemType) AND uid IN \(arrayString)",
+		])
+		
+		_ = try view.link(datasource, type: "datasource")
+		
+		// Open the view
+		try openView(context, view: view, with: arguments)
+	}
+	
+	func exec(_ arguments: [String: Any?]) throws {
+		//        let selection = context.cascadingView.userState.get("selection") as? [Item]
+		guard let uids = arguments["uids"] as? [Int],
+			  let itemType = arguments["itemType"] as? String
+		else { return }
+		let viewArguments = arguments["viewArguments"] as? ViewArguments
+		
+		try? openView(context, itemType: itemType, uids, with: viewArguments)
+	}
+	
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+		execWithoutThrow { try ActionOpenView(context).exec(arguments) }
+	}
+}
+
+
 class ActionToggleEditMode: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
 		"icon": "pencil",

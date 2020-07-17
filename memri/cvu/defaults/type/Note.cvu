@@ -199,5 +199,11 @@ Note[] {
 	
 	[renderer = calendar] {
 		dateTime: {{.dateModified}}
+
+		TimelineItem {
+			icon: "square.and.pencil"
+			title: {{.title or "Untitled Note"}}
+			text: {{.content.plainString}}
+		}
 	}
 }

@@ -141,7 +141,7 @@ public class UIElement: CVUToString {
 public enum UIElementFamily: String, CaseIterable {
 	case VStack, HStack, ZStack, EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
 		Text, Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
-		Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, RichTextfield, Empty
+		Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, RichTextfield, Empty, TimelineItem
 }
 
 public enum UIElementProperties: String, CaseIterable {

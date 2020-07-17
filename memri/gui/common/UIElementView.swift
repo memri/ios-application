@@ -281,6 +281,12 @@ public struct UIElementView: SwiftUI.View {
 				} else if from.type == .MemriButton {
 					MemriButton(item: self.item)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .TimelineItem {
+					TimelineItemView(icon: Image(systemName: get("icon") ?? "arrowtriangle.right"),
+									 title: from.processText(get("title")) ?? "-",
+									 subtitle: from.processText(get("text")),
+									 backgroundColor: ItemFamily(rawValue: item.genericType)?.backgroundColor ?? .gray)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Image {
 					if has("systemName") {
 						Image(systemName: get("systemName") ?? "exclamationmark.bubble")
