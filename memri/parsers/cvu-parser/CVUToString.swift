@@ -11,8 +11,6 @@ protocol CVUToString: CustomStringConvertible {
 	func toCVUString(_ depth: Int, _ tab: String) -> String
 }
 
-#warning("Implement that when .parsed on definitions is nil that the key is not included")
-
 class CVUSerializer {
 	class func valueToString(_ value: Any?, _ depth: Int = 0, _ tab: String = "    ") -> String {
 		if value == nil || (value as? String != "nil") && "\(value!)" == "nil" {
@@ -26,7 +24,9 @@ class CVUSerializer {
 				return dictToString(p, depth + 1, tab)
 			} else if let p = p as? CVUToString {
 				return p.toCVUString(depth + 1, tab)
-			} else if let p = p as? Color {
+            } else if let p = p as? Item, let uid = p.uid.value {
+                return "{{ item(\(p.genericType), \(uid)) }}"
+            } else if let p = p as? Color {
 				return String(p.description.lowercased().prefix(7))
 			} else if let p = p as? Double {
 				if p.truncatingRemainder(dividingBy: 1) == 0 {
@@ -144,7 +144,11 @@ class CVUSerializer {
 						}
 					}
 				}
-			} else {
+            } else if
+                key != "userState" &&
+                key != "viewArguments" ||
+                (dict[key] as? UserState)?.head.parsed?.count ?? 0 > 0
+            {
 				if let p = dict[key] as? [String: Any?] {
 					str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
 						+ "\(key): \(valueToString(p, depth, tab))")
@@ -160,7 +164,7 @@ class CVUSerializer {
 			let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
 			children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
 		}
-		if let p = dict["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
+        if let p = dict["datasourceDefinition"] as? CVUParsedDatasourceDefinition, p.parsed != nil {
 			let body = p.toCVUString(depth, tab)
 			definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
 		}

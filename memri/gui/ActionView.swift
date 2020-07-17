@@ -114,7 +114,7 @@ struct ActionPopup: View {
 		// TODO: refactor: this list item needs to be removed when we close the popup in any way
         self.context.addToStack(self.presentationMode)
 
-        let args = action.arguments["viewArguments"] as? ViewArguments ?? ViewArguments()
+        let args = action.arguments["viewArguments"] as? ViewArguments ?? ViewArguments(nil)
 		args.set("showCloseButton", true)
 
 		// TODO: scroll selected into view? https://stackoverflow.com/questions/57121782/scroll-swiftui-list-to-new-selection

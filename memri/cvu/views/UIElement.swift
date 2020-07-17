@@ -33,7 +33,7 @@ public class UIElement: CVUToString {
 	}
 
 	public func get<T>(_ propName: String, _ item: Item? = nil,
-					   _ viewArguments: ViewArguments = ViewArguments()) -> T? {
+					   _ viewArguments: ViewArguments = ViewArguments(nil)) -> T? {
 		if let prop = properties[propName] {
 			let propValue = prop
 

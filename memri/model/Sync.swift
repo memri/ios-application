@@ -91,7 +91,7 @@ class Sync {
 			audititem.date = Date()
 
 			// Set syncstate to "fetch" in order to get priority treatment for querying
-			audititem.syncState?.actionNeeded = "fetch"
+			audititem._action = "fetch"
 
 			// Add to realm
 			realmWriteIfAvailable(realm) { realm.add(audititem) }
@@ -160,7 +160,7 @@ class Sync {
 
                     // We no longer need to process this log item
                     realmWriteIfAvailable(self.realm) {
-                        audititem.setSyncStateActionNeeded("")
+                        audititem._action = nil
                     }
                 }
             } else {
@@ -210,7 +210,7 @@ class Sync {
 			if let type = itemType.getType() as? SchemaItem.Type {
 				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
 				for item in items {
-					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
+					if let action = item._action, itemQueue[action] != nil {
 						itemQueue[action]?.append(item)
 						found += 1
 					}
@@ -221,7 +221,7 @@ class Sync {
 		// Edges
 		let edges = realm.objects(Edge.self).filter("syncState.actionNeeded != ''")
 		for edge in edges {
-			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
+			if let action = edge._action, edgeQueue[action] != nil {
 				edgeQueue[action]?.append(edge)
 				found += 1
 			}
@@ -232,20 +232,20 @@ class Sync {
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
 						if let item = item as? SchemaItem {
-                            if item.syncState?.actionNeeded == "delete" {
+                            if item._action == "delete" {
                                 realm.delete(item)
                             }
                             else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
+                                item._action = ""
+                                item._updated.removeAll()
                             }
 						} else if let item = item as? Edge {
-                            if item.syncState?.actionNeeded == "delete" {
+                            if item._action == "delete" {
                                 realm.delete(item)
                             }
                             else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
+                                item._action = ""
+                                item._updated.removeAll()
                             }
 						}
 					}

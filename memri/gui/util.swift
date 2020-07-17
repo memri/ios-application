@@ -234,7 +234,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
-		return withWriteRealm { realm in
+		return withReadRealm { realm in
 			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
 		} as? Item
 	}

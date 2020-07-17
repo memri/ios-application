@@ -21,7 +21,7 @@ public struct UIElementView: SwiftUI.View {
 		from = gui
 		item = dataItem
 
-		self.viewArguments = viewArguments ?? ViewArguments() // This is already a copy
+		self.viewArguments = viewArguments ?? ViewArguments(nil) // This is already a copy
 		self.viewArguments.set(".", dataItem)
 	}
 
@@ -233,7 +233,7 @@ public struct UIElementView: SwiftUI.View {
 						SubView(
 							context: self.context,
 							viewName: from.getString("viewName"),
-							dataItem: self.item,
+							item: self.item,
 							viewArguments: ViewArguments(get("arguments"))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
@@ -245,21 +245,18 @@ public struct UIElementView: SwiftUI.View {
 								// Find out why datasource is not parsed
 
 								if let parsed: [String: Any?] = get("view") {
-									let parsedViewDef = CVUParsedViewDefinition("[view = '\(UUID().uuidString)']")
-									parsedViewDef.parsed = parsed
+                                    let def = CVUParsedViewDefinition("[view]", type: "view", parsed: parsed)
 									do {
-										let sessionView = try SessionView.fromCVUDefinition(parsed: parsedViewDef)
-										return sessionView
+										return try CVUStateDefinition.fromCVUParsedDefinition(def)
 									} catch {
 										debugHistory.error("\(error)")
 									}
-									return SessionView()
 								} else {
 									debugHistory.error("Failed to make subview (not defined), creating empty one instead")
-									return SessionView()
 								}
+                                return CVUStateDefinition()
 							}(),
-							dataItem: self.item,
+							item: self.item,
                             viewArguments: ViewArguments(get("arguments"))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)

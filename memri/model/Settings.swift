@@ -130,10 +130,10 @@ public class Settings {
 			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
 				s.json = try serialize(value)
                 
-                if s.syncState?.actionNeeded != "create" {
-                    s.syncState?.actionNeeded = "update"
-                    if !(s.syncState?.updatedFields.contains("json") ?? false) {
-                        s.syncState?.updatedFields.append("json")
+                if s._action != "create" {
+                    s._action = "update"
+                    if !s._updated.contains("json") {
+                        s._updated.append("json")
                     }
                     #warning("Missing AuditItem for the change")
                 }

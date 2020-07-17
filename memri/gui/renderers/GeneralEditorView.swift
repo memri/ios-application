@@ -73,7 +73,7 @@ struct GeneralEditorLayoutItem {
             } catch {
                 // TODO: Refactor error handling
                 debugHistory.error("Could note compute layout property \(propName)\n"
-                    + "Arguments: [\(viewArguments?.asDict().keys.description ?? "")]\n"
+                    + "Arguments: [\(viewArguments?.description ?? "")]\n"
                     + (expr.startInStringMode
                         ? "Expression: \"\(expr.code)\"\n"
                         : "Expression: \(expr.code)\n")
@@ -368,15 +368,19 @@ struct GeneralEditorSection: View {
 			   value _: Any? = nil,
 			   item: Item?,
 			   edge: Edge? = nil) -> ViewArguments? {
-		try? ViewArguments([
-			"subject": item,
-			"readOnly": !(context.currentSession?.editMode ?? false),
-			"title": groupKey.camelCaseToWords().uppercased(),
-			"displayName": name.camelCaseToWords().capitalizingFirst(),
-			"name": name,
-			"edge": edge,
-			".": item,
-		].merging(renderConfig.viewArguments?.asDict() ?? [:], uniquingKeysWith: { l, _ in l }))
+		
+        ViewArguments(
+            [
+                "subject": item,
+                "readOnly": !(context.currentSession?.editMode ?? false),
+                "title": groupKey.camelCaseToWords().uppercased(),
+                "displayName": name.camelCaseToWords().capitalizingFirst(),
+                "name": name,
+                "edge": edge,
+                ".": item,
+            ],
+            renderConfig.viewArguments?.cascadeStack
+        )
 	}
     
     func getAction(edgeType:String, itemType:String) -> Action {
@@ -384,7 +388,7 @@ struct GeneralEditorSection: View {
             context,
             arguments: [
                 "name": "choose-item-by-query",
-                "viewArguments": try? ViewArguments.fromDict([
+                "viewArguments": ViewArguments([
                     "query": itemType,
                     "type": edgeType,
                     "subject": item,

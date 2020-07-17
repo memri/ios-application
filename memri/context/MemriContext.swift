@@ -356,6 +356,7 @@ public class RootContext: MemriContext {
 			// Load views configuration
 			try self.views.load(self) {
                 
+                // Load session
                 try sessions.load(self)
                 
 				// Update view when sessions changes
@@ -364,8 +365,7 @@ public class RootContext: MemriContext {
 				}
 
 				// Load current view
-                self.currentSession?.setCurrentView()
-//                try self.cascadingView?.load()()
+                try self.currentSession?.setCurrentView()
                 
                 callback?()
 			}

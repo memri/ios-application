@@ -44,17 +44,13 @@ struct FilterPanel: View {
 	}
 
 	private func toggleAscending() {
-		realmWriteIfAvailable(context.realm) {
-			self.context.currentSession?.currentView?.datasource?.sortAscending.value
-				= !(self.context.currentView?.datasource.sortAscending ?? true)
-		}
+        let ds = self.context.currentView?.datasource
+        ds?.sortAscending = !(ds?.sortAscending ?? true)
 		context.scheduleCascadingViewUpdate()
 	}
 
 	private func changeOrderProperty(_ fieldName: String) {
-		realmWriteIfAvailable(context.realm) {
-			self.context.currentSession?.currentView?.datasource?.sortProperty = fieldName
-		}
+        self.context.currentView?.datasource.sortProperty = fieldName
 		context.scheduleCascadingViewUpdate()
 	}
 

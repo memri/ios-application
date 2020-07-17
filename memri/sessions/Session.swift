@@ -153,7 +153,6 @@ public final class Session : Equatable {
         sessions?.schedulePersist()
     }
     
-    #warning("Move to separate thread")
     public func persist() throws {
         try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
@@ -233,14 +232,12 @@ public final class Session : Equatable {
         
         if !isReload { storedView.accessed() }
 		
-        #warning("Merge with existing viewArguments on view")
-        //.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?])
         if let args = viewArguments {
-            currentView?.viewArguments = args
+            currentView?.viewArguments = ViewArguments(args, currentView?.viewArguments)
         }
         
         try currentView?.load { error in
-            if !isReload, error == nil, let item = currentView?.singleton {
+            if !isReload, error == nil, let item = currentView?.resultSet.singletonItem {
                 item.accessed()
             }
         }

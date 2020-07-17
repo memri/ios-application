@@ -11,7 +11,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-public final class Sessions : Equatable {
+public final class Sessions : ObservableObject, Equatable {
     /// TBD
     var currentSessionIndex:Int {
         get { parsed?["currentSessionIndex"] as? Int ?? 0 }
@@ -27,10 +27,14 @@ public final class Sessions : Equatable {
     }
 
     /// TBD
-    var sessions = [Session]()
     var context: MemriContext? = nil
     
+    private var sessions = [Session]()
     private var cancellables: [AnyCancellable] = []
+    
+    var count: Int {
+        sessions.count
+    }
     
 	var currentSession: Session? {
         sessions[safe: currentSessionIndex]
@@ -39,6 +43,10 @@ public final class Sessions : Equatable {
 	var currentView: CascadingView? {
 		currentSession?.currentView
 	}
+    
+    subscript(index: Int) -> Session? {
+        sessions[safe: index]
+    }
 
     init(_ state: CVUStateDefinition?) throws {
         if let state = state {
@@ -145,7 +153,6 @@ public final class Sessions : Equatable {
         schedulePersist()
 	}
     
-    #warning("Move to separate thread")
     public func persist() throws {
         try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)

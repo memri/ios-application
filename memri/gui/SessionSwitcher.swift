@@ -109,8 +109,8 @@ struct SessionSwitcher: View {
 	}
 
 	private func getRelativePosition(_ i: CGFloat, _: GeometryProxy) -> CGFloat {
-		let normalizedPosition = i / CGFloat(context.sessions?.sessions?.count ?? 0)
-		let maxGlobalOffset = CGFloat(context.sessions?.sessions?.count ?? 0) * height
+        let normalizedPosition = i / CGFloat(context.sessions.count)
+        let maxGlobalOffset = CGFloat(context.sessions.count) * height
 		let normalizedGlobalState = min(1, max(0, globalOffset / maxGlobalOffset))
 		let translatedRelativePosition = normalizedGlobalState + (normalizedPosition / 2)
 		return translatedRelativePosition / 2.0
@@ -146,9 +146,9 @@ struct SessionSwitcher: View {
 					.resizable(resizingMode: .tile)
 					.edgesIgnoringSafeArea(.vertical)
 
-				ForEach(0 ..< (self.context.sessions?.sessions?.count ?? 0), id: \.self) { i in
+				ForEach(0..<self.context.sessions.count, id: \.self) { i in
 					{ () -> Image in
-						if let session = self.context.sessions?.sessions?[i] {
+						if let session = self.context.sessions[i] {
 							if let screenShot = session.screenshot,
 								let uiImage = screenShot.asUIImage {
 								return Image(uiImage: uiImage)
@@ -174,7 +174,7 @@ struct SessionSwitcher: View {
 						.zIndex(Double(0))
 						//                            .opacity(0.7)
 						.onTapGesture {
-							if let session = self.context.sessions?.sessions?[i] {
+							if let session = self.context.sessions[i] {
 								// TODO:
 								do { try ActionOpenSession.exec(self.context, ["session": session]) }
 								catch {}
@@ -189,12 +189,12 @@ struct SessionSwitcher: View {
 			DragGesture()
 				.onChanged { gesture in
 					self.offset = gesture.translation
-					let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions?.sessions?.count ?? 0) * self.height / 2
+                    let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions.count) * self.height / 2
 					self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
 				}
 
 				.onEnded { _ in
-					let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions?.sessions?.count ?? 0) * self.height / 2
+					let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions.count) * self.height / 2
 					self.globalOffset = min(maxGlobalOffset, max(0, self.lastGlobalOffset + self.offset.height))
 					self.lastGlobalOffset = self.globalOffset
 				}

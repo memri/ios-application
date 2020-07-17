@@ -264,6 +264,8 @@ public class AuditItem : Item {
 
 public class CVUStateDefinition : CVUStoredDefinition {
     required init () {
+        super.init()
+        
         domain = "state"
     }
 }

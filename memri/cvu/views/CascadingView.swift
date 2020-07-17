@@ -34,31 +34,32 @@ public class CascadableDict: Cascadable, CustomStringConvertible {
     }
     
     func resolve(_ item: Item?) throws {
-        throw "Not implemented yet"
-        #warning("Implement")
-//        self.init(CVUParsedObjectDefinition(parsed), [], host)
-        
-        //                    var dict = viewArgs.asDict()
-        //                    for (key, value) in dict {
-        //                        if let expr = value as? Expression {
-        //                            dict[key] = try expr.execute(viewArgs)
-        //                        }
-        //                    }
+        // TODO: Only doing this for head, let's see if that is enough
+        for (key, value) in head.parsed ?? [:] {
+            if let expr = value as? Expression {
+                head.parsed?[key] = try expr.execute(viewArguments)
+            }
+        }
     }
     
     public var description: String {
         head.parsed?.keys.description ?? ""
     }
     
-    public convenience init(_ parsed: [String:Any?]? = nil, host:Cascadable? = nil) {
-        self.init(CVUParsedObjectDefinition(parsed), [], host)
+    public init(_ head: [String:Any?]? = nil, _ tail: [CVUParsedDefinition]? = nil, host:Cascadable? = nil) {
+        super.init(CVUParsedObjectDefinition(head), tail, host)
     }
     
-    public convenience init(_ cascadableDict: CascadableDict?) {
-        self.init(cascadableDict?.head ?? CVUParsedObjectDefinition(), [])
+    public init(_ head: CascadableDict?, _ tail: CascadableDict? = nil) {
+        var combinedTail = head?.tail
+        combinedTail?.append(contentsOf: tail?.cascadeStack ?? [])
+        super.init(CVUParsedObjectDefinition(head?.head.parsed), combinedTail)
+    }
+    
+    required init(_ head: CVUParsedDefinition? = nil, _ tail: [CVUParsedDefinition]? = nil, _ host: Cascadable? = nil) {
+        super.init(head, tail, host)
     }
 }
-#warning("How does this object deal with items being stored????")
 public typealias UserState = CascadableDict
 public typealias ViewArguments = CascadableDict
 
@@ -362,10 +363,10 @@ public class CascadingView: Cascadable, ObservableObject {
     
     required init(
         _ head: CVUParsedDefinition? = nil,
-        _ tail: [CVUParsedDefinition],
+        _ tail: [CVUParsedDefinition]? = nil,
         _ host: Cascadable? = nil
     ) {
-        super.init(head, tail, host)
+        fatalError("Invalid way to initialize CascadingView")
     }
     
 	subscript(propName: String) -> Any? {

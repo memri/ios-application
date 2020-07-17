@@ -80,8 +80,7 @@ class CascadingRichTextEditorConfig: CascadingRenderConfig {
 struct RichTextRendererView: View {
 	@EnvironmentObject var context: MemriContext
 
-	var renderConfig: CascadingRichTextEditorConfig
-		= CascadingRichTextEditorConfig([])
+	var renderConfig = CascadingRichTextEditorConfig()
 
 	var noteItem: Note? {
 		context.item as? Note

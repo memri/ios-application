@@ -247,7 +247,7 @@ extension Cache {
         case all
     }
     
-    func isOnRemote(_ item: Item, _ retries: Int = 0, _ callback: (Error?) -> Void) {
+    func isOnRemote(_ item: Item, _ retries: Int = 0, _ callback: @escaping (Error?) -> Void) {
         if retries > 20 {
             callback("Maximum retries reached")
             return

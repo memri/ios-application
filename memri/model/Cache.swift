@@ -430,7 +430,7 @@ public class Cache {
 			for item in items {
 				if !item.deleted {
 					item.deleted = true
-					item.setSyncStateActionNeeded("delete")
+					item._action = "delete"
 					let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
 					_ = try item.link(auditItem, type: "changelog")
 				}

@@ -281,7 +281,7 @@ public class Action: HashableClass, CVUToString {
 	}
 
 	func get<T>(_ key: String, _ viewArguments: ViewArguments? = nil) -> T? {
-		let x: Any? = values[key] ?? defaultValues[key] ?? baseValues[key]
+        let x: Any? = values[key] ?? defaultValues[key] ?? baseValues[key] as Any?
 		if let expr = x as? Expression {
 			do {
 				expr.lookup = context.views.lookupValueOfVariables
@@ -1102,7 +1102,7 @@ class ActionRunIndexer: Action, ActionExec {
                 // Start indexer process
                 self.context.podAPI.runIndexer(uid) { error, data in
                     if error == nil {
-                        let watcher: AnyCancellable
+                        var watcher: AnyCancellable? = nil
                         watcher = self.context.cache.subscribe(to: run).sink { item in
                             if let progress: Int = item.get("progress") {
                                 self.context.scheduleUIUpdate()
@@ -1110,11 +1110,13 @@ class ActionRunIndexer: Action, ActionExec {
                                 print("progress \(progress)")
                                 
                                 if progress >= 100 {
-                                    watcher.cancel()
+                                    watcher?.cancel()
+                                    watcher = nil
                                 }
                             } else {
                                 debugHistory.error("ERROR, could not get progress: \(String(describing: error))")
-                                watcher.cancel()
+                                watcher?.cancel()
+                                watcher = nil
                             }
                         }
                     }
@@ -1177,7 +1179,7 @@ class ActionSetProperty: Action, ActionExec {
 			throw "Exception: property is not set to a string"
 		}
 
-		subject.set(propertyName, arguments["value"])
+        subject.set(propertyName, arguments["value"] as Any?)
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()

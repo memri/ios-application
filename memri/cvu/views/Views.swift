@@ -184,6 +184,14 @@ public class Views {
 				return ""
 			}
 			return f
+        case "item":
+            let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
+                guard let typeName = args?[0] as? String, let uid = args?[1] as? Int else {
+                    return nil
+                }
+                return getItem(typeName, uid)
+            }
+            return f
 		case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
 		case "context": return context
 		case "sessions": return context?.sessions
@@ -191,7 +199,7 @@ public class Views {
 		case "session":
 			return context?.currentSession
 		case "view": return context?.currentView
-		case "item":
+		case "singletonItem":
 			if let itemRef: Item = viewArguments?.get(".") {
 				return itemRef
 			} else if let item = context?.currentView?.resultSet.singletonItem {
@@ -242,7 +250,7 @@ public class Views {
 						throw "Unexpected edge lookup. No source specified"
 					}
 
-					let name = node.name == "@@DEFAULT@@" ? "item" : node.name
+					let name = node.name == "@@DEFAULT@@" ? "singletonItem" : node.name
 					do {
 						value = try getGlobalReference(name, viewArguments: viewArguments)
 						first = false
@@ -354,7 +362,7 @@ public class Views {
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
 				let list = dataItemListToArray(value)
-				let args = try ViewArguments.clone(viewArguments, managed: false)
+				let args = ViewArguments(viewArguments)
 				let expr = node.sequence[0]
 
 				for item in list {
@@ -493,7 +501,7 @@ public class Views {
     }
 
 	// TODO: Refactor: Consider caching cascadingView based on the type of the item
-	public func renderItemCell(with dataItem: Item?,
+	public func renderItemCell(with item: Item?,
 							   search rendererNames: [String] = [],
 							   inView viewOverride: String? = nil,
 							   use viewArguments: ViewArguments? = nil) -> UIElementView {
@@ -502,7 +510,7 @@ public class Views {
 				throw "Exception: MemriContext is not defined in views"
 			}
 
-			guard let dataItem = dataItem else {
+			guard let item = item else {
 				throw "Exception: No item is passed to render cell"
 			}
 
@@ -548,7 +556,7 @@ public class Views {
 				}
 			} else {
 				// Find views based on datatype
-				outerLoop: for needle in ["\(dataItem.genericType)[]", "*[]"] {
+				outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
 					for key in ["user", "defaults"] {
 						if let viewDefinition = context.views
 							.fetchDefinitions(selector: needle, domain: key).first {
@@ -575,21 +583,22 @@ public class Views {
 			}
 
 			if cascadeStack.count == 0 {
-				throw "Exception: Unable to find a way to render this element: \(dataItem.genericType)"
+				throw "Exception: Unable to find a way to render this element: \(item.genericType)"
 			}
 
 			// Create a new view
-			let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
+            #warning("viewArguments are not passed to cascading config, is that bad?")
+            let cascadingRenderConfig = CascadingRenderConfig(nil, cascadeStack, context.currentView)
 
 			// Return the rendered UIElements in a UIElementView
-			return cascadingRenderConfig.render(item: dataItem)
+            return cascadingRenderConfig.render(item: item, arguments: viewArguments)
 		} catch {
 			debugHistory.error("Unable to render ItemCell: \(error)")
 
 			// TODO: Refactor: Log error to the user
 			return UIElementView(UIElement(.Text,
 										   properties: ["text": "Could not render this view"]),
-								 dataItem ?? Item())
+								 item ?? Item())
 		}
 	}
 }

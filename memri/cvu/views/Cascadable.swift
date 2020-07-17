@@ -229,14 +229,14 @@ public class Cascadable {
 
     required init(
         _ head: CVUParsedDefinition? = nil,
-        _ tail: [CVUParsedDefinition],
+        _ tail: [CVUParsedDefinition]? = nil,
         _ host: Cascadable? = nil
     ) {
 		self.host = host
-        self.tail = tail
+        self.tail = tail ?? []
         self.head = head ?? CVUParsedDefinition()
         
         self.cascadeStack = [self.head]
-        self.cascadeStack.append(contentsOf: tail)
+        self.cascadeStack.append(contentsOf: self.tail)
 	}
 }

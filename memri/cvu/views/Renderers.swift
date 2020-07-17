@@ -123,7 +123,7 @@ protocol CascadingRendererDefaults {
 public class CascadingRenderConfig: Cascadable {
     required init(
         _ head: CVUParsedDefinition? = nil,
-        _ tail: [CVUParsedDefinition],
+        _ tail: [CVUParsedDefinition]? = nil,
         _ host: Cascadable? = nil
     ) {
         super.init(head, tail, host)

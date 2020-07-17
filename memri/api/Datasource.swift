@@ -122,9 +122,9 @@ public class CascadingDatasource: Cascadable, UniqueString {
 
 	func flattened() -> Datasource {
 		Datasource(value: [
-			"query": query,
-			"sortProperty": sortProperty,
-			"sortAscending": sortAscending,
+			"query": query as Any,
+			"sortProperty": sortProperty as Any,
+			"sortAscending": sortAscending as Any,
 		])
 	}
 //
@@ -146,9 +146,9 @@ public class CascadingDatasource: Cascadable, UniqueString {
 		}
 		set(value) {
 			switch propName {
-			case "query": return datasource.query = value as? String ?? ""
-			case "sortProperty": return datasource.sortProperty = value as? String ?? ""
-			case "sortAscending": return datasource.sortAscending.value = value as? Bool ?? true
+			case "query": query = value as? String
+			case "sortProperty": sortProperty = value as? String
+			case "sortAscending": sortAscending = value as? Bool
 			default: return
 			}
 		}

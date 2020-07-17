@@ -406,7 +406,7 @@ public class Item: SchemaItem {
 
 		realmWriteIfAvailable(realm) {
 			if item.realm == nil, let item = item as? Item {
-				item.syncState?.actionNeeded = "create"
+				item._action = "create"
 				realm?.add(item, update: .modified)
 			}
 
@@ -427,8 +427,8 @@ public class Item: SchemaItem {
 				edge.sequence.value = sequenceNumber
 				edge.edgeLabel = label
 
-				if edge.syncState?.actionNeeded == nil {
-					edge.syncState?.actionNeeded = "update"
+				if edge._action == nil {
+					edge._action = "update"
 				}
 			} else if edge == nil {
 				throw "Exception: Could not create link"
@@ -456,7 +456,7 @@ public class Item: SchemaItem {
 		if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
 			realmWriteIfAvailable(realm) {
 				edge.deleted = true
-				edge.syncState?.actionNeeded = "delete"
+				edge._action = "delete"
 				realm?.delete(edge)
 			}
 		} else {
@@ -482,11 +482,11 @@ public class Item: SchemaItem {
 				if all {
 					for edge in results {
 						edge.deleted = true
-						edge.syncState?.actionNeeded = "delete"
+						edge._action = "delete"
 					}
 				} else if let edge = results.first {
 					edge.deleted = true
-					edge.syncState?.actionNeeded = "delete"
+					edge._action = "delete"
 				}
 			}
 		}
@@ -547,31 +547,25 @@ public class Item: SchemaItem {
 	/// - Parameter item: item to be merged with the current Item
 	/// - Returns: boolean indicating the succes of the merge
 	public func safeMerge(_ item: Item) -> Bool {
-		if let syncState = self.syncState {
-			// Ignore when marked for deletion
-			if syncState.actionNeeded == "delete" { return true }
+        // Ignore when marked for deletion
+        if self._action == "delete" { return true }
 
-			// Do not update when the version is not higher then what we already have
-			if item.version <= version { return false }
+        // Do not update when the version is not higher then what we already have
+        if item.version <= version { return false }
 
-			// Make sure to not overwrite properties that have been changed
-			let updatedFields = syncState.updatedFields
+        // Make sure to not overwrite properties that have been changed
+        let updatedFields = self._updated
 
-			// Compare all updated properties and make sure they are the same
-            #warning("properly implment this for edges")
-			for fieldName in updatedFields {
-				if !isEqualProperty(fieldName, item) { return false }
-			}
+        // Compare all updated properties and make sure they are the same
+        #warning("properly implement this for edges")
+        for fieldName in updatedFields {
+            if !isEqualProperty(fieldName, item) { return false }
+        }
 
-			// Merge with item
-			merge(item)
+        // Merge with item
+        merge(item)
 
-			return true
-		} else {
-			// TODO: Error handling
-			print("trying to merge, but syncState is nil")
-			return false
-		}
+        return true
 	}
 
 	/// merges the the passed Item in the current item
@@ -668,17 +662,6 @@ public class Item: SchemaItem {
 
 		let items: [Item] = try MemriJSONDecoder.decode(family: ItemFamily.self, from: jsonData)
 		return items
-	}
-
-	/// Sets syncState .actionNeeded property
-	/// - Parameters:
-	///   - action: action name
-	public func setSyncStateActionNeeded(_ action: String) {
-		if let syncState = self.syncState {
-			syncState.actionNeeded = action
-		} else {
-			print("No syncState available for item \(self)")
-		}
 	}
 
 	/// Read Item from string
@@ -861,9 +844,6 @@ extension memri.Edge {
 		targetItemID.value = target.1
 		self.sequence.value = sequence
 		self.edgeLabel = label
-
-		if let action = action {
-			syncState?.actionNeeded = action
-		}
+        self._action = action
 	}
 }
