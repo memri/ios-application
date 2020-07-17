@@ -265,10 +265,12 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
 				} else if from.type == .Map {
-					#warning("TODO: Fix map uielement")
-					Text("TEMPORARILY DISABLED")
-//					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
-//							config: .init(dataItems: [self.item], location: {  }, addressKey: get("addressKey") ?? "address"))
+					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
+							config: .init(dataItems: [self.item],
+										  locationResolver: { _ in get("location") },
+										  addressResolver: { _ in get("address", type: Address.self) ?? get("address", type: List<Address>.self) },
+										  labelResolver: { _ in get("label") })
+					)
 						.background(Color(.secondarySystemBackground))
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Picker {

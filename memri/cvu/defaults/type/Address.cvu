@@ -22,7 +22,7 @@ Address[] {
             }
             Spacer
             Map {
-                addressKey: self
+				address: {{.}}
                 maxWidth: 150
                 minHeight: 150
                 maxHeight: 150
@@ -52,7 +52,7 @@ Address[] {
                 }
                 Spacer
                 Map {
-                    addressKey: self
+					address: {{.}}
                     maxWidth: 150
                     minHeight: 150
                     maxHeight: 150
@@ -107,7 +107,7 @@ Address {
             showTitle: false
             
             Map {
-                addressKey: self
+				address: {{.}}
                 minHeight: 150
                 maxHeight: 150
             }
