@@ -368,7 +368,7 @@ public enum RenderType: String {
 }
 
 public enum ActionFamily: String, CaseIterable {
-	case back, addItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
+	case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode, toggleFilterPanel,
 		star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
@@ -381,6 +381,7 @@ public enum ActionFamily: String, CaseIterable {
 		case .back: return ActionBack.self
 		case .addItem: return ActionAddItem.self
 		case .openView: return ActionOpenView.self
+		case .openGroup: return ActionOpenViewWithUIDs.self
 		case .openViewByName: return ActionOpenViewByName.self
 		case .toggleEditMode: return ActionToggleEditMode.self
 		case .toggleFilterPanel: return ActionToggleFilterPanel.self

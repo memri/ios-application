@@ -33,8 +33,6 @@ let registerCalendarRenderer = {
 
 class CascadingCalendarConfig: CascadingRenderConfig {
 	var type: String? = "calendar"
-	
-//	var press: Action? { cascadeProperty("press") }
 
 	var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
 }
