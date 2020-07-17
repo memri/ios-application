@@ -20,11 +20,12 @@ public struct SubView: View {
 	// There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
 	// By only duplicating that line and setting session later, but I am too lazy to do that.
 	// TODO: Refactor
-	public init(context: MemriContext, viewName: String, dataItem: Item? = nil,
+	public init(context: MemriContext, viewName: String, item: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-            let args = try ViewArguments(viewArguments, item: dataItem)
-            args.set(".", dataItem)
+            let args = ViewArguments(viewArguments)
+            try args.resolve(item)
+            args.set(".", item)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -39,19 +40,9 @@ public struct SubView: View {
                     throw "Could not fetch view by name: \(viewName)"
                 }
                 
-                var state:CVUStateDefinition = try CVUStateDefinition.fromCVUStoredDefinition(stored)
-                if stored.type == "sessions" {
-                    
-                }
-                else if stored.type == "session" {
-                    
-                }
-                else stored.type == "view" {
-                    
-                }
-                
-                proxyMain = try context.createSubContext(state)
-                try proxyMain?.currentSession?.setCurrentView(nil, args)
+                let state = try context.views.getViewStateDefinition(from: stored)
+                proxyMain = try context.createSubContext()
+                try proxyMain?.currentSession?.setCurrentView(state, args)
             }
 			catch {
 				// TODO: Refactor error handling
@@ -63,10 +54,12 @@ public struct SubView: View {
 		}
 	}
 
-	public init(context: MemriContext, view state: CVUStateDefinition, dataItem: Item? = nil,
+	public init(context: MemriContext, view state: CVUStateDefinition, item: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-			let args = try ViewArguments(viewArguments, item: dataItem)
+			let args = ViewArguments(viewArguments)
+            try args.resolve(item)
+            args.set(".", item)
 
 			toolbar = args.get("toolbar") ?? toolbar
 			searchbar = args.get("searchbar") ?? searchbar
@@ -76,10 +69,8 @@ public struct SubView: View {
 				throw "Exception: Too much nesting"
 			}
             
-            proxyMain = try context.createSubContext(state)
-            args.set(".", dataItem)
-            proxyMain?.cascadingView.set("viewArguments", args)
-            try proxyMain?.updateCascadingView()
+            proxyMain = try context.createSubContext()
+            try proxyMain?.currentSession?.setCurrentView(state, args)
 		} catch {
 			// TODO: Refactor error handling
 			debugHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")

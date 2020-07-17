@@ -63,7 +63,7 @@ public class UIElement: CVUToString {
 				} catch {
 					// TODO: Refactor error handling
 					debugHistory.error("Could note compute \(propName)\n"
-						+ "Arguments: [\(viewArguments.asDict().keys.description)]\n"
+						+ "Arguments: [\(viewArguments.description)]\n"
 						+ (expr.startInStringMode
 							? "Expression: \"\(expr.code)\"\n"
 							: "Expression: \(expr.code)\n")

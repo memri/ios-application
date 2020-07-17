@@ -208,11 +208,35 @@ public class Cascadable {
 		localCache[name] = result
 		return result
 	}
+    
+    func cascadeContext<T:Cascadable, P:CVUParsedDefinition>(
+        _ propName:String,
+        _ lookupName:String,
+        _ parsedType:P.Type,
+        _ type:T.Type = T.self
+    ) -> T {
+        if let x = localCache[propName] as? T { return x }
+        
+        let head = self.head[lookupName] as? P ?? P.init()
+        self.head[lookupName] = head
+        
+        let tail = self.tail.compactMap { $0[lookupName] as? P }
 
-    init(_ head: CVUParsedDefinition, _ tail: [CVUParsedDefinition], _ host: Cascadable? = nil) {
+        let cascadable = T.init(head, tail, self)
+        localCache[propName] = cascadable
+        return cascadable
+    }
+
+    required init(
+        _ head: CVUParsedDefinition? = nil,
+        _ tail: [CVUParsedDefinition],
+        _ host: Cascadable? = nil
+    ) {
 		self.host = host
-        self.cascadeStack = [head].append(membersOf: tail)
         self.tail = tail
-        self.head = head
+        self.head = head ?? CVUParsedDefinition()
+        
+        self.cascadeStack = [self.head]
+        self.cascadeStack.append(contentsOf: tail)
 	}
 }

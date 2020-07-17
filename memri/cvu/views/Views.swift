@@ -463,6 +463,34 @@ public class Views {
 
 		return nil
 	}
+    
+    /// Takes a stored definition and fetches the view definition or when its a session definition, the currentView of that session
+    func getViewStateDefinition(from stored: CVUStoredDefinition) throws -> CVUStateDefinition {
+        var view:CVUStateDefinition
+        if stored.type == "view" {
+            view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+        }
+        else if stored.type == "session" {
+            guard let parsed = try parseDefinition(stored) else {
+                throw "Unable to parse state definition"
+            }
+            
+            if
+                let list = parsed["views"] as? [CVUParsedViewDefinition],
+                let p = list[safe: parsed["currentViewIndex"] as? Int ?? 0]
+            {
+                view = try CVUStateDefinition.fromCVUParsedDefinition(p)
+            }
+            else {
+                throw "Invalid definition type"
+            }
+        }
+        else {
+            throw "Invalid definition type"
+        }
+        
+        return view
+    }
 
 	// TODO: Refactor: Consider caching cascadingView based on the type of the item
 	public func renderItemCell(with dataItem: Item?,

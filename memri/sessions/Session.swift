@@ -13,27 +13,27 @@ import SwiftUI
 public final class Session : Equatable {
     /// The name of the item.
     var name:String? {
-        get { parsed["name"] as? String }
+        get { parsed?["name"] as? String }
         set (value) { setState("name", value) }
     }
     /// TBD
     var currentViewIndex:Int {
-        get { parsed["currentViewIndex"] as? Int ?? 0 }
+        get { parsed?["currentViewIndex"] as? Int ?? 0 }
         set (value) { setState("currentViewIndex", value) }
     }
     /// TBD
     var editMode:Bool {
-        get { parsed["editMode"] as? Bool ?? false }
+        get { parsed?["editMode"] as? Bool ?? false }
         set (value) { setState("editMode", value) }
     }
     /// TBD
     var showContextPane:Bool {
-        get { parsed["showContextPane"] as? Bool ?? false }
+        get { parsed?["showContextPane"] as? Bool ?? false }
         set (value) { setState("showContextPane", value) }
     }
     /// TBD
     var showFilterPanel:Bool  {
-        get { parsed["showFilterPanel"] as? Bool ?? false }
+        get { parsed?["showFilterPanel"] as? Bool ?? false }
         set (value) { setState("showFilterPanel", value) }
     }
 
@@ -56,8 +56,8 @@ public final class Session : Equatable {
         }
     }
 
-    var uid: Int
-    var parsed: CVUParsedSessionDefinition
+    var uid: Int? = nil
+    var parsed: CVUParsedSessionDefinition?
     var state: CVUStateDefinition? {
         withReadRealm { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
@@ -71,6 +71,7 @@ public final class Session : Equatable {
     var context: MemriContext?
     
 	private var cancellables: [AnyCancellable] = []
+    private var lastViewIndex: Int = -1
 
 	var swiftUIEditMode: EditMode {
 		get {
@@ -91,50 +92,60 @@ public final class Session : Equatable {
         views[safe: currentViewIndex]
 	}
 
-    init(_ state: CVUStateDefinition, _ sessions:Sessions) throws {
-        guard let uid = state.uid.value else {
-            throw "CVU state object is unmanaged"
-        }
-        
-        self.uid = uid
+    init(_ state: CVUStateDefinition?, _ sessions:Sessions) throws {
         self.sessions = sessions
         self.context = sessions.context
         
-        guard let p = try context?.views.parseDefinition(state) as? CVUParsedSessionDefinition else {
-            throw "Unable to parse state definition"
-        }
-        
-        try withReadRealmThrows { realm in
-            self.parsed = p
-            
-            // Either the views are encoded in the definition
-            if
-                let parsedViews = self.parsed["viewDefinitions"] as? [CVUParsedViewDefinition],
-                parsedViews.count > 0
-            {
-                for parsed in parsedViews {
-                    let view = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
-                    _ = try state.link(view, type: "view")
-                }
+        if let state = state {
+            guard let uid = state.uid.value else {
+                throw "CVU state object is unmanaged"
             }
-            // Or they are in the database linked as edges
-            else {
-                guard let storedViewStates = state.edges("view")?
-                    .sorted(byKeyPath: "sequence").items(type: CVUStateDefinition.self) else {
-                        throw "No views found. Aborting" // TODO should this initialize a default view?
-                }
-                
+            
+            self.uid = uid
+            
+            guard let p = try context?.views.parseDefinition(state) as? CVUParsedSessionDefinition else {
+                throw "Unable to parse state definition"
+            }
+            
+            self.parsed = p
+        
+            // Check if there are views in the db
+            if
+                let storedViewStates = state
+                    .edges("view")?
+                    .sorted(byKeyPath: "sequence")
+                    .items(type: CVUStateDefinition.self),
+                storedViewStates.count > 0
+            {
                 for viewState in storedViewStates {
                     views.append(try CascadingView(viewState, self))
                 }
                 
                 try setCurrentView()
             }
-       }
+            // Or if the views are encoded in the definition
+            else if
+                let parsedViews = self.parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
+                parsedViews.count > 0
+            {
+                try withWriteRealmThrows { realm in
+                    for parsed in parsedViews {
+                        let view = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
+                        _ = try state.link(view, type: "view")
+                    }
+                }
+                
+                self.parsed?["viewDefinitions"] = nil
+            }
+        }
+        else {
+            // Do nothing and expect a call to setCurrentView later
+        }
     }
     
     private func setState(_ name:String, _ value: Any?) {
-        parsed[name] = value
+        if parsed == nil { parsed = CVUParsedSessionDefinition() }
+        parsed?[name] = value
         schedulePersist()
     }
     
@@ -158,7 +169,7 @@ public final class Session : Equatable {
                 self.uid = uid
             }
             
-            state?.set("definition", parsed.toCVUString(0, "    "))
+            state?.set("definition", parsed?.toCVUString(0, "    "))
             
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
@@ -213,12 +224,15 @@ public final class Session : Equatable {
             currentViewIndex = views.count - 1
         }
         
+        let isReload = lastViewIndex == currentViewIndex && sessions?.currentSession == self
+        lastViewIndex = currentViewIndex
+        
         if sessions?.currentSession != self {
             try sessions?.setCurrentSession(self.state)
         }
-		
-        storedView.accessed()
         
+        if !isReload { storedView.accessed() }
+		
         #warning("Merge with existing viewArguments on view")
         //.merging(dict, uniquingKeysWith: { _, new in new }) as [String: Any?])
         if let args = viewArguments {
@@ -226,22 +240,24 @@ public final class Session : Equatable {
         }
         
         try currentView?.load { error in
-            if error == nil, let item = currentView?.singleton {
+            if !isReload, error == nil, let item = currentView?.singleton {
                 item.accessed()
             }
         }
         
-        // turn off editMode when navigating
-        if editMode { editMode = false }
+        if !isReload {
+            // turn off editMode when navigating
+            if editMode { editMode = false }
 
-        // hide filterpanel if view doesnt have a button to open it
-        if showFilterPanel {
-            if currentView?.filterButtons.first(where: { $0.name == .toggleFilterPanel }) != nil {
-                showFilterPanel = false
+            // hide filterpanel if view doesnt have a button to open it
+            if showFilterPanel {
+                if currentView?.filterButtons.first(where: { $0.name == .toggleFilterPanel }) != nil {
+                    showFilterPanel = false
+                }
             }
-        }
         
-        schedulePersist()
+            schedulePersist()
+        }
     }
 
 	public func takeScreenShot() {

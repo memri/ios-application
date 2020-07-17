@@ -145,7 +145,7 @@ IndexerRun {
                     Button {
                         margin: 0 5 10 35
                         
-                        press: runIndexerRun {
+                        press: runIndexer {
                             arguments {
                                 indexerRun: {{.}}
                             }

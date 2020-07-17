@@ -120,7 +120,7 @@ public class MemriContext: ObservableObject {
 			self.scheduledComputeView = false
 
 			// Update UI
-			do { try self.updateCascadingView() }
+            do { try self.currentSession?.setCurrentView() }
 			catch {
 				// TODO: User error handling
 				// TODO: Error Handling
@@ -225,9 +225,8 @@ public class MemriContext: ObservableObject {
 		realm: Realm,
 		settings: Settings,
 		installer: Installer,
-		sessions: Sessions? = nil,
+		sessions: Sessions,
 		views: Views,
-		cascadingView: CascadingView? = nil,
 		navigation: MainNavigation,
 		renderers: Renderers,
 		indexerAPI: IndexerAPI
@@ -240,7 +239,6 @@ public class MemriContext: ObservableObject {
 		self.installer = installer
 		self.sessions = sessions
 		self.views = views
-		self.cascadingView = cascadingView
 		self.navigation = navigation
 		self.renderers = renderers
 		self.indexerAPI = indexerAPI
@@ -254,7 +252,7 @@ public class MemriContext: ObservableObject {
 public class SubContext: MemriContext {
 	let parent: MemriContext
 
-	init(name: String, _ context: MemriContext, _ state: CVUStateDefinition) throws {
+	init(name: String, _ context: MemriContext, _ state: CVUStateDefinition?) throws {
 		let views = Views(context.realm)
 
 		parent = context
@@ -313,7 +311,7 @@ public class RootContext: MemriContext {
 			realm: realm,
 			settings: Settings(realm),
 			installer: Installer(realm),
-			sessions: try Sessions(sessionState, views),
+			sessions: try Sessions(sessionState),
 			views: views,
 			navigation: MainNavigation(realm),
 			renderers: Renderers(),
@@ -340,7 +338,7 @@ public class RootContext: MemriContext {
 		globalSettings = settings
 	}
 
-    public func createSubContext(_ state: CVUStateDefinition) throws -> MemriContext {
+    public func createSubContext(_ state: CVUStateDefinition? = nil) throws -> MemriContext {
 		let subContext = try SubContext(name: "Proxy", self, state)
         subContexts.append(subContext)
         return subContext
@@ -361,7 +359,7 @@ public class RootContext: MemriContext {
                 try sessions.load(self)
                 
 				// Update view when sessions changes
-				self.cancellable = self.sessions?.objectWillChange.sink { _ in
+				self.cancellable = self.sessions.objectWillChange.sink { _ in
 					self.scheduleUIUpdate()
 				}
 

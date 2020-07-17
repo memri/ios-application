@@ -15,17 +15,26 @@ public class Item: SchemaItem {
 		"uid"
 	}
 
+//    extension SyncState {
+//        override public var description: String {
+//            "{"
+//                + (actionNeeded != nil ? "\n        actionNeeded: \(actionNeeded ?? "")" : "")
+//                + (isPartiallyLoaded ? "\n        isPartiallyLoaded: \(isPartiallyLoaded)" : "")
+//                + (changedInThisSession ? "\n        changedInThisSession: \(changedInThisSession)" : "")
+//                + (updatedFields.count > 0 ? "\n        updatedFields: [\(updatedFields.map { $0 }.joined(separator: ", "))]" : "")
+//                + "\n    }"
+//        }
+//    }
+    
 	override public var description: String {
 		var str = "\(genericType) \(realm == nil ? "[UNMANAGED] " : ""){\n"
 			+ "    uid: \(uid.value == nil ? "nil" : String(uid.value ?? 0))\n"
 			+ "    " + objectSchema.properties
 			.filter {
-				self[$0.name] != nil && $0.name != "allEdges"
-					&& $0.name != "uid" && $0.name != "syncState"
+				self[$0.name] != nil && $0.name != "allEdges" && $0.name != "uid"
 			}
 			.map { "\($0.name): \(CVUSerializer.valueToString(self[$0.name]))" }
 			.joined(separator: "\n    ")
-			+ "\n    syncState: \(syncState?.description ?? "")"
 
 		str += (allEdges.count > 0 ? "\n\n    " : "")
 			+ allEdges

@@ -11,6 +11,8 @@ protocol CVUToString: CustomStringConvertible {
 	func toCVUString(_ depth: Int, _ tab: String) -> String
 }
 
+#warning("Implement that when .parsed on definitions is nil that the key is not included")
+
 class CVUSerializer {
 	class func valueToString(_ value: Any?, _ depth: Int = 0, _ tab: String = "    ") -> String {
 		if value == nil || (value as? String != "nil") && "\(value!)" == "nil" {

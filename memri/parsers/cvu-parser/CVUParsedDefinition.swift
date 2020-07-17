@@ -51,10 +51,10 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 	}
     
     convenience init(_ parsed: [String:Any?]? = nil) {
-        self.init("", parsed: parsed)
+        self.init(parsed: parsed)
     }
 
-	init(_ selector: String, name: String? = nil, domain: String? = "user", parsed: [String: Any?]? = nil) {
+	required init (_ selector: String? = "", name: String? = nil, domain: String? = "user", parsed: [String: Any?]? = nil) {
 		self.selector = selector
 		self.name = name
 		self.domain = domain
@@ -130,12 +130,21 @@ public class CVUParsedViewDefinition: CVUParsedDefinition {
 	let query: ExprNode?
     override var definitionType: String { "view" }
 
-	init(_ selector: String, name: String? = nil, type: String? = nil, query: ExprNode? = nil) {
+	init(_ selector: String, name: String? = nil, type: String? = nil, query: ExprNode? = nil,
+         domain: String? = "user", parsed: [String: Any?]? = nil) {
+        
 		self.type = type
 		self.query = query
 
-		super.init(selector, name: name)
+        super.init(selector, name: name, parsed: parsed)
 	}
+    
+    required init(_ selector: String? = "", name: String? = nil, domain: String? = "user", parsed: [String : Any?]? = nil) {
+        self.type = nil
+        self.query = nil
+        
+        super.init(selector, name: name, domain: domain, parsed: parsed)
+    }
 }
 
 public class CVUParsedSessionDefinition: CVUParsedDefinition {

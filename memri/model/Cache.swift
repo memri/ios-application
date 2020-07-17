@@ -357,71 +357,54 @@ public class Cache {
 			throw "Cannot add an item without uid to the cache"
 		}
 
-		// Check if this is a new item or an existing one
-		if let syncState = item.syncState {
-			// Fetch item from the cache to double check
-			if let cachedItem: Item = getItem(item.genericType, uid) {
-				// Do nothing when the version is not higher then what we already have
-				if item.version <= cachedItem.version {
-					return cachedItem
-				}
+        // Fetch item from the cache to double check
+        if let cachedItem: Item = getItem(item.genericType, uid) {
+            // Do nothing when the version is not higher then what we already have
+            if item.version <= cachedItem.version {
+                return cachedItem
+            }
 
-				// Check if there are local changes
-                if cachedItem.syncState?.actionNeeded != "" {
-					// Try to merge without overwriting local changes
-					if !cachedItem.safeMerge(item) {
-						// Merging failed
-                        throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? 0)"
-					}
-                    return cachedItem
-				}
-                // Merge in the properties from cachedItem that are not already set
-                cachedItem.merge(item)
-			}
-			return nil
-		} else {
-			print("Error: no syncstate available during merge")
-			return nil
-		}
+            // Check if there are local changes
+            if cachedItem._action != nil {
+                // Try to merge without overwriting local changes
+                if !cachedItem.safeMerge(item) {
+                    // Merging failed
+                    throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? 0)"
+                }
+                return cachedItem
+            }
+            // Merge in the properties from cachedItem that are not already set
+            cachedItem.merge(item)
+        }
+        return nil
 	}
 
 	// TODO: does this work for subobjects?
 	private func bindChangeListeners(_ item: Item) {
-		if let syncState = item.syncState {
-			// Update the sync state when the item changes
-			rlmTokens.append(item.observe { objectChange in
-				if case let .change(_, propChanges) = objectChange {
-					if syncState.actionNeeded == "" {
-						func doAction() {
-							// Mark item for updating
-							syncState.actionNeeded = "update"
-							syncState.changedInThisSession = true
+        // Update the sync state when the item changes
+        rlmTokens.append(item.observe { objectChange in
+            if case let .change(_, propChanges) = objectChange {
+                if item._action == nil {
+                    func doAction() {
+                        // Mark item for updating
+                        item._action = "update"
+                        item._changedInSession = true
 
-							// Record which field was updated
-							for prop in propChanges {
-								if !syncState.updatedFields.contains(prop.name) {
-									syncState.updatedFields.append(prop.name)
-								}
-							}
-						}
-
-						realmWriteIfAvailable(self.realm) { doAction() }
-					}
-					self.scheduleUIUpdate?(nil)
-				}
-            })
-
-			// Trigger sync.schedule() when the SyncState changes
-			rlmTokens.append(syncState.observe { objectChange in
-				if case .change = objectChange {
-					if syncState.actionNeeded != "" {
-						self.sync.schedule()
-					}
-				}
-            })
-		} else {
-			print("Error, no syncState available for item")
-		}
+                        // Record which field was updated
+                        for prop in propChanges {
+                            if !item._updated.contains(prop.name) {
+                                item._updated.append(prop.name)
+                            }
+                        }
+                    }
+                    
+                    self.sync.schedule()
+                    
+                    realmWriteIfAvailable(self.realm) { doAction() }
+                }
+                self.scheduleUIUpdate?(nil)
+            }
+        })
 	}
 
 	/// sets delete to true in the syncstate, for an array of items
@@ -431,9 +414,11 @@ public class Cache {
 		if !item.deleted {
 			realmWriteIfAvailable(realm) {
 				item.deleted = true
-				item.syncState?.actionNeeded = "delete"
+				item._action = "delete"
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
 				_ = try item.link(auditItem, type: "changelog")
+                
+                self.sync.schedule()
 			}
 		}
 	}
@@ -450,6 +435,8 @@ public class Cache {
 					_ = try item.link(auditItem, type: "changelog")
 				}
 			}
+            
+            self.sync.schedule()
 		}
 	}
 
@@ -508,33 +495,27 @@ public class Cache {
 	}
 
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
-		// Check if this is a new item or an existing one
-		if let syncState = newerItem.syncState {
-			// Do nothing when the version is not higher then what we already have
-			if !syncState.isPartiallyLoaded,
-				newerItem.version <= cachedItem.version {
-				return cachedItem
-			}
+        // Do nothing when the version is not higher then what we already have
+        if !newerItem._partial && newerItem.version <= cachedItem.version {
+            return cachedItem
+        }
 
-			// Check if there are local changes
-			if syncState.actionNeeded != "" {
-				// Try to merge without overwriting local changes
-				if !newerItem.safeMerge(cachedItem) {
-					// Merging failed
-					throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
-				}
-			}
+        // Check if there are local changes
+        if newerItem._action != nil {
+            // Try to merge without overwriting local changes
+            if !newerItem.safeMerge(cachedItem) {
+                // Merging failed
+                throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+            }
+        }
 
-			// If the item is partially loaded, then lets not overwrite the database
-			if syncState.isPartiallyLoaded {
-				// Merge in the properties from cachedItem that are not already set
-				newerItem.merge(cachedItem, true)
-			}
+        // If the item is partially loaded, then lets not overwrite the database
+        if newerItem._partial {
+            // Merge in the properties from cachedItem that are not already set
+            newerItem.merge(cachedItem, true)
+        }
 
-			return newerItem
-		} else {
-			throw "Exception: no syncstate available during merge"
-		}
+        return newerItem
 	}
 
 	public class func createItem<T: Object>(_ type: T.Type, values: [String: Any?] = [:],
@@ -577,10 +558,8 @@ public class Cache {
 				}
 				fromCache["dateModified"] = Date()
 
-				if let item = item, item.objectSchema["syncState"] != nil,
-					let syncState = item["syncState"] as? SyncState,
-					syncState.actionNeeded != "create" {
-					syncState.actionNeeded = "update"
+                if let item = item, item["_action"] as? String != "create" {
+                    item["_action"] = "update"
 				}
 
 				if let item = item as? Item, type != AuditItem.self {
@@ -597,9 +576,8 @@ public class Cache {
 
 			item = realm.create(type, value: dict)
 
-			if let item = item, item.objectSchema["syncState"] != nil,
-				let syncState = item["syncState"] as? SyncState {
-				syncState.actionNeeded = "create"
+			if let item = item {
+                item["_action"] = "create"
 			}
 
 			if let item = item as? Item, type != AuditItem.self {
@@ -641,10 +619,10 @@ public class Cache {
 				"edgeLabel": label,
 				"sequence": sequence,
 				"dateCreated": Date(),
+                "_action": "create"
 			]
 
 			edge = realm.create(Edge.self, value: values)
-			edge?.syncState?.actionNeeded = "create"
 		}
 
 		return edge ?? Edge()

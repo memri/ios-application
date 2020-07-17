@@ -18,7 +18,7 @@ public final class Sessions : Equatable {
         set (value) { setState("currentSessionIndex", value) }
     }
     
-    var uid: Int
+    var uid: Int? = nil
     var parsed: CVUParsedSessionsDefinition? = nil
     var state: CVUStateDefinition? {
         withReadRealm { realm in
@@ -40,41 +40,65 @@ public final class Sessions : Equatable {
 		currentSession?.currentView
 	}
 
-    init(_ state: CVUStateDefinition) throws {
-        guard let uid = state.uid.value else {
-            throw "CVU state object is unmanaged"
+    init(_ state: CVUStateDefinition?) throws {
+        if let state = state {
+            guard let uid = state.uid.value else {
+                throw "CVU state object is unmanaged"
+            }
+            
+            self.uid = uid
         }
-        
-        self.uid = uid
     }
     
     func load(_ context:MemriContext) throws {
         self.context = context
         
         try withReadRealmThrows { realm in
-            guard
-                let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid),
-                let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition
+            if let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid) {
+                guard let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition else {
+                    throw "Unable to parse state definition"
+                }
+            
+                self.parsed = p
+                
+                // Check if there are sessions in the db
+                if
+                    let storedSessionStates = state
+                        .edges("session")?
+                        .sorted(byKeyPath: "sequence")
+                        .items(type: CVUStateDefinition.self),
+                    storedSessionStates.count > 0
+                {
+                    for sessionState in storedSessionStates {
+                        sessions.append(try Session(sessionState, self))
+                    }
+                    
+                    try setCurrentSession()
+                }
+                // Or if the sessions are encoded in the definition
+                else if
+                    let parsedSessions = p["sessionDefinitions"] as? [CVUParsedSessionDefinition],
+                    parsedSessions.count > 0
+                {
+                    try withWriteRealmThrows { realm in
+                        for parsed in parsedSessions {
+                            let session = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
+                            _ = try state.link(session, type: "session")
+                        }
+                    }
+                    
+                    self.parsed?["sessionDefinitions"] = nil
+                }
+            }
+            // Create a default session
             else {
-                throw "Unable to fetch CVU state definition"
+                sessions.append(try Session(nil, self))
             }
-            
-            self.parsed = p
-            
-            guard let storedSessionStates = state.edges("session")?
-                .sorted(byKeyPath: "sequence").items(type: CVUStateDefinition.self) else {
-                    throw "No sessions found. Aborting" // TODO should this initialize a default session?
-            }
-            
-            for sessionState in storedSessionStates {
-                sessions.append(try Session(sessionState, self))
-            }
-            
-            try setCurrentSession()
         }
     }
     
     private func setState(_ name:String, _ value: Any?) {
+        if parsed == nil { parsed = CVUParsedSessionsDefinition() }
         parsed?[name] = value
         schedulePersist()
     }

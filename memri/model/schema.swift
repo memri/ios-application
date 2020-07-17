@@ -18,6 +18,7 @@ public typealias List = RealmSwift.List
 enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeAuditItem = "AuditItem"
     case typeCVUStoredDefinition = "CVUStoredDefinition"
+    case typeCVUStateDefinition = "CVUStateDefinition"
     case typeCompany = "Company"
     case typeCreativeWork = "CreativeWork"
     case typeDigitalDocument = "DigitalDocument"
@@ -47,11 +48,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typePerson = "Person"
     case typePhoneNumber = "PhoneNumber"
     case typePublicKey = "PublicKey"
-    case typeSession = "Session"
-    case typeSessionView = "SessionView"
-    case typeSessions = "Sessions"
     case typeSetting = "Setting"
-    case typeSyncState = "SyncState"
     case typeUserState = "UserState"
     case typeViewArguments = "ViewArguments"
     case typeWebsite = "Website"
@@ -62,6 +59,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return Color(hex: "#93c47d")
         case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
+        case .typeCVUStateDefinition: return Color(hex: "#93c47d")
         case .typeCompany: return Color(hex: "#93c47d")
         case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeDigitalDocument: return Color(hex: "#93c47d")
@@ -91,11 +89,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Color(hex: "#3a5eb2")
         case .typePhoneNumber: return Color(hex: "#eccf23")
         case .typePublicKey: return Color(hex: "#93c47d")
-        case .typeSession: return Color(hex: "#93c47d")
-        case .typeSessionView: return Color(hex: "#93c47d")
-        case .typeSessions: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
-        case .typeSyncState: return Color(hex: "#93c47d")
         case .typeUserState: return Color(hex: "#93c47d")
         case .typeViewArguments: return Color(hex: "#93c47d")
         case .typeWebsite: return Color(hex: "#3d57e2")
@@ -106,6 +100,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return Color(hex: "#ffffff")
         case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
+        case .typeCVUStateDefinition: return Color(hex: "#ffffff")
         case .typeCompany: return Color(hex: "#ffffff")
         case .typeCreativeWork: return Color(hex: "#ffffff")
         case .typeDigitalDocument: return Color(hex: "#ffffff")
@@ -135,11 +130,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Color(hex: "#ffffff")
         case .typePhoneNumber: return Color(hex: "#ffffff")
         case .typePublicKey: return Color(hex: "#ffffff")
-        case .typeSession: return Color(hex: "#ffffff")
-        case .typeSessionView: return Color(hex: "#ffffff")
-        case .typeSessions: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
-        case .typeSyncState: return Color(hex: "#ffffff")
         case .typeUserState: return Color(hex: "#ffffff")
         case .typeViewArguments: return Color(hex: "#ffffff")
         case .typeWebsite: return Color(hex: "#ffffff")
@@ -154,6 +145,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return AuditItem.self
         case .typeCVUStoredDefinition: return CVUStoredDefinition.self
+        case .typeCVUStateDefinition: return CVUStateDefinition.self
         case .typeCompany: return Company.self
         case .typeCreativeWork: return CreativeWork.self
         case .typeDigitalDocument: return DigitalDocument.self
@@ -183,11 +175,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Person.self
         case .typePhoneNumber: return PhoneNumber.self
         case .typePublicKey: return PublicKey.self
-        case .typeSession: return Session.self
-        case .typeSessionView: return SessionView.self
-        case .typeSessions: return Sessions.self
         case .typeSetting: return Setting.self
-        case .typeSyncState: return SyncState.self
         case .typeUserState: return UserState.self
         case .typeViewArguments: return ViewArguments.self
         case .typeWebsite: return Website.self
@@ -243,7 +231,7 @@ public class SchemaItem: SyncableItem, Codable, Identifiable {
 
     private enum CodingKeys: String, CodingKey {
         case allEdges, dateAccessed, dateCreated, dateModified, deleted, externalID,
-            itemDescription, starred, syncState, version, uid
+            itemDescription, starred, version, uid
     }
 }
 
@@ -278,28 +266,6 @@ public class CVUStateDefinition : CVUStoredDefinition {
     required init () {
         domain = "state"
     }
-    
-    public class func fromCVUStoredDefinition(_ stored:CVUStoredDefinition) throws -> CVUStateDefinition {
-        try Cache.createItem(CVUStateDefinition.self, values: [
-            "definition": stored.definition,
-            "domain": "state",
-            "name": stored.name,
-            "query": stored.query,
-            "selector": stored.selector,
-            "type": stored.type
-        ])
-    }
-    
-    public class func fromCVUParsedDefinition(_ parsed:CVUParsedDefinition) throws -> CVUStateDefinition {
-        try Cache.createItem(CVUStateDefinition.self, values: [
-            "definition": parsed.toCVUString(0, "    "),
-            "domain": "state",
-            "name": parsed.name,
-//            "query": stores.query,
-            "selector": parsed.selector,
-            "type": parsed.definitionType
-        ])
-    }
 }
 
 /// TBD
@@ -317,17 +283,6 @@ public class CVUStoredDefinition : Item {
     /// TBD
     @objc dynamic var type:String? = nil
     
-    override var computedTitle: String {
-        if let value = name, value != "" { return value }
-        //        else if let rendererName = self.rendererName {
-        //            return "A \(rendererName) showing: \(self.datasource?.query ?? "")"
-        //        }
-        else if let query = datasource?.query {
-            return "Showing: \(query)"
-        }
-        return "[No Name]"
-    }
-
     public required convenience init(from decoder: Decoder) throws {
         self.init()
         
@@ -746,16 +701,13 @@ public class Downloader : Item {
 }
 
 /// TBD
-public class Edge : Object, Codable {
+public class Edge : SyncableItem, Codable {
     /// TBD
     @objc dynamic var type:String? = nil
     /// TBD
     @objc dynamic var targetItemType:String? = nil
     /// TBD
     @objc dynamic var sourceItemType:String? = nil
-    /// Object describing syncing information about this object like loading state, versioning,
-    /// etc.
-    @objc dynamic var syncState:SyncState? = SyncState()
     /// Boolean whether the Item has been deleted.
     @objc dynamic var deleted:Bool = false
     /// The last version loaded from the server.
@@ -775,7 +727,6 @@ public class Edge : Object, Codable {
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("_type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
-            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
             version = try decoder.decodeIfPresent("version") ?? version
             edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
@@ -1299,6 +1250,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CVUStateDefinition> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
@@ -1327,9 +1279,6 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
 

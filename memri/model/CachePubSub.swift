@@ -30,7 +30,7 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
         }
     }
     
-    func listen(_ retries:Int = 0) throws {
+    func listen() throws {
         guard let uid = item.uid.value else {
             throw "Exception: Cannot subscribe to changes of an item without a uid"
         }
@@ -43,42 +43,42 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
             throw "Exception: Item is already created, cannot listen for create event"
         }
         
-        guard retries < 20 else {
-            return
-        }
-        
-        if item.syncState?.actionNeeded == "create" {
-            cache.sync.syncToPod()
-                
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                try? self.listen(retries + 1)
+        cache.isOnRemote(item) { error in
+            if error != nil {
+                // How to handle??
+                #warning("Look at this when implementing syncing")
+                debugHistory.error("Polling timeout. All polling services disabled")
+                return
             }
-            return
-        }
-        
-        // Poll every second
-        // TODO: make this an option?
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             
-            self.cache.podAPI.get(uid) { error, item in
-                if let error = error {
-                    debugHistory.warn("Received error polling item: \(error)")
+            // Poll every second
+            // TODO: make this an option?
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
+                if self.subscriber == nil {
+                    timer.invalidate()
+                    return
                 }
-                else if let item = item {
-                    do {
-                        if item.version > self.item.version {
-                            if let cachedItem = try self.cache.addToCache(item) as? Data {
-                                if case .update = self.event, cachedItem.deleted { return }
-                                if case .update = self.event, !cachedItem.deleted { return }
-                                _ = self.subscriber?.receive(cachedItem)
-                            }
-                            else {
-                                throw "Exception: Could not parse item"
+                
+                self.cache.podAPI.get(uid) { error, item in
+                    if let error = error {
+                        debugHistory.warn("Received error polling item: \(error)")
+                    }
+                    else if let item = item {
+                        do {
+                            if item.version > self.item.version {
+                                if let cachedItem = try self.cache.addToCache(item) as? Data {
+                                    if case .update = self.event, cachedItem.deleted { return }
+                                    if case .update = self.event, !cachedItem.deleted { return }
+                                    _ = self.subscriber?.receive(cachedItem)
+                                }
+                                else {
+                                    throw "Exception: Could not parse item"
+                                }
                             }
                         }
-                    }
-                    catch let error {
-                        debugHistory.warn("Received error polling item: \(error)")
+                        catch let error {
+                            debugHistory.warn("Received error polling item: \(error)")
+                        }
                     }
                 }
             }
@@ -245,6 +245,24 @@ extension Cache {
         case update
         case delete
         case all
+    }
+    
+    func isOnRemote(_ item: Item, _ retries: Int = 0, _ callback: (Error?) -> Void) {
+        if retries > 20 {
+            callback("Maximum retries reached")
+            return
+        }
+        
+        if item._action == "create" {
+            sync.syncToPod()
+                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.isOnRemote(item, retries + 1, callback)
+            }
+            return
+        }
+        
+        callback(nil)
     }
     
     func subscribe(query: String, on events: ItemChange = .all) -> QueryPublisher {

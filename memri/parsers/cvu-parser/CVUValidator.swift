@@ -105,7 +105,7 @@ class CVUValidator {
 
 	func validateDefinition(_ definition: CVUParsedDefinition) {
 		func check(_ definition: CVUParsedDefinition, _ validate: (String, Any) throws -> Bool) {
-			for (key, value) in definition.parsed {
+            for (key, value) in definition.parsed ?? [:] {
 				if value is Expression { continue }
 
 				do {
@@ -186,7 +186,7 @@ class CVUValidator {
 			//                return true
 			//            }
 
-			if let children = definition.parsed["children"] as? [Any] {
+			if let children = definition.parsed?["children"] as? [Any] {
 				for child in children {
 					if let element = child as? UIElement { validateUIElement(element) }
 					else {

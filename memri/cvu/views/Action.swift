@@ -7,6 +7,7 @@
 import Foundation
 import RealmSwift
 import SwiftUI
+import Combine
 
 extension MemriContext {
 	private func getItem(_ dict: [String: Any?], _ dataItem: Item?,
@@ -42,11 +43,12 @@ extension MemriContext {
 		return item
 	}
 
-	private func buildArguments(_ action: Action, _ dataItem: Item?,
+	private func buildArguments(_ action: Action, _ item: Item?,
 								_ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
-        let viewArgs = try ViewArguments.from(viewArguments ?? currentView?.viewArguments, dataItem)
-        viewArgs.set(".", dataItem)
+        let viewArgs = ViewArguments(viewArguments ?? currentView?.viewArguments)
+        try viewArgs.resolve(item)
+        viewArgs.set(".", item)
         
         var args = [String: Any?]()
 		for (argName, inputValue) in action.arguments {
@@ -79,9 +81,9 @@ extension MemriContext {
                 }
                 
 				if action.argumentTypes[argName] == ViewArguments.self {
-					finalValue = try ViewArguments(dict)
+					finalValue = ViewArguments(dict)
 				} else if action.argumentTypes[argName] == ItemFamily.self {
-					finalValue = try getItem(dict, dataItem, viewArguments)
+					finalValue = try getItem(dict, item, viewArguments)
 				} else if action.argumentTypes[argName] == CVUStateDefinition.self {
 					let viewDef = CVUParsedViewDefinition(UUID().uuidString)
 					viewDef.parsed = dict
@@ -91,7 +93,8 @@ extension MemriContext {
 				}
             } else if action.argumentTypes[argName] == ViewArguments.self {
                 if let viewArgs = argValue as? ViewArguments {
-                    finalValue = try ViewArguments.from(viewArgs, dataItem)
+                    finalValue = ViewArguments(viewArgs)
+                    try (finalValue as? ViewArguments)?.resolve(item)
                 }
                 else {
                     throw "Exception: Could not parse \(argName)"
@@ -119,7 +122,7 @@ extension MemriContext {
 		}
 
 		// Last element of arguments array is the context data item
-		args["item"] = dataItem ?? currentView?.resultSet.singletonItem
+		args["item"] = item ?? currentView?.resultSet.singletonItem
 
 		return args
 	}
@@ -363,7 +366,7 @@ public enum ActionFamily: String, CaseIterable {
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
 		showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
-		link, closePopup, unlink, multiAction, noop, runIndexerRun, runImporterRun,
+		link, closePopup, unlink, multiAction, noop, runIndexer, runImporter,
 		setProperty, setSetting
 
 	func getType() -> Action.Type {
@@ -391,8 +394,8 @@ public enum ActionFamily: String, CaseIterable {
 		case .link: return ActionLink.self
 		case .unlink: return ActionUnlink.self
 		case .multiAction: return ActionMultiAction.self
-		case .runIndexerRun: return ActionRunIndexerRun.self
-		case .runImporterRun: return ActionRunImporterRun.self
+		case .runIndexer: return ActionRunIndexer.self
+		case .runImporter: return ActionRunImporter.self
 		case .setProperty: return ActionSetProperty.self
         case .setSetting: return ActionSetSetting.self
 		case .noop: fallthrough
@@ -574,27 +577,13 @@ class ActionOpenViewByName: Action, ActionExec {
                 throw "No view found with the name \(name)"
             }
             
-            var view:CVUStateDefinition
-            if stored.type == "view" {
-                view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+            do {
+                let view = try context.views.getViewStateDefinition(from: stored)
+                try ActionOpenView(context).openView(context, view: view, with: viewArguments)
             }
-            else if stored.type == "session" {
-                guard let parsed = try context.views.parseDefinition(stored) else {
-                    throw "Unable to parse state definition"
-                }
-                
-                if let list = parsed["views"] as? [CVUParsedViewDefinition], let p = list.first {
-                    view = try CVUStateDefinition.fromCVUParsedDefinition(p)
-                }
-                else {
-                    throw "Invalid definition type for \(name)"
-                }
+            catch let error {
+                throw "\(error) for \(name)"
             }
-            else {
-                throw "Invalid definition type for \(name)"
-            }
-            
-            try ActionOpenView(context).openView(context, view: view, with: viewArguments)
 		} else {
 			// TODO: Error Handling
 			throw "Cannot execute ActionOpenViewByName, no name found in arguments."
@@ -1007,7 +996,7 @@ class ActionDelete: Action, ActionExec {
 		//        }
 
         if
-            let selection: [Item] = context.currentView?.userState.get("selection") as? [Item],
+            let selection = context.currentView?.userState.get("selection", type: [Item].self),
             selection.count > 0
         {
 			context.cache.delete(selection)
@@ -1031,11 +1020,16 @@ class ActionDuplicate: Action, ActionExec {
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
-		if let selection: [Item] = context.cascadingView?.userState?.get("selection"), selection.count > 0 {
+        if
+            let selection = context.currentView?.userState.get("selection", type: [Item].self),
+            selection.count > 0
+        {
 			try selection.forEach { item in try ActionAddItem.exec(context, ["item": item]) }
-		} else if let item = arguments["item"] as? Item {
+		}
+        else if let item = arguments["item"] as? Item {
 			try ActionAddItem.exec(context, ["item": item])
-		} else {
+		}
+        else {
 			// TODO: Error handling
 			throw "Cannot execute ActionDupliate. The user either needs to make a selection, or a dataItem needs to be passed to this call."
 		}
@@ -1046,13 +1040,13 @@ class ActionDuplicate: Action, ActionExec {
 	}
 }
 
-class ActionRunImporterRun: Action, ActionExec {
+class ActionRunImporter: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
 		"argumentTypes": ["importerRun": ItemFamily.self],
 	] }
 
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runImporterRun", arguments: arguments, values: values)
+		super.init(context, "runImporter", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1061,7 +1055,7 @@ class ActionRunImporterRun: Action, ActionExec {
 		if let run = arguments["importerRun"] as? ImporterRun {
 			guard let uid = run.uid.value else { throw "Uninitialized import run" }
 
-			context.podAPI.runImporterRun(uid) { error, _ in
+			context.podAPI.runImporter(uid) { error, _ in
 				if let error = error {
 					print("Cannot execute actionImport: \(error)")
 				}
@@ -1070,13 +1064,13 @@ class ActionRunImporterRun: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
-		execWithoutThrow { try ActionRunImporterRun(context).exec(arguments) }
+		execWithoutThrow { try ActionRunImporter(context).exec(arguments) }
 	}
 }
 
-class ActionRunIndexerRun: Action, ActionExec {
+class ActionRunIndexer: Action, ActionExec {
 	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runIndexerRun", arguments: arguments, values: values)
+		super.init(context, "runIndexer", arguments: arguments, values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1088,68 +1082,48 @@ class ActionRunIndexerRun: Action, ActionExec {
 		if run.indexer?.runDestination == "ios" {
 			try runLocal(run)
 		} else {
-			// First make sure the indexer exists
-
-			//            print("starting IndexerRun with memrID \(memriID)")
 			run.set("progress", 0)
 			context.scheduleUIUpdate()
 			// TODO: indexerInstance items should have been automatically created already by now
-
-			func getAndRunIndexerRun(_ tries: Int) {
-				if tries > 5 {
-					return
-				}
-				let uid: Int? = run.get("uid")
-				if run.syncState?.actionNeeded == "create" {
-                    context.cache.sync.syncToPod()
-					DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-						getAndRunIndexerRun(tries + 1)
-					}
-				} else {
-					runIndexerRun(run, uid!)
-				}
-			}
-			getAndRunIndexerRun(0)
-		}
-	}
-
-	func runIndexerRun(_ run: IndexerRun, _ uid: Int) {
-		let start = Date()
-        
             
-        self.context.podAPI.runIndexerRun(uid) { error, data in
-            print(error)
-            print(data)
-            
-        }
-
-		Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-			let timePassed = Int(Date().timeIntervalSince(start))
-			print("polling indexerInstance")
-			self.context.podAPI.get(uid) { error, data in
-				if let updatedInstance = data as? IndexerRun {
-                    
-                    do{
-                        try self.context.cache.addToCache(updatedInstance)
+            context.cache.isOnRemote(run) { error in
+                if error != nil {
+                    // How to handle??
+                    #warning("Look at this when implementing syncing")
+                    debugHistory.error("Polling timeout. All polling services disabled")
+                    return
+                }
+                
+                guard let uid = run.uid.value else {
+                    debugHistory.error("Item does not have a uid")
+                    return
+                }
+                
+                // Start indexer process
+                self.context.podAPI.runIndexer(uid) { error, data in
+                    if error == nil {
+                        let watcher: AnyCancellable
+                        watcher = self.context.cache.subscribe(to: run).sink { item in
+                            if let progress: Int = item.get("progress") {
+                                self.context.scheduleUIUpdate()
+                                
+                                print("progress \(progress)")
+                                
+                                if progress >= 100 {
+                                    watcher.cancel()
+                                }
+                            } else {
+                                debugHistory.error("ERROR, could not get progress: \(String(describing: error))")
+                                watcher.cancel()
+                            }
+                        }
                     }
-                    catch {
-                        print("Could not add \(updatedInstance) to cache")
+                    else {
+                        // TODO User Error handling
+                        debugHistory.error("Could not start indexer: \(error ?? "")")
                     }
-					if let progress: Int = updatedInstance.get("progress") {
-                        self.context.scheduleUIUpdate()
-                        print("progress \(progress)")
-						if timePassed > 20 || progress >= 100 {
-							timer.invalidate()
-						}
-					} else {
-						print("ERROR, could not get progress: \(String(describing: error))")
-						timer.invalidate()
-					}
-				} else {
-					print("Error, no instance")
-					timer.invalidate()
-				}
-			}
+                }
+            }
 		}
 	}
 
@@ -1167,7 +1141,7 @@ class ActionRunIndexerRun: Action, ActionExec {
 	}
 
 	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
-		execWithoutThrow { try ActionRunIndexerRun(context).exec(arguments) }
+		execWithoutThrow { try ActionRunIndexer(context).exec(arguments) }
 	}
 }
 

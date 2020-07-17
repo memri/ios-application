@@ -12,8 +12,8 @@ public class Languages {
 
 	public func load(_ definitions: [CVUParsedDefinition]) {
 		for def in definitions {
-			if def.name == currentLanguage {
-				for (keyword, naturalLanguageString) in def.parsed {
+            if def.name == currentLanguage, let parsed = def.parsed {
+				for (keyword, naturalLanguageString) in parsed {
 					if keywords[keyword] != nil {
 						// TODO: warn developers
 						print("Keyword already exists \(keyword) for language \(currentLanguage)")

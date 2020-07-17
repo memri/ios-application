@@ -81,7 +81,7 @@ struct ThumbnailRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.currentView?.userState?
+				self.context.currentView?.userState
 					.set("selection", $0.compactMap { self.context.items[safe: $0] })
 			}
 		)
@@ -90,7 +90,7 @@ struct ThumbnailRendererView: View {
 	var name: String = "thumbnail"
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+        context.currentView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
