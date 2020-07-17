@@ -289,6 +289,12 @@ public struct UIElementView: SwiftUI.View {
 									 subtitle: from.processText(get("text")),
 									 backgroundColor: ItemFamily(rawValue: item.genericType)?.backgroundColor ?? .gray)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .MessageBubble {
+					MessageBubbleView(timestamp: get("dateTime"),
+									  sender: get("sender"),
+									  content: from.processText(get("content")) ?? "",
+									  outgoing: get("isOutgoing") ?? false)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Image {
 					if has("systemName") {
 						Image(systemName: get("systemName") ?? "exclamationmark.bubble")

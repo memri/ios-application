@@ -25,12 +25,23 @@ class CascadingMessageRendererConfig: CascadingRenderConfig {
 	var type: String? = "messages"
 	
 	var press: Action? { cascadeProperty("press") }
+	
+	var isOutgoing: Expression? { cascadeProperty("isOutgoing", type: Expression.self) }
 }
 
 struct MessageRenderer: View {
 	@EnvironmentObject var context: MemriContext
 	var renderConfig: CascadingMessageRendererConfig {
 		context.cascadingView?.renderConfig as? CascadingMessageRendererConfig ?? CascadingMessageRendererConfig()
+	}
+	
+	func resolveExpression<T>(_ expression: Expression?,
+							  toType _: T.Type = T.self,
+							  forItem dataItem: Item) -> T? {
+		let args = try? ViewArguments
+			.clone(context.cascadingView?.viewArguments, [".": dataItem], managed: false)
+		
+		return try? expression?.execForReturnType(T.self, args: args)
 	}
 	
 	var selectedItems: Binding<Set<Int>> {
@@ -47,66 +58,13 @@ struct MessageRenderer: View {
 		context.currentSession?.isEditMode ?? false
 	}
     
-    var dateFormatter: DateFormatter {
-        let format = DateFormatter()
-        format.dateStyle = .short
-        format.timeStyle = .short
-        format.doesRelativeDateFormatting = true
-        return format
-    }
-    
-    var messageItems: [MessageItem] {
-		context.items.map { item in
-            let sender = item.get("title", type: String.self)
-            let date = item.get("dateModified", type: Date.self) ?? Date()
-            return MessageItem(id: item.id.hashValue,
-							   item: item,
-                               timestamp: date,
-							   sender: sender,
-							   content: item.get("content", type: String.self)?.strippingHTMLtags() ?? "",
-                               outgoing: sender == "To read list")
-        }.sorted(by: { $0.timestamp < $1.timestamp })
-    }
-    
     var section: ASSection<Int> {
-        ASSection<Int>(id: 0, data: messageItems, selectedItems: selectedItems) { item, cellContext in
-            HStack {
-                if item.outgoing {
-                    Spacer(minLength: editMode ? 5 : 40)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-					if !item.outgoing {
-						item.sender.map {
-							Text($0)
-								.lineLimit(1)
-								.font(Font.body.bold())
-						}
-					}
-					Text(dateFormatter.string(from: item.timestamp))
-						.lineLimit(1)
-						.font(.caption)
-						.foregroundColor(Color(.secondaryLabel))
-                    Text(item.content)
-                        .multilineTextAlignment(.leading)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.all, 10)
-                        .foregroundColor(
-                            item.outgoing ? Color.white : Color(.label)
-                        )
-                        .background(
-                            item.outgoing ? Color.blue : Color(.secondarySystemBackground)
-                        )
-                        .mask(RoundedRectangle(cornerRadius: 5, style: .continuous))
-                }
-                if !item.outgoing {
-                    Spacer(minLength: editMode ? 5 : 40)
-                }
-            }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 10)
-        }
+		ASSection<Int>(id: 0, data: context.items, selectedItems: selectedItems) { item, cellContext in
+			renderConfig.render(item: item)
+				.environmentObject(self.context)
+		}
 		.onSelectSingle { (index) in
-			guard let selectedItem = self.messageItems[safe: index]?.item,
+			guard let selectedItem = context.items[safe: index],
 				  let press = self.renderConfig.press
 			else { return }
 			context.executeAction(press, with: selectedItem)
@@ -121,15 +79,57 @@ struct MessageRenderer: View {
             .contentInsets(.init(top: 5, left: 0, bottom: 5, right: 0))
             .edgesIgnoringSafeArea(.all)
     }
-    
-    struct MessageItem: Identifiable {
-        var id: Int
-		var item: Item
-        var timestamp: Date
-		var sender: String?
-        var content: String
-        var outgoing: Bool
-    }
+}
+
+struct MessageBubbleView: View {
+	var timestamp: Date?
+	var sender: String?
+	var content: String
+	var outgoing: Bool
+	
+	var dateFormatter: DateFormatter {
+		// TODO: If there is a user setting for a *short* date format, we should use that
+		let format = DateFormatter()
+		format.dateStyle = .short
+		format.timeStyle = .short
+		format.doesRelativeDateFormatting = true
+		return format
+	}
+	
+	var body: some View {
+		HStack {
+			VStack(alignment: .leading, spacing: 2) {
+				if !outgoing {
+					sender.map {
+						Text($0)
+							.lineLimit(1)
+							.font(Font.body.bold())
+					}
+				}
+				timestamp.map {
+					Text(dateFormatter.string(from: $0))
+						.lineLimit(1)
+						.font(.caption)
+						.foregroundColor(Color(.secondaryLabel))
+				}
+				Text(content)
+					.multilineTextAlignment(.leading)
+					.fixedSize(horizontal: false, vertical: true)
+					.padding(.all, 10)
+					.foregroundColor(
+						outgoing ? Color.white : Color(.label)
+					)
+					.background(
+						outgoing ? Color.blue : Color(.secondarySystemBackground)
+					)
+					.mask(RoundedRectangle(cornerRadius: 5, style: .continuous))
+			}
+		}
+		.padding(.vertical, 4)
+		.padding(.horizontal, 10)
+		.frame(maxWidth: .infinity, alignment: outgoing ? .trailing : .leading)
+		.padding(outgoing ? .leading : .trailing, 20)
+	}
 }
 
 struct MessageRenderer_Previews: PreviewProvider {
