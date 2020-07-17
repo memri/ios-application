@@ -107,9 +107,37 @@ struct CalendarView: View {
             .background(Color(.secondarySystemBackground))
             ASCollectionView(sections: sections(withCalcs: calcs))
                 .scrollPositionSetter($scrollPosition)
-                .layout { (layoutEnvironment) -> ASCollectionLayoutSection in
-                    .grid(layoutMode: .fixedNumberOfColumns(7), itemSpacing: 0, lineSpacing: 0, itemSize: .absolute(55))
-                }
+				.layout( ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 4) {
+					ASCollectionLayoutSection { (environment) -> NSCollectionLayoutSection in
+						let columns = 7
+						
+						let itemSize = NSCollectionLayoutDimension.absolute(55)
+						
+						let	itemLayoutSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: itemSize)
+						let	groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: itemSize)
+						let	supplementarySize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(30))
+						
+						let item = NSCollectionLayoutItem(layoutSize: itemLayoutSize)
+						
+						let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitem: item, count: columns)
+						
+						let section = NSCollectionLayoutSection(group: group)
+						section.interGroupSpacing = 0
+						section.contentInsets = .init(top: 0, leading: 20, bottom: 0, trailing: 20)
+						section.visibleItemsInvalidationHandler = { _, _, _ in } // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
+						
+						let headerSupplementary = NSCollectionLayoutBoundarySupplementaryItem(
+							layoutSize: supplementarySize,
+							elementKind: UICollectionView.elementKindSectionHeader,
+							alignment: .top)
+						let footerSupplementary = NSCollectionLayoutBoundarySupplementaryItem(
+							layoutSize: supplementarySize,
+							elementKind: UICollectionView.elementKindSectionFooter,
+							alignment: .bottom)
+						section.boundarySupplementaryItems = [headerSupplementary, footerSupplementary]
+						return section
+					}
+				})
                 .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
                 .alwaysBounceVertical()
         }
@@ -130,9 +158,23 @@ struct CalendarView: View {
 						Spacer()
 						Text(self.calendarHelper.dayString(for: day))
 							.foregroundColor(self.calendarHelper.isToday(day) ? .red : Color(.label))
-						Circle().fill(calcs.hasItemOnDay(day) ? Color.red : Color.clear)
-							.frame(width: 10, height: 10)
-							.padding(4)
+						HStack(spacing: 0) {
+							if calcs.itemsOnDay(day).count > 4 {
+								Circle()
+									.fill(Color.red)
+									.frame(width: 10, height: 10)
+									.padding(4)
+								Text("×\(calcs.itemsOnDay(day).count)")
+									.font(Font.caption.bold())
+									.foregroundColor(Color.red)
+									.fixedSize()
+							} else {
+								CalendarDotShape(count: calcs.itemsOnDay(day).count)
+									.fill(Color.red)
+									.frame(height: 10)
+									.padding(4)
+							}
+						}
 						Spacer()
 						Divider()
 					}
@@ -141,7 +183,7 @@ struct CalendarView: View {
 			}
 		}
 		.sectionHeader {
-			Text(calendarHelper.monthString(for: month))
+			Text(calendarHelper.monthYearString(for: month))
 				.font(.headline)
 				.frame(maxWidth: .infinity, alignment: .leading)
 		}
@@ -157,6 +199,22 @@ struct CalendarView: View {
 			guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
 			
 			try? ActionOpenViewWithUIDs(self.context).exec(["itemType": itemType, "uids": uids])
+		}
+	}
+}
+
+struct CalendarDotShape: Shape {
+	var count: Int
+	func path(in rect: CGRect) -> Path {
+		Path { path in
+			guard count > 0 else { return }
+			let boundedCountInt = max(min(count, 4), 0)
+			let boundedCount = CGFloat(boundedCountInt)
+			let radius = min(rect.width/2/(boundedCount + 1) - 1, rect.height * 0.5)
+			let spacing = rect.width / (boundedCount + 1)
+			for i in (1...boundedCountInt) {
+				path.addEllipse(in: CGRect(x: spacing * CGFloat(i) - radius, y: rect.midY - radius, width: radius * 2, height: radius * 2))
+			}
 		}
 	}
 }

@@ -38,14 +38,14 @@ struct TimelineRenderer: View {
 	func resolveItemDateTime(_ item: Item) -> Date? {
 		resolveExpression(renderConfig.dateTimeExpression, toType: Date.self, forItem: item)
 	}
+	
+	let minSectionHeight: CGFloat = 40
     
-    var sections: [ASSection<Date>] {
-		let model = TimelineModel(dataItems: context.items, itemDateTimeResolver: resolveItemDateTime, detailLevel: renderConfig.detailLevel, mostRecentFirst: renderConfig.mostRecentFirst)
-        return model.data.map { group in
-            let matchesNow = model.calendarHelper.isSameAsNow(group.date, byComponents: model.detailLevel.relevantComponents)
+	func sections(withModel model: TimelineModel) -> [ASSection<Date>] {
+		return model.data.map { group in
             return ASSection<Date>(id: group.date, data: group.items) { element, cellContext in
 				self.renderElement(element)
-					.if(group.items.count < 2) { $0.frame(minHeight: 35) }
+					.if(group.items.count < 2) { $0.frame(minHeight: minSectionHeight) }
             }
 			.onSelectSingle({ (index) in
 				guard let element = group.items[safe: index] else { return }
@@ -59,26 +59,7 @@ struct TimelineRenderer: View {
 				}
 			})
             .sectionHeader {
-                VStack(spacing: 0) {
-                    smallString(forDate: group.date).map { string in
-                        Text(string)
-                        .font(Font.system(size: 15))
-                        .foregroundColor(matchesNow ? Color.red : Color(.secondaryLabel))
-                    }
-                    largeString(forDate: group.date).map { string in
-                        Text(string)
-                        .font(Font.system(size: 25))
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.6)
-                            .foregroundColor(matchesNow ? (useFillToIndicateNow ? Color.white : .red) : Color(.label))
-                        .padding(matchesNow ? 3 : 0)
-                        .background(
-                            Circle().fill((useFillToIndicateNow && matchesNow) ? Color.red : .clear)
-                                .frame(minWidth: 35, minHeight: 35)
-                        )
-                    }
-                }
-                .padding(8)
+				header(for: group, calendarHelper: model.calendarHelper)
             }
             .sectionFooter {
                 VStack {
@@ -109,9 +90,11 @@ struct TimelineRenderer: View {
 	}
     
     var body: some View {
-       ASCollectionView(sections: sections)
-        .layout(layout)
-        .alwaysBounceVertical()
+		let model = TimelineModel(dataItems: context.items, itemDateTimeResolver: resolveItemDateTime, detailLevel: renderConfig.detailLevel, mostRecentFirst: renderConfig.mostRecentFirst)
+		
+		return ASCollectionView(sections: sections(withModel: model))
+			.layout(layout)
+			.alwaysBounceVertical()
     }
     
     var leadingInset: CGFloat {
@@ -132,7 +115,7 @@ struct TimelineRenderer: View {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
-				section.contentInsets = .init(top: 15, leading: hasFullWidthHeader ? 10 : self.leadingInset + 5 , bottom: 15, trailing: 10)
+				section.contentInsets = .init(top: 8, leading: hasFullWidthHeader ? 10 : self.leadingInset + 5 , bottom: 8, trailing: 10)
                 section.interGroupSpacing = 10
                 section.visibleItemsInvalidationHandler = { visibleItems, contentOffset, layoutEnvironment in
                     // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
@@ -148,7 +131,7 @@ struct TimelineRenderer: View {
                     headerSupplementary.extendsBoundary = true
                     headerSupplementary.pinToVisibleBounds = false
                 } else {
-					let supplementarySize = NSCollectionLayoutSize(widthDimension: .absolute(self.leadingInset), heightDimension: .absolute(64))
+					let supplementarySize = NSCollectionLayoutSize(widthDimension: .absolute(self.leadingInset), heightDimension: .absolute(minSectionHeight + 16))
                     headerSupplementary = NSCollectionLayoutBoundarySupplementaryItem(
                         layoutSize: supplementarySize,
                         elementKind: UICollectionView.elementKindSectionHeader,
@@ -171,46 +154,109 @@ struct TimelineRenderer: View {
 }
 
 extension TimelineRenderer {
-    
-    func largeString(forDate date: Date) -> String? {
-        switch renderConfig.detailLevel {
-        case .hour:
-            return nil
-        case .day:
-            let format = DateFormatter()
-            format.dateFormat = "d"
-            return format.string(from: date)
-        case .week:
-            let format = DateFormatter()
-            format.dateFormat = "ww"
-            return format.string(from: date)
-        case .month:
-            let format = DateFormatter()
-            format.dateFormat = "MMM"
-            return format.string(from: date)
-        case .year:
-            let format = DateFormatter()
-            format.dateFormat = "YYYY"
-            return format.string(from: date)
-        }
-    }
-    
-    func smallString(forDate date: Date) -> String? {
-        switch renderConfig.detailLevel {
-        case .hour:
-            let format = DateFormatter()
-            format.dateFormat = "h a"
-            return format.string(from: date)
-        case .day:
-            let format = DateFormatter()
-            format.dateFormat = "MMM"
-            return format.string(from: date)
-        case .week:
-            return "Week"
-        default:
-            return nil
-        }
-    }
+	// TODO: Clean up this function. Should probably define for each `DetailLevel` individually
+	func header(for group: TimelineGroup, calendarHelper: CalendarHelper) -> some View {
+		let matchesNow = calendarHelper.isSameAsNow(group.date, byComponents: renderConfig.detailLevel.relevantComponents)
+		
+		let flipOrder: Bool = {
+			switch renderConfig.detailLevel {
+			case .hour: return true
+			default:
+				return false
+			}
+		}()
+		
+		let alignment: HorizontalAlignment = {
+			switch renderConfig.detailLevel {
+			case .year: return .leading
+			case .day: return .center
+			default: return .trailing
+			}
+		}()
+		
+		let largeString: String? = {
+			switch renderConfig.detailLevel {
+			case .hour:
+				if group.isStartOf.contains(.day) {
+					let format = DateFormatter()
+					format.dateFormat = "dd/MM"
+					return format.string(from: group.date)
+				}
+			case .day:
+				let format = DateFormatter()
+				format.dateFormat = "d"
+				return format.string(from: group.date)
+			case .week:
+				let format = DateFormatter()
+				format.dateFormat = "ww"
+				return format.string(from: group.date)
+			case .month:
+				let format = DateFormatter()
+				format.dateFormat = "MMM"
+				return format.string(from: group.date)
+			case .year:
+				let format = DateFormatter()
+				format.dateFormat = "YYYY"
+				return format.string(from: group.date)
+			}
+			return nil
+		}()
+		
+		let smallString: String? = {
+			switch renderConfig.detailLevel {
+			case .hour:
+				let format = DateFormatter()
+				format.dateFormat = "h a"
+				return format.string(from: group.date)
+			case .day:
+				let format = DateFormatter()
+				format.dateFormat = group.isStartOf.contains(.year) ? "MMM YY" : "MMM"
+				return format.string(from: group.date)
+			case .week:
+				return "Week"
+			case .month:
+				if group.isStartOf.contains(.year) {
+					let format = DateFormatter()
+					format.dateFormat = "YYYY"
+					return format.string(from: group.date)
+				}
+			default: break
+			}
+			return nil
+		}()
+		
+		let small: some View = {
+			smallString.map { string in
+				Text(string)
+					.font(Font.system(size: 14))
+					.foregroundColor(matchesNow ? Color.red : Color(.secondaryLabel))
+			}
+		}()
+		
+		return VStack(alignment: alignment, spacing: 0) {
+			if !flipOrder {
+				small
+			}
+			largeString.map { string in
+				Text(string)
+					.font(Font.system(size: 20))
+					.lineLimit(1)
+					.minimumScaleFactor(0.6)
+					.foregroundColor(matchesNow ? (useFillToIndicateNow ? Color.white : .red) : Color(.label))
+					.padding(.vertical, matchesNow ? 3 : 0)
+					.background(
+						Circle().fill((useFillToIndicateNow && matchesNow) ? Color.red : .clear)
+							.frame(minWidth: 30, minHeight: 30)
+					)
+			}
+			if flipOrder {
+				small
+			}
+			Spacer(minLength: 0)
+		}
+		.padding(8)
+		.frame(maxWidth: .infinity, alignment: Alignment(horizontal: alignment, vertical: .top))
+	}
     
     var useFillToIndicateNow: Bool {
         switch renderConfig.detailLevel {

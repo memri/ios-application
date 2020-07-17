@@ -20,6 +20,11 @@ struct CalendarHelper {
         formatter.dateFormat = "MMM"
         return formatter
     }()
+	var monthYearFormatter: DateFormatter = {
+		let formatter = DateFormatter()
+		formatter.dateFormat = "MMM YYYY"
+		return formatter
+	}()
     
     func getMonths(from startDate: Date, to endDate: Date) -> [Date] {
         guard endDate >= startDate,
@@ -82,6 +87,14 @@ struct CalendarHelper {
     func monthString(for date: Date) -> String {
         monthFormatter.string(from: date)
     }
+	
+	func monthYearString(for date: Date) -> String {
+		if calendar.isDate(date, equalTo: Date(), toGranularity: .year) {
+			return monthFormatter.string(from: date)
+		} else {
+			return monthYearFormatter.string(from: date)
+		}
+	}
     
     var daysInWeek: [String] {
         calendar.shortStandaloneWeekdaySymbols

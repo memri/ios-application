@@ -182,6 +182,7 @@ public class Item: SchemaItem {
                     _ = try self.link(obj, type: name)
                 }
             }
+			self.dateModified = Date() // Update DateModified
 		}
 	}
 
