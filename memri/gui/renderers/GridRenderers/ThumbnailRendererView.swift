@@ -114,7 +114,6 @@ struct ThumbnailRendererView: View {
 								selectedItems: selectedIndices)
 		{ dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
-				// TODO: Error handling
 				self.renderConfig.render(item: dataItem)
 					.environmentObject(self.context)
 

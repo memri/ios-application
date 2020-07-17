@@ -79,7 +79,6 @@ struct ThumbHorizontalGridRendererView: View {
 		ASCollectionViewSection(id: 0, data: context.items, selectedItems: selectedIndices) { dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
 				GeometryReader { geom in
-					// TODO: Error handling
 					self.renderConfig.render(item: dataItem)
 						.environmentObject(self.context)
 						.frame(width: geom.size.width, height: geom.size.height)

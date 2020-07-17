@@ -106,7 +106,6 @@ class MapHelper {
 
 	var cancellableBag = Set<AnyCancellable>()
 
-	// TODO: Persist the address lookups back to the dataItem
 	var addressLookupResults: [Int: CLLocation] = [:]
 	var addressLookupPublishers: [Int: AnyPublisher<CLLocation?, Never>] = [:]
 }
