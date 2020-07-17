@@ -44,17 +44,17 @@ struct TimelineRenderer: View {
         return model.data.map { group in
             let matchesNow = model.calendarHelper.isSameAsNow(group.date, byComponents: model.detailLevel.relevantComponents)
             return ASSection<Date>(id: group.date, data: group.items) { element, cellContext in
-                renderElement(element)
+				self.renderElement(element)
 					.if(group.items.count < 2) { $0.frame(minHeight: 35) }
             }
 			.onSelectSingle({ (index) in
 				guard let element = group.items[safe: index] else { return }
 				if element.isGroup {
 					let uids = element.items.compactMap { $0.uid }
-					try? ActionOpenViewWithUIDs(context).exec(["itemType": element.itemType, "uids": uids])
+					try? ActionOpenViewWithUIDs(self.context).exec(["itemType": element.itemType, "uids": uids])
 				} else {
 					if let press = self.renderConfig.press, let item = element.items.first {
-						context.executeAction(press, with: item)
+						self.context.executeAction(press, with: item)
 					}
 				}
 			})
@@ -99,10 +99,12 @@ struct TimelineRenderer: View {
 							 backgroundColor: ItemFamily(rawValue: element.itemType)?.backgroundColor ?? .gray)
 				.frame(maxWidth: .infinity, alignment: .leading)
 			#warning("@Ruben: I couldn't figure out a way using current CVU options to provide a way to render for a `group` of items")
-		} else if let item = element.items.first {
-			self.renderConfig.render(item: item)
-				.frame(maxWidth: .infinity, alignment: .leading)
-				.environmentObject(context)
+		} else {
+			element.items.first.map {
+				self.renderConfig.render(item: $0)
+					.frame(maxWidth: .infinity, alignment: .leading)
+					.environmentObject(context)
+			}
 		}
 	}
     
@@ -119,7 +121,7 @@ struct TimelineRenderer: View {
     var layout: ASCollectionLayout<Date> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) { () -> ASCollectionLayoutSection in
             ASCollectionLayoutSection { layoutEnvironment -> NSCollectionLayoutSection in
-                let hasFullWidthHeader: Bool = renderConfig.detailLevel == .year
+				let hasFullWidthHeader: Bool = self.renderConfig.detailLevel == .year
                 
                 
                 let itemLayoutSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(20))
@@ -130,7 +132,7 @@ struct TimelineRenderer: View {
                 
                 let section = NSCollectionLayoutSection(group: group)
                 
-                section.contentInsets = .init(top: 15, leading: hasFullWidthHeader ? 10 : leadingInset + 5 , bottom: 15, trailing: 10)
+				section.contentInsets = .init(top: 15, leading: hasFullWidthHeader ? 10 : self.leadingInset + 5 , bottom: 15, trailing: 10)
                 section.interGroupSpacing = 10
                 section.visibleItemsInvalidationHandler = { visibleItems, contentOffset, layoutEnvironment in
                     // If this isn't defined, there is a bug in UICVCompositional Layout that will fail to update sizes of cells
@@ -146,7 +148,7 @@ struct TimelineRenderer: View {
                     headerSupplementary.extendsBoundary = true
                     headerSupplementary.pinToVisibleBounds = false
                 } else {
-                    let supplementarySize = NSCollectionLayoutSize(widthDimension: .absolute(leadingInset), heightDimension: .absolute(64))
+					let supplementarySize = NSCollectionLayoutSize(widthDimension: .absolute(self.leadingInset), heightDimension: .absolute(64))
                     headerSupplementary = NSCollectionLayoutBoundarySupplementaryItem(
                         layoutSize: supplementarySize,
                         elementKind: UICollectionView.elementKindSectionHeader,

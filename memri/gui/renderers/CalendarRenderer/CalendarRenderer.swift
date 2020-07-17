@@ -94,9 +94,9 @@ struct CalendarView: View {
                 day.map { day in
                     VStack(spacing: 0) {
                         Spacer()
-                        Text(calendarHelper.dayString(for: day))
-							.foregroundColor(calendarHelper.isToday(day) ? .red : Color(.label))
-                        Circle().fill(hasItemOnDay(day) ? Color.red : Color.clear)
+						Text(self.calendarHelper.dayString(for: day))
+							.foregroundColor(self.calendarHelper.isToday(day) ? .red : Color(.label))
+						Circle().fill(self.hasItemOnDay(day) ? Color.red : Color.clear)
                             .frame(width: 10, height: 10)
                             .padding(4)
                         Spacer()
@@ -117,12 +117,12 @@ struct CalendarView: View {
 			formatter.dateStyle = .long
 			formatter.timeStyle = .none
 			// handle press on day
-			let items = itemsOnDay(day)
+			let items = self.itemsOnDay(day)
 			let uids = items.compactMap { $0.uid }
 			
 			guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
 			
-			try? ActionOpenViewWithUIDs(context).exec(["itemType": itemType, "uids": uids])
+			try? ActionOpenViewWithUIDs(self.context).exec(["itemType": itemType, "uids": uids])
 		}
     }
     

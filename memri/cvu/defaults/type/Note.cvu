@@ -197,7 +197,7 @@ Note[] {
         }
     }
 	
-	[renderer = calendar] {
+	[renderer = calendar.timeline] {
 		dateTime: {{.dateModified}}
 
 		TimelineItem {

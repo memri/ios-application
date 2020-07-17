@@ -60,14 +60,14 @@ struct MessageRenderer: View {
     
     var section: ASSection<Int> {
 		ASSection<Int>(id: 0, data: context.items, selectedItems: selectedItems) { item, cellContext in
-			renderConfig.render(item: item)
+			self.renderConfig.render(item: item)
 				.environmentObject(self.context)
 		}
 		.onSelectSingle { (index) in
-			guard let selectedItem = context.items[safe: index],
+			guard let selectedItem = self.context.items[safe: index],
 				  let press = self.renderConfig.press
 			else { return }
-			context.executeAction(press, with: selectedItem)
+			self.context.executeAction(press, with: selectedItem)
 		}
     }
     

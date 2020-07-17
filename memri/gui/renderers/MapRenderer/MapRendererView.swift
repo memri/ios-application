@@ -58,14 +58,14 @@ struct MapRendererView: View {
 	var body: some View {
 		let config = MapViewConfig(dataItems: context.items,
 								   locationResolver: {
-									self.resolveExpression(renderConfig.location, forItem: $0)
+									self.resolveExpression(self.renderConfig.location, forItem: $0)
 								   },
 								   addressResolver: {
-									self.resolveExpression(renderConfig.address, toType: Results<Item>.self, forItem: $0)
-									?? self.resolveExpression(renderConfig.address, toType: Address.self, forItem: $0)
+									self.resolveExpression(self.renderConfig.address, toType: Results<Item>.self, forItem: $0)
+										?? self.resolveExpression(self.renderConfig.address, toType: Address.self, forItem: $0)
 								   },
 								   labelResolver: {
-									self.resolveExpression(renderConfig.label, forItem: $0)
+									self.resolveExpression(self.renderConfig.label, forItem: $0)
 								   },
 								   mapStyle: renderConfig.mapStyle,
 								   onPress: self.onPress)
