@@ -49,7 +49,6 @@ public class Renderers {
 		registerThumbWaterfallRenderer()
 		registerMapRenderer()
 		registerChartRenderer()
-		registerRichTextEditorRenderer()
 		registerCalendarRenderer()
 		registerMessageRenderer()
 	}
