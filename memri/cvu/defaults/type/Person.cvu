@@ -441,7 +441,7 @@ Person[] {
     
     [renderer = map] {
 		address: {{.address[]}}
-		labelKey: "{.firstName}"
+		label: "{.firstName}"
     }
     
     [renderer = chart] {

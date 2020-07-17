@@ -13,10 +13,11 @@ class CascadingTimelineConfig: CascadingRenderConfig {
 	var type: String? = "calendar.timeline"
 	
 	var press: Action? { cascadeProperty("press") }
-	var detailLevel: TimelineModel.DetailLevel = .day
 	var mostRecentFirst: Bool = true
 	
 	var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
+	var detailLevelString: String? { cascadeProperty("detailLevel") }
+	var detailLevel: TimelineModel.DetailLevel { detailLevelString.flatMap(TimelineModel.DetailLevel.init) ?? .day }
 }
 
 struct TimelineRenderer: View {

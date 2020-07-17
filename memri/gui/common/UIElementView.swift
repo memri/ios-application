@@ -268,7 +268,7 @@ public struct UIElementView: SwiftUI.View {
 					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
 							config: .init(dataItems: [self.item],
 										  locationResolver: { _ in get("location") },
-										  addressResolver: { _ in get("address", type: Address.self) ?? get("address", type: List<Address>.self) },
+										  addressResolver: { _ in get("address", type: Address.self) ?? get("address", type: Results<Item>.self) },
 										  labelResolver: { _ in get("label") })
 					)
 						.background(Color(.secondarySystemBackground))

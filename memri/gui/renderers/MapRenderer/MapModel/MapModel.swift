@@ -8,6 +8,7 @@
 import Combine
 import CoreLocation
 import Foundation
+import RealmSwift
 
 #if !targetEnvironment(macCatalyst)
 	import Mapbox
@@ -76,9 +77,10 @@ class MapModel {
 		}
 		
 		let addresses: [Address]
-		if let addressesList = addressResolver?(dataItem) as? List<Address> {
-			addresses = Array(addressesList)
-		} else if let address = addressResolver?(dataItem) as? Address {
+		let addressExpressionResult = addressResolver?(dataItem)
+		if let addressesList = addressExpressionResult as? Results<Item> {
+			addresses = Array(addressesList.compactMap { $0 as? Address })
+		} else if let address = addressExpressionResult as? Address {
 			addresses = [address]
 		} else {
 			return []

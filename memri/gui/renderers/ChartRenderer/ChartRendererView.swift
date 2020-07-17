@@ -110,7 +110,7 @@ struct ChartRendererView: View {
 		case .bar:
 			guard let labelExpression = renderConfig.labelExpression, let yAxisExpression = renderConfig.yAxisExpression else { return missingDataView.eraseToAnyView() }
 			let data = ChartHelper.generateLabelledYChartSetFromItems(dataItems,
-																	  labelKey: {
+																	  labelExpression: {
 																	  	self.resolveExpression(labelExpression, forItem: $0)
 																	  },
 																	  yAxis: {
@@ -133,7 +133,7 @@ struct ChartRendererView: View {
 															   yAxis: {
 															   	self.resolveExpression(yAxisExpression, forItem: $0)
 															   },
-															   labelKey: {
+															   labelExpression: {
 															   	self.resolveExpression(self.renderConfig.labelExpression, forItem: $0)
                                                                    })
 			return VStack(spacing: 0) {

@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import RealmSwift
 
 let registerMapRenderer = {
 	Renderers.register(
@@ -60,7 +61,7 @@ struct MapRendererView: View {
 									self.resolveExpression(renderConfig.location, forItem: $0)
 								   },
 								   addressResolver: {
-									self.resolveExpression(renderConfig.address, toType: List<Address>.self, forItem: $0)
+									self.resolveExpression(renderConfig.address, toType: Results<Item>.self, forItem: $0)
 									?? self.resolveExpression(renderConfig.address, toType: Address.self, forItem: $0)
 								   },
 								   labelResolver: {
