@@ -591,8 +591,9 @@ public class Item: SchemaItem {
 		let properties = objectSchema.properties
 		for prop in properties {
 			// Exclude SyncState
-            if prop.name == "SyncState" || prop.name == "uid" {
-				continue
+            if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+                || prop.name == "deleted" || prop.name == "_changedInSession" || prop.name == "uid" {
+                    continue
 			}
 
 			// Perhaps not needed:
@@ -615,30 +616,33 @@ public class Item: SchemaItem {
 		}
         #warning("Implement edge merging")
 	}
-
+    
 	/// update the dateAccessed property to the current date
 	public func accessed() {
-		realmWriteIfAvailable(realm) {
-			self.dateAccessed = Date()
+        realmWriteAsync(self) { realm, item in
+            item.dateAccessed = Date()
             
             let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
-            _ = try link(auditItem, type: "changelog")
-		}
+            _ = try item.link(auditItem, type: "changelog")
+        }
 	}
     
     /// update the dateAccessed property to the current date
     public func modified(_ updatedFields:[String]) {
         #warning("Only do this once in a while. This is what syncState.changedInThisSession was for")
         
-        realmWriteIfAvailable(realm) {
-            self.dateModified = Date()
-            self._updated.append(objectsIn: updatedFields)
+        realmWriteAsync(self) { realm, item in
+            item.dateModified = Date()
+            item._updated.append(objectsIn: updatedFields)
             
             let auditItem = try Cache.createItem(
                 AuditItem.self,
-                values: ["action": "update", "content": try serialize(AnyCodable(Array(updatedFields)))]
+                values: [
+                    "action": "update",
+                    "content": try serialize(AnyCodable(Array(updatedFields)))
+                ]
             )
-            _ = try link(auditItem, type: "changelog")
+            _ = try item.link(auditItem, type: "changelog")
         }
     }
 

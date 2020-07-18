@@ -22,6 +22,10 @@ public class CascadableContextPane: Cascadable {
         get { cascadeList("navigate") }
         set (value) { setState("navigate", value) }
     }
+    
+    func isSet() -> Bool {
+        head.parsed?.count ?? 0 > 0 || tail.count > 0
+    }
 }
 
 public class CascadableDict: Cascadable, CustomStringConvertible {
@@ -94,6 +98,19 @@ public class CascadingView: Cascadable, ObservableObject {
             setState("defaultRenderer", value)
 		}
 	}
+    
+    var fullscreen: Bool {
+        get { cascadeProperty("fullscreen") ?? false }
+        set (value) { setState("fullscreen", value) }
+    }
+    var showToolbar: Bool {
+        get { cascadeProperty("showToolbar") ?? true }
+        set (value) { setState("showToolbar", value) }
+    }
+    var showSearchbar: Bool {
+        get { cascadeProperty("showSearchbar") ?? true }
+        set (value) { setState("showSearchbar", value) }
+    }
 
 	var backTitle: String? {
         get { cascadeProperty("backTitle") }
@@ -361,12 +378,14 @@ public class CascadingView: Cascadable, ObservableObject {
         super.init(head, [])
 	}
     
+    /// This init should only be called to create an empty CascadingView when needed inside a SwiftUI View
     required init(
         _ head: CVUParsedDefinition? = nil,
         _ tail: [CVUParsedDefinition]? = nil,
         _ host: Cascadable? = nil
     ) {
-        fatalError("Invalid way to initialize CascadingView")
+        self.uid = -1000000
+        super.init(head, tail, host)
     }
     
 	subscript(propName: String) -> Any? {
@@ -437,7 +456,7 @@ public class CascadingView: Cascadable, ObservableObject {
         try withWriteRealmThrows { realm in
             var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if stored == nil {
-                debugHistory.warn("Could not find stored CVU. Creating a new one.")
+                debugHistory.warn("Could not find stored view CVU. Creating a new one.")
                 
                 stored = try Cache.createItem(CVUStateDefinition.self)
                 

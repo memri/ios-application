@@ -11,6 +11,7 @@ import Foundation
 import RealmSwift
 
 var realmTesting = false
+var cacheUIDCounter:Int = -1
 
 var config = Realm.Configuration(
 	// Set the new schema version. This must be greater than the previously used
@@ -324,10 +325,7 @@ public class Cache {
 		}
 	}
 
-	/// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
-	/// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
-	/// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
-	/// the the item changes
+	/// Adds an item to the local database
 	/// - Parameter item:Item to be added
 	/// - Throws: Sync conflict exception
 	/// - Returns: cached dataItem
@@ -407,7 +405,7 @@ public class Cache {
         })
 	}
 
-	/// sets delete to true in the syncstate, for an array of items
+	/// marks an item to be deleted
 	/// - Parameter item: item to be deleted
 	/// - Remark: All methods and properties must throw when deleted = true;
 	public func delete(_ item: Item) {
@@ -423,7 +421,7 @@ public class Cache {
 		}
 	}
 
-	/// sets delete to true in the syncstate, for an array of items
+	/// marks a set of items to be deleted
 	/// - Parameter items: items to be deleted
 	public func delete(_ items: [Item]) {
 		realmWriteIfAvailable(realm) {
@@ -445,7 +443,7 @@ public class Cache {
 	/// - Returns: copied item
 	public func duplicate(_ item: Item) throws -> Item {
 		let excludes = ["uid", "dateCreated", "dateAccessed", "dateModified", "starred",
-						"deleted", "syncState"]
+						"deleted", "_updated", "_action", "_partial", "_changedInSession"]
 
         #warning("Does not duplicate all edges")
         
@@ -469,29 +467,41 @@ public class Cache {
 	}
 
 	public class func incrementUID() throws -> Int {
-		let realm = try Realm()
-		if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
-			if let lastUID = Int(setting.json ?? "") {
-				realmWriteIfAvailable(realm) {
-					setting.json = String(lastUID + 1)
-				}
-				return (lastUID + 1)
-			} else {
-				throw "Invalid value. Cannot increment ID for new Item"
-			}
-		}
-
-		// As an exception we are not using Cache.createItem here because it should
-		// not be synced to the backend
-
-		realmWriteIfAvailable(realm) {
-			realm.create(Setting.self, value: [
-				"uid": -1,
-				"json": String(1_000_000_001),
-			])
-		}
-
-		return 1_000_000_001
+        let realm = try Realm()
+        
+        if cacheUIDCounter == -1 {
+            if
+                let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1),
+                let str = setting.json,
+                let counter = Int(str)
+            {
+                cacheUIDCounter = counter
+            }
+            else {
+                cacheUIDCounter = try getDeviceID() + 1
+                
+                // As an exception we are not using Cache.createItem here because it should
+                // not be synced to the backend
+                realmWriteIfAvailable(realm) {
+                    realm.create(Setting.self, value: [
+                        "uid": -1,
+                        "json": String(cacheUIDCounter),
+                    ])
+                }
+                
+                return cacheUIDCounter
+            }
+        }
+        
+        cacheUIDCounter += 1
+        
+        if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
+            realmWriteIfAvailable(realm) {
+                setting.json = String(cacheUIDCounter)
+            }
+        }
+        
+        return cacheUIDCounter
 	}
 
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
@@ -572,7 +582,11 @@ public class Cache {
 			}
 
 			if dict["dateCreated"] == nil { dict["dateCreated"] = Date() }
-			if dict["uid"] == nil { dict["uid"] = try Cache.incrementUID() }
+			if dict["uid"] == nil {
+                dict["uid"] = try Cache.incrementUID()
+            }
+            
+            print(dict["uid"])
 
 			item = realm.create(type, value: dict)
 

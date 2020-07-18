@@ -234,7 +234,8 @@ class CVUParser {
 		}
 
 		while true {
-			//            print(peekCurrentToken())
+//            print(peekCurrentToken())
+            
 			switch popCurrentToken() {
 			case let .Bool(v, _, _):
 				stack.append(v)
@@ -320,7 +321,6 @@ class CVUParser {
 							properties = try parseDict(value)
 						}
 						stack.append(CVUParsedObjectDefinition(properties as [String: Any]))
-						continue
 					} else if case CVUToken.CurlyBracketOpen = nextToken {
 						// Do nothing
 					} else if lastKey == nil {

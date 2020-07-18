@@ -14,8 +14,10 @@ import SwiftUI
 public final class Sessions : ObservableObject, Equatable {
     /// TBD
     var currentSessionIndex:Int {
-        get { parsed?["currentSessionIndex"] as? Int ?? 0 }
-        set (value) { setState("currentSessionIndex", value) }
+        get { Int(parsed?["currentSessionIndex"] as? Double ?? 0) }
+        set (value) {
+            setState("currentSessionIndex", Double(value))
+        }
     }
     
     var uid: Int? = nil
@@ -60,6 +62,7 @@ public final class Sessions : ObservableObject, Equatable {
     
     func load(_ context:MemriContext) throws {
         self.context = context
+        self.sessions = []
         
         try withReadRealmThrows { realm in
             if let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid) {
@@ -80,8 +83,6 @@ public final class Sessions : ObservableObject, Equatable {
                     for sessionState in storedSessionStates {
                         sessions.append(try Session(sessionState, self))
                     }
-                    
-                    try setCurrentSession()
                 }
                 // Or if the sessions are encoded in the definition
                 else if
@@ -90,12 +91,16 @@ public final class Sessions : ObservableObject, Equatable {
                 {
                     try withWriteRealmThrows { realm in
                         for parsed in parsedSessions {
-                            let session = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
-                            _ = try state.link(session, type: "session")
+                            let sessionState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
+                            _ = try state.link(sessionState, type: "session", sequence: .last)
+                            sessions.append(try Session(sessionState, self))
                         }
                     }
                     
                     self.parsed?["sessionDefinitions"] = nil
+                }
+                else {
+                    throw "CVU state definition is missing sessions"
                 }
             }
             // Create a default session
@@ -117,7 +122,7 @@ public final class Sessions : ObservableObject, Equatable {
         
         scheduled = true
         
-        DispatchQueue.global(qos: .userInitiated).async {
+        realmWriteAsync { _ in
             do { try self.persist() }
             catch let error {
                 debugHistory.warn("Unable to persist session state: \(error)")
@@ -157,7 +162,7 @@ public final class Sessions : ObservableObject, Equatable {
         try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
-                debugHistory.warn("Could not find stored CVU. Creating a new one.")
+                debugHistory.warn("Could not find stored sessions CVU. Creating a new one.")
                 
                 state = try Cache.createItem(CVUStateDefinition.self, values: [:])
                 
@@ -190,18 +195,24 @@ public final class Sessions : ObservableObject, Equatable {
             guard
                 let template = realm.objects(CVUStoredDefinition.self).filter(templateQuery).first,
                 let parsed = try context.views.parseDefinition(template),
-                let stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+                let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             else {
                 throw "Installation is corrupt. Cannot recover."
             }
             
             let defs = (parsed["sessionDefinitions"] as? [CVUParsedSessionDefinition] ?? [])
-            let allSessions = try defs.map { try CVUStateDefinition.fromCVUParsedDefinition($0) }
+            let allSessions = try defs.map {
+                try CVUStateDefinition.fromCVUParsedDefinition($0)
+            }
 
             for session in allSessions {
-                _ = try stored.link(session, type: "session", sequence: .last)
+                _ = try state.link(session, type: "session", sequence: .last)
             }
             
+            self.parsed = parsed as? CVUParsedSessionsDefinition
+            self.parsed?["sessionDefinitions"] = nil
+            
+            try persist()
             try load(context)
         }
 	}

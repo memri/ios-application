@@ -51,7 +51,7 @@ Note {
                     view: {
                         defaultRenderer: timeline
                         
-                         [datasource = pod] {
+                        [datasource = pod] {
                             query: "AuditItem appliesTo:{.id}"
                             sortProperty: dateCreated
                             sortAscending: true

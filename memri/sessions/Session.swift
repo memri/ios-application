@@ -18,8 +18,8 @@ public final class Session : Equatable {
     }
     /// TBD
     var currentViewIndex:Int {
-        get { parsed?["currentViewIndex"] as? Int ?? 0 }
-        set (value) { setState("currentViewIndex", value) }
+        get { Int(parsed?["currentViewIndex"] as? Double ?? 0) }
+        set (value) { setState("currentViewIndex", Double(value)) }
     }
     /// TBD
     var editMode:Bool {
@@ -120,8 +120,6 @@ public final class Session : Equatable {
                 for viewState in storedViewStates {
                     views.append(try CascadingView(viewState, self))
                 }
-                
-                try setCurrentView()
             }
             // Or if the views are encoded in the definition
             else if
@@ -130,12 +128,16 @@ public final class Session : Equatable {
             {
                 try withWriteRealmThrows { realm in
                     for parsed in parsedViews {
-                        let view = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
-                        _ = try state.link(view, type: "view")
+                        let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
+                        _ = try state.link(viewState, type: "view", sequence: .last)
+                        views.append(try CascadingView(viewState, self))
                     }
                 }
                 
                 self.parsed?["viewDefinitions"] = nil
+            }
+            else {
+                throw "CVU state definition is missing views"
             }
         }
         else {
@@ -157,7 +159,7 @@ public final class Session : Equatable {
         try withWriteRealmThrows { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
-                debugHistory.warn("Could not find stored CVU. Creating a new one.")
+                debugHistory.warn("Could not find stored session CVU. Creating a new one.")
                 
                 state = try Cache.createItem(CVUStateDefinition.self, values: [:])
                 
@@ -182,7 +184,7 @@ public final class Session : Equatable {
                     }
                 }
                 if i < stateViewEdges.count {
-                    for j in stride(from: stateViewEdges.count, through: i, by: -1) {
+                    for j in stride(from: stateViewEdges.count - 1, through: i, by: -1) {
                         try state?.unlink(stateViewEdges[j])
                     }
                 }
@@ -215,8 +217,10 @@ public final class Session : Equatable {
         }
         // Otherwise lets create a new session
         else {
-            // Remove all items after the current index
-            views.removeSubrange(currentViewIndex...)
+            if currentViewIndex + 1 < views.count {
+                // Remove all items after the current index
+                views.removeSubrange((currentViewIndex + 1)...)
+            }
             
             // Add session to list
             views.append(try CascadingView(storedView, self))

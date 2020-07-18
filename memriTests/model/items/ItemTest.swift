@@ -159,7 +159,7 @@ class ItemTest: XCTestCase {
 		)
 		let item2: Item = try MemriJSONDecoder.decode(Item.self, from: data2)
 
-		item1.syncState?.updatedFields.append("starred")
+		item1._updated.append("starred")
 
 		XCTAssertEqual(item1.safeMerge(item2), false)
 	}
@@ -177,7 +177,7 @@ class ItemTest: XCTestCase {
 		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let dt = item1.dateAccessed
-		item1.access()
+		item1.accessed()
 		XCTAssertNotEqual(dt, item1.dateAccessed)
 	}
 

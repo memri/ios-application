@@ -136,7 +136,8 @@ public class PodAPI {
 
 			let properties = item.objectSchema.properties
 			for prop in properties {
-				if prop.name == "syncState" || prop.name == "deleted"
+				if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+                    || prop.name == "deleted" || prop.name == "_changedInSession"
 					|| prop.name == "targetItemType" || prop.name == "targetItemID"
 					|| prop.name == "sourceItemType" || prop.name == "sourceItemID" {
 					// Ignore
@@ -174,7 +175,8 @@ public class PodAPI {
 
 			let properties = item.objectSchema.properties
 			for prop in properties {
-				if prop.name == "syncState" || prop.name == "deleted" {
+				if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+                    || prop.name == "deleted" || prop.name == "_changedInSession" {
 					// Ignore
 				} else if prop.name == "allEdges" {
 					for edge in item.allEdges {
@@ -229,7 +231,9 @@ public class PodAPI {
 //        print("\(item.genericType) \(item.uid.value ?? 0)")
 
 		let properties = item.objectSchema.properties
-        let exclude = ["syncState", "deleted", "allEdges", "uid"]
+        let exclude = [
+            "_updated", "_action", "_partial", "_changedInSession", "deleted", "allEdges", "uid"
+        ]
 		for prop in properties {
             if exclude.contains(prop.name) {
 				// Ignore
@@ -255,7 +259,10 @@ public class PodAPI {
 		var result = [String: Any]()
 
 		let properties = edge.objectSchema.properties
-        let exclude = ["version", "syncState", "deleted", "targetItemType", "targetItemID", "sourceItemType", "sourceItemID"]
+        let exclude = [
+            "version", "deleted", "targetItemType", "targetItemID", "sourceItemType",
+            "sourceItemID", "_updated", "_action", "_partial", "_changedInSession"
+        ]
 		for prop in properties {
 			if exclude.contains(prop.name) {
 				// Ignore

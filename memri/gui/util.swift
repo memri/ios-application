@@ -209,7 +209,7 @@ func withReadRealmThrowsReturn(_ doThis: (_ realm: Realm) throws -> Any?) throws
     let realm = try Realm()
     return try doThis(realm)
 }
-func withWriteRealm(_ doThis: (_ realm: Realm) -> Void) {
+func withWriteRealm(_ doThis: (_ realm: Realm) throws -> Void) {
     do { try withWriteRealmThrows(doThis) }
     catch let error {
         debugHistory.error("Could not read from realm: \(error)")
@@ -221,6 +221,62 @@ func withWriteRealmThrows(_ doThis: (_ realm: Realm) throws -> Void) throws {
         try realm.write { try doThis(realm) }
     } else {
         try doThis(realm)
+    }
+}
+
+let realmWriteQueue = DispatchQueue(label: "memri.sync.realm.write", qos: .utility)
+
+func realmWriteAsync<T: ThreadConfined>(_ object: T, _ doWrite: @escaping (Realm, T) throws -> Void) {
+    if object.realm != nil {
+        // Handle managed object
+        let wrappedObject = ThreadSafeReference(to: object) // Managed instance, needs to be passed safely
+        realmWriteAsync(wrappedObject, doWrite)
+        return
+    } else {
+        // Handle unmanaged object
+        realmWriteQueue.async {
+            autoreleasepool {
+                do {
+                    let realmInstance = try Realm()
+                    try realmInstance.write {
+                        try doWrite(realmInstance, object)
+                    }
+                } catch {
+                    // Implement me
+                }
+            }
+        }
+    }
+}
+
+func realmWriteAsync<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
+    realmWriteQueue.async {
+        autoreleasepool {
+            do {
+                let realmInstance = try Realm()
+                guard let threadSafeObject = realmInstance.resolve(objectReference) else { return }
+                try realmInstance.write {
+                    try doWrite(realmInstance, threadSafeObject)
+                }
+            } catch {
+                // Implement me
+            }
+        }
+    }
+}
+
+func realmWriteAsync(_ doWrite: @escaping (Realm) throws -> Void) {
+    realmWriteQueue.async {
+        autoreleasepool {
+            do {
+                let realmInstance = try Realm()
+                try realmInstance.write {
+                    try doWrite(realmInstance)
+                }
+            } catch {
+                // Implement me
+            }
+        }
     }
 }
 

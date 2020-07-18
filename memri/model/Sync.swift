@@ -208,7 +208,7 @@ class Sync {
             if itemType == .typeUserState { continue }
             
 			if let type = itemType.getType() as? SchemaItem.Type {
-				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
+				let items = realm.objects(type).filter("_action != nil")
 				for item in items {
 					if let action = item._action, itemQueue[action] != nil {
 						itemQueue[action]?.append(item)
@@ -219,7 +219,7 @@ class Sync {
 		}
 
 		// Edges
-		let edges = realm.objects(Edge.self).filter("syncState.actionNeeded != ''")
+		let edges = realm.objects(Edge.self).filter("_action != nil")
 		for edge in edges {
 			if let action = edge._action, edgeQueue[action] != nil {
 				edgeQueue[action]?.append(edge)
