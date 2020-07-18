@@ -75,7 +75,7 @@ public class CascadingView: Cascadable, ObservableObject {
     var uid: Int
     
     var state: CVUStateDefinition? {
-        withReadRealm { realm in
+        realmRead { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -453,7 +453,7 @@ public class CascadingView: Cascadable, ObservableObject {
     }
     
     public func persist() throws {
-        try withWriteRealmThrows { realm in
+        try realmTryWrite { realm in
             var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if stored == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")

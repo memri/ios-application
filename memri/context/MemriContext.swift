@@ -82,66 +82,42 @@ public class MemriContext: ObservableObject {
             closeStack = Array(closeStack.prefix(upTo: lastVisibleIndex))
         }
     }
-
-	private var scheduled: Bool = false
-	private var scheduledComputeView: Bool = false
+    
+    private var uiUpdateSubject = PassthroughSubject<Void, Never>()
+    private var uiUpdateCancellable: AnyCancellable?
+    
+    private var cascadingViewUpdateSubject = PassthroughSubject<Void, Never>()
+    private var cascadingViewUpdateCancellable: AnyCancellable?
 
 	func scheduleUIUpdate(immediate: Bool = false, _ check: ((_ context: MemriContext) -> Bool)? = nil) { // Update UI
-		let outcome = {
-			// Reset scheduled
-			self.scheduled = false
-
-			// Update UI
-			self.objectWillChange.send()
-		}
 		if immediate {
 			// Do this straight away, usually for the sake of correct animation
-			outcome()
+            DispatchQueue.main.async {
+                // Update UI
+                self.objectWillChange.send()
+            }
 			return
 		}
 
 		if let check = check {
 			guard check(self) else { return }
 		}
-		// Don't schedule when we are already scheduled
-		guard !scheduled else { return }
-		// Prevent multiple calls to the dispatch queue
-		scheduled = true
-
-		// Schedule update
-		DispatchQueue.main.async {
-			outcome()
-		}
+        uiUpdateSubject.send()
 	}
 
 	func scheduleCascadingViewUpdate(immediate: Bool = false) {
-		let outcome = {
-			// Reset scheduled
-			self.scheduledComputeView = false
-
-			// Update UI
-            do { try self.currentSession?.setCurrentView() }
-			catch {
-				// TODO: User error handling
-				// TODO: Error Handling
-				debugHistory.error("Could not update CascadingView: \(error)")
-			}
-		}
 		if immediate {
 			// Do this straight away, usually for the sake of correct animation
-			outcome()
+            do { try self.currentSession?.setCurrentView() }
+            catch {
+                // TODO: User error handling
+                // TODO: Error Handling
+                debugHistory.error("Could not update CascadingView: \(error)")
+            }
 			return
-		}
-		// Don't schedule when we are already scheduled
-		if !scheduledComputeView {
-			// Prevent multiple calls to the dispatch queue
-			scheduledComputeView = true
-
-			// Schedule update
-			DispatchQueue.main.async {
-				outcome()
-			}
-		}
+        } else {
+            cascadingViewUpdateSubject.send()
+        }
 	}
 
 	public func getPropertyValue(_ name: String) -> Any {
@@ -246,6 +222,22 @@ public class MemriContext: ObservableObject {
 		// TODO: FIX
 		self.currentView?.context = self
 		self.indexerAPI.context = self
+        
+        // Setup update publishers
+        self.uiUpdateCancellable = uiUpdateSubject
+            .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.objectWillChange.send()
+            }
+        
+        // Setup update publishers
+        self.cascadingViewUpdateCancellable = cascadingViewUpdateSubject
+            .throttle(for: .milliseconds(500), scheduler: RunLoop.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                try? self?.currentSession?.setCurrentView()
+            }
 	}
 }
 
@@ -333,9 +325,6 @@ public class RootContext: MemriContext {
 
 		cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
 		navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
-
-		// Make settings global so it can be reached everywhere
-		globalSettings = settings
 	}
 
     public func createSubContext(_ state: CVUStateDefinition? = nil) throws -> MemriContext {

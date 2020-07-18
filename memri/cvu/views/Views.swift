@@ -12,7 +12,7 @@ public class Views {
 
 	private var recursionCounter = 0
 	private var realm: Realm
-    private var CVUWatcher: AnyCancellable? = nil
+    private var cvuWatcher: AnyCancellable? = nil
     private var settingWatcher: AnyCancellable? = nil
 
 	init(_ rlm: Realm) {
@@ -26,12 +26,12 @@ public class Views {
         
         settingWatcher = context.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
             if let value = $0 as? Bool {
-                if value && self.CVUWatcher == nil {
+                if value && self.cvuWatcher == nil {
                     self.listenForChanges()
                 }
-                else if !value, let c = self.CVUWatcher {
+                else if !value, let c = self.cvuWatcher {
                     c.cancel()
-                    self.CVUWatcher = nil
+                    self.cvuWatcher = nil
                 }
             }
         }
@@ -42,7 +42,7 @@ public class Views {
     
     public func listenForChanges() {
         // Subscribe to changes in CVUStoredDefinition
-        CVUWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+        cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
             self.reloadViews(items)
         }
     }
@@ -123,14 +123,14 @@ public class Views {
 
     #warning("This should be moved elsewhere")
 	public class func formatDate(_ date: Date?) -> String {
-		let showAgoDate: Bool? = Settings.get("user/general/gui/showDateAgo")
+        let showAgoDate: Bool? = Settings.shared.get("user/general/gui/showDateAgo")
 
 		if let date = date {
 			// Compare against 36 hours ago
 			if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
 				let dateFormatter = DateFormatter()
 
-				dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.dateFormat = Settings.shared.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
 				dateFormatter.locale = Locale(identifier: "en_US")
 				dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
@@ -176,10 +176,10 @@ public class Views {
 			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
 				#warning("@Toby - how can we re-architect this?")
 				if let value = args?[0] as? String {
-					if let x = Settings.get(value, type: Double.self) { return x }
-					else if let x = Settings.get(value, type: Int.self) { return x }
-					else if let x = Settings.get(value, type: String.self) { return x }
-					else if let x = Settings.get(value, type: Bool.self) { return x }
+					if let x = Settings.shared.get(value, type: Double.self) { return x }
+					else if let x = Settings.shared.get(value, type: Int.self) { return x }
+					else if let x = Settings.shared.get(value, type: String.self) { return x }
+					else if let x = Settings.shared.get(value, type: Bool.self) { return x }
 				}
 				return ""
 			}

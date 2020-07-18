@@ -91,7 +91,7 @@ public class Cache {
 		podAPI = api
 
 		// Create scheduler objects
-		sync = Sync(podAPI, realm)
+		sync = Sync(podAPI)
 		sync.cache = self
 	}
 
@@ -183,7 +183,7 @@ public class Cache {
 						)
 					}
 
-					realmWriteIfAvailable(realm) {
+					realmWrite(realm) { _ in
 						item.allEdges.append(edge)
 					}
 				}
@@ -398,7 +398,7 @@ public class Cache {
                     
                     self.sync.schedule()
                     
-                    realmWriteIfAvailable(self.realm) { doAction() }
+                    realmWrite(self.realm) { _ in doAction() }
                 }
                 self.scheduleUIUpdate?(nil)
             }
@@ -410,7 +410,7 @@ public class Cache {
 	/// - Remark: All methods and properties must throw when deleted = true;
 	public func delete(_ item: Item) {
 		if !item.deleted {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) { _ in
 				item.deleted = true
 				item._action = "delete"
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
@@ -424,7 +424,7 @@ public class Cache {
 	/// marks a set of items to be deleted
 	/// - Parameter items: items to be deleted
 	public func delete(_ items: [Item]) {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) { _ in
 			for item in items {
 				if !item.deleted {
 					item.deleted = true
@@ -482,7 +482,7 @@ public class Cache {
                 
                 // As an exception we are not using Cache.createItem here because it should
                 // not be synced to the backend
-                realmWriteIfAvailable(realm) {
+                realmWrite(realm) { _ in
                     realm.create(Setting.self, value: [
                         "uid": -1,
                         "json": String(cacheUIDCounter),
@@ -496,7 +496,7 @@ public class Cache {
         cacheUIDCounter += 1
         
         if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
-            realmWriteIfAvailable(realm) {
+            realmWrite(realm) { _ in
                 setting.json = String(cacheUIDCounter)
             }
         }
@@ -532,7 +532,7 @@ public class Cache {
 											unique: String? = nil) throws -> T {
 		let realm = try Realm()
 		var item: T?
-		try realmWriteIfAvailableThrows(realm) {
+		try realmTryWrite(realm) { _ in
 			var dict = values
 
 			// TODO:
@@ -586,7 +586,7 @@ public class Cache {
                 dict["uid"] = try Cache.incrementUID()
             }
             
-            print(dict["uid"])
+            print("\(type) - \(dict["uid"])")
 
 			item = realm.create(type, value: dict)
 
@@ -617,7 +617,7 @@ public class Cache {
 								 label: String? = nil, sequence: Int? = nil) throws -> Edge {
 		let realm = try Realm()
 		var edge: Edge?
-		try realmWriteIfAvailableThrows(realm) {
+		try realmTryWrite(realm) { _ in
 			// TODO:
 			// Always overwrite (see also link())
 

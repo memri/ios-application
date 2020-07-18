@@ -59,7 +59,7 @@ public final class Session : Equatable {
     var uid: Int? = nil
     var parsed: CVUParsedSessionDefinition?
     var state: CVUStateDefinition? {
-        withReadRealm { realm in
+        realmRead { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -126,7 +126,7 @@ public final class Session : Equatable {
                 let parsedViews = self.parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
                 parsedViews.count > 0
             {
-                try withWriteRealmThrows { realm in
+                try realmTryWrite { _ in
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                         _ = try state.link(viewState, type: "view", sequence: .last)
@@ -156,7 +156,7 @@ public final class Session : Equatable {
     }
     
     public func persist() throws {
-        try withWriteRealmThrows { realm in
+        try realmTryWrite { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored session CVU. Creating a new one.")

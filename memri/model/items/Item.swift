@@ -177,11 +177,10 @@ public class Item: SchemaItem {
 	///   - name: property name
 	///   - value: value
 	public func set(_ name: String, _ value: Any?) {
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) { _ in
 			if let schema = self.objectSchema[name] {
                 #warning("TODO implement, check for difference")
 //                state?.modified(["definition"])
-                
 				switch schema.type {
 				case .int:
 					self[name] = value as? Int
@@ -404,7 +403,7 @@ public class Item: SchemaItem {
 		var edge = allEdges.filter(query).first
 		let sequenceNumber: Int? = try determineSequenceNumber(edgeType, sequence)
 
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) { _ in
 			if item.realm == nil, let item = item as? Item {
 				item._action = "create"
 				realm?.add(item, update: .modified)
@@ -454,7 +453,7 @@ public class Item: SchemaItem {
 
 	public func unlink(_ edge: Edge) throws {
 		if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) { _ in
 				edge.deleted = true
 				edge._action = "delete"
 				realm?.delete(edge)
@@ -478,7 +477,7 @@ public class Item: SchemaItem {
 		let results = allEdges.filter(query)
 
 		if results.count > 0 {
-			realmWriteIfAvailable(realm) {
+			realmWrite(realm) { _ in
 				if all {
 					for edge in results {
 						edge.deleted = true

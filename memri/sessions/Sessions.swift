@@ -23,7 +23,7 @@ public final class Sessions : ObservableObject, Equatable {
     var uid: Int? = nil
     var parsed: CVUParsedSessionsDefinition? = nil
     var state: CVUStateDefinition? {
-        withReadRealm { realm in
+        realmRead { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         } as? CVUStateDefinition
     }
@@ -58,13 +58,24 @@ public final class Sessions : ObservableObject, Equatable {
             
             self.uid = uid
         }
+        
+        // Setup update publishers
+        self.persistCancellable = persistSubject
+            .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                do { try self?.persist() }
+                catch let error {
+                    debugHistory.warn("Unable to persist session state: \(error)")
+                }
+            }
     }
     
     func load(_ context:MemriContext) throws {
         self.context = context
         self.sessions = []
         
-        try withReadRealmThrows { realm in
+        try realmTryRead { realm in
             if let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid) {
                 guard let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition else {
                     throw "Unable to parse state definition"
@@ -89,7 +100,7 @@ public final class Sessions : ObservableObject, Equatable {
                     let parsedSessions = p["sessionDefinitions"] as? [CVUParsedSessionDefinition],
                     parsedSessions.count > 0
                 {
-                    try withWriteRealmThrows { realm in
+                    try realmTryWrite { realm in
                         for parsed in parsedSessions {
                             let sessionState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                             _ = try state.link(sessionState, type: "session", sequence: .last)
@@ -116,25 +127,6 @@ public final class Sessions : ObservableObject, Equatable {
         schedulePersist()
     }
     
-    private var scheduled = false
-    func schedulePersist() {
-        guard !scheduled else { return }
-        
-        scheduled = true
-        
-        realmWriteAsync { _ in
-            do { try self.persist() }
-            catch let error {
-                debugHistory.warn("Unable to persist session state: \(error)")
-            }
-            
-            self.scheduled = false
-            
-            // Update UI
-//            self.objectWillChange.send()
-        }
-    }
-    
 	public func setCurrentSession(_ state: CVUStateDefinition? = nil) throws {
         guard let storedSession = state ?? self.currentSession?.state else {
             throw "Exception: Unable fetch stored CVU state"
@@ -158,8 +150,12 @@ public final class Sessions : ObservableObject, Equatable {
         schedulePersist()
 	}
     
+    private var persistSubject = PassthroughSubject<Void, Never>()
+    private var persistCancellable: AnyCancellable?
+    func schedulePersist() { persistSubject.send() }
+    
     public func persist() throws {
-        try withWriteRealmThrows { realm in
+        try realmTryWrite { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored sessions CVU. Creating a new one.")
@@ -189,7 +185,7 @@ public final class Sessions : ObservableObject, Equatable {
     }
 
 	public func install(_ context: MemriContext) throws {
-        try withWriteRealmThrows { realm in
+        try realmTryWrite { realm in
             
             let templateQuery = "selector = '[sessions = defaultSessions]'"
             guard

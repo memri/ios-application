@@ -87,7 +87,7 @@ class MapHelper {
 		lookup.sink { [weak self] location in
 			if let location = location {
 				// Update the address with the location (avoid future lookups)
-				realmWriteIfAvailable(self?.realm) {
+				realmWrite(self?.realm) { _ in
                     let newLocation = try Cache.createItem(Location.self, values: [
                         "latitude": location.coordinate.latitude,
                         "longitude": location.coordinate.longitude

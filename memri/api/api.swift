@@ -25,8 +25,9 @@ public class PodAPI {
 
 	private func http(_ method: HTTPMethod = .GET, path: String = "", body: Data? = nil,
 					  _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void) {
+        let settings = Settings()
 		let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
-		let podhost = Settings.get("user/pod/host") ?? ""
+		let podhost = settings.get("user/pod/host") ?? ""
 		guard var baseUrl = URL(string: podhost) else {
 			let message = "Invalid pod host set in settings: \(podhost)"
 			debugHistory.error(message)
@@ -41,8 +42,8 @@ public class PodAPI {
 		// TODO: when the backend sends the correct caching headers
 		// this can be changed: .reloadIgnoringCacheData
 
-		guard let username: String = Settings.get("user/pod/username"),
-			let password: String = Settings.get("user/pod/password") else {
+		guard let username: String = settings.get("user/pod/username"),
+			let password: String = settings.get("user/pod/password") else {
 			// TODO: User error handling
 			print("ERROR: Could not find login credentials, so could not authenticate to pod")
 			return

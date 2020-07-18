@@ -281,7 +281,7 @@ public class Action: HashableClass, CVUToString {
 	}
 
 	func get<T>(_ key: String, _ viewArguments: ViewArguments? = nil) -> T? {
-        let x: Any? = values[key] ?? defaultValues[key] ?? baseValues[key] as Any?
+        let x: Any? = values[key] ?? defaultValues[key] ?? baseValues[key].flatMap { $0 }
 		if let expr = x as? Expression {
 			do {
 				expr.lookup = context.views.lookupValueOfVariables
@@ -447,7 +447,7 @@ class ActionBack: Action, ActionExec {
 			if session.currentViewIndex == 0 {
 				print("Warn: Can't go back. Already at earliest view in session")
 			} else {
-				realmWriteIfAvailable(context.realm) { session.currentViewIndex -= 1 }
+				session.currentViewIndex -= 1
 				context.scheduleCascadingViewUpdate()
 			}
 		} else {
@@ -658,7 +658,7 @@ class ActionStar: Action, ActionExec {
 		//                selection.append(item)
 		//            }
 //
-		//            realmWriteIfAvailable(context.cache.realm, {
+		//            realmWrite(context.cache.realm, {
 		//                for item in selection { item.starred = toValue }
 		//            })
 //
@@ -1179,7 +1179,7 @@ class ActionSetProperty: Action, ActionExec {
 			throw "Exception: property is not set to a string"
 		}
 
-        subject.set(propertyName, arguments["value"] as Any?)
+        subject.set(propertyName, arguments["value"].flatMap { $0 }) // Flatmap removes the double optional
 
 		// TODO: refactor
 		((context as? SubContext)?.parent ?? context).scheduleUIUpdate()
@@ -1206,7 +1206,7 @@ class ActionSetSetting: Action, ActionExec {
 
         let value = arguments["value"]
 
-        Settings.set(path, value as Any)
+        Settings.shared.set(path, value as Any)
 
         // TODO: refactor
         ((context as? SubContext)?.parent ?? context).scheduleUIUpdate()

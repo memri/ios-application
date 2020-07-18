@@ -266,7 +266,7 @@ class ItemTest: XCTestCase {
 		let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
 		let realm = try Realm()
-		realmWriteIfAvailable(realm) {
+		realmWrite(realm) {
 			for item in items {
 				realm.add(item, update: .modified)
 			}
