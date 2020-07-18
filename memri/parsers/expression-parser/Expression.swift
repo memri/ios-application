@@ -22,7 +22,8 @@ public class Expression: CVUToString {
 	private var ast: ExprNode?
 
 	func toCVUString(_: Int, _: String) -> String {
-		startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
+        let code = self.ast?.toExprString() ?? self.code
+		return startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
 	}
 
 	public var description: String {

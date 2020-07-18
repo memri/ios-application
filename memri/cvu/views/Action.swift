@@ -137,15 +137,8 @@ extension MemriContext {
 		action.context = self
 
 		if action.getBool("opensView") {
-			let binding = action.binding
-
 			if let action = action as? ActionExec {
 				try action.exec(args)
-
-				// Toggle a state value, for instance the starred button in the view (via dataItem.starred)
-				if let binding = binding {
-					try binding.toggleBool()
-				}
 			} else {
 				print("Missing exec for action \(action.name), NOT EXECUTING")
 			}
@@ -693,8 +686,7 @@ class ActionShowStarred: Action, ActionExec {
 		do {
 			if let binding = self.binding, try !binding.isTrue() {
 				try ActionOpenViewByName.exec(context, ["name": "filter-starred"])
-				// Open named view 'showStarred'
-				// openView("filter-starred", ["stateName": starButton.actionStateName as Any])
+                try binding.toggleBool()
 			} else {
 				// Go back to the previous view
 				try ActionBack.exec(context, [:])

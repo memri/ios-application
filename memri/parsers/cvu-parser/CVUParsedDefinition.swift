@@ -71,13 +71,42 @@ public class CVUParsedDefinition: Equatable, CVUToString {
     func compile(_ viewArguments:ViewArguments?, scope: CompileScope = .needed) throws {
         guard !isCompiled, let parsed = parsed, scope != .none else { return }
         
-        for (key, value) in parsed {
-            if let expr = value as? Expression {
-                self.parsed?[key] = scope == .all
+        func recur(_ unknown:Any?) throws -> Any? {
+            guard let notnil = unknown else { return unknown }
+            
+            if let expr = notnil as? Expression {
+                return scope == .all
                     ? try expr.execute(viewArguments)
                     : try expr.compile(viewArguments)
+            } else if var dict = notnil as? [String:Any?] {
+                for (key, value) in dict {
+                    dict[key] = try recur(value)
+                }
+                return dict
+            } else if var list = notnil as? [Any?] {
+                for i in 0..<list.count {
+                    list[i] = try recur(list[i])
+                }
+                return list
+            } else if var list = notnil as? [CVUParsedDefinition] {
+                for i in 0..<list.count {
+                    if let def = try recur(list[i]) as? CVUParsedDefinition {
+                        list[i] = def
+                    }
+                }
+                return list
+            } else if let def = notnil as? CVUParsedDefinition {
+                def.parsed = try recur(def.parsed) as? [String:Any?]
+            } else if let el = notnil as? UIElement {
+                if let dict = try recur(el.properties) as? [String:Any?] {
+                    el.properties = dict
+                }
             }
+            
+            return notnil
         }
+        
+        self.parsed = try recur(parsed) as? [String:Any?]
     }
 }
 
