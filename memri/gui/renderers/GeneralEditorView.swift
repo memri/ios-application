@@ -527,8 +527,11 @@ struct DefaultGeneralEditorRow: View {
 		let binding = Binding<Bool>(
 			get: { self.item[self.prop] as? Bool ?? false },
 			set: { _ in
-				self.item.toggle(self.prop)
-				self.context.objectWillChange.send()
+                do {
+                    try self.item.toggle(self.prop)
+                    self.context.objectWillChange.send()
+                }
+                catch{}
 			}
 		)
 

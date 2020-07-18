@@ -28,13 +28,18 @@ public class CascadableContextPane: Cascadable {
     }
 }
 
-public class CascadableDict: Cascadable, CustomStringConvertible {
+public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable {
     func get<T>(_ name:String, type:T.Type = T.self) -> T? {
         cascadeProperty(name)
     }
     
     func set(_ name:String, _ value:Any?) {
         setState(name, value)
+    }
+    
+    subscript(name: String) -> Any? {
+        get { get(name) }
+        set (value) { set(name, value) }
     }
     
     func resolve(_ item: Item?) throws {
@@ -67,7 +72,7 @@ public class CascadableDict: Cascadable, CustomStringConvertible {
 public typealias UserState = CascadableDict
 public typealias ViewArguments = CascadableDict
 
-public class CascadingView: Cascadable, ObservableObject {
+public class CascadingView: Cascadable, ObservableObject, Subscriptable {
     var context: MemriContext?
     var session: Session? = nil
     

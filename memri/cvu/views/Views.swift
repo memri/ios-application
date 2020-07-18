@@ -336,13 +336,7 @@ public class Views {
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on list")
 					}
-				} else if let v = value as? MemriContext {
-					value = v[node.name]
-				} else if let v = value as? UserState {
-					value = v.get(node.name)
-				} else if let v = value as? CascadingView {
-					value = v[node.name]
-				} else if let v = value as? CascadingDatasource {
+				} else if let v = value as? Subscriptable {
 					value = v[node.name]
 				}
 				// CascadingRenderer??

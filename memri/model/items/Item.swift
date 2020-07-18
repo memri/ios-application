@@ -493,12 +493,13 @@ public class Item: SchemaItem {
 
 	/// Toggle boolean property
 	/// - Parameter name: property name
-	public func toggle(_ name: String) {
-		if let val = self[name] as? Bool {
-			val ? set(name, false) : set(name, true)
-		} else {
-			print("tried to toggle property \(name), but \(name) is not a boolean")
-		}
+	public func toggle(_ name: String) throws {
+        guard self.objectSchema[name]?.type == .bool else {
+            throw "'\(name)' is not a boolean property"
+        }
+            
+		let val = self[name] as? Bool ?? false
+        set(name, !val)
 	}
 
 	/// Compares value of this Items property with the corresponding property of the passed items property

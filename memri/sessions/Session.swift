@@ -10,7 +10,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-public final class Session : Equatable {
+public final class Session : Equatable, Subscriptable {
     /// The name of the item.
     var name:String? {
         get { parsed?["name"] as? String }
@@ -142,6 +142,32 @@ public final class Session : Equatable {
         }
         else {
             // Do nothing and expect a call to setCurrentView later
+        }
+    }
+    
+    subscript(propName: String) -> Any? {
+        get {
+            switch propName {
+            case "name": return name
+            case "editMode": return editMode
+            case "showContextPane": return showContextPane
+            case "showFilterPanel": return showFilterPanel
+            case "screenshot": return screenshot
+            default: return nil
+            }
+        }
+        set(value) {
+            switch propName {
+            case "name": name = value as? String
+            case "editMode": editMode = value as? Bool ?? false
+            case "showContextPane": showContextPane = value as? Bool ?? false
+            case "showFilterPanel": showFilterPanel = value as? Bool ?? false
+            case "screenshot": screenshot = value as? File
+            default:
+                // Do nothing
+                debugHistory.warn("Unable to set property: \(propName)")
+                return
+            }
         }
     }
     

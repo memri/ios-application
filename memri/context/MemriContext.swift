@@ -20,7 +20,11 @@ import SwiftUI
 // TODO: Remove this and find a solution for Edges
 var globalCache: Cache?
 
-public class MemriContext: ObservableObject {
+protocol Subscriptable {
+    subscript(propName: String) -> Any? { get set }
+}
+
+public class MemriContext: ObservableObject, Subscriptable {
 	public var name: String = ""
     
     @Published public var sessions: Sessions

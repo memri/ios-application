@@ -61,23 +61,23 @@ public class Expression: CVUToString {
 
 				if let context = context {
 					if let obj = lookupValue as? UserState {
-						obj.set(lastProperty.name,
-								!ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
-						return
+						obj.set(lastProperty.name, !(obj.get(lastProperty.name) ?? false))
+                        return
 					} else if let obj = lookupValue as? Object {
+                        let name = lastProperty.name
+                        
+                        guard obj.objectSchema[name]?.type == .bool else {
+                            throw "'\(name)' is not a boolean property"
+                        }
+                        
 						realmWrite(context.realm) { _ in
-							obj[lastProperty.name] =
-								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+							obj[name] = !(obj[name] as? Bool ?? false)
 						}
-						return
+                        return
 					}
-					// TODO: FIX: Implement LookUpAble
-					else if let obj = lookupValue as? MemriContext {
-						realmWrite(context.realm) { _ in
-							obj[lastProperty.name] =
-								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
-						}
-						return
+					else if var obj = lookupValue as? Subscriptable {
+                        obj[lastProperty.name] = !(obj[lastProperty.name] as? Bool ?? false)
+                        return
 					}
 				}
 			}

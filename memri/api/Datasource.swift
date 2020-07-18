@@ -85,7 +85,7 @@ public class Datasource: SchemaItem, UniqueString {
 	}
 }
 
-public class CascadingDatasource: Cascadable, UniqueString {
+public class CascadingDatasource: Cascadable, UniqueString, Subscriptable {
 	/// Retrieves the query which is used to load data from the pod
 	var query: String? {
         get { cascadeProperty("query") }
