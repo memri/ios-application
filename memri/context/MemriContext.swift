@@ -95,6 +95,8 @@ public class MemriContext: ObservableObject, Subscriptable {
 
 	func scheduleUIUpdate(immediate: Bool = false, _ check: ((_ context: MemriContext) -> Bool)? = nil) { // Update UI
 		if immediate {
+            #warning("@Toby how can we prevent the uiUpdateSubject from firing immediate after this?")
+            
 			// Do this straight away, usually for the sake of correct animation
             DispatchQueue.main.async {
                 // Update UI
@@ -106,6 +108,7 @@ public class MemriContext: ObservableObject, Subscriptable {
 		if let check = check {
 			guard check(self) else { return }
 		}
+        
         uiUpdateSubject.send()
 	}
 

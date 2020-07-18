@@ -590,9 +590,6 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
         // TODO is this needed for anything or should the tail property be removed?
         tail = cascadeStack.suffix(cascadeStack.count - 1)
         localCache = [:] // Reset local cache again since it was filled when we fetched datasource
-        
-        // Update the UI
-        context?.scheduleUIUpdate(immediate: true)
 	}
     
     public func reload() throws {

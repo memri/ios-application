@@ -237,9 +237,11 @@ public final class Session : Equatable, Subscriptable {
             throw "Exception: Unable fetch stored CVU state"
         }
         
+        var nextIndex:Int
+        
         // If the session already exists, we simply update the session index
         if let index = views.firstIndex(where: { view in view.uid == storedView.uid.value }) {
-            currentViewIndex = index
+            nextIndex = index
         }
         // Otherwise lets create a new session
         else {
@@ -250,15 +252,11 @@ public final class Session : Equatable, Subscriptable {
             
             // Add session to list
             views.append(try CascadingView(storedView, self))
-            currentViewIndex = views.count - 1
+            nextIndex = views.count - 1
         }
         
         let isReload = lastViewIndex == currentViewIndex && sessions?.currentSession == self
         lastViewIndex = currentViewIndex
-        
-        if sessions?.currentSession != self {
-            try sessions?.setCurrentSession(self.state)
-        }
         
         if !isReload { storedView.accessed() }
 		
@@ -271,6 +269,12 @@ public final class Session : Equatable, Subscriptable {
                 item.accessed()
             }
         }
+        
+        if sessions?.currentSession != self {
+            try sessions?.setCurrentSession(self.state)
+        }
+        
+        currentViewIndex = nextIndex
         
         if !isReload {
             // turn off editMode when navigating
@@ -285,6 +289,9 @@ public final class Session : Equatable, Subscriptable {
         
             schedulePersist()
         }
+        
+        // Update the UI
+        currentView?.context?.scheduleUIUpdate(immediate: true)
     }
 
 	public func takeScreenShot() {
