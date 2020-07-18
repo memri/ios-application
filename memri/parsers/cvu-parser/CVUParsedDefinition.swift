@@ -13,6 +13,7 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 	let selector: String?
 	var domain: String?
     var definitionType: String { "" }
+    private var isCompiled: Bool = false
 
 	subscript(propName: String) -> Any? {
         get {
@@ -30,22 +31,6 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 
 	var parsed: [String: Any?]?
 
-	func toCVUString(_ depth: Int, _ tab: String) -> String {
-        let body = CVUSerializer.dictToString(parsed ?? [:], depth + 1, tab, extraNewLine: true) { lhp, rhp in
-			let lv = self.parsed?[lhp] as? [String: Any?]
-			let rv = self.parsed?[rhp] as? [String: Any?]
-
-			let leftIsDict = lv != nil
-			let rightIsDict = rv != nil
-			let leftHasChildren = lv?["children"] != nil
-			let rightHasChildren = rv?["children"] != nil
-
-			return (leftHasChildren ? 1 : 0, leftIsDict ? 1 : 0, lhp.lowercased())
-				< (rightHasChildren ? 1 : 0, rightIsDict ? 1 : 0, rhp.lowercased())
-		}
-		return "\(selector ?? "") \(body)"
-	}
-
 	public var description: String {
 		toCVUString(0, "    ")
 	}
@@ -61,44 +46,39 @@ public class CVUParsedDefinition: Equatable, CVUToString {
 		self.parsed = parsed
 	}
     
-//    public func merge(_ state: UserState) throws {
-//        let dict = asDict().merging(state.asDict(), uniquingKeysWith: { _, new in new })
-//        try storeInCache(dict as [String: Any?])
-//        persist()
-//    }
-//
-//    func toCVUString(_ depth: Int, _ tab: String) -> String {
-//        CVUSerializer.dictToString(asDict(), depth, tab)
-//    }
-//
-//    public class func clone(_ viewArguments: ViewArguments? = nil,
-//                            _ values: [String: Any?]? = nil,
-//                            managed: Bool = true,
-//                            item: Item? = nil) throws -> UserState {
-//        var dict = viewArguments?.asDict() ?? [:]
-//        if let values = values {
-//            dict.merge(values, uniquingKeysWith: { _, r in r })
-//        }
-//
-//        if managed { return try UserState.fromDict(dict, item: item) }
-//        else { return try UserState(dict) }
-//    }
-//
-//    public class func fromDict(_ dict: [String: Any?], item: Item? = nil) throws -> UserState {
-//        let userState = try Cache.createItem(UserState.self, values: [:])
-//
-//        // Resolve expressions
-//        var dct = dict
-//        for (key, value) in dct {
-//            if let expr = value as? Expression {
-//                dct[key] = try expr.execute(ViewArguments([".": item]))
-//            }
-//        }
-//
-//        try userState.storeInCache(dct)
-//        userState.persist()
-//        return userState
-//    }
+    func toCVUString(_ depth: Int, _ tab: String) -> String {
+        let body = CVUSerializer.dictToString(parsed ?? [:], depth + 1, tab, extraNewLine: true) { lhp, rhp in
+            let lv = self.parsed?[lhp] as? [String: Any?]
+            let rv = self.parsed?[rhp] as? [String: Any?]
+
+            let leftIsDict = lv != nil
+            let rightIsDict = rv != nil
+            let leftHasChildren = lv?["children"] != nil
+            let rightHasChildren = rv?["children"] != nil
+
+            return (leftHasChildren ? 1 : 0, leftIsDict ? 1 : 0, lhp.lowercased())
+                < (rightHasChildren ? 1 : 0, rightIsDict ? 1 : 0, rhp.lowercased())
+        }
+        return "\(selector ?? "") \(body)"
+    }
+    
+   enum CompileScope {
+       case all
+       case needed
+       case none
+   }
+    
+    func compile(_ viewArguments:ViewArguments?, scope: CompileScope = .needed) throws {
+        guard !isCompiled, let parsed = parsed, scope != .none else { return }
+        
+        for (key, value) in parsed {
+            if let expr = value as? Expression {
+                self.parsed?[key] = scope == .all
+                    ? try expr.execute(viewArguments)
+                    : try expr.compile(viewArguments)
+            }
+        }
+    }
 }
 
 public class CVUParsedObjectDefinition: CVUParsedDefinition {

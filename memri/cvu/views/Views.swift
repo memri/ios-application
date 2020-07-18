@@ -198,6 +198,7 @@ public class Views {
 		case "currentSession": fallthrough
 		case "session":
 			return context?.currentSession
+        case "currentView": fallthrough
 		case "view": return context?.currentView
 		case "singletonItem":
 			if let itemRef: Item = viewArguments?.get(".") {

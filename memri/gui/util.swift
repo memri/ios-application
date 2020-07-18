@@ -203,6 +203,12 @@ func realmWriteAsync<T>(_ objectReference: ThreadSafeReference<T>, _ doWrite: @e
 			do {
 				let realmInstance = try Realm()
 				guard let threadSafeObject = realmInstance.resolve(objectReference) else { return }
+                
+                guard !realmInstance.isInWriteTransaction else {
+                    try doWrite(realmInstance, threadSafeObject)
+                    return
+                }
+                
 				try realmInstance.write {
 					try doWrite(realmInstance, threadSafeObject)
 				}
@@ -218,6 +224,12 @@ func realmWriteAsync(_ doWrite: @escaping (Realm) throws -> Void) {
         autoreleasepool {
             do {
                 let realmInstance = try Realm()
+                
+                guard !realmInstance.isInWriteTransaction else {
+                    try doWrite(realmInstance)
+                    return
+                }
+                
                 try realmInstance.write {
                     try doWrite(realmInstance)
                 }

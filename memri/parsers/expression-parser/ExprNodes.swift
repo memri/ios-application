@@ -38,6 +38,19 @@ public struct ExprStringNode: ExprNode {
 	}
 }
 
+public struct ExprAnyNode: ExprNode {
+    public let value: Any
+    public var description: String {
+        "NilNode()"
+    }
+}
+
+public struct ExprNilNode: ExprNode {
+    public var description: String {
+        "NilNode()"
+    }
+}
+
 public struct ExprNegationNode: ExprNode {
 	public let exp: ExprNode
 	public var description: String {

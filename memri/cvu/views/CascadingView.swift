@@ -42,15 +42,6 @@ public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable 
         set (value) { set(name, value) }
     }
     
-    func resolve(_ item: Item?) throws {
-        // TODO: Only doing this for head, let's see if that is enough
-        for (key, value) in head.parsed ?? [:] {
-            if let expr = value as? Expression {
-                head.parsed?[key] = try expr.execute(viewArguments)
-            }
-        }
-    }
-    
     public var description: String {
         head.parsed?.keys.description ?? ""
     }
@@ -67,6 +58,15 @@ public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable 
     
     required init(_ head: CVUParsedDefinition? = nil, _ tail: [CVUParsedDefinition]? = nil, _ host: Cascadable? = nil) {
         super.init(head, tail, host)
+    }
+    
+    func resolve(_ item: Item?) throws {
+        // TODO: Only doing this for head, let's see if that is enough
+        for (key, value) in head.parsed ?? [:] {
+            if let expr = value as? Expression {
+                head.parsed?[key] = try expr.execute(viewArguments)
+            }
+        }
     }
 }
 public typealias UserState = CascadableDict
@@ -513,8 +513,12 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
         
         var activeRenderer: Any?
 
-        func checkForIncludes(_ parsedDef: CVUParsedDefinition, _ domain: String) throws {
+        func include(_ parsedDef: CVUParsedDefinition, _ domain: String) throws {
             if !cascadeStack.contains(parsedDef) {
+                // Compile parsed definition to embed state that may change (e.g. currentView)
+                try parsedDef.compile(viewArguments, scope: .needed)
+                
+                // Add to cascade stack
                 cascadeStack.append(parsedDef)
                 
                 if activeRenderer == nil, let d = parsedDef["defaultRenderer"] {
@@ -537,7 +541,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
                         }
                     } else if let view = result as? CascadingView {
                         let parsed = CVUParsedViewDefinition(parsed: view.head.parsed)
-                        try checkForIncludes(parsed, domain)
+                        try include(parsed, domain)
                     } else {
                         throw "Exception: Unable to inherit view from \(inheritFrom)"
                     }
@@ -556,7 +560,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
 				if let parsedDef = try context?.views.parseDefinition(def) {
 					parsedDef.domain = domain
 
-					try checkForIncludes(parsedDef, domain)
+					try include(parsedDef, domain)
 				} else {
 					debugHistory.error("Could not parse definition")
 				}
@@ -570,7 +574,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
 		}
 
         // Add head to the cascadeStack
-        try checkForIncludes(head, "state")
+        try include(head, "state")
 
 		// Find views based on datatype
 		for domain in ["user", "defaults"] {
@@ -621,6 +625,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
             }
 
             do {
+                // Load the cascade list of views
                 try cascade()
 
                 try self.resultSet.load { error in

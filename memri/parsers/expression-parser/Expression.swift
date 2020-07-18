@@ -44,7 +44,7 @@ public class Expression: CVUToString {
 		self.lookup = lookup
 		self.execFunc = execFunc
 	}
-
+    
 	public func isTrue() throws -> Bool {
 		let x: Bool? = try execForReturnType()
 		return x ?? false
@@ -108,11 +108,28 @@ public class Expression: CVUToString {
 
 		throw "Exception: Unable to fetch type of property referenced in expression. Perhaps expression is not a pure lookup?"
 	}
+    
+    func compile(_ viewArguments:ViewArguments?) throws -> Expression {
+        let copy = Expression(code, startInStringMode: startInStringMode, lookup: lookup, execFunc: execFunc)
+        
+        if parsed, let ast = ast {
+            copy.interpreter = ExprInterpreter(ast, lookup, execFunc)
+            copy.parsed = true
+        }
+        else {
+            try copy.parse()
+        }
+        
+        copy.ast = try copy.interpreter?.compile(viewArguments)
+        
+        return copy
+    }
 
-	private func parse() throws {
+    private func parse() throws {
 		let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
 		let parser = ExprParser(try lexer.tokenize())
-		ast = try parser.parse()
+		
+        ast = try parser.parse()
 
 		// TODO: Error handlign
 		if let ast = ast {

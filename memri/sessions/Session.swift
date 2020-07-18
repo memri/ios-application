@@ -264,8 +264,9 @@ public final class Session : Equatable, Subscriptable {
             currentView?.viewArguments = ViewArguments(args, currentView?.viewArguments)
         }
         
-        try currentView?.load { error in
-            if !isReload, error == nil, let item = currentView?.resultSet.singletonItem {
+        let nextView = views[nextIndex]
+        try nextView.load { error in
+            if !isReload, error == nil, let item = nextView.resultSet.singletonItem {
                 item.accessed()
             }
         }
