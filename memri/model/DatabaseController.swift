@@ -16,7 +16,7 @@ class DatabaseController {
 	
 	/// This function returns a Realm for the current thread
 	static func getRealm() -> Realm {
-		guard !isOnRealmQueue else { return queueConfinedRealm }
+		guard !isOnRealmQueue else { return queueConfinedRealm } // If someone trys to write to realm while we're already in the realm queue this would lock the thread. Hence this check
 		return try! Realm(configuration: realmConfig, queue: nil)
 	}
 	
