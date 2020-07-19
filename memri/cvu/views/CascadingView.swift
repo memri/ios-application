@@ -260,7 +260,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
 		if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
 
         func getConfig(_ a:CVUParsedDefinition) -> CVUParsedRendererDefinition? {
-            let definitions = (a["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
+            let definitions = (a["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
             // Prefer a perfectly matched definition
             return definitions.first(where: { $0.name == activeRenderer })
                 // Else get the one from the parent renderer
@@ -270,7 +270,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
         
         let head = getConfig(self.head) ?? {
             let head = CVUParsedRendererDefinition("[renderer = \(activeRenderer)]")
-            self.head["renderDefinitions"] = [head]
+            self.head["rendererDefinitions"] = [head]
             return head
         }()
         
@@ -459,20 +459,25 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
     
     public func persist() throws {
         try realmTryWrite { realm in
-            var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-            if stored == nil {
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+            if state == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")
                 
-                stored = try Cache.createItem(CVUStateDefinition.self)
+                state = try Cache.createItem(CVUStateDefinition.self)
                 
-                guard let storedUID = stored?.uid.value else {
+                guard let stateUID = state?.uid.value else {
                     throw "Exception: could not create stored definition"
                 }
                 
-                uid = storedUID
+                uid = stateUID
             }
             
-            stored?.set("definition", head.toCVUString(0, "    "))
+            let definition = head.toCVUString(0, "    ")
+            if state?.definition != definition {
+                #warning("Remove")
+                var d = head.toCVUString(0, "    ")
+                state?.set("definition", definition)
+            }
         }
     }
 
@@ -546,7 +551,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
                         throw "Exception: Unable to inherit view from \(inheritFrom)"
                     }
                     
-                    parsedDef["inherit"] = nil
+                    parsedDef.parsed?.removeValue(forKey: "inherit")
                 }
             }
         }

@@ -163,9 +163,10 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-                    realmWriteAsync(wrappedObject) { _, audititem in
-                        audititem._action = nil
-                    }
+                    #warning("@Toby, This is giving thread errors and I dont understand why")
+//                    realmWriteAsync(wrappedObject) { _, audititem in
+//                        audititem._action = nil
+//                    }
                 }
             } else {
                 // Ignore errors (we'll retry next time)

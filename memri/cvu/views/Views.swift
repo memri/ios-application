@@ -175,7 +175,7 @@ public class Views {
 		case "setting":
 			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
 				#warning("@Toby - how can we re-architect this?")
-				if let value = args?[0] as? String {
+                if let value = args?[safe:0] as? String {
 					if let x = Settings.shared.get(value, type: Double.self) { return x }
 					else if let x = Settings.shared.get(value, type: Int.self) { return x }
 					else if let x = Settings.shared.get(value, type: String.self) { return x }
@@ -186,7 +186,10 @@ public class Views {
 			return f
         case "item":
             let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
-                guard let typeName = args?[0] as? String, let uid = args?[1] as? Int else {
+                guard let typeName = args?[safe:0] as? String, let uid = args?[safe:1] as? Int else {
+                    if args?.count == 0 {
+                        return self.context?.currentView?.resultSet.singletonItem
+                    }
                     return nil
                 }
                 return getItem(typeName, uid)
@@ -435,7 +438,8 @@ public class Views {
 			throw "Exception: Missing Context"
 		}
 
-		let cached = InMemoryObjectCache.get(strDef)
+        #warning("Turned off caching temporarily due to issue with UserState being cached wrongly (and then changed in cache)")
+		let cached = -1 //InMemoryObjectCache.get(strDef)
 		if let cached = cached as? CVU {
 			return try cached.parse().first
 		} else if let definition = viewDef.definition {
@@ -511,7 +515,7 @@ public class Views {
 
 			func searchForRenderer(in viewDefinition: CVUStoredDefinition) throws -> Bool {
 				let parsed = try context.views.parseDefinition(viewDefinition)
-				for def in parsed?["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
+				for def in parsed?["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
 					for name in rendererNames {
 						// TODO: Should this first search for the first renderer everywhere
 						//       before trying the second renderer?

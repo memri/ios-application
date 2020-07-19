@@ -170,7 +170,7 @@ class CVUValidator {
 					if let value = value as? [Any] {
 						return value[0] is String && value[1] is [String: Any]
 					} else { return value is String }
-				case "renderDefinitions": return value is [CVUParsedRendererDefinition]
+				case "rendererDefinitions": return value is [CVUParsedRendererDefinition]
 				default: throw "Unknown"
 				}
 

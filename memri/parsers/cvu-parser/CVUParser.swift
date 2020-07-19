@@ -249,9 +249,9 @@ class CVUParser {
 					// TODO: remove code duplication
 					let selector = try parseBracketsSelector(lastToken)
 					if let selector = selector as? CVUParsedRendererDefinition {
-						var value = dict["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
+						var value = dict["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
 						value.append(selector)
-						dict["renderDefinitions"] = value
+						dict["rendererDefinitions"] = value
 						_ = try parseDefinition(selector)
 						lastKey = nil
 					} else if let selector = selector as? CVUParsedSessionDefinition {
@@ -318,7 +318,7 @@ class CVUParser {
 						var properties: [String: Any?] = [:]
 						if case CVUToken.CurlyBracketOpen = nextToken {
 							_ = popCurrentToken()
-							properties = try parseDict(value)
+							properties = try parseDict()
 						}
 						stack.append(CVUParsedObjectDefinition(properties as [String: Any]))
 					} else if case CVUToken.CurlyBracketOpen = nextToken {

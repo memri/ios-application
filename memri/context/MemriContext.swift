@@ -319,15 +319,11 @@ public class RootContext: MemriContext {
 
 		currentView?.context = self
 
-		let takeScreenShot = { () -> Void in
-			// Make sure to record a screenshot prior to session switching
-			self.currentSession?.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
-		}
-
 		// TODO: Refactor: This is a mess. Create a nice API, possible using property wrappers
+        // Optimize by only doing this when a property in session/view/dataitem has changed
 		aliases = [
-			"showSessionSwitcher": Alias(key: "device/gui/showSessionSwitcher", type: "bool", on: takeScreenShot),
-			"showNavigation": Alias(key: "device/gui/showNavigation", type: "bool", on: takeScreenShot),
+            "showSessionSwitcher": Alias(key: "device/gui/showSessionSwitcher", type: "bool", on: { self.currentSession?.takeScreenShot(immediate:true) }),
+			"showNavigation": Alias(key: "device/gui/showNavigation", type: "bool", on: { self.currentSession?.takeScreenShot() }),
 		]
 
 		cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }

@@ -99,10 +99,10 @@ class CVUSerializer {
 			if !isMultiline { isMultiline = strValue.contains("\n") }
 		}
 
-		return withDef
+        return str.count == 0 ? "[]" : withDef
 			? isMultiline
-			? "[\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\n\(tabsEnd)]"
-			: str.joined(separator: " ")
+                ? "[\n\(tabs)\(str.joined(separator: "\n\(tabs)"))\n\(tabsEnd)]"
+                : str.joined(separator: " ")
 			: str.joined(separator: (extraNewLine ? "\n" : "") + "\n\(tabs)")
 	}
 
@@ -125,7 +125,7 @@ class CVUSerializer {
 
 		var str = [String]()
 		for key in keys {
-			if key == "children" || key == "renderDefinitions" || key == "datasourceDefinition"
+			if key == "children" || key == "rendererDefinitions" || key == "datasourceDefinition"
 				|| key == "sessionDefinitions" || key == "viewDefinitions" {
 				continue
 			} else if key == "cornerborder" {
@@ -144,41 +144,49 @@ class CVUSerializer {
 						}
 					}
 				}
-            } else if
-                key != "userState" &&
-                key != "viewArguments" ||
-                (dict[key] as? UserState)?.head.parsed?.count ?? 0 > 0
-            {
-				if let p = dict[key] as? [String: Any?] {
-					str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
-						+ "\(key): \(valueToString(p, depth, tab))")
-				} else if let value = dict[key] {
-					str.append("\(key): \(valueToString(value, depth, tab))")
-				}
+            } else {
+                let value = dict[key]
+                let isDef = value is CVUParsedDefinition
+                let dict = (value as? CVUParsedDefinition)?.parsed
+                
+                if !isDef || dict != nil && dict?.count ?? 0 > 0 {
+                    if let p = value as? [String: Any?] {
+                        str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
+                            + "\(key): \(valueToString(p, depth, tab))")
+                    } else if let value = value {
+                        str.append("\(key): \(valueToString(value, depth - 1, tab))")
+                    }
+                }
 			}
 		}
 
 		var children: String = ""
 		var definitions: [String] = []
+        var hasPriorContent = str.count > 0
 		if let p = dict["children"] as? [UIElement], p.count > 0 {
 			let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
-			children = "\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)"
+			children = "\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)"
+            hasPriorContent = true
 		}
         if let p = dict["datasourceDefinition"] as? CVUParsedDatasourceDefinition, p.parsed != nil {
 			let body = p.toCVUString(depth, tab)
-			definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
+			definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
+            hasPriorContent = true
 		}
-		if let p = dict["sessionDefinitions"] as? [CVUParsedSessionDefinition], p.count > 0 {
+        if let p = (dict["sessionDefinitions"] as? [CVUParsedSessionDefinition])?.filter({ $0.parsed != nil }), p.count > 0 {
 			let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
-			definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
+			definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
+            hasPriorContent = true
 		}
-		if let p = dict["viewDefinitions"] as? [CVUParsedViewDefinition], p.count > 0 {
+        if let p = (dict["viewDefinitions"] as? [CVUParsedViewDefinition])?.filter({ $0.parsed != nil }), p.count > 0 {
 			let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
-			definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
+			definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
+            hasPriorContent = true
 		}
-		if let p = dict["renderDefinitions"] as? [CVUParsedRendererDefinition], p.count > 0 {
+        if let p = (dict["rendererDefinitions"] as? [CVUParsedRendererDefinition])?.filter({ $0.parsed != nil }), p.count > 0 {
 			let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
-			definitions.append("\(str.count > 0 ? "\n\n\(tabs)" : "")\(body)")
+			definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
+            hasPriorContent = true
 		}
 
 		return withDef

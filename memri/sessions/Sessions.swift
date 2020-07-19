@@ -64,9 +64,8 @@ public final class Sessions : ObservableObject, Equatable {
             .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                do { try self?.persist() }
-                catch let error {
-                    debugHistory.warn("Unable to persist session state: \(error)")
+                realmWriteAsync { _ in
+                    try self?.persist()
                 }
             }
     }
@@ -156,7 +155,7 @@ public final class Sessions : ObservableObject, Equatable {
     
     public func persist() throws {
         try realmTryWrite { realm in
-            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored sessions CVU. Creating a new one.")
                 
@@ -169,9 +168,11 @@ public final class Sessions : ObservableObject, Equatable {
                 self.uid = uid
             }
             
-            state?.set("definition", parsed?.toCVUString(0, "    "))
+            if let definition = self.parsed?.toCVUString(0, "    "), state?.definition != definition {
+                state?.set("definition", definition)
+            }
             
-            for session in sessions {
+            for session in self.sessions {
                 try session.persist()
                 
                 if let s = session.state {
@@ -206,7 +207,7 @@ public final class Sessions : ObservableObject, Equatable {
             }
             
             self.parsed = parsed as? CVUParsedSessionsDefinition
-            self.parsed?["sessionDefinitions"] = nil
+            self.parsed?.parsed?.removeValue(forKey: "sessionDefinitions")
             
             try persist()
             try load(context)

@@ -134,7 +134,7 @@ public final class Session : Equatable, Subscriptable {
                     }
                 }
                 
-                self.parsed?["viewDefinitions"] = nil
+                self.parsed?.parsed?.removeValue(forKey: "viewDefinitions")
             }
             else {
                 throw "CVU state definition is missing views"
@@ -196,7 +196,9 @@ public final class Session : Equatable, Subscriptable {
                 self.uid = uid
             }
             
-            state?.set("definition", parsed?.toCVUString(0, "    "))
+            if let definition = self.parsed?.toCVUString(0, "    "), state?.definition != definition {
+                state?.set("definition", definition)
+            }
             
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
@@ -295,12 +297,11 @@ public final class Session : Equatable, Subscriptable {
         currentView?.context?.scheduleUIUpdate(immediate: true)
     }
 
-	public func takeScreenShot() {
+    public func takeScreenShot(immediate:Bool = false) {
 		if let view = UIApplication.shared.windows[0].rootViewController?.view {
 			if let uiImage = view.takeScreenShot() {
                 
-                #warning("Test this")
-                DispatchQueue.global(qos: .userInitiated).async {
+                func doIt() {
                     do {
                         if self.screenshot == nil {
                             let file = try Cache.createItem(File.self,
@@ -312,6 +313,13 @@ public final class Session : Equatable, Subscriptable {
                         try self.screenshot?.write(uiImage)
                     } catch {
                         debugHistory.error("Unable to write screenshot: \(error)")
+                    }
+                }
+                
+                if immediate { doIt() }
+                else {
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        doIt()
                     }
                 }
 
