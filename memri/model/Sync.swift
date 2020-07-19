@@ -82,7 +82,7 @@ class Sync {
             ] as? [String: String])
             
             // Add to realm
-            realmWriteAsync() { realm in
+			DatabaseController.writeAsync { realm in
                 
                 // Store query in a log item
                 let audititem = AuditItem()
@@ -163,7 +163,7 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-                    realmWriteAsync(wrappedObject) { _, audititem in
+					DatabaseController.writeAsync(withResolvedReferenceTo: wrappedObject) { _, audititem in
                         audititem._action = nil
                     }
                 }
@@ -202,35 +202,31 @@ class Sync {
 
 	public func syncToPod() {
 		func markAsDone(_ list: [String: Any]) {
-			for (_, sublist) in list {
-				for item in sublist as? [Any] ?? [] {
-					if let item = item as? ThreadSafeReference<SchemaItem> {
-                        #warning("@Toby: Shouldnt this be outside of the loop? I understand that starting a write transaction is expensive")
-						realmWriteAsync(item) { realm, item in
-							if item._action == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item._action = ""
-                                item._updated.removeAll()
-                            }
-						}
-					} else if let item = item as? ThreadSafeReference<Edge> {
-						realmWriteAsync(item) { realm, item in
-							if item._action == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item._action = ""
-                                item._updated.removeAll()
-                            }
+			DatabaseController.writeAsync { realm in
+				for (_, sublist) in list {
+					for item in sublist as? [Any] ?? [] {
+						if let item = item as? ThreadSafeReference<SchemaItem>, let resolvedItem = realm.resolve(item) {
+							if resolvedItem._action == "delete" {
+								realm.delete(resolvedItem)
+							}
+							else {
+								resolvedItem._action = ""
+								resolvedItem._updated.removeAll()
+							}
+						} else if let item = item as? ThreadSafeReference<Edge>, let resolvedItem = realm.resolve(item) {
+							if resolvedItem._action == "delete" {
+								realm.delete(resolvedItem)
+							}
+							else {
+								resolvedItem._action = ""
+								resolvedItem._updated.removeAll()
+							}
 						}
 					}
 				}
 			}
 		}
 		
-		#warning("@Ruben, I have added this guard check here to avoid starting again if already syncing... but not sure if it should be there?")
 		guard let realm = try? Realm(), !self.syncing else { return }
 		self.syncing = true
 		

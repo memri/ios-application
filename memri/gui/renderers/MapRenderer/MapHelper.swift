@@ -16,8 +16,6 @@ class MapHelper {
 
 	private init() {}
 
-	var realm: Realm?
-
 	func onAppStart() {
 		#if !targetEnvironment(macCatalyst)
 			// Disable MapBox usage metrics by default to maintain user privacy
@@ -87,7 +85,8 @@ class MapHelper {
 		lookup.sink { [weak self] location in
 			if let location = location {
 				// Update the address with the location (avoid future lookups)
-				realmWrite(self?.realm) { _ in
+				let addressReference = ThreadSafeReference(to: address)
+				DatabaseController.writeAsync(withResolvedReferenceTo: addressReference) { _, address in
                     let newLocation = try Cache.createItem(Location.self, values: [
                         "latitude": location.coordinate.latitude,
                         "longitude": location.coordinate.longitude

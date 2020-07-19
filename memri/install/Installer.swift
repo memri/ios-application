@@ -9,15 +9,14 @@ import Foundation
 import RealmSwift
 
 public class Installer {
-	private var realm: Realm
 
-	init(_ rlm: Realm) {
-		realm = rlm
+	init() {
 	}
 
 	public func install(_: MemriContext) {}
 
 	public func installIfNeeded(_ context: MemriContext, _ callback: () throws -> Void) throws {
+		let realm = DatabaseController.getRealm()
 		let installLogs = realm.objects(AuditItem.self).filter("action = 'install'")
 
 		// TODO: Refactor: check version??
