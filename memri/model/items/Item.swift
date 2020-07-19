@@ -177,7 +177,7 @@ public class Item: SchemaItem {
 	///   - name: property name
 	///   - value: value
 	public func set(_ name: String, _ value: Any?) {
-		realmWrite(realm) { _ in
+		DatabaseController.writeSync { _ in
 			if let schema = self.objectSchema[name] {
                 #warning("TODO implement, check for difference")
 //                state?.modified(["definition"])
@@ -403,7 +403,7 @@ public class Item: SchemaItem {
 		var edge = allEdges.filter(query).first
 		let sequenceNumber: Int? = try determineSequenceNumber(edgeType, sequence)
 
-		realmWrite(realm) { _ in
+		DatabaseController.writeSync { _ in
 			if item.realm == nil, let item = item as? Item {
 				item._action = "create"
 				realm?.add(item, update: .modified)
@@ -453,7 +453,7 @@ public class Item: SchemaItem {
 
 	public func unlink(_ edge: Edge) throws {
 		if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
-			realmWrite(realm) { _ in
+			DatabaseController.writeSync { _ in
 				edge.deleted = true
 				edge._action = "delete"
 				realm?.delete(edge)
@@ -477,7 +477,7 @@ public class Item: SchemaItem {
 		let results = allEdges.filter(query)
 
 		if results.count > 0 {
-			realmWrite(realm) { _ in
+			DatabaseController.writeSync { _ in
 				if all {
 					for edge in results {
 						edge.deleted = true
@@ -619,9 +619,10 @@ public class Item: SchemaItem {
     
 	/// update the dateAccessed property to the current date
 	public func accessed() {
-        realmWriteAsync(self) { realm, item in
+		let safeSelf = ThreadSafeReference(to: self)
+		DatabaseController.writeAsync(withResolvedReferenceTo: safeSelf) { realm, item in
             item.dateAccessed = Date()
-            
+
             let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
             _ = try item.link(auditItem, type: "changelog")
         }
@@ -631,19 +632,20 @@ public class Item: SchemaItem {
     public func modified(_ updatedFields:[String]) {
         #warning("Only do this once in a while. This is what syncState.changedInThisSession was for")
         
-        realmWriteAsync(self) { realm, item in
-            item.dateModified = Date()
-            item._updated.append(objectsIn: updatedFields)
-            
-            let auditItem = try Cache.createItem(
-                AuditItem.self,
-                values: [
-                    "action": "update",
-                    "content": try serialize(AnyCodable(Array(updatedFields)))
-                ]
-            )
-            _ = try item.link(auditItem, type: "changelog")
-        }
+		let safeSelf = ThreadSafeReference(to: self)
+		DatabaseController.writeAsync(withResolvedReferenceTo: safeSelf) { realm, item in
+			item.dateModified = Date()
+			item._updated.append(objectsIn: updatedFields)
+			
+			let auditItem = try Cache.createItem(
+				AuditItem.self,
+				values: [
+					"action": "update",
+					"content": try serialize(AnyCodable(Array(updatedFields)))
+				]
+			)
+			_ = try item.link(auditItem, type: "changelog")
+		}
     }
 
 	/// compare two dataItems

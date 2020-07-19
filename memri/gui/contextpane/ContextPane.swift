@@ -20,7 +20,7 @@ struct ContextPane: View {
 	var isVisible: Bool {
 		get { context.currentSession?.showContextPane ?? false }
 		nonmutating set {
-			realmWrite(self.context.realm) { _ in
+			DatabaseController.writeSync { _ in
 				self.context.currentSession?.showContextPane = newValue
 				self.context.scheduleUIUpdate(immediate: true)
 			}

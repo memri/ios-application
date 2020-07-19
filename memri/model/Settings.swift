@@ -13,8 +13,6 @@ import Combine
 public class Settings {
     /// Shared settings that can be used from the main thread
     static var shared: Settings = Settings()
-	/// Realm database object
-	let realm: Realm
 	/// Default settings
 	var settings: Results<Setting>
     
@@ -23,9 +21,10 @@ public class Settings {
 
 	/// Init settings with the relam database
 	/// - Parameter rlm: realm database object
-	init(_ realm: Realm = try! Realm()) {
-		self.realm = realm
-		settings = realm.objects(Setting.self)
+	init() {
+		settings = try! DatabaseController.tryRead { realm in
+			realm.objects(Setting.self)
+		}
 	}
 
 	// TODO: Refactor this so that the default settings are always used if not found in Realm.
@@ -128,7 +127,7 @@ public class Settings {
 	///   - path: path of the setting
 	///   - value: setting Value
 	public func setSetting(_ path: String, _ value: AnyCodable) throws {
-		realmWrite(realm) { _ in
+		DatabaseController.writeSync { realm in
 			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
 				s.json = try serialize(value)
                 

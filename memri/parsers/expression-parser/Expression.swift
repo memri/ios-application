@@ -71,7 +71,7 @@ public class Expression: CVUToString {
                             throw "'\(name)' is not a boolean property"
                         }
                         
-						realmWrite(context.realm) { _ in
+						DatabaseController.writeSync { _ in
 							obj[name] = !(obj[name] as? Bool ?? false)
 						}
                         return

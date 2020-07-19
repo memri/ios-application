@@ -80,9 +80,9 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
     var uid: Int
     
     var state: CVUStateDefinition? {
-        realmRead { realm in
+		DatabaseController.read { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-        } as? CVUStateDefinition
+        }
     }
     
 	/// The name of the cascading view
@@ -458,7 +458,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
     }
     
     public func persist() throws {
-        try realmTryWrite { realm in
+        try DatabaseController.tryWriteSync { realm in
             var stored = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if stored == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")
