@@ -40,7 +40,7 @@ class DatabaseController {
 		try doRead(realm)
 	}
 	
-	static func tryRead<T>(_ doRead: ((Realm) throws -> T?) ) throws -> T? {
+	static func tryRead<T>(_ doRead: ((Realm) throws -> T) ) throws -> T {
 		let realm = getRealm()
 		return try doRead(realm)
 	}
