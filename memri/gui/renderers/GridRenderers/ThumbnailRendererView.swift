@@ -23,24 +23,36 @@ let registerThumbnailRenderer = {
 class CascadingThumbnailConfig: CascadingRenderConfig {
 	var type: String? = "thumbnail"
 
-	var longPress: Action? { cascadeProperty("longPress") }
-	var press: Action? { cascadeProperty("press") }
+	var longPress: Action? {
+        get { cascadeProperty("longPress") }
+        set (value) { setState("longPress", value) }
+    }
+	var press: Action? {
+        get { cascadeProperty("press") }
+        set (value) { setState("press", value) }
+    }
 
-	var columns: Int { Int(cascadeProperty("columns") as Double? ?? 3) }
+	var columns: Int {
+        get { Int(cascadeProperty("columns") as Double? ?? 3) }
+        set (value) { setState("columns", value) }
+    }
 
 	var edgeInset: UIEdgeInsets {
-		if let edgeInset = cascadePropertyAsCGFloat("edgeInset") {
-			return UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
-		} else if let x: [Double?] = cascadeProperty("edgeInset") {
-			let insetArray = x.compactMap { $0.map { CGFloat($0) } }
-			switch insetArray.count {
-			case 2: return UIEdgeInsets(top: insetArray[1], left: insetArray[0], bottom: insetArray[1], right: insetArray[0])
-			case 4: return UIEdgeInsets(top: insetArray[0], left: insetArray[3], bottom: insetArray[2], right: insetArray[1])
-			default: return .init()
-			}
-		}
-		return .init()
-	}
+        get {
+            if let edgeInset = cascadePropertyAsCGFloat("edgeInset") {
+                return UIEdgeInsets(top: edgeInset, left: edgeInset, bottom: edgeInset, right: edgeInset)
+            } else if let x: [Double?] = cascadeProperty("edgeInset") {
+                let insetArray = x.compactMap { $0.map { CGFloat($0) } }
+                switch insetArray.count {
+                case 2: return UIEdgeInsets(top: insetArray[1], left: insetArray[0], bottom: insetArray[1], right: insetArray[0])
+                case 4: return UIEdgeInsets(top: insetArray[0], left: insetArray[3], bottom: insetArray[2], right: insetArray[1])
+                default: return .init()
+                }
+            }
+            return .init()
+        }
+        set (value) { setState("edgeInset", value) }
+    }
 
 	var nsEdgeInset: NSDirectionalEdgeInsets {
 		let edgeInset = self.edgeInset
@@ -49,14 +61,17 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
 
 	// Calculated
 	var spacing: (x: CGFloat, y: CGFloat) {
-		if let spacing = cascadePropertyAsCGFloat("spacing") {
-			return (spacing, spacing)
-		} else if let x: [Double?] = cascadeProperty("spacing") {
-			let spacingArray = x.compactMap { $0.map { CGFloat($0) } }
-			guard spacingArray.count == 2 else { return (0, 0) }
-			return (spacingArray[0], spacingArray[1])
-		}
-		return (0, 0)
+        get {
+            if let spacing = cascadePropertyAsCGFloat("spacing") {
+                return (spacing, spacing)
+            } else if let x: [Double?] = cascadeProperty("spacing") {
+                let spacingArray = x.compactMap { $0.map { CGFloat($0) } }
+                guard spacingArray.count == 2 else { return (0, 0) }
+                return (spacingArray[0], spacingArray[1])
+            }
+            return (0, 0)
+        }
+        set (value) { setState("spacing", value) }
 	}
 }
 
@@ -66,8 +81,7 @@ struct ThumbnailRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.cascadingView?.userState?
-					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
 			}
 		)
 	}
@@ -75,7 +89,7 @@ struct ThumbnailRendererView: View {
 	var name: String = "thumbnail"
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+        context.currentView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
@@ -115,7 +129,6 @@ struct ThumbnailRendererView: View {
 								selectedItems: selectedIndices)
 		{ dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
-				// TODO: Error handling
 				self.renderConfig.render(item: dataItem)
 					.environmentObject(self.context)
 
@@ -144,10 +157,10 @@ struct ThumbnailRendererView: View {
 
 	var body: some View {
 		VStack {
-			if (context.cascadingView?.resultSet.count ?? 0) == 0 {
+			if (context.currentView?.resultSet.count ?? 0) == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView?.emptyResultText ?? "")
+					Text(self.context.currentView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)

@@ -25,8 +25,9 @@ public class PodAPI {
 
 	private func http(_ method: HTTPMethod = .GET, path: String = "", body: Data? = nil,
 					  _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void) {
+        let settings = Settings()
 		let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
-		let podhost = Settings.get("user/pod/host") ?? ""
+		let podhost = settings.get("user/pod/host") ?? ""
 		guard var baseUrl = URL(string: podhost) else {
 			let message = "Invalid pod host set in settings: \(podhost)"
 			debugHistory.error(message)
@@ -41,8 +42,8 @@ public class PodAPI {
 		// TODO: when the backend sends the correct caching headers
 		// this can be changed: .reloadIgnoringCacheData
 
-		guard let username: String = Settings.get("user/pod/username"),
-			let password: String = Settings.get("user/pod/password") else {
+		guard let username: String = settings.get("user/pod/username"),
+			let password: String = settings.get("user/pod/password") else {
 			// TODO: User error handling
 			print("ERROR: Could not find login credentials, so could not authenticate to pod")
 			return
@@ -118,7 +119,7 @@ public class PodAPI {
 
 	private let MAXDEPTH = 2
 	private func recursiveSearch(_ item: SchemaItem, removeUID _: Bool = false) throws -> [String: Any] {
-		if item.syncState?.actionNeeded == nil { throw "No action required" }
+		if item._action == nil { throw "No action required" }
 
 		var createItems = [[String: Any]]()
 		var updateItems = [[String: Any]]()
@@ -128,7 +129,7 @@ public class PodAPI {
 		var deleteEdges = [[String: Any]]()
 
 		func recurEdge(_ edge: Edge, forceInclude: Bool = false) throws {
-			let a = edge.syncState?.actionNeeded
+			let a = edge._action
 			if a == nil, !forceInclude { return }
 			guard let action = a else { return }
 
@@ -136,7 +137,8 @@ public class PodAPI {
 
 			let properties = item.objectSchema.properties
 			for prop in properties {
-				if prop.name == "syncState" || prop.name == "deleted"
+				if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+                    || prop.name == "deleted" || prop.name == "_changedInSession"
 					|| prop.name == "targetItemType" || prop.name == "targetItemID"
 					|| prop.name == "sourceItemType" || prop.name == "sourceItemID" {
 					// Ignore
@@ -163,24 +165,25 @@ public class PodAPI {
 		}
 
 		func recur(_ item: SchemaItem, forceInclude: Bool = false) throws {
-			let a = item.syncState?.actionNeeded
+			let a = item._action
 			if a == nil, !forceInclude { return }
 			guard let action = a else { return }
 
-			let updatedFields = item.syncState?.updatedFields
+			let updatedFields = item._updated
 			var result: [String: Any] = [
 				"_type": item.genericType,
 			]
 
 			let properties = item.objectSchema.properties
 			for prop in properties {
-				if prop.name == "syncState" || prop.name == "deleted" {
+				if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+                    || prop.name == "deleted" || prop.name == "_changedInSession" {
 					// Ignore
 				} else if prop.name == "allEdges" {
 					for edge in item.allEdges {
 						try recurEdge(edge, forceInclude: action == "create")
 					}
-				} else if updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
+				} else if updatedFields.contains(prop.name) {
 					if prop.type == .object {
 						throw "Unexpected object schema"
 					} else {
@@ -221,7 +224,7 @@ public class PodAPI {
 	}
 
 	func simplify(_ item: SchemaItem, create: Bool = false) throws -> [String: Any] {
-		let updatedFields = item.syncState?.updatedFields
+		let updatedFields = item._updated
 		var result: [String: Any] = [
 			"_type": item.genericType,
             "uid": item.uid
@@ -229,11 +232,13 @@ public class PodAPI {
 //        print("\(item.genericType) \(item.uid.value ?? 0)")
 
 		let properties = item.objectSchema.properties
-        let exclude = ["syncState", "deleted", "allEdges", "uid"]
+        let exclude = [
+            "_updated", "_action", "_partial", "_changedInSession", "deleted", "allEdges", "uid"
+        ]
 		for prop in properties {
             if exclude.contains(prop.name) {
 				// Ignore
-			} else if create || updatedFields == nil || updatedFields?.contains(prop.name) ?? false {
+			} else if create || updatedFields.contains(prop.name) {
 				if prop.type == .object {
 					debugHistory.warn("Unexpected object schema")
                 } else if prop.type == .date, let date = item[prop.name] as? Date {
@@ -255,7 +260,10 @@ public class PodAPI {
 		var result = [String: Any]()
 
 		let properties = edge.objectSchema.properties
-        let exclude = ["version", "syncState", "deleted", "targetItemType", "targetItemID", "sourceItemType", "sourceItemID"]
+        let exclude = [
+            "version", "deleted", "targetItemType", "targetItemID", "sourceItemType",
+            "sourceItemID", "_updated", "_action", "_partial", "_changedInSession"
+        ]
 		for prop in properties {
 			if exclude.contains(prop.name) {
 				// Ignore
@@ -477,7 +485,7 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runImporterRun(_ uid: Int,
+	public func runImporter(_ uid: Int,
 							   _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
 		http(.PUT, path: "import/\(uid)") { error, _ in
 			callback(error, error == nil)
@@ -488,7 +496,7 @@ public class PodAPI {
 	/// - Parameters:
 	///   - memriID: The memriID of the data item to remove
 	///   - callback: Function that is called when the task is completed either with a result, or  an error
-	public func runIndexerRun(_ uid: Int,
+	public func runIndexer(_ uid: Int,
 							  _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void) {
 		http(.POST, path: "run_service/indexers/\(uid)") { error, _ in
 			callback(error, error == nil)

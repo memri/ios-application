@@ -20,14 +20,23 @@ import SwiftUI
 // TODO: Remove this and find a solution for Edges
 var globalCache: Cache?
 
-public class MemriContext: ObservableObject {
+protocol Subscriptable {
+    subscript(propName: String) -> Any? { get set }
+}
+
+public class MemriContext: ObservableObject, Subscriptable {
 	public var name: String = ""
+    
+    @Published public var sessions: Sessions
+    
 	/// The current session that is active in the application
-	@Published public var currentSession: Session?
+    public var currentSession: Session? {
+        sessions.currentSession
+    }
 
-	@Published public var cascadingView: CascadingView?
-
-	@Published public var sessions: Sessions?
+    public var currentView: CascadableView? {
+        sessions.currentSession?.currentView
+    }
 
 	public var views: Views
 
@@ -41,15 +50,13 @@ public class MemriContext: ObservableObject {
 
 	public var cache: Cache
 
-	public var realm: Realm
-
 	public var navigation: MainNavigation
 
 	public var renderers: Renderers
 
 	public var items: [Item] {
 		get {
-			cascadingView?.resultSet.items ?? []
+			currentView?.resultSet.items ?? []
 		}
 		set {
 			// Do nothing
@@ -59,7 +66,7 @@ public class MemriContext: ObservableObject {
 
 	public var item: Item? {
 		get {
-			cascadingView?.resultSet.singletonItem
+			currentView?.resultSet.singletonItem
 		}
 		set {
 			// Do nothing
@@ -77,177 +84,45 @@ public class MemriContext: ObservableObject {
             closeStack = Array(closeStack.prefix(upTo: lastVisibleIndex))
         }
     }
-
-	private var scheduled: Bool = false
-	private var scheduledComputeView: Bool = false
+    
+    private var uiUpdateSubject = PassthroughSubject<Void, Never>()
+    private var uiUpdateCancellable: AnyCancellable?
+    
+    private var cascadableViewUpdateSubject = PassthroughSubject<Void, Never>()
+    private var cascadableViewUpdateCancellable: AnyCancellable?
 
 	func scheduleUIUpdate(immediate: Bool = false, _ check: ((_ context: MemriContext) -> Bool)? = nil) { // Update UI
-		let outcome = {
-			// Reset scheduled
-			self.scheduled = false
-
-			// Update UI
-			self.objectWillChange.send()
-		}
 		if immediate {
+            #warning("@Toby how can we prevent the uiUpdateSubject from firing immediate after this?")
+            
 			// Do this straight away, usually for the sake of correct animation
-			outcome()
+            DispatchQueue.main.async {
+                // Update UI
+                self.objectWillChange.send()
+            }
 			return
 		}
 
 		if let check = check {
 			guard check(self) else { return }
 		}
-		// Don't schedule when we are already scheduled
-		guard !scheduled else { return }
-		// Prevent multiple calls to the dispatch queue
-		scheduled = true
-
-		// Schedule update
-		DispatchQueue.main.async {
-			outcome()
-		}
+        
+        uiUpdateSubject.send()
 	}
 
-	func scheduleCascadingViewUpdate(immediate: Bool = false) {
-		let outcome = {
-			// Reset scheduled
-			self.scheduledComputeView = false
-
-			// Update UI
-			do { try self.updateCascadingView() }
-			catch {
-				// TODO: User error handling
-				// TODO: Error Handling
-				debugHistory.error("Could not update CascadingView: \(error)")
-			}
-		}
+	func scheduleCascadableViewUpdate(immediate: Bool = false) {
 		if immediate {
 			// Do this straight away, usually for the sake of correct animation
-			outcome()
+            do { try self.currentSession?.setCurrentView() }
+            catch {
+                // TODO: User error handling
+                // TODO: Error Handling
+                debugHistory.error("Could not update CascadableView: \(error)")
+            }
 			return
-		}
-		// Don't schedule when we are already scheduled
-		if !scheduledComputeView {
-			// Prevent multiple calls to the dispatch queue
-			scheduledComputeView = true
-
-			// Schedule update
-			DispatchQueue.main.async {
-				outcome()
-			}
-		}
-	}
-
-	public func updateCascadingView() throws {
-		try maybeLogUpdate()
-
-		// Fetch datasource if not yet parsed yet
-		guard let currentView = sessions?.currentView else {
-			throw "Exception: currentView is not set"
-		}
-
-		if currentView.datasource == nil {
-			if let parsedDef = try views.parseDefinition(currentView.viewDefinition) {
-				if let ds = parsedDef["datasourceDefinition"] as? CVUParsedDatasourceDefinition {
-					// TODO: this is at the wrong moment. Should be done after cascading
-					currentView.set("datasource",
-									try Datasource.fromCVUDefinition(ds, currentView.viewArguments))
-				} else {
-					throw "Exception: Missing datasource in session view"
-				}
-			} else {
-				throw "Exception: Unable to parse view definition"
-			}
-		}
-
-		guard let datasource = currentView.datasource else {
-			throw "Exception: Missing datasource in session view"
-		}
-
-		// Fetch the resultset associated with the current view
-		let resultSet = cache.getResultSet(datasource)
-
-		// If we can guess the type of the result based on the query, let's compute the view
-		if resultSet.determinedType != nil {
-			if self is RootContext { // if type(of: self) == RootMain.self {
-				debugHistory.info("Computing view "
-					+ (currentView.name ?? currentView.viewDefinition?.selector ?? ""))
-			}
-
-			do {
-				// Calculate cascaded view
-				let cascadingView = try views.createCascadingView() // TODO: handle errors better
-
-				// Update current session
-				currentSession = sessions?.currentSession // TODO: filter to a single property
-
-				// Set the newly cascading view
-				self.cascadingView = cascadingView
-
-				// Load data in the resultset of the computed view
-				try self.cascadingView?.resultSet.load { error in
-					if let error = error {
-						// TODO: Refactor: Log warning to user
-						print("Error: could not load result: \(error)")
-					} else {
-						try maybeLogRead()
-
-						// Update the UI
-						scheduleUIUpdate()
-					}
-				}
-			} catch {
-				// TODO: Error handling
-				// TODO: User Error handling
-				debugHistory.error("\(error)")
-			}
-
-			// Update the UI
-			scheduleUIUpdate()
-		}
-		// Otherwise let's execute the query first
-		else {
-			// Updating the data in the resultset of the session view
-			try resultSet.load { error in
-
-				// Only update when data was retrieved successfully
-				if let error = error {
-					// TODO: Error handling
-					print("Error: could not load result: \(error)")
-				} else {
-					// Update the current view based on the new info
-					scheduleUIUpdate() // TODO: shouldn't this be setCurrentView??
-				}
-			}
-		}
-	}
-
-	private func maybeLogRead() throws {
-		if let item = cascadingView?.resultSet.singletonItem {
-			let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
-			_ = try item.link(auditItem, type: "changelog")
-		}
-	}
-
-	private func maybeLogUpdate() throws {
-		if cascadingView?.context == nil { return }
-
-		let syncState = cascadingView?.resultSet.singletonItem?.syncState
-		if let syncState = syncState, syncState.changedInThisSession {
-			let fields = syncState.updatedFields
-			// TODO: serialize
-			if let item = cascadingView?.resultSet.singletonItem {
-				let auditItem = try Cache.createItem(AuditItem.self, values: [
-					"contents": try serialize(AnyCodable(Array(fields))),
-					"action": "update",
-				])
-				_ = try item.link(auditItem, type: "changelog")
-				realmWriteIfAvailable(realm) { syncState.changedInThisSession = false }
-			} else {
-				print("Could not log update, no Item found")
-			}
-		}
+        } else {
+            cascadableViewUpdateSubject.send()
+        }
 	}
 
 	public func getPropertyValue(_ name: String) -> Any {
@@ -323,17 +198,20 @@ public class MemriContext: ObservableObject {
 		get { self["showNavigation"] as? Bool == true }
 		set(value) { self["showNavigation"] = value }
 	}
+	
+	public func setSelection(_ selection: [Item]) {
+		currentView?.userState.set("selection", selection)
+		scheduleUIUpdate()
+	}
 
 	init(
 		name: String,
 		podAPI: PodAPI,
 		cache: Cache,
-		realm: Realm,
 		settings: Settings,
 		installer: Installer,
-		sessions: Sessions? = nil,
+		sessions: Sessions,
 		views: Views,
-		cascadingView: CascadingView? = nil,
 		navigation: MainNavigation,
 		renderers: Renderers,
 		indexerAPI: IndexerAPI
@@ -341,27 +219,41 @@ public class MemriContext: ObservableObject {
 		self.name = name
 		self.podAPI = podAPI
 		self.cache = cache
-		self.realm = realm
 		self.settings = settings
 		self.installer = installer
 		self.sessions = sessions
 		self.views = views
-		self.cascadingView = cascadingView
 		self.navigation = navigation
 		self.renderers = renderers
 		self.indexerAPI = indexerAPI
 
 		// TODO: FIX
-		self.cascadingView?.context = self
+		self.currentView?.context = self
 		self.indexerAPI.context = self
+        
+        // Setup update publishers
+        self.uiUpdateCancellable = uiUpdateSubject
+            .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.objectWillChange.send()
+            }
+        
+        // Setup update publishers
+        self.cascadableViewUpdateCancellable = cascadableViewUpdateSubject
+            .throttle(for: .milliseconds(500), scheduler: RunLoop.main, latest: true)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                try? self?.currentSession?.setCurrentView()
+            }
 	}
 }
 
 public class SubContext: MemriContext {
 	let parent: MemriContext
 
-	init(name: String, _ context: MemriContext, _ session: Session) throws {
-		let views = Views(context.realm)
+	init(name: String, _ context: MemriContext, _ state: CVUStateDefinition?) throws {
+		let views = Views()
 
 		parent = context
 
@@ -369,12 +261,10 @@ public class SubContext: MemriContext {
 			name: name,
 			podAPI: context.podAPI,
 			cache: context.cache,
-			realm: context.realm,
 			settings: context.settings,
 			installer: context.installer,
-			sessions: try Cache.createItem(Sessions.self),
+			sessions: try Sessions(state),
 			views: views,
-			//            cascadingView: context.cascadingView,
 			navigation: context.navigation,
 			renderers: context.renderers,
 			indexerAPI: context.indexerAPI
@@ -383,8 +273,8 @@ public class SubContext: MemriContext {
 		closeStack = context.closeStack
 
 		views.context = self
-
-		sessions?.setCurrentSession(session)
+        
+        try sessions.load(self)
 	}
 }
 
@@ -401,48 +291,43 @@ public class RootContext: MemriContext {
 	init(name: String, key: String) throws {
 		let podAPI = PodAPI(key)
 		let cache = try Cache(podAPI)
-		let realm = cache.realm
+        let views = Views()
 
 		globalCache = cache // TODO: remove this and fix edges
-
-		MapHelper.shared.realm = realm // TODO: How to access realm in a better way?
+        
+        let sessionState = try Cache.createItem(
+            CVUStateDefinition.self,
+            values: ["uid": try Cache.getDeviceID()]
+        )
 
 		super.init(
 			name: name,
 			podAPI: podAPI,
 			cache: cache,
-			realm: realm,
-			settings: Settings(realm),
-			installer: Installer(realm),
-			sessions: try Cache.createItem(Sessions.self, values: ["uid": try Cache.getDeviceID()]),
-			views: Views(realm),
-			navigation: MainNavigation(realm),
+			settings: Settings(),
+			installer: Installer(),
+			sessions: try Sessions(sessionState),
+			views: views,
+			navigation: MainNavigation(),
 			renderers: Renderers(),
 			indexerAPI: IndexerAPI()
 		)
 
-		cascadingView?.context = self
-
-		let takeScreenShot = { () -> Void in
-			// Make sure to record a screenshot prior to session switching
-			self.currentSession?.takeScreenShot() // Optimize by only doing this when a property in session/view/dataitem has changed
-		}
+		currentView?.context = self
 
 		// TODO: Refactor: This is a mess. Create a nice API, possible using property wrappers
+        // Optimize by only doing this when a property in session/view/dataitem has changed
 		aliases = [
-			"showSessionSwitcher": Alias(key: "device/gui/showSessionSwitcher", type: "bool", on: takeScreenShot),
-			"showNavigation": Alias(key: "device/gui/showNavigation", type: "bool", on: takeScreenShot),
+            "showSessionSwitcher": Alias(key: "device/gui/showSessionSwitcher", type: "bool", on: { self.currentSession?.takeScreenShot(immediate:true) }),
+			"showNavigation": Alias(key: "device/gui/showNavigation", type: "bool", on: { self.currentSession?.takeScreenShot() }),
 		]
 
 		cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
 		navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
-
-		// Make settings global so it can be reached everywhere
-		globalSettings = settings
 	}
 
-	public func createSubContext(_ session: Session) throws -> MemriContext {
-		let subContext = try SubContext(name: "Proxy", self, session)
+    public func createSubContext(_ state: CVUStateDefinition? = nil) throws -> MemriContext {
+		let subContext = try SubContext(name: "Proxy", self, state)
         subContexts.append(subContext)
         return subContext
 	}
@@ -458,16 +343,17 @@ public class RootContext: MemriContext {
 
 			// Load views configuration
 			try self.views.load(self) {
+                
+                // Load session
+                try sessions.load(self)
+                
 				// Update view when sessions changes
-				self.cancellable = self.sessions?.objectWillChange.sink { _ in
+				self.cancellable = self.sessions.objectWillChange.sink { _ in
 					self.scheduleUIUpdate()
 				}
 
-				self.currentSession?.access()
-				self.currentSession?.currentView?.access()
-
 				// Load current view
-				try self.updateCascadingView()
+                try self.currentSession?.setCurrentView()
                 
                 callback?()
 			}

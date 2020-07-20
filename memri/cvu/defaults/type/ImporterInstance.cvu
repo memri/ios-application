@@ -35,41 +35,51 @@ ImporterRun {
         showContextPane
     ]
     
-    contextButtons: star schedule
-    
-    navigateItems: [
-        openView {
-            title: "Timeline of this importer run"
-            arguments {
-                view: {
-                    defaultRenderer: timeline
-                    
-                     [datasource = pod] {
-                        query: "AuditItem appliesTo:{.id}"
-                        sortProperty: dateCreated
-                        sortAscending: true
-                    }
-                    
-                    [renderer = timeline] {
-                        timeProperty: dateCreated
+    contextPane {
+        buttons: star schedule
+        
+        actions: [
+            showOverlay { title: "Share with..." }
+            addToPanel { title: "Add to list..." }
+            duplicate { title: "Duplicate Note" }
+        ]
+        
+        navigate: [
+            openView {
+                title: "Timeline of this importer run"
+                arguments {
+                    view: {
+                        defaultRenderer: timeline
+                        
+                         [datasource = pod] {
+                            query: "AuditItem appliesTo:{.id}"
+                            sortProperty: dateCreated
+                            sortAscending: true
+                        }
+                        
+                        [renderer = timeline] {
+                            timeProperty: dateCreated
+                        }
                     }
                 }
             }
-        }
-        openViewByName {
-            title: "Starred importer runs"
-            arguments: {
-                name: "filter-starred"
-                viewArguments: {
-                    include: "all-notes"
+            openViewByName {
+                title: "Starred importer runs"
+                arguments: {
+                    name: "filter-starred"
+                    viewArguments: {
+                        include: "all-notes"
+                    }
                 }
             }
-        }
-        openViewByName {
-            title: "All importer runs"
-            name: "all-importer-instances"
-        }
-    ]
+            openSessionByName {
+                title: "All importer runs"
+                arguments: {
+                    name: "all-importer-instances"
+                }
+            }
+        ]
+    }
     
     [renderer = generalEditor] {
         layout: [
@@ -123,7 +133,7 @@ ImporterRun {
                     Button {
                         margin: 5 5 5 35
                         
-                        press: runImporterRun {
+                        press: runImporter {
                             arguments {
                                 importerRun: {{.}}
                             }

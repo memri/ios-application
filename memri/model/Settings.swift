@@ -11,8 +11,8 @@ import Combine
 /// This class stores the settings used in the memri app. Settings may include things like how to format dates, whether to show certain
 /// buttons by default, etc.
 public class Settings {
-	/// Realm database object
-	let realm: Realm
+    /// Shared settings that can be used from the main thread
+    static var shared: Settings = Settings()
 	/// Default settings
 	var settings: Results<Setting>
     
@@ -21,9 +21,10 @@ public class Settings {
 
 	/// Init settings with the relam database
 	/// - Parameter rlm: realm database object
-	init(_ realm: Realm) {
-		self.realm = realm
-		settings = realm.objects(Setting.self)
+	init() {
+		settings = try! DatabaseController.tryRead { realm in
+			realm.objects(Setting.self)
+		}
 	}
 
 	// TODO: Refactor this so that the default settings are always used if not found in Realm.
@@ -126,14 +127,14 @@ public class Settings {
 	///   - path: path of the setting
 	///   - value: setting Value
 	public func setSetting(_ path: String, _ value: AnyCodable) throws {
-		realmWriteIfAvailable(realm) {
+		DatabaseController.writeSync { realm in
 			if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
 				s.json = try serialize(value)
                 
-                if s.syncState?.actionNeeded != "create" {
-                    s.syncState?.actionNeeded = "update"
-                    if !(s.syncState?.updatedFields.contains("json") ?? false) {
-                        s.syncState?.updatedFields.append("json")
+                if s._action != "create" {
+                    s._action = "update"
+                    if !s._updated.contains("json") {
+                        s._updated.append("json")
                     }
                     #warning("Missing AuditItem for the change")
                 }
@@ -173,24 +174,4 @@ public class Settings {
         self.listeners[path]?.removeAll(where: { $0 == id })
         self.callbacks.removeValue(forKey: id)
     }
-    
-	/// Get *global* setting value for given path
-	/// - Parameter path: global setting path
-	/// - Returns: setting value
-	public class func get<T: Decodable>(_ path: String, type _: T.Type = T.self) -> T? {
-		globalSettings?.get(path)
-	}
-
-	/// Get *global* setting value for given path
-	/// - Parameter path: global setting path
-	///   - value: setting value for the given path
-	public class func set(_ path: String, _ value: Any) {
-		if let globalSettings = globalSettings {
-			return globalSettings.set(path, value)
-		} else {
-			debugHistory.error("Failed to set setting with path \(path) and value \(value) on globalSettings (nil)")
-		}
-	}
 }
-
-var globalSettings: Settings?

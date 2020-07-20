@@ -43,10 +43,9 @@ import RealmSwift
 class Sync {
 	/// PodAPI Object to use for executing queries
 	private var podAPI: PodAPI
-	/// The local realm database
-	private var realm: Realm
 	/// Cache Object used to fetch resultsets
 	public var cache: Cache?
+    
 
 	private var scheduled: Int = 0
 	private var syncing: Bool = false
@@ -58,9 +57,8 @@ class Sync {
 	/// - Parameters:
 	///   - api: api Object
 	///   - rlm: local Realm database object
-	init(_ api: PodAPI, _ rlm: Realm) {
+	init(_ api: PodAPI) {
 		podAPI = api
-		realm = rlm
 
 		// Periodically sync data from the pod
 		// TODO:
@@ -77,27 +75,31 @@ class Sync {
 	public func syncQuery(_ datasource: Datasource) {
 		// TODO: if this query was executed recently, considering postponing action
 		do {
-			// Store query in a log item
-			let audititem = AuditItem()
-			let data = try MemriJSONEncoder.encode([ // TODO: move this to Datasource
-				"query": datasource.query,
-				"sortProperty": datasource.sortProperty,
-				"sortAscending": datasource.sortAscending.value ?? false ? "true" : "false",
-			] as? [String: String])
-
-			audititem.uid.value = try Cache.incrementUID()
-			audititem.content = String(data: data, encoding: .utf8) ?? ""
-			audititem.action = "query"
-			audititem.date = Date()
-
-			// Set syncstate to "fetch" in order to get priority treatment for querying
-			audititem.syncState?.actionNeeded = "fetch"
-
-			// Add to realm
-			realmWriteIfAvailable(realm) { realm.add(audititem) }
-
-			// Execute query with priority
-			prioritySync(datasource, audititem)
+            let data = try MemriJSONEncoder.encode([ // TODO: move this to Datasource
+                "query": datasource.query,
+                "sortProperty": datasource.sortProperty,
+                "sortAscending": datasource.sortAscending ?? false ? "true" : "false",
+            ] as? [String: String])
+            
+            // Add to realm
+			DatabaseController.writeAsync { realm in
+                
+                // Store query in a log item
+                let audititem = AuditItem()
+                
+                audititem.uid.value = try Cache.incrementUID()
+                audititem.content = String(data: data, encoding: .utf8) ?? ""
+                audititem.action = "query"
+                audititem.date = Date()
+                
+                // Set syncstate to "fetch" in order to get priority treatment for querying
+                audititem._action = "fetch"
+                
+				realm.add(audititem)
+				// Execute query with priority
+				self.prioritySync(datasource, audititem)
+			}
+			
 		} catch {
 			print("syncQuery failed: \(error)")
 		}
@@ -132,6 +134,8 @@ class Sync {
         
         debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
         
+        let safeRef = ItemReference(to: audititem)
+        
         // Call out to the pod with the query
         podAPI.query(datasource) { error, items in
             if let items = items {
@@ -159,8 +163,8 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-                    realmWriteIfAvailable(self.realm) {
-                        audititem.setSyncStateActionNeeded("")
+					DatabaseController.writeAsync { _ in
+                        safeRef.resolve()?._action = nil
                     }
                 }
             } else {
@@ -197,94 +201,110 @@ class Sync {
 	}
 
 	public func syncToPod() {
-		syncing = true
-
-		var found = 0
-		var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
-		var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
-
-		// Items
-		for itemType in ItemFamily.allCases {
-            if itemType == .typeUserState { continue }
-            
-			if let type = itemType.getType() as? SchemaItem.Type {
-				let items = realm.objects(type).filter("syncState.actionNeeded != ''")
-				for item in items {
-					if let action = item.syncState?.actionNeeded, itemQueue[action] != nil {
-						itemQueue[action]?.append(item)
-						found += 1
-					}
-				}
-			}
-		}
-
-		// Edges
-		let edges = realm.objects(Edge.self).filter("syncState.actionNeeded != ''")
-		for edge in edges {
-			if let action = edge.syncState?.actionNeeded, edgeQueue[action] != nil {
-				edgeQueue[action]?.append(edge)
-				found += 1
-			}
-		}
-
 		func markAsDone(_ list: [String: Any]) {
-			realmWriteIfAvailable(realm) {
+			DatabaseController.writeAsync { realm in
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
-						if let item = item as? SchemaItem {
-                            if item.syncState?.actionNeeded == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
-                            }
-						} else if let item = item as? Edge {
-                            if item.syncState?.actionNeeded == "delete" {
-                                realm.delete(item)
-                            }
-                            else {
-                                item.syncState?.actionNeeded = ""
-                                item.syncState?.updatedFields.removeAll()
-                            }
+						if
+                            let item = item as? ItemReference,
+                            let resolvedItem = item.resolve()
+                        {
+							if resolvedItem._action == "delete" {
+								realm.delete(resolvedItem)
+							}
+							else {
+								resolvedItem._action = ""
+								resolvedItem._updated.removeAll()
+							}
+						} else if
+                            let item = item as? EdgeReference,
+                            let resolvedItem = item.resolve()
+                        {
+							if resolvedItem._action == "delete" {
+								realm.delete(resolvedItem)
+							}
+							else {
+								resolvedItem._action = ""
+								resolvedItem._updated.removeAll()
+							}
 						}
 					}
 				}
 			}
 		}
-
-		if found > 0 {
-            debugHistory.info("Syncing to pod with \(found) changes")
+		
+		guard !self.syncing else { return }
+		self.syncing = true
+        
+        DatabaseController.read { realm in
+            var found = 0
+            var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
+            var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
             
-			do {
-				try podAPI.sync(
-					createItems: itemQueue["create"],
-					updateItems: itemQueue["update"],
-					deleteItems: itemQueue["delete"],
-					createEdges: edgeQueue["create"],
-					updateEdges: edgeQueue["update"],
-					deleteEdges: edgeQueue["delete"]
-				) { (error) -> Void in
-					self.syncing = false
-
-					if let error = error {
-                        debugHistory.error("Could not sync to pod: \(error)")
-                        self.schedule(long: true)
+            // Items
+            for itemType in ItemFamily.allCases {
+                if itemType == .typeUserState { continue }
+                
+                if let type = itemType.getType() as? Item.Type {
+                    let items = realm.objects(type).filter("_action != nil")
+                    for item in items {
+                        if let action = item._action, itemQueue[action] != nil {
+                            itemQueue[action]?.append(item)
+                            found += 1
+                        }
                     }
-                    else {
-						#warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
-						markAsDone(itemQueue)
-						markAsDone(edgeQueue)
-
-						self.schedule()
-					}
-				}
-			} catch {
-				debugHistory.error("Could not sync to pod: \(error)")
-			}
-		} else {
-			schedule(long: true)
-		}
+                }
+            }
+            
+            // Edges
+            let edges = realm.objects(Edge.self).filter("_action != nil")
+            for edge in edges {
+                if let action = edge._action, edgeQueue[action] != nil {
+                    edgeQueue[action]?.append(edge)
+                    found += 1
+                }
+            }
+            
+            let safeItemQueue = itemQueue.mapValues {
+                $0.map { ItemReference(to: $0) }
+            }
+            
+            let safeEdgeQueue = edgeQueue.mapValues {
+                $0.map { EdgeReference(to: $0) }
+            }
+            
+            if found > 0 {
+                debugHistory.info("Syncing to pod with \(found) changes")
+                do {
+                    try self.podAPI.sync(
+                        createItems: itemQueue["create"],
+                        updateItems: itemQueue["update"],
+                        deleteItems: itemQueue["delete"],
+                        createEdges: edgeQueue["create"],
+                        updateEdges: edgeQueue["update"],
+                        deleteEdges: edgeQueue["delete"]
+                    ) { (error) -> Void in
+                        self.syncing = false
+                        
+                        if let error = error {
+                            debugHistory.error("Could not sync to pod: \(error)")
+                            self.schedule(long: true)
+                        }
+                        else {
+                            #warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
+                            markAsDone(safeItemQueue)
+                            markAsDone(safeEdgeQueue)
+                            
+                            self.schedule()
+                        }
+                    }
+                } catch {
+                    debugHistory.error("Could not sync to pod: \(error)")
+                }
+            } else {
+                self.schedule(long: true)
+            }
+        }
 	}
 
 	private func syncFromPod() {

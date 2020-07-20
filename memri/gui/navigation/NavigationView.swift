@@ -200,30 +200,6 @@ struct Navigation: View {
 		.frame(maxWidth: .infinity, alignment: .leading)
 		.background(Color(hex: "543184"))
 	}
-
-//
-	// TODO: -   This functionality (below) has been temporaily moved to TableView and it should remain here
-	//          so this is a refactoring task
-
-//
-	//    public func hide(){
-	//        withAnimation {
-	//            self.context.showNavigation = false
-	//        }
-	//    }
-
-	//    func item(_ navigationItem: NavigationItem) -> AnyView{
-	//        switch navigationItem.type{
-	//        case "item":
-	//            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
-	//        case "heading":
-	//            return AnyView(NavigationHeadingView(title: navigationItem.title))
-	//        case "line":
-	//            return AnyView(NavigationLineView())
-	//        default:
-	//            return AnyView(NavigationItemView(item: navigationItem, hide: hide))
-	//        }
-	//    }
 }
 
 struct NavigationItemView: View {

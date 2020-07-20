@@ -36,8 +36,8 @@ struct _RichTextEditor: View {
 	var headingFontSize: CGFloat = 26
 
 	var editModeBinding: Binding<Bool> {
-		Binding<Bool>(get: { self.context.currentSession?.isEditMode ?? false },
-					  set: { self.context.currentSession?.isEditMode = $0 })
+		Binding<Bool>(get: { self.context.currentSession?.editMode ?? false },
+					  set: { self.context.currentSession?.editMode = $0 })
 	}
 
 	let filterText: Binding<String>
@@ -62,17 +62,25 @@ struct _RichTextEditor: View {
 class CascadingRichTextEditorConfig: CascadingRenderConfig {
 	var type: String? = "richTextEditor"
 
-	var titleHint: String? { cascadeProperty("titleHint") ?? "Untitled" }
-	var fontSize: CGFloat { cascadePropertyAsCGFloat("fontSize") ?? 18 }
-	var titleFontSize: CGFloat { cascadePropertyAsCGFloat("titleFontSize") ?? 26 }
+	var titleHint: String? {
+        get { cascadeProperty("titleHint") ?? "Untitled" }
+        set (value) { setState("titleHint", value) }
+    }
+	var fontSize: CGFloat {
+        get { cascadePropertyAsCGFloat("fontSize") ?? 18 }
+        set (value) { setState("fontSize", value) }
+    }
+	var titleFontSize: CGFloat {
+        get { cascadePropertyAsCGFloat("titleFontSize") ?? 26 }
+        set (value) { setState("titleFontSize", value) }
+    }
 }
 
 #warning("This renderer is currently specialised for Notes - it might make sense to utilise the custom renderer instead. The RichTextEditor CVU component has all this functionality.")
 struct RichTextRendererView: View {
 	@EnvironmentObject var context: MemriContext
 
-	var renderConfig: CascadingRichTextEditorConfig
-		= CascadingRichTextEditorConfig([])
+	var renderConfig = CascadingRichTextEditorConfig()
 
 	var noteItem: Note? {
 		context.item as? Note
@@ -102,7 +110,7 @@ struct RichTextRendererView: View {
 	}
 
 	var body: some View {
-		let dataItem = self.context.cascadingView?.resultSet.singletonItem
+		let dataItem = self.context.currentView?.resultSet.singletonItem
 
 		return VStack(spacing: 0) {
 			dataItem.map { _ in
@@ -113,8 +121,8 @@ struct RichTextRendererView: View {
 								fontSize: renderConfig.fontSize,
 								headingFontSize: renderConfig.titleFontSize,
 								filterText: Binding<String>(
-									get: { self.context.cascadingView?.filterText ?? "" },
-									set: { self.context.cascadingView?.filterText = $0 }
+									get: { self.context.currentView?.filterText ?? "" },
+									set: { self.context.currentView?.filterText = $0 }
 								))
 			}
 		}

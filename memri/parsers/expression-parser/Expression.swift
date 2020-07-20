@@ -22,7 +22,8 @@ public class Expression: CVUToString {
 	private var ast: ExprNode?
 
 	func toCVUString(_: Int, _: String) -> String {
-		startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
+        let code = self.ast?.toExprString() ?? self.code
+		return startInStringMode ? "\"\(code)\"" : "{{\(code)}}"
 	}
 
 	public var description: String {
@@ -44,7 +45,7 @@ public class Expression: CVUToString {
 		self.lookup = lookup
 		self.execFunc = execFunc
 	}
-
+    
 	public func isTrue() throws -> Bool {
 		let x: Bool? = try execForReturnType()
 		return x ?? false
@@ -61,23 +62,23 @@ public class Expression: CVUToString {
 
 				if let context = context {
 					if let obj = lookupValue as? UserState {
-						obj.set(lastProperty.name,
-								!ExprInterpreter.evaluateBoolean(obj.get(lastProperty.name)))
-						return
+						obj.set(lastProperty.name, !(obj.get(lastProperty.name) ?? false))
+                        return
 					} else if let obj = lookupValue as? Object {
-						realmWriteIfAvailable(context.realm) {
-							obj[lastProperty.name] =
-								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
+                        let name = lastProperty.name
+                        
+                        guard obj.objectSchema[name]?.type == .bool else {
+                            throw "'\(name)' is not a boolean property"
+                        }
+                        
+						DatabaseController.writeSync { _ in
+							obj[name] = !(obj[name] as? Bool ?? false)
 						}
-						return
+                        return
 					}
-					// TODO: FIX: Implement LookUpAble
-					else if let obj = lookupValue as? MemriContext {
-						realmWriteIfAvailable(context.realm) {
-							obj[lastProperty.name] =
-								!ExprInterpreter.evaluateBoolean(obj[lastProperty.name])
-						}
-						return
+					else if var obj = lookupValue as? Subscriptable {
+                        obj[lastProperty.name] = !(obj[lastProperty.name] as? Bool ?? false)
+                        return
 					}
 				}
 			}
@@ -108,11 +109,28 @@ public class Expression: CVUToString {
 
 		throw "Exception: Unable to fetch type of property referenced in expression. Perhaps expression is not a pure lookup?"
 	}
+    
+    func compile(_ viewArguments:ViewArguments?) throws -> Expression {
+        let copy = Expression(code, startInStringMode: startInStringMode, lookup: lookup, execFunc: execFunc)
+        
+        if parsed, let ast = ast {
+            copy.interpreter = ExprInterpreter(ast, lookup, execFunc)
+            copy.parsed = true
+        }
+        else {
+            try copy.parse()
+        }
+        
+        copy.ast = try copy.interpreter?.compile(viewArguments)
+        
+        return copy
+    }
 
-	private func parse() throws {
+    private func parse() throws {
 		let lexer = ExprLexer(input: code, startInStringMode: startInStringMode)
 		let parser = ExprParser(try lexer.tokenize())
-		ast = try parser.parse()
+		
+        ast = try parser.parse()
 
 		// TODO: Error handlign
 		if let ast = ast {
@@ -133,13 +151,13 @@ public class Expression: CVUToString {
 		let value = try interpreter?.execute(args)
 
 		if value == nil { return nil }
-		if let value = value as? T { return value }
 		if T.self == Bool.self { return ExprInterpreter.evaluateBoolean(value) as? T }
 		if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == Int.self { return ExprInterpreter.evaluateNumber(value) as? T }
 		if T.self == String.self { return ExprInterpreter.evaluateString(value) as? T }
-
-		return nil
+		if T.self == Date.self { return ExprInterpreter.evaluateDateTime(value) as? T }
+		
+		return value as? T
 	}
 
 	public func execute(_ args: ViewArguments? = nil) throws -> Any? {

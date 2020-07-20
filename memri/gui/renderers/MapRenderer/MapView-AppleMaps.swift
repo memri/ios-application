@@ -25,9 +25,9 @@ struct MapView_AppleMaps: UIViewRepresentable {
 
 	func updateUIView(_: MKMapView, context: Context) {
 		context.coordinator.mapModel.dataItems = config.dataItems
-		context.coordinator.mapModel.locationKey = config.locationKey
-		context.coordinator.mapModel.addressKey = config.addressKey
-		context.coordinator.mapModel.labelKey = config.labelKey
+		context.coordinator.mapModel.locationResolver = config.locationResolver
+		context.coordinator.mapModel.addressResolver = config.addressResolver
+		context.coordinator.mapModel.labelResolver = config.labelResolver
 		context.coordinator.mapModel.mapStyle = config.mapStyle
 	}
 

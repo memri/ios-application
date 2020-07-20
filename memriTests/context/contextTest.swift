@@ -22,7 +22,7 @@ class contextTest: XCTestCase {
 		let root = try RootContext(name: "", key: "")
 		try root.boot()
 
-		XCTAssertEqual(root.cascadingView?.sessionView.viewDefinition!.selector, "[view]")
+		XCTAssertEqual(root.cascadableView?.sessionView.viewDefinition!.selector, "[view]")
 	}
 
 	func testSubContext() throws {
@@ -30,7 +30,7 @@ class contextTest: XCTestCase {
 		try root.boot()
 		let sub = try root.createSubContext(Session())
 
-		XCTAssertEqual(sub.cascadingView?.sessionView.viewDefinition, nil)
+		XCTAssertEqual(sub.cascadableView?.sessionView.viewDefinition, nil)
 	}
 
 	func testDynamicProperties() throws {

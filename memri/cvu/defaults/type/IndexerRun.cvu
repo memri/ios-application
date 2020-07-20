@@ -35,41 +35,51 @@ IndexerRun {
         showContextPane
     ]
     
-    contextButtons: star schedule
-    
-    navigateItems: [
-        openView {
-            title: "Timeline of this indexer run"
-            arguments {
-                view: {
-                    defaultRenderer: timeline
-                    
-                     [datasource = pod] {
-                        query: "AuditItem appliesTo:{.id}"
-                        sortProperty: dateCreated
-                        sortAscending: true
-                    }
-                    
-                    [renderer = timeline] {
-                        timeProperty: dateCreated
+    contextPane {
+        buttons: star schedule
+        
+        actions: [
+            showOverlay { title: "Share with..." }
+            addToPanel { title: "Add to list..." }
+            duplicate { title: "Duplicate Note" }
+        ]
+        
+        navigateItems: [
+            openView {
+                title: "Timeline of this indexer run"
+                arguments {
+                    view: {
+                        defaultRenderer: timeline
+                        
+                         [datasource = pod] {
+                            query: "AuditItem appliesTo:{.id}"
+                            sortProperty: dateCreated
+                            sortAscending: true
+                        }
+                        
+                        [renderer = timeline] {
+                            timeProperty: dateCreated
+                        }
                     }
                 }
             }
-        }
-        openViewByName {
-            title: "Starred indexer runs"
-            arguments: {
-                name: "filter-starred"
-                viewArguments: {
-                    include: "all-notes"
+            openViewByName {
+                title: "Starred indexer runs"
+                arguments: {
+                    name: "filter-starred"
+                    viewArguments: {
+                        include: "all-notes"
+                    }
                 }
             }
-        }
-        openViewByName {
-            title: "All indexer runs"
-            name: "all-indexer-instances"
-        }
-    ]
+            openSessionByName {
+                title: "All indexer runs"
+                arguments: {
+                    name: "all-indexer-instances"
+                }
+            }
+        ]
+    }
     
     [renderer = generalEditor] {
         layout: [
@@ -145,7 +155,7 @@ IndexerRun {
                     Button {
                         margin: 0 5 10 35
                         
-                        press: runIndexerRun {
+                        press: runIndexer {
                             arguments {
                                 indexerRun: {{.}}
                             }

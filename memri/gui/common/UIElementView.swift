@@ -21,7 +21,7 @@ public struct UIElementView: SwiftUI.View {
 		from = gui
 		item = dataItem
 
-		self.viewArguments = viewArguments ?? ViewArguments() // This is already a copy
+		self.viewArguments = viewArguments ?? ViewArguments(nil) // This is already a copy
 		self.viewArguments.set(".", dataItem)
 	}
 
@@ -233,40 +233,40 @@ public struct UIElementView: SwiftUI.View {
 						SubView(
 							context: self.context,
 							viewName: from.getString("viewName"),
-							dataItem: self.item,
-							viewArguments: try? ViewArguments(get("arguments") ?? [:])
+							item: self.item,
+							viewArguments: ViewArguments(get("arguments", type:[String:Any?].self))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
 						SubView(
 							context: self.context,
 							view: {
-								// TODO: create view form the parsed definition
-								// Find out why datasource is not parsed
-
+                                #warning("This is creating a new CVU at every redraw. Instead architect this to only create the CVU once and have that one reload")
+                                
 								if let parsed: [String: Any?] = get("view") {
-									let parsedViewDef = CVUParsedViewDefinition("[view = '\(UUID().uuidString)']")
-									parsedViewDef.parsed = parsed
+                                    let def = CVUParsedViewDefinition("[view]", type: "view", parsed: parsed)
 									do {
-										let sessionView = try SessionView.fromCVUDefinition(parsed: parsedViewDef)
-										return sessionView
+										return try CVUStateDefinition.fromCVUParsedDefinition(def)
 									} catch {
 										debugHistory.error("\(error)")
 									}
-									return SessionView()
 								} else {
 									debugHistory.error("Failed to make subview (not defined), creating empty one instead")
-									return SessionView()
 								}
+                                return CVUStateDefinition()
 							}(),
-							dataItem: self.item,
-                            viewArguments: try! ViewArguments.fromDict(get("arguments") ?? [:])
+							item: self.item,
+                            viewArguments: ViewArguments(get("arguments", type:[String:Any?].self))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
 				} else if from.type == .Map {
 					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
-							config: .init(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address"))
+							config: .init(dataItems: [self.item],
+										  locationResolver: { _ in self.get("location") },
+										  addressResolver: { _ in (self.get("address", type: Address.self) as Any?) ?? (self.get("address", type: Results<Item>.self) as Any?) },
+										  labelResolver: { _ in self.get("label") })
+					)
 						.background(Color(.secondarySystemBackground))
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Picker {
@@ -278,6 +278,18 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .MemriButton {
 					MemriButton(item: self.item)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .TimelineItem {
+					TimelineItemView(icon: Image(systemName: get("icon") ?? "arrowtriangle.right"),
+									 title: from.processText(get("title")) ?? "-",
+									 subtitle: from.processText(get("text")),
+									 backgroundColor: ItemFamily(rawValue: item.genericType)?.backgroundColor ?? .gray)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .MessageBubble {
+					MessageBubbleView(timestamp: get("dateTime"),
+									  sender: get("sender"),
+									  content: from.processText(get("content")) ?? "",
+									  outgoing: get("isOutgoing") ?? false)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Image {
 					if has("systemName") {
@@ -383,8 +395,8 @@ public struct UIElementView: SwiftUI.View {
 
 		// Filter (unimplemented)
 		let filterTextBinding = Binding<String>(
-			get: { self.context.cascadingView?.filterText ?? "" },
-			set: { self.context.cascadingView?.filterText = $0 }
+			get: { self.context.currentView?.filterText ?? "" },
+			set: { self.context.currentView?.filterText = $0 }
 		)
 
 		return _RichTextEditor(htmlContentBinding: contentBinding,

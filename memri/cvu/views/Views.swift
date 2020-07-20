@@ -11,28 +11,25 @@ public class Views {
 	var context: MemriContext?
 
 	private var recursionCounter = 0
-	private var realm: Realm
-    private var CVUWatcher: AnyCancellable? = nil
+    private var cvuWatcher: AnyCancellable? = nil
     private var settingWatcher: AnyCancellable? = nil
 
-	init(_ rlm: Realm) {
-		realm = rlm
+	init() {
 	}
 
-	public func load(_ mn: MemriContext, _ callback: () throws -> Void) throws {
-		// Store context for use within createCascadingView)
-		context = mn
+	public func load(_ context: MemriContext, _ callback: () throws -> Void) throws {
+        self.context = context
 
-		try setCurrentLanguage(context?.settings.get("user/language") ?? "English")
+		try setCurrentLanguage(context.settings.get("user/language") ?? "English")
         
-        settingWatcher = context?.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
+        settingWatcher = context.settings.subscribe("device/debug/autoReloadCVU", type:Bool.self).sink {
             if let value = $0 as? Bool {
-                if value && self.CVUWatcher == nil {
+                if value && self.cvuWatcher == nil {
                     self.listenForChanges()
                 }
-                else if !value, let c = self.CVUWatcher {
+                else if !value, let c = self.cvuWatcher {
                     c.cancel()
-                    self.CVUWatcher = nil
+                    self.cvuWatcher = nil
                 }
             }
         }
@@ -43,7 +40,7 @@ public class Views {
     
     public func listenForChanges() {
         // Subscribe to changes in CVUStoredDefinition
-        CVUWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
+        cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
             self.reloadViews(items)
         }
     }
@@ -83,34 +80,37 @@ public class Views {
 				}
 			}
 
-			// Loop over lookup table with named views
-			for def in parsedDefinitions {
-				var values: [String: Any?] = [
-					"selector": def.selector,
-					"name": def.name,
-					"domain": "defaults",
-					"definition": def.description,
-				]
-
-				guard let selector = def.selector else {
-					throw "Exception: selector on parsed CVU is not defined"
+			
+			try DatabaseController.tryWriteSync { _ in // Start write transaction outside loop for performance reasons
+				// Loop over lookup table with named views
+				for def in parsedDefinitions {
+					var values: [String: Any?] = [
+						"selector": def.selector,
+						"name": def.name,
+						"domain": "defaults",
+						"definition": def.description,
+					]
+					
+					guard let selector = def.selector else {
+						throw "Exception: selector on parsed CVU is not defined"
+					}
+					
+					if def is CVUParsedViewDefinition {
+						values["type"] = "view"
+						//                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
+					} else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+					else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
+					else if def is CVUParsedStyleDefinition { values["type"] = "style" }
+					else if def is CVUParsedColorDefinition { values["type"] = "color" }
+					else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
+					else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
+					else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+					else { throw "Exception: unknown definition" }
+					
+					// Store definition
+					_ = try Cache.createItem(CVUStoredDefinition.self, values: values,
+											 unique: "selector = '\(selector)' and domain = 'defaults'")
 				}
-
-				if def is CVUParsedViewDefinition {
-					values["type"] = "view"
-					//                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
-				} else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
-				else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
-				else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-				else if def is CVUParsedColorDefinition { values["type"] = "color" }
-				else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-				else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-				else if def is CVUParsedSessionDefinition { values["type"] = "session" }
-				else { throw "Exception: unknown definition" }
-
-				// Store definition
-				_ = try Cache.createItem(CVUStoredDefinition.self, values: values,
-										 unique: "selector = '\(selector)' and domain = 'defaults'")
 			}
 		} catch {
 			if let error = error as? CVUParseErrors {
@@ -124,14 +124,14 @@ public class Views {
 
     #warning("This should be moved elsewhere")
 	public class func formatDate(_ date: Date?) -> String {
-		let showAgoDate: Bool? = Settings.get("user/general/gui/showDateAgo")
+        let showAgoDate: Bool? = Settings.shared.get("user/general/gui/showDateAgo")
 
 		if let date = date {
 			// Compare against 36 hours ago
 			if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
 				let dateFormatter = DateFormatter()
 
-				dateFormatter.dateFormat = Settings.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.dateFormat = Settings.shared.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
 				dateFormatter.locale = Locale(identifier: "en_US")
 				dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
@@ -161,41 +161,54 @@ public class Views {
 //        // Determine whether the current view needs reloading
 //        for def in defs {
 //            var selectors = [String]()
-//            if let stack = context?.cascadingView?.cascadeStack {
+//            if let stack = context?.cascadableView?.cascadeStack {
 //                for parsed in stack { selectors.append(parsed.selectors) }
 //                ...
 //            }
 //        }
         
-        self.context?.scheduleCascadingViewUpdate()
+        self.context?.scheduleCascadableViewUpdate()
     }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
+		let realm = DatabaseController.getRealm()
 		// Fetch the value of the right property on the right object
 		switch name {
 		case "setting":
 			let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
 				#warning("@Toby - how can we re-architect this?")
-				if let value = args?[0] as? String {
-					if let x = Settings.get(value, type: Double.self) { return x }
-					else if let x = Settings.get(value, type: Int.self) { return x }
-					else if let x = Settings.get(value, type: String.self) { return x }
-					else if let x = Settings.get(value, type: Bool.self) { return x }
+                if let value = args?[safe:0] as? String {
+					if let x = Settings.shared.get(value, type: Double.self) { return x }
+					else if let x = Settings.shared.get(value, type: Int.self) { return x }
+					else if let x = Settings.shared.get(value, type: String.self) { return x }
+					else if let x = Settings.shared.get(value, type: Bool.self) { return x }
 				}
 				return ""
 			}
 			return f
+        case "item":
+            let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
+                guard let typeName = args?[safe:0] as? String, let uid = args?[safe:1] as? Int else {
+                    if args?.count == 0 {
+                        return self.context?.currentView?.resultSet.singletonItem
+                    }
+                    return nil
+                }
+                return getItem(typeName, uid)
+            }
+            return f
 		case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
 		case "context": return context
 		case "sessions": return context?.sessions
 		case "currentSession": fallthrough
 		case "session":
 			return context?.currentSession
-		case "view": return context?.cascadingView
-		case "dataItem":
+        case "currentView": fallthrough
+		case "view": return context?.currentView
+		case "singletonItem":
 			if let itemRef: Item = viewArguments?.get(".") {
 				return itemRef
-			} else if let item = context?.cascadingView?.resultSet.singletonItem {
+			} else if let item = context?.currentView?.resultSet.singletonItem {
 				return item
 			} else {
 				throw "Exception: Missing object for property getter"
@@ -243,7 +256,7 @@ public class Views {
 						throw "Unexpected edge lookup. No source specified"
 					}
 
-					let name = node.name == "@@DEFAULT@@" ? "dataItem" : node.name
+					let name = node.name == "@@DEFAULT@@" ? "singletonItem" : node.name
 					do {
 						value = try getGlobalReference(name, viewArguments: viewArguments)
 						first = false
@@ -329,13 +342,7 @@ public class Views {
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on list")
 					}
-				} else if let v = value as? MemriContext {
-					value = v[node.name]
-				} else if let v = value as? UserState {
-					value = v.get(node.name)
-				} else if let v = value as? CascadingView {
-					value = v[node.name]
-				} else if let v = value as? CascadingDatasource {
+				} else if let v = value as? Subscriptable {
 					value = v[node.name]
 				}
 				// CascadingRenderer??
@@ -355,7 +362,7 @@ public class Views {
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
 				let list = dataItemListToArray(value)
-				let args = try ViewArguments.clone(viewArguments, managed: false)
+				let args = ViewArguments(viewArguments)
 				let expr = node.sequence[0]
 
 				for item in list {
@@ -373,10 +380,11 @@ public class Views {
             }
 		}
 
-		// Format a date
-		if let date = value as? Date {
-			value = Views.formatDate(date)
-		}
+//		// Format a date
+//		if let date = value as? Date {
+//			value = Views.formatDate(date)
+//		}
+		#warning("This was disabled because it prevents getting a Date from an expression.")
 
 		recursionCounter -= 1
 
@@ -418,9 +426,12 @@ public class Views {
 
 		if let domain = domain { filter.append("domain = '\(domain)'") }
 
-		return realm.objects(CVUStoredDefinition.self)
-			.filter(filter.joined(separator: " AND "))
-			.map { (def) -> CVUStoredDefinition in def }
+		return Array(
+			DatabaseController.read {
+				$0.objects(CVUStoredDefinition.self)
+					.filter(filter.joined(separator: " AND "))
+					.map { (def) -> CVUStoredDefinition in def }
+			} ?? [])
 	}
 
 	// TODO: REfactor return list of definitions
@@ -433,7 +444,8 @@ public class Views {
 			throw "Exception: Missing Context"
 		}
 
-		let cached = InMemoryObjectCache.get(strDef)
+        #warning("Turned off caching temporarily due to issue with UserState being cached wrongly (and then changed in cache)")
+		let cached = -1 //InMemoryObjectCache.get(strDef)
 		if let cached = cached as? CVU {
 			return try cached.parse().first
 		} else if let definition = viewDef.definition {
@@ -464,42 +476,37 @@ public class Views {
 
 		return nil
 	}
+    
+    /// Takes a stored definition and fetches the view definition or when its a session definition, the currentView of that session
+    func getViewStateDefinition(from stored: CVUStoredDefinition) throws -> CVUStateDefinition {
+        var view:CVUStateDefinition
+        if stored.type == "view" {
+            view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
+        }
+        else if stored.type == "session" {
+            guard let parsed = try parseDefinition(stored) else {
+                throw "Unable to parse state definition"
+            }
+            
+            if
+                let list = parsed["views"] as? [CVUParsedViewDefinition],
+                let p = list[safe: parsed["currentViewIndex"] as? Int ?? 0]
+            {
+                view = try CVUStateDefinition.fromCVUParsedDefinition(p)
+            }
+            else {
+                throw "Invalid definition type"
+            }
+        }
+        else {
+            throw "Invalid definition type"
+        }
+        
+        return view
+    }
 
-	public func createCascadingView(_ sessionView: SessionView? = nil) throws -> CascadingView {
-		guard let context = self.context else {
-			throw "Exception: MemriContext is not defined in views"
-		}
-
-		var cascadingView: CascadingView
-		if let viewFromSession = sessionView ?? context.sessions?.currentSession?.currentView {
-			cascadingView = try CascadingView.fromSessionView(viewFromSession, in: context)
-		} else {
-			throw "Unable to find currentView"
-		}
-
-		// TODO: REFACTOR: move these to a better place (context??)
-
-		// turn off editMode when navigating
-		if context.sessions?.currentSession?.isEditMode == true {
-			realmWriteIfAvailable(realm) {
-				context.sessions?.currentSession?.isEditMode = false
-			}
-		}
-
-		// hide filterpanel if view doesnt have a button to open it
-		if context.sessions?.currentSession?.showFilterPanel ?? false {
-			if cascadingView.filterButtons.filter({ $0.name == .toggleFilterPanel }).count == 0 {
-				realmWriteIfAvailable(realm) {
-					context.sessions?.currentSession?.showFilterPanel = false
-				}
-			}
-		}
-
-		return cascadingView
-	}
-
-	// TODO: Refactor: Consider caching cascadingView based on the type of the item
-	public func renderItemCell(with dataItem: Item?,
+	// TODO: Refactor: Consider caching cascadableView based on the type of the item
+	public func renderItemCell(with item: Item?,
 							   search rendererNames: [String] = [],
 							   inView viewOverride: String? = nil,
 							   use viewArguments: ViewArguments? = nil) -> UIElementView {
@@ -508,13 +515,13 @@ public class Views {
 				throw "Exception: MemriContext is not defined in views"
 			}
 
-			guard let dataItem = dataItem else {
+			guard let item = item else {
 				throw "Exception: No item is passed to render cell"
 			}
 
 			func searchForRenderer(in viewDefinition: CVUStoredDefinition) throws -> Bool {
 				let parsed = try context.views.parseDefinition(viewDefinition)
-				for def in parsed?["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
+				for def in parsed?["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [] {
 					for name in rendererNames {
 						// TODO: Should this first search for the first renderer everywhere
 						//       before trying the second renderer?
@@ -554,7 +561,7 @@ public class Views {
 				}
 			} else {
 				// Find views based on datatype
-				outerLoop: for needle in ["\(dataItem.genericType)[]", "*[]"] {
+				outerLoop: for needle in ["\(item.genericType)[]", "*[]"] {
 					for key in ["user", "defaults"] {
 						if let viewDefinition = context.views
 							.fetchDefinitions(selector: needle, domain: key).first {
@@ -581,21 +588,22 @@ public class Views {
 			}
 
 			if cascadeStack.count == 0 {
-				throw "Exception: Unable to find a way to render this element: \(dataItem.genericType)"
+				throw "Exception: Unable to find a way to render this element: \(item.genericType)"
 			}
 
 			// Create a new view
-			let cascadingRenderConfig = CascadingRenderConfig(cascadeStack, viewArguments)
+            #warning("viewArguments are not passed to cascading config, is that bad?")
+            let cascadingRenderConfig = CascadingRenderConfig(nil, cascadeStack, context.currentView)
 
 			// Return the rendered UIElements in a UIElementView
-			return cascadingRenderConfig.render(item: dataItem)
+            return cascadingRenderConfig.render(item: item, arguments: viewArguments)
 		} catch {
 			debugHistory.error("Unable to render ItemCell: \(error)")
 
 			// TODO: Refactor: Log error to the user
 			return UIElementView(UIElement(.Text,
 										   properties: ["text": "Could not render this view"]),
-								 dataItem ?? Item())
+								 item ?? Item())
 		}
 	}
 }

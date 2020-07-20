@@ -8,10 +8,11 @@ import Foundation
 import RealmSwift
 
 class ExprInterpreter {
-	let ast: ExprNode
+	var ast: ExprNode
 	let lookup: (ExprLookupNode, ViewArguments?) throws -> Any?
 	let execFunc: (ExprLookupNode, [Any?], ViewArguments?) throws -> Any?
 	var stack: [Any] = []
+    let compilableIdentifiers = ["view", "currentView"]
 
 	init(_ ast: ExprNode,
 		 _ lookup: @escaping (ExprLookupNode, ViewArguments?) throws -> Any?,
@@ -51,6 +52,10 @@ class ExprInterpreter {
 		else if x == nil { return .nan }
 		else { return .nan }
 	}
+	
+	class func evaluateDateTime(_ x: Any?) -> Date? {
+		return x as? Date
+	}
 
 	class func evaluateString(_ x: Any?, _ defaultValue: String = "") -> String {
 		if let x = x as? Bool { return x ? "true" : "false" }
@@ -59,7 +64,7 @@ class ExprInterpreter {
 		else if let x = x as? String { return x }
         else if let x = x as? Date {
             let formatter = DateFormatter()
-            formatter.dateFormat = Settings.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
+            formatter.dateFormat = Settings.shared.get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
             return formatter.string(from: x)
         }
 		else if x == nil { return defaultValue }
@@ -75,6 +80,57 @@ class ExprInterpreter {
 		else if a == nil { return b == nil }
 		else { return false }
 	}
+    
+    func compile(_ args: ViewArguments?) throws -> ExprNode {
+        func recur(_ node:ExprNode) throws -> ExprNode {
+            if let node = node as? ExprLookupNode {
+                if let first = node.sequence.first as? ExprVariableNode {
+                    if compilableIdentifiers.contains(first.name) {
+                        let value = try self.lookup(node, args)
+                        if let value = value as? Bool {
+                            return ExprBoolNode(value: value)
+                        } else if let value = value as? Int {
+                            return ExprNumberNode(value: Double(value))
+                        } else if let value = value as? Double {
+                            return ExprNumberNode(value: value)
+                        } else if let value = value as? String {
+                            return ExprStringNode(value: value)
+                        } else if value == nil {
+                            return ExprNilNode()
+                        } else {
+                            return ExprAnyNode(value: value as Any)
+                        }
+                    }
+                }
+            } else if let node = node as? ExprBinaryOpNode {
+                return ExprBinaryOpNode(
+                    op: node.op,
+                    lhs: try recur(node.lhs),
+                    rhs: try recur(node.rhs)
+                )
+            } else if let node = node as? ExprConditionNode {
+                return ExprConditionNode(
+                    condition: try recur(node.condition),
+                    trueExp: try recur(node.trueExp),
+                    falseExp: try recur(node.falseExp)
+                )
+            } else if let node = node as? ExprStringModeNode {
+                var expressions = [ExprNode]()
+                try node.expressions.forEach { node in expressions.append(try recur(node)) }
+                return ExprStringModeNode(expressions: expressions)
+            } else if let node = node as? ExprCallNode {
+                // recur(node.lookup) // TODO Functions are not supported
+                var arguments = [ExprNode]()
+                try node.arguments.forEach { node in arguments.append(try recur(node)) }
+                return ExprCallNode(lookup: node.lookup, arguments: arguments)
+            }
+            return node
+        }
+        
+        ast = try recur(ast)
+        
+        return ast
+    }
 
 	func execSingle(_ expr: ExprNode, _ args: ViewArguments?) throws -> Any? {
 		if let expr = expr as? ExprBinaryOpNode {
@@ -131,6 +187,8 @@ class ExprInterpreter {
 		} else if let expr = expr as? ExprNumberNode { return expr.value }
 		else if let expr = expr as? ExprStringNode { return expr.value }
 		else if let expr = expr as? ExprBoolNode { return expr.value }
+        else if let _ = expr as? ExprNilNode { return nil }
+        else if let expr = expr as? ExprAnyNode { return expr.value }
 		else if let expr = expr as? ExprNumberExpressionNode {
 			let result = try execSingle(expr.exp, args)
 			return IP.evaluateNumber(result)

@@ -10,55 +10,14 @@ import Combine
 import Foundation
 import RealmSwift
 
-var realmTesting = false
+var cacheUIDCounter:Int = -1
 
-var config = Realm.Configuration(
-	// Set the new schema version. This must be greater than the previously used
-	// version (if you've never set a schema version before, the version is 0).
-	schemaVersion: 101,
-
-	// Set the block which will be called automatically when opening a Realm with
-	// a schema version lower than the one set above
-	migrationBlock: { _, oldSchemaVersion in
-		// We haven’t migrated anything yet, so oldSchemaVersion == 0
-		if oldSchemaVersion < 2 {
-			// Nothing to do!
-			// Realm will automatically detect new properties and removed properties
-			// And will update the schema on disk automatically
-		}
-	}
-)
-
-/// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
-/// - Returns: the computed database file path
-func getRealmPath() throws -> String {
-	if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
-		var realmDir = homeDir + "/realm.memri"
-
-		if realmTesting {
-			realmDir += ".testing"
-		}
-
-		do {
-			try FileManager.default.createDirectory(atPath:
-				realmDir, withIntermediateDirectories: true, attributes: nil)
-		} catch {
-			print(error)
-		}
-
-		return realmDir + "/memri.realm"
-	} else {
-		throw "Could not get realm path"
-	}
-}
 
 public class Cache {
 	/// PodAPI object
 	var podAPI: PodAPI
 	/// Object that schedules with the POD
 	var sync: Sync
-	/// Realm Database object
-	var realm: Realm
 
 	private var rlmTokens: [NotificationToken] = []
 	private var cancellables: [AnyCancellable] = []
@@ -70,32 +29,16 @@ public class Cache {
 	/// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
 	/// - Parameter api: api object
 	public init(_ api: PodAPI) throws {
-		// Tell Realm to use this new configuration object for the default Realm
-		#if targetEnvironment(simulator)
-			do {
-				config.fileURL = URL(fileURLWithPath: try getRealmPath())
-			} catch {
-				// TODO: Error handling
-				print("\(error)")
-			}
-		#endif
-
-		Realm.Configuration.defaultConfiguration = config
-
-		debugHistory.info("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL?.description ?? "")")
-
-		// TODO: Error handling
-		realm = try Realm()
-
 		podAPI = api
 
 		// Create scheduler objects
-		sync = Sync(podAPI, realm)
+		sync = Sync(podAPI)
 		sync.cache = self
 	}
 
 	/// gets default item from database, and adds them to realm
 	public func install() throws {
+		let realm = DatabaseController.getRealm()
 		// Load default database from disk
 		do {
 			let jsonData = try jsonDataFromFile("default_database")
@@ -182,7 +125,7 @@ public class Cache {
 						)
 					}
 
-					realmWriteIfAvailable(realm) {
+					DatabaseController.writeSync { _ in
 						item.allEdges.append(edge)
 					}
 				}
@@ -215,6 +158,7 @@ public class Cache {
 	///   - callback: action exectued on the result
     public func query(_ datasource: Datasource, syncWithRemote:Bool = true,
 					  _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void) throws {
+		let realm = DatabaseController.getRealm()
 		// Do nothing when the query is empty. Should not happen.
 		let q = datasource.query ?? ""
 
@@ -258,7 +202,7 @@ public class Cache {
 				if let sortProperty = datasource.sortProperty, sortProperty != "" {
 					result = result.sorted(
 						byKeyPath: sortProperty,
-						ascending: datasource.sortAscending.value ?? true
+						ascending: datasource.sortAscending ?? true
 					)
 				}
 
@@ -310,13 +254,13 @@ public class Cache {
 			// Make sure the new resultset has the right query properties
 			resultSet.datasource.query = datasource.query
 			resultSet.datasource.sortProperty = datasource.sortProperty
-			resultSet.datasource.sortAscending.value = datasource.sortAscending.value
+			resultSet.datasource.sortAscending = datasource.sortAscending
 
 			// Make sure the UI updates when the resultset updates
 			cancellables.append(resultSet.objectWillChange.sink { _ in
 				// TODO: Error handling
 				self.scheduleUIUpdate? { context in
-					context.cascadingView?.resultSet.datasource == resultSet.datasource
+					context.currentView?.resultSet.datasource == resultSet.datasource
 				}
             })
 
@@ -324,10 +268,7 @@ public class Cache {
 		}
 	}
 
-	/// Adding an item to cache consist of 3 phases. 1) When the passed item already exists, it is merged with the existing item in the cache.
-	/// If it does not exist, this method passes a new "create" action to the SyncState, which will generate a uid for this item. 2) the merged
-	/// objects ia added to realm 3) We create bindings from the item with the syncstate which will trigger the syncstate to update when
-	/// the the item changes
+	/// Adds an item to the local database
 	/// - Parameter item:Item to be added
 	/// - Throws: Sync conflict exception
 	/// - Returns: cached dataItem
@@ -342,7 +283,7 @@ public class Cache {
 			}
 
 			// Add item to realm
-			try realm.write { realm.add(item, update: .modified) }
+			try DatabaseController.tryWriteSync { $0.add(item, update: .modified) }
 		} catch {
 			throw "Could not add item to cache: \(error)"
 		}
@@ -357,99 +298,86 @@ public class Cache {
 			throw "Cannot add an item without uid to the cache"
 		}
 
-		// Check if this is a new item or an existing one
-		if let syncState = item.syncState {
-			// Fetch item from the cache to double check
-			if let cachedItem: Item = getItem(item.genericType, uid) {
-				// Do nothing when the version is not higher then what we already have
-				if item.version <= cachedItem.version {
-					return cachedItem
-				}
+        // Fetch item from the cache to double check
+        if let cachedItem: Item = getItem(item.genericType, uid) {
+            // Do nothing when the version is not higher then what we already have
+            if item.version <= cachedItem.version {
+                return cachedItem
+            }
 
-				// Check if there are local changes
-                if cachedItem.syncState?.actionNeeded != "" {
-					// Try to merge without overwriting local changes
-					if !cachedItem.safeMerge(item) {
-						// Merging failed
-                        throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? 0)"
-					}
-                    return cachedItem
-				}
-                // Merge in the properties from cachedItem that are not already set
-                cachedItem.merge(item)
-			}
-			return nil
-		} else {
-			print("Error: no syncstate available during merge")
-			return nil
-		}
+            // Check if there are local changes
+            if cachedItem._action != nil {
+                // Try to merge without overwriting local changes
+                if !cachedItem.safeMerge(item) {
+                    // Merging failed
+                    throw "Exception: Sync conflict with item \(item.genericType):\(cachedItem.uid.value ?? 0)"
+                }
+                return cachedItem
+            }
+            // Merge in the properties from cachedItem that are not already set
+            cachedItem.merge(item)
+        }
+        return nil
 	}
 
 	// TODO: does this work for subobjects?
 	private func bindChangeListeners(_ item: Item) {
-		if let syncState = item.syncState {
-			// Update the sync state when the item changes
-			rlmTokens.append(item.observe { objectChange in
-				if case let .change(_, propChanges) = objectChange {
-					if syncState.actionNeeded == "" {
-						func doAction() {
-							// Mark item for updating
-							syncState.actionNeeded = "update"
-							syncState.changedInThisSession = true
+        // Update the sync state when the item changes
+        rlmTokens.append(item.observe { objectChange in
+            if case let .change(propChanges) = objectChange {
+                if item._action == nil {
+                    func doAction() {
+                        // Mark item for updating
+                        item._action = "update"
+                        item._changedInSession = true
 
-							// Record which field was updated
-							for prop in propChanges {
-								if !syncState.updatedFields.contains(prop.name) {
-									syncState.updatedFields.append(prop.name)
-								}
-							}
-						}
-
-						realmWriteIfAvailable(self.realm) { doAction() }
-					}
-					self.scheduleUIUpdate?(nil)
-				}
-            })
-
-			// Trigger sync.schedule() when the SyncState changes
-			rlmTokens.append(syncState.observe { objectChange in
-				if case .change = objectChange {
-					if syncState.actionNeeded != "" {
-						self.sync.schedule()
-					}
-				}
-            })
-		} else {
-			print("Error, no syncState available for item")
-		}
+                        // Record which field was updated
+                        for prop in propChanges {
+                            if !item._updated.contains(prop.name) {
+                                item._updated.append(prop.name)
+                            }
+                        }
+                    }
+                    
+                    self.sync.schedule()
+                    
+					DatabaseController.writeSync { _ in doAction() }
+                }
+                self.scheduleUIUpdate?(nil)
+            }
+        })
 	}
 
-	/// sets delete to true in the syncstate, for an array of items
+	/// marks an item to be deleted
 	/// - Parameter item: item to be deleted
 	/// - Remark: All methods and properties must throw when deleted = true;
 	public func delete(_ item: Item) {
 		if !item.deleted {
-			realmWriteIfAvailable(realm) {
+			DatabaseController.writeSync { _ in
 				item.deleted = true
-				item.syncState?.actionNeeded = "delete"
+				item._action = "delete"
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
 				_ = try item.link(auditItem, type: "changelog")
+                
+                self.sync.schedule()
 			}
 		}
 	}
 
-	/// sets delete to true in the syncstate, for an array of items
+	/// marks a set of items to be deleted
 	/// - Parameter items: items to be deleted
 	public func delete(_ items: [Item]) {
-		realmWriteIfAvailable(realm) {
+		DatabaseController.writeSync { _ in
 			for item in items {
 				if !item.deleted {
 					item.deleted = true
-					item.setSyncStateActionNeeded("delete")
+					item._action = "delete"
 					let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
 					_ = try item.link(auditItem, type: "changelog")
 				}
 			}
+            
+            self.sync.schedule()
 		}
 	}
 
@@ -458,8 +386,10 @@ public class Cache {
 	/// - Returns: copied item
 	public func duplicate(_ item: Item) throws -> Item {
 		let excludes = ["uid", "dateCreated", "dateAccessed", "dateModified", "starred",
-						"deleted", "syncState"]
+						"deleted", "_updated", "_action", "_partial", "_changedInSession"]
 
+        #warning("Does not duplicate all edges")
+        
 		if let itemType = item.getType() {
 			var dict = [String: Any?]()
 
@@ -480,66 +410,65 @@ public class Cache {
 	}
 
 	public class func incrementUID() throws -> Int {
-		let realm = try Realm()
-		if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
-			if let lastUID = Int(setting.json ?? "") {
-				realmWriteIfAvailable(realm) {
-					setting.json = String(lastUID + 1)
+		DatabaseController.writeSync { realm in
+			if cacheUIDCounter == -1 {
+				if
+					let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1),
+					let str = setting.json,
+					let counter = Int(str)
+				{
+					cacheUIDCounter = counter
 				}
-				return (lastUID + 1)
-			} else {
-				throw "Invalid value. Cannot increment ID for new Item"
+				else {
+					cacheUIDCounter = try getDeviceID() + 1
+					
+					// As an exception we are not using Cache.createItem here because it should
+					// not be synced to the backend
+					realm.create(Setting.self, value: [
+						"uid": -1,
+						"json": String(cacheUIDCounter),
+					])
+					return
+				}
+			}
+			
+			cacheUIDCounter += 1
+			
+			if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
+				setting.json = String(cacheUIDCounter)
 			}
 		}
-
-		// As an exception we are not using Cache.createItem here because it should
-		// not be synced to the backend
-
-		realmWriteIfAvailable(realm) {
-			realm.create(Setting.self, value: [
-				"uid": -1,
-				"json": String(1_000_000_001),
-			])
-		}
-
-		return 1_000_000_001
+		return cacheUIDCounter
 	}
 
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
-		// Check if this is a new item or an existing one
-		if let syncState = newerItem.syncState {
-			// Do nothing when the version is not higher then what we already have
-			if !syncState.isPartiallyLoaded,
-				newerItem.version <= cachedItem.version {
-				return cachedItem
-			}
+        // Do nothing when the version is not higher then what we already have
+        if !newerItem._partial && newerItem.version <= cachedItem.version {
+            return cachedItem
+        }
 
-			// Check if there are local changes
-			if syncState.actionNeeded != "" {
-				// Try to merge without overwriting local changes
-				if !newerItem.safeMerge(cachedItem) {
-					// Merging failed
-					throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
-				}
-			}
+        // Check if there are local changes
+        if newerItem._action != nil {
+            // Try to merge without overwriting local changes
+            if !newerItem.safeMerge(cachedItem) {
+                // Merging failed
+                throw "Exception: Sync conflict with item.uid \(cachedItem.uid)"
+            }
+        }
 
-			// If the item is partially loaded, then lets not overwrite the database
-			if syncState.isPartiallyLoaded {
-				// Merge in the properties from cachedItem that are not already set
-				newerItem.merge(cachedItem, true)
-			}
+        // If the item is partially loaded, then lets not overwrite the database
+        if newerItem._partial {
+            // Merge in the properties from cachedItem that are not already set
+            newerItem.merge(cachedItem, true)
+        }
 
-			return newerItem
-		} else {
-			throw "Exception: no syncstate available during merge"
-		}
+        return newerItem
 	}
 
 	public class func createItem<T: Object>(_ type: T.Type, values: [String: Any?] = [:],
 											unique: String? = nil) throws -> T {
-		let realm = try Realm()
 		var item: T?
-		try realmWriteIfAvailableThrows(realm) {
+		try DatabaseController.tryWriteSync { realm in
 			var dict = values
 
 			// TODO:
@@ -575,10 +504,8 @@ public class Cache {
 				}
 				fromCache["dateModified"] = Date()
 
-				if let item = item, item.objectSchema["syncState"] != nil,
-					let syncState = item["syncState"] as? SyncState,
-					syncState.actionNeeded != "create" {
-					syncState.actionNeeded = "update"
+                if let item = item, item["_action"] as? String != "create" {
+                    item["_action"] = "update"
 				}
 
 				if let item = item as? Item, type != AuditItem.self {
@@ -591,13 +518,16 @@ public class Cache {
 			}
 
 			if dict["dateCreated"] == nil { dict["dateCreated"] = Date() }
-			if dict["uid"] == nil { dict["uid"] = try Cache.incrementUID() }
+			if dict["uid"] == nil {
+                dict["uid"] = try Cache.incrementUID()
+            }
+            
+//            print("\(type) - \(dict["uid"])")
 
 			item = realm.create(type, value: dict)
 
-			if let item = item, item.objectSchema["syncState"] != nil,
-				let syncState = item["syncState"] as? SyncState {
-				syncState.actionNeeded = "create"
+			if let item = item {
+                item["_action"] = "create"
 			}
 
 			if let item = item as? Item, type != AuditItem.self {
@@ -621,9 +551,8 @@ public class Cache {
 
 	public class func createEdge(source: Item, target: (String, Int), type edgeType: String,
 								 label: String? = nil, sequence: Int? = nil) throws -> Edge {
-		let realm = try Realm()
 		var edge: Edge?
-		try realmWriteIfAvailableThrows(realm) {
+		try DatabaseController.tryWriteSync { realm in
 			// TODO:
 			// Always overwrite (see also link())
 
@@ -639,10 +568,10 @@ public class Cache {
 				"edgeLabel": label,
 				"sequence": sequence,
 				"dateCreated": Date(),
+                "_action": "create"
 			]
 
 			edge = realm.create(Edge.self, value: values)
-			edge?.syncState?.actionNeeded = "create"
 		}
 
 		return edge ?? Edge()

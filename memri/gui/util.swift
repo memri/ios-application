@@ -9,12 +9,6 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-// func decodeFromTuples(_ decoder: Decoder, _ tuples: inout [(Any, String)]) throws{
-//    for var (prop, name) in tuples.map({(AnyCodable($0), $1)}){
-//        prop = try decoder.decodeIfPresent(name) ?? prop
-//    }
-// }
-
 // Run formatter: swift-format . --configuration .swift-format.json
 
 let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x: JSONEncoder, y: JSONDecoder) in
@@ -26,7 +20,7 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x: JSONEncoder, y: JSONDecod
 	return (encoder, decoder)
 }()
 
-func unserialize<T: Decodable>(_ s: String) throws -> T? {
+func unserialize<T: Decodable>(_ s: String, type: T.Type = T.self) throws -> T? {
 	let data = s.data(using: .utf8) ?? Data()
 	let output: T = try MemriJSONDecoder.decode(T.self, from: data)
 	return output as T
@@ -80,12 +74,6 @@ func getCodingPathString(_ codingPath: [CodingKey]) -> String {
 
 	return path
 }
-
-// extension Error {
-//    var debugDescription: String {
-//        return "\(String(describing: type(of: self))).\(String(describing: self)) (code \((self as NSError).code))"
-//    }
-// }
 
 func JSONErrorReporter(_ convert: () throws -> Void) throws {
 	do {
@@ -144,18 +132,6 @@ func serializeJSON(_ encode: (_ encoder: JSONEncoder) throws -> Data) -> String?
 	return json
 }
 
-// func decodeIntoList<T: Decodable>(_ decoder: Decoder, _ key: String, _ list: RealmSwift.List<T>) {
-//	do {
-//		if let parsed: [T] = try decoder.decodeIfPresent(key) {
-//			for item in parsed {
-//				list.append(item)
-//			}
-//		}
-//	} catch {
-//		print("Failed to decode into list \(error)")
-//	}
-// }
-
 func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
 	do {
 		if let edges: [Edge] = try decoder.decodeIfPresent(key) {
@@ -171,48 +147,6 @@ func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
 	}
 }
 
-func realmWriteIfAvailableThrows(_ realm: Realm?, _ doWrite: () throws -> Void) throws {
-	if let realm = realm {
-		if !realm.isInWriteTransaction {
-			// TODO: Error handling (this can happen for instance if you pass a
-			// non existing property string to dataItem.set())
-			try realm.write { try doWrite() }
-		} else {
-			try doWrite()
-		}
-	} else {
-		try doWrite()
-	}
-}
-
-func realmWriteIfAvailable(_ realm: Realm?, _ doWrite: () throws -> Void) {
-	// TODO: Refactor, Error Handling , _ error:(error) -> Void  ??
-	do {
-		try realmWriteIfAvailableThrows(realm, doWrite)
-	} catch {
-		debugHistory.error("Realm Error: \(error)")
-	}
-}
-
-func withRealm(_ doThis: (_ realm: Realm) -> Void) {
-	do {
-		let realm = try Realm()
-		doThis(realm)
-	} catch {
-		debugHistory.error("\(error)")
-	}
-}
-
-func withRealm(_ doThis: (_ realm: Realm) -> Any?) -> Any? {
-	do {
-		let realm = try Realm()
-		return doThis(realm)
-	} catch {
-		debugHistory.error("\(error)")
-	}
-	return nil
-}
-
 /// retrieves item from realm by type and uid.
 /// - Parameters:
 ///   - type: realm type
@@ -222,54 +156,9 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
 	let type = ItemFamily(rawValue: type)
 	if let type = type {
 		let item = ItemFamily.getType(type)
-		return withRealm { realm in
-			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid)
-		} as? Item
+		return DatabaseController.read { realm in
+			realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as? Item
+		}
 	}
 	return nil
 }
-
-//
-// func getItem(_ edge: Edge) -> Item? {
-//	if let family = ItemFamily(rawValue: edge.targetType) {
-//		return withRealm { realm in
-//			realm.object(ofType: family.getType() as! Object.Type,
-//						 forPrimaryKey: edge.objectMemriID)
-//		} as? Item
-//	}
-//	return nil
-// }
-
-// func dataItemListToArray(_ object: Any) -> [Item] {
-//	var collection: [Item] = []
-//
-//	if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<File> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Location> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<MedicalCondition> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Importer> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<ImporterRun> { list.forEach { collection.append($0) } }
-//	else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
-//    else if let list = object as? Results<Edge> { return list.itemsArray() }
-//
-//	return collection
-// }

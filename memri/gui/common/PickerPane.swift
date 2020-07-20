@@ -69,8 +69,8 @@ struct PickerPane: View {
 		SubView(
 			context: self.context,
 			viewName: "choose-item-by-query",
-			dataItem: self.item,
-			viewArguments: try! ViewArguments.fromDict([
+			item: self.item,
+			viewArguments: ViewArguments([
                 "showCloseButton": true,
                 "subject": propItem,
                 "renderer": renderer ?? "list",

@@ -49,7 +49,8 @@ public class Renderers {
 		registerThumbWaterfallRenderer()
 		registerMapRenderer()
 		registerChartRenderer()
-		registerRichTextEditorRenderer()
+		registerCalendarRenderer()
+		registerMessageRenderer()
 	}
 
 	var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {
@@ -82,12 +83,12 @@ class FilterPanelRendererButton: Action, ActionExec {
 	}
 
 	override func isActive() -> Bool? {
-		context.cascadingView?.activeRenderer == rendererName
+		context.currentView?.activeRenderer == rendererName
 	}
 
 	func exec(_: [String: Any?]) {
-		context.cascadingView?.activeRenderer = rendererName
-		context.scheduleUIUpdate { _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
+		context.currentView?.activeRenderer = rendererName
+		context.scheduleUIUpdate { _ in true } // scheduleCascadableViewUpdate() // TODO why are userState not kept?
 	}
 }
 
@@ -121,10 +122,14 @@ protocol CascadingRendererDefaults {
 //    }
 
 public class CascadingRenderConfig: Cascadable {
-	required init(_ cascadeStack: [CVUParsedRendererDefinition] = [], _ viewArguments: ViewArguments? = nil) {
-		super.init(cascadeStack, viewArguments)
-	}
-
+    required init(
+        _ head: CVUParsedDefinition? = nil,
+        _ tail: [CVUParsedDefinition]? = nil,
+        _ host: Cascadable? = nil
+    ) {
+        super.init(head, tail, host)
+    }
+    
 	func hasGroup(_ group: String) -> Bool {
 		let x: Any? = cascadeProperty(group)
 		return x != nil

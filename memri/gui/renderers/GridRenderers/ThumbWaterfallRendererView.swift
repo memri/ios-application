@@ -25,7 +25,14 @@ struct ThumbWaterfallRendererView: View {
 
 	var name: String = "thumbnail_waterfall"
 
-	@State var selectedItems: Set<Int> = []
+	var selectedIndices: Binding<Set<Int>> {
+		Binding<Set<Int>>(
+			get: { [] },
+			set: {
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
+			}
+		)
+	}
 
 	//    @Environment(\.editMode) private var editMode
 	//    var isEditing: Bool
@@ -34,7 +41,7 @@ struct ThumbWaterfallRendererView: View {
 	//    }
 
 	var renderConfig: CascadingThumbnailConfig {
-		context.cascadingView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+		context.currentView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
 	}
 
 	var layout: ASCollectionLayout<Int> {
@@ -47,10 +54,9 @@ struct ThumbWaterfallRendererView: View {
 	}
 
 	var section: ASCollectionViewSection<Int> {
-		ASCollectionViewSection(id: 0, data: context.items, selectedItems: $selectedItems) { dataItem, state in
+		ASCollectionViewSection(id: 0, data: context.items, selectedItems: selectedIndices) { dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
 				GeometryReader { geom in
-					// TODO: Error handling
 					self.renderConfig.render(item: dataItem)
 						.environmentObject(self.context)
 						.onTapGesture {
@@ -87,10 +93,10 @@ struct ThumbWaterfallRendererView: View {
 
 	var body: some View {
 		VStack {
-			if context.cascadingView?.resultSet.count == 0 {
+			if context.currentView?.resultSet.count == 0 {
 				HStack(alignment: .top) {
 					Spacer()
-					Text(self.context.cascadingView?.emptyResultText ?? "")
+					Text(self.context.currentView?.emptyResultText ?? "")
 						.multilineTextAlignment(.center)
 						.font(.system(size: 16, weight: .regular, design: .default))
 						.opacity(0.7)

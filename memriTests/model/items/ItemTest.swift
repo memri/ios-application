@@ -77,7 +77,7 @@ class ItemTest: XCTestCase {
 	func testToggle() throws {
 		let item = Item()
 		XCTAssertEqual(item.starred, false)
-		item.toggle("starred")
+		try item.toggle("starred")
 		XCTAssertEqual(item.starred, true)
 	}
 
@@ -159,7 +159,7 @@ class ItemTest: XCTestCase {
 		)
 		let item2: Item = try MemriJSONDecoder.decode(Item.self, from: data2)
 
-		item1.syncState?.updatedFields.append("starred")
+		item1._updated.append("starred")
 
 		XCTAssertEqual(item1.safeMerge(item2), false)
 	}
@@ -177,7 +177,7 @@ class ItemTest: XCTestCase {
 		let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
 
 		let dt = item1.dateAccessed
-		item1.access()
+		item1.accessed()
 		XCTAssertNotEqual(dt, item1.dateAccessed)
 	}
 
@@ -265,8 +265,7 @@ class ItemTest: XCTestCase {
 		)
 		let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
-		let realm = try Realm()
-		realmWriteIfAvailable(realm) {
+		DatabaseController.writeSync { realm in
 			for item in items {
 				realm.add(item, update: .modified)
 			}
