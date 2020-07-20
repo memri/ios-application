@@ -168,9 +168,7 @@ public final class Sessions : ObservableObject, Equatable {
                 self.uid = uid
             }
             
-            if let definition = self.parsed?.toCVUString(0, "    "), state?.definition != definition {
-                state?.set("definition", definition)
-            }
+            state?.set("definition", self.parsed?.toCVUString(0, "    "))
             
             for session in self.sessions {
                 try session.persist()

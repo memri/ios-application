@@ -413,12 +413,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
                 uid = stateUID
             }
             
-            let definition = head.toCVUString(0, "    ")
-            if state?.definition != definition {
-                #warning("Remove")
-                var d = head.toCVUString(0, "    ")
-                state?.set("definition", definition)
-            }
+            state?.set("definition", head.toCVUString(0, "    "))
         }
     }
 

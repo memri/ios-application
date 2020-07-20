@@ -196,9 +196,7 @@ public final class Session : Equatable, Subscriptable {
                 self.uid = uid
             }
             
-            if let definition = self.parsed?.toCVUString(0, "    "), state?.definition != definition {
-                state?.set("definition", definition)
-            }
+            state?.set("definition", self.parsed?.toCVUString(0, "    "))
             
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
@@ -257,8 +255,8 @@ public final class Session : Equatable, Subscriptable {
             nextIndex = views.count - 1
         }
         
-        let isReload = lastViewIndex == currentViewIndex && sessions?.currentSession == self
-        lastViewIndex = currentViewIndex
+        let isReload = lastViewIndex == nextIndex && sessions?.currentSession == self
+        lastViewIndex = nextIndex
         
         if !isReload { storedView.accessed() }
 		

@@ -173,7 +173,7 @@ public class Item: SchemaItem {
 		}
 		return nil
 	}
-
+    
 	/// Set property to value, which will be persisted in the local database
 	/// - Parameters:
 	///   - name: property name
@@ -181,8 +181,8 @@ public class Item: SchemaItem {
 	public func set(_ name: String, _ value: Any?) {
 		DatabaseController.writeSync { _ in
 			if let schema = self.objectSchema[name] {
-                #warning("TODO implement, check for difference")
-//                state?.modified(["definition"])
+                guard !isEqualValue(self[name], value) else { return }
+                
 				switch schema.type {
 				case .int:
 					self[name] = value as? Int
@@ -193,6 +193,8 @@ public class Item: SchemaItem {
 				default:
 					self[name] = value
 				}
+                
+                self.modified([name])
 			} else if let obj = value as? Object {
 				_ = try self.link(obj, type: name, distinct: true)
 			} else if let list = value as? [Object] {
@@ -512,37 +514,30 @@ public class Item: SchemaItem {
 	public func isEqualProperty(_ propName: String, _ item: Item) -> Bool {
 		if let prop = objectSchema[propName] {
 			// List
-			if prop.objectClassName != nil {
+			if prop.isArray {
 				return false // TODO: implement a list compare and a way to add to updatedFields
 			} else {
-				let value1 = self[propName]
-				let value2 = item[propName]
-
-				if let item1 = value1 as? String, let value2 = value2 as? String {
-					return item1 == value2
-				}
-				if let item1 = value1 as? Int, let value2 = value2 as? Int {
-					return item1 == value2
-				}
-				if let item1 = value1 as? Double, let value2 = value2 as? Double {
-					return item1 == value2
-				}
-				if let item1 = value1 as? Object, let value2 = value2 as? Object {
-					return item1 == value2
-				} else {
-					// TODO: Error handling
-					print("Trying to compare property \(propName) of item \(item) and \(self) " +
-						"but types do not mach")
-				}
+				return isEqualValue(self[propName], item[propName])
 			}
-
-			return true
 		} else {
 			// TODO: Error handling
-			print("Tried to compare property \(propName), but \(self) does not have that property")
+            debugHistory.warn("Unable to compare property \(propName), but \(self) does not have that property")
 			return false
 		}
 	}
+    
+    private func isEqualValue(_ a: Any?, _ b: Any?) -> Bool {
+        if a == nil { return b == nil }
+        else if let a = a as? Bool { return a == b as? Bool }
+        else if let a = a as? String { return a == b as? String }
+        else if let a = a as? Int { return a == b as? Int }
+        else if let a = a as? Double { return a == b as? Double }
+        else if let a = a as? Object { return a == b as? Object }
+        else {
+            debugHistory.warn("Unable to compare value: types do not mach")
+            return false
+        }
+    }
 
 	/// Safely merges the passed item with the current Item. When there are merge conflicts, meaning that some other process
 	/// requested changes for the same properties with different values, merging is not performed.
@@ -632,18 +627,45 @@ public class Item: SchemaItem {
     
     /// update the dateAccessed property to the current date
     public func modified(_ updatedFields:[String]) {
-        #warning("Only do this once in a while. This is what syncState.changedInThisSession was for")
-        
 		let safeSelf = ThreadSafeReference(to: self)
 		DatabaseController.writeAsync(withResolvedReferenceTo: safeSelf) { realm, item in
-			item.dateModified = Date()
-			item._updated.append(objectsIn: updatedFields)
-			
+            let previousModified = item.dateModified
+            item.dateModified = Date()
+            
+            for field in updatedFields {
+                if !item._updated.contains(field) {
+                    item._updated.append(field)
+                }
+            }
+            
+            if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
+                #warning("Test that .last gives the last added audit item")
+                if
+                    let auditItem = item.edges("changelog")?.last?.item(type: AuditItem.self),
+                    let content = auditItem.content,
+                    var dict = try unserialize(content, type: [String:AnyCodable?].self)
+                {
+                    for field in updatedFields {
+                        guard item.objectSchema[field] != nil else { throw "Invalid update call" }
+                        dict[field] = AnyCodable(item[field])
+                    }
+                    auditItem.content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
+                    return
+                }
+            }
+            
+            var dict = [String:AnyCodable?]()
+            for field in updatedFields {
+                guard item.objectSchema[field] != nil else { throw "Invalid update call" }
+                dict[field] = AnyCodable(item[field])
+            }
+            
+            let content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
 			let auditItem = try Cache.createItem(
 				AuditItem.self,
 				values: [
 					"action": "update",
-					"content": try serialize(AnyCodable(Array(updatedFields)))
+					"content": content
 				]
 			)
 			_ = try item.link(auditItem, type: "changelog")
@@ -706,15 +728,16 @@ extension RealmSwift.Results where Element == Edge {
 		}
 
 		do {
-			let realm = try Realm()
-			let filter = "uid = "
-				+ compactMap {
-					if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID.value) {
-						return String(value)
-					}
-					return nil
-				}.joined(separator: " or uid = ")
-			return realm.objects(finalType).filter(filter)
+            return try DatabaseController.tryRead {
+                let filter = "uid = "
+                    + compactMap {
+                        if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID.value) {
+                            return String(value)
+                        }
+                        return nil
+                    }.joined(separator: " or uid = ")
+                return $0.objects(finalType).filter(filter)
+            }
 		} catch {
 			debugHistory.error("\(error)")
 			return nil
@@ -790,12 +813,13 @@ extension memri.Edge {
 
 	func target<T: Object>(type _: T.Type? = T.self) -> T? {
 		do {
-			let realm = try Realm()
-			if let itemType = targetType {
-				return realm.object(ofType: itemType, forPrimaryKey: targetItemID) as? T
-			} else {
-				throw "Could not resolve edge target: \(self)"
-			}
+            return try DatabaseController.tryRead {
+                if let itemType = targetType {
+                    return $0.object(ofType: itemType, forPrimaryKey: targetItemID) as? T
+                } else {
+                    throw "Could not resolve edge target: \(self)"
+                }
+            }
 		} catch {
 			debugHistory.error("\(error)")
 		}
@@ -805,12 +829,13 @@ extension memri.Edge {
 
 	func source<T: Item>(type _: T.Type? = T.self) -> T? {
 		do {
-			let realm = try Realm()
-			if let itemType = sourceType {
-				return realm.object(ofType: itemType, forPrimaryKey: sourceItemID) as? T
-			} else {
-				throw "Could not resolve edge source: \(self)"
-			}
+			return try DatabaseController.tryRead {
+                if let itemType = sourceType {
+                    return $0.object(ofType: itemType, forPrimaryKey: sourceItemID) as? T
+                } else {
+                    throw "Could not resolve edge source: \(self)"
+                }
+            }
 		} catch {
 			debugHistory.error("\(error)")
 		}

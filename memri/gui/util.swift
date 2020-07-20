@@ -26,7 +26,7 @@ let (MemriJSONEncoder, MemriJSONDecoder) = { () -> (x: JSONEncoder, y: JSONDecod
 	return (encoder, decoder)
 }()
 
-func unserialize<T: Decodable>(_ s: String) throws -> T? {
+func unserialize<T: Decodable>(_ s: String, type: T.Type = T.self) throws -> T? {
 	let data = s.data(using: .utf8) ?? Data()
 	let output: T = try MemriJSONDecoder.decode(T.self, from: data)
 	return output as T
