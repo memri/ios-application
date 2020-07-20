@@ -62,7 +62,6 @@ public final class Sessions : ObservableObject, Equatable {
         // Setup update publishers
         self.persistCancellable = persistSubject
             .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 DatabaseController.writeAsync { _ in
                     try self?.persist()
