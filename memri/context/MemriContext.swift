@@ -50,8 +50,6 @@ public class MemriContext: ObservableObject, Subscriptable {
 
 	public var cache: Cache
 
-	public var realm: Realm
-
 	public var navigation: MainNavigation
 
 	public var renderers: Renderers
@@ -205,7 +203,6 @@ public class MemriContext: ObservableObject, Subscriptable {
 		name: String,
 		podAPI: PodAPI,
 		cache: Cache,
-		realm: Realm,
 		settings: Settings,
 		installer: Installer,
 		sessions: Sessions,
@@ -217,7 +214,6 @@ public class MemriContext: ObservableObject, Subscriptable {
 		self.name = name
 		self.podAPI = podAPI
 		self.cache = cache
-		self.realm = realm
 		self.settings = settings
 		self.installer = installer
 		self.sessions = sessions
@@ -252,7 +248,7 @@ public class SubContext: MemriContext {
 	let parent: MemriContext
 
 	init(name: String, _ context: MemriContext, _ state: CVUStateDefinition?) throws {
-		let views = Views(context.realm)
+		let views = Views()
 
 		parent = context
 
@@ -260,7 +256,6 @@ public class SubContext: MemriContext {
 			name: name,
 			podAPI: context.podAPI,
 			cache: context.cache,
-			realm: context.realm,
 			settings: context.settings,
 			installer: context.installer,
 			sessions: try Sessions(state),
@@ -291,12 +286,9 @@ public class RootContext: MemriContext {
 	init(name: String, key: String) throws {
 		let podAPI = PodAPI(key)
 		let cache = try Cache(podAPI)
-		let realm = cache.realm
-        let views = Views(realm)
+        let views = Views()
 
 		globalCache = cache // TODO: remove this and fix edges
-
-		MapHelper.shared.realm = realm // TODO: How to access realm in a better way?
         
         let sessionState = try Cache.createItem(
             CVUStateDefinition.self,
@@ -307,12 +299,11 @@ public class RootContext: MemriContext {
 			name: name,
 			podAPI: podAPI,
 			cache: cache,
-			realm: realm,
-			settings: Settings(realm),
-			installer: Installer(realm),
+			settings: Settings(),
+			installer: Installer(),
 			sessions: try Sessions(sessionState),
 			views: views,
-			navigation: MainNavigation(realm),
+			navigation: MainNavigation(),
 			renderers: Renderers(),
 			indexerAPI: IndexerAPI()
 		)

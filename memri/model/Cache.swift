@@ -58,8 +58,6 @@ public class Cache {
 	var podAPI: PodAPI
 	/// Object that schedules with the POD
 	var sync: Sync
-	/// Realm Database object
-	var realm: Realm
 
 	private var rlmTokens: [NotificationToken] = []
 	private var cancellables: [AnyCancellable] = []
@@ -85,9 +83,6 @@ public class Cache {
 
 		debugHistory.info("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL?.description ?? "")")
 
-		// TODO: Error handling
-		realm = try Realm()
-
 		podAPI = api
 
 		// Create scheduler objects
@@ -97,6 +92,7 @@ public class Cache {
 
 	/// gets default item from database, and adds them to realm
 	public func install() throws {
+		let realm = DatabaseController.getRealm()
 		// Load default database from disk
 		do {
 			let jsonData = try jsonDataFromFile("default_database")
@@ -183,7 +179,7 @@ public class Cache {
 						)
 					}
 
-					realmWrite(realm) { _ in
+					DatabaseController.writeSync { _ in
 						item.allEdges.append(edge)
 					}
 				}
@@ -216,6 +212,7 @@ public class Cache {
 	///   - callback: action exectued on the result
     public func query(_ datasource: Datasource, syncWithRemote:Bool = true,
 					  _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void) throws {
+		let realm = DatabaseController.getRealm()
 		// Do nothing when the query is empty. Should not happen.
 		let q = datasource.query ?? ""
 
@@ -340,7 +337,7 @@ public class Cache {
 			}
 
 			// Add item to realm
-			try realm.write { realm.add(item, update: .modified) }
+			try DatabaseController.tryWriteSync { $0.add(item, update: .modified) }
 		} catch {
 			throw "Could not add item to cache: \(error)"
 		}
@@ -398,7 +395,7 @@ public class Cache {
                     
                     self.sync.schedule()
                     
-                    realmWrite(self.realm) { _ in doAction() }
+					DatabaseController.writeSync { _ in doAction() }
                 }
                 self.scheduleUIUpdate?(nil)
             }
@@ -410,7 +407,7 @@ public class Cache {
 	/// - Remark: All methods and properties must throw when deleted = true;
 	public func delete(_ item: Item) {
 		if !item.deleted {
-			realmWrite(realm) { _ in
+			DatabaseController.writeSync { _ in
 				item.deleted = true
 				item._action = "delete"
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
@@ -424,7 +421,7 @@ public class Cache {
 	/// marks a set of items to be deleted
 	/// - Parameter items: items to be deleted
 	public func delete(_ items: [Item]) {
-		realmWrite(realm) { _ in
+		DatabaseController.writeSync { _ in
 			for item in items {
 				if !item.deleted {
 					item.deleted = true
@@ -467,41 +464,35 @@ public class Cache {
 	}
 
 	public class func incrementUID() throws -> Int {
-        let realm = try Realm()
-        
-        if cacheUIDCounter == -1 {
-            if
-                let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1),
-                let str = setting.json,
-                let counter = Int(str)
-            {
-                cacheUIDCounter = counter
-            }
-            else {
-                cacheUIDCounter = try getDeviceID() + 1
-                
-                // As an exception we are not using Cache.createItem here because it should
-                // not be synced to the backend
-                realmWrite(realm) { _ in
-                    realm.create(Setting.self, value: [
-                        "uid": -1,
-                        "json": String(cacheUIDCounter),
-                    ])
-                }
-                
-                return cacheUIDCounter
-            }
-        }
-        
-        cacheUIDCounter += 1
-        
-        if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
-            realmWrite(realm) { _ in
-                setting.json = String(cacheUIDCounter)
-            }
-        }
-        
-        return cacheUIDCounter
+		DatabaseController.writeSync { realm in
+			if cacheUIDCounter == -1 {
+				if
+					let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1),
+					let str = setting.json,
+					let counter = Int(str)
+				{
+					cacheUIDCounter = counter
+				}
+				else {
+					cacheUIDCounter = try getDeviceID() + 1
+					
+					// As an exception we are not using Cache.createItem here because it should
+					// not be synced to the backend
+					realm.create(Setting.self, value: [
+						"uid": -1,
+						"json": String(cacheUIDCounter),
+					])
+					return
+				}
+			}
+			
+			cacheUIDCounter += 1
+			
+			if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
+				setting.json = String(cacheUIDCounter)
+			}
+		}
+		return cacheUIDCounter
 	}
 
 	private class func mergeFromCache(_ cachedItem: Item, newerItem: Item) throws -> Item? {
@@ -530,9 +521,8 @@ public class Cache {
 
 	public class func createItem<T: Object>(_ type: T.Type, values: [String: Any?] = [:],
 											unique: String? = nil) throws -> T {
-		let realm = try Realm()
 		var item: T?
-		try realmTryWrite(realm) { _ in
+		try DatabaseController.tryWriteSync { realm in
 			var dict = values
 
 			// TODO:
@@ -615,9 +605,8 @@ public class Cache {
 
 	public class func createEdge(source: Item, target: (String, Int), type edgeType: String,
 								 label: String? = nil, sequence: Int? = nil) throws -> Edge {
-		let realm = try Realm()
 		var edge: Edge?
-		try realmTryWrite(realm) { _ in
+		try DatabaseController.tryWriteSync { realm in
 			// TODO:
 			// Always overwrite (see also link())
 

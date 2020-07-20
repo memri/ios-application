@@ -23,9 +23,9 @@ public final class Sessions : ObservableObject, Equatable {
     var uid: Int? = nil
     var parsed: CVUParsedSessionsDefinition? = nil
     var state: CVUStateDefinition? {
-        realmRead { realm in
+		DatabaseController.read { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
-        } as? CVUStateDefinition
+        }
     }
 
     /// TBD
@@ -74,7 +74,7 @@ public final class Sessions : ObservableObject, Equatable {
         self.context = context
         self.sessions = []
         
-        try realmTryRead { realm in
+        try DatabaseController.tryRead { realm in
             if let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid) {
                 guard let p = try context.views.parseDefinition(state) as? CVUParsedSessionsDefinition else {
                     throw "Unable to parse state definition"
@@ -99,7 +99,7 @@ public final class Sessions : ObservableObject, Equatable {
                     let parsedSessions = p["sessionDefinitions"] as? [CVUParsedSessionDefinition],
                     parsedSessions.count > 0
                 {
-                    try realmTryWrite { realm in
+                    try DatabaseController.tryWriteSync { realm in
                         for parsed in parsedSessions {
                             let sessionState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                             _ = try state.link(sessionState, type: "session", sequence: .last)
@@ -154,8 +154,8 @@ public final class Sessions : ObservableObject, Equatable {
     func schedulePersist() { persistSubject.send() }
     
     public func persist() throws {
-        try realmTryWrite { realm in
-            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
+        try DatabaseController.tryWriteSync { realm in
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored sessions CVU. Creating a new one.")
                 
@@ -186,7 +186,7 @@ public final class Sessions : ObservableObject, Equatable {
     }
 
 	public func install(_ context: MemriContext) throws {
-        try realmTryWrite { realm in
+        try  DatabaseController.tryWriteSync { realm in
             
             let templateQuery = "selector = '[sessions = defaultSessions]'"
             guard

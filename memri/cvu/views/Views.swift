@@ -11,12 +11,10 @@ public class Views {
 	var context: MemriContext?
 
 	private var recursionCounter = 0
-	private var realm: Realm
     private var cvuWatcher: AnyCancellable? = nil
     private var settingWatcher: AnyCancellable? = nil
 
-	init(_ rlm: Realm) {
-		realm = rlm
+	init() {
 	}
 
 	public func load(_ context: MemriContext, _ callback: () throws -> Void) throws {
@@ -82,34 +80,37 @@ public class Views {
 				}
 			}
 
-			// Loop over lookup table with named views
-			for def in parsedDefinitions {
-				var values: [String: Any?] = [
-					"selector": def.selector,
-					"name": def.name,
-					"domain": "defaults",
-					"definition": def.description,
-				]
-
-				guard let selector = def.selector else {
-					throw "Exception: selector on parsed CVU is not defined"
+			
+			try DatabaseController.tryWriteSync { _ in // Start write transaction outside loop for performance reasons
+				// Loop over lookup table with named views
+				for def in parsedDefinitions {
+					var values: [String: Any?] = [
+						"selector": def.selector,
+						"name": def.name,
+						"domain": "defaults",
+						"definition": def.description,
+					]
+					
+					guard let selector = def.selector else {
+						throw "Exception: selector on parsed CVU is not defined"
+					}
+					
+					if def is CVUParsedViewDefinition {
+						values["type"] = "view"
+						//                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
+					} else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+					else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
+					else if def is CVUParsedStyleDefinition { values["type"] = "style" }
+					else if def is CVUParsedColorDefinition { values["type"] = "color" }
+					else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
+					else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
+					else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+					else { throw "Exception: unknown definition" }
+					
+					// Store definition
+					_ = try Cache.createItem(CVUStoredDefinition.self, values: values,
+											 unique: "selector = '\(selector)' and domain = 'defaults'")
 				}
-
-				if def is CVUParsedViewDefinition {
-					values["type"] = "view"
-					//                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
-				} else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
-				else if def is CVUParsedDatasourceDefinition { values["type"] = "datasource" }
-				else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-				else if def is CVUParsedColorDefinition { values["type"] = "color" }
-				else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-				else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-				else if def is CVUParsedSessionDefinition { values["type"] = "session" }
-				else { throw "Exception: unknown definition" }
-
-				// Store definition
-				_ = try Cache.createItem(CVUStoredDefinition.self, values: values,
-										 unique: "selector = '\(selector)' and domain = 'defaults'")
 			}
 		} catch {
 			if let error = error as? CVUParseErrors {
@@ -170,6 +171,7 @@ public class Views {
     }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
+		let realm = DatabaseController.getRealm()
 		// Fetch the value of the right property on the right object
 		switch name {
 		case "setting":
@@ -423,9 +425,12 @@ public class Views {
 
 		if let domain = domain { filter.append("domain = '\(domain)'") }
 
-		return realm.objects(CVUStoredDefinition.self)
-			.filter(filter.joined(separator: " AND "))
-			.map { (def) -> CVUStoredDefinition in def }
+		return Array(
+			DatabaseController.read {
+				$0.objects(CVUStoredDefinition.self)
+					.filter(filter.joined(separator: " AND "))
+					.map { (def) -> CVUStoredDefinition in def }
+			} ?? [])
 	}
 
 	// TODO: REfactor return list of definitions
