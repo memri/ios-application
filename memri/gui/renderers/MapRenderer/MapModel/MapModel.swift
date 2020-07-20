@@ -48,7 +48,7 @@ class MapModel {
 		}
 	}
 	
-	var locationResolver: ((Item) -> CLLocation?)?
+	var locationResolver: ((Item) -> Any?)?
 	var addressResolver: ((Item) -> Any?)?
 	var labelResolver: ((Item) -> String?)?
 
@@ -71,10 +71,17 @@ class MapModel {
 	}
 
 	func resolveItem(dataItem: Item) -> [CLLocation] {
-		if let location = locationResolver?(dataItem) {
+		if let locItem = locationResolver?(dataItem) as? Location {
+            let location = CLLocation(
+                latitude: locItem.latitude.value ?? 0,
+                longitude: locItem.longitude.value ?? 0
+            )
+            
 			// Has a coordinate value
 			return [location]
 		}
+        
+        #warning("@Toby Note that the location implementation above was wrong and is also faulty for MapBOx")
 		
 		let addresses: [Address]
 		let addressExpressionResult = addressResolver?(dataItem)

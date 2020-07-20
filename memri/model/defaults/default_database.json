@@ -94,6 +94,12 @@
     },
     {
         "_type": "NavigationItem",
+        "type": "item",
+        "title": "location",
+        "sessionName": "all-locations"
+    },
+    {
+        "_type": "NavigationItem",
         "type": "heading",
         "title": "Macros"
     },

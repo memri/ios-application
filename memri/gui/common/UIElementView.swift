@@ -263,8 +263,14 @@ public struct UIElementView: SwiftUI.View {
 				} else if from.type == .Map {
 					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
 							config: .init(dataItems: [self.item],
-										  locationResolver: { _ in self.get("location") },
-										  addressResolver: { _ in (self.get("address", type: Address.self) as Any?) ?? (self.get("address", type: Results<Item>.self) as Any?) },
+										  locationResolver: { _ in
+                                            self.get("location", type: Location.self) ?? (self.get("location", type: Results<Item>.self) as Any?)
+                                            
+                            },
+										  addressResolver: {
+                                            _ in (self.get("address", type: Address.self) as Any?) ?? (self.get("address", type: Results<Item>.self) as Any?)
+                                            
+                            },
 										  labelResolver: { _ in self.get("label") })
 					)
 						.background(Color(.secondarySystemBackground))

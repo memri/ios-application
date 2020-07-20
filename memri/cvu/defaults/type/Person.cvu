@@ -448,6 +448,17 @@ Person[] {
     [renderer = map] {
 		address: {{.address[]}}
 		label: "{.firstName}"
+        
+/*        Popup {*/
+            VStack {
+                Image {
+                    image: {{.profilePicture}}
+                }
+                Text {
+                    text: "{.firstName} {.lastName}"
+                }
+            }
+/*        }*/
     }
     
     [renderer = chart] {

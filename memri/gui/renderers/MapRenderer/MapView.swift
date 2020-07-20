@@ -32,7 +32,7 @@ import CoreLocation
 
 struct MapViewConfig {
 	var dataItems: [Item] = []
-	var locationResolver: (Item) -> CLLocation?
+    var locationResolver: (Item) -> Any?
 	var addressResolver: (Item) -> Any?
 	var labelResolver: (Item) -> String?
 	var maxInitialZoom: Double = 16
