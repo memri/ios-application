@@ -10,9 +10,16 @@ import CoreGraphics
 import Foundation
 
 public class Cascadable {
-	var viewArguments: ViewArguments?
+    var host: Cascadable?
 	var cascadeStack: [CVUParsedDefinition]
+    var tail: [CVUParsedDefinition]
+    var head: CVUParsedDefinition
 	var localCache = [String: Any?]()
+    
+    var viewArguments: ViewArguments? {
+        get { host?.viewArguments }
+        set (value) { host?.viewArguments = value }
+    }
 
 	private func execExpression<T>(_ expr: Expression) -> T? {
 		do {
@@ -47,6 +54,11 @@ public class Cascadable {
 			return result as? T
 		} else { return value as? T }
 	}
+    
+    func setState(_ propName:String, _ value:Any?) {
+        head[propName] = value
+        localCache.removeValue(forKey: propName)
+    }
 
 	func cascadePropertyAsCGFloat(_ name: String) -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil
 		(cascadeProperty(name) as Double?).map { CGFloat($0) }
@@ -160,7 +172,7 @@ public class Cascadable {
 		localCache[name] = result
 		return result
 	}
-
+    
 	func cascadeDict<T>(_ name: String, _ defaultDict: [String: T] = [:],
 						forceArray: Bool = false) -> [String: T] {
 		if let x = localCache[name] as? [String: T] { return x }
@@ -196,9 +208,35 @@ public class Cascadable {
 		localCache[name] = result
 		return result
 	}
+    
+    func cascadeContext<T:Cascadable, P:CVUParsedDefinition>(
+        _ propName:String,
+        _ lookupName:String,
+        _ parsedType:P.Type,
+        _ type:T.Type = T.self
+    ) -> T {
+        if let x = localCache[propName] as? T { return x }
+        
+        let head = self.head[lookupName] as? P ?? P.init()
+        self.head[lookupName] = head
+        
+        let tail = self.tail.compactMap { $0[lookupName] as? P }
 
-	init(_ cascadeStack: [CVUParsedDefinition], _ viewArguments: ViewArguments? = nil) {
-		self.viewArguments = viewArguments
-		self.cascadeStack = cascadeStack
+        let cascadable = T.init(head, tail, self)
+        localCache[propName] = cascadable
+        return cascadable
+    }
+
+    required init(
+        _ head: CVUParsedDefinition? = nil,
+        _ tail: [CVUParsedDefinition]? = nil,
+        _ host: Cascadable? = nil
+    ) {
+		self.host = host
+        self.tail = tail ?? []
+        self.head = head ?? CVUParsedDefinition()
+        
+        self.cascadeStack = [self.head]
+        self.cascadeStack.append(contentsOf: self.tail)
 	}
 }

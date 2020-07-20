@@ -18,6 +18,7 @@ public typealias List = RealmSwift.List
 enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeAuditItem = "AuditItem"
     case typeCVUStoredDefinition = "CVUStoredDefinition"
+    case typeCVUStateDefinition = "CVUStateDefinition"
     case typeCompany = "Company"
     case typeCreativeWork = "CreativeWork"
     case typeDigitalDocument = "DigitalDocument"
@@ -47,11 +48,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typePerson = "Person"
     case typePhoneNumber = "PhoneNumber"
     case typePublicKey = "PublicKey"
-    case typeSession = "Session"
-    case typeSessionView = "SessionView"
-    case typeSessions = "Sessions"
     case typeSetting = "Setting"
-    case typeSyncState = "SyncState"
     case typeUserState = "UserState"
     case typeViewArguments = "ViewArguments"
     case typeWebsite = "Website"
@@ -62,6 +59,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return Color(hex: "#93c47d")
         case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
+        case .typeCVUStateDefinition: return Color(hex: "#93c47d")
         case .typeCompany: return Color(hex: "#93c47d")
         case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeDigitalDocument: return Color(hex: "#93c47d")
@@ -91,11 +89,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Color(hex: "#3a5eb2")
         case .typePhoneNumber: return Color(hex: "#eccf23")
         case .typePublicKey: return Color(hex: "#93c47d")
-        case .typeSession: return Color(hex: "#93c47d")
-        case .typeSessionView: return Color(hex: "#93c47d")
-        case .typeSessions: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
-        case .typeSyncState: return Color(hex: "#93c47d")
         case .typeUserState: return Color(hex: "#93c47d")
         case .typeViewArguments: return Color(hex: "#93c47d")
         case .typeWebsite: return Color(hex: "#3d57e2")
@@ -106,6 +100,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return Color(hex: "#ffffff")
         case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
+        case .typeCVUStateDefinition: return Color(hex: "#ffffff")
         case .typeCompany: return Color(hex: "#ffffff")
         case .typeCreativeWork: return Color(hex: "#ffffff")
         case .typeDigitalDocument: return Color(hex: "#ffffff")
@@ -135,11 +130,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Color(hex: "#ffffff")
         case .typePhoneNumber: return Color(hex: "#ffffff")
         case .typePublicKey: return Color(hex: "#ffffff")
-        case .typeSession: return Color(hex: "#ffffff")
-        case .typeSessionView: return Color(hex: "#ffffff")
-        case .typeSessions: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
-        case .typeSyncState: return Color(hex: "#ffffff")
         case .typeUserState: return Color(hex: "#ffffff")
         case .typeViewArguments: return Color(hex: "#ffffff")
         case .typeWebsite: return Color(hex: "#ffffff")
@@ -154,6 +145,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         switch self {
         case .typeAuditItem: return AuditItem.self
         case .typeCVUStoredDefinition: return CVUStoredDefinition.self
+        case .typeCVUStateDefinition: return CVUStateDefinition.self
         case .typeCompany: return Company.self
         case .typeCreativeWork: return CreativeWork.self
         case .typeDigitalDocument: return DigitalDocument.self
@@ -183,11 +175,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typePerson: return Person.self
         case .typePhoneNumber: return PhoneNumber.self
         case .typePublicKey: return PublicKey.self
-        case .typeSession: return Session.self
-        case .typeSessionView: return SessionView.self
-        case .typeSessions: return Sessions.self
         case .typeSetting: return Setting.self
-        case .typeSyncState: return SyncState.self
         case .typeUserState: return UserState.self
         case .typeViewArguments: return ViewArguments.self
         case .typeWebsite: return Website.self
@@ -195,8 +183,18 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     }
 }
 
+public class SyncableItem: Object {
+    let _updated = List<String>()
+    /// TBD
+    @objc dynamic var _partial:Bool = false
+    /// TBD
+    @objc dynamic var _action:String? = nil
+    /// TBD
+    @objc dynamic var _changedInSession:Bool = false
+}
+
 /// Item is the baseclass for all of the data classes.
-public class SchemaItem: Object, Codable, Identifiable {
+public class SchemaItem: SyncableItem, Codable, Identifiable {
     /// A collection of all edges this Item is connected to.
     let allEdges = List<Edge>()
     /// Last access date of the Item.
@@ -213,9 +211,6 @@ public class SchemaItem: Object, Codable, Identifiable {
     @objc dynamic var itemDescription:String? = nil
     /// Boolean whether the Item has been starred.
     @objc dynamic var starred:Bool = false
-    /// Object describing syncing information about this object like loading state, versioning,
-    /// etc.
-    @objc dynamic var syncState:SyncState? = SyncState()
     /// The last version loaded from the server.
     @objc dynamic var version:Int = 1
     /// The unique identifier of the Item set by the pod.
@@ -230,14 +225,13 @@ public class SchemaItem: Object, Codable, Identifiable {
             externalID = try decoder.decodeIfPresent("externalID") ?? externalID
             itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
             starred = try decoder.decodeIfPresent("starred") ?? starred
-            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             version = try decoder.decodeIfPresent("version") ?? version
             uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
     }
 
     private enum CodingKeys: String, CodingKey {
         case allEdges, dateAccessed, dateCreated, dateModified, deleted, externalID,
-            itemDescription, starred, syncState, version, uid
+            itemDescription, starred, version, uid
     }
 }
 
@@ -268,6 +262,13 @@ public class AuditItem : Item {
     }
 }
 
+public class CVUStateDefinition : CVUStoredDefinition {
+    required init () {
+        super.init()
+//        domain = "state"
+    }
+}
+
 /// TBD
 public class CVUStoredDefinition : Item {
     /// TBD
@@ -282,7 +283,7 @@ public class CVUStoredDefinition : Item {
     @objc dynamic var selector:String? = nil
     /// TBD
     @objc dynamic var type:String? = nil
-
+    
     public required convenience init(from decoder: Decoder) throws {
         self.init()
         
@@ -701,16 +702,13 @@ public class Downloader : Item {
 }
 
 /// TBD
-public class Edge : Object, Codable {
+public class Edge : SyncableItem, Codable {
     /// TBD
     @objc dynamic var type:String? = nil
     /// TBD
     @objc dynamic var targetItemType:String? = nil
     /// TBD
     @objc dynamic var sourceItemType:String? = nil
-    /// Object describing syncing information about this object like loading state, versioning,
-    /// etc.
-    @objc dynamic var syncState:SyncState? = SyncState()
     /// Boolean whether the Item has been deleted.
     @objc dynamic var deleted:Bool = false
     /// The last version loaded from the server.
@@ -730,7 +728,6 @@ public class Edge : Object, Codable {
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("_type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
-            syncState = try decoder.decodeIfPresent("syncState") ?? syncState
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
             version = try decoder.decodeIfPresent("version") ?? version
             edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
@@ -1211,106 +1208,6 @@ public class PublicKey : Item {
 }
 
 /// TBD
-public class SchemaSession : Item {
-    /// TBD
-    @objc dynamic var currentViewIndex:Int = 0
-    /// TBD
-    @objc dynamic var editMode:Bool = false
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-    /// TBD
-    @objc dynamic var showContextPane:Bool = false
-    /// TBD
-    @objc dynamic var showFilterPanel:Bool = false
-
-    /// TBD
-    var screenshot: File? {
-        edge("screenshot")?.target(type:File.self)
-    }
-
-    /// TBD
-    var views: Results<SessionView>? {
-        edges("view")?.sorted(byKeyPath: "sequence").items(type:SessionView.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
-            name = try decoder.decodeIfPresent("name") ?? name
-            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
-            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SessionView : Item {
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-
-    /// TBD
-    var datasource: Datasource? {
-        edge("datasource")?.target(type:Datasource.self)
-    }
-
-    /// TBD
-    var session: Session? {
-        edge("session")?.target(type:Session.self)
-    }
-
-    /// TBD
-    var userState: UserState? {
-        edge("userState")?.target(type:UserState.self)
-    }
-
-    /// TBD
-    var viewDefinition: CVUStoredDefinition? {
-        edge("viewDefinition")?.target(type:CVUStoredDefinition.self)
-    }
-
-    /// TBD
-    var viewArguments: ViewArguments? {
-        edge("viewArguments")?.target(type:ViewArguments.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            name = try decoder.decodeIfPresent("name") ?? name
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SchemaSessions : Item {
-    /// TBD
-    @objc dynamic var currentSessionIndex:Int = 0
-
-    /// TBD
-    var sessions: Results<Session>? {
-        edges("session")?.sorted(byKeyPath: "sequence").items(type:Session.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            currentSessionIndex = try decoder.decodeIfPresent("currentSessionIndex") ?? currentSessionIndex
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
 public class Setting : Item {
     /// TBD
     @objc dynamic var key:String? = nil
@@ -1325,27 +1222,6 @@ public class Setting : Item {
             json = try decoder.decodeIfPresent("json") ?? json
 
             try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// TBD
-public class SyncState: Object, Codable {
-    let updatedFields = List<String>()
-    /// TBD
-    @objc dynamic var isPartiallyLoaded:Bool = false
-    /// TBD
-    @objc dynamic var actionNeeded:String? = nil
-    /// TBD
-    @objc dynamic var changedInThisSession:Bool = false
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-        
-        jsonErrorHandling(decoder) {
-            isPartiallyLoaded = try decoder.decodeIfPresent("isPartiallyLoaded") ?? isPartiallyLoaded
-            actionNeeded = try decoder.decodeIfPresent("actionNeeded") ?? actionNeeded
-            changedInThisSession = try decoder.decodeIfPresent("changedInThisSession") ?? changedInThisSession
         }
     }
 }
@@ -1375,6 +1251,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CVUStateDefinition> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
@@ -1403,9 +1280,6 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Session> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<SessionView> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Sessions> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
 

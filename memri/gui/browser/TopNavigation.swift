@@ -164,12 +164,12 @@ public struct TopNavigation: View {
 				// TODO: this should not be a setting but a user defined view that works on all
 				if context.item != nil || context.items.count > 0 &&
 					context.settings.getBool("user/general/gui/showEditButton") != false &&
-					context.cascadingView?.editActionButton != nil {
-					ActionButton(action: context.cascadingView?.editActionButton)
+					context.currentView?.editActionButton != nil {
+					ActionButton(action: context.currentView?.editActionButton)
 						.font(Font.system(size: 19, weight: .semibold))
 				}
 
-				if context.currentSession?.isEditMode ?? false {
+				if context.currentSession?.editMode ?? false {
 					Button(action: { withAnimation { self.context.executeAction(ActionDelete(self.context)) } }) {
 						Image(systemName: "trash")
 							.fixedSize()
@@ -180,7 +180,7 @@ public struct TopNavigation: View {
 					}
 				}
 
-				ActionButton(action: context.cascadingView?.actionButton)
+				ActionButton(action: context.currentView?.actionButton)
 					.font(Font.system(size: 22, weight: .semibold))
 
 				if !inSubView {
@@ -202,7 +202,7 @@ public struct TopNavigation: View {
 			Button(action: {
 				self.showingTitleActions = true
             }) {
-				Text(context.cascadingView?.title ?? "")
+				Text(context.currentView?.title ?? "")
 					.font(.headline)
 					.foregroundColor(Color(hex: "#333"))
 					.truncationMode(.tail)

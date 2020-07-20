@@ -15,54 +15,61 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
     private let item: Data
     private let cache: Cache
     private let event: Cache.ItemChange
+    private let wait: Double
 
-    init (cache: Cache, subscriber: SubscriberType, item: Data, event: Cache.ItemChange) {
+    init (cache: Cache, subscriber: SubscriberType, item: Data, event: Cache.ItemChange, wait:Double) {
         self.subscriber = subscriber
         self.item = item
         self.cache = cache
         self.event = event
+        self.wait = wait
         
-        do {
-            try listen()
-        }
-        catch let error {
-            debugHistory.error("\(error)")
+        DispatchQueue.global(qos: .background).async {
+            self.listen()
         }
     }
     
-    func listen(_ retries:Int = 0) throws {
+    func waitListen(_ retries:Int = 0, _ error:Error? = nil) {
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + self.wait) {
+            self.listen(retries, error)
+        }
+    }
+    
+    func listen(_ retries:Int = 0, _ error:Error? = nil) {
+        guard self.subscriber != nil else { return }
+        
         guard let uid = item.uid.value else {
-            throw "Exception: Cannot subscribe to changes of an item without a uid"
+            debugHistory.error("Exception: Cannot subscribe to changes of an item without a uid")
+            return
         }
         
         guard !item.deleted else {
-            throw "Exception: Cannot subscribe to changes of a deleted item"
+            debugHistory.error("Exception: Cannot subscribe to changes of a deleted item")
+            return
         }
         
         if case .create = self.event {
-            throw "Exception: Item is already created, cannot listen for create event"
+            debugHistory.error("Exception: Item is already created, cannot listen for create event")
+            return
         }
         
         guard retries < 20 else {
+            debugHistory.warn("Stopped polling after 20 retries with error: \(error ?? "")")
             return
         }
         
-        if item.syncState?.actionNeeded == "create" {
-            cache.sync.syncToPod()
-                
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                try? self.listen(retries + 1)
+        cache.isOnRemote(item) { error in
+            if error != nil {
+                // How to handle??
+                #warning("Look at this when implementing syncing")
+                debugHistory.error("Polling timeout. All polling services disabled")
+                return
             }
-            return
-        }
-        
-        // Poll every second
-        // TODO: make this an option?
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
             
             self.cache.podAPI.get(uid) { error, item in
                 if let error = error {
-                    debugHistory.warn("Received error polling item: \(error)")
+                    self.waitListen(retries + 1, error)
+                    return
                 }
                 else if let item = item {
                     do {
@@ -78,9 +85,12 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
                         }
                     }
                     catch let error {
-                        debugHistory.warn("Received error polling item: \(error)")
+                        self.waitListen(retries + 1, error)
+                        return
                     }
                 }
+                
+                self.waitListen()
             }
         }
     }
@@ -102,11 +112,13 @@ struct ItemPublisher<Data: Item>: Publisher {
     let item: Data
     let itemEvents: Cache.ItemChange
     let cache: Cache
+    let wait: Double
 
-    init(cache: Cache, item: Data, events: Cache.ItemChange) {
+    init(cache: Cache, item: Data, events: Cache.ItemChange, wait: Double) {
         self.item = item
         self.itemEvents = events
         self.cache = cache
+        self.wait = wait
     }
     
     func receive<S>(subscriber: S) where S : Subscriber,
@@ -117,7 +129,8 @@ struct ItemPublisher<Data: Item>: Publisher {
             cache: self.cache,
             subscriber: subscriber,
             item: item,
-            event: itemEvents
+            event: itemEvents,
+            wait: wait
         )
         subscriber.receive(subscription: subscription)
     }
@@ -130,73 +143,83 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
     private let query: String
     private let cache: Cache
     private let event: Cache.ItemChange
+    private let wait: Double
 
-    init (cache: Cache, subscriber: SubscriberType, query: String, event: Cache.ItemChange) {
+    init (cache: Cache, subscriber: SubscriberType, query: String, event: Cache.ItemChange, wait: Double) {
         self.subscriber = subscriber
         self.query = query
         self.cache = cache
         self.event = event
+        self.wait = wait
         
-        do {
-            try listen()
-        }
-        catch let error {
-            debugHistory.error("\(error)")
+        DispatchQueue.global(qos: .background).async {
+            self.listen()
         }
     }
     
-    func listen(_ retries:Int = 0) throws {
-        guard query != "" else {
-            throw "Exception: empty query"
+    func waitListen(_ retries:Int = 0, _ error:Error? = nil) {
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + self.wait) {
+            self.listen(retries, error)
         }
+    }
+    
+    func listen(_ retries:Int = 0, _ error:Error? = nil) {
+        guard self.subscriber != nil else { return }
         
-        guard retries < 20 else {
+        guard query != "" else {
+            debugHistory.error("Unable to start polling: Empty query")
             return
         }
         
-        // Poll every second
-        // TODO: make this an option?
-        Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { timer in
-            
-            self.cache.podAPI.query(Datasource(query: self.query), withEdges: false) { error, items in
-                if let error = error {
-                    debugHistory.warn("Received error polling item: \(error)")
-                }
-                else if let items = items {
-                    do {
-                        var changes = [Item]()
-                        for i in 0..<items.count {
-                            let item = items[i]
-                            
-                            if let uid = item.uid.value {
-                                
-                                if let cachedItem = getItem(item.genericType, uid) {
-                                    if item.version > cachedItem.version {
-                                        if case .delete = self.event, !item.deleted { continue }
-                                        else if case .create = self.event { continue }
-                                    }
-                                    else {
-                                        continue
-                                    }
-                                }
-                                else { // Create
-                                    if case .update = self.event { continue }
-                                    if case .create = self.event { continue }
-                                }
-                                    
-                                let cachedItem = try self.cache.addToCache(items[i])
-                                changes.append(cachedItem)
-                            }
-                        }
+        guard retries < 20 else {
+            debugHistory.warn("Stopped polling after 20 retries with error: \(error ?? "").")
+            return
+        }
+        
+        self.cache.podAPI.query(Datasource(query: self.query), withEdges: false) { error, items in
+            if let error = error {
+                self.waitListen(retries + 1, error)
+                return
+            }
+            else if let items = items {
+                do {
+                    var changes = [Item]()
+                    for i in 0..<items.count {
+                        let item = items[i]
                         
-                        if changes.count > 0 {
-                            _ = self.subscriber?.receive(changes)
+                        if let uid = item.uid.value {
+                            
+                            if let cachedItem = getItem(item.genericType, uid) {
+                                if item.version > cachedItem.version {
+                                    if case .delete = self.event, !item.deleted { continue }
+                                    else if case .create = self.event { continue }
+                                }
+                                else {
+                                    continue
+                                }
+                            }
+                            else { // Create
+                                if case .update = self.event { continue }
+                                if case .create = self.event { continue }
+                            }
+                                
+                            let cachedItem = try self.cache.addToCache(items[i])
+                            changes.append(cachedItem)
                         }
                     }
-                    catch let error {
-                        debugHistory.warn("Received error polling item: \(error)")
+                    
+                    if changes.count > 0 {
+                        _ = self.subscriber?.receive(changes)
                     }
                 }
+                catch let error {
+                    self.waitListen(retries + 1, error)
+                    return
+                }
+            }
+            
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + self.wait) {
+                self.waitListen()
             }
         }
     }
@@ -218,11 +241,13 @@ struct QueryPublisher: Publisher {
     let query: String
     let itemEvents: Cache.ItemChange
     let cache: Cache
+    let wait: Double
 
-    init(cache: Cache, query: String, events: Cache.ItemChange) {
+    init(cache: Cache, query: String, events: Cache.ItemChange, wait: Double) {
         self.query = query
         self.itemEvents = events
         self.cache = cache
+        self.wait = wait
     }
     
     func receive<S>(subscriber: S) where S : Subscriber,
@@ -230,10 +255,11 @@ struct QueryPublisher: Publisher {
             
         // TODO
         let subscription = QuerySubscription(
-            cache: self.cache,
+            cache: cache,
             subscriber: subscriber,
             query: query,
-            event: itemEvents
+            event: itemEvents,
+            wait: wait
         )
         subscriber.receive(subscription: subscription)
     }
@@ -247,12 +273,30 @@ extension Cache {
         case all
     }
     
-    func subscribe(query: String, on events: ItemChange = .all) -> QueryPublisher {
-        return QueryPublisher(cache: self, query: query, events: events)
+    func isOnRemote(_ item: Item, _ retries: Int = 0, _ callback: @escaping (Error?) -> Void) {
+        if retries > 20 {
+            callback("Maximum retries reached")
+            return
+        }
+        
+        if item._action == "create" {
+            sync.syncToPod()
+                
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.isOnRemote(item, retries + 1, callback)
+            }
+            return
+        }
+        
+        callback(nil)
+    }
+    
+    func subscribe(query: String, on events: ItemChange = .all, wait:Double = 0.5) -> QueryPublisher {
+        return QueryPublisher(cache: self, query: query, events: events, wait: wait)
     }
 
     
-    func subscribe(to item: Item, on events: ItemChange = .all) -> ItemPublisher<Item> {
-        return ItemPublisher(cache: self, item: item, events: events)
+    func subscribe(to item: Item, on events: ItemChange = .all, wait:Double = 0.5) -> ItemPublisher<Item> {
+        return ItemPublisher(cache: self, item: item, events: events, wait: wait)
     }
 }

@@ -15,14 +15,14 @@ extension StringProtocol {
 }
 
 public class MainNavigation: ObservableObject {
-	var items: Results<NavigationItem>
+	var items: Results<NavigationItem>?
 
 	var filterText: String {
 		get {
-			Settings.get("device/navigation/filterText") ?? ""
+            Settings.shared.get("device/navigation/filterText") ?? ""
 		}
 		set(newFilter) {
-			Settings.set("device/navigation/filterText", newFilter)
+			Settings.shared.set("device/navigation/filterText", newFilter)
 
 			scheduleUIUpdate?(nil)
 		}
@@ -30,18 +30,17 @@ public class MainNavigation: ObservableObject {
 
 	public var scheduleUIUpdate: ((((_ context: MemriContext) -> Bool)?) -> Void)?
 
-	private var realm: Realm
-
-	required init(_ rlm: Realm) {
-		realm = rlm
-		items = realm.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
+	required init() {
+		items = DatabaseController.read { realm in
+			realm.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
+		}
 	}
 
 	public func getItems() -> [NavigationItem] {
 		let needle = filterText.lowercased()
 
-		return items.filter {
+		return items?.filter {
 			return needle == "" || $0.type == "item" && ($0.title ?? "").lowercased().contains(needle)
-		}
+		} ?? []
 	}
 }

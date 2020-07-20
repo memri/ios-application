@@ -593,6 +593,26 @@ class CVUParserTests: XCTestCase {
 			throw "Error"
 		}
 	}
+    
+    #warning("Test that this works")
+    func testEmptyArray() throws {
+        let snippet = """
+        Person {
+            userState: {
+                selection: []]
+            }
+        }
+        """
+
+        let parsed = try parse(snippet).first
+
+        XCTAssertEqual(toCVUString([parsed!]), snippet)
+
+        guard let us = parsed!["userState"] as? UserState, us["selection"] is [Any?] else {
+            XCTFail()
+            throw "Error"
+        }
+    }
 
 	func testViewArguments() throws {
 		let snippet = """

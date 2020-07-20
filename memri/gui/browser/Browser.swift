@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  Browser.swift
 //  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
@@ -12,23 +12,38 @@ struct Browser: View {
 	@EnvironmentObject var context: MemriContext
 
 	var activeRenderer: AnyView {
-		allRenderers?.allViews[context.cascadingView?.activeRenderer ?? ""] ?? AnyView(Spacer())
+		allRenderers?.allViews[context.currentView?.activeRenderer ?? ""] ?? AnyView(Spacer())
 	}
 
 	var body: some View {
-		ZStack {
-			VStack(alignment: .center, spacing: 0) {
-				TopNavigation()
-					.background(Color(.systemBackground))
-				activeRenderer
-					.fullHeight().layoutPriority(1)
-				Search()
-				if self.context.currentSession?.showFilterPanel ?? false {
-					FilterPanel()
-				}
-			}
+        let currentView = self.context.currentView ?? CascadableView()
+        
+		return ZStack {
+            if self.context.currentView == nil {
+                Text("Loading...")
+            }
+            else {
+                VStack(alignment: .center, spacing: 0) {
+                    if currentView.showToolbar && !currentView.fullscreen {
+                        TopNavigation()
+                            .background(Color(.systemBackground))
+                    }
+                    
+                    activeRenderer
+                        .fullHeight().layoutPriority(1)
+                    
+                    if currentView.showSearchbar && !currentView.fullscreen {
+                        Search()
+                        if self.context.currentSession?.showFilterPanel ?? false {
+                            FilterPanel()
+                        }
+                    }
+                }
 
-			ContextPane()
+                if currentView.contextPane.isSet() {
+                    ContextPane()
+                }
+            }
 		}
 	}
 }

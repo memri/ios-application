@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-// TODO: Refactor: optimize this for performance
 public struct SubView: View {
 	@EnvironmentObject var context: MemriContext
 
@@ -17,45 +16,31 @@ public struct SubView: View {
 	var searchbar: Bool = true
 	var showCloseButton: Bool = false
 
-	// There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
-	// By only duplicating that line and setting session later, but I am too lazy to do that.
-	// TODO: Refactor
-	public init(context: MemriContext, viewName: String, dataItem: Item? = nil,
+	public init(context: MemriContext, viewName: String, item: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-            let args = try ViewArguments.clone(viewArguments, item: dataItem)
+            let args = ViewArguments(viewArguments)
+            try args.resolve(item)
+            args.set(".", item)
 
-			toolbar = args.get("toolbar") ?? toolbar
-			searchbar = args.get("searchbar") ?? searchbar
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
 			guard let context = context as? RootContext else {
 				throw "Exception: Too much nesting"
 			}
 
-			let stored = context.views.fetchDefinitions(name: viewName, type: "view").first
-			var parsed = try context.views.parseDefinition(stored)
-
-			if parsed is CVUParsedSessionDefinition {
-				if let list = parsed?["views"] as? [CVUParsedViewDefinition] { parsed = list.first }
-			}
-
-			args.set(".", dataItem)
-
-			let view = try SessionView.fromCVUDefinition(
-				parsed: parsed as? CVUParsedViewDefinition,
-				stored: stored,
-				viewArguments: args
-			)
-
-			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "view")
-
-			proxyMain = try context.createSubContext(session)
-			do { try proxyMain?.updateCascadingView() }
+            do {
+                guard let stored = context.views.fetchDefinitions(name: viewName).first else {
+                    throw "Could not fetch view by name: \(viewName)"
+                }
+                
+                let state = try context.views.getViewStateDefinition(from: stored)
+                proxyMain = try context.createSubContext()
+                try proxyMain?.currentSession?.setCurrentView(state, args)
+            }
 			catch {
 				// TODO: Refactor error handling
-				throw "Cannot update CascadingView \(self): \(error)"
+				throw "Cannot update CascadableView \(self): \(error)"
 			}
 		} catch {
 			// TODO: Refactor: error handling
@@ -63,52 +48,31 @@ public struct SubView: View {
 		}
 	}
 
-	public init(context: MemriContext, view: SessionView, dataItem: Item? = nil,
+	public init(context: MemriContext, view state: CVUStateDefinition, item: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
-			let args = try ViewArguments.clone(viewArguments, item: dataItem)
+			let args = ViewArguments(viewArguments)
+            try args.resolve(item)
+            args.set(".", item)
 
-			toolbar = args.get("toolbar") ?? toolbar
-			searchbar = args.get("searchbar") ?? searchbar
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
 			guard let context = context as? RootContext else {
 				throw "Exception: Too much nesting"
 			}
-
-			args.set(".", dataItem)
-			view.set("viewArguments", args)
-
-			let session = try Cache.createItem(Session.self)
-			_ = try session.link(view, type: "view")
-
-			proxyMain = try context.createSubContext(session)
-			try proxyMain?.updateCascadingView()
+            
+            proxyMain = try context.createSubContext()
+            try proxyMain?.currentSession?.setCurrentView(state, args)
 		} catch {
 			// TODO: Refactor error handling
-			debugHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
+			debugHistory.error("Error: cannot init subview, failed to update CascadableView: \(error)")
 		}
 	}
 
-	// TODO: refactor: consider inserting Browser here and adding variables instead
 	public var body: some View {
-		//        ZStack {
-		VStack(alignment: .center, spacing: 0) {
-			if self.toolbar {
-				TopNavigation(inSubView: true, showCloseButton: showCloseButton)
-			}
-			allRenderers?.allViews[self.proxyMain?.cascadingView?.activeRenderer ?? "list"]
-				.fullHeight()
-
-			if self.searchbar {
-				Search()
-			}
-		}
-		.fullHeight()
-		// NOTE: Allowed force unwrap
-		.environmentObject(self.proxyMain!)
-
-		//            ContextPane()
-		//        }
+		Browser()
+            .fullHeight()
+            // NOTE: Allowed force unwrap
+            .environmentObject(self.proxyMain!)
 	}
 }

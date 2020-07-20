@@ -73,7 +73,7 @@ struct GeneralEditorLayoutItem {
             } catch {
                 // TODO: Refactor error handling
                 debugHistory.error("Could note compute layout property \(propName)\n"
-                    + "Arguments: [\(viewArguments?.asDict().keys.description ?? "")]\n"
+                    + "Arguments: [\(viewArguments?.description ?? "")]\n"
                     + (expr.startInStringMode
                         ? "Expression: \"\(expr.code)\"\n"
                         : "Expression: \(expr.code)\n")
@@ -141,7 +141,7 @@ struct GeneralEditorView: View {
     }
     
     func getItem() -> Item {
-        if let dataItem = context.cascadingView?.resultSet.singletonItem {
+        if let dataItem = context.currentView?.resultSet.singletonItem {
             return dataItem
         } else {
             debugHistory.warn("Could not load item from result set, creating empty item")
@@ -150,7 +150,7 @@ struct GeneralEditorView: View {
     }
     
     func getRenderConfig() -> CascadingGeneralEditorConfig? {
-        context.cascadingView?.renderConfig as? CascadingGeneralEditorConfig
+        context.currentView?.renderConfig as? CascadingGeneralEditorConfig
     }
     
     func getUsedFields(_ layout: [GeneralEditorLayoutItem]) -> [String] {
@@ -193,7 +193,7 @@ struct GeneralEditorSection: View {
 
 	var body: some View {
         let renderConfig = self.renderConfig
-        let editMode = context.currentSession?.isEditMode ?? false
+        let editMode = context.currentSession?.editMode ?? false
         let fields:[String] = (layoutSection.get("fields", String.self) == "*"
             ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
@@ -368,15 +368,19 @@ struct GeneralEditorSection: View {
 			   value _: Any? = nil,
 			   item: Item?,
 			   edge: Edge? = nil) -> ViewArguments? {
-		try? ViewArguments([
-			"subject": item,
-			"readOnly": !(context.currentSession?.isEditMode ?? false),
-			"title": groupKey.camelCaseToWords().uppercased(),
-			"displayName": name.camelCaseToWords().capitalizingFirst(),
-			"name": name,
-			"edge": edge,
-			".": item,
-		].merging(renderConfig.viewArguments?.asDict() ?? [:], uniquingKeysWith: { l, _ in l }))
+		
+        ViewArguments(
+            [
+                "subject": item,
+                "readOnly": !(context.currentSession?.editMode ?? false),
+                "title": groupKey.camelCaseToWords().uppercased(),
+                "displayName": name.camelCaseToWords().capitalizingFirst(),
+                "name": name,
+                "edge": edge,
+                ".": item,
+            ],
+            renderConfig.viewArguments?.cascadeStack
+        )
 	}
     
     func getAction(edgeType:String, itemType:String) -> Action {
@@ -384,14 +388,14 @@ struct GeneralEditorSection: View {
             context,
             arguments: [
                 "name": "choose-item-by-query",
-                "viewArguments": try? ViewArguments.fromDict([
+                "viewArguments": ViewArguments([
                     "query": itemType,
                     "type": edgeType,
                     "subject": item,
                     "renderer": "list",
                     "edgeType": edgeType,
                     "title": "Choose a \(itemType)",
-                    "dataItem": item,
+                    "item": item,
                 ]),
             ],
             values: [
@@ -514,7 +518,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -523,8 +527,11 @@ struct DefaultGeneralEditorRow: View {
 		let binding = Binding<Bool>(
 			get: { self.item[self.prop] as? Bool ?? false },
 			set: { _ in
-				self.item.toggle(self.prop)
-				self.context.objectWillChange.send()
+                do {
+                    try self.item.toggle(self.prop)
+                    self.context.objectWillChange.send()
+                }
+                catch{}
 			}
 		)
 
@@ -549,7 +556,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}
@@ -565,7 +572,7 @@ struct DefaultGeneralEditorRow: View {
 
 		return MemriTextField(value: binding)
 			.onEditingBegan {
-				self.context.currentSession?.isEditMode = true
+				self.context.currentSession?.editMode = true
 			}
 			.generalEditorCaption()
 	}

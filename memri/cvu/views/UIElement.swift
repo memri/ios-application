@@ -33,7 +33,7 @@ public class UIElement: CVUToString {
 	}
 
 	public func get<T>(_ propName: String, _ item: Item? = nil,
-					   _ viewArguments: ViewArguments = ViewArguments()) -> T? {
+					   _ viewArguments: ViewArguments = ViewArguments(nil)) -> T? {
 		if let prop = properties[propName] {
 			let propValue = prop
 
@@ -63,7 +63,7 @@ public class UIElement: CVUToString {
 				} catch {
 					// TODO: Refactor error handling
 					debugHistory.error("Could note compute \(propName)\n"
-						+ "Arguments: [\(viewArguments.asDict().keys.description)]\n"
+						+ "Arguments: [\(viewArguments.description)]\n"
 						+ (expr.startInStringMode
 							? "Expression: \"\(expr.code)\"\n"
 							: "Expression: \(expr.code)\n")

@@ -13,17 +13,6 @@ extension Object {
 	}
 }
 
-extension SyncState {
-	override public var description: String {
-		"{"
-			+ (actionNeeded != nil ? "\n        actionNeeded: \(actionNeeded ?? "")" : "")
-			+ (isPartiallyLoaded ? "\n        isPartiallyLoaded: \(isPartiallyLoaded)" : "")
-			+ (changedInThisSession ? "\n        changedInThisSession: \(changedInThisSession)" : "")
-			+ (updatedFields.count > 0 ? "\n        updatedFields: [\(updatedFields.map { $0 }.joined(separator: ", "))]" : "")
-			+ "\n    }"
-	}
-}
-
 extension Note {
 	override var computedTitle: String {
 		"\(title ?? "")"
@@ -182,4 +171,36 @@ extension IndexerRun {
 
 		if let indexer = indexer { set("indexer", indexer) }
 	}
+}
+
+extension CVUStateDefinition {
+    public class func fromCVUStoredDefinition(_ stored:CVUStoredDefinition) throws -> CVUStateDefinition {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": stored.definition,
+            "domain": "state",
+            "name": stored.name,
+            "query": stored.query,
+            "selector": stored.selector,
+            "type": stored.type
+        ])
+    }
+    
+    public class func fromCVUParsedDefinition(_ parsed:CVUParsedDefinition) throws -> CVUStateDefinition {
+        try Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": parsed.toCVUString(0, "    "),
+            "domain": "state",
+            "name": parsed.name,
+//            "query": stores.query,
+            "selector": parsed.selector,
+            "type": parsed.definitionType
+        ])
+    }
+}
+
+extension CVUStoredDefinition {
+    override var computedTitle: String {
+        #warning("Parse and then create a proper string representation")
+        if let value = name, value != "" { return value }
+        return "[No Name]"
+    }
 }

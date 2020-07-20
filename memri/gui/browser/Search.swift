@@ -17,15 +17,15 @@ struct Search: View {
 			Divider().background(Color(hex: "#efefef"))
 			HStack {
 				MemriTextField(value: Binding<String>(
-					get: { self.context.cascadingView?.filterText ?? "" },
-					set: { self.context.cascadingView?.filterText = $0 }
+					get: { self.context.currentView?.filterText ?? "" },
+					set: { self.context.currentView?.filterText = $0 }
 				),
-							   placeholder: context.cascadingView?.searchHint ?? "",
+							   placeholder: context.currentView?.searchHint ?? "",
 							   showPrevNextButtons: false)
 					.layoutPriority(-1)
-				Text(context.cascadingView?.searchMatchText ?? "")
+				Text(context.currentView?.searchMatchText ?? "")
 
-				ForEach(context.cascadingView?.filterButtons ?? [], id: \.self) { filterButton in
+				ForEach(context.currentView?.filterButtons ?? [], id: \.self) { filterButton in
 					ActionButton(action: filterButton)
 						.font(Font.system(size: 20, weight: .medium))
 				}

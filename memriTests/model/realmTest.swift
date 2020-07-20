@@ -20,12 +20,7 @@ class realmTest: XCTestCase {
 	}
 
 	func testRealmCreate() throws {
-		#if targetEnvironment(simulator)
-			config.fileURL = URL(fileURLWithPath: try getRealmPath())
-		#endif
-
-		Realm.Configuration.defaultConfiguration = config
-		_ = try! Realm()
+		_ = DatabaseController.getRealm()
 	}
 
 	func testPerformanceExample() throws {

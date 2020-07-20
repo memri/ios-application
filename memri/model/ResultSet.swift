@@ -35,7 +35,19 @@ public class ResultSet: ObservableObject {
 				return String(typeName == "*" ? "mixed" : typeName)
 			}
 		}
-		return nil
+        
+        var foundType:String? = nil
+        for item in items {
+            if let _ = foundType {
+                if foundType == item.genericType { continue }
+                else { return "mixed" }
+            }
+            else {
+                foundType = item.genericType
+            }
+        }
+        
+		return foundType
 	}
 
 	/// Boolean indicating whether the resultset is a collection of items or a single item
@@ -44,7 +56,7 @@ public class ResultSet: ObservableObject {
 		// TODO: this is called very often, needs caching
 
 		let (typeName, filter) = cache.parseQuery(datasource.query ?? "")
-		if let type = ItemFamily(rawValue: typeName) {
+		if let _ = ItemFamily(rawValue: typeName) {
 			if (filter ?? "").match("^AND uid = .*?$").count > 0 {
 				return false
 			}

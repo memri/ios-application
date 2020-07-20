@@ -105,7 +105,7 @@ class CVUValidator {
 
 	func validateDefinition(_ definition: CVUParsedDefinition) {
 		func check(_ definition: CVUParsedDefinition, _ validate: (String, Any) throws -> Bool) {
-			for (key, value) in definition.parsed {
+            for (key, value) in definition.parsed ?? [:] {
 				if value is Expression { continue }
 
 				do {
@@ -143,11 +143,14 @@ class CVUValidator {
 			check(definition) { key, value in
 				switch key {
 				case "name", "emptyResultText", "title", "subTitle", "filterText",
-					 "activeRenderer", "defaultRenderer", "backTitle", "searchHint":
+					 "activeRenderer", "defaultRenderer", "backTitle", "searchHint",
+                     "searchMatchText":
 					return value is String
-				case "userState": return value is UserState
+				case "userState": return value is CVUParsedObjectDefinition
+                case "viewArguments": return value is CVUParsedObjectDefinition
+                    #warning("Add validation for contextPane")
+                case "contextPane": return value is CVUParsedObjectDefinition
 				case "datasourceDefinition": return value is CVUParsedDatasourceDefinition
-				case "viewArguments": return value is ViewArguments
 				case "showLabels": return value is Bool
 				case "actionButton", "editActionButton":
 					if let value = value as? Action { validateAction(value) }
@@ -170,7 +173,7 @@ class CVUValidator {
 					if let value = value as? [Any] {
 						return value[0] is String && value[1] is [String: Any]
 					} else { return value is String }
-				case "renderDefinitions": return value is [CVUParsedRendererDefinition]
+				case "rendererDefinitions": return value is [CVUParsedRendererDefinition]
 				default: throw "Unknown"
 				}
 
@@ -186,7 +189,7 @@ class CVUValidator {
 			//                return true
 			//            }
 
-			if let children = definition.parsed["children"] as? [Any] {
+			if let children = definition.parsed?["children"] as? [Any] {
 				for child in children {
 					if let element = child as? UIElement { validateUIElement(element) }
 					else {

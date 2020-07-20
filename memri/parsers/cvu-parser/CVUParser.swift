@@ -234,7 +234,8 @@ class CVUParser {
 		}
 
 		while true {
-			//            print(peekCurrentToken())
+//            print(peekCurrentToken())
+            
 			switch popCurrentToken() {
 			case let .Bool(v, _, _):
 				stack.append(v)
@@ -248,9 +249,9 @@ class CVUParser {
 					// TODO: remove code duplication
 					let selector = try parseBracketsSelector(lastToken)
 					if let selector = selector as? CVUParsedRendererDefinition {
-						var value = dict["renderDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
+						var value = dict["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [CVUParsedRendererDefinition]()
 						value.append(selector)
-						dict["renderDefinitions"] = value
+						dict["rendererDefinitions"] = value
 						_ = try parseDefinition(selector)
 						lastKey = nil
 					} else if let selector = selector as? CVUParsedSessionDefinition {
@@ -276,6 +277,11 @@ class CVUParser {
 				}
 			case .BracketClose:
 				if isArrayMode {
+                    // Set value as an empty array if it has no elements
+                    if stack.count == 0 {
+                        stack.append([Any?]())
+                    }
+                    
 					setPropertyValue()
 					isArrayMode = false
 					lastKey = nil
@@ -283,7 +289,11 @@ class CVUParser {
 					throw CVUParseErrors.UnexpectedToken(lastToken!) // We should never get here
 				}
 			case .CurlyBracketOpen:
-				stack.append(try parseDict(lastKey!))
+                guard let lastKey = lastKey else {
+                    throw CVUParseErrors.ExpectedIdentifier(lastToken!)
+                }
+                
+				stack.append(try parseDict(lastKey))
 			case .CurlyBracketClose:
 				setPropertyValue()
 				if forUIElement { processCompoundProperties(&dict) }
@@ -313,14 +323,13 @@ class CVUParser {
 
 						addUIElement(type, &properties)
 						continue
-					} else if lvalue == "userstate" || lvalue == "viewarguments" {
+					} else if lvalue == "userstate" || lvalue == "viewarguments" || lvalue == "contextpane" {
 						var properties: [String: Any?] = [:]
 						if case CVUToken.CurlyBracketOpen = nextToken {
 							_ = popCurrentToken()
-							properties = try parseDict(value)
+							properties = try parseDict()
 						}
-						stack.append(try UserState(properties as [String: Any]))
-						continue
+						stack.append(CVUParsedObjectDefinition(properties as [String: Any]))
 					} else if case CVUToken.CurlyBracketOpen = nextToken {
 						// Do nothing
 					} else if lastKey == nil {
