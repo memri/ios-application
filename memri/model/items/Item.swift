@@ -616,62 +616,64 @@ public class Item: SchemaItem {
     
 	/// update the dateAccessed property to the current date
 	public func accessed() {
-		#warning("REPLACE ME with ItemReference - we don't know what thread this Item was made on... so even `self` may not be safe")
-//		let safeSelf = ThreadSafeReference(to: self)
-//		DatabaseController.writeAsync(withResolvedReferenceTo: safeSelf) { realm, item in
-//            item.dateAccessed = Date()
-//
-//            let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
-//            _ = try item.link(auditItem, type: "changelog")
-//        }
+		let safeSelf = ItemReference(to: self)
+        DatabaseController.writeAsync { realm in
+            guard let item = safeSelf.resolve() else { return }
+            
+            item.dateAccessed = Date()
+
+            let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "read"])
+            _ = try item.link(auditItem, type: "changelog")
+        }
 	}
     
     /// update the dateAccessed property to the current date
     public func modified(_ updatedFields:[String]) {
-		#warning("REPLACE ME with ItemReference - we don't know what thread this Item was made on... so even `self` may not be safe")
-//		let safeSelf = ThreadSafeReference(to: self)
-//		DatabaseController.writeAsync(withResolvedReferenceTo: safeSelf) { realm, item in
-//            let previousModified = item.dateModified
-//            item.dateModified = Date()
-//
-//            for field in updatedFields {
-//                if !item._updated.contains(field) {
-//                    item._updated.append(field)
-//                }
-//            }
-//
-//            if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
-//                #warning("Test that .last gives the last added audit item")
-//                if
-//                    let auditItem = item.edges("changelog")?.last?.item(type: AuditItem.self),
-//                    let content = auditItem.content,
-//                    var dict = try unserialize(content, type: [String:AnyCodable?].self)
-//                {
-//                    for field in updatedFields {
-//                        guard item.objectSchema[field] != nil else { throw "Invalid update call" }
-//                        dict[field] = AnyCodable(item[field])
-//                    }
-//                    auditItem.content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
-//                    return
-//                }
-//            }
-//
-//            var dict = [String:AnyCodable?]()
-//            for field in updatedFields {
-//                guard item.objectSchema[field] != nil else { throw "Invalid update call" }
-//                dict[field] = AnyCodable(item[field])
-//            }
-//
-//            let content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
-//			let auditItem = try Cache.createItem(
-//				AuditItem.self,
-//				values: [
-//					"action": "update",
-//					"content": content
-//				]
-//			)
-//			_ = try item.link(auditItem, type: "changelog")
-//		}
+		let safeSelf = ItemReference(to: self)
+        DatabaseController.writeAsync { realm in
+            guard let item = safeSelf.resolve() else { return }
+            
+            let previousModified = item.dateModified
+            item.dateModified = Date()
+
+            for field in updatedFields {
+                if !item._updated.contains(field) {
+                    item._updated.append(field)
+                }
+            }
+
+            if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
+                #warning("Test that .last gives the last added audit item")
+                if
+                    let auditItem = item.edges("changelog")?.last?.item(type: AuditItem.self),
+                    let content = auditItem.content,
+                    var dict = try unserialize(content, type: [String:AnyCodable?].self)
+                {
+                    for field in updatedFields {
+                        guard item.objectSchema[field] != nil else { throw "Invalid update call" }
+                        dict[field] = AnyCodable(item[field])
+                    }
+                    auditItem.content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
+                    return
+                }
+            }
+
+            var dict = [String:AnyCodable?]()
+            for field in updatedFields {
+                guard item.objectSchema[field] != nil else { throw "Invalid update call" }
+                dict[field] = AnyCodable(item[field])
+            }
+
+            let content = String(data: try MemriJSONEncoder.encode(dict), encoding: .utf8) ?? ""
+			let auditItem = try Cache.createItem(
+				AuditItem.self,
+				values: [
+					"action": "update",
+					"content": content
+				]
+			)
+			_ = try item.link(auditItem, type: "changelog")
+		}
     }
 
 	/// compare two dataItems

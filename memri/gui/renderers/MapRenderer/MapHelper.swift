@@ -85,8 +85,10 @@ class MapHelper {
 		lookup.sink { [weak self] location in
 			if let location = location {
 				// Update the address with the location (avoid future lookups)
-				let addressReference = ThreadSafeReference(to: address)
-				DatabaseController.writeAsync(withResolvedReferenceTo: addressReference) { _, address in
+				let safeRef = ItemReference(to: address)
+				DatabaseController.writeAsync { _ in
+                    guard let address = safeRef.resolve() as? Address else { return }
+                    
                     let newLocation = try Cache.createItem(Location.self, values: [
                         "latitude": location.coordinate.latitude,
                         "longitude": location.coordinate.longitude

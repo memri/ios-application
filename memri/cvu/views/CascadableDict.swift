@@ -8,20 +8,6 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-class ItemReference {
-    let uid:Int
-    let type:Item.Type
-    
-    init (to: Item) {
-        uid = to.uid.value ?? -1
-        type = to.getType() ?? Item.self
-    }
-    
-    func resolve() -> Item? {
-        DatabaseController.read { $0.object(ofType: type, forPrimaryKey: uid) }
-    }
-}
-
 public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable {
     func get<T>(_ name:String, type:T.Type = T.self) -> T? {
         guard let value = cascadeProperty(name, type: Any?.self) else {

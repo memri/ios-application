@@ -9,6 +9,40 @@
 import Foundation
 import RealmSwift
 
+class ItemReference {
+    let uid:Int
+    let type:Item.Type
+    
+    init (to: Item) {
+        uid = to.uid.value ?? -1
+        type = to.getType() ?? Item.self
+    }
+    
+    func resolve() -> Item? {
+        DatabaseController.read { $0.object(ofType: type, forPrimaryKey: uid) }
+    }
+}
+
+class EdgeReference {
+    let type:String
+    let sourceItemID:Int
+    let targetItemID:Int
+    
+    init (to: Edge) {
+        type = to.type ?? ""
+        sourceItemID = to.sourceItemID.value ?? -1
+        targetItemID = to.targetItemID.value ?? -1
+    }
+    
+    func resolve() -> Edge? {
+        DatabaseController.read {
+            $0.objects(Edge.self)
+                .filter("type = '\(type)' AND sourceItemID = \(sourceItemID) AND targetItemID = \(targetItemID)")
+                .first
+        }
+    }
+}
+
 class DatabaseController {
 	private init() {}
 	
@@ -30,7 +64,7 @@ class DatabaseController {
 					// Realm will automatically detect new properties and removed properties
 					// And will update the schema on disk automatically
 				}
-		}
+            }
 		)
 	}
 	
@@ -98,7 +132,6 @@ class DatabaseController {
 			debugHistory.error("Realm Error: \(error)")
 		}
 	}
-	
 	
 	static func read<T>(_ doRead: ((Realm) throws -> T?) ) -> T? {
 		do {
@@ -177,7 +210,8 @@ class DatabaseController {
 	}
 	
 	/// Use this for writing to Realm in the background. It will run on a background thread.
-	static func writeAsync<T>(withResolvedReferenceTo objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
+	static func writeAsync<T>(withResolvedReferenceTo objectReference: ThreadSafeReference<T>,
+                              _ doWrite: @escaping (Realm, T) throws -> Void) {
 		realmQueue.async {
 			autoreleasepool {
 				do {

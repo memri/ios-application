@@ -202,7 +202,7 @@ public class Cache {
 				if let sortProperty = datasource.sortProperty, sortProperty != "" {
 					result = result.sorted(
 						byKeyPath: sortProperty,
-						ascending: datasource.sortAscending.value ?? true
+						ascending: datasource.sortAscending ?? true
 					)
 				}
 
@@ -254,7 +254,7 @@ public class Cache {
 			// Make sure the new resultset has the right query properties
 			resultSet.datasource.query = datasource.query
 			resultSet.datasource.sortProperty = datasource.sortProperty
-			resultSet.datasource.sortAscending.value = datasource.sortAscending.value
+			resultSet.datasource.sortAscending = datasource.sortAscending
 
 			// Make sure the UI updates when the resultset updates
 			cancellables.append(resultSet.objectWillChange.sink { _ in
@@ -324,7 +324,7 @@ public class Cache {
 	private func bindChangeListeners(_ item: Item) {
         // Update the sync state when the item changes
         rlmTokens.append(item.observe { objectChange in
-            if case let .change(_, propChanges) = objectChange {
+            if case let .change(propChanges) = objectChange {
                 if item._action == nil {
                     func doAction() {
                         // Mark item for updating
@@ -522,7 +522,7 @@ public class Cache {
                 dict["uid"] = try Cache.incrementUID()
             }
             
-            print("\(type) - \(dict["uid"])")
+//            print("\(type) - \(dict["uid"])")
 
 			item = realm.create(type, value: dict)
 

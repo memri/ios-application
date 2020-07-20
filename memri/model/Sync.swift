@@ -78,7 +78,7 @@ class Sync {
             let data = try MemriJSONEncoder.encode([ // TODO: move this to Datasource
                 "query": datasource.query,
                 "sortProperty": datasource.sortProperty,
-                "sortAscending": datasource.sortAscending.value ?? false ? "true" : "false",
+                "sortAscending": datasource.sortAscending ?? false ? "true" : "false",
             ] as? [String: String])
             
             // Add to realm
@@ -134,7 +134,7 @@ class Sync {
         
         debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
         
-        let wrappedObject = ThreadSafeReference(to: audititem)
+        let safeRef = ItemReference(to: audititem)
         
         // Call out to the pod with the query
         podAPI.query(datasource) { error, items in
@@ -163,8 +163,8 @@ class Sync {
                     }
 
                     // We no longer need to process this log item
-					DatabaseController.writeAsync(withResolvedReferenceTo: wrappedObject) { _, audititem in
-                        audititem._action = nil
+					DatabaseController.writeAsync { _ in
+                        safeRef.resolve()?._action = nil
                     }
                 }
             } else {
@@ -205,7 +205,10 @@ class Sync {
 			DatabaseController.writeAsync { realm in
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
-						if let item = item as? ThreadSafeReference<SchemaItem>, let resolvedItem = realm.resolve(item) {
+						if
+                            let item = item as? ItemReference,
+                            let resolvedItem = item.resolve()
+                        {
 							if resolvedItem._action == "delete" {
 								realm.delete(resolvedItem)
 							}
@@ -213,7 +216,10 @@ class Sync {
 								resolvedItem._action = ""
 								resolvedItem._updated.removeAll()
 							}
-						} else if let item = item as? ThreadSafeReference<Edge>, let resolvedItem = realm.resolve(item) {
+						} else if
+                            let item = item as? EdgeReference,
+                            let resolvedItem = item.resolve()
+                        {
 							if resolvedItem._action == "delete" {
 								realm.delete(resolvedItem)
 							}
@@ -232,14 +238,14 @@ class Sync {
         
         DatabaseController.read { realm in
             var found = 0
-            var itemQueue: [String: [SchemaItem]] = ["create": [], "update": [], "delete": []]
+            var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
             var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
             
             // Items
             for itemType in ItemFamily.allCases {
                 if itemType == .typeUserState { continue }
                 
-                if let type = itemType.getType() as? SchemaItem.Type {
+                if let type = itemType.getType() as? Item.Type {
                     let items = realm.objects(type).filter("_action != nil")
                     for item in items {
                         if let action = item._action, itemQueue[action] != nil {
@@ -260,11 +266,11 @@ class Sync {
             }
             
             let safeItemQueue = itemQueue.mapValues {
-                $0.map { ThreadSafeReference(to: $0) }
+                $0.map { ItemReference(to: $0) }
             }
             
             let safeEdgeQueue = edgeQueue.mapValues {
-                $0.map { ThreadSafeReference(to: $0) }
+                $0.map { EdgeReference(to: $0) }
             }
             
             if found > 0 {
