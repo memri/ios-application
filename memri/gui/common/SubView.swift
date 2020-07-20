@@ -17,9 +17,6 @@ public struct SubView: View {
 	var searchbar: Bool = true
 	var showCloseButton: Bool = false
 
-	// There is duplication here becaue proxyMain cannot be set outside of init. This can be fixed
-	// By only duplicating that line and setting session later, but I am too lazy to do that.
-	// TODO: Refactor
 	public init(context: MemriContext, viewName: String, item: Item? = nil,
 				viewArguments: ViewArguments?) {
 		do {
@@ -27,8 +24,6 @@ public struct SubView: View {
             try args.resolve(item)
             args.set(".", item)
 
-			toolbar = args.get("toolbar") ?? toolbar
-			searchbar = args.get("searchbar") ?? searchbar
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
 			guard let context = context as? RootContext else {
@@ -61,8 +56,6 @@ public struct SubView: View {
             try args.resolve(item)
             args.set(".", item)
 
-			toolbar = args.get("toolbar") ?? toolbar
-			searchbar = args.get("searchbar") ?? searchbar
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
 			guard let context = context as? RootContext else {
@@ -77,25 +70,10 @@ public struct SubView: View {
 		}
 	}
 
-	// TODO: refactor: consider inserting Browser here and adding variables instead
 	public var body: some View {
-		//        ZStack {
-		VStack(alignment: .center, spacing: 0) {
-			if self.toolbar {
-				TopNavigation(inSubView: true, showCloseButton: showCloseButton)
-			}
-			allRenderers?.allViews[self.proxyMain?.currentView?.activeRenderer ?? "list"]
-				.fullHeight()
-
-			if self.searchbar {
-				Search()
-			}
-		}
-		.fullHeight()
-		// NOTE: Allowed force unwrap
-		.environmentObject(self.proxyMain!)
-
-		//            ContextPane()
-		//        }
+		Browser()
+            .fullHeight()
+            // NOTE: Allowed force unwrap
+            .environmentObject(self.proxyMain!)
 	}
 }

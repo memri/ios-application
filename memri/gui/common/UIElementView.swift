@@ -234,7 +234,7 @@ public struct UIElementView: SwiftUI.View {
 							context: self.context,
 							viewName: from.getString("viewName"),
 							item: self.item,
-							viewArguments: ViewArguments(get("arguments"))
+							viewArguments: ViewArguments(get("arguments", type:[String:Any?].self))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else {
@@ -257,7 +257,7 @@ public struct UIElementView: SwiftUI.View {
                                 return CVUStateDefinition()
 							}(),
 							item: self.item,
-                            viewArguments: ViewArguments(get("arguments"))
+                            viewArguments: ViewArguments(get("arguments", type:[String:Any?].self))
 						)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 					}

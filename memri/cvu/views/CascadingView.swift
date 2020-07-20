@@ -8,109 +8,6 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-public class CascadableContextPane: Cascadable {
-    var buttons: [Action] {
-        get { cascadeList("buttons") }
-        set (value) { setState("buttons", value) }
-    }
-    
-    var actions: [Action] {
-        get { cascadeList("actions") }
-        set (value) { setState("actions", value) }
-    }
-    
-    var navigate: [Action] {
-        get { cascadeList("navigate") }
-        set (value) { setState("navigate", value) }
-    }
-    
-    func isSet() -> Bool {
-        head.parsed?.count ?? 0 > 0 || tail.count > 0
-    }
-}
-
-public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable {
-    class ItemReference {
-        let uid:Int
-        let type:Item.Type
-        
-        init (to: Item) {
-            uid = to.uid.value ?? -1
-            type = to.getType() ?? Item.self
-        }
-        
-        func resolve() -> Item? {
-            DatabaseController.read { $0.object(ofType: type, forPrimaryKey: uid) }
-        }
-    }
-    
-    func get<T>(_ name:String, type:T.Type = T.self) -> T? {
-        let value = cascadeProperty(name, type: Any.self)
-        
-        if let itemRef = value as? ItemReference {
-            return itemRef.resolve() as? T
-        }
-        else if let list = value as? [ItemReference?] {
-            return list.map { ref -> Item? in
-                guard let ref = ref else { return nil }
-                return ref.resolve()
-            } as? T
-        }
-        // Dicts are not support atm
-        
-        return value as? T
-    }
-    
-    func set(_ name:String, _ value:Any?) {
-        if let item = value as? Item {
-            setState(name, ItemReference(to: item))
-        }
-        else if let list = value as? [Item?] {
-            setState(name, list.map { item -> ItemReference? in
-                guard let item = item else { return nil }
-                return ItemReference(to: item)
-            })
-        }
-        else {
-            setState(name, value)
-        }
-    }
-    
-    subscript(name: String) -> Any? {
-        get { get(name) }
-        set (value) { set(name, value) }
-    }
-    
-    public var description: String {
-        head.parsed?.keys.description ?? ""
-    }
-    
-    public init(_ head: [String:Any?]? = nil, _ tail: [CVUParsedDefinition]? = nil, host:Cascadable? = nil) {
-        super.init(CVUParsedObjectDefinition(head), tail, host)
-    }
-    
-    public init(_ head: CascadableDict?, _ tail: CascadableDict? = nil) {
-        var combinedTail = head?.tail
-        combinedTail?.append(contentsOf: tail?.cascadeStack ?? [])
-        super.init(CVUParsedObjectDefinition(head?.head.parsed), combinedTail)
-    }
-    
-    required init(_ head: CVUParsedDefinition? = nil, _ tail: [CVUParsedDefinition]? = nil, _ host: Cascadable? = nil) {
-        super.init(head, tail, host)
-    }
-    
-    func resolve(_ item: Item?) throws {
-        // TODO: Only doing this for head, let's see if that is enough
-        for (key, value) in head.parsed ?? [:] {
-            if let expr = value as? Expression {
-                head.parsed?[key] = try expr.execute(viewArguments)
-            }
-        }
-    }
-}
-public typealias UserState = CascadableDict
-public typealias ViewArguments = CascadableDict
-
 public class CascadingView: Cascadable, ObservableObject, Subscriptable {
     var context: MemriContext?
     var session: Session? = nil
@@ -144,16 +41,21 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
 	}
     
     var fullscreen: Bool {
-        get { cascadeProperty("fullscreen") ?? false }
+        get { viewArguments?.get("fullscreen") ?? cascadeProperty("fullscreen") ?? false }
         set (value) { setState("fullscreen", value) }
     }
     var showToolbar: Bool {
-        get { cascadeProperty("showToolbar") ?? true }
+        get { viewArguments?.get("showToolbar") ?? cascadeProperty("showToolbar") ?? true }
         set (value) { setState("showToolbar", value) }
     }
     var showSearchbar: Bool {
-        get { cascadeProperty("showSearchbar") ?? true }
+        get { viewArguments?.get("showSearchbar") ?? cascadeProperty("showSearchbar") ?? true }
         set (value) { setState("showSearchbar", value) }
+    }
+    #warning("Implement this in all renderers")
+    var readOnly: Bool {
+        get { viewArguments?.get("readOnly") ?? cascadeProperty("readOnly") ?? true }
+        set (value) { setState("readOnly", value) }
     }
 
 	var backTitle: String? {
@@ -161,11 +63,11 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
         set (value) { setState("backTitle", value) }
     }
 	var searchHint: String {
-        get {cascadeProperty("searchHint") ?? "" }
+        get { cascadeProperty("searchHint") ?? "" }
         set (value) { setState("searchHint", value) }
     }
 	var actionButton: Action? {
-        get {cascadeProperty("actionButton") }
+        get { cascadeProperty("actionButton") }
         set (value) { setState("actionButton", value) }
     }
 	var editActionButton: Action? {

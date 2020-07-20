@@ -279,8 +279,8 @@ Person {
                     }
                 }
                 arguments: {
-                    toolbar: false
-                    searchbar: false
+                    showToolbar: false
+                    showSearchbar: false
                     readOnly: true
                 }
             }
