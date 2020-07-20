@@ -190,7 +190,7 @@ public final class Session : Equatable, Subscriptable {
                 state = try Cache.createItem(CVUStateDefinition.self, values: [:])
                 
                 guard let uid = state?.uid.value else {
-                    throw "Exception: could not create stored definition"
+                    throw "Exception: could not create state definition"
                 }
                 
                 self.uid = uid
@@ -225,7 +225,7 @@ public final class Session : Equatable, Subscriptable {
                     _ = try state?.link(s, type: "view", sequence: .last, overwrite: false)
                 }
                 else {
-                    debugHistory.warn("Unable to store view. Missing stored CVU")
+                    debugHistory.warn("Unable to store view. Missing state CVU")
                 }
             }
         }
@@ -285,7 +285,7 @@ public final class Session : Equatable, Subscriptable {
 
             // hide filterpanel if view doesnt have a button to open it
             if showFilterPanel {
-                if currentView?.filterButtons.first(where: { $0.name == .toggleFilterPanel }) != nil {
+                if currentView?.filterButtons.first(where: { $0.name == .toggleFilterPanel }) == nil {
                     showFilterPanel = false
                 }
             }

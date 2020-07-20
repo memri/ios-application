@@ -26,6 +26,8 @@ class CVUSerializer {
 				return p.toCVUString(depth + 1, tab)
             } else if let p = p as? Item, let uid = p.uid.value {
                 return "{{ item(\(p.genericType), \(uid)) }}"
+            } else if p is ItemReference, let p = (p as? ItemReference)?.resolve(), let uid = p.uid.value {
+                return "{{ item(\(p.genericType), \(uid)) }}"
             } else if let p = p as? Color {
 				return String(p.description.lowercased().prefix(7))
 			} else if let p = p as? Double {
