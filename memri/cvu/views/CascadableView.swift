@@ -8,7 +8,7 @@ import Foundation
 import SwiftUI
 import RealmSwift
 
-public class CascadingView: Cascadable, ObservableObject, Subscriptable {
+public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     var context: MemriContext?
     var session: Session? = nil
     
@@ -324,7 +324,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
         super.init(head, [])
 	}
     
-    /// This init should only be called to create an empty CascadingView when needed inside a SwiftUI View
+    /// This init should only be called to create an empty CascadableView when needed inside a SwiftUI View
     required init(
         _ head: CVUParsedDefinition? = nil,
         _ tail: [CVUParsedDefinition]? = nil,
@@ -480,7 +480,7 @@ public class CascadingView: Cascadable, ObservableObject, Subscriptable {
                         else {
                             throw "Exception: could not parse view: \(viewName)"
                         }
-                    } else if let view = result as? CascadingView {
+                    } else if let view = result as? CascadableView {
                         let parsed = CVUParsedViewDefinition(parsed: view.head.parsed)
                         try include(parsed, domain)
                     } else {

@@ -65,7 +65,7 @@ public final class Session : Equatable, Subscriptable {
     }
     
     /// TBD
-    var views = [CascadingView]()
+    var views = [CascadableView]()
     /// TBD
     var sessions: Sessions?
     var context: MemriContext?
@@ -88,7 +88,7 @@ public final class Session : Equatable, Subscriptable {
 		currentViewIndex > 0
 	}
 
-	public var currentView: CascadingView? {
+	public var currentView: CascadableView? {
         views[safe: currentViewIndex]
 	}
 
@@ -118,7 +118,7 @@ public final class Session : Equatable, Subscriptable {
                 storedViewStates.count > 0
             {
                 for viewState in storedViewStates {
-                    views.append(try CascadingView(viewState, self))
+                    views.append(try CascadableView(viewState, self))
                 }
             }
             // Or if the views are encoded in the definition
@@ -130,7 +130,7 @@ public final class Session : Equatable, Subscriptable {
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                         _ = try state.link(viewState, type: "view", sequence: .last)
-                        views.append(try CascadingView(viewState, self))
+                        views.append(try CascadableView(viewState, self))
                     }
                 }
                 
@@ -251,7 +251,7 @@ public final class Session : Equatable, Subscriptable {
             }
             
             // Add session to list
-            views.append(try CascadingView(storedView, self))
+            views.append(try CascadableView(storedView, self))
             nextIndex = views.count - 1
         }
         

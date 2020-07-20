@@ -87,7 +87,7 @@ class FilterPanelRendererButton: Action, ActionExec {
 
 	func exec(_: [String: Any?]) {
 		context.currentView?.activeRenderer = rendererName
-		context.scheduleUIUpdate { _ in true } // scheduleCascadingViewUpdate() // TODO why are userState not kept?
+		context.scheduleUIUpdate { _ in true } // scheduleCascadableViewUpdate() // TODO why are userState not kept?
 	}
 }
 

@@ -34,7 +34,7 @@ public class MemriContext: ObservableObject, Subscriptable {
         sessions.currentSession
     }
 
-    public var currentView: CascadingView? {
+    public var currentView: CascadableView? {
         sessions.currentSession?.currentView
     }
 
@@ -88,8 +88,8 @@ public class MemriContext: ObservableObject, Subscriptable {
     private var uiUpdateSubject = PassthroughSubject<Void, Never>()
     private var uiUpdateCancellable: AnyCancellable?
     
-    private var cascadingViewUpdateSubject = PassthroughSubject<Void, Never>()
-    private var cascadingViewUpdateCancellable: AnyCancellable?
+    private var cascadableViewUpdateSubject = PassthroughSubject<Void, Never>()
+    private var cascadableViewUpdateCancellable: AnyCancellable?
 
 	func scheduleUIUpdate(immediate: Bool = false, _ check: ((_ context: MemriContext) -> Bool)? = nil) { // Update UI
 		if immediate {
@@ -110,18 +110,18 @@ public class MemriContext: ObservableObject, Subscriptable {
         uiUpdateSubject.send()
 	}
 
-	func scheduleCascadingViewUpdate(immediate: Bool = false) {
+	func scheduleCascadableViewUpdate(immediate: Bool = false) {
 		if immediate {
 			// Do this straight away, usually for the sake of correct animation
             do { try self.currentSession?.setCurrentView() }
             catch {
                 // TODO: User error handling
                 // TODO: Error Handling
-                debugHistory.error("Could not update CascadingView: \(error)")
+                debugHistory.error("Could not update CascadableView: \(error)")
             }
 			return
         } else {
-            cascadingViewUpdateSubject.send()
+            cascadableViewUpdateSubject.send()
         }
 	}
 
@@ -235,7 +235,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             }
         
         // Setup update publishers
-        self.cascadingViewUpdateCancellable = cascadingViewUpdateSubject
+        self.cascadableViewUpdateCancellable = cascadableViewUpdateSubject
             .throttle(for: .milliseconds(500), scheduler: RunLoop.main, latest: true)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in

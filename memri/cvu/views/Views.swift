@@ -161,13 +161,13 @@ public class Views {
 //        // Determine whether the current view needs reloading
 //        for def in defs {
 //            var selectors = [String]()
-//            if let stack = context?.cascadingView?.cascadeStack {
+//            if let stack = context?.cascadableView?.cascadeStack {
 //                for parsed in stack { selectors.append(parsed.selectors) }
 //                ...
 //            }
 //        }
         
-        self.context?.scheduleCascadingViewUpdate()
+        self.context?.scheduleCascadableViewUpdate()
     }
 
 	func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
@@ -504,7 +504,7 @@ public class Views {
         return view
     }
 
-	// TODO: Refactor: Consider caching cascadingView based on the type of the item
+	// TODO: Refactor: Consider caching cascadableView based on the type of the item
 	public func renderItemCell(with item: Item?,
 							   search rendererNames: [String] = [],
 							   inView viewOverride: String? = nil,

@@ -441,7 +441,7 @@ class ActionBack: Action, ActionExec {
 				print("Warn: Can't go back. Already at earliest view in session")
 			} else {
 				session.currentViewIndex -= 1
-				context.scheduleCascadingViewUpdate()
+				context.scheduleCascadableViewUpdate()
 			}
 		} else {
 			// TODO: Error Handling?
@@ -528,7 +528,7 @@ class ActionOpenView: Action, ActionExec {
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
-		//        let selection = context.cascadingView.userState.get("selection") as? [Item]
+		//        let selection = context.cascadableView.userState.get("selection") as? [Item]
 		let item = arguments["item"] as? Item
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
@@ -644,7 +644,7 @@ class ActionStar: Action, ActionExec {
 	// TODO: selection handling for binding
 	func exec(_: [String: Any?]) throws {
 		//        if let item = arguments["item"] as? Item {
-		//            var selection:[Item] = context.cascadingView.userState.get("selection") ?? []
+		//            var selection:[Item] = context.cascadableView.userState.get("selection") ?? []
 		//            let toValue = !item.starred
 //
 		//            if !selection.contains(item) {
@@ -794,7 +794,7 @@ class ActionForward: Action, ActionExec {
 				print("Warn: Can't go forward. Already at last view in session")
 			} else {
 				session.currentViewIndex += 1
-				context.scheduleCascadingViewUpdate()
+				context.scheduleCascadableViewUpdate()
 			}
 		} else {
 			// TODO: Error handling?
@@ -818,7 +818,7 @@ class ActionForwardToFront: Action, ActionExec {
 	func exec(_: [String: Any?]) throws {
 		if let session = context.currentSession {
             session.currentViewIndex = session.views.count - 1
-			context.scheduleCascadingViewUpdate()
+			context.scheduleCascadableViewUpdate()
 		} else {
 			// TODO: Error handling
 		}
@@ -992,10 +992,10 @@ class ActionDelete: Action, ActionExec {
             selection.count > 0
         {
 			context.cache.delete(selection)
-			context.scheduleCascadingViewUpdate(immediate: true)
+			context.scheduleCascadableViewUpdate(immediate: true)
 		} else if let dataItem = arguments["item"] as? Item {
 			context.cache.delete(dataItem)
-			context.scheduleCascadingViewUpdate(immediate: true)
+			context.scheduleCascadableViewUpdate(immediate: true)
 		} else {
 			// TODO: Erorr handling
 		}

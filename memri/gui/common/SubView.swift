@@ -40,7 +40,7 @@ public struct SubView: View {
             }
 			catch {
 				// TODO: Refactor error handling
-				throw "Cannot update CascadingView \(self): \(error)"
+				throw "Cannot update CascadableView \(self): \(error)"
 			}
 		} catch {
 			// TODO: Refactor: error handling
@@ -65,7 +65,7 @@ public struct SubView: View {
             try proxyMain?.currentSession?.setCurrentView(state, args)
 		} catch {
 			// TODO: Refactor error handling
-			debugHistory.error("Error: cannot init subview, failed to update CascadingView: \(error)")
+			debugHistory.error("Error: cannot init subview, failed to update CascadableView: \(error)")
 		}
 	}
 

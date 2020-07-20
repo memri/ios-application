@@ -16,7 +16,7 @@ struct Browser: View {
 	}
 
 	var body: some View {
-        let currentView = self.context.currentView ?? CascadingView()
+        let currentView = self.context.currentView ?? CascadableView()
         
 		return ZStack {
             if self.context.currentView == nil {

@@ -46,12 +46,12 @@ struct FilterPanel: View {
 	private func toggleAscending() {
         let ds = self.context.currentView?.datasource
         ds?.sortAscending = !(ds?.sortAscending ?? true)
-		context.scheduleCascadingViewUpdate()
+		context.scheduleCascadableViewUpdate()
 	}
 
 	private func changeOrderProperty(_ fieldName: String) {
         self.context.currentView?.datasource.sortProperty = fieldName
-		context.scheduleCascadingViewUpdate()
+		context.scheduleCascadableViewUpdate()
 	}
 
 	private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
@@ -84,7 +84,7 @@ struct FilterPanel: View {
 
 	var body: some View {
 		let context = self.context
-		let cascadingView = self.context.currentView
+		let cascadableView = self.context.currentView
 
 		return
 			HStack(alignment: .top, spacing: 0) {
@@ -116,7 +116,7 @@ struct FilterPanel: View {
 						ASSection(id: 0, data: renderersAvailable(), dataID: \.0) { (item: (key: String, renderer: FilterPanelRendererButton), _) in
 							Button(action: { context.executeAction(item.renderer) }) {
 								Group {
-									if cascadingView?.activeRenderer == item.renderer.rendererName {
+									if cascadableView?.activeRenderer == item.renderer.rendererName {
 										Text(LocalizedStringKey(item.renderer.getString("title")))
 											.foregroundColor(Color(hex: "#6aa84f"))
 											.fontWeight(.semibold)
@@ -142,7 +142,7 @@ struct FilterPanel: View {
 							.padding(.horizontal)
 							.padding(.vertical, 6)
                     }) {
-						cascadingView?.datasource.sortProperty.map { currentSortProperty in
+						cascadableView?.datasource.sortProperty.map { currentSortProperty in
 							Button(action: { self.toggleAscending() }) {
 								HStack {
 									Text(currentSortProperty)
@@ -150,7 +150,7 @@ struct FilterPanel: View {
 										.font(.system(size: 16, weight: .semibold, design: .default))
 										.frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
 									Spacer()
-									Image(systemName: cascadingView?.datasource.sortAscending == false
+									Image(systemName: cascadableView?.datasource.sortAscending == false
 										? "arrow.down"
 										: "arrow.up")
 										.resizable()
@@ -160,8 +160,8 @@ struct FilterPanel: View {
 								}
 							}
 						}
-						cascadingView?.sortFields.filter {
-							cascadingView?.datasource.sortProperty != $0
+						cascadableView?.sortFields.filter {
+							cascadableView?.datasource.sortProperty != $0
 						}.map { fieldName in
 							Button(action: { self.changeOrderProperty(fieldName) }) {
 								Text(fieldName)

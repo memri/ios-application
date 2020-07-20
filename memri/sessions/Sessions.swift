@@ -42,7 +42,7 @@ public final class Sessions : ObservableObject, Equatable {
         sessions[safe: currentSessionIndex]
 	}
 
-	var currentView: CascadingView? {
+	var currentView: CascadableView? {
 		currentSession?.currentView
 	}
     

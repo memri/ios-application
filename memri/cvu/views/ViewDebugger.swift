@@ -67,7 +67,7 @@ class InfoState: Hashable {
 	var displayMessage: String = ""
 	var messageCount: Int = 1
 	var type: InfoType = .info
-	//    var cascadingView: ComputedView
+	//    var cascadableView: ComputedView
 
 	init(displayMessage m: String) {
 		displayMessage = m
@@ -109,42 +109,42 @@ class DebugHistory: ObservableObject {
 		return "[\(dateFormatter.string(from: d))]"
 	}
 
-	func info(_ message: String /* , _ cascadingView:ComputedView */ ) {
+	func info(_ message: String /* , _ cascadableView:ComputedView */ ) {
 		// if same view
 		if log.last?.displayMessage == message {
 			log[log.count - 1].messageCount += 1
 		} else {
 			log.append(InfoState(
 				displayMessage: message
-				//            cascadingView: cascadingView
+				//            cascadableView: cascadableView
 			))
 		}
 
 		print("\(time()) INFO: \(message.replace("\n", "\n    "))")
 	}
 
-	func warn(_ message: String /* , _ cascadingView:ComputedView */ ) {
+	func warn(_ message: String /* , _ cascadableView:ComputedView */ ) {
 		// if same view
 		if log.last?.displayMessage == message {
 			log[log.count - 1].messageCount += 1
 		} else {
 			log.append(WarnState(
 				displayMessage: message
-				//            cascadingView: cascadingView
+				//            cascadableView: cascadableView
 			))
 		}
 
 		print("\(time()) WARNING: \(message.replace("\n", "\n    "))")
 	}
 
-	func error(_ message: String /* , _ cascadingView:ComputedView */ ) {
+	func error(_ message: String /* , _ cascadableView:ComputedView */ ) {
 		// if same view
 		if log.last?.displayMessage == message {
 			log[log.count - 1].messageCount += 1
 		} else {
 			log.append(ErrorState(
 				displayMessage: message
-				//            cascadingView: cascadingView
+				//            cascadableView: cascadableView
 			))
 		}
 
