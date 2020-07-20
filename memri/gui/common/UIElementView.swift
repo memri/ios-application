@@ -262,7 +262,11 @@ public struct UIElementView: SwiftUI.View {
 					}
 				} else if from.type == .Map {
 					MapView(useMapBox: context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false,
-							config: .init(dataItems: [self.item], locationKey: get("locationKey") ?? "location", addressKey: get("addressKey") ?? "address"))
+							config: .init(dataItems: [self.item],
+										  locationResolver: { _ in self.get("location") },
+										  addressResolver: { _ in (self.get("address", type: Address.self) as Any?) ?? (self.get("address", type: Results<Item>.self) as Any?) },
+										  labelResolver: { _ in self.get("label") })
+					)
 						.background(Color(.secondarySystemBackground))
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Picker {
@@ -274,6 +278,18 @@ public struct UIElementView: SwiftUI.View {
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .MemriButton {
 					MemriButton(item: self.item)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .TimelineItem {
+					TimelineItemView(icon: Image(systemName: get("icon") ?? "arrowtriangle.right"),
+									 title: from.processText(get("title")) ?? "-",
+									 subtitle: from.processText(get("text")),
+									 backgroundColor: ItemFamily(rawValue: item.genericType)?.backgroundColor ?? .gray)
+						.setProperties(from.properties, self.item, context, self.viewArguments)
+				} else if from.type == .MessageBubble {
+					MessageBubbleView(timestamp: get("dateTime"),
+									  sender: get("sender"),
+									  content: from.processText(get("content")) ?? "",
+									  outgoing: get("isOutgoing") ?? false)
 						.setProperties(from.properties, self.item, context, self.viewArguments)
 				} else if from.type == .Image {
 					if has("systemName") {

@@ -65,8 +65,7 @@ struct ListRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-                self.context.currentView?.userState
-					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
 			}
 		)
 	}

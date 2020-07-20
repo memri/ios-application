@@ -81,7 +81,7 @@ class Person: SchemaPerson {
 	/// Age in years
 	var age: Int? {
 		if let birthDate = birthDate {
-			return Int(birthDate.distance(to: Date()) / 365 * 24 * 60 * 60)
+			return Calendar.current.dateComponents([.year], from: birthDate, to: Date()).year
 		}
 		return nil
 	}

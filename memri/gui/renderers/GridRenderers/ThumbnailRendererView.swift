@@ -81,8 +81,7 @@ struct ThumbnailRendererView: View {
 		Binding<Set<Int>>(
 			get: { [] },
 			set: {
-				self.context.currentView?.userState
-					.set("selection", $0.compactMap { self.context.items[safe: $0] })
+				self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
 			}
 		)
 	}
@@ -130,7 +129,6 @@ struct ThumbnailRendererView: View {
 								selectedItems: selectedIndices)
 		{ dataItem, state in
 			ZStack(alignment: .bottomTrailing) {
-				// TODO: Error handling
 				self.renderConfig.render(item: dataItem)
 					.environmentObject(self.context)
 

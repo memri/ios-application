@@ -58,7 +58,6 @@
 		5D487F242440772100B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
 		5D487F252440772D00B50202 /* list_item_component.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D487F232440772100B50202 /* list_item_component.json */; };
 		5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D487F262440776700B50202 /* ItemRendererTest.swift */; };
-		5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D493FDD23FC15FF0034692B /* RichTextRendererView.swift */; };
 		5D4B903D247BC0ED00EE50B4 /* ActionErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4B903C247BC0ED00EE50B4 /* ActionErrors.swift */; };
 		5D4C71E92445E07500DF09E8 /* persons_from_server.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D4C71E82445E07500DF09E8 /* persons_from_server.json */; };
 		5D4C71EA2445E07B00DF09E8 /* persons_from_server.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D4C71E82445E07500DF09E8 /* persons_from_server.json */; };
@@ -215,6 +214,7 @@
 		86FFD0C524A4CE42001BF14B /* Other.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FFD0C424A4CE42001BF14B /* Other.swift */; };
 		B809186524A4DFF400BD74D8 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B809186424A4DFF400BD74D8 /* Charts */; };
 		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
+		B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C05A024C183E100A3738D /* RichTextEditor.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */; };
@@ -226,6 +226,12 @@
 		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
 		B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */; };
 		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
+		B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */; };
+		B881BECA24BD3C8B0016DBF5 /* CalendarRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */; };
+		B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */; };
+		B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */; };
+		B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */; };
+		B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B881BED224BD4F4D0016DBF5 /* calendar.cvu */; };
 		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
@@ -238,6 +244,9 @@
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
 		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
 		B8ABA93024C420E80038509F /* DatabaseController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8ABA92F24C420E80038509F /* DatabaseController.swift */; };
+		B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */; };
+		B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8BF6F4B24BEA3E60058067C /* messages.cvu */; };
+		B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
 		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
@@ -331,7 +340,6 @@
 		5D487F21244073DF00B50202 /* UIElementView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElementView.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D487F232440772100B50202 /* list_item_component.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = list_item_component.json; sourceTree = "<group>"; };
 		5D487F262440776700B50202 /* ItemRendererTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ItemRendererTest.swift; path = memriTests/data/ItemRendererTest.swift; sourceTree = SOURCE_ROOT; };
-		5D493FDD23FC15FF0034692B /* RichTextRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextRendererView.swift; sourceTree = "<group>"; };
 		5D4B903C247BC0ED00EE50B4 /* ActionErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionErrors.swift; sourceTree = "<group>"; };
 		5D4C71E82445E07500DF09E8 /* persons_from_server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = persons_from_server.json; sourceTree = "<group>"; };
 		5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralEditorView.swift; sourceTree = "<group>"; wrapsLines = 0; };
@@ -481,6 +489,7 @@
 		B81237E824A43D7C003E8BCB /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
 		B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapboxMobileEvents.framework; sourceTree = "<group>"; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
+		B81C05A024C183E100A3738D /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
 		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -494,6 +503,12 @@
 		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
+		B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
+		B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarRenderer.swift; sourceTree = "<group>"; };
+		B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineModel.swift; sourceTree = "<group>"; };
+		B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineRenderer.swift; sourceTree = "<group>"; };
+		B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineItemView.swift; sourceTree = "<group>"; };
+		B881BED224BD4F4D0016DBF5 /* calendar.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = calendar.cvu; sourceTree = "<group>"; };
 		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
@@ -506,6 +521,9 @@
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		B8ABA92F24C420E80038509F /* DatabaseController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseController.swift; sourceTree = "<group>"; };
+		B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageRenderer.swift; sourceTree = "<group>"; };
+		B8BF6F4B24BEA3E60058067C /* messages.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = messages.cvu; sourceTree = "<group>"; };
+		B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualBottomBar.swift; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
 		B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapView-Mapbox.swift"; sourceTree = "<group>"; };
@@ -709,12 +727,14 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
+				B881BECB24BD4A930016DBF5 /* TimelineRenderer */,
+				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
 				8672C27B2497F35A006F0D42 /* CustomRenderer.swift */,
+				B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */,
 				B88AAB3424A1AEF80007C9EB /* GridRenderers */,
 				B88AAB3324A1AEEE0007C9EB /* MapRenderer */,
-				5D493FDD23FC15FF0034692B /* RichTextRendererView.swift */,
 				B88AAB2624A1AE8C0007C9EB /* ChartRenderer */,
 			);
 			path = renderers;
@@ -909,6 +929,7 @@
 			children = (
 				5D599BBE23F2B77500F218A0 /* Browser.swift */,
 				5DD1E9B223FD7E59007BDF7B /* TopNavigation.swift */,
+				B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */,
 				5DD1E9B423FD7EB1007BDF7B /* Search.swift */,
 				5D414AD7242B875F00A3DDFA /* FilterPanel.swift */,
 			);
@@ -1142,6 +1163,8 @@
 				5DAFB6142479524500719160 /* thumbnail.cvu */,
 				5DAFB6122479523B00719160 /* list.cvu */,
 				B8E0FBE324A4ADE3009C3C30 /* map.cvu */,
+				B881BED224BD4F4D0016DBF5 /* calendar.cvu */,
+				B8BF6F4B24BEA3E60058067C /* messages.cvu */,
 				86FFD0BD24A2398F001BF14B /* chart.cvu */,
 			);
 			path = renderer;
@@ -1162,6 +1185,7 @@
 				B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */,
 				B8627E2E24A9EAAA005A1A8F /* MemriFittedTextEditor.swift */,
 				B8627E2F24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift */,
+				B81C05A024C183E100A3738D /* RichTextEditor.swift */,
 			);
 			path = MemriTextEditor;
 			sourceTree = "<group>";
@@ -1191,6 +1215,25 @@
 				B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */,
 			);
 			path = MemriTextField;
+			sourceTree = "<group>";
+		};
+		B881BEC624BD3C700016DBF5 /* CalendarRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */,
+				B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */,
+			);
+			path = CalendarRenderer;
+			sourceTree = "<group>";
+		};
+		B881BECB24BD4A930016DBF5 /* TimelineRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */,
+				B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */,
+				B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */,
+			);
+			path = TimelineRenderer;
 			sourceTree = "<group>";
 		};
 		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
@@ -1412,6 +1455,7 @@
 			files = (
 				86FFD0BF24A23FEB001BF14B /* chart.cvu in Resources */,
 				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
+				B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */,
 				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
 				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
@@ -1447,6 +1491,7 @@
 				5DAFB6152479524500719160 /* thumbnail.cvu in Resources */,
 				B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
+				B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */,
 				5DAFB6382479533000719160 /* sessions.cvu in Resources */,
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */,
@@ -1568,6 +1613,7 @@
 				C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */,
 				868EF63724766A8800C0375F /* ExprLexer.swift in Sources */,
 				B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */,
+				B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */,
 				5D4C71ED2445E44B00DF09E8 /* GeneralEditorView.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
@@ -1589,6 +1635,7 @@
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* api.swift in Sources */,
+				B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */,
 				5D4320E8247E79890052B224 /* HorizonalLine.swift in Sources */,
 				B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */,
 				5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */,
@@ -1626,6 +1673,7 @@
 				863CDB712441E69F000D7AC0 /* File.swift in Sources */,
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
 				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
+				B881BECA24BD3C8B0016DBF5 /* CalendarRenderer.swift in Sources */,
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */,
 				B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */,
@@ -1644,6 +1692,7 @@
 				86CDB46C24698DB7007EAE67 /* NSAttributedString.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
 				868EF63424766A8800C0375F /* ExprParser.swift in Sources */,
+				B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */,
 				86865D38244996AA0010271A /* FlowStack.swift in Sources */,
 				8690AF062472D90D00FC49F4 /* date.swift in Sources */,
 				B8627E3C24A9EAAA005A1A8F /* MemriTextEditor_UIKit.swift in Sources */,
@@ -1653,16 +1702,19 @@
 				867527BA24B76F5B002B5006 /* CachePubSub.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
-				5D493FDE23FC15FF0034692B /* RichTextRendererView.swift in Sources */,
 				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
+				B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,
 				5D90464F243616B000632492 /* color.swift in Sources */,
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
+				B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */,
 				B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* ThumbnailRendererView.swift in Sources */,
 				5DB8EC0424598FA30028FD2E /* CascadableView.swift in Sources */,
+				B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */,
+				5DB8EC0424598FA30028FD2E /* CascadingView.swift in Sources */,
 				5D3D9621241675100004040E /* util.swift in Sources */,
 				B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */,
 				B89A268324A70358009119E4 /* MapView.swift in Sources */,
@@ -1680,6 +1732,7 @@
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
 				B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
+				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
 				5DE95A6A241BC954003ABA63 /* DecodableDict.swift in Sources */,

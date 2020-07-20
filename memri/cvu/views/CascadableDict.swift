@@ -56,6 +56,7 @@ public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable 
         super.init(CVUParsedObjectDefinition(head), tail, host)
     }
     
+    #warning("This is wrong. Head should almost never be set. Check all uses")
     public init(_ head: CascadableDict?, _ tail: CascadableDict? = nil) {
         var combinedTail = head?.tail
         combinedTail?.append(contentsOf: tail?.cascadeStack ?? [])

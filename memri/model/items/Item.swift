@@ -145,9 +145,6 @@ public class Item: SchemaItem {
 	/// - Parameter propName: name of the property
 	/// - Returns: boolean indicating whether Item has the property
 	public func hasProperty(_ propName: String) -> Bool {
-		if propName == "self" {
-			return true
-		}
 		for prop in objectSchema.properties {
 			if prop.name == propName { return true }
 			if let haystack = self[prop.name] as? String {
@@ -164,9 +161,7 @@ public class Item: SchemaItem {
 	/// - Parameters:
 	///   - name: property name
 	public func get<T>(_ name: String, type _: T.Type = T.self) -> T? {
-		if name == "self" {
-			return self as? T
-		} else if objectSchema[name] != nil {
+		if objectSchema[name] != nil {
 			return self[name] as? T
 		} else if let edge = edge(name) {
 			return edge.target() as? T
@@ -202,6 +197,7 @@ public class Item: SchemaItem {
                     _ = try self.link(obj, type: name)
                 }
             }
+			self.dateModified = Date() // Update DateModified
 		}
 	}
 

@@ -354,7 +354,7 @@ public enum RenderType: String {
 }
 
 public enum ActionFamily: String, CaseIterable {
-	case back, addItem, openView, openDynamicView, openViewByName, toggleEditMode, toggleFilterPanel,
+	case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode, toggleFilterPanel,
 		star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
@@ -367,6 +367,7 @@ public enum ActionFamily: String, CaseIterable {
 		case .back: return ActionBack.self
 		case .addItem: return ActionAddItem.self
 		case .openView: return ActionOpenView.self
+		case .openGroup: return ActionOpenViewWithUIDs.self
 		case .openViewByName: return ActionOpenViewByName.self
 		case .toggleEditMode: return ActionToggleEditMode.self
 		case .toggleFilterPanel: return ActionToggleFilterPanel.self
@@ -587,6 +588,67 @@ class ActionOpenViewByName: Action, ActionExec {
 		execWithoutThrow { try ActionOpenViewByName(context).exec(arguments) }
 	}
 }
+
+class ActionOpenViewWithUIDs: Action, ActionExec {
+	override var defaultValues: [String: Any?] { [
+		"argumentTypes": ["view": CVUStateDefinition.self, "viewArguments": ViewArguments.self],
+		"withAnimation": false,
+		"opensView": true,
+	] }
+	
+	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+		super.init(context, "openView", arguments: arguments, values: values)
+	}
+	
+	func openView(_ context: MemriContext, view: CVUStateDefinition, with arguments: ViewArguments? = nil) throws {
+		if let session = context.currentSession {
+            // Add view to session
+            try session.setCurrentView(view, arguments)
+		} else {
+			// TODO: Error Handling
+            debugHistory.error("No session is active on context")
+		}
+	}
+	
+	private func openView(_ context: MemriContext, itemType: String, _ uids: [Int], with arguments: ViewArguments? = nil) throws {
+        guard !uids.isEmpty else { throw "No UIDs specified" }
+        
+        let arrayString = "{\(uids.map { String($0) }.joined(separator: ","))}"
+
+        // Create a new view
+        let view = try Cache.createItem(CVUStateDefinition.self, values: [
+            "type": "view",
+            "selector": "[view]",
+            "definition": """
+                [view] {
+                    [datasource = pod] {
+                        query: "\(itemType) AND uid IN \(arrayString)"
+                    }
+                }
+            """
+        ])
+
+        // Open the view
+        try openView(context, view: view, with: arguments)
+	}
+	
+	func exec(_ arguments: [String: Any?]) throws {
+		//        let selection = context.cascadingView.userState.get("selection") as? [Item]
+		guard
+            let uids = arguments["uids"] as? [Int],
+            let itemType = arguments["itemType"] as? String
+		else { return }
+        
+		let viewArguments = arguments["viewArguments"] as? ViewArguments
+		
+		try? openView(context, itemType: itemType, uids, with: viewArguments)
+	}
+	
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+		execWithoutThrow { try ActionOpenView(context).exec(arguments) }
+	}
+}
+
 
 class ActionToggleEditMode: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
@@ -989,7 +1051,7 @@ class ActionDelete: Action, ActionExec {
 
         if
             let selection = context.currentView?.userState.get("selection", type: [Item].self),
-            selection.count > 0
+            !selection.isEmpty
         {
 			context.cache.delete(selection)
 			context.scheduleCascadableViewUpdate(immediate: true)

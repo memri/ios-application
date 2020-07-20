@@ -200,4 +200,25 @@ Note[] {
             }
         }
     }
+	
+	[renderer = calendar.timeline] {
+		dateTime: {{.dateModified}}
+
+		TimelineItem {
+			icon: "square.and.pencil"
+			title: {{.title or "Untitled Note"}}
+			text: {{.content.plainString}}
+		}
+	}
+	
+	[renderer = messages] {
+		sort: dateModified
+		
+		MessageBubble {
+			sender: {{.title}}
+			content: {{.content.plainString}}
+			dateTime: {{.dateModified}}
+			isOutgoing: {{.title = "To read list"}} /* This is just a demo until we have a Message type in the schema... */
+		}
+	}
 }

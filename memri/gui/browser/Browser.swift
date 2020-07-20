@@ -28,10 +28,12 @@ struct Browser: View {
                         TopNavigation()
                             .background(Color(.systemBackground))
                     }
-                    
+        
                     activeRenderer
                         .fullHeight().layoutPriority(1)
-                    
+        
+                    ContextualBottomBar()
+        
                     if currentView.showSearchbar && !currentView.fullscreen {
                         Search()
                         if self.context.currentSession?.showFilterPanel ?? false {

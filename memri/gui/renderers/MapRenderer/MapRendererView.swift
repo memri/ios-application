@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import RealmSwift
 
 let registerMapRenderer = {
 	Renderers.register(
@@ -33,20 +34,20 @@ class CascadingMapConfig: CascadingRenderConfig {
         set (value) { setState("press", value) }
     }
 
-	var locationKey: String {
-        get { cascadeProperty("locationKey") ?? "coordinate" }
-        set (value) { setState("locationKey", value) }
+	var location: Expression? {
+        get { cascadeProperty("location", type: Expression.self) }
+        set (value) { setState("location", value) }
     }
-	var addressKey: String {
-        get { cascadeProperty("addressKey") ?? "address" }
-        set (value) { setState("addressKey", value) }
+	var address: Expression? {
+        get { cascadeProperty("address", type: Expression.self) }
+        set (value) { setState("address", value) }
     }
-	var labelKey: String {
-        get { cascadeProperty("labelKey") ?? "name" } // Ideally we can actually hold an expression here to be resolved against each data item
-        set (value) { setState("labelKey", value) }
+	var label: Expression? {
+        get { cascadeProperty("label", type: Expression.self) }
+        set (value) { setState("label", value) }
     }
-    
-    var mapStyle: MapStyle {
+
+	var mapStyle: MapStyle {
         get { MapStyle(fromString: cascadeProperty("mapStyle")) }
         set (value) { setState("mapStyle", value) }
     }
@@ -60,16 +61,38 @@ struct MapRendererView: View {
 	var renderConfig: CascadingMapConfig {
 		(context.currentView?.renderConfig as? CascadingMapConfig) ?? CascadingMapConfig()
 	}
+	
+	func resolveExpression<T>(
+        _ expression: Expression?,
+		toType _: T.Type = T.self,
+		forItem dataItem: Item
+    ) -> T? {
+		let args = ViewArguments(context.currentView?.viewArguments)
+        args.set(".", dataItem)
+		return try? expression?.execForReturnType(T.self, args: args)
+	}
 
-	var useMapBox: Bool { context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false }
+	var useMapBox: Bool {
+        context.settings.get("/user/general/gui/useMapBox", type: Bool.self) ?? false
+    }
 
 	var body: some View {
-		let config = MapViewConfig(dataItems: context.items,
-								   locationKey: renderConfig.locationKey,
-								   addressKey: renderConfig.addressKey,
-								   labelKey: renderConfig.labelKey,
-								   mapStyle: renderConfig.mapStyle,
-								   onPress: self.onPress)
+		let config = MapViewConfig(
+            dataItems: context.items,
+            locationResolver: {
+                self.resolveExpression(self.renderConfig.location, forItem: $0)
+            },
+            addressResolver: {
+                let addr = self.renderConfig.address
+                return self.resolveExpression(addr, toType: Results<Item>.self, forItem: $0)
+                    ?? self.resolveExpression(addr, toType: Address.self, forItem: $0)
+            },
+            labelResolver: {
+                self.resolveExpression(self.renderConfig.label, forItem: $0)
+            },
+            mapStyle: renderConfig.mapStyle,
+            onPress: self.onPress
+        )
 
 		return MapView(useMapBox: useMapBox, config: config)
 			.background(Color(.secondarySystemBackground))

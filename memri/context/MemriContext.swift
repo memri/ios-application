@@ -198,6 +198,11 @@ public class MemriContext: ObservableObject, Subscriptable {
 		get { self["showNavigation"] as? Bool == true }
 		set(value) { self["showNavigation"] = value }
 	}
+	
+	public func setSelection(_ selection: [Item]) {
+		currentView?.userState.set("selection", selection)
+		scheduleUIUpdate()
+	}
 
 	init(
 		name: String,

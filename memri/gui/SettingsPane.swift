@@ -75,7 +75,7 @@ struct SettingsPane: View {
                 }) {
 					Text("Pod Connection")
 				}
-
+				
 				NavigationLink(destination: Form {
 					Section(
 						header: Text("User Interface"),
