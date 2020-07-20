@@ -64,7 +64,7 @@ public final class Sessions : ObservableObject, Equatable {
             .throttle(for: .milliseconds(300), scheduler: RunLoop.main, latest: true)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
-                realmWriteAsync { _ in
+                DatabaseController.writeAsync { _ in
                     try self?.persist()
                 }
             }

@@ -6,6 +6,7 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
 public class CascadableContextPane: Cascadable {
     var buttons: [Action] {
@@ -29,12 +30,50 @@ public class CascadableContextPane: Cascadable {
 }
 
 public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable {
+    class ItemReference {
+        let uid:Int
+        let type:Item.Type
+        
+        init (to: Item) {
+            uid = to.uid.value ?? -1
+            type = to.getType() ?? Item.self
+        }
+        
+        func resolve() -> Item? {
+            DatabaseController.read { $0.object(ofType: type, forPrimaryKey: uid) }
+        }
+    }
+    
     func get<T>(_ name:String, type:T.Type = T.self) -> T? {
-        cascadeProperty(name)
+        let value = cascadeProperty(name, type: Any.self)
+        
+        if let itemRef = value as? ItemReference {
+            return itemRef.resolve() as? T
+        }
+        else if let list = value as? [ItemReference?] {
+            return list.map { ref -> Item? in
+                guard let ref = ref else { return nil }
+                return ref.resolve()
+            } as? T
+        }
+        // Dicts are not support atm
+        
+        return value as? T
     }
     
     func set(_ name:String, _ value:Any?) {
-        setState(name, value)
+        if let item = value as? Item {
+            setState(name, ItemReference(to: item))
+        }
+        else if let list = value as? [Item?] {
+            setState(name, list.map { item -> ItemReference? in
+                guard let item = item else { return nil }
+                return ItemReference(to: item)
+            })
+        }
+        else {
+            setState(name, value)
+        }
     }
     
     subscript(name: String) -> Any? {

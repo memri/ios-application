@@ -126,7 +126,7 @@ class CVUSerializer {
 		var str = [String]()
 		for key in keys {
 			if key == "children" || key == "rendererDefinitions" || key == "datasourceDefinition"
-				|| key == "sessionDefinitions" || key == "viewDefinitions" {
+				|| key == "sessionDefinitions" || key == "viewDefinitions" || key == "." {
 				continue
 			} else if key == "cornerborder" {
 				if var value = dict[key] as? [Any] {
@@ -154,7 +154,7 @@ class CVUSerializer {
                         str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
                             + "\(key): \(valueToString(p, depth, tab))")
                     } else if let value = value {
-                        str.append("\(key): \(valueToString(value, depth - 1, tab))")
+                        str.append("\(key): \(valueToString(value, depth, tab))")
                     }
                 }
 			}

@@ -277,6 +277,11 @@ class CVUParser {
 				}
 			case .BracketClose:
 				if isArrayMode {
+                    // Set value as an empty array if it has no elements
+                    if stack.count == 0 {
+                        stack.append([Any?]())
+                    }
+                    
 					setPropertyValue()
 					isArrayMode = false
 					lastKey = nil
@@ -284,7 +289,11 @@ class CVUParser {
 					throw CVUParseErrors.UnexpectedToken(lastToken!) // We should never get here
 				}
 			case .CurlyBracketOpen:
-				stack.append(try parseDict(lastKey!))
+                guard let lastKey = lastKey else {
+                    throw CVUParseErrors.ExpectedIdentifier(lastToken!)
+                }
+                
+				stack.append(try parseDict(lastKey))
 			case .CurlyBracketClose:
 				setPropertyValue()
 				if forUIElement { processCompoundProperties(&dict) }

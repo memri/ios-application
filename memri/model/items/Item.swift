@@ -29,9 +29,11 @@ public class Item: SchemaItem {
 	override public var description: String {
 		var str = "\(genericType) \(realm == nil ? "[UNMANAGED] " : ""){\n"
 			+ "    uid: \(uid.value == nil ? "nil" : String(uid.value ?? 0))\n"
+            + "    _updated: \(_updated.count == 0 ? "[]" : "[\(_updated.joined(separator: ", "))]")\n"
 			+ "    " + objectSchema.properties
 			.filter {
 				self[$0.name] != nil && $0.name != "allEdges" && $0.name != "uid"
+                    && $0.name != "_updated"
 			}
 			.map { "\($0.name): \(CVUSerializer.valueToString(self[$0.name]))" }
 			.joined(separator: "\n    ")
