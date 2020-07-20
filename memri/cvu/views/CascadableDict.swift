@@ -24,7 +24,9 @@ public class CascadableDict: Cascadable, CustomStringConvertible, Subscriptable 
     }
     
     func get<T>(_ name:String, type:T.Type = T.self) -> T? {
-        let value = cascadeProperty(name, type: Any.self)
+        guard let value = cascadeProperty(name, type: Any?.self) else {
+            return nil
+        }
         
         if let itemRef = value as? ItemReference {
             return itemRef.resolve() as? T

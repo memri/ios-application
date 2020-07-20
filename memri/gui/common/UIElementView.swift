@@ -241,9 +241,8 @@ public struct UIElementView: SwiftUI.View {
 						SubView(
 							context: self.context,
 							view: {
-								// TODO: create view form the parsed definition
-								// Find out why datasource is not parsed
-
+                                #warning("This is creating a new CVU at every redraw. Instead architect this to only create the CVU once and have that one reload")
+                                
 								if let parsed: [String: Any?] = get("view") {
                                     let def = CVUParsedViewDefinition("[view]", type: "view", parsed: parsed)
 									do {

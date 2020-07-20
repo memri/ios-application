@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 
-// TODO: Refactor: optimize this for performance
 public struct SubView: View {
 	@EnvironmentObject var context: MemriContext
 

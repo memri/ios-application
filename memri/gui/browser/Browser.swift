@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  Browser.swift
 //  memri
 //
 //  Copyright © 2020 memri. All rights reserved.
