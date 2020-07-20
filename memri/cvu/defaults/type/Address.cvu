@@ -34,7 +34,7 @@ Address[] {
     }
     
     [renderer = map] {
-		address: {{.self}}
+		address: {{.}}
 		label: "{.computedTitle()}"
     }
     

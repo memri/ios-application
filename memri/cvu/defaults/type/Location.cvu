@@ -1,0 +1,39 @@
+[session = all-locations] {
+    [view] {
+        title: "All Locations"
+        [datasource = pod] {
+            query: "Location"
+        }
+    }
+}
+
+Location[] {
+    name: all-locations
+    defaultRenderer: list
+    filterButtons: showStarred toggleFilterPanel
+    
+    editActionButton: toggleEditMode
+    
+    [renderer = list] {
+        HStack {
+            Spacer
+            Map {
+                location: {{.}}
+                minHeight: 50
+                maxHeight: 50
+            }
+        }
+    }
+    
+    [renderer = map] {
+        location: {{.}}
+        
+        radius: {{.influence}}
+        
+        line: {
+            color: #ff0000
+            sortProperty: {{.dateCreated}}
+            maxTimeApart: 15
+        }
+    }
+}

@@ -112,6 +112,7 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
             "latitude": location.coordinate.latitude,
             "longitude": location.coordinate.longitude
         ])
+        #warning("Force the UI to update when location is shown somehow")
     }
     
     //
