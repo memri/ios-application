@@ -11,29 +11,74 @@ import RealmSwift
 
 class DatabaseController {
 	private init() {}
-	private static var realmConfig: Realm.Configuration = .defaultConfiguration
 	
+	static var realmTesting = false
+	
+	private static var realmConfig: Realm.Configuration {
+		Realm.Configuration(
+			fileURL: try! getRealmURL(),
+			// Set the new schema version. This must be greater than the previously used
+			// version (if you've never set a schema version before, the version is 0).
+			schemaVersion: 101,
+			
+			// Set the block which will be called automatically when opening a Realm with
+			// a schema version lower than the one set above
+			migrationBlock: { _, oldSchemaVersion in
+				// We haven’t migrated anything yet, so oldSchemaVersion == 0
+				if oldSchemaVersion < 2 {
+					// Nothing to do!
+					// Realm will automatically detect new properties and removed properties
+					// And will update the schema on disk automatically
+				}
+		}
+		)
+	}
+	
+	/// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
+	/// - Returns: the computed database file path
+	static func getRealmURL() throws -> URL {
+		#if targetEnvironment(simulator)
+		if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
+			var realmDir = homeDir + "/realm.memri"
+			
+			if realmTesting {
+				realmDir += ".testing"
+			}
+			
+			do {
+				try FileManager.default.createDirectory(atPath:
+					realmDir, withIntermediateDirectories: true, attributes: nil)
+			} catch {
+				print(error)
+			}
+			
+			let realmURL = URL(fileURLWithPath: realmDir + "/memri.realm")
+			return realmURL
+		} else {
+			throw "Could not get realm url"
+		}
+		#else
+		return nil
+		#endif
+	}
 	
 	/// This function returns a Realm for the current thread
 	static func getRealm() -> Realm {
-		guard !isOnRealmQueue else { return queueConfinedRealm } // If someone trys to write to realm while we're already in the realm queue this would lock the thread. Hence this check
-		return try! Realm(configuration: realmConfig, queue: nil)
+		return try! Realm(configuration: realmConfig)
 	}
 	
 	private static var realmQueue: DispatchQueue =  {
 		let queue = DispatchQueue(label: "memri.realmQueue", qos: .utility)
-		queue.setSpecific(key: realmQueueSpecificKey, value: true)
 		return queue
 	}()
-	static let realmQueueSpecificKey = DispatchSpecificKey<Bool>()
+//	static let realmQueueSpecificKey = DispatchSpecificKey<Bool>()
 	/// This is used internally to get a queue-confined instance of Realm
 //	private static func getQueueConfinedRealm() -> Realm {
 //		try! Realm(configuration: realmConfig, queue: realmQueue)
 //	}
-	static let queueConfinedRealm = try! Realm(configuration: realmConfig, queue: realmQueue)
-	static var isOnRealmQueue: Bool {
-		DispatchQueue.getSpecific(key: realmQueueSpecificKey) ?? false
-	}
+//	static var isOnRealmQueue: Bool {
+//		DispatchQueue.getSpecific(key: realmQueueSpecificKey) ?? false
+//	}
 	
 	static func tryRead(_ doRead: ((Realm) throws -> Void) ) throws {
 		let realm = getRealm()
@@ -65,6 +110,7 @@ class DatabaseController {
 		}
 	}
 	
+	/// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
 	static func tryWriteSync(_ doWrite: ((Realm) throws -> Void) ) throws {
 		let realm = getRealm()
 		guard !realm.isInWriteTransaction else {
@@ -76,6 +122,7 @@ class DatabaseController {
 		}
 	}
 	
+	/// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
 	static func tryWriteSync<T>(_ doWrite: ((Realm) throws -> T?) ) throws -> T? {
 		let realm = getRealm()
 		guard !realm.isInWriteTransaction else {
@@ -87,6 +134,7 @@ class DatabaseController {
 		return nil
 	}
 	
+	/// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
 	static func writeSync(_ doWrite: ((Realm) throws -> Void) ) {
 		do {
 			try tryWriteSync(doWrite)
@@ -96,6 +144,7 @@ class DatabaseController {
 		}
 	}
 	
+	/// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
 	static func writeSync<T>(_ doWrite: ((Realm) throws -> T?)) -> T? {
 		do {
 			return try tryWriteSync(doWrite)
@@ -106,40 +155,46 @@ class DatabaseController {
 		}
 	}
 	
+	/// Use this for writing to Realm in the background. It will run on a background thread.
 	static func writeAsync(_ doWrite: (@escaping (Realm) throws -> Void) ) {
 		realmQueue.async {
-			do {
-				let realm = queueConfinedRealm
-				guard !realm.isInWriteTransaction else {
-					try doWrite(realm)
-					return
+			autoreleasepool {
+				do {
+					let realm = getRealm()
+					guard !realm.isInWriteTransaction else {
+						try doWrite(realm)
+						return
+					}
+					try realm.write {
+						try doWrite(realm)
+					}
 				}
-				try realm.write {
-					try doWrite(realm)
+				catch {
+					debugHistory.error("Realm Error: \(error)")
 				}
-			}
-			catch {
-				debugHistory.error("Realm Error: \(error)")
 			}
 		}
 	}
 	
+	/// Use this for writing to Realm in the background. It will run on a background thread.
 	static func writeAsync<T>(withResolvedReferenceTo objectReference: ThreadSafeReference<T>, _ doWrite: @escaping (Realm, T) throws -> Void) {
 		realmQueue.async {
-			do {
-				let realm = queueConfinedRealm
-				guard let threadSafeObject = realm.resolve(objectReference) else { return }
-				
-				guard !realm.isInWriteTransaction else {
-					try doWrite(realm, threadSafeObject)
-					return
+			autoreleasepool {
+				do {
+					let realm = getRealm()
+					guard let threadSafeObject = realm.resolve(objectReference) else { return }
+					
+					guard !realm.isInWriteTransaction else {
+						try doWrite(realm, threadSafeObject)
+						return
+					}
+					
+					try realm.write {
+						try doWrite(realm, threadSafeObject)
+					}
+				} catch {
+					debugHistory.error("Realm Error: \(error)")
 				}
-				
-				try realm.write {
-					try doWrite(realm, threadSafeObject)
-				}
-			} catch {
-				debugHistory.error("Realm Error: \(error)")
 			}
 		}
 	}

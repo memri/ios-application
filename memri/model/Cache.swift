@@ -10,48 +10,8 @@ import Combine
 import Foundation
 import RealmSwift
 
-var realmTesting = false
 var cacheUIDCounter:Int = -1
 
-var config = Realm.Configuration(
-	// Set the new schema version. This must be greater than the previously used
-	// version (if you've never set a schema version before, the version is 0).
-	schemaVersion: 101,
-
-	// Set the block which will be called automatically when opening a Realm with
-	// a schema version lower than the one set above
-	migrationBlock: { _, oldSchemaVersion in
-		// We haven’t migrated anything yet, so oldSchemaVersion == 0
-		if oldSchemaVersion < 2 {
-			// Nothing to do!
-			// Realm will automatically detect new properties and removed properties
-			// And will update the schema on disk automatically
-		}
-	}
-)
-
-/// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
-/// - Returns: the computed database file path
-func getRealmPath() throws -> String {
-	if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
-		var realmDir = homeDir + "/realm.memri"
-
-		if realmTesting {
-			realmDir += ".testing"
-		}
-
-		do {
-			try FileManager.default.createDirectory(atPath:
-				realmDir, withIntermediateDirectories: true, attributes: nil)
-		} catch {
-			print(error)
-		}
-
-		return realmDir + "/memri.realm"
-	} else {
-		throw "Could not get realm path"
-	}
-}
 
 public class Cache {
 	/// PodAPI object
@@ -69,20 +29,6 @@ public class Cache {
 	/// Starts the local realm database, which is created if it does not exist, sets the api and initializes the sync from them.
 	/// - Parameter api: api object
 	public init(_ api: PodAPI) throws {
-		// Tell Realm to use this new configuration object for the default Realm
-		#if targetEnvironment(simulator)
-			do {
-				config.fileURL = URL(fileURLWithPath: try getRealmPath())
-			} catch {
-				// TODO: Error handling
-				print("\(error)")
-			}
-		#endif
-
-		Realm.Configuration.defaultConfiguration = config
-
-		debugHistory.info("Starting realm at \(Realm.Configuration.defaultConfiguration.fileURL?.description ?? "")")
-
 		podAPI = api
 
 		// Create scheduler objects

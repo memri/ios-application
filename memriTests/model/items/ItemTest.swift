@@ -77,7 +77,7 @@ class ItemTest: XCTestCase {
 	func testToggle() throws {
 		let item = Item()
 		XCTAssertEqual(item.starred, false)
-		item.toggle("starred")
+		try item.toggle("starred")
 		XCTAssertEqual(item.starred, true)
 	}
 
@@ -265,8 +265,7 @@ class ItemTest: XCTestCase {
 		)
 		let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
-		let realm = try Realm()
-		realmWrite(realm) {
+		DatabaseController.writeSync { realm in
 			for item in items {
 				realm.add(item, update: .modified)
 			}
