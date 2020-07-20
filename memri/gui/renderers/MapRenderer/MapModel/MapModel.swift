@@ -81,25 +81,7 @@ class MapModel {
 			return [location]
 		}
         
-//        var locations: [Location]
-//        let locationExpressionResult = locationResolver?(dataItem)
-//        if let locationList = locationExpressionResult as? Results<Item> {
-//            locations = Array(locationList.compactMap { $0 as? Location })
-//        } else if let location = locationExpressionResult as? Location {
-//            locations = [location]
-//        } else {
-//            return []
-//        }
-//        if !locations.isEmpty {
-//            return locations.map {
-//                CLLocation(
-//                    latitude: $0.latitude.value ?? 0,
-//                    longitude: $0.longitude.value ?? 0
-//                )
-//            }
-//        }
-        
-        #warning("@Toby A list of locations is not yet implemented. Note that the location implementation above was wrong and is also faulty for MapBOx")
+        #warning("@Toby Note that the location implementation above was wrong and is also faulty for MapBOx")
 		
 		let addresses: [Address]
 		let addressExpressionResult = addressResolver?(dataItem)
