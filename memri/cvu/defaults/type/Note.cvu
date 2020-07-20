@@ -72,9 +72,11 @@ Note {
                     }
                 }
             }
-            openViewByName {
+            openSessionByName {
                 title: "All notes"
-                name: "all-notes"
+                arguments: {
+                    name: "all-notes"
+                }
             }
         ]
     }

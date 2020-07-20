@@ -35,7 +35,7 @@ struct ContextPaneForeground: View {
 							.padding(.horizontal, paddingLeft)
 
 						HStack {
-							ForEach(context.currentView?.contextButtons ?? [], id: \.self) { actionItem in
+                            ForEach(context.currentView?.contextPane.buttons ?? [], id: \.self) { actionItem in
 								ActionButton(action: actionItem)
 							}
 						}
@@ -62,7 +62,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.currentView?.actionItems ?? [], id: \.self) { actionItem in
+                        ForEach(context.currentView?.contextPane.actions ?? [], id: \.self) { actionItem in
 							Button(action: {
 								context.executeAction(actionItem)
                     }) {
@@ -87,7 +87,7 @@ struct ContextPaneForeground: View {
 					.padding(.top, 15)
 					.padding(.bottom, 10)
 					VStack(alignment: .leading, spacing: 0) {
-						ForEach(context.currentView?.navigateItems ?? [], id: \.self) { navigateItem in
+                        ForEach(context.currentView?.contextPane.navigate ?? [], id: \.self) { navigateItem in
 							Button(action: {
 								context.executeAction(navigateItem)
                     }) {

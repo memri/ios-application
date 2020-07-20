@@ -20,10 +20,8 @@ struct ContextPane: View {
 	var isVisible: Bool {
 		get { context.currentSession?.showContextPane ?? false }
 		nonmutating set {
-			DatabaseController.writeSync { _ in
-				self.context.currentSession?.showContextPane = newValue
-				self.context.scheduleUIUpdate(immediate: true)
-			}
+            self.context.currentSession?.showContextPane = newValue
+            self.context.scheduleUIUpdate(immediate: true)
 		}
 	}
 
