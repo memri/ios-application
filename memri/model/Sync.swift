@@ -176,7 +176,6 @@ class Sync {
 
 	/// Schedule a syncing round
 	/// - Remark: currently calls mock code
-	/// - TODO: implement syncToPod()
 	public func schedule(long: Bool = false) {
 		// Don't schedule when we are already scheduled
 		if scheduled == 0 || !long && scheduled == 2 {
@@ -195,13 +194,16 @@ class Sync {
 				self.scheduled = 0
 
 				// Start syncing local data to the pod
+                self.syncing = true
 				self.syncToPod()
 			}
 		}
 	}
 
 	public func syncToPod() {
-		func markAsDone(_ list: [String: Any]) {
+        func markAsDone(_ list: [String: Any], _ callback:@escaping () -> Void) {
+            debugHistory.info("Syncing complete")
+            
 			DatabaseController.writeAsync { realm in
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
@@ -213,7 +215,7 @@ class Sync {
 								realm.delete(resolvedItem)
 							}
 							else {
-								resolvedItem._action = ""
+								resolvedItem._action = nil
 								resolvedItem._updated.removeAll()
 							}
 						} else if
@@ -224,18 +226,17 @@ class Sync {
 								realm.delete(resolvedItem)
 							}
 							else {
-								resolvedItem._action = ""
+								resolvedItem._action = nil
 								resolvedItem._updated.removeAll()
 							}
 						}
 					}
 				}
+                
+                callback()
 			}
 		}
 		
-		guard !self.syncing else { return }
-		self.syncing = true
-        
         DatabaseController.read { realm in
             var found = 0
             var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
@@ -284,24 +285,26 @@ class Sync {
                         updateEdges: edgeQueue["update"],
                         deleteEdges: edgeQueue["delete"]
                     ) { (error) -> Void in
-                        self.syncing = false
-                        
                         if let error = error {
                             debugHistory.error("Could not sync to pod: \(error)")
+                            self.syncing = false
                             self.schedule(long: true)
                         }
                         else {
                             #warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
-                            markAsDone(safeItemQueue)
-                            markAsDone(safeEdgeQueue)
-                            
-                            self.schedule()
+                            markAsDone(safeItemQueue) {
+                                markAsDone(safeEdgeQueue) {
+                                    self.syncing = false
+                                    self.schedule()
+                                }
+                            }
                         }
                     }
                 } catch {
                     debugHistory.error("Could not sync to pod: \(error)")
                 }
             } else {
+                self.syncing = false
                 self.schedule(long: true)
             }
         }
