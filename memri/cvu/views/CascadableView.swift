@@ -126,7 +126,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         cascadeContext("contextPane", "contextPane", CVUParsedObjectDefinition.self)
     }
 
-    // Use cascadeDict here??
     var userState: CascadableDict {
         get {
             cascadeContext("userState", "userState", CVUParsedObjectDefinition.self)
@@ -136,8 +135,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-    // TODO: let this cascade when the use case for it arrises
-    // Use cascadeDict here??
     override var viewArguments: CascadableDict? {
         get {
             cascadeContext("viewArguments", "viewArguments", CVUParsedObjectDefinition.self)
@@ -417,7 +414,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-	public func cascade() throws {
+    public func cascade() throws {
         // Reset properties
 		tail = [CVUParsedDefinition]()
         localCache = [:]
@@ -440,7 +437,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 		guard let type = resultSet.determinedType else {
 			throw "Exception: ResultSet does not know the type of its data"
 		}
-
+        
 		var needles: [String]
 		if type != "mixed" {
 			// Determine query

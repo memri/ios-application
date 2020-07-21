@@ -246,15 +246,10 @@ public class Cache {
 			return resultSet
 		} else {
 			// Create new result set
-			let resultSet = ResultSet(self)
+			let resultSet = ResultSet(self, datasource)
 
 			// Store resultset in the lookup table
 			queryIndex[key] = resultSet
-
-			// Make sure the new resultset has the right query properties
-			resultSet.datasource.query = datasource.query
-			resultSet.datasource.sortProperty = datasource.sortProperty
-			resultSet.datasource.sortAscending = datasource.sortAscending
 
 			// Make sure the UI updates when the resultset updates
 			cancellables.append(resultSet.objectWillChange.sink { _ in

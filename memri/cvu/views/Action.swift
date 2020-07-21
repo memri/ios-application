@@ -10,8 +10,10 @@ import SwiftUI
 import Combine
 
 extension MemriContext {
-	private func getItem(_ dict: [String: Any?], _ dataItem: Item?,
+	private func getItem(_ dict: [String: Any?],
+                         _ dataItem: Item?,
 						 _ viewArguments: ViewArguments? = nil) throws -> Item {
+        
 		// TODO: refactor: move to function
 		guard let stringType = dict["_type"] as? String else {
 			throw "Missing type attribute to indicate the type of the data item"
@@ -43,18 +45,18 @@ extension MemriContext {
 		return item
 	}
 
-	private func buildArguments(_ action: Action, _ item: Item?,
-								_ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
+	func buildArguments(_ action: Action,
+                        _ item: Item?,
+                        _ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
-        let viewArgs = ViewArguments(viewArguments ?? currentView?.viewArguments)
-        try viewArgs.resolve(item)
-        viewArgs.set(".", item)
+        let viewArgs = try ViewArguments(currentView?.viewArguments)
+            .merge(viewArguments)
+            .resolve(item)
         
         var args = [String: Any?]()
 		for (argName, inputValue) in action.arguments {
 			var argValue: Any?
 
-			// preprocess arg
 			if let expr = inputValue as? Expression {
 				argValue = try expr.execute(viewArgs)
 			} else {
@@ -63,7 +65,6 @@ extension MemriContext {
 
 			var finalValue: Any? = ""
 
-			// TODO: add cases for argValue = Item, ViewArgument
 			if let dataItem = argValue as? Item {
 				finalValue = dataItem
 			} else if var dict = argValue as? [String: Any?] {
@@ -93,8 +94,12 @@ extension MemriContext {
 				}
             } else if action.argumentTypes[argName] == ViewArguments.self {
                 if let viewArgs = argValue as? ViewArguments {
-                    finalValue = ViewArguments(viewArgs)
-                    try (finalValue as? ViewArguments)?.resolve(item)
+                    // We explicitly don't copy here. The caller is responsible for uniqueness
+                    finalValue = try viewArgs.resolve(item)
+                }
+                else if let parsedDef = argValue as? CVUParsedDefinition {
+                    #warning("This seems to not set the head properly")
+                    finalValue = try ViewArguments(parsedDef).resolve(item)
                 }
                 else {
                     throw "Exception: Could not parse \(argName)"
@@ -111,7 +116,6 @@ extension MemriContext {
 				finalValue = argValue ?? []
 			} else if action.argumentTypes[argName] == AnyObject.self {
 				finalValue = argValue ?? nil
-			// TODO: are nil values allowed?
             } else if argValue == nil {
 				finalValue = nil
 			} else {
@@ -311,6 +315,14 @@ public class Action: HashableClass, CVUToString {
 		let x: RenderType = get("renderAs", viewArguments) ?? .button
 		return x
 	}
+    
+    func getArguments(_ item: Item? = nil) -> [String: Any?]{
+        do { return try context.buildArguments(self, item) }
+        catch let error {
+            debugHistory.warn("Could not parse arguments for popup: \(error)")
+            return [:]
+        }
+    }
 
 	func toCVUString(_ depth: Int, _ tab: String) -> String {
 		let tabs = Array(0 ..< depth).map { _ in tab }.joined()

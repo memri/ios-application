@@ -21,8 +21,7 @@ public struct UIElementView: SwiftUI.View {
 		from = gui
 		item = dataItem
 
-		self.viewArguments = viewArguments ?? ViewArguments(nil) // This is already a copy
-		self.viewArguments.set(".", dataItem)
+        self.viewArguments = ViewArguments(viewArguments, item)
 	}
 
 	public func has(_ propName: String) -> Bool {
@@ -192,8 +191,6 @@ public struct UIElementView: SwiftUI.View {
 					FlowStack(getList("list")) { listItem in
 						ForEach(0 ..< self.from.children.count) { index in
 							UIElementView(self.from.children[index], listItem, self.viewArguments)
-								//                                          ViewArguments(self.viewArguments.asDict().merging([".": listItem],
-								//                                                                                            uniquingKeysWith: { current, new in new })))
 								.environmentObject(self.context)
 						}
 					}
