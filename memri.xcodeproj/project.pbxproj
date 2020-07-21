@@ -255,9 +255,9 @@
 		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
 		B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */; };
 		B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; };
-		B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; };
-		B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8E0FBE324A4ADE3009C3C30 /* map.cvu */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
@@ -1967,7 +1967,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
@@ -2002,7 +2002,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
@@ -2192,7 +2192,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

@@ -259,12 +259,10 @@ public final class Session : Equatable, Subscriptable {
         lastViewIndex = nextIndex
         
         if !isReload { storedView.accessed() }
-		
-        if let args = viewArguments {
-            currentView?.viewArguments = ViewArguments(args, currentView?.viewArguments)
-        }
         
         let nextView = views[nextIndex]
+        _ = nextView.viewArguments?.deepMerge(viewArguments)
+        
         try nextView.load { error in
             if !isReload, error == nil, let item = nextView.resultSet.singletonItem {
                 item.accessed()

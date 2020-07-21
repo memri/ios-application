@@ -9,7 +9,7 @@
 import CoreGraphics
 import Foundation
 
-public class Cascadable {
+public class Cascadable : CustomStringConvertible {
     var host: Cascadable?
 	var cascadeStack: [CVUParsedDefinition]
     var tail: [CVUParsedDefinition]
@@ -19,6 +19,21 @@ public class Cascadable {
     var viewArguments: ViewArguments? {
         get { host?.viewArguments }
         set (value) { host?.viewArguments = value }
+    }
+    
+    public var description: String {
+        var merged = [String:Any?]()
+        
+        func recur(_ dict:[String:Any?]?) {
+            guard let dict = dict else { return }
+            for (key, value) in dict {
+                merged[key] = value
+            }
+        }
+        recur(head.parsed)
+        for item in tail { recur(item.parsed) }
+        
+        return CVUSerializer.dictToString(merged, 0, "    ")
     }
 
 	private func execExpression<T>(_ expr: Expression) -> T? {

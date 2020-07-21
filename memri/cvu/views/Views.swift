@@ -123,15 +123,18 @@ public class Views {
 	}
 
     #warning("This should be moved elsewhere")
-	public class func formatDate(_ date: Date?) -> String {
+    public class func formatDate(_ date: Date?, dateFormat:String? = nil) -> String {
         let showAgoDate: Bool? = Settings.shared.get("user/general/gui/showDateAgo")
 
 		if let date = date {
 			// Compare against 36 hours ago
-			if showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
+			if dateFormat != nil || showAgoDate == false || date.timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
 				let dateFormatter = DateFormatter()
 
-                dateFormatter.dateFormat = Settings.shared.get("user/formatting/date") ?? "yyyy/MM/dd HH:mm"
+                dateFormatter.dateFormat = dateFormat
+                    ?? Settings.shared.get("user/formatting/date")
+                    ?? "yyyy/MM/dd HH:mm"
+                
 				dateFormatter.locale = Locale(identifier: "en_US")
 				dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
 
@@ -269,8 +272,8 @@ public class Views {
 						recursionCounter = 0
 						throw error
 					}
-				} else if isFunction, i == lookup.sequence.count {
-					value = (value as? Item)?.functions[node.name]
+				} else if isFunction, i == lookup.sequence.count, let item = value as? Item {
+					value = item.functions[node.name]
 					if value == nil {
 						// TODO: parse [blah]
 						recursionCounter = 0
@@ -310,6 +313,21 @@ public class Views {
 						// TODO: Warn
 						debugHistory.warn("Could not find property \(node.name) on string")
 					}
+                } else if let date = value as? Date {
+                    switch node.name {
+                    case "format":
+                        guard isFunction else { throw "You must call .format() as a function" }
+                        
+                        value = { (args: [Any?]?) -> Any? in
+                            if args?.count == 0 { return Views.formatDate(date) }
+                            else { return Views.formatDate(date, dateFormat: args?[0] as? String) }
+                        }
+                    case "timeSince1970": value = date.timeIntervalSince1970
+                    case "timeSinceNow": value = date.timeIntervalSinceNow
+                    default:
+                        // TODO: Warn
+                        debugHistory.warn("Could not find property \(node.name) on string")
+                    }
 				} else if let v = value as? Edge {
 					switch node.name {
 					case "source": value = v.source()
@@ -362,7 +380,7 @@ public class Views {
 
 				let interpret = ExprInterpreter(node, lookupValueOfVariables, executeFunction)
 				let list = dataItemListToArray(value)
-				let args = ViewArguments(viewArguments)
+                let args = viewArguments?.copy() ?? ViewArguments(nil)
 				let expr = node.sequence[0]
 
 				for item in list {
@@ -379,12 +397,6 @@ public class Views {
                 break
             }
 		}
-
-//		// Format a date
-//		if let date = value as? Date {
-//			value = Views.formatDate(date)
-//		}
-		#warning("This was disabled because it prevents getting a Date from an expression.")
 
 		recursionCounter -= 1
 

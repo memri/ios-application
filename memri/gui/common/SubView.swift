@@ -17,11 +17,9 @@ public struct SubView: View {
 	var showCloseButton: Bool = false
 
 	public init(context: MemriContext, viewName: String, item: Item? = nil,
-				viewArguments: ViewArguments?) {
+				viewArguments: ViewArguments = ViewArguments(nil)) {
 		do {
-            let args = ViewArguments(viewArguments)
-            try args.resolve(item)
-            args.set(".", item)
+            let args = try viewArguments.resolve(item)
 
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
@@ -49,11 +47,9 @@ public struct SubView: View {
 	}
 
 	public init(context: MemriContext, view state: CVUStateDefinition, item: Item? = nil,
-				viewArguments: ViewArguments?) {
+				viewArguments: ViewArguments = ViewArguments(nil)) {
 		do {
-			let args = ViewArguments(viewArguments)
-            try args.resolve(item)
-            args.set(".", item)
+            let args = try viewArguments.resolve(item)
 
 			showCloseButton = args.get("showCloseButton") ?? showCloseButton
 
