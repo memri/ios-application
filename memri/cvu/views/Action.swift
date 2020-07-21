@@ -641,29 +641,6 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 	}
 }
 
-
-class ActionNewViewByChangingRenderer: Action, ActionExec {
-	
-	override var defaultValues: [String: Any?] { [:] }
-	
-	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
-		super.init(context, "changeRenderer", values: values)
-	}
-	
-	func exec(_ arguments: [String: Any?]) throws {
-		guard let rendererName = values["rendererName"] as? String else { return }
-		
-		#warning("@Ruben - how to open a copy of the current view changing only the renderer? So that we get the back button from here")
-		context.currentView?.activeRenderer = rendererName
-		context.scheduleUIUpdate { _ in true }
-	}
-	
-	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
-		execWithoutThrow { try ActionToggleEditMode(context).exec(arguments) }
-	}
-}
-
-
 class ActionToggleEditMode: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
 		"icon": "pencil",
