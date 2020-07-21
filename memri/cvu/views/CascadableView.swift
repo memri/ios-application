@@ -126,7 +126,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         cascadeContext("contextPane", "contextPane", CVUParsedObjectDefinition.self)
     }
 
-    // Use cascadeDict here??
     var userState: CascadableDict {
         get {
             cascadeContext("userState", "userState", CVUParsedObjectDefinition.self)
@@ -136,8 +135,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-    // TODO: let this cascade when the use case for it arrises
-    // Use cascadeDict here??
     override var viewArguments: CascadableDict? {
         get {
             cascadeContext("viewArguments", "viewArguments", CVUParsedObjectDefinition.self)
@@ -416,23 +413,65 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             state?.set("definition", head.toCVUString(0, "    "))
         }
     }
+    
+    private func include(_ parsedDef: CVUParsedDefinition, _ domain: String) throws {
+        if !cascadeStack.contains(parsedDef) {
+            // Compile parsed definition to embed state that may change (e.g. currentView)
+            try parsedDef.compile(viewArguments, scope: .needed)
+            
+            // Add to cascade stack
+            cascadeStack.append(parsedDef)
+            if parsedDef != head { tail.append(parsedDef) }
+            
+            if let inheritFrom = parsedDef["inherit"] {
+                var result: Any? = inheritFrom
 
-	public func cascade() throws {
-        // Reset properties
-		tail = [CVUParsedDefinition]()
-        localCache = [:]
-        cascadeStack = []
+                if let expr = inheritFrom as? Expression {
+                    result = try expr.execute(viewArguments)
+                }
 
-		// Fetch query from the view from session
-        guard head["datasourceDefinition"] != nil else {
-			throw "Exception: Cannot compute a view without a query to fetch data"
-		}
-
-		// Look up the associated result set
-        guard let resultSet = context?.cache.getResultSet(datasource.flattened()) else {
-            throw "Exception: Unable to fetch result set from view"
+                if let viewName = result as? String {
+                    if let view = context?.views.fetchDefinitions(name: viewName).first {
+                        parse(view, domain)
+                    }
+                    else {
+                        throw "Exception: could not parse view: \(viewName)"
+                    }
+                } else if let view = result as? CascadableView {
+                    let parsed = CVUParsedViewDefinition(parsed: view.head.parsed)
+                    try include(parsed, domain)
+                } else {
+                    throw "Exception: Unable to inherit view from \(inheritFrom)"
+                }
+                
+                parsedDef.parsed?.removeValue(forKey: "inherit")
+            }
         }
+    }
+    
+    private func parse(_ def: CVUStoredDefinition?, _ domain: String) {
+        do {
+            guard let def = def else {
+                throw "Exception: missing view definition"
+            }
 
+            if let parsedDef = try context?.views.parseDefinition(def) {
+                parsedDef.domain = domain
+
+                try include(parsedDef, domain)
+            } else {
+                debugHistory.error("Could not parse definition")
+            }
+        } catch {
+            if let error = error as? CVUParseErrors {
+                debugHistory.error("\(error.toString(def?.definition ?? ""))")
+            } else {
+                debugHistory.error("\(error)")
+            }
+        }
+    }
+
+    public func cascade(_ resultSet:ResultSet) throws {
 		// Determine whether this is a list or a single item resultset
 		let isList = resultSet.isList
 
@@ -440,7 +479,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 		guard let type = resultSet.determinedType else {
 			throw "Exception: ResultSet does not know the type of its data"
 		}
-
+        
 		var needles: [String]
 		if type != "mixed" {
 			// Determine query
@@ -452,71 +491,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 			needles = [isList ? "*[]" : "*"]
 		}
         
-        var activeRenderer: Any?
-
-        func include(_ parsedDef: CVUParsedDefinition, _ domain: String) throws {
-            if !cascadeStack.contains(parsedDef) {
-                // Compile parsed definition to embed state that may change (e.g. currentView)
-                try parsedDef.compile(viewArguments, scope: .needed)
-                
-                // Add to cascade stack
-                cascadeStack.append(parsedDef)
-                
-                if activeRenderer == nil, let d = parsedDef["defaultRenderer"] {
-                    activeRenderer = d
-                }
-
-                if let inheritFrom = parsedDef["inherit"] {
-                    var result: Any? = inheritFrom
-
-                    if let expr = inheritFrom as? Expression {
-                        result = try expr.execute(viewArguments)
-                    }
-
-                    if let viewName = result as? String {
-                        if let view = context?.views.fetchDefinitions(name: viewName).first {
-                            parse(view, domain)
-                        }
-                        else {
-                            throw "Exception: could not parse view: \(viewName)"
-                        }
-                    } else if let view = result as? CascadableView {
-                        let parsed = CVUParsedViewDefinition(parsed: view.head.parsed)
-                        try include(parsed, domain)
-                    } else {
-                        throw "Exception: Unable to inherit view from \(inheritFrom)"
-                    }
-                    
-                    parsedDef.parsed?.removeValue(forKey: "inherit")
-                }
-            }
-        }
-        
-		func parse(_ def: CVUStoredDefinition?, _ domain: String) {
-			do {
-				guard let def = def else {
-					throw "Exception: missing view definition"
-				}
-
-				if let parsedDef = try context?.views.parseDefinition(def) {
-					parsedDef.domain = domain
-
-					try include(parsedDef, domain)
-				} else {
-					debugHistory.error("Could not parse definition")
-				}
-			} catch {
-				if let error = error as? CVUParseErrors {
-					debugHistory.error("\(error.toString(def?.definition ?? ""))")
-				} else {
-					debugHistory.error("\(error)")
-				}
-			}
-		}
-
-        // Add head to the cascadeStack
-        try include(head, "state")
-
 		// Find views based on datatype
 		for domain in ["user", "defaults"] {
 			for needle in needles {
@@ -528,7 +502,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 			}
 		}
 
-		if activeRenderer == nil {
+		if activeRenderer == "" {
 			throw "Exception: could not determine the active renderer for this view"
 		}
         
@@ -549,25 +523,38 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
     
+    var loading:Bool = false
+    
     public func load(_ callback:(Error?) -> Void) throws {
-        guard head["datasourceDefinition"] != nil else {
-            throw "Exception: Missing datasource in view"
-        }
+        guard !loading else { return }
+        loading = true
+        
+        // Reset properties
+        tail = [CVUParsedDefinition]()
+        localCache = [:]
+        cascadeStack = []
+        
+        // Load all includes in the stack so that we can make sure there is a datasource defined
+        try include(head, "state")
+        
+        let datasource = self.datasource
+        guard datasource.query != nil else { throw "Exception: Missing datasource in view" }
+        localCache = [:] // Clear cache again to delete the entry for datasource
 
         // Look up the associated result set
         guard let resultSet = context?.cache.getResultSet(datasource.flattened()) else {
             throw "Exception: Unable to fetch result set from view"
         }
+        
+        if context is RootContext {
+            debugHistory.info("Computing view " + (name ?? state?.selector ?? ""))
+        }
 
         // If we can guess the type of the result based on the query, let's compute the view
         if resultSet.determinedType != nil {
-            if context is RootContext {
-                debugHistory.info("Computing view " + (name ?? state?.selector ?? ""))
-            }
-
             do {
                 // Load the cascade list of views
-                try cascade()
+                try cascade(resultSet)
 
                 try self.resultSet.load { error in
                     if let error = error {
@@ -578,6 +565,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                         context?.scheduleUIUpdate()
                     }
                     
+                    loading = false
                     callback(error)
                 }
             } catch {
@@ -593,8 +581,12 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                     // TODO: Error handling
                     debugHistory.error("Exception: could not load result: \(error)")
                 } else {
-                    try load(callback)
+                    // Load the cascade list of views
+                    try cascade(resultSet)
                 }
+                
+                loading = false
+                callback(error)
             }
         }
     }

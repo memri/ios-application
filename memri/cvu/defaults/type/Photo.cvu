@@ -50,8 +50,13 @@ Photo[]: {
         spacing: 1
         edgeInset: 0 0 0 0 /* inset edges */
 		
-		press: openViewByChangingRenderer {
-			rendererName: "photoViewer"
+		press: openView {
+            arguments: {
+                view: {
+                    inherit: {{currentView}}
+                    defaultRenderer: "photoViewer"
+                }
+            }
 		}
         
         Image {

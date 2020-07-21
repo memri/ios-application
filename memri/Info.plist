@@ -18,6 +18,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -39,10 +41,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Used for showing your location on map views.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Used for tracking your day-to-day movements</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Used for showing your location on map views.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

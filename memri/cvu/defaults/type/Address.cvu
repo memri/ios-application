@@ -96,7 +96,7 @@ Address {
     
     [renderer = generalEditor] {
         layout: [
-            { section: location, exclude: locationWasAutomaticLookupWithHash }
+            { section: location, exclude: locationAutoLookupHash }
             { section: labels }
             { section: address, fields: street city state postalCode country }
             { section: other, fields: * }

@@ -70,7 +70,7 @@ class DatabaseController {
 	}
 	
 	/// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
-	/// - Returns: the computed database file url
+	/// - Returns: the computed database file path
 	static func getRealmURL() throws -> URL {
 		#if targetEnvironment(simulator)
 		if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {

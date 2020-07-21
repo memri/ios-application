@@ -165,4 +165,30 @@ public class Expression: CVUToString {
 
 		return try interpreter?.execute(args)
 	}
+    
+    public class func resolve<T>(_ object:Any?,
+                              _ viewArguments:ViewArguments? = nil,
+                              dontResolveItems:Bool = false) throws -> T? {
+        
+        if var dict = object as? [String:Any?] {
+            for (key, value) in dict {
+                dict[key] = try resolve(value, viewArguments)
+            }
+            return dict as? T
+        }
+        else if var list = object as? [Any?] {
+            for i in 0..<list.count {
+                list[i] = try resolve(list[i], viewArguments)
+            }
+            return list as? T
+        }
+        else if let expr = object as? Expression {
+            let value = try expr.execute(viewArguments)
+            if dontResolveItems, let _ = value as? Item { return expr as? T}
+            else { return value as? T }
+        }
+        else {
+            return object as? T
+        }
+    }
 }

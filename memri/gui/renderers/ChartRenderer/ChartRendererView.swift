@@ -111,8 +111,7 @@ struct ChartRendererView: View {
 	func resolveExpression<T>(_ expression: Expression?,
 							  toType _: T.Type = T.self,
 							  forItem item: Item) -> T? {
-		let args = ViewArguments(context.currentView?.viewArguments)
-        args.set(".", item)
+		let args = ViewArguments(context.currentView?.viewArguments, item)
 
 		return try? expression?.execForReturnType(T.self, args: args)
 	}

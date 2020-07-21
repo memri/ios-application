@@ -17,12 +17,14 @@ public typealias List = RealmSwift.List
 // The family of all data item classes
 enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeAuditItem = "AuditItem"
-    case typeCVUStoredDefinition = "CVUStoredDefinition"
     case typeCVUStateDefinition = "CVUStateDefinition"
+    case typeCVUStoredDefinition = "CVUStoredDefinition"
     case typeCompany = "Company"
     case typeCreativeWork = "CreativeWork"
     case typeDigitalDocument = "DigitalDocument"
+    case typeChat = "Chat"
     case typeComment = "Comment"
+    case typeMessage = "Message"
     case typeNote = "Note"
     case typeMediaObject = "MediaObject"
     case typeAudio = "Audio"
@@ -58,13 +60,15 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     var backgroundColor: Color {
         switch self {
         case .typeAuditItem: return Color(hex: "#93c47d")
-        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
         case .typeCVUStateDefinition: return Color(hex: "#93c47d")
+        case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
         case .typeCompany: return Color(hex: "#93c47d")
         case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeDigitalDocument: return Color(hex: "#93c47d")
+        case .typeChat: return Color(hex: "#93c47d")
         case .typeComment: return Color(hex: "#93c47d")
-        case .typeNote: return Color(hex: "#ccb94b")
+        case .typeMessage: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
         case .typeMediaObject: return Color(hex: "#93c47d")
         case .typeAudio: return Color(hex: "#93c47d")
         case .typePhoto: return Color(hex: "#93c47d")
@@ -99,12 +103,14 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     var foregroundColor: Color {
         switch self {
         case .typeAuditItem: return Color(hex: "#ffffff")
-        case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
         case .typeCVUStateDefinition: return Color(hex: "#ffffff")
+        case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
         case .typeCompany: return Color(hex: "#ffffff")
         case .typeCreativeWork: return Color(hex: "#ffffff")
         case .typeDigitalDocument: return Color(hex: "#ffffff")
+        case .typeChat: return Color(hex: "#ffffff")
         case .typeComment: return Color(hex: "#ffffff")
+        case .typeMessage: return Color(hex: "#ffffff")
         case .typeNote: return Color(hex: "#ffffff")
         case .typeMediaObject: return Color(hex: "#ffffff")
         case .typeAudio: return Color(hex: "#ffffff")
@@ -144,12 +150,14 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     func getType() -> AnyObject.Type {
         switch self {
         case .typeAuditItem: return AuditItem.self
-        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
         case .typeCVUStateDefinition: return CVUStateDefinition.self
+        case .typeCVUStoredDefinition: return CVUStoredDefinition.self
         case .typeCompany: return Company.self
         case .typeCreativeWork: return CreativeWork.self
         case .typeDigitalDocument: return DigitalDocument.self
+        case .typeChat: return Chat.self
         case .typeComment: return Comment.self
+        case .typeMessage: return Message.self
         case .typeNote: return Note.self
         case .typeMediaObject: return MediaObject.self
         case .typeAudio: return Audio.self
@@ -193,65 +201,71 @@ public class SyncableItem: Object {
     @objc dynamic var _changedInSession:Bool = false
 }
 
+public class CVUStateDefinition : CVUStoredDefinition {
+    required init () {
+        super.init()
+    }
+}
+
 /// Item is the baseclass for all of the data classes.
 public class SchemaItem: SyncableItem, Codable, Identifiable {
-    /// A collection of all edges this Item is connected to.
-    let allEdges = List<Edge>()
     /// Last access date of the Item.
     @objc dynamic var dateAccessed:Date? = nil
     /// Creation date of the Item.
     @objc dynamic var dateCreated:Date? = nil
     /// Last modification date of the Item.
     @objc dynamic var dateModified:Date? = nil
-    /// Boolean whether the Item has been deleted.
+    /// Whether the Item is deleted.
     @objc dynamic var deleted:Bool = false
     /// The identifier of an external source.
-    @objc dynamic var externalID:String? = nil
+    @objc dynamic var externalId:String? = nil
     /// A description of the item.
     @objc dynamic var itemDescription:String? = nil
-    /// Boolean whether the Item has been starred.
+    /// Whether the Item is starred.
     @objc dynamic var starred:Bool = false
     /// The last version loaded from the server.
     @objc dynamic var version:Int = 1
     /// The unique identifier of the Item set by the pod.
     let uid = RealmOptional<Int>()
+    /// A collection of all edges of an Item.
+    let allEdges = List<Edge>()
 
     public func superDecode(from decoder: Decoder) throws {
-            decodeEdges(decoder, "allEdges", self as! Item)
             dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
             dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
             dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-            externalID = try decoder.decodeIfPresent("externalID") ?? externalID
+            externalId = try decoder.decodeIfPresent("externalId") ?? externalId
             itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
             starred = try decoder.decodeIfPresent("starred") ?? starred
             version = try decoder.decodeIfPresent("version") ?? version
             uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
+            decodeEdges(decoder, "allEdges", self as! Item)
     }
-
+      
     private enum CodingKeys: String, CodingKey {
-        case allEdges, dateAccessed, dateCreated, dateModified, deleted, externalID,
-            itemDescription, starred, version, uid
+        case dateAccessed, dateCreated, dateModified, deleted, externalId, itemDescription, starred,
+            version, uid, allEdges
     }
 }
 
 /// TBD
 public class AuditItem : Item {
-    /// Date of death.
+    /// The date related to an Item.
     @objc dynamic var date:Date? = nil
-    /// TBD
+    /// The content of an Item.
     @objc dynamic var content:String? = nil
     /// TBD
     @objc dynamic var action:String? = nil
 
-    /// TBD
+    /// The Item this Item applies to.
     var appliesTo: [Item]? {
         edges("appliesTo")?.itemsArray()
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             date = try decoder.decodeIfPresent("date") ?? date
             content = try decoder.decodeIfPresent("content") ?? content
@@ -262,31 +276,25 @@ public class AuditItem : Item {
     }
 }
 
-public class CVUStateDefinition : CVUStoredDefinition {
-    required init () {
-        super.init()
-//        domain = "state"
-    }
-}
-
 /// TBD
 public class CVUStoredDefinition : Item {
-    /// TBD
+    /// The definition of an Item.
     @objc dynamic var definition:String? = nil
-    /// TBD
+    /// An identification string that defines a realm of administrative autonomy, authority or
+    /// control within the internet.
     @objc dynamic var domain:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
+    /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
     /// TBD
     @objc dynamic var selector:String? = nil
     /// TBD
     @objc dynamic var type:String? = nil
-    
+
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             definition = try decoder.decodeIfPresent("definition") ?? definition
             domain = try decoder.decodeIfPresent("domain") ?? domain
@@ -309,7 +317,7 @@ public class Company : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
@@ -319,22 +327,20 @@ public class Company : Item {
     }
 }
 
-/// The most generic kind of creative work, including books, movies, photographs, software
-/// programs, etc.
+/// The most generic kind of creative work, including books, movies, photographs, software programs,
+/// etc.
 public class CreativeWork : Item {
-    /// An abstract is a short description that summarizes a CreativeWork.
+    /// An abstract is a short description that summarizes an Items content.
     @objc dynamic var abstract:String? = nil
     /// Date of first broadcast/publication.
     @objc dynamic var datePublished:Date? = nil
     /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
     /// typically delimited by commas.
     @objc dynamic var keyword:String? = nil
-    /// A license document that applies to this content, typically indicated by URL.
-    @objc dynamic var license:String? = nil
     /// A text that belongs to this item.
     @objc dynamic var text:String? = nil
 
-    /// A media object that encodes this CreativeWork. This property is a synonym for encoding.
+    /// A media object that encodes this Item.
     var associatedMedia: Results<MediaObject>? {
         edges("associatedMedia")?.items(type:MediaObject.self)
     }
@@ -356,8 +362,8 @@ public class CreativeWork : Item {
         edges("contentLocation")?.items(type:Location.self)
     }
 
-    /// The location where the CreativeWork was created, which may not be the same as the
-    /// location depicted in the CreativeWork.
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
     var locationCreated: Results<Location>? {
         edges("locationCreated")?.items(type:Location.self)
     }
@@ -374,12 +380,11 @@ public class CreativeWork : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             abstract = try decoder.decodeIfPresent("abstract") ?? abstract
             datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
             keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            license = try decoder.decodeIfPresent("license") ?? license
             text = try decoder.decodeIfPresent("text") ?? text
 
             try self.superDecode(from: decoder)
@@ -391,8 +396,38 @@ public class CreativeWork : Item {
 public class DigitalDocument : Item {
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A chat is a collection of messages.
+public class Chat : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The topic of an item, for instance a Chat.
+    @objc dynamic var topic:String? = nil
+    /// The Person that received, or is to receive, this Item.
+    @objc dynamic var receiver:String? = nil
+    /// Whether the item is encrypted.
+    @objc dynamic var encrypted:Bool = false
+
+    /// A photo object.
+    var photo: Results<Photo>? {
+        edges("photo")?.items(type:Photo.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            topic = try decoder.decodeIfPresent("topic") ?? topic
+            receiver = try decoder.decodeIfPresent("receiver") ?? receiver
+            encrypted = try decoder.decodeIfPresent("encrypted") ?? encrypted
 
             try self.superDecode(from: decoder)
         }
@@ -401,14 +436,14 @@ public class DigitalDocument : Item {
 
 /// A comment.
 public class Comment : Item {
-    /// TBD
+    /// The content of an Item.
     @objc dynamic var content:String? = nil
-    /// TBD
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
     @objc dynamic var textContent:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
@@ -418,23 +453,53 @@ public class Comment : Item {
     }
 }
 
+/// A single message.
+public class Message : Item {
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// The sender of an Item.
+    @objc dynamic var sender:String? = nil
+    /// The Synapse jid of a chat.
+    @objc dynamic var chatJid:String? = nil
+    /// The Synapse reciever id.
+    @objc dynamic var chatReceiver:String? = nil
+
+    /// A Chat this Item belongs to.
+    var chat: Results<Chat>? {
+        edges("chat")?.items(type:Chat.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            sender = try decoder.decodeIfPresent("sender") ?? sender
+            chatJid = try decoder.decodeIfPresent("chatJid") ?? chatJid
+            chatReceiver = try decoder.decodeIfPresent("chatReceiver") ?? chatReceiver
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 /// A file containing a note.
 public class Note : Item {
-    /// TBD
+    /// The title of an Item.
     @objc dynamic var title:String? = nil
-    /// TBD
+    /// The content of an Item.
     @objc dynamic var content:String? = nil
-    /// TBD
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
     @objc dynamic var textContent:String? = nil
 
-    /// TBD
+    /// A comment on this Item.
     var comment: Results<Comment>? {
         edges("comment")?.items(type:Comment.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
@@ -450,52 +515,51 @@ public class Note : Item {
 /// associated with it on the same web page. For example, a page about a single song (MusicRecording)
 /// may have a music video (VideoObject), and a high and low bandwidth audio stream (2 AudioObject's).
 public class MediaObject : Item {
+    /// The bitrate of a media object.
+    let bitrate = RealmOptional<Int>()
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
     /// The endTime of something. For a reserved event or service, the time that it is expected
     /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
     /// book from January to December. For media, including audio and video, it's the time offset of the
     /// end of a clip within a larger file.
     @objc dynamic var endTime:Date? = nil
-    /// Location of the actual bytes of the media object, for example the image file or video
-    /// file.
+    /// Location of the actual bytes of a File.
     @objc dynamic var fileLocation:String? = nil
     /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
     /// KB will be assumed.
     @objc dynamic var fileSize:String? = nil
+    /// The height of the item.
+    let height = RealmOptional<Int>()
     /// The startTime of something. For a reserved event or service, the time that it is
     /// expected to start. For actions that span a period of time, when the action was performed. e.g.
     /// John wrote a book from January to December. For media, including audio and video, it's the time
     /// offset of the start of a clip within a larger file.
     @objc dynamic var startTime:Date? = nil
-    /// The bitrate of the media object.
-    let bitrate = RealmOptional<Int>()
-    /// TBD
-    let duration = RealmOptional<Int>()
-    /// The height of the item.
-    let height = RealmOptional<Int>()
     /// The width of the item.
     let width = RealmOptional<Int>()
 
-    /// TBD
+    /// Any type of file that can be stored on disk.
     var file: File? {
         edge("file")?.target(type:File.self)
     }
 
-    /// TBD
+    /// Items included within this Item. Included Items can be of any type.
     var includes: [Item]? {
         edges("includes")?.itemsArray()
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             endTime = try decoder.decodeIfPresent("endTime") ?? endTime
             fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
             fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             height.value = try decoder.decodeIfPresent("height") ?? height.value
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
             width.value = try decoder.decodeIfPresent("width") ?? width.value
 
             try self.superDecode(from: decoder)
@@ -512,30 +576,14 @@ public class Audio : Item {
     @objc dynamic var transcript:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// The bitrate of the media object.
-    let bitrate = RealmOptional<Int>()
-    /// TBD
-    let duration = RealmOptional<Int>()
-
-    /// TBD
-    var file: File? {
-        edge("file")?.target(type:File.self)
-    }
-
-    /// TBD
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             caption = try decoder.decodeIfPresent("caption") ?? caption
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
             name = try decoder.decodeIfPresent("name") ?? name
-            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
             try self.superDecode(from: decoder)
         }
@@ -547,39 +595,27 @@ public class Photo : Item {
     /// The caption for this object. For downloadable machine formats (closed caption, subtitles
     /// etc.) use MediaObject and indicate the encodingFormat.
     @objc dynamic var caption:String? = nil
-    /// Exif data for this object.
+    /// Exif data of an image file.
     @objc dynamic var exifData:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
-    /// The height of the item.
-    let height = RealmOptional<Int>()
 
-    /// Thumbnail image for an image or video.
+    /// Thumbnail image for an Item, typically an image or video.
     var thumbnail: File? {
         edge("thumbnail")?.target(type:File.self)
     }
-
-    /// TBD
+    
     var file: File? {
         edge("file")?.target(type:File.self)
     }
 
-    /// TBD
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
-
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             caption = try decoder.decodeIfPresent("caption") ?? caption
             exifData = try decoder.decodeIfPresent("exifData") ?? exifData
             name = try decoder.decodeIfPresent("name") ?? name
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
 
             try self.superDecode(from: decoder)
         }
@@ -591,42 +627,23 @@ public class Video : Item {
     /// The caption for this object. For downloadable machine formats (closed caption, subtitles
     /// etc.) use MediaObject and indicate the encodingFormat.
     @objc dynamic var caption:String? = nil
-    /// Exif data for this object.
+    /// Exif data of an image file.
     @objc dynamic var exifData:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
-    /// The height of the item.
-    let height = RealmOptional<Int>()
-    /// TBD
-    let duration = RealmOptional<Int>()
 
-    /// Thumbnail image for an image or video.
+    /// Thumbnail image for an Item, typically an image or video.
     var thumbnail: Results<File>? {
         edges("thumbnail")?.items(type:File.self)
     }
 
-    /// TBD
-    var file: File? {
-        edge("file")?.target(type:File.self)
-    }
-
-    /// TBD
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
-
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             caption = try decoder.decodeIfPresent("caption") ?? caption
             exifData = try decoder.decodeIfPresent("exifData") ?? exifData
             name = try decoder.decodeIfPresent("name") ?? name
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
             try self.superDecode(from: decoder)
         }
@@ -635,31 +652,31 @@ public class Video : Item {
 
 /// A business corporation.
 public class Device : Item {
-    /// TBD
+    /// The Device ID, used for smartphones and tablets.
     @objc dynamic var deviceID:String? = nil
-    /// TBD
+    /// The make number of a device, for instance a mobile phone.
     @objc dynamic var make:String? = nil
-    /// TBD
+    /// The manufacturer of the Item
     @objc dynamic var manufacturer:String? = nil
-    /// TBD
+    /// The model number or name of an Item, for instance of a mobile phone.
     @objc dynamic var model:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
-    @objc dynamic var dateAquired:Date? = nil
-    /// TBD
+    /// The date this item was acquired.
+    @objc dynamic var dateAcquired:Date? = nil
+    /// The date this Item was lost.
     @objc dynamic var dateLost:Date? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             deviceID = try decoder.decodeIfPresent("deviceID") ?? deviceID
             make = try decoder.decodeIfPresent("make") ?? make
             manufacturer = try decoder.decodeIfPresent("manufacturer") ?? manufacturer
             model = try decoder.decodeIfPresent("model") ?? model
             name = try decoder.decodeIfPresent("name") ?? name
-            dateAquired = try decoder.decodeIfPresent("dateAquired") ?? dateAquired
+            dateAcquired = try decoder.decodeIfPresent("dateAcquired") ?? dateAcquired
             dateLost = try decoder.decodeIfPresent("dateLost") ?? dateLost
 
             try self.superDecode(from: decoder)
@@ -667,7 +684,8 @@ public class Device : Item {
     }
 }
 
-/// TBD
+/// A strategy of regulating the intake of food to achieve or maintain a specific health-related
+/// goal.
 public class Diet : Item {
     /// TBD
     @objc dynamic var type:String? = nil
@@ -678,7 +696,7 @@ public class Diet : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             addition = try decoder.decodeIfPresent("addition") ?? addition
@@ -689,11 +707,11 @@ public class Diet : Item {
     }
 }
 
-/// TBD
+/// A Downloader is used to download data from an external source, to be imported using an Importer.
 public class Downloader : Item {
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
 
             try self.superDecode(from: decoder)
@@ -701,57 +719,59 @@ public class Downloader : Item {
     }
 }
 
-/// TBD
+/// Edge is the Item that stores the specifics of an edge, used by front ends.
 public class Edge : SyncableItem, Codable {
     /// TBD
     @objc dynamic var type:String? = nil
-    /// TBD
+    /// The type of the target Item, or Item to where an edge points. Opposite of
+    /// sourceItemType.
     @objc dynamic var targetItemType:String? = nil
-    /// TBD
+    /// The uid of the target Item, or Item to where an Edge points. Opposite of sourceItemID
+    let targetItemID = RealmOptional<Int>()
+    /// The type of the source Item, or Item from where an edge points. Opposite of
+    /// targetItemType.
     @objc dynamic var sourceItemType:String? = nil
-    /// Boolean whether the Item has been deleted.
+    /// The uid of the source Item, or Item from where an Edge points. Opposite of targetItemID
+    let sourceItemID = RealmOptional<Int>()
+    /// Used to define position in a sequence, enables ordering based on this number.
+    let sequence = RealmOptional<Int>()
+    /// Whether the Item is deleted.
     @objc dynamic var deleted:Bool = false
     /// The last version loaded from the server.
     @objc dynamic var version:Int = 1
-    /// TBD
+    /// A label of an edge.
     @objc dynamic var edgeLabel:String? = nil
-    /// TBD
-    let targetItemID = RealmOptional<Int>()
-    /// TBD
-    let sourceItemID = RealmOptional<Int>()
-    /// TBD
-    let sequence = RealmOptional<Int>()
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("_type") ?? type
+            type = try decoder.decodeIfPresent("type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
+            targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
+            sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
             version = try decoder.decodeIfPresent("version") ?? version
             edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
-            targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
-            sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
 
-            try parseTargetDict(try decoder.decodeIfPresent("_target"))
+            try parseTargetDict(try decoder.decodeIfPresent("target"))
         }
     }
 }
 
-/// TBD
+/// Any type of file that can be stored on disk.
 public class File : Item {
     /// The uri property represents the Uniform Resource Identifier (URI) of a resource.
     @objc dynamic var uri:String? = nil
 
-    /// TBD
+    /// An Item this Item is used by.
     var usedBy: [Item]? {
         edges("usedBy")?.itemsArray()
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             uri = try decoder.decodeIfPresent("uri") ?? uri
 
@@ -760,25 +780,25 @@ public class File : Item {
     }
 }
 
-/// TBD
+/// An Importer is used to import data from an external source to the Pod database.
 public class Importer : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
+    /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
     /// TBD
     @objc dynamic var icon:String? = nil
     /// TBD
     @objc dynamic var bundleImage:String? = nil
 
-    /// TBD
+    /// A run of a certain Importer, that defines the details of the specific import.
     var importerRun: Results<ImporterRun>? {
         edges("importerRun")?.items(type:ImporterRun.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
@@ -790,21 +810,21 @@ public class Importer : Item {
     }
 }
 
-/// TBD
+/// A run of a certain Importer, that defines the details of the specific import.
 public class ImporterRun : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
+    /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
 
-    /// TBD
+    /// An Importer is used to import data from an external source to the Pod database.
     var importer: Importer? {
         edge("importer")?.target(type:Importer.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
@@ -814,30 +834,30 @@ public class ImporterRun : Item {
     }
 }
 
-/// An indexer enhances your personal data by inferring facts over existing data and adding those
-/// to the database.
+/// An indexer enhances your personal data by inferring facts over existing data and adding those to
+/// the database.
 public class Indexer : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
     /// TBD
     @objc dynamic var icon:String? = nil
-    /// TBD
+    /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
     /// TBD
     @objc dynamic var bundleImage:String? = nil
-    /// TBD
+    /// The destination of a run.
     @objc dynamic var runDestination:String? = nil
-    /// TBD
+    /// The type of an Indexer.
     @objc dynamic var indexerClass:String? = nil
 
-    /// TBD
+    /// A run of a certain Indexer, that defines the details of the specific indexing.
     var indexerRun: Results<IndexerRun>? {
         edges("indexerRun")?.items(type:IndexerRun.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             icon = try decoder.decodeIfPresent("icon") ?? icon
@@ -855,26 +875,27 @@ public class Indexer : Item {
 public class IndexerRun : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
+    /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
-    /// TBD
-    @objc dynamic var targetDataType:String? = nil
-    /// TBD
+    /// The progress an Item made. The number could be a (rounded) percentage or a count of a
+    /// (potentially unknown) total.
     let progress = RealmOptional<Int>()
+    /// The type of data this Item targets.
+    @objc dynamic var targetDataType:String? = nil
 
-    /// TBD
+    /// An Indexer is used to enrich data in the Pod database.
     var indexer: Indexer? {
         edge("indexer")?.target(type:Indexer.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
             query = try decoder.decodeIfPresent("query") ?? query
-            targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
             progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
+            targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
 
             try self.superDecode(from: decoder)
         }
@@ -883,24 +904,24 @@ public class IndexerRun : Item {
 
 /// TBD
 public class Label : Item {
-    /// The color of this thing.
+    /// The color of this Item.
     @objc dynamic var color:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
 
-    /// TBD
+    /// A comment on this Item.
     var comment: Results<Comment>? {
         edges("comment")?.items(type:Comment.self)
     }
 
-    /// TBD
+    /// The Item this Item applies to.
     var appliesTo: [Item]? {
         edges("appliesTo")?.itemsArray()
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             color = try decoder.decodeIfPresent("color") ?? color
             name = try decoder.decodeIfPresent("name") ?? name
@@ -912,14 +933,14 @@ public class Label : Item {
 
 /// The location of something.
 public class Location : Item {
-    /// TBD
+    /// The latitude of a location in WGS84 format.
     let latitude = RealmOptional<Double>()
-    /// TBD
+    /// The longitude of a location in WGS84 format.
     let longitude = RealmOptional<Double>()
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
             longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
@@ -942,9 +963,9 @@ public class Address : Item {
     /// TBD
     @objc dynamic var type:String? = nil
     /// TBD
-    @objc dynamic var locationWasAutomaticLookupWithHash:String? = nil
+    @objc dynamic var locationAutoLookupHash:String? = nil
 
-    /// TBD
+    /// A country.
     var country: Country? {
         edge("country")?.target(type:Country.self)
     }
@@ -957,21 +978,21 @@ public class Address : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             city = try decoder.decodeIfPresent("city") ?? city
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
             state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
             type = try decoder.decodeIfPresent("type") ?? type
-            locationWasAutomaticLookupWithHash = try decoder.decodeIfPresent("locationWasAutomaticLookupWithHash") ?? locationWasAutomaticLookupWithHash
+            locationAutoLookupHash = try decoder.decodeIfPresent("locationAutoLookupHash") ?? locationAutoLookupHash
 
             try self.superDecode(from: decoder)
         }
     }
 }
 
-/// TBD
+/// A country.
 public class Country : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
@@ -989,7 +1010,7 @@ public class Country : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
 
@@ -998,7 +1019,8 @@ public class Country : Item {
     }
 }
 
-/// TBD
+/// Any condition of the human body that affects the normal functioning of a person, whether
+/// physically or mentally. Includes diseases, injuries, disabilities, disorders, syndromes, etc.
 public class MedicalCondition : Item {
     /// TBD
     @objc dynamic var type:String? = nil
@@ -1007,7 +1029,7 @@ public class MedicalCondition : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             name = try decoder.decodeIfPresent("name") ?? name
@@ -1019,30 +1041,30 @@ public class MedicalCondition : Item {
 
 /// TBD
 public class NavigationItem : Item {
-    /// TBD
+    /// The title of an Item.
     @objc dynamic var title:String? = nil
     /// TBD
     @objc dynamic var sessionName:String? = nil
+    /// Used to define position in a sequence, enables ordering based on this number.
+    let sequence = RealmOptional<Int>()
     /// TBD
     @objc dynamic var type:String? = nil
-    /// TBD
-    let sequence = RealmOptional<Int>()
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             title = try decoder.decodeIfPresent("title") ?? title
             sessionName = try decoder.decodeIfPresent("sessionName") ?? sessionName
-            type = try decoder.decodeIfPresent("type") ?? type
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
+            type = try decoder.decodeIfPresent("type") ?? type
 
             try self.superDecode(from: decoder)
         }
     }
 }
 
-/// TBD
+/// An online profile, typically on social media.
 public class OnlineProfile : Item {
     /// TBD
     @objc dynamic var type:String? = nil
@@ -1051,7 +1073,7 @@ public class OnlineProfile : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             handle = try decoder.decodeIfPresent("handle") ?? handle
@@ -1075,16 +1097,26 @@ public class SchemaPerson : Item {
     /// Given name. In the U.S., the first name of a Person. This can be used along with
     /// familyName instead of the name property.
     @objc dynamic var lastName:String? = nil
-    /// The sexual orientation of a person.
+    /// Gender of something, typically a Person, but possibly also fictional characters,
+    /// animals, etc.
     @objc dynamic var gender:String? = nil
-    /// The gender of a person.
+    /// The sexual orientation of a person.
     @objc dynamic var sexualOrientation:String? = nil
     /// The height of the item.
     let height = RealmOptional<Int>()
-    /// TBD
+    /// The shoulder width of an Item.
     let shoulderWidth = RealmOptional<Double>()
-    /// TBD
+    /// The arm length of an Item.
     let armLength = RealmOptional<Double>()
+    /// The name to display, for Persons this could be a first or last name, both, or a
+    /// phonenumber.
+    @objc dynamic var displayName:String? = nil
+    /// The name quality used by Synapse.
+    let nameQuality = RealmOptional<Int>()
+    /// Whether the Item should be displayed in the interfaces.
+    @objc dynamic var enablePresence:Bool = false
+    ///
+    @objc dynamic var enableReceipts:Bool = false
 
     /// Physical address of the event or place.
     var address: Results<Address>? {
@@ -1096,12 +1128,12 @@ public class SchemaPerson : Item {
         edge("birthPlace")?.target(type:Location.self)
     }
 
-    /// The place where the person died.
+    /// The place where someone or something died, typically a Person.
     var deathPlace: Location? {
         edge("deathPlace")?.target(type:Location.self)
     }
 
-    /// TBD
+    /// A photo that corresponds to some Person or other kind of profile.
     var profilePicture: Photo? {
         edge("profilePicture")?.target(type:Photo.self)
     }
@@ -1111,44 +1143,47 @@ public class SchemaPerson : Item {
         edges("relationship")?.items(type:Person.self)
     }
 
-    /// A phone number.
+    /// A phone number that belongs to an Item.
     var hasPhoneNumber: Results<PhoneNumber>? {
         edges("hasPhoneNumber")?.items(type:PhoneNumber.self)
     }
 
-    /// TBD
+    /// A WebSite is a set of related web pages and other items typically served from a single
+    /// web domain and accessible via URLs.
     var website: Results<Website>? {
         edges("website")?.items(type:Website.self)
     }
 
-    /// TBD
+    /// A business or similar type of organization.
     var company: Results<Company>? {
         edges("company")?.items(type:Company.self)
     }
 
-    /// TBD
+    /// A public key used in an asymmetric cryptography protocol.
     var publicKey: Results<PublicKey>? {
         edges("publicKey")?.items(type:PublicKey.self)
     }
 
-    /// TBD
+    /// An online profile, typically on social media.
     var onlineProfile: Results<OnlineProfile>? {
         edges("onlineProfile")?.items(type:OnlineProfile.self)
     }
 
-    /// TBD
+    /// A strategy of regulating the intake of food to achieve or maintain a specific
+    /// health-related goal.
     var diet: Results<Diet>? {
         edges("diet")?.items(type:Diet.self)
     }
 
-    /// TBD
+    /// Any condition of the human body that affects the normal functioning of a person, whether
+    /// physically or mentally. Includes diseases, injuries, disabilities, disorders, syndromes, etc.
     var medicalCondition: Results<MedicalCondition>? {
         edges("medicalCondition")?.items(type:MedicalCondition.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             birthDate = try decoder.decodeIfPresent("birthDate") ?? birthDate
             email = try decoder.decodeIfPresent("email") ?? email
@@ -1160,13 +1195,17 @@ public class SchemaPerson : Item {
             height.value = try decoder.decodeIfPresent("height") ?? height.value
             shoulderWidth.value = try decoder.decodeIfPresent("shoulderWidth") ?? shoulderWidth.value
             armLength.value = try decoder.decodeIfPresent("armLength") ?? armLength.value
+            displayName = try decoder.decodeIfPresent("displayName") ?? displayName
+            nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
+            enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
+            enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
 
             try self.superDecode(from: decoder)
         }
     }
 }
 
-/// TBD
+/// A telephone number.
 public class PhoneNumber : Item {
     /// A phone number with an area code.
     @objc dynamic var phoneNumber:String? = nil
@@ -1175,7 +1214,7 @@ public class PhoneNumber : Item {
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
             type = try decoder.decodeIfPresent("type") ?? type
@@ -1185,18 +1224,19 @@ public class PhoneNumber : Item {
     }
 }
 
-/// TBD
+/// A public key used in an asymmetric cryptography protocol.
 public class PublicKey : Item {
     /// TBD
     @objc dynamic var type:String? = nil
-    /// TBD
+    /// A piece of information that determines the functional output of a cryptographic
+    /// algorithm.
     @objc dynamic var key:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             key = try decoder.decodeIfPresent("key") ?? key
@@ -1209,14 +1249,15 @@ public class PublicKey : Item {
 
 /// TBD
 public class Setting : Item {
-    /// TBD
+    /// A piece of information that determines the functional output of a cryptographic
+    /// algorithm.
     @objc dynamic var key:String? = nil
     /// TBD
     @objc dynamic var json:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             key = try decoder.decodeIfPresent("key") ?? key
             json = try decoder.decodeIfPresent("json") ?? json
@@ -1226,16 +1267,17 @@ public class Setting : Item {
     }
 }
 
-/// TBD
+/// A Website is a set of related web pages and other items typically served from a single web
+/// domain and accessible via URLs.
 public class Website : Item {
     /// TBD
     @objc dynamic var type:String? = nil
-    /// URL of the item.
+    /// The URL of an Item.
     @objc dynamic var url:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
-        
+
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("type") ?? type
             url = try decoder.decodeIfPresent("url") ?? url
@@ -1250,12 +1292,14 @@ func dataItemListToArray(_ object: Any) -> [Item] {
 
     if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CVUStateDefinition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Chat> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Comment> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Message> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<MediaObject> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
