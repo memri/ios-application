@@ -51,7 +51,7 @@ class MapHelper {
            let latitude = location.latitude.value,
            let longitude = location.longitude.value {
             let clLocation = CLLocation(latitude: latitude, longitude: longitude)
-            if let oldLookupHash = address.locationWasAutomaticLookupWithHash {
+            if let oldLookupHash = address.locationAutoLookupHash {
                 // This was an automatic lookup - check it's still current
                 if oldLookupHash == String(lookupHash) { return (clLocation, nil) }
             } else {
@@ -93,7 +93,7 @@ class MapHelper {
                         "latitude": location.coordinate.latitude,
                         "longitude": location.coordinate.longitude
                     ])
-                    address.locationWasAutomaticLookupWithHash = String(lookupHash)
+                    address.locationAutoLookupHash = String(lookupHash)
                     
                     try address.location.map { try address.unlink($0) }
 					_ = try address.link(newLocation, type: "location")
