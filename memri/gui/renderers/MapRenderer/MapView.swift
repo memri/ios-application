@@ -14,17 +14,18 @@ struct MapView: View {
 	var config: MapViewConfig
 
 	var body: some View {
-		#if targetEnvironment(macCatalyst)
-			return MapView_AppleMaps(config: config)
-		#else
-			return Group {
-				if useMapBox {
-					MapView_Mapbox(config: config)
-				} else {
-					MapView_AppleMaps(config: config)
-				}
-			}
-		#endif
+		return MapView_AppleMaps(config: config)
+//		#if targetEnvironment(macCatalyst)
+//			return MapView_AppleMaps(config: config)
+//		#else
+//			return Group {
+//				if useMapBox {
+//					MapView_Mapbox(config: config)
+//				} else {
+//					MapView_AppleMaps(config: config)
+//				}
+//			}
+//		#endif
 	}
 }
 
