@@ -254,10 +254,6 @@
 		B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */; };
 		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
 		B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */; };
-		B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; };
-		B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E824A43D7C003E8BCB /* Mapbox.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; };
-		B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */; platformFilter = ios; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8E0FBE324A4ADE3009C3C30 /* map.cvu */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
@@ -285,21 +281,6 @@
 		};
 /* End PBXContainerItemProxy section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		5D409110242E166F00911641 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				B8E0FBE224A44841009C3C30 /* MapboxMobileEvents.framework in Embed Frameworks */,
-				B8E0FBE024A4483F009C3C30 /* Mapbox.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		5D0A28B7240677EE00398B17 /* test_dataItems.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = test_dataItems.json; sourceTree = "<group>"; };
 		5D0A28B8240678EE00398B17 /* ModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelTest.swift; sourceTree = "<group>"; };
@@ -311,7 +292,6 @@
 		5D1A3E6C2408099900A0583B /* empty_session.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = empty_session.json; sourceTree = "<group>"; };
 		5D228B052432385300464506 /* ActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionView.swift; sourceTree = "<group>"; };
 		5D228B072432416F00464506 /* ActionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActionTest.swift; path = memri/control/ActionTest.swift; sourceTree = SOURCE_ROOT; };
-		5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRendererComponent.swift; sourceTree = "<group>"; };
 		5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelIndexerNotesTest.swift; sourceTree = "<group>"; };
 		5D301F61245C372400183BD2 /* ListRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
@@ -344,9 +324,6 @@
 		5D4B903C247BC0ED00EE50B4 /* ActionErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionErrors.swift; sourceTree = "<group>"; };
 		5D4C71E82445E07500DF09E8 /* persons_from_server.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = persons_from_server.json; sourceTree = "<group>"; };
 		5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralEditorView.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		5D4C71F02445E62C00DF09E8 /* person.0x011.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x011.json; sourceTree = "<group>"; };
-		5D4C71F52445E7F300DF09E8 /* person.0x012.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x012.json; sourceTree = "<group>"; };
-		5D4C71F72445E7F900DF09E8 /* person.0x013.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = person.0x013.json; sourceTree = "<group>"; };
 		5D5327D8248FA59C001FF168 /* Importer.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Importer.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5D5327DA248FD03E001FF168 /* Indexer.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Indexer.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5D5327DC248FF2AA001FF168 /* ImporterInstance.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImporterInstance.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
@@ -488,11 +465,8 @@
 		86DDB363247AD0400051A92F /* CVUValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUValidatorTests.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86FFD0BD24A2398F001BF14B /* chart.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chart.cvu; sourceTree = "<group>"; wrapsLines = 0; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86FFD0C424A4CE42001BF14B /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		B81237E824A43D7C003E8BCB /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Mapbox.framework; sourceTree = "<group>"; };
-		B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = MapboxMobileEvents.framework; sourceTree = "<group>"; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
 		B81C05A024C183E100A3738D /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
-		B83E331524982F4200D88742 /* LEOTextStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LEOTextStorage.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichTextToolbar.swift; sourceTree = "<group>"; };
@@ -553,8 +527,6 @@
 				B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
 				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
-				B8E0FBDF24A4483E009C3C30 /* Mapbox.framework in Frameworks */,
-				B8E0FBE124A44841009C3C30 /* MapboxMobileEvents.framework in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -750,18 +722,6 @@
 			path = file;
 			sourceTree = "<group>";
 		};
-		5D487F1C2440735E00B50202 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				5D22DF0E243F1A8E003FC1EB /* ItemRendererComponent.swift */,
-				5D4C71F02445E62C00DF09E8 /* person.0x011.json */,
-				5D4C71F52445E7F300DF09E8 /* person.0x012.json */,
-				5D4C71F72445E7F900DF09E8 /* person.0x013.json */,
-				B83E331524982F4200D88742 /* LEOTextStorage.swift */,
-			);
-			name = "Recovered References";
-			sourceTree = "<group>";
-		};
 		5D493FDC23FC15D10034692B /* cvu */ = {
 			isa = PBXGroup;
 			children = (
@@ -779,8 +739,6 @@
 				5D599BD023F2B77700F218A0 /* memriTests */,
 				5D599BDB23F2B77700F218A0 /* memriUITests */,
 				5D38DE3F240581E500FF9B70 /* memri.app */,
-				5D487F1C2440735E00B50202 /* Recovered References */,
-				B88AAB1A24A1A99F0007C9EB /* Frameworks */,
 				B857B7B424A1CBE700615BA7 /* memriTests.xctest */,
 				B857B7B524A1CBE700615BA7 /* memriUITests.xctest */,
 			);
@@ -1239,15 +1197,6 @@
 			path = TimelineRenderer;
 			sourceTree = "<group>";
 		};
-		B88AAB1A24A1A99F0007C9EB /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				B81237E824A43D7C003E8BCB /* Mapbox.framework */,
-				B81237E924A43D7C003E8BCB /* MapboxMobileEvents.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		B88AAB2624A1AE8C0007C9EB /* ChartRenderer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1343,8 +1292,7 @@
 				5D599BB323F2B77500F218A0 /* Sources */,
 				5D599BB423F2B77500F218A0 /* Frameworks */,
 				5D599BB523F2B77500F218A0 /* Resources */,
-				5D409110242E166F00911641 /* Embed Frameworks */,
-				B809BC9124A16D27007E38CE /* Mapbox */,
+				B809BC9124A16D27007E38CE /* TEMP DISABLED: Mapbox */,
 			);
 			buildRules = (
 			);
@@ -1570,7 +1518,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		B809BC9124A16D27007E38CE /* Mapbox */ = {
+		B809BC9124A16D27007E38CE /* TEMP DISABLED: Mapbox */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1579,14 +1527,14 @@
 			);
 			inputPaths = (
 			);
-			name = Mapbox;
+			name = "TEMP DISABLED: Mapbox";
 			outputFileListPaths = (
 			);
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${TARGET_OS_MACCATALYST}\" = \"0\" ]; then\nbash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\nfi\n";
+			shellScript = "# if [ \"${TARGET_OS_MACCATALYST}\" = \"0\" ]; then\n# bash \"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/Mapbox.framework/strip-frameworks.sh\"\n# fi\n";
 		};
 		B8E8BA7324A8227500A89F60 /* Swift Format */ = {
 			isa = PBXShellScriptBuildPhase;
