@@ -384,7 +384,7 @@ public enum ActionProperties: String, CaseIterable {
 		backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
     // These are arguments
     case viewName, sessionName, view, viewArguments, session, importer, indexer, subject, property,
-         value, path, edgeType, distinct, all, actions
+         value, path, edgeType, distinct, all, actions, item
 
 	func validate(_ key: String, _ value: Any?) -> Bool {
 		if value is Expression { return true }
@@ -400,7 +400,7 @@ public enum ActionProperties: String, CaseIterable {
 		case .color, .backgroundColor, .inactiveColor, .activeBackgroundColor, .inactiveBackgroundColor:
 			return value is Color
         case .value: return true // AnyObject is always true
-        case .subject, .importer, .indexer: return value is Item
+        case .subject, .importer, .indexer, .item: return value is Item
         case .viewArguments: return value is CVUParsedObjectDefinition || value is [String:Any?]
         case .view: return value is CVUParsedViewDefinition || value is [String:Any?]
         case .session: return value is CVUParsedSessionDefinition || value is [String:Any?]
@@ -737,7 +737,7 @@ class ActionShowStarred: Action, ActionExec {
 	func exec(_: [String: Any?]) throws {
 		do {
 			if let binding = self.binding, try !binding.isTrue() {
-				try ActionOpenViewByName.exec(context, ["name": "filter-starred"])
+				try ActionOpenViewByName.exec(context, ["viewName": "filter-starred"])
                 try binding.toggleBool()
 			} else {
 				// Go back to the previous view
@@ -1059,6 +1059,10 @@ class ActionDelete: Action, ActionExec {
 }
 
 class ActionDuplicate: Action, ActionExec {
+    override var defaultValues: [String: Any?] { [
+        "argumentTypes": ["item": ItemFamily.self],
+    ] }
+    
 	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
 		super.init(context, "duplicate", values: values)
 	}
@@ -1071,7 +1075,7 @@ class ActionDuplicate: Action, ActionExec {
 			try selection.forEach { item in try ActionAddItem.exec(context, ["item": item]) }
 		}
         else if let item = arguments["item"] as? Item {
-			try ActionAddItem.exec(context, ["item": item])
+			try ActionAddItem.exec(context, ["template": item])
 		}
         else {
 			// TODO: Error handling
