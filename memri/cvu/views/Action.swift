@@ -354,7 +354,7 @@ public enum RenderType: String {
 }
 
 public enum ActionFamily: String, CaseIterable {
-	case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode, toggleFilterPanel,
+	case back, addItem, openView, openDynamicView, openViewByName, openGroup, openViewByChangingRenderer, toggleEditMode, toggleFilterPanel,
 		star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel, duplicate,
 		schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
 		delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
@@ -368,6 +368,7 @@ public enum ActionFamily: String, CaseIterable {
 		case .addItem: return ActionAddItem.self
 		case .openView: return ActionOpenView.self
 		case .openGroup: return ActionOpenViewWithUIDs.self
+		case .openViewByChangingRenderer: return ActionNewViewByChangingRenderer.self
 		case .openViewByName: return ActionOpenViewByName.self
 		case .toggleEditMode: return ActionToggleEditMode.self
 		case .toggleFilterPanel: return ActionToggleFilterPanel.self
@@ -646,6 +647,28 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 	
 	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
 		execWithoutThrow { try ActionOpenView(context).exec(arguments) }
+	}
+}
+
+
+class ActionNewViewByChangingRenderer: Action, ActionExec {
+	
+	override var defaultValues: [String: Any?] { [:] }
+	
+	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+		super.init(context, "changeRenderer", arguments: arguments, values: values)
+	}
+	
+	func exec(_ arguments: [String: Any?]) throws {
+		guard let rendererName = values["rendererName"] as? String else { return }
+		
+		#warning("@Ruben - how to open a copy of the current view changing only the renderer? So that we get the back button from here")
+		context.currentView?.activeRenderer = rendererName
+		context.scheduleUIUpdate { _ in true }
+	}
+	
+	class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+		execWithoutThrow { try ActionToggleEditMode(context).exec(arguments) }
 	}
 }
 

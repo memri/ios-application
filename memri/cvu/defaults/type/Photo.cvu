@@ -49,6 +49,10 @@ Photo[]: {
     [renderer = thumbnail] {
         spacing: 1
         edgeInset: 0 0 0 0 /* inset edges */
+		
+		press: openViewByChangingRenderer {
+			rendererName: "photoViewer"
+		}
         
         Image {
             image: {{.file}}
@@ -63,6 +67,22 @@ Photo[]: {
 		TimelineItem {
 			icon: "camera"
 			title: "Photo"
+		}
+	}
+	
+	
+	[renderer = photoViewer] {
+		file: {{.file}}
+		
+		VStack {
+			spacing: 5
+			padding: 20
+			Text {
+				text: "Testing overlay"
+			}
+			Text {
+				text: {{.dateCreated}}
+			}
 		}
 	}
 }

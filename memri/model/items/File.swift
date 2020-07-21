@@ -11,13 +11,25 @@ import RealmSwift
 import SwiftUI
 
 extension File {
+	public var url: URL? {
+		uri.flatMap { path in
+			// Little hack to make our demo data work
+			if path.hasPrefix("/tmp/lfw"), let fileName = path.components(separatedBy: "/").last?.components(separatedBy: ".").first {
+				return Bundle.main.url(forResource: "DemoAssets/\(fileName)", withExtension: "jpg")
+			}
+			// Normally we just want the URL
+			return URL(fileURLWithPath: path)
+		}
+	}
+	
 	public var asUIImage: UIImage? {
 		do { if let x: UIImage = try read() { return x } }
 		catch {
 			// TODO: User error handling
 			// TODO: Refactor: error handling
 			if let uri = uri, let fileName = uri.components(separatedBy: "/").last {
-				return UIImage(named: fileName)
+				// Note that this is a temporary solution. Using UIImage(named:) will only work for files in the app bundle
+				return UIImage(named: "DemoAssets/\(fileName)")
 			}
 			debugHistory.error("Could not read image in path: \(uri ?? "")")
 		}

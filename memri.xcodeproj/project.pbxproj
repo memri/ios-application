@@ -216,6 +216,9 @@
 		B809186524A4DFF400BD74D8 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B809186424A4DFF400BD74D8 /* Charts */; };
 		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
 		B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C05A024C183E100A3738D /* RichTextEditor.swift */; };
+		B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */; };
+		B821D67D24C70DCF006D6CFF /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */; };
+		B821D67F24C71274006D6CFF /* DemoAssets in Resources */ = {isa = PBXBuildFile; fileRef = B821D67E24C71274006D6CFF /* DemoAssets */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */; };
@@ -249,7 +252,6 @@
 		B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8BF6F4B24BEA3E60058067C /* messages.cvu */; };
 		B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
-		B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */; };
 		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
 		B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */; };
 		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
@@ -467,6 +469,9 @@
 		86FFD0C424A4CE42001BF14B /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
 		B81C05A024C183E100A3738D /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
+		B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerRenderer.swift; sourceTree = "<group>"; };
+		B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
+		B821D67E24C71274006D6CFF /* DemoAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DemoAssets; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RichTextToolbar.swift; sourceTree = "<group>"; };
@@ -501,7 +506,6 @@
 		B8BF6F4B24BEA3E60058067C /* messages.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = messages.cvu; sourceTree = "<group>"; };
 		B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualBottomBar.swift; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
-		B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = DemoAssets.xcassets; sourceTree = "<group>"; };
 		B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MapView-Mapbox.swift"; sourceTree = "<group>"; };
 		B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapView-AppleMaps.swift"; sourceTree = "<group>"; };
 		B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapStyle.swift; sourceTree = "<group>"; };
@@ -710,6 +714,7 @@
 				B88AAB3424A1AEF80007C9EB /* GridRenderers */,
 				B88AAB3324A1AEEE0007C9EB /* MapRenderer */,
 				B88AAB2624A1AE8C0007C9EB /* ChartRenderer */,
+				B821D67924C70DCF006D6CFF /* PhotoViewerRenderer */,
 			);
 			path = renderers;
 			sourceTree = "<group>";
@@ -1139,6 +1144,15 @@
 			path = styles;
 			sourceTree = "<group>";
 		};
+		B821D67924C70DCF006D6CFF /* PhotoViewerRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */,
+				B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */,
+			);
+			path = PhotoViewerRenderer;
+			sourceTree = "<group>";
+		};
 		B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */ = {
 			isa = PBXGroup;
 			children = (
@@ -1274,9 +1288,9 @@
 			isa = PBXGroup;
 			children = (
 				5D599BC023F2B77700F218A0 /* Assets.xcassets */,
+				B821D67E24C71274006D6CFF /* DemoAssets */,
 				5D599BC523F2B77700F218A0 /* LaunchScreen.storyboard */,
 				C8A6F73B241993AD00FF8183 /* Localizable.strings */,
-				B8DCEE0D24A0D6A400FF3B70 /* DemoAssets.xcassets */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -1422,6 +1436,7 @@
 				8699AA30247BCF2B00EC85C0 /* defaults.cvu in Resources */,
 				5D47BCFD24911A0000126126 /* IndexerRun.cvu in Resources */,
 				C8A6F739241993AD00FF8183 /* Localizable.strings in Resources */,
+				B821D67F24C71274006D6CFF /* DemoAssets in Resources */,
 				5D599BC423F2B77700F218A0 /* Preview Assets.xcassets in Resources */,
 				8656461A24238BB000D071B4 /* notes_from_server.json in Resources */,
 				866F87DA2456AD76000E5FAB /* person.0x012.json in Resources */,
@@ -1441,7 +1456,6 @@
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
 				5D5327D9248FA59C001FF168 /* Importer.cvu in Resources */,
 				5DAFB6152479524500719160 /* thumbnail.cvu in Resources */,
-				B8DCEE0E24A0D6A400FF3B70 /* DemoAssets.xcassets in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,
 				B8BF6F4D24BEA4DB0058067C /* messages.cvu in Resources */,
 				5DAFB6382479533000719160 /* sessions.cvu in Resources */,
@@ -1600,6 +1614,7 @@
 				863D0E0C24796C0A00DAB6C8 /* CVUToString.swift in Sources */,
 				B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */,
 				5D487F22244073DF00B50202 /* UIElementView.swift in Sources */,
+				B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */,
 				5D1A3E64240704D000A0583B /* CodablePublishedExtension.swift in Sources */,
 				B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */,
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
@@ -1655,6 +1670,7 @@
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
 				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
+				B821D67D24C70DCF006D6CFF /* PhotoViewController.swift in Sources */,
 				B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
 				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
