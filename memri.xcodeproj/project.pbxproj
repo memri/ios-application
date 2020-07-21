@@ -1899,7 +1899,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
@@ -1916,7 +1916,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.3;
+				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1936,7 +1936,7 @@
 				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
@@ -1954,7 +1954,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.3;
+				MARKETING_VERSION = 0.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";
