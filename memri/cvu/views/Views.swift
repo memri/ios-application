@@ -380,10 +380,11 @@ public class Views {
             }
 		}
 
-		// Format a date
-		if let date = value as? Date {
-			value = Views.formatDate(date)
-		}
+//		// Format a date
+//		if let date = value as? Date {
+//			value = Views.formatDate(date)
+//		}
+		#warning("This was disabled because it prevents getting a Date from an expression.")
 
 		recursionCounter -= 1
 

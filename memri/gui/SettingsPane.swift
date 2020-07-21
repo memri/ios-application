@@ -75,7 +75,7 @@ struct SettingsPane: View {
                 }) {
 					Text("Pod Connection")
 				}
-
+				
 				NavigationLink(destination: Form {
 					Section(
 						header: Text("User Interface"),
@@ -88,12 +88,12 @@ struct SettingsPane: View {
 						Toggle(isOn: getBinding("/user/general/gui/showDateAgo")) {
 							Text("Enable time ago")
 						}
-						#if !targetEnvironment(macCatalyst)
-							// Only supported on iOS
-							Toggle(isOn: getBinding("/user/general/gui/useMapBox")) {
-								Text("Use MapBox (OpenStreetMap) instead of Apple Maps")
-							}
-						#endif
+//						#if !targetEnvironment(macCatalyst)
+//							// Only supported on iOS
+//							Toggle(isOn: getBinding("/user/general/gui/useMapBox")) {
+//								Text("Use MapBox (OpenStreetMap) instead of Apple Maps")
+//							}
+//						#endif
 					}
                 }) {
 					Text("User Interface")

@@ -64,7 +64,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeDigitalDocument: return Color(hex: "#93c47d")
         case .typeComment: return Color(hex: "#93c47d")
-        case .typeNote: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#ccb94b")
         case .typeMediaObject: return Color(hex: "#93c47d")
         case .typeAudio: return Color(hex: "#93c47d")
         case .typePhoto: return Color(hex: "#93c47d")

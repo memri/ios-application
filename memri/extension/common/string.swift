@@ -142,8 +142,12 @@ extension RangeReplaceableCollection where Element == Character {
 
 extension String {
     func strippingHTMLtags() -> String {
-        // First replace br/p with a newline
-        self.replacingOccurrences(of: "<br[^>]*>|<p[^>]*>", with: "\n",
+		// Remove style tags and content
+		self.replacingOccurrences(of: "<style[^>]*>[^>]*<[^>]*style>", with: "\n",
+								  options: .regularExpression,
+								  range: nil)
+        // replace br/p with a newline
+        .replacingOccurrences(of: "<br[^>]*>|<p[^>]*>", with: "\n",
                              options: .regularExpression,
                              range: nil)
         // Remove all html tags

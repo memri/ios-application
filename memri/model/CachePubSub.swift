@@ -188,7 +188,6 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
                         let item = items[i]
                         
                         if let uid = item.uid.value {
-                            
                             if let cachedItem = getItem(item.genericType, uid) {
                                 if item.version > cachedItem.version {
                                     if case .delete = self.event, !item.deleted { continue }

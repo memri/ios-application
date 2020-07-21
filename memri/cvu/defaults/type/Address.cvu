@@ -22,7 +22,7 @@ Address[] {
             }
             Spacer
             Map {
-                addressKey: self
+				address: {{.}}
                 maxWidth: 150
                 minHeight: 150
                 maxHeight: 150
@@ -34,7 +34,8 @@ Address[] {
     }
     
     [renderer = map] {
-        addressKey: self
+		address: {{.}}
+		label: "{.computedTitle()}"
     }
     
     [renderer = generalEditor] {
@@ -51,7 +52,7 @@ Address[] {
                 }
                 Spacer
                 Map {
-                    addressKey: self
+					address: {{.}}
                     maxWidth: 150
                     minHeight: 150
                     maxHeight: 150
@@ -106,7 +107,7 @@ Address {
             showTitle: false
             
             Map {
-                addressKey: self
+				address: {{.}}
                 minHeight: 150
                 maxHeight: 150
             }

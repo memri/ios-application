@@ -49,7 +49,8 @@ public class Renderers {
 		registerThumbWaterfallRenderer()
 		registerMapRenderer()
 		registerChartRenderer()
-		registerRichTextEditorRenderer()
+		registerCalendarRenderer()
+		registerMessageRenderer()
 	}
 
 	var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {

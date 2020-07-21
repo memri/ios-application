@@ -23,7 +23,7 @@ struct BarChartSwiftUIView: UIViewRepresentable {
 		chartView.xAxis.drawGridLinesEnabled = false
 		chartView.xAxis.valueFormatter = BarChartXAxisFormatter()
 		chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
-		chartView.rightAxis.drawGridLinesEnabled = false
+		chartView.rightAxis.enabled = false
 		chartView.legend.enabled = false
 		chartView.pinchZoomEnabled = false
 		chartView.scaleXEnabled = false
@@ -40,6 +40,8 @@ struct BarChartSwiftUIView: UIViewRepresentable {
 		let labels = model.getLabels()
 		chartView.xAxis.labelCount = labels.count
 		(chartView.xAxis.valueFormatter as? BarChartXAxisFormatter)?.values = labels
+		
+		chartView.notifyDataSetChanged()
 	}
 
 	func makeCoordinator() -> Coordinator {

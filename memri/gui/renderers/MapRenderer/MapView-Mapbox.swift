@@ -1,5 +1,4 @@
-//
-import Combine
+/*
 //  MapView.swift
 //  MemriPlayground
 //
@@ -7,19 +6,7 @@ import Combine
 //
 import Foundation
 import SwiftUI
-
-struct MapViewConfig {
-	var dataItems: [Item] = []
-	var locationKey: String = "coordinate"
-	var addressKey: String = "address"
-	var labelKey: String = "name"
-	var maxInitialZoom: Double = 16
-	var mapStyle: MapStyle = .street
-
-	var onPress: ((Item) -> Void)?
-
-	@Environment(\.colorScheme) var colorScheme
-}
+import Combine
 
 #if !targetEnvironment(macCatalyst)
 	import Mapbox
@@ -44,9 +31,9 @@ struct MapViewConfig {
 
 		func updateUIView(_: MGLMapView, context: Context) {
 			context.coordinator.mapModel.dataItems = config.dataItems
-			context.coordinator.mapModel.locationKey = config.locationKey
-			context.coordinator.mapModel.addressKey = config.addressKey
-			context.coordinator.mapModel.labelKey = config.labelKey
+			context.coordinator.mapModel.locationResolver = config.locationResolver
+			context.coordinator.mapModel.addressResolver = config.addressResolver
+			context.coordinator.mapModel.labelResolver = config.labelResolver
 			context.coordinator.mapModel.mapStyle = config.mapStyle
 		}
 
@@ -144,3 +131,4 @@ struct MapViewConfig {
 	}
 
 #endif
+*/

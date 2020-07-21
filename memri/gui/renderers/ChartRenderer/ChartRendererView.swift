@@ -60,6 +60,11 @@ class CascadingChartConfig: CascadingRenderConfig {
         get { cascadeProperty("label", type: Expression.self) }
         set (value) { setState("label", value) }
     }
+    
+    var lineWidth: CGFloat {
+        get { cascadePropertyAsCGFloat("lineWidth") ?? 0 }
+        set (value) { setState("lineWidth", value) }
+    }
 
 	var yAxisStartAtZero: Bool {
         get { cascadeProperty("yAxisStartAtZero") ?? false }
@@ -137,8 +142,8 @@ struct ChartRendererView: View {
 			
             let data = ChartHelper.generateLabelledYChartSetFromItems(
                 dataItems,
-				labelKey: { self.resolveExpression(labelExpression, forItem: $0) },
-				yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) }
+                labelExpression: { self.resolveExpression(labelExpression, forItem: $0) },
+                yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) }
             )
 
 			return VStack(spacing: 0) {
@@ -160,20 +165,22 @@ struct ChartRendererView: View {
                 let xAxisExpression = renderConfig.xAxisExpression,
                 let yAxisExpression = renderConfig.yAxisExpression
             else { return missingDataView.eraseToAnyView() }
-			
-            let data = ChartHelper.generateXYChartSetFromItems(
+            
+			let data = ChartHelper.generateXYChartSetFromItems(
                 dataItems,
                 xAxis: { self.resolveExpression(xAxisExpression, forItem: $0) },
                 yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) },
-                labelKey: { self.resolveExpression(self.renderConfig.labelExpression, forItem: $0) }
+                labelExpression: {
+                    self.resolveExpression(self.renderConfig.labelExpression, forItem: $0)
+                }
             )
 			return VStack(spacing: 0) {
 				chartTitleView
 				LineChartSwiftUIView(
                     model: LineChartModel(
                         sets: [data],
-                        hideGridLines:
-                        renderConfig.hideGridLines,
+                        lineWidth: renderConfig.lineWidth,
+                        hideGridLines: renderConfig.hideGridLines,
                         forceMinYOfZero: renderConfig.yAxisStartAtZero
                     ),
                     onPress: { self.onPress(index: $0) }
