@@ -51,11 +51,9 @@ Photo[]: {
         edgeInset: 0 0 0 0 /* inset edges */
 		
 		press: openView {
-            arguments: {
-                view: {
-                    inherit: {{currentView}}
-                    defaultRenderer: "photoViewer"
-                }
+            view: {
+                inherit: {{currentView}}
+                defaultRenderer: "photoViewer"
             }
 		}
         

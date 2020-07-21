@@ -167,8 +167,8 @@ public class Expression: CVUToString {
 	}
     
     public class func resolve<T>(_ object:Any?,
-                              _ viewArguments:ViewArguments? = nil,
-                              dontResolveItems:Bool = false) throws -> T? {
+                                 _ viewArguments:ViewArguments? = nil,
+                                 dontResolveItems:Bool = false) throws -> T? {
         
         if var dict = object as? [String:Any?] {
             for (key, value) in dict {

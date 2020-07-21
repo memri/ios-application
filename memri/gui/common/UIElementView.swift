@@ -152,7 +152,7 @@ public struct UIElementView: SwiftUI.View {
 								"subject": self.context.item, // self.item,
 								"edgeType": self.viewArguments.get("name"),
 							]
-							let action = ActionUnlink(self.context, arguments: args)
+							let action = ActionUnlink(self.context, values: args)
 							self.context.executeAction(action, with: self.item, using: self.viewArguments)
                         }) {
 							Image(systemName: "minus.circle.fill")

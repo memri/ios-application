@@ -33,7 +33,7 @@
                 Button {
                     press: openViewByName {
                         name: "all-items-with-label"
-                        arguments: {
+                        viewArguments: {
                             name: "{.name}"
                             uid: {{.uid}}
                         }

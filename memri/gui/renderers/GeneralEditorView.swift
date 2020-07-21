@@ -386,7 +386,7 @@ struct GeneralEditorSection: View {
     func getAction(edgeType:String, itemType:String) -> Action {
         return ActionOpenViewByName(
             context,
-            arguments: [
+            values: [
                 "name": "choose-item-by-query",
                 "viewArguments": ViewArguments([
                     "query": itemType,
@@ -397,8 +397,6 @@ struct GeneralEditorSection: View {
                     "title": "Choose a \(itemType)",
                     "item": item,
                 ]),
-            ],
-            values: [
                 "icon": "plus",
                 "renderAs": RenderType.popup,
             ]
