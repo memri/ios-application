@@ -11,7 +11,7 @@ import Foundation
 import RealmSwift
 
 #if !targetEnvironment(macCatalyst)
-	import Mapbox
+//	import Mapbox
 #endif
 
 class MapModel {

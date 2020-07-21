@@ -11,7 +11,7 @@ import Foundation
 /// This class wraps a query and its results, and is responsible for loading a the result and possibly applying clienside filtering
 public class ResultSet: ObservableObject {
 	/// Object describing the query and postprocessing instructions
-	var datasource: Datasource = Datasource(query: "")
+	var datasource: Datasource
 	/// Resulting Items
 	var items: [Item] = []
 	/// Nr of items in the resultset
@@ -87,8 +87,9 @@ public class ResultSet: ObservableObject {
 		}
 	}
 
-	required init(_ ch: Cache) {
+    required init(_ ch: Cache, _ datasource: Datasource) {
 		cache = ch
+        self.datasource = datasource
 	}
 
 	/// Executes a query given the current QueryOptions, filters the result client side and executes the callback on the resulting

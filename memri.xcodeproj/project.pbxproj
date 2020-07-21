@@ -130,6 +130,7 @@
 		861C52C224A5A9B100B3230C /* schema.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C124A5A9B100B3230C /* schema.swift */; };
 		861C52C524A5B24500B3230C /* installerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C424A5B24500B3230C /* installerTest.swift */; };
 		861C52C724A5BAD500B3230C /* datasourceTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861C52C624A5BAD500B3230C /* datasourceTest.swift */; };
+		8625F25C24C73AF6004750E1 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */; };
 		863CDB712441E69F000D7AC0 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 863CDB702441E69F000D7AC0 /* File.swift */; };
 		863D0E0424794D8C00DAB6C8 /* example.view in Resources */ = {isa = PBXBuildFile; fileRef = 868EF62324766A8800C0375F /* example.view */; };
 		863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF63A24766AA100C0375F /* ExprParserTests.swift */; };
@@ -253,7 +254,6 @@
 		B8E0FBD724A43F27009C3C30 /* MapView-Mapbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD624A43F27009C3C30 /* MapView-Mapbox.swift */; };
 		B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */; };
 		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
-		B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDC24A43FDB009C3C30 /* MapModel.swift */; };
 		B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B8E0FBE324A4ADE3009C3C30 /* map.cvu */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
@@ -1652,6 +1652,7 @@
 				5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */,
 				5D179AB724756C7800AA275C /* Action.swift in Sources */,
 				867527BA24B76F5B002B5006 /* CachePubSub.swift in Sources */,
+				8625F25C24C73AF6004750E1 /* MapModel.swift in Sources */,
 				8656461424222C2000D071B4 /* Application.swift in Sources */,
 				B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */,
 				861C52C224A5A9B100B3230C /* schema.swift in Sources */,
@@ -1681,7 +1682,6 @@
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
 				8672C27C2497F35A006F0D42 /* CustomRenderer.swift in Sources */,
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
-				B8E0FBDE24A43FDB009C3C30 /* MapModel.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
 				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
@@ -1916,7 +1916,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1954,7 +1954,7 @@
 					"@executable_path/Frameworks",
 					memri/Resources,
 				);
-				MARKETING_VERSION = 0.0.2;
+				MARKETING_VERSION = 0.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = polis.memri;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SCHEME_FILE = "${INTERMEDIATES_OUTPUT_DIR}current_scheme.txt";

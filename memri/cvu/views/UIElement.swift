@@ -33,17 +33,19 @@ public class UIElement: CVUToString {
 	}
 
 	public func get<T>(_ propName: String, _ item: Item? = nil,
-					   _ viewArguments: ViewArguments = ViewArguments(nil)) -> T? {
+					   _ viewArguments: ViewArguments? = nil) -> T? {
+        
+        let args = viewArguments ?? ViewArguments([".": item])
+        
 		if let prop = properties[propName] {
 			let propValue = prop
 
 			// Execute expression to get the right value
 			if let expr = propValue as? Expression {
-				viewArguments.set(".", item) // TODO: Optimization This is called a billion times. Find a better place for this
 
 				do {
 					if T.self == [Item].self {
-						let x = try expr.execute(viewArguments)
+						let x = try expr.execute(args)
 
 						var result = [Item]()
 						if let list = x as? Results<Edge> {
@@ -58,12 +60,12 @@ public class UIElement: CVUToString {
 
 						return (result as! T)
 					} else {
-						let x = try expr.execForReturnType(T.self, args: viewArguments); return x
+						let x = try expr.execForReturnType(T.self, args: args); return x
 					}
 				} catch {
 					// TODO: Refactor error handling
 					debugHistory.error("Could note compute \(propName)\n"
-						+ "Arguments: [\(viewArguments.description)]\n"
+						+ "Arguments: [\(args.description)]\n"
 						+ (expr.startInStringMode
 							? "Expression: \"\(expr.code)\"\n"
 							: "Expression: \(expr.code)\n")

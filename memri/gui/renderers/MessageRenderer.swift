@@ -38,8 +38,7 @@ struct MessageRenderer: View {
 	func resolveExpression<T>(_ expression: Expression?,
 							  toType _: T.Type = T.self,
 							  forItem dataItem: Item) -> T? {
-		let args = ViewArguments(context.currentView?.viewArguments)
-        args.set(".", dataItem)
+		let args = ViewArguments(context.currentView?.viewArguments, dataItem)
 		return try? expression?.execForReturnType(T.self, args: args)
 	}
 	
