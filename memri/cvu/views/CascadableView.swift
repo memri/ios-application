@@ -471,7 +471,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-    public func cascade(_ resultSet:ResultSet) throws {
+    private func cascade(_ resultSet:ResultSet) throws {
 		// Determine whether this is a list or a single item resultset
 		let isList = resultSet.isList
 
@@ -572,6 +572,9 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 // TODO: Error handling
                 // TODO: User Error handling
                 debugHistory.error("\(error)")
+
+                loading = false
+                callback(error)
             }
         }
         // Otherwise let's execute the query first to be able to read the type from the data
