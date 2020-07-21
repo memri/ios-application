@@ -19,11 +19,22 @@ Location[] {
             Spacer
             Map {
                 location: {{.}}
-                minHeight: 50
-                maxHeight: 50
+                minHeight: 80
+                maxHeight: 80
             }
         }
     }
+	
+	[renderer = thumbnail] {
+		HStack {
+			Spacer
+			Map {
+				location: {{.}}
+				minWidth: 80
+				minHeight: 80
+			}
+		}
+	}
     
     [renderer = map] {
         location: {{.}}
