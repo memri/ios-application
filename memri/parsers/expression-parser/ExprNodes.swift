@@ -194,7 +194,7 @@ public struct ExprCallNode: ExprNode {
 		"CallNode(lookup: \(lookup), argument: \(arguments))"
 	}
     public func toExprString() -> String {
-        "\(lookup.toExprString())(\(arguments.map { $0.toExprString() }.joined(separator: ", "))"
+        "\(lookup.toExprString())(\(arguments.map { $0.toExprString() }.joined(separator: ", ")))"
     }
 
 }
