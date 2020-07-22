@@ -300,9 +300,7 @@ public final class Session : Equatable, Subscriptable {
                 func doIt() {
                     do {
                         if self.screenshot == nil {
-                            let file = try Cache.createItem(File.self,
-                                values: ["uri": File.generateFilePath()]
-                            )
+                            let file = try Cache.createItem(File.self)
                             self.screenshot = file
                         }
 

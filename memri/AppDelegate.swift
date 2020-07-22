@@ -11,7 +11,9 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+		CrashObserver.shared.onLaunch()
+		
+		// Override point for customization after application launch.
         MapHelper.shared.onAppStart()
         
         // This works for normal app startup and background location event startups (testing for the launch "location" key not necessary)
@@ -19,6 +21,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         return true
     }
+	
+	func applicationWillTerminate(_ application: UIApplication) {
+		CrashObserver.shared.onTerminate()
+	}
+	
 
     // MARK: UISceneSession Lifecycle
 
@@ -33,4 +40,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
+}
+
+
+class CrashObserver {
+	static var shared = CrashObserver()
+	
+	var didCrashLastTime: Bool
+	
+	static let defaultsKey = "memri.crashObserver.didCrash"
+	
+	private init() {
+		didCrashLastTime = (UserDefaults.standard.value(forKey: CrashObserver.defaultsKey) as? Bool) ?? false
+	}
+	
+	func onLaunch() {
+		// This will be overridden before the app launches again - ie. assume crash until we record otherwise
+		UserDefaults.standard.setValue(true, forKey: CrashObserver.defaultsKey)
+	}
+	
+	func onTerminate() {
+		// Called when the app closes through normal methods (ie. not a crash)
+		UserDefaults.standard.setValue(false, forKey: CrashObserver.defaultsKey)
+	}
 }

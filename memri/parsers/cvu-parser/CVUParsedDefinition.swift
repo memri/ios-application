@@ -108,6 +108,16 @@ public class CVUParsedDefinition: Equatable, CVUToString {
         
         self.parsed = try recur(parsed) as? [String:Any?]
     }
+    
+    func mergeValuesWhenNotSet(_ other:CVUParsedDefinition) {
+        guard let dict = other.parsed else { return }
+        for (key, value) in dict {
+            if parsed?[key] == nil {
+                if parsed == nil { parsed = [:] }
+                parsed?[key] = value
+            }
+        }
+    }
 }
 
 public class CVUParsedObjectDefinition: CVUParsedDefinition {

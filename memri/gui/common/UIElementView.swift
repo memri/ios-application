@@ -152,7 +152,7 @@ public struct UIElementView: SwiftUI.View {
 								"subject": self.context.item, // self.item,
 								"edgeType": self.viewArguments.get("name"),
 							]
-							let action = ActionUnlink(self.context, arguments: args)
+							let action = ActionUnlink(self.context, values: args)
 							self.context.executeAction(action, with: self.item, using: self.viewArguments)
                         }) {
 							Image(systemName: "minus.circle.fill")
@@ -306,8 +306,14 @@ public struct UIElementView: SwiftUI.View {
 							.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else { // assuming image property
 						Image(uiImage: getImage("image"))
-							.renderingMode(.original)
-							.if(from.has("resizable")) { self.resize($0) }
+								.renderingMode(.original)
+								.if(from.has("resizable")) { view in
+									GeometryReader { geom in
+										self.resize(view)
+											.frame(width: geom.size.width, height: geom.size.height)
+											.clipped()
+									}
+								}
 							.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
 				} else if from.type == .Circle {

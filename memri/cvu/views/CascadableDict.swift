@@ -115,20 +115,12 @@ public class CascadableDict: Cascadable, Subscriptable {
         return self
     }
     
-    func resolve(_ item: Item?) throws -> CascadableDict {
+    func resolve(_ item: Item?, _ viewArguments:ViewArguments? = nil) throws -> CascadableDict {
         // TODO: Only doing this for head, let's see if that is enough
         //       Currently the assumption is that tails never change.
         //       If they do, a copy is required
         
-        #warning("This will resolve items which is not good")
-        for (key, value) in head.parsed ?? [:] {
-            if let expr = value as? Expression {
-                let value = try expr.execute(viewArguments)
-                if let _ = value as? Item { /* ignore */ }
-                else { head.parsed?[key] = value }
-            }
-        }
-        
+        head.parsed = try Expression.resolve(head.parsed, viewArguments, dontResolveItems: true)
         set(".", item)
         
         return self

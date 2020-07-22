@@ -42,7 +42,7 @@ public struct TopNavigation: View {
 
 	private func openAllViewsOfSession() {
 		do {
-			try ActionOpenViewByName.exec(context, ["name": "views-in-current-session"])
+			try ActionOpenViewByName.exec(context, ["viewName": "views-in-current-session"])
 		} catch {
 			debugHistory.error("Unable to open views for session: \(error)")
 		}

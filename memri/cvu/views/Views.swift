@@ -464,7 +464,7 @@ public class Views {
 			let viewDefParser = CVU(definition, context,
 									lookup: lookupValueOfVariables,
 									execFunc: executeFunction)
-			try InMemoryObjectCache.set(strDef, viewDefParser)
+			try InMemoryObjectCache.global.set(strDef, viewDefParser)
 
 			if let firstDefinition = try viewDefParser.parse().first {
 				// TODO: potentially turn this off to optimize

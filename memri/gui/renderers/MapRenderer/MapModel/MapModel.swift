@@ -10,10 +10,6 @@ import CoreLocation
 import Foundation
 import RealmSwift
 
-#if !targetEnvironment(macCatalyst)
-//	import Mapbox
-#endif
-
 class MapModel {
 	var didChange = PassthroughSubject<Void, Never>()
 
