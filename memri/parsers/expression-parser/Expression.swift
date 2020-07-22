@@ -172,13 +172,13 @@ public class Expression: CVUToString {
         
         if var dict = object as? [String:Any?] {
             for (key, value) in dict {
-                dict[key] = try resolve(value, viewArguments)
+                dict[key] = try resolve(value, viewArguments, dontResolveItems: dontResolveItems)
             }
             return dict as? T
         }
         else if var list = object as? [Any?] {
             for i in 0..<list.count {
-                list[i] = try resolve(list[i], viewArguments)
+                list[i] = try resolve(list[i], viewArguments, dontResolveItems: dontResolveItems)
             }
             return list as? T
         }
