@@ -122,11 +122,14 @@ public struct ExprVariableNode: ExprNode {
 	}
     
     public func toExprString() -> String {
+        var strName = name
+        if strName == "@@DEFAULT@@" { strName = "." }
+        
         switch type {
-        case .reverseEdge: return "_~\(name)\(list == .single ? "" : "[]")"
-        case .reverseEdgeItem: return "~\(name)\(list == .single ? "" : "[]")"
-        case .edge: return "_\(name)\(list == .single ? "" : "[]")"
-        case .propertyOrItem: return "\(name)\(list == .single ? "" : "[]")"
+        case .reverseEdge: return "_~\(strName)\(list == .single ? "" : "[]")"
+        case .reverseEdgeItem: return "~\(strName)\(list == .single ? "" : "[]")"
+        case .edge: return "_\(strName)\(list == .single ? "" : "[]")"
+        case .propertyOrItem: return "\(strName)\(list == .single ? "" : "[]")"
         }
     }
 }
@@ -191,7 +194,7 @@ public struct ExprCallNode: ExprNode {
 		"CallNode(lookup: \(lookup), argument: \(arguments))"
 	}
     public func toExprString() -> String {
-        "\(lookup.toExprString())(\(arguments.map { $0.toExprString() }.joined(separator: ", "))"
+        "\(lookup.toExprString())(\(arguments.map { $0.toExprString() }.joined(separator: ", ")))"
     }
 
 }

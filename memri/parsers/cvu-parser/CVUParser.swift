@@ -351,11 +351,10 @@ class CVUParser {
 						}
 					}
 
-					let arguments = options.removeValue(forKey: "arguments") as? [String: Any] ?? [:]
 					if let actionFamily = ActionFamily(rawValue: name) {
 						let ActionType = ActionFamily.getType(actionFamily)()
 						// swiftformat:disable:next redundantInit
-						stack.append(ActionType.init(context, arguments: arguments, values: options))
+						stack.append(ActionType.init(context, values: options))
 					} else {
 						// TODO: ERROR REPORTING
 					}

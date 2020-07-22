@@ -31,6 +31,7 @@ struct Browser: View {
         
                     activeRenderer
                         .fullHeight().layoutPriority(1)
+						.background((currentView.fullscreen ? Color.black : Color.clear).edgesIgnoringSafeArea(.all))
         
                     ContextualBottomBar()
         

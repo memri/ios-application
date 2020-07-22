@@ -126,12 +126,10 @@ Address {
                     
                     Button {
                         press: openViewByName {
-                            arguments {
-                                name: all-items-with-label
-                                viewArguments: {
-                                    name: "{.name}"
-                                    uid: {{.uid}}
-                                }
+                            viewName: all-items-with-label
+                            viewArguments: {
+                                name: "{.name}"
+                                uid: {{.uid}}
                             }
                         }
                         

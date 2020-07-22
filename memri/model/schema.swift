@@ -762,7 +762,7 @@ public class Edge : SyncableItem, Codable {
 /// Any type of file that can be stored on disk.
 public class File : Item {
     /// The uri property represents the Uniform Resource Identifier (URI) of a resource.
-    @objc dynamic var uri:String? = nil
+	@objc dynamic var uri:String? = UUID().uuidString
 
     /// An Item this Item is used by.
     var usedBy: [Item]? {

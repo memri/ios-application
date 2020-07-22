@@ -63,7 +63,7 @@ public class Cascadable : CustomStringConvertible {
 
 		if result.count > 0 {
 			if let value = result as? [Action], T.self == Action.self {
-				return (ActionMultiAction(value[0].context, arguments: ["actions": value]) as? T)
+				return (ActionMultiAction(value[0].context, values: ["actions": value]) as? T)
 			}
 
 			return result as? T

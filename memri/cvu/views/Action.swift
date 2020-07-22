@@ -10,12 +10,10 @@ import SwiftUI
 import Combine
 
 extension MemriContext {
-	private func getItem(_ dict: [String: Any?],
-                         _ dataItem: Item?,
-						 _ viewArguments: ViewArguments? = nil) throws -> Item {
+	private func getItem(_ dict: [String: Any?]?, _ dataItem: Item?) throws -> Item {
         
 		// TODO: refactor: move to function
-		guard let stringType = dict["_type"] as? String else {
+		guard let stringType = dict?["_type"] as? String else {
 			throw "Missing type attribute to indicate the type of the data item"
 		}
 
@@ -27,34 +25,26 @@ extension MemriContext {
 			throw "Cannot find family \(stringType)"
 		}
 
-        var values = [String:Any?]()
-        if let uid = dict["uid"] as? Int { values["uid"] = uid }
-		
-        var initArgs = dict
-		initArgs.removeValue(forKey: "_type")
-        initArgs.removeValue(forKey: "uid")
+        var values = dict ?? [:]
+        if let _ = dict?["uid"] as? Int {}
+        else { values.removeValue(forKey: "uid") }
+		values.removeValue(forKey: "_type")
 
-		// swiftformat:disable:next redundantInit
-		let item = try Cache.createItem(ItemType, values: values)
-
-		// TODO: fill item
-		for (propName, propValue) in initArgs {
-            item.set(propName, propValue)
-		}
-
-		return item
+		return try Cache.createItem(ItemType, values: values)
 	}
 
 	func buildArguments(_ action: Action,
                         _ item: Item?,
                         _ viewArguments: ViewArguments? = nil) throws -> [String: Any?] {
 		
-        let viewArgs = try ViewArguments(currentView?.viewArguments)
+        let viewArgs = try ViewArguments(currentView?.viewArguments, item)
             .merge(viewArguments)
             .resolve(item)
         
         var args = [String: Any?]()
-		for (argName, inputValue) in action.arguments {
+		for (argName, inputValue) in action.values {
+            if action.argumentTypes[argName] == nil { continue }
+            
 			var argValue: Any?
 
 			if let expr = inputValue as? Expression {
@@ -67,26 +57,13 @@ extension MemriContext {
 
 			if let dataItem = argValue as? Item {
 				finalValue = dataItem
-			} else if var dict = argValue as? [String: Any?] {
-                for (key, value) in dict {
-                    if let expr = value as? Expression {
-                        dict[key] = try expr.execute(viewArgs)
-                    }
-                    else if var list = value as? [Any?] {
-                        for i in 0..<list.count {
-                            if let expr = list[i] as? Expression {
-                                list[i] = try expr.execute(viewArgs)
-                            }
-                        }
-                    }
-                }
-                
+			} else if let dict = argValue as? [String: Any?] {
 				if action.argumentTypes[argName] == ViewArguments.self {
-					finalValue = ViewArguments(dict)
+                    finalValue = try ViewArguments(dict).resolve(item, viewArgs)
 				} else if action.argumentTypes[argName] == ItemFamily.self {
-					finalValue = try getItem(dict, item, viewArguments)
+                    finalValue = try getItem(Expression.resolve(dict, viewArguments), item)
 				} else if action.argumentTypes[argName] == CVUStateDefinition.self {
-					let viewDef = CVUParsedViewDefinition(UUID().uuidString)
+					let viewDef = CVUParsedViewDefinition("[view]")
 					viewDef.parsed = dict
                     finalValue = try CVUStateDefinition.fromCVUParsedDefinition(viewDef)
 				} else {
@@ -99,7 +76,7 @@ extension MemriContext {
                 }
                 else if let parsedDef = argValue as? CVUParsedDefinition {
                     #warning("This seems to not set the head properly")
-                    finalValue = try ViewArguments(parsedDef).resolve(item)
+                    finalValue = try ViewArguments(parsedDef).resolve(item, viewArgs)
                 }
                 else {
                     throw "Exception: Could not parse \(argName)"
@@ -192,7 +169,6 @@ extension MemriContext {
 
 public class Action: HashableClass, CVUToString {
 	var name: ActionFamily = .noop
-	var arguments: [String: Any?] = [:]
 
 	var binding: Expression? {
 		if let expr = (values["binding"] ?? defaultValues["binding"]) as? Expression {
@@ -257,7 +233,7 @@ public class Action: HashableClass, CVUToString {
 		toCVUString(0, "    ")
 	}
 
-	init(_ context: MemriContext, _ name: String, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
+	init(_ context: MemriContext, _ name: String, values: [String: Any?] = [:]) {
 		self.context = context
 
 		super.init()
@@ -265,7 +241,6 @@ public class Action: HashableClass, CVUToString {
 		if let actionName = ActionFamily(rawValue: name) { self.name = actionName }
 		else { self.name = .noop } // TODO: REfactor: Report error to user
 
-		self.arguments = arguments ?? self.arguments
 		self.values = values
 
 		if let x = self.values["renderAs"] as? String {
@@ -273,7 +248,7 @@ public class Action: HashableClass, CVUToString {
 		}
 	}
 
-	required init(_ context: MemriContext, arguments _: [String: Any?]? = nil, values _: [String: Any?] = [:]) {
+	required init(_ context: MemriContext, values _: [String: Any?] = [:]) {
 		self.context = context
 	}
 
@@ -328,10 +303,6 @@ public class Action: HashableClass, CVUToString {
 		let tabs = Array(0 ..< depth).map { _ in tab }.joined()
 		let tabsEnd = depth > 0 ? Array(0 ..< depth - 1).map { _ in tab }.joined() : ""
 		var strBuilder: [String] = []
-
-		if arguments.count > 0 {
-			strBuilder.append("arguments: \(CVUSerializer.dictToString(arguments, depth + 1, tab))")
-		}
 
 		if let value = values["binding"] as? Expression {
 			strBuilder.append("binding: \(value.description)")
@@ -413,19 +384,29 @@ public enum ActionFamily: String, CaseIterable {
 public enum ActionProperties: String, CaseIterable {
 	case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
 		backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
+    // These are arguments
+    case viewName, sessionName, view, viewArguments, session, importer, indexer, subject, property,
+         value, path, edgeType, distinct, all, actions, item
 
 	func validate(_ key: String, _ value: Any?) -> Bool {
 		if value is Expression { return true }
 
+        // TODO: test the actions of each specific Action instead of a check for all of them
+        
 		let prop = ActionProperties(rawValue: key)
 		switch prop {
-		case .name: return value is String
-		case .arguments: return value is [Any?] // TODO: do better by implementing something similar to executeAction
+        case .name, .path, .property, .edgeType: return value is String
 		case .renderAs: return value is RenderType
 		case .title, .showTitle, .icon: return value is String
-		case .opensView: return value is Bool
+        case .opensView, .distinct, .all: return value is Bool
 		case .color, .backgroundColor, .inactiveColor, .activeBackgroundColor, .inactiveBackgroundColor:
 			return value is Color
+        case .value: return true // AnyObject is always true
+        case .subject, .importer, .indexer, .item: return value is Item
+        case .viewArguments: return value is CVUParsedObjectDefinition || value is [String:Any?]
+        case .view: return value is CVUParsedViewDefinition || value is [String:Any?]
+        case .session: return value is CVUParsedSessionDefinition || value is [String:Any?]
+        case .actions: return value is [Action]
 		default: return false
 		}
 	}
@@ -444,8 +425,8 @@ class ActionBack: Action, ActionExec {
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "back", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "back", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -475,8 +456,8 @@ class ActionAddItem: Action, ActionExec {
 		"inactiveColor": Color(hex: "#434343"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "addItem", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "addItem", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -505,8 +486,8 @@ class ActionOpenView: Action, ActionExec {
 		"opensView": true,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "openView", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "openView", values: values)
 	}
 
 	func openView(_ context: MemriContext, view: CVUStateDefinition, with arguments: ViewArguments? = nil) throws {
@@ -565,19 +546,19 @@ class ActionOpenView: Action, ActionExec {
 
 class ActionOpenViewByName: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
-		"argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
+		"argumentTypes": ["viewName": String.self, "viewArguments": ViewArguments.self],
 		"withAnimation": false,
 		"opensView": true,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "openViewByName", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "openViewByName", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
-		if let name = arguments["name"] as? String {
+		if let name = arguments["viewName"] as? String {
 			// Fetch a dynamic view based on its name
             guard let stored = context.views.fetchDefinitions(name: name, type: "view").first else {
                 throw "No view found with the name \(name)"
@@ -608,8 +589,8 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 		"opensView": true,
 	] }
 	
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "openView", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "openView", values: values)
 	}
 	
 	func openView(_ context: MemriContext, view: CVUStateDefinition, with arguments: ViewArguments? = nil) throws {
@@ -661,7 +642,6 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 	}
 }
 
-
 class ActionToggleEditMode: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
 		"icon": "pencil",
@@ -671,8 +651,8 @@ class ActionToggleEditMode: Action, ActionExec {
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "toggleEditMode", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "toggleEditMode", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -691,8 +671,8 @@ class ActionToggleFilterPanel: Action, ActionExec {
 		"activeColor": Color(hex: "#6aa84f"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "toggleFilterPanel", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "toggleFilterPanel", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -711,8 +691,8 @@ class ActionStar: Action, ActionExec {
 		"binding": Expression("dataItem.starred"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "star", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "star", values: values)
 	}
 
 	// TODO: selection handling for binding
@@ -752,14 +732,14 @@ class ActionShowStarred: Action, ActionExec {
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "showStarred", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "showStarred", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
 		do {
 			if let binding = self.binding, try !binding.isTrue() {
-				try ActionOpenViewByName.exec(context, ["name": "filter-starred"])
+				try ActionOpenViewByName.exec(context, ["viewName": "filter-starred"])
                 try binding.toggleBool()
 			} else {
 				// Go back to the previous view
@@ -782,8 +762,8 @@ class ActionShowContextPane: Action, ActionExec {
 		"binding": Expression("currentSession.showContextPane"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "showContextPane", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "showContextPane", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -803,8 +783,8 @@ class ActionShowNavigation: Action, ActionExec {
 		"inactiveColor": Color(hex: "#434343"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "showNavigation", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "showNavigation", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -822,8 +802,8 @@ class ActionSchedule: Action, ActionExec {
 		"icon": "alarm",
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "schedule", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "schedule", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -840,8 +820,8 @@ class ActionShowSessionSwitcher: Action, ActionExec {
 		"color": Color(hex: "#CCC"),
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "showSessionSwitcher", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "showSessionSwitcher", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -858,8 +838,8 @@ class ActionForward: Action, ActionExec {
 		"opensView": true,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "forward", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "forward", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -885,8 +865,8 @@ class ActionForwardToFront: Action, ActionExec {
 		"opensView": true,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "forwardToFront", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "forwardToFront", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -909,8 +889,8 @@ class ActionBackAsSession: Action, ActionExec {
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "backAsSession", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "backAsSession", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -955,8 +935,8 @@ class ActionOpenSession: Action, ActionExec {
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "openSession", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "openSession", values: values)
 	}
 
 	func openSession(_ session: CVUStateDefinition, _ args: ViewArguments? = nil) throws {
@@ -1006,19 +986,19 @@ class ActionOpenSession: Action, ActionExec {
 // TODO: How to deal with viewArguments in sessions
 class ActionOpenSessionByName: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
-		"argumentTypes": ["name": String.self, "viewArguments": ViewArguments.self],
+		"argumentTypes": ["sessionName": String.self, "viewArguments": ViewArguments.self],
 		"opensView": true,
 		"withAnimation": false,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "openSessionByName", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "openSessionByName", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
 		let viewArguments = arguments["viewArguments"] as? ViewArguments
 
-		guard let name = arguments["name"] as? String else {
+		guard let name = arguments["sessionName"] as? String else {
 			// TODO: Error handling "No name given"
 			throw "Cannot execute ActionOpenSessionByName, no name defined in viewArguments"
 		}
@@ -1044,8 +1024,8 @@ class ActionOpenSessionByName: Action, ActionExec {
 }
 
 class ActionDelete: Action, ActionExec {
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "delete", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "delete", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1081,8 +1061,12 @@ class ActionDelete: Action, ActionExec {
 }
 
 class ActionDuplicate: Action, ActionExec {
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "duplicate", arguments: arguments, values: values)
+    override var defaultValues: [String: Any?] { [
+        "argumentTypes": ["item": ItemFamily.self],
+    ] }
+    
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "duplicate", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1093,7 +1077,7 @@ class ActionDuplicate: Action, ActionExec {
 			try selection.forEach { item in try ActionAddItem.exec(context, ["item": item]) }
 		}
         else if let item = arguments["item"] as? Item {
-			try ActionAddItem.exec(context, ["item": item])
+			try ActionAddItem.exec(context, ["template": item])
 		}
         else {
 			// TODO: Error handling
@@ -1108,17 +1092,17 @@ class ActionDuplicate: Action, ActionExec {
 
 class ActionRunImporter: Action, ActionExec {
 	override var defaultValues: [String: Any?] { [
-		"argumentTypes": ["importerRun": ItemFamily.self],
+		"argumentTypes": ["importer": ItemFamily.self],
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runImporter", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "runImporter", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
 		// TODO: parse options
 
-		if let run = arguments["importerRun"] as? ImporterRun {
+		if let run = arguments["importer"] as? ImporterRun {
 			guard let uid = run.uid.value else { throw "Uninitialized import run" }
 
 			context.podAPI.runImporter(uid) { error, _ in
@@ -1135,8 +1119,8 @@ class ActionRunImporter: Action, ActionExec {
 }
 
 class ActionRunIndexer: Action, ActionExec {
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "runIndexer", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "runIndexer", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1214,8 +1198,8 @@ class ActionRunIndexer: Action, ActionExec {
 }
 
 class ActionClosePopup: Action, ActionExec {
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "closePopup", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "closePopup", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
@@ -1232,8 +1216,8 @@ class ActionSetProperty: Action, ActionExec {
 		"argumentTypes": ["subject": ItemFamily.self, "property": String.self, "value": AnyObject.self],
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "setProperty", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "setProperty", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1261,8 +1245,8 @@ class ActionSetSetting: Action, ActionExec {
         "argumentTypes": ["path": String.self, "value": Any.self],
     ] }
 
-    required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-        super.init(context, "setSetting", arguments: arguments, values: values)
+    required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+        super.init(context, "setSetting", values: values)
     }
 
     func exec(_ arguments: [String: Any?]) throws {
@@ -1289,8 +1273,8 @@ class ActionLink: Action, ActionExec {
         "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "distinct": Bool.self],
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "link", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "link", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1324,8 +1308,8 @@ class ActionUnlink: Action, ActionExec {
         "argumentTypes": ["subject": ItemFamily.self, "edgeType": String.self, "all": Bool.self],
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "unlink", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "unlink", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1359,8 +1343,8 @@ class ActionMultiAction: Action, ActionExec {
 		"opensView": true,
 	] }
 
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "multiAction", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "multiAction", values: values)
 	}
 
 	func exec(_ arguments: [String: Any?]) throws {
@@ -1379,8 +1363,8 @@ class ActionMultiAction: Action, ActionExec {
 }
 
 class ActionNoop: Action, ActionExec {
-	required init(_ context: MemriContext, arguments: [String: Any?]? = nil, values: [String: Any?] = [:]) {
-		super.init(context, "noop", arguments: arguments, values: values)
+	required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+		super.init(context, "noop", values: values)
 	}
 
 	func exec(_: [String: Any?]) throws {
