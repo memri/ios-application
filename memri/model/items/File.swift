@@ -53,7 +53,7 @@ extension File {
 	public func read<T>() throws -> T? {
 		guard let uri = uri else { throw "URI Not set" }
 
-		let cachedData: T? = InMemoryObjectCache.get(uri) as? T
+		let cachedData: T? = InMemoryObjectCache.global.get(uri) as? T
 		if cachedData != nil { return cachedData }
 
 		guard let data = FileStorageController.getData(fromFileForUUID: uri) else { throw "Couldn't read file" }
@@ -68,14 +68,14 @@ extension File {
 		} else {
 			throw "Could not parse \(uri)"
 		}
-		try result.map { try InMemoryObjectCache.set(uri, $0) }
+		try result.map { try InMemoryObjectCache.global.set(uri, $0) }
 		return result
 	}
 	
 	public func read<T: Decodable>() throws -> T? {
 		guard let uri = uri else { throw "URI Not set" }
 		
-		let cachedData: T? = InMemoryObjectCache.get(uri) as? T
+		let cachedData: T? = InMemoryObjectCache.global.get(uri) as? T
 		if cachedData != nil { return cachedData }
 		
 		guard let data = FileStorageController.getData(fromFileForUUID: uri) else { throw "Couldn't read file" }
@@ -104,7 +104,7 @@ extension File {
 			}
 			
 			try FileStorageController.writeData(data, toFileForUUID: uri)
-			try InMemoryObjectCache.set(uri, value)
+			try InMemoryObjectCache.global.set(uri, value)
 		} catch {
 			throw "\(error)"
 		}
@@ -117,7 +117,7 @@ extension File {
 			let jsonData = try JSONEncoder().encode(value)
 			
 			try FileStorageController.writeData(jsonData, toFileForUUID: uri)
-			try InMemoryObjectCache.set(uri, value)
+			try InMemoryObjectCache.global.set(uri, value)
 		} catch {
 			throw "\(error)"
 		}
