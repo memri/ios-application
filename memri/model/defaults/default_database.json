@@ -151,6 +151,7 @@
 		"_type": "Photo",
 		"width": 1000,
 		"height": 1500,
+		"caption": "A bridge at night",
 		"allEdges": [
 			{"type":"file", "target": {"_type": "File", "uri": "ave-calvar-ukuIJ6ReFms-unsplash"}}
 		]
@@ -167,6 +168,7 @@
 		"_type": "Photo",
 		"width": 1000,
 		"height": 1500,
+		"caption": "Lavender",
 		"allEdges": [
 			{"type":"file", "target": {"_type": "File", "uri": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash"}}
 		]
@@ -175,6 +177,7 @@
 		"_type": "Photo",
 		"width": 1000,
 		"height": 1333,
+		"caption": "Coffee is the answer!",
 		"allEdges": [
 			{"type":"file", "target": {"_type": "File", "uri": "szabo-viktor-tarTTEaiIx4-unsplash"}}
 		]

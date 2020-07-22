@@ -83,11 +83,18 @@ Photo[]: {
 		
 		VStack {
 			padding: 10
-			Text {
+			VStack {
+				spacing: 5
 				padding: 12
 				background: #FFFFFF
 				cornerRadius: 5
-				text: "Photo taken: {.dateCreated}"
+				Text {
+					text: "{.caption}"
+					font: 18 bold
+				}
+				Text {
+					text: "Photo taken: {.dateCreated}"
+				}
 			}
 		}
 	}

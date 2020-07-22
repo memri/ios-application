@@ -216,6 +216,7 @@
 		86FFD0C524A4CE42001BF14B /* Other.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FFD0C424A4CE42001BF14B /* Other.swift */; };
 		B809186524A4DFF400BD74D8 /* Charts in Frameworks */ = {isa = PBXBuildFile; productRef = B809186424A4DFF400BD74D8 /* Charts */; };
 		B80E01A724C839250005D756 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E01A624C839250005D756 /* ProgressBarView.swift */; };
+		B80E01A924C8434F0005D756 /* Array+Segments.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E01A824C8434F0005D756 /* Array+Segments.swift */; };
 		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
 		B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C05A024C183E100A3738D /* RichTextEditor.swift */; };
 		B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */; };
@@ -470,6 +471,7 @@
 		86FFD0BD24A2398F001BF14B /* chart.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = chart.cvu; sourceTree = "<group>"; wrapsLines = 0; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86FFD0C424A4CE42001BF14B /* Other.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Other.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		B80E01A624C839250005D756 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
+		B80E01A824C8434F0005D756 /* Array+Segments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Segments.swift"; sourceTree = "<group>"; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
 		B81C05A024C183E100A3738D /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
 		B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerRenderer.swift; sourceTree = "<group>"; };
@@ -629,6 +631,7 @@
 				8690AEFF2472D8AB00FC49F4 /* common */,
 				86CDB46B24698DB7007EAE67 /* NSAttributedString.swift */,
 				5D3D96222416764A0004040E /* codable */,
+				B80E01A824C8434F0005D756 /* Array+Segments.swift */,
 			);
 			path = extension;
 			sourceTree = "<group>";
@@ -1680,6 +1683,7 @@
 				C892B3E824A5455D006707EC /* SensorManager.swift in Sources */,
 				86C3A7372452BF66006D4F55 /* MemriButton.swift in Sources */,
 				5D38DE172405776B00FF9B70 /* Item.swift in Sources */,
+				B80E01A924C8434F0005D756 /* Array+Segments.swift in Sources */,
 				86CDB46C24698DB7007EAE67 /* NSAttributedString.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
 				868EF63424766A8800C0375F /* ExprParser.swift in Sources */,
