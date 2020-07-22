@@ -43,6 +43,8 @@ extension MemriContext {
         
         var args = [String: Any?]()
 		for (argName, inputValue) in action.values {
+            if action.argumentTypes[argName] == nil { continue }
+            
 			var argValue: Any?
 
 			if let expr = inputValue as? Expression {
