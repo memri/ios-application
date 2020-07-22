@@ -74,7 +74,7 @@ extension MemriContext {
                 }
                 else if let parsedDef = argValue as? CVUParsedDefinition {
                     #warning("This seems to not set the head properly")
-                    finalValue = try ViewArguments(parsedDef).resolve(item)
+                    finalValue = try ViewArguments(parsedDef).resolve(item, viewArgs)
                 }
                 else {
                     throw "Exception: Could not parse \(argName)"
