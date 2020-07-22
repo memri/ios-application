@@ -84,6 +84,7 @@ Photo[]: {
 		VStack {
 			spacing: 5
 			padding: 20
+			background: #999999
 			Text {
 				text: "Testing overlay"
 			}
