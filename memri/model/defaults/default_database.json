@@ -154,7 +154,7 @@
 		"dateCreated": 1589691657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0001.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0001"}}
         ]
     },
     {
@@ -164,7 +164,7 @@
 		"dateCreated": 1591765257000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0002.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0002"}}
         ]
     },
     {
@@ -175,7 +175,7 @@
 		"dateCreated": 1592283657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0003.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0003"}}
         ]
     },
     {
@@ -185,7 +185,7 @@
 		"dateCreated": 1592483657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0004.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0004"}}
         ]
     },
     {
@@ -195,7 +195,7 @@
 		"dateCreated": 1591183657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0005.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0005"}}
         ]
     },
     {
@@ -205,7 +205,7 @@
 		"dateCreated": 1591981657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0006.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0006"}}
         ]
     },
     {
@@ -215,7 +215,7 @@
 		"dateCreated": 1590561657000,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0007.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0007"}}
         ]
     },
     {
@@ -224,7 +224,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0008.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0008"}}
         ]
     },
     {
@@ -233,7 +233,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0009.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0009"}}
         ]
     },
     {
@@ -242,7 +242,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0010.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0010"}}
         ]
     },
     {
@@ -251,7 +251,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0011.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0011"}}
         ]
     },
     {
@@ -260,7 +260,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0012.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0012"}}
         ]
     },
     {
@@ -269,7 +269,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0013.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0013"}}
         ]
     },
     {
@@ -278,7 +278,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0014.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0014"}}
         ]
     },
     {
@@ -287,7 +287,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0015.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0015"}}
         ]
     },
     {
@@ -296,7 +296,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0016.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0016"}}
         ]
     },
     {
@@ -305,7 +305,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0017.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0017"}}
         ]
     },
     {
@@ -314,7 +314,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0018.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0018"}}
         ]
     },
     {
@@ -323,7 +323,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0019.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0019"}}
         ]
     },
     {
@@ -332,7 +332,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0020.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0020"}}
         ]
     },
     {
@@ -341,7 +341,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0021.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0021"}}
         ]
     },
     {
@@ -350,7 +350,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0022.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0022"}}
         ]
     },
     {
@@ -359,7 +359,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0023.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0023"}}
         ]
     },
     {
@@ -368,7 +368,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0024.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0024"}}
         ]
     },
     {
@@ -377,7 +377,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0025.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0025"}}
         ]
     },
     {
@@ -386,7 +386,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0026.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0026"}}
         ]
     },
     {
@@ -395,7 +395,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0027.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0027"}}
         ]
     },
     {
@@ -404,7 +404,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0028.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0028"}}
         ]
     },
     {
@@ -413,7 +413,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0029.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0029"}}
         ]
     },
     {
@@ -422,7 +422,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0030.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0030"}}
         ]
     },
     {
@@ -431,7 +431,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0031.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0031"}}
         ]
     },
     {
@@ -440,7 +440,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0032.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0032"}}
         ]
     },
     {
@@ -449,7 +449,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0033.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0033"}}
         ]
     },
     {
@@ -458,7 +458,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0034.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0034"}}
         ]
     },
     {
@@ -467,7 +467,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0035.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0035"}}
         ]
     },
     {
@@ -476,7 +476,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0036.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0036"}}
         ]
     },
     {
@@ -485,7 +485,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0037.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0037"}}
         ]
     },
     {
@@ -494,7 +494,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0038.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0038"}}
         ]
     },
     {
@@ -503,7 +503,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0039.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0039"}}
         ]
     },
     {
@@ -512,7 +512,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0040.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0040"}}
         ]
     },
     {
@@ -521,7 +521,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0041.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0041"}}
         ]
     },
     {
@@ -530,7 +530,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Arnold_Schwarzenegger/Arnold_Schwarzenegger_0042.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0042"}}
         ]
     },
     {
@@ -540,7 +540,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Michael_Douglas/Michael_Douglas_0005.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Michael_Douglas_0005"}}
         ]
     },
     {
@@ -550,7 +550,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "/tmp/lfw/Norah_Jones/Norah_Jones_0007.jpg"}}
+            {"type":"file", "target": {"_type": "File", "uri": "Norah_Jones_0007"}}
         ]
     },
     { "_type": "Label", "uid": 1000, "name": "Green house", "color": "#047a0a", "aliases": ["green house", "green-house"] },

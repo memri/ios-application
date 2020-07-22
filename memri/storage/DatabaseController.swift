@@ -74,7 +74,7 @@ class DatabaseController {
 	static func getRealmURL() throws -> URL {
 		#if targetEnvironment(simulator)
 		if let homeDir = ProcessInfo.processInfo.environment["SIMULATOR_HOST_HOME"] {
-			var realmDir = homeDir + "/realm.memri"
+			var realmDir = homeDir + "/memriDevData/realm.memri"
 			
 			if realmTesting {
 				realmDir += ".testing"
