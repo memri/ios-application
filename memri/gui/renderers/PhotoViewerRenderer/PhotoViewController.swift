@@ -256,11 +256,15 @@ class PhotoScalingView: UIScrollView {
             }
         }
     }
+	
+	var hasSetInitialZoomScale: Bool = false
     
     func prepareForContents() {
-        if let image = imageView.image {
+		if let image = imageView.image, image.size.width > 0, image.size.height > 0 {
             // Set contentSize
-            self.contentSize = image.size
+			if contentSize != image.size {
+				self.contentSize = image.size
+			}
             
             // Set scale limits
             let scaleWidth = frame.width / image.size.width
@@ -269,7 +273,8 @@ class PhotoScalingView: UIScrollView {
             let maxZoom = max(minZoom * 2, 1.5)
             minimumZoomScale = minZoom
             maximumZoomScale = maxZoom
-            zoomScale = minZoom
+			zoomScale = min(hasSetInitialZoomScale ? max(zoomScale, minZoom) : minZoom, maxZoom)
+			hasSetInitialZoomScale = true
             setNeedsLayout()
         } else {
             self.contentSize = frame.size

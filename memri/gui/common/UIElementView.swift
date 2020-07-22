@@ -306,8 +306,14 @@ public struct UIElementView: SwiftUI.View {
 							.setProperties(from.properties, self.item, context, self.viewArguments)
 					} else { // assuming image property
 						Image(uiImage: getImage("image"))
-							.renderingMode(.original)
-							.if(from.has("resizable")) { self.resize($0) }
+								.renderingMode(.original)
+								.if(from.has("resizable")) { view in
+									GeometryReader { geom in
+										self.resize(view)
+											.frame(width: geom.size.width, height: geom.size.height)
+											.clipped()
+									}
+								}
 							.setProperties(from.properties, self.item, context, self.viewArguments)
 					}
 				} else if from.type == .Circle {

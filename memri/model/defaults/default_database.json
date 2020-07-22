@@ -147,6 +147,38 @@
         "title": "Note2",
         "content": "some random note",
     },
+	{
+		"_type": "Photo",
+		"width": 1000,
+		"height": 1500,
+		"allEdges": [
+			{"type":"file", "target": {"_type": "File", "uri": "ave-calvar-ukuIJ6ReFms-unsplash"}}
+		]
+	},
+	{
+		"_type": "Photo",
+		"width": 1482,
+		"height": 1000,
+		"allEdges": [
+			{"type":"file", "target": {"_type": "File", "uri": "karen-penroz-06ZTGDcAQFs-unsplash"}}
+		]
+	},
+	{
+		"_type": "Photo",
+		"width": 1000,
+		"height": 1500,
+		"allEdges": [
+			{"type":"file", "target": {"_type": "File", "uri": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash"}}
+		]
+	},
+	{
+		"_type": "Photo",
+		"width": 1000,
+		"height": 1333,
+		"allEdges": [
+			{"type":"file", "target": {"_type": "File", "uri": "szabo-viktor-tarTTEaiIx4-unsplash"}}
+		]
+	},
     {
         "_type": "Photo",
         "width": 250,

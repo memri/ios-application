@@ -82,14 +82,12 @@ Photo[]: {
 		initialItem: {{currentItem}}
 		
 		VStack {
-			spacing: 5
-			padding: 20
-			background: #999999
+			padding: 10
 			Text {
-				text: "Testing overlay"
-			}
-			Text {
-				text: {{.dateCreated}}
+				padding: 12
+				background: #FFFFFF
+				cornerRadius: 5
+				text: "Photo taken: {.dateCreated}"
 			}
 		}
 	}
