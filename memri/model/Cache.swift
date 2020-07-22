@@ -37,11 +37,11 @@ public class Cache {
 	}
 
 	/// gets default item from database, and adds them to realm
-	public func install() throws {
+    public func install(_ dbName:String) throws {
 		let realm = DatabaseController.getRealm()
 		// Load default database from disk
 		do {
-			let jsonData = try jsonDataFromFile("default_database")
+			let jsonData = try jsonDataFromFile(dbName)
 			let dicts: [AnyCodable] = try MemriJSONDecoder.decode([AnyCodable].self, from: jsonData)
 			var items = [Item: [[String: Any]]]()
 			var lut = [Int: Int]()

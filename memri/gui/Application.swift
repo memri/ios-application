@@ -34,18 +34,23 @@ struct Application: View {
 
 	var body: some View {
 		ScreenSizer {
-			VStack(spacing: 0) {
-				NavigationWrapper(isVisible: self.context.showNavigationBinding) {
-					if self.context.showSessionSwitcher {
-						SessionSwitcher()
-							.ignoreSafeAreaOnMac()
-					} else {
-						Browser()
-							.ignoreSafeAreaOnMac()
-					}
-				}
-				DebugConsole()
-			}
+            VStack(spacing: 0) {
+                if self.context.installer.isInstalled {
+                    NavigationWrapper(isVisible: self.context.showNavigationBinding) {
+                        if self.context.showSessionSwitcher {
+                            SessionSwitcher()
+                                .ignoreSafeAreaOnMac()
+                        } else {
+                            Browser()
+                                .ignoreSafeAreaOnMac()
+                        }
+                    }
+                    DebugConsole()
+                }
+                else {
+                    SetupWizard()
+                }
+            }
 		}
 		.background(Color(.systemBackground))
 		.colorScheme(.light) // Force light color scheme for now, until we add better dark-mode support

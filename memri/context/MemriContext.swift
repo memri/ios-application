@@ -285,7 +285,7 @@ public class RootContext: MemriContext {
     
     #warning("@Toby how can we tell when the sub context is done and how can we clear it?")
     var subContexts = [SubContext]()
-
+    
 	// TODO: Refactor: Should installer be moved to rootmain?
 
 	init(name: String, key: String) throws {
@@ -333,31 +333,28 @@ public class RootContext: MemriContext {
 	}
 
     public func boot(_ callback:(() -> Void)? = nil) throws {
-		// Make sure memri is installed properly
-		try installer.installIfNeeded(self) {
-			#if targetEnvironment(simulator)
-				// Reload for easy adjusting
-				self.views.context = self
-				try self.views.install()
-			#endif
+        #if targetEnvironment(simulator)
+            // Reload for easy adjusting
+            self.views.context = self
+            try self.views.install()
+        #endif
 
-			// Load views configuration
-			try self.views.load(self) {
-                
-                // Load session
-                try sessions.load(self)
-                
-				// Update view when sessions changes
-				self.cancellable = self.sessions.objectWillChange.sink { _ in
-					self.scheduleUIUpdate()
-				}
+        // Load views configuration
+        try self.views.load(self) {
+            
+            // Load session
+            try sessions.load(self)
+            
+            // Update view when sessions changes
+            self.cancellable = self.sessions.objectWillChange.sink { _ in
+                self.scheduleUIUpdate()
+            }
 
-				// Load current view
-                try self.currentSession?.setCurrentView()
-                
-                callback?()
-			}
-		}
+            // Load current view
+            try self.currentSession?.setCurrentView()
+            
+            callback?()
+        }
 	}
 
 	public func mockBoot() -> MemriContext {
