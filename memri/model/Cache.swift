@@ -439,8 +439,10 @@ public class Cache {
                 .first
             {
 				setting.json = String(cacheUIDCounter)
-                setting._action = "update"
-                setting["_updated"] = ["json"]
+                if setting._action == nil {
+                    setting._action = "update"
+                    setting["_updated"] = ["json"]
+                }
 			}
 		}
 		return cacheUIDCounter
