@@ -128,7 +128,7 @@ class CVUSerializer {
 		var str = [String]()
 		for key in keys {
 			if key == "children" || key == "rendererDefinitions" || key == "datasourceDefinition"
-				|| key == "sessionDefinitions" || key == "viewDefinitions" /*|| key == "."*/ {
+				|| key == "sessionDefinitions" || key == "viewDefinitions" || key == "." {
 				continue
 			} else if key == "cornerborder" {
 				if var value = dict[key] as? [Any] {

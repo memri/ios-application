@@ -413,43 +413,56 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 
                 uid = stateUID
             }
+            if context?.currentView?.state == self.state {
+                1+1
+            }
             
             state?.set("definition", head.toCVUString(0, "    "))
         }
     }
     
-    private func include(_ parsedDef: CVUParsedDefinition, _ domain: String) throws {
-        if !cascadeStack.contains(parsedDef) {
+    private func include(_ parsed:CVUParsedDefinition, _ domain:String, merge:Bool = false) throws {
+        if !cascadeStack.contains(parsed) {
             // Compile parsed definition to embed state that may change (e.g. currentView)
-            try parsedDef.compile(viewArguments, scope: .needed)
+            try parsed.compile(viewArguments, scope: .needed)
             
             // Add to cascade stack
-            cascadeStack.append(parsedDef)
-            if parsedDef != head { tail.append(parsedDef) }
+            cascadeStack.append(parsed)
+            if parsed != head { tail.append(parsed) }
             
-            if let inheritFrom = parsedDef["inherit"] {
-                var result: Any? = inheritFrom
+            func doInherit(_ parsed:CVUParsedDefinition) throws {
+                if let inheritFrom = parsed["inherit"] {
+                    parsed.parsed?.removeValue(forKey: "inherit")
+                    
+                    var result: Any? = inheritFrom
 
-                if let expr = inheritFrom as? Expression {
-                    result = try expr.execute(viewArguments)
-                }
+                    if let expr = inheritFrom as? Expression {
+                        result = try expr.execute(viewArguments)
+                    }
 
-                if let viewName = result as? String {
-                    if let view = context?.views.fetchDefinitions(name: viewName).first {
-                        parse(view, domain)
+                    if let viewName = result as? String {
+                        if let view = context?.views.fetchDefinitions(name: viewName).first {
+                            parse(view, domain)
+                        }
+                        else {
+                            throw "Exception: could not parse view: \(viewName)"
+                        }
+                    } else if let view = result as? CascadableView {
+                        let parsedInclude = CVUParsedViewDefinition(parsed: view.head.parsed)
+                        if merge {
+                            parsed.mergeValuesWhenNotSet(parsedInclude)
+                            try doInherit(parsed)
+                        }
+                        else {
+                            try include(parsedInclude, domain)
+                        }
+                    } else {
+                        throw "Exception: Unable to inherit view from \(inheritFrom)"
                     }
-                    else {
-                        throw "Exception: could not parse view: \(viewName)"
-                    }
-                } else if let view = result as? CascadableView {
-                    let parsed = CVUParsedViewDefinition(parsed: view.head.parsed)
-                    try include(parsed, domain)
-                } else {
-                    throw "Exception: Unable to inherit view from \(inheritFrom)"
                 }
-                
-                parsedDef.parsed?.removeValue(forKey: "inherit")
             }
+                
+            try doInherit(parsed)
         }
     }
     
@@ -539,7 +552,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         cascadeStack = []
         
         // Load all includes in the stack so that we can make sure there is a datasource defined
-        try include(head, "state")
+        try include(head, "state", merge:true)
         
         let datasource = self.datasource
         guard datasource.query != nil else { throw "Exception: Missing datasource in view" }
