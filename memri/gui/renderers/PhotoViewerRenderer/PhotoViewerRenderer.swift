@@ -25,6 +25,7 @@ class PhotoViewerRendererConfig: CascadingRenderConfig {
 	var type: String? = "photoViewer"
 	
 	var imageFile: Expression? { cascadeProperty("file", type: Expression.self) }
+	var initialItem: Item? { cascadeProperty("initialItem", type: Item.self) }
 }
 
 struct PhotoViewerRenderer: View {
@@ -41,7 +42,9 @@ struct PhotoViewerRenderer: View {
 		return try? expression?.execForReturnType(T.self, args: args)
 	}
 	
-	var initialIndex: Int = 0 // TODO: Get this from the presenting action's viewArguments
+	var initialIndex: Int  {
+		renderConfig.initialItem.flatMap { context.items.firstIndex(of: $0) } ?? 0
+	}
 	
 	func photoItemProvider(forIndex index: Int) -> PhotoViewerController.PhotoItem? {
 		guard let item = context.items[safe: index],

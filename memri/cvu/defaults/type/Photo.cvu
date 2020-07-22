@@ -55,6 +55,9 @@ Photo[]: {
                 inherit: {{currentView}}
                 defaultRenderer: "photoViewer"
             }
+			viewArguments: {
+				currentItem: {{.}}
+			}
 		}
         
         Image {
@@ -76,6 +79,7 @@ Photo[]: {
 	
 	[renderer = photoViewer] {
 		file: {{.file}}
+		initialItem: {{currentItem}}
 		
 		VStack {
 			spacing: 5
