@@ -522,7 +522,7 @@ public class Item: SchemaItem {
 		}
 	}
     
-    private func isEqualValue(_ a: Any?, _ b: Any?) -> Bool {
+    func isEqualValue(_ a: Any?, _ b: Any?) -> Bool {
         if a == nil { return b == nil }
         else if let a = a as? Bool { return a == b as? Bool }
         else if let a = a as? String { return a == b as? String }
@@ -850,15 +850,27 @@ extension memri.Edge {
             throw "Invalid JSON, no _type specified for target: \(dict)"
         }
 
-        guard let type = ItemFamily(rawValue: itemType)?.getType() as? Object.Type else {
+        guard let type = ItemFamily(rawValue: itemType)?.getType() as? Item.Type else {
             throw "Invalid target item type specificed: \(itemType)"
         }
         
-        var values = [String: Any]()
-        for (key, value) in dict { values[key] = value.value }
-
-        let item = try Cache.createItem(type, values: values)
-        if let uid = item["uid"] as? Int {
+        let realm = DatabaseController.getRealm()
+        var item = type.init()
+        for (key, value) in dict {
+            guard let prop = realm.schema[itemType]?[key] else {
+                continue
+            }
+            
+            if prop.type == .date, let value = value.value as? Int {
+                item[key] = Date(timeIntervalSince1970: Double(value / 1000))
+            }
+            else {
+                item[key] = value.value
+            }
+        }
+        item = try Cache.addToCache(item)
+        
+        if let uid = item.uid.value {
             targetItemType = itemType
             targetItemID.value = uid
         } else {

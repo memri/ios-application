@@ -19,7 +19,7 @@ public struct UIElementView: SwiftUI.View {
 
 	public init(_ gui: UIElement, _ dataItem: Item, _ viewArguments: ViewArguments? = nil) {
 		from = gui
-		item = dataItem
+        item = dataItem.isInvalidated ? Item() : dataItem
 
         self.viewArguments = ViewArguments(viewArguments, item)
 	}

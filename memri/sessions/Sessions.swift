@@ -58,6 +58,10 @@ public final class Sessions : ObservableObject, Equatable {
             
             self.uid = uid
         }
+        else {
+            // Load default sessions for this device
+            self.uid = Settings.shared.getInt("device/sessions/uid")
+        }
         
         // Setup update publishers
         self.persistCancellable = persistSubject
@@ -70,6 +74,14 @@ public final class Sessions : ObservableObject, Equatable {
     }
     
     func load(_ context:MemriContext) throws {
+        if self.uid == nil {
+            self.uid = Settings.shared.getInt("device/sessions/uid")
+        }
+        
+        guard self.uid != nil else {
+            throw "Could not find stored sessions to load from"
+        }
+        
         self.context = context
         self.sessions = []
         
@@ -127,7 +139,7 @@ public final class Sessions : ObservableObject, Equatable {
     
 	public func setCurrentSession(_ state: CVUStateDefinition? = nil) throws {
         guard let storedSession = state ?? self.currentSession?.state else {
-            throw "Exception: Unable fetch stored CVU state"
+            throw "Exception: Unable to fetch stored CVU state for session"
         }
         
         // If the session already exists, we simply update the session index
@@ -184,12 +196,10 @@ public final class Sessions : ObservableObject, Equatable {
 
 	public func install(_ context: MemriContext) throws {
         try  DatabaseController.tryWriteSync { realm in
-            
             let templateQuery = "selector = '[sessions = defaultSessions]'"
             guard
                 let template = realm.objects(CVUStoredDefinition.self).filter(templateQuery).first,
-                let parsed = try context.views.parseDefinition(template),
-                let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+                let parsed = try context.views.parseDefinition(template)
             else {
                 throw "Installation is corrupt. Cannot recover."
             }
@@ -199,9 +209,14 @@ public final class Sessions : ObservableObject, Equatable {
                 try CVUStateDefinition.fromCVUParsedDefinition($0)
             }
 
+            let state = try Cache.createItem(CVUStateDefinition.self)
             for session in allSessions {
                 _ = try state.link(session, type: "session", sequence: .last)
             }
+            
+            // uid is always set
+            self.uid = state.uid.value
+            Settings.shared.set("device/sessions/uid", state.uid.value ?? -1)
             
             self.parsed = parsed as? CVUParsedSessionsDefinition
             self.parsed?.parsed?.removeValue(forKey: "sessionDefinitions")

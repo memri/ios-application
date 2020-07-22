@@ -23,6 +23,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 		do {
 			let context = try RootContext(name: "Memri GUI", key: "ABCDEF")
 			let application = Application().environmentObject(context as MemriContext)
+            
+            try context.installer.await {
+                try context.boot() {
+                    self.settingWatcher = context.settings.subscribe("device/sensors/location/track", type:Bool.self).sink {
+                        if let value = $0 as? Bool {
+                            if value { SensorManager.shared.locationTrackingEnabledByUser() }
+                            else { SensorManager.shared.locationTrackingDisabledByUser() }
+                        }
+                    }
+                }
+            }
 
 			// Use a UIHostingController as window root view controller.
 			guard let windowScene = scene as? UIWindowScene else { return }

@@ -74,7 +74,7 @@ final class ItemSubscription<SubscriberType: Subscriber, Data: Item>: Subscripti
                 else if let item = item {
                     do {
                         if item.version > self.item.version {
-                            if let cachedItem = try self.cache.addToCache(item) as? Data {
+                            if let cachedItem = try Cache.addToCache(item) as? Data {
                                 if case .update = self.event, cachedItem.deleted { return }
                                 if case .update = self.event, !cachedItem.deleted { return }
                                 _ = self.subscriber?.receive(cachedItem)
@@ -202,7 +202,7 @@ final class QuerySubscription<SubscriberType: Subscriber>: Subscription
                                 if case .create = self.event { continue }
                             }
                                 
-                            let cachedItem = try self.cache.addToCache(items[i])
+                            let cachedItem = try Cache.addToCache(items[i])
                             changes.append(cachedItem)
                         }
                     }
@@ -279,7 +279,7 @@ extension Cache {
         }
         
         if item._action == "create" {
-            sync.syncToPod()
+            sync.schedule()
                 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.isOnRemote(item, retries + 1, callback)

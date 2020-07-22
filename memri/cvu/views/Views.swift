@@ -85,11 +85,12 @@ public class Views {
 				// Loop over lookup table with named views
 				for def in parsedDefinitions {
 					var values: [String: Any?] = [
-						"selector": def.selector,
-						"name": def.name,
-						"domain": "defaults",
-						"definition": def.description,
-					]
+                        "domain": "defaults",
+                        "definition": def.description
+                    ]
+                    
+                    if def.selector != nil { values["selector"] = def.selector }
+                    if def.name != nil { values["name"] = def.name }
 					
 					guard let selector = def.selector else {
 						throw "Exception: selector on parsed CVU is not defined"

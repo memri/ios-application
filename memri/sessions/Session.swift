@@ -234,7 +234,7 @@ public final class Session : Equatable, Subscriptable {
         _ viewArguments: ViewArguments? = nil
     ) throws {
 		guard let storedView = state ?? self.currentView?.state else {
-            throw "Exception: Unable fetch stored CVU state"
+            throw "Exception: Unable to fetch stored CVU state for view"
         }
         
         var nextIndex:Int

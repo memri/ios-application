@@ -295,18 +295,13 @@ public class RootContext: MemriContext {
 
 		globalCache = cache // TODO: remove this and fix edges
         
-        let sessionState = try Cache.createItem(
-            CVUStateDefinition.self,
-            values: ["uid": try Cache.getDeviceID()]
-        )
-
 		super.init(
 			name: name,
 			podAPI: podAPI,
 			cache: cache,
 			settings: Settings(),
 			installer: Installer(),
-			sessions: try Sessions(sessionState),
+			sessions: try Sessions(nil),
 			views: views,
 			navigation: MainNavigation(),
 			renderers: Renderers(),
