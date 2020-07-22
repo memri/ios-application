@@ -21,15 +21,15 @@ struct ProgressBarView: View {
 		GeometryReader { geom in
 			ZStack(alignment: .leading) {
 				self.backColor
-				if progressFraction > 0 {
-					bodyShape
+				if self.progressFraction > 0 {
+					self.bodyShape
 						.fill(self.frontColor)
-						.frame(width: geom.size.width * CGFloat(progressFraction))
-						.animation(.default, value: progressFraction)
+						.frame(width: geom.size.width * CGFloat(self.progressFraction))
+						.animation(.default, value: self.progressFraction)
 				}
-				bodyShape.strokeBorder(strokeColor, lineWidth: 1)
+				self.bodyShape.strokeBorder(self.strokeColor, lineWidth: 1)
 			}
-			.clipShape(bodyShape)
+			.clipShape(self.bodyShape)
 		}
 		.frame(height: 20)
 	}
