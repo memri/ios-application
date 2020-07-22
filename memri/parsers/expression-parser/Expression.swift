@@ -184,7 +184,9 @@ public class Expression: CVUToString {
         }
         else if let expr = object as? Expression {
             let value = try expr.execute(viewArguments)
-            if dontResolveItems, let _ = value as? Item { return expr as? T}
+            if dontResolveItems, let item = value as? Item {
+                return ItemReference(to: item) as? T
+            }
             else { return value as? T }
         }
         else {
