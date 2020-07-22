@@ -222,7 +222,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
         if let all = allRenderers, let RenderConfigType = all.allConfigTypes[activeRenderer] {
             // swiftformat:disable:next redundantInit
-            let renderConfig = RenderConfigType.init(head, tail, host)
+            let renderConfig = RenderConfigType.init(head, tail, self)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
             return renderConfig
