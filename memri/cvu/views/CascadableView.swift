@@ -42,7 +42,11 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     
     var fullscreen: Bool {
         get { viewArguments?.get("fullscreen") ?? cascadeProperty("fullscreen") ?? false }
-        set (value) { setState("fullscreen", value) }
+		set (value) {
+			setState("fullscreen", value)
+			context?.scheduleUIUpdate()
+			#warning("@Ruben - this wasn't triggering a UI update. I doubt we want to update UI for everything, so didn't put this in setState. But note that things like `showToolbar` probably need this called as well")
+		}
     }
     var showToolbar: Bool {
         get { viewArguments?.get("showToolbar") ?? cascadeProperty("showToolbar") ?? true }
