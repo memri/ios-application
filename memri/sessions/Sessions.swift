@@ -30,6 +30,7 @@ public final class Sessions : ObservableObject, Equatable {
 
     /// TBD
     var context: MemriContext? = nil
+    var isDefault: Bool = false
     
     private var sessions = [Session]()
     private var cancellables: [AnyCancellable] = []
@@ -50,7 +51,7 @@ public final class Sessions : ObservableObject, Equatable {
         sessions[safe: index]
     }
 
-    init(_ state: CVUStateDefinition?) throws {
+    init(_ state: CVUStateDefinition? = nil, isDefault:Bool = false) throws {
         if let state = state {
             guard let uid = state.uid.value else {
                 throw "CVU state object is unmanaged"
@@ -58,7 +59,8 @@ public final class Sessions : ObservableObject, Equatable {
             
             self.uid = uid
         }
-        else {
+        else if isDefault {
+            self.isDefault = isDefault
             // Load default sessions for this device
             self.uid = Settings.shared.getInt("device/sessions/uid")
         }
@@ -74,12 +76,12 @@ public final class Sessions : ObservableObject, Equatable {
     }
     
     func load(_ context:MemriContext) throws {
-        if self.uid == nil {
+        if self.isDefault && self.uid == nil {
             self.uid = Settings.shared.getInt("device/sessions/uid")
-        }
-        
-        guard self.uid != nil else {
-            throw "Could not find stored sessions to load from"
+            
+            guard self.uid != nil else {
+                throw "Could not find stored sessions to load from"
+            }
         }
         
         self.context = context

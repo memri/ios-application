@@ -131,7 +131,7 @@ struct ActionPopup: View {
 				// TODO: ERror logging
 			}
 		} else if action.name == .openViewByName {
-			if let viewName = args["name"] as? String {
+			if let viewName = args["viewName"] as? String {
 				return SubView(
 					context: self.context,
 					viewName: viewName,
