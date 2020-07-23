@@ -23,8 +23,4 @@ public class CascadableContextPane: Cascadable {
         get { cascadeList("navigate") }
         set (value) { setState("navigate", value) }
     }
-    
-    func isSet() -> Bool {
-        head.parsed?.count ?? 0 > 0 || tail.count > 0
-    }
 }

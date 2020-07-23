@@ -42,11 +42,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     
     var fullscreen: Bool {
         get { viewArguments?.get("fullscreen") ?? cascadeProperty("fullscreen") ?? false }
-		set (value) {
-			setState("fullscreen", value)
-			context?.scheduleUIUpdate()
-			#warning("@Ruben - this wasn't triggering a UI update. I doubt we want to update UI for everything, so didn't put this in setState. But note that things like `showToolbar` probably need this called as well")
-		}
+		set (value) { setState("fullscreen", value) }
     }
     var showToolbar: Bool {
         get { viewArguments?.get("showToolbar") ?? cascadeProperty("showToolbar") ?? true }
@@ -82,10 +78,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         get { cascadeList("sortFields") }
         set (value) { setState("sortFields", value) }
     }
-//	var editButtons: [Action] {
-//        get { cascadeList("editButtons") }
-//        set (value) { setState("editButtons", value) }
-//    }
 	var filterButtons: [Action] {
         get { cascadeList("filterButtons") }
         set (value) { setState("filterButtons", value) }
@@ -110,21 +102,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     var datasource: CascadingDatasource {
         cascadeContext("datasource", "datasourceDefinition", CVUParsedDatasourceDefinition.self)
     }
-    
-//    var datasource: CascadingDatasource {
-//        if let x = localCache["datasource"] as? CascadingDatasource { return x }
-//
-//        let head = self.head["datasourceDefinition"] as? CVUParsedDatasourceDefinition
-//            ?? CVUParsedDatasourceDefinition()
-//
-//        let tail = self.tail.compactMap {
-//            $0["datasourceDefinition"] as? CVUParsedDatasourceDefinition
-//        }
-//
-//        let datasource = CascadingDatasource(head, tail, self)
-//        localCache["datasource"] = datasource
-//        return datasource
-//    }
     
     var contextPane: CascadableContextPane {
         cascadeContext("contextPane", "contextPane", CVUParsedObjectDefinition.self)
@@ -393,6 +370,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     override func setState(_ propName:String, _ value:Any?) {
         super.setState(propName, value)
         schedulePersist()
+        context?.scheduleUIUpdate()
     }
     
     func schedulePersist() {
@@ -412,9 +390,6 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 }
                 
                 uid = stateUID
-            }
-            if context?.currentView?.state == self.state {
-                1+1
             }
             
             state?.set("definition", head.toCVUString(0, "    "))

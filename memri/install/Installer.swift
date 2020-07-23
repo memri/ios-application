@@ -98,17 +98,6 @@ public class Installer : ObservableObject {
     
     public func clearSessions(_ context: MemriContext) {
         DatabaseController.writeSync { realm in
-            guard let sessionState = try realm.object(
-                ofType: CVUStateDefinition.self,
-                forPrimaryKey: Cache.getDeviceID()
-            ) else { return }
-            
-            // Create a backup of the session
-            _ = try context.cache.duplicate(sessionState)
-            
-            // Delete old session
-            context.cache.delete(sessionState)
-            
             // Create a new default session
             try context.sessions.install(context)
         }

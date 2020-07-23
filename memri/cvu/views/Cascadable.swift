@@ -74,6 +74,10 @@ public class Cascadable : CustomStringConvertible {
         head[propName] = value
         localCache.removeValue(forKey: propName)
     }
+    
+    func isSet() -> Bool {
+        head.parsed?.count ?? 0 > 0 || tail.count > 0
+    }
 
 	func cascadePropertyAsCGFloat(_ name: String) -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil
 		(cascadeProperty(name) as Double?).map { CGFloat($0) }

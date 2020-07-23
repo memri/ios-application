@@ -36,9 +36,7 @@ public class PodAPI {
 		let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
         let podhost = self.host ?? settings.getString("user/pod/host")
 		guard var baseUrl = URL(string: podhost) else {
-			let message = "Invalid pod host set in settings: \(podhost)"
-			debugHistory.error(message)
-			callback(message, nil)
+			callback("Invalid pod host set in settings: \(podhost)", nil)
 			return
 		}
 
