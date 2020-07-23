@@ -10,6 +10,18 @@
 import XCTest
 
 class contextTest: XCTestCase {
+    override init() {
+        super.init()
+        
+        do {
+            let root = try RootContext(name: "", key: "")
+            root.installer.installDefaultDatabase(root)
+        }
+        catch let error {
+            print(error)
+        }
+    }
+    
 	override func setUpWithError() throws {
 		// Put setup code here. This method is called before the invocation of each test method in the class.
 	}
@@ -21,16 +33,25 @@ class contextTest: XCTestCase {
 	func testBooting() throws {
 		let root = try RootContext(name: "", key: "")
 		try root.boot()
-
-		XCTAssertEqual(root.cascadableView?.sessionView.viewDefinition!.selector, "[view]")
+        
+        XCTAssertEqual(root.currentView?.state?.selector, "[view]")
 	}
 
 	func testSubContext() throws {
 		let root = try RootContext(name: "", key: "")
 		try root.boot()
-		let sub = try root.createSubContext(Session())
+		let sub = try root.createSubContext()
+        try sub.currentSession?.setCurrentView(Cache.createItem(CVUStateDefinition.self, values: [
+            "definition": """
+            [view] {
+                [datasource = pod] {
+                    query: "Note"
+                }
+            }
+            """
+        ]))
 
-		XCTAssertEqual(sub.cascadableView?.sessionView.viewDefinition, nil)
+        XCTAssertEqual(sub.currentView?.datasource.query, "Note")
 	}
 
 	func testDynamicProperties() throws {

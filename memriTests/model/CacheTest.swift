@@ -28,17 +28,19 @@ class CacheTest: XCTestCase {
 	}
 
 	func getCountry(_ name: String) -> Country? {
-		testCache.realm.objects(Country.self).filter("name = '\(name)'").first
+        let realm = DatabaseController.getRealm()
+		return realm.objects(Country.self).filter("name = '\(name)'").first
 	}
 
 	func testCacheInstall() throws {
 		// Also tests getItemById
-		try testCache.install()
-		XCTAssertTrue(testCache.realm.objects(Country.self).count > 0)
+		try testCache.install("default_database")
+        let realm = DatabaseController.getRealm()
+		XCTAssertTrue(realm.objects(Country.self).count > 0)
 	}
 
 	func testGetItem() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		XCTAssertEqual(getCountry("Aruba")?.getString("name"), "Aruba")
 	}
 
@@ -49,7 +51,7 @@ class CacheTest: XCTestCase {
 	}
 
 	func testTypeQuery() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 
 		for dtype in ItemFamily.allCases {
 			try testCache.query(Datasource(query: dtype.rawValue)) { _, items in
@@ -82,19 +84,19 @@ class CacheTest: XCTestCase {
 	}
 
 	func testGetResultSet() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		// TODO: not sure what this should test yet
 		_ = testCache.getResultSet(Datasource(query: "*"))
 	}
 
 	func testAddToCache() throws {
 		let note = Note()
-		_ = try testCache.addToCache(note)
+		_ = try Cache.addToCache(note)
 		// TODO: what to test here
 	}
 
 	func testAddToCacheConflicts() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		// TODO: FIX
 		//        let item: Country = testCache.getItemById("country", "Aruba")
 		//        let cachedNote = try testCache.addToCache(note)
@@ -126,7 +128,7 @@ class CacheTest: XCTestCase {
 	}
 
 	func testDelete() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		let item = getCountry("Aruba")
 		testCache.delete(item!)
 		let item2 = getCountry("Aruba")
@@ -134,7 +136,7 @@ class CacheTest: XCTestCase {
 	}
 
 	func testDeleteMulti() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		let items = [getCountry("Aruba")!,
 					 getCountry("Antarctica")!]
 
@@ -147,7 +149,7 @@ class CacheTest: XCTestCase {
 	}
 
 	func testDuplicate() throws {
-		try testCache.install()
+		try testCache.install("default_database")
 		let item = getCountry("Aruba")
 		let copy = try testCache.duplicate(item!)
 		let cls = item!.getType()

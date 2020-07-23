@@ -96,13 +96,6 @@ public class CascadingDatasource: Cascadable, UniqueString, Subscriptable {
 			sortAscending: sortAscending
 		)
 	}
-//
-//	init(_ cascadeStack: [CVUParsedDatasourceDefinition],
-//		 _ viewArguments: ViewArguments? = nil,
-//		 _ datasource: Datasource) {
-//		self.datasource = datasource
-//		super.init(cascadeStack, viewArguments)
-//	}
 
 	subscript(propName: String) -> Any? {
 		get {

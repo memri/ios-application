@@ -18,36 +18,14 @@ class datasourceTest: XCTestCase {
 	}
 
 	func testUnique() throws {
-		let ds1 = Datasource(value: ["query": "test", "sortAscending": true, "sortProperty": "foo"])
-		let ds2 = Datasource(value: ["query": "test", "sortAscending": false, "sortProperty": "foo"])
-		let ds3 = Datasource(value: ["query": "test", "sortAscending": true, "sortProperty": "bar"])
-		let ds4 = Datasource(value: ["query": "test", "sortAscending": true, "sortProperty": "foo"])
+		let ds1 = Datasource(query: "test", sortProperty: "foo", sortAscending: true)
+		let ds2 = Datasource(query: "test", sortProperty: "foo", sortAscending: false)
+		let ds3 = Datasource(query: "test", sortProperty: "bar", sortAscending: true)
+		let ds4 = Datasource(query: "test", sortProperty: "foo", sortAscending: true)
 
 		XCTAssertNotEqual(ds1.uniqueString, ds2.uniqueString)
 		XCTAssertNotEqual(ds1.uniqueString, ds3.uniqueString)
 		XCTAssertNotEqual(ds1.uniqueString, ds4.uniqueString)
-	}
-
-	func testFromCVU() throws {
-		let strDef = """
-		[datasource = pod] {
-		    query: "test"
-		    sortProperty: foo
-		    sortAscending: false
-		}
-		"""
-
-		let def = CVUStoredDefinition(value: ["definition": strDef])
-
-		let root = try RootContext(name: "", key: "")
-		try root.boot()
-
-		let parsed = try root.views.parseDefinition(def)
-		let ds = try Datasource.fromCVUDefinition(parsed as! CVUParsedDatasourceDefinition)
-
-		XCTAssertEqual(ds.query, "test")
-		XCTAssertEqual(ds.sortProperty, "foo")
-		XCTAssertEqual(ds.sortAscending.value, false)
 	}
 
 	func testCascading() throws {
@@ -80,17 +58,30 @@ class datasourceTest: XCTestCase {
 			try root.views.parseDefinition(def3) as! CVUParsedDatasourceDefinition,
 		]
 
-		let ds = CascadingDatasource(parsed, nil, Datasource())
+		let ds = CascadingDatasource(nil, parsed)
 
 		XCTAssertEqual(ds.query, "test")
 		XCTAssertEqual(ds.sortProperty, "foo")
 		XCTAssertEqual(ds.sortAscending, false)
 	}
-
-	//    func testPerformanceExample() throws {
-	//        // This is an example of a performance test case.
-	//        self.measure {
-	//            // Put the code you want to measure the time of here.
-	//        }
-	//    }
+    
+    func testSubscript() throws {
+        let strDef1 = """
+        [datasource = pod] {
+            query: "test"
+            sortProperty: "foo"
+            sortAscending: false
+        }
+        """
+        let def1 = CVUStoredDefinition(value: ["definition": strDef1])
+        
+        let root = try RootContext(name: "", key: "")
+        let head = try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition
+        let ds = CascadingDatasource(head)
+        
+        XCTAssertEqual(ds["query"] as? String, "test")
+        XCTAssertEqual(ds["sortProperty"] as? String, "foo")
+        XCTAssertEqual(ds["sortAscending"] as? Bool, false)
+        
+    }
 }

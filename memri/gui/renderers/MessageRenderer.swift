@@ -34,8 +34,10 @@ class CascadingMessageRendererConfig: CascadingRenderConfig {
 
 struct MessageRenderer: View {
 	@EnvironmentObject var context: MemriContext
+    
 	var renderConfig: CascadingMessageRendererConfig {
-		context.currentView?.renderConfig as? CascadingMessageRendererConfig ?? CascadingMessageRendererConfig()
+		context.currentView?.renderConfig as? CascadingMessageRendererConfig
+            ?? CascadingMessageRendererConfig()
 	}
 	
 	func resolveExpression<T>(_ expression: Expression?,
