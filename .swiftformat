@@ -1,2 +1,8 @@
---indent tab
---tabwidth 4
+--indent 4
+--all-man
+--elseposition next-line
+--stripunusedargs unnamed-only
+--maxwidth 100
+--header "\n{file}\nCopyright (c) {year} Memri."
+--wrapcollections before-first
+--wrapparameters after-first
