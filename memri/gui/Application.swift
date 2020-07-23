@@ -32,7 +32,7 @@ struct Application: View {
     var body: some View {
         ScreenSizer {
             VStack(spacing: 0) {
-                if self.context.installer.isInstalled {
+                if self.context.installer.isInstalled && !self.context.installer.debugMode {
                     NavigationWrapper(isVisible: self.context.showNavigationBinding) {
                         if self.context.showSessionSwitcher {
                             SessionSwitcher()

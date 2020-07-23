@@ -21,7 +21,7 @@ public class Installer: ObservableObject {
     }
 
     public func await(_ callback: @escaping () throws -> Void) throws {
-        if isInstalled {
+        if isInstalled && !debugMode{
             try callback()
             return
         }
@@ -32,7 +32,7 @@ public class Installer: ObservableObject {
     public func ready() {
         isInstalled = true
         
-        DatabaseController.writeSync { realm in
+        _ = DatabaseController.writeSync { realm in
             realm.create(AuditItem.self, value: ["uid": -2], update: .modified)
         }
         
@@ -42,6 +42,20 @@ public class Installer: ObservableObject {
         }
         catch {
             debugHistory.error("\(error)")
+        }
+    }
+    
+    public func installForTesting(boot:Bool = true) throws {
+        if !isInstalled {
+            let root = try RootContext(name: "", key: "")
+            
+            try await {
+                if boot {
+                    try root.boot(isTesting: true)
+                }
+            }
+            
+            installDefaultDatabase(root)
         }
     }
 
@@ -86,13 +100,20 @@ public class Installer: ObservableObject {
 
         ready()
     }
+    
+    public func continueAsNormal(_ context: MemriContext) {
+        debugMode = false
+        context.scheduleUIUpdate(immediate: true)
+    }
 
-    public func clearDatabase(_: MemriContext) {
+    public func clearDatabase(_ context: MemriContext) {
         DatabaseController.writeSync { realm in
             realm.deleteAll()
         }
 
         isInstalled = false
+        debugMode = false
+        context.scheduleUIUpdate(immediate: true)
     }
 
     public func clearSessions(_ context: MemriContext) {
@@ -102,6 +123,7 @@ public class Installer: ObservableObject {
         }
 
         debugMode = false
+        ready()
     }
 }
 
@@ -115,7 +137,7 @@ struct SetupWizard: View {
     var body: some View {
         NavigationView {
             Form {
-                if !context.installer.isInstalled {
+                if !context.installer.isInstalled && !context.installer.debugMode {
                     Text("Setup Wizard")
                         .font(.system(size: 22, weight: .bold))
 
@@ -227,9 +249,14 @@ struct SetupWizard: View {
                         }) {
                             Text("Play around with the DEMO database")
                         }
+//                        Button(action: {
+//                            fatalError()
+//                        }) {
+//                            Text("Simulate a hard crash")
+//                        }
                     }
                 }
-                if context.installer.isInstalled && context.installer.debugMode {
+                if context.installer.debugMode {
                     Text("Recovery Wizard")
                         .font(.system(size: 22, weight: .bold))
 
@@ -237,19 +264,21 @@ struct SetupWizard: View {
                         header: Text("Memri crashed last time. What would you like to do?")
                     ) {
                         Button(action: {
-                            self.context.installer.debugMode = false
+                            self.context.installer.continueAsNormal(self.context)
                         }) {
-                            Text("Continue as normal)")
+                            Text("Continue as normal")
                         }
                         Button(action: {
                             self.context.installer.clearDatabase(self.context)
                         }) {
                             Text("Delete the local database and start over")
                         }
-                        Button(action: {
-                            self.context.installer.clearSessions(self.context)
-                        }) {
-                            Text("Clear the session history (to recover from an issue)")
+                        if context.installer.isInstalled {
+                            Button(action: {
+                                self.context.installer.clearSessions(self.context)
+                            }) {
+                                Text("Clear the session history (to recover from an issue)")
+                            }
                         }
                     }
                 }

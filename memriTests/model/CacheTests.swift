@@ -5,8 +5,9 @@
 @testable import memri
 import XCTest
 
-class CacheTest: XCTestCase {
-    var testCache: Cache = try! Cache(PodAPI("test"))
+class CacheTests: XCTestCase {
+    var testCache = try! Cache(PodAPI("test"))
+    var installer = Installer()
 
     override func setUp() {
         // reset cache
@@ -23,14 +24,14 @@ class CacheTest: XCTestCase {
     }
 
     func testCacheInstall() throws {
-        // Also tests getItemById
-        try testCache.install("default_database")
+        installer.installForTesting()
+        
         let realm = DatabaseController.getRealm()
         XCTAssertTrue(realm.objects(Country.self).count > 0)
     }
 
     func testGetItem() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         XCTAssertEqual(getCountry("Aruba")?.getString("name"), "Aruba")
     }
 
@@ -41,7 +42,7 @@ class CacheTest: XCTestCase {
     }
 
     func testTypeQuery() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
 
         for dtype in ItemFamily.allCases {
             try testCache.query(Datasource(query: dtype.rawValue)) { _, items in
@@ -75,7 +76,7 @@ class CacheTest: XCTestCase {
     }
 
     func testGetResultSet() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         // TODO: not sure what this should test yet
         _ = testCache.getResultSet(Datasource(query: "*"))
     }
@@ -87,7 +88,7 @@ class CacheTest: XCTestCase {
     }
 
     func testAddToCacheConflicts() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         // TODO: FIX
         //        let item: Country = testCache.getItemById("country", "Aruba")
         //        let cachedNote = try testCache.addToCache(note)
@@ -119,7 +120,7 @@ class CacheTest: XCTestCase {
     }
 
     func testDelete() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         let item = getCountry("Aruba")
         testCache.delete(item!)
         let item2 = getCountry("Aruba")
@@ -127,7 +128,7 @@ class CacheTest: XCTestCase {
     }
 
     func testDeleteMulti() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         let items = [
             getCountry("Aruba")!,
             getCountry("Antarctica")!,
@@ -144,7 +145,7 @@ class CacheTest: XCTestCase {
     }
 
     func testDuplicate() throws {
-        try testCache.install("default_database")
+        installer.installForTesting()
         let item = getCountry("Aruba")
         let copy = try testCache.duplicate(item!)
         let cls = item!.getType()
