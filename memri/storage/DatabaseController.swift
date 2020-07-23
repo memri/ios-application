@@ -86,6 +86,8 @@ class DatabaseController {
 			} catch {
 				print(error)
 			}
+            
+//            print("Using realm at \(realmDir + "/memri.realm")")
 			
 			let realmURL = URL(fileURLWithPath: realmDir + "/memri.realm")
 			return realmURL

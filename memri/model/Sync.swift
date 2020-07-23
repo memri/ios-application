@@ -72,7 +72,7 @@ class Sync {
 
 	/// Schedule a query to sync the resulting Items from the pod
 	/// - Parameter datasource: QueryOptions used to perform the query
-	public func syncQuery(_ datasource: Datasource) {
+    public func syncQuery(_ datasource: Datasource, auditable:Bool = true, _ callback:(()->Void)? = nil) {
 		// TODO: if this query was executed recently, considering postponing action
 		do {
             let data = try MemriJSONEncoder.encode([ // TODO: move this to Datasource
@@ -84,20 +84,35 @@ class Sync {
             // Add to realm
 			DatabaseController.writeAsync { realm in
                 
-                // Store query in a log item
-                let audititem = AuditItem()
+                var safeRef:ItemReference? = nil
+                if auditable {
+                    // Store query in a log item
+                    let audititem = AuditItem()
+                    
+                    audititem.uid.value = try Cache.incrementUID()
+                    audititem.content = String(data: data, encoding: .utf8) ?? ""
+                    audititem.action = "query"
+                    audititem.date = Date()
+                    
+                    // Set syncstate to "fetch" in order to get priority treatment for querying
+                    audititem._action = "fetch"
+                    
+                    realm.add(audititem)
+                    
+                    safeRef = ItemReference(to: audititem)
+                }
                 
-                audititem.uid.value = try Cache.incrementUID()
-                audititem.content = String(data: data, encoding: .utf8) ?? ""
-                audititem.action = "query"
-                audititem.date = Date()
-                
-                // Set syncstate to "fetch" in order to get priority treatment for querying
-                audititem._action = "fetch"
-                
-				realm.add(audititem)
 				// Execute query with priority
-				self.prioritySync(datasource, audititem)
+                self.prioritySync(datasource) {
+                    if auditable {
+                        // We no longer need to process this log item
+                        DatabaseController.writeAsync { _ in
+                            safeRef?.resolve()?._action = nil
+                        }
+                    }
+                    
+                    callback?()
+                }
 			}
 			
 		} catch {
@@ -125,7 +140,7 @@ class Sync {
 		}
 	}
 
-	private func prioritySync(_ datasource: Datasource, _ audititem: AuditItem) {
+	private func prioritySync(_ datasource: Datasource, _ callback:(()->Void)? = nil) {
 		// Only execute queries once per session until we fix syncing
         
 //        guard recentQueries[datasource.uniqueString] != true else {
@@ -133,8 +148,6 @@ class Sync {
 //        }
         
         debugHistory.info("Syncing from pod with query: \(datasource.query ?? "")")
-        
-        let safeRef = ItemReference(to: audititem)
         
         // Call out to the pod with the query
         podAPI.query(datasource) { error, items in
@@ -149,7 +162,7 @@ class Sync {
                     for item in items {
                         // TODO: handle sync errors
                         do {
-                            _ = try cache.addToCache(item)
+                            _ = try Cache.addToCache(item)
                         } catch {
                             debugHistory.error("\(error)")
                         }
@@ -162,10 +175,7 @@ class Sync {
                         debugHistory.error("\(error)")
                     }
 
-                    // We no longer need to process this log item
-					DatabaseController.writeAsync { _ in
-                        safeRef.resolve()?._action = nil
-                    }
+                    callback?()
                 }
             } else {
                 // Ignore errors (we'll retry next time)
@@ -200,10 +210,8 @@ class Sync {
 		}
 	}
 
-	public func syncToPod() {
+	private func syncToPod() {
         func markAsDone(_ list: [String: Any], _ callback:@escaping () -> Void) {
-            debugHistory.info("Syncing complete")
-            
 			DatabaseController.writeAsync { realm in
 				for (_, sublist) in list {
 					for item in sublist as? [Any] ?? [] {
@@ -249,7 +257,7 @@ class Sync {
                 if let type = itemType.getType() as? Item.Type {
                     let items = realm.objects(type).filter("_action != nil")
                     for item in items {
-                        if let action = item._action, itemQueue[action] != nil {
+                        if let action = item._action, itemQueue[action] != nil, item.uid.value ?? 0 > 0 {
                             itemQueue[action]?.append(item)
                             found += 1
                         }
@@ -294,6 +302,8 @@ class Sync {
                             #warning("Items/Edges could have changed in the mean time, check dateModified/AuditItem")
                             markAsDone(safeItemQueue) {
                                 markAsDone(safeEdgeQueue) {
+                                    debugHistory.info("Syncing complete")
+                                    
                                     self.syncing = false
                                     self.schedule()
                                 }
@@ -310,7 +320,22 @@ class Sync {
         }
 	}
 
-	private func syncFromPod() {
+    #warning("This is terribly brittle, we'll need to completely rearchitect syncing next week")
+    public func syncAllFromPod(_ callback:@escaping () -> Void) {
+        syncQuery(Datasource(query: "CVUStoredDefinition"), auditable: false) {
+            self.syncQuery(Datasource(query: "CVUStateDefinition"), auditable: false) {
+                self.syncQuery(Datasource(query: "Country"), auditable: false) {
+                    self.syncQuery(Datasource(query: "Setting"), auditable: false) {
+                        self.syncQuery(Datasource(query: "NavigationItem"), auditable: false) {
+                            callback()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+	public func syncFromPod() {
 		// TODO:
 	}
 

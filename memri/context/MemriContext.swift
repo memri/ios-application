@@ -284,8 +284,9 @@ public class RootContext: MemriContext {
 	private var cancellable: AnyCancellable?
     
     #warning("@Toby how can we tell when the sub context is done and how can we clear it?")
+    #warning("We can assume that they are all cleared when the root view is reloaded or detect the specific one when a sheet is closed")
     var subContexts = [SubContext]()
-
+    
 	// TODO: Refactor: Should installer be moved to rootmain?
 
 	init(name: String, key: String) throws {
@@ -295,18 +296,13 @@ public class RootContext: MemriContext {
 
 		globalCache = cache // TODO: remove this and fix edges
         
-        let sessionState = try Cache.createItem(
-            CVUStateDefinition.self,
-            values: ["uid": try Cache.getDeviceID()]
-        )
-
 		super.init(
 			name: name,
 			podAPI: podAPI,
 			cache: cache,
 			settings: Settings(),
 			installer: Installer(),
-			sessions: try Sessions(sessionState),
+            sessions: try Sessions(isDefault: true),
 			views: views,
 			navigation: MainNavigation(),
 			renderers: Renderers(),
@@ -333,31 +329,28 @@ public class RootContext: MemriContext {
 	}
 
     public func boot(_ callback:(() -> Void)? = nil) throws {
-		// Make sure memri is installed properly
-		try installer.installIfNeeded(self) {
-			#if targetEnvironment(simulator)
-				// Reload for easy adjusting
-				self.views.context = self
-				try self.views.install()
-			#endif
+        #if targetEnvironment(simulator)
+            // Reload for easy adjusting
+            self.views.context = self
+            try self.views.install()
+        #endif
 
-			// Load views configuration
-			try self.views.load(self) {
-                
-                // Load session
-                try sessions.load(self)
-                
-				// Update view when sessions changes
-				self.cancellable = self.sessions.objectWillChange.sink { _ in
-					self.scheduleUIUpdate()
-				}
+        // Load views configuration
+        try self.views.load(self) {
+            
+            // Load session
+            try sessions.load(self)
+            
+            // Update view when sessions changes
+            self.cancellable = self.sessions.objectWillChange.sink { _ in
+                self.scheduleUIUpdate()
+            }
 
-				// Load current view
-                try self.currentSession?.setCurrentView()
-                
-                callback?()
-			}
-		}
+            // Load current view
+            try self.currentSession?.setCurrentView()
+            
+            callback?()
+        }
 	}
 
 	public func mockBoot() -> MemriContext {

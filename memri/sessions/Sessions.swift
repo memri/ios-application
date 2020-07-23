@@ -30,6 +30,7 @@ public final class Sessions : ObservableObject, Equatable {
 
     /// TBD
     var context: MemriContext? = nil
+    var isDefault: Bool = false
     
     private var sessions = [Session]()
     private var cancellables: [AnyCancellable] = []
@@ -50,13 +51,18 @@ public final class Sessions : ObservableObject, Equatable {
         sessions[safe: index]
     }
 
-    init(_ state: CVUStateDefinition?) throws {
+    init(_ state: CVUStateDefinition? = nil, isDefault:Bool = false) throws {
         if let state = state {
             guard let uid = state.uid.value else {
                 throw "CVU state object is unmanaged"
             }
             
             self.uid = uid
+        }
+        else if isDefault {
+            self.isDefault = isDefault
+            // Load default sessions for this device
+            self.uid = Settings.shared.getInt("device/sessions/uid")
         }
         
         // Setup update publishers
@@ -70,6 +76,14 @@ public final class Sessions : ObservableObject, Equatable {
     }
     
     func load(_ context:MemriContext) throws {
+        if self.isDefault && self.uid == nil {
+            self.uid = Settings.shared.getInt("device/sessions/uid")
+            
+            guard self.uid != nil else {
+                throw "Could not find stored sessions to load from"
+            }
+        }
+        
         self.context = context
         self.sessions = []
         
@@ -127,7 +141,7 @@ public final class Sessions : ObservableObject, Equatable {
     
 	public func setCurrentSession(_ state: CVUStateDefinition? = nil) throws {
         guard let storedSession = state ?? self.currentSession?.state else {
-            throw "Exception: Unable fetch stored CVU state"
+            throw "Exception: Unable to fetch stored CVU state for session"
         }
         
         // If the session already exists, we simply update the session index
@@ -184,12 +198,10 @@ public final class Sessions : ObservableObject, Equatable {
 
 	public func install(_ context: MemriContext) throws {
         try  DatabaseController.tryWriteSync { realm in
-            
             let templateQuery = "selector = '[sessions = defaultSessions]'"
             guard
                 let template = realm.objects(CVUStoredDefinition.self).filter(templateQuery).first,
-                let parsed = try context.views.parseDefinition(template),
-                let state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+                let parsed = try context.views.parseDefinition(template)
             else {
                 throw "Installation is corrupt. Cannot recover."
             }
@@ -199,9 +211,14 @@ public final class Sessions : ObservableObject, Equatable {
                 try CVUStateDefinition.fromCVUParsedDefinition($0)
             }
 
+            let state = try Cache.createItem(CVUStateDefinition.self)
             for session in allSessions {
                 _ = try state.link(session, type: "session", sequence: .last)
             }
+            
+            // uid is always set
+            self.uid = state.uid.value
+            Settings.shared.set("device/sessions/uid", state.uid.value ?? -1)
             
             self.parsed = parsed as? CVUParsedSessionsDefinition
             self.parsed?.parsed?.removeValue(forKey: "sessionDefinitions")

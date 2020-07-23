@@ -17,7 +17,7 @@ let registerPhotoViewerRenderer = {
 		icon: "camera",
 		view: AnyView(PhotoViewerRenderer()),
 		renderConfigType: PhotoViewerRendererConfig.self,
-		canDisplayResults: { items -> Bool in !items.isEmpty }
+        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
 	)
 }
 

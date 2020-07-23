@@ -39,6 +39,8 @@ public class Views {
 	}
     
     public func listenForChanges() {
+        guard context?.podAPI.isConfigured ?? false else { return }
+        
         // Subscribe to changes in CVUStoredDefinition
         cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
             self.reloadViews(items)
@@ -85,11 +87,12 @@ public class Views {
 				// Loop over lookup table with named views
 				for def in parsedDefinitions {
 					var values: [String: Any?] = [
-						"selector": def.selector,
-						"name": def.name,
-						"domain": "defaults",
-						"definition": def.description,
-					]
+                        "domain": "defaults",
+                        "definition": def.description
+                    ]
+                    
+                    if def.selector != nil { values["selector"] = def.selector }
+                    if def.name != nil { values["name"] = def.name }
 					
 					guard let selector = def.selector else {
 						throw "Exception: selector on parsed CVU is not defined"

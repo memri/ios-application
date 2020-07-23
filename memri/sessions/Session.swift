@@ -201,6 +201,7 @@ public final class Session : Equatable, Subscriptable {
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
                 for edge in stateViewEdges {
+                    #warning("Hard crash when index out of range. Fix")
                     if edge.targetItemID.value == views[i].uid {
                         i += 1
                         continue
@@ -234,7 +235,7 @@ public final class Session : Equatable, Subscriptable {
         _ viewArguments: ViewArguments? = nil
     ) throws {
 		guard let storedView = state ?? self.currentView?.state else {
-            throw "Exception: Unable fetch stored CVU state"
+            throw "Exception: Unable to fetch stored CVU state for view"
         }
         
         var nextIndex:Int

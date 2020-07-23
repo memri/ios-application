@@ -30,7 +30,7 @@ struct FilterPanel: View {
 											.fixedSize()
 											.padding(.horizontal, 5)
 											.padding(.vertical, 5)
-											.frame(width: 40, height: 40, alignment: .center)
+											.frame(width: 35, height: 40, alignment: .center)
 											.foregroundColor(self.isActive(renderer)
 																? renderer.getColor("activeColor")
 																: renderer.getColor("inactiveColor"))
