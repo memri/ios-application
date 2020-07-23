@@ -17,7 +17,10 @@ let registerMessageRenderer = {
 		icon: "message",
 		view: AnyView(MessageRenderer()),
 		renderConfigType: CascadingMessageRendererConfig.self,
-		canDisplayResults: { _ -> Bool in true }
+		canDisplayResults: { items -> Bool in
+            items.first?.genericType == "Message" ||
+                items.first?.genericType == "Note"
+        }
 	)
 }
 
