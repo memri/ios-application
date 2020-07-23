@@ -1,34 +1,31 @@
 //
-//  ChartModel.swift
-//  MemriPlayground
-//
-//  Created by Toby Brennan.
-//
+// ChartModel.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 
 struct ChartSetLabelledY {
-	var points: [ChartPointLabelledY]
+    var points: [ChartPointLabelledY]
 }
 
 struct ChartSetXY {
-	var points: [ChartPointXY]
+    var points: [ChartPointXY]
 }
 
 struct ChartPointLabelledY {
-	var label: String
-	var y: Double
-	var itemID: String
+    var label: String
+    var y: Double
+    var itemID: String
 }
 
 struct ChartPointXY {
-	var x: Double
-	var y: Double
-	var label: String?
-	var itemID: String
+    var x: Double
+    var y: Double
+    var label: String?
+    var itemID: String
 }
 
 struct ChartEntryInfo {
-	var dataIndex: Int // Doesn't always equal index on chart (eg. line chart sorts by x)
-	var label: String?
+    var dataIndex: Int // Doesn't always equal index on chart (eg. line chart sorts by x)
+    var label: String?
 }

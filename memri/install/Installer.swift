@@ -1,42 +1,38 @@
 //
-//  Installer.swift
-//  memri
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// Installer.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 import RealmSwift
 import SwiftUI
 
-public class Installer : ObservableObject {
-    
-    @Published var isInstalled:Bool = false
-    @Published var debugMode:Bool = false
-    
+public class Installer: ObservableObject {
+    @Published var isInstalled: Bool = false
+    @Published var debugMode: Bool = false
+
     private var readyCallback: () throws -> Void = {}
 
-	init() {
+    init() {
         let realm = DatabaseController.getRealm()
         if let _ = realm.object(ofType: AuditItem.self, forPrimaryKey: -2) {
             isInstalled = true
         }
         debugMode = CrashObserver.shared.didCrashLastTime
-	}
-    
+    }
+
     public func await(_ callback: @escaping () throws -> Void) throws {
-        if isInstalled {
+        if isInstalled && !debugMode{
             try callback()
             return
         }
-        
+
         readyCallback = callback
     }
-    
+
     public func ready() {
         isInstalled = true
         
-        DatabaseController.writeSync { realm in
+        _ = DatabaseController.writeSync { realm in
             realm.create(AuditItem.self, value: ["uid": -2], update: .modified)
         }
         
@@ -44,31 +40,44 @@ public class Installer : ObservableObject {
             try readyCallback()
             readyCallback = {}
         }
-        catch let error {
+        catch {
             debugHistory.error("\(error)")
         }
     }
     
-	public func installDefaultDatabase(_ context: MemriContext) {
+    public func installForTesting(boot:Bool = true) throws {
+        if !isInstalled {
+            let root = try RootContext(name: "", key: "")
+            
+            try await {
+                if boot {
+                    try root.boot(isTesting: true)
+                }
+            }
+            
+            installDefaultDatabase(root)
+        }
+    }
+
+    public func installDefaultDatabase(_ context: MemriContext) {
         debugHistory.info("Installing defaults in the database")
-        
+
         do { try install(context, dbName: "default_database") }
-        catch let error {
+        catch {
             debugHistory.error("Unable to load: \(error)")
         }
-        
     }
-    
+
     public func installDemoDatabase(_ context: MemriContext) {
         debugHistory.info("Installing demo database")
-        
+
         do { try install(context, dbName: "demo_database") }
-        catch let error {
+        catch {
             debugHistory.error("Unable to load: \(error)")
         }
     }
-    
-    private func install(_ context: MemriContext, dbName:String) throws {
+
+    private func install(_ context: MemriContext, dbName: String) throws {
         // Load default objects in database
         try context.cache.install(dbName)
 
@@ -88,43 +97,51 @@ public class Installer : ObservableObject {
                 "contents": try serialize(["version": "1.0"]),
             ])
         }
-        
+
         ready()
     }
     
+    public func continueAsNormal(_ context: MemriContext) {
+        debugMode = false
+        context.scheduleUIUpdate(immediate: true)
+    }
+
     public func clearDatabase(_ context: MemriContext) {
         DatabaseController.writeSync { realm in
             realm.deleteAll()
         }
-        
+
         isInstalled = false
+        debugMode = false
+        context.scheduleUIUpdate(immediate: true)
     }
-    
+
     public func clearSessions(_ context: MemriContext) {
-        DatabaseController.writeSync { realm in
+        DatabaseController.writeSync { _ in
             // Create a new default session
             try context.sessions.install(context)
         }
-        
+
         debugMode = false
+        ready()
     }
 }
 
 struct SetupWizard: View {
     @EnvironmentObject var context: MemriContext
-    
-    @State var host:String = "http://localhost:3030"
-    @State var username:String = ""
-    @State var password:String = ""
+
+    @State var host: String = "http://localhost:3030"
+    @State var username: String = ""
+    @State var password: String = ""
 
     var body: some View {
         NavigationView {
             Form {
-                if !context.installer.isInstalled {
+                if !context.installer.isInstalled && !context.installer.debugMode {
                     Text("Setup Wizard")
                         .font(.system(size: 22, weight: .bold))
-                    
-                    Section (
+
+                    Section(
                         header: Text("Connect to a pod")
                     ) {
                         NavigationLink(destination: Form {
@@ -152,7 +169,8 @@ struct SetupWizard: View {
                                     Button(action: {
                                         if self.host != "" {
 //                                            self.context.installer.clearDatabase(self.context)
-                                            self.context.installer.installDefaultDatabase(self.context)
+                                            self.context.installer
+                                                .installDefaultDatabase(self.context)
                                             Settings.shared.set("user/pod/host", self.host)
                                             Settings.shared.set("user/pod/username", self.username)
                                             Settings.shared.set("user/pod/password", self.password)
@@ -193,11 +211,17 @@ struct SetupWizard: View {
                                             self.context.podAPI.host = self.host
                                             self.context.podAPI.username = self.username
                                             self.context.podAPI.password = self.password
-                                            
-                                            self.context.cache.sync.syncAllFromPod() {
+
+                                            self.context.cache.sync.syncAllFromPod {
                                                 Settings.shared.set("user/pod/host", self.host)
-                                                Settings.shared.set("user/pod/username", self.username)
-                                                Settings.shared.set("user/pod/password", self.password)
+                                                Settings.shared.set(
+                                                    "user/pod/username",
+                                                    self.username
+                                                )
+                                                Settings.shared.set(
+                                                    "user/pod/password",
+                                                    self.password
+                                                )
                                                 self.context.installer.ready()
                                             }
                                         }
@@ -210,7 +234,7 @@ struct SetupWizard: View {
                             Text("Connect to an existing pod")
                         }
                     }
-                    Section (
+                    Section(
                         header: Text("Or use Memri locally")
                     ) {
                         Button(action: {
@@ -225,29 +249,36 @@ struct SetupWizard: View {
                         }) {
                             Text("Play around with the DEMO database")
                         }
+//                        Button(action: {
+//                            fatalError()
+//                        }) {
+//                            Text("Simulate a hard crash")
+//                        }
                     }
                 }
-                if context.installer.isInstalled && context.installer.debugMode {
+                if context.installer.debugMode {
                     Text("Recovery Wizard")
                         .font(.system(size: 22, weight: .bold))
-                    
-                    Section (
+
+                    Section(
                         header: Text("Memri crashed last time. What would you like to do?")
                     ) {
                         Button(action: {
-                            self.context.installer.debugMode = false
+                            self.context.installer.continueAsNormal(self.context)
                         }) {
-                            Text("Continue as normal)")
+                            Text("Continue as normal")
                         }
                         Button(action: {
                             self.context.installer.clearDatabase(self.context)
                         }) {
                             Text("Delete the local database and start over")
                         }
-                        Button(action: {
-                            self.context.installer.clearSessions(self.context)
-                        }) {
-                            Text("Clear the session history (to recover from an issue)")
+                        if context.installer.isInstalled {
+                            Button(action: {
+                                self.context.installer.clearSessions(self.context)
+                            }) {
+                                Text("Clear the session history (to recover from an issue)")
+                            }
                         }
                     }
                 }

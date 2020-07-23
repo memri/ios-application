@@ -1,48 +1,45 @@
 //
-//  SettingsPubSub.swift
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// SettingsPubSub.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Combine
 import Foundation
 import RealmSwift
 
-final class SettingSubscription<SubscriberType: Subscriber, T:Decodable>: Subscription
+final class SettingSubscription<SubscriberType: Subscriber, T: Decodable>: Subscription
     where SubscriberType.Input == Any? {
-    
     private var id = UUID()
     private var subscriber: SubscriberType?
     private let path: String
     private let settings: Settings
 
-    init (settings: Settings, subscriber: SubscriberType, path: String, type: T.Type) {
+    init(settings: Settings, subscriber: SubscriberType, path: String, type: T.Type) {
         self.subscriber = subscriber
         self.path = path
         self.settings = settings
-        
+
         do {
-            try self.settings.addListener(path, id, type:type) { value in
+            try self.settings.addListener(path, id, type: type) { value in
                 _ = subscriber.receive(value)
             }
         }
-        catch let error {
+        catch {
             debugHistory.warn("Unable to set listener for setting: \(path) : \(error)")
         }
     }
 
-    func request(_ demand: Subscribers.Demand) {
+    func request(_: Subscribers.Demand) {
         // We do nothing here as we only want to send events when they occur.
         // See, for more info: https://developer.apple.com/documentation/combine/subscribers/demand
     }
 
     func cancel() {
-        self.settings.removeListener(path, id)
+        settings.removeListener(path, id)
         subscriber = nil
     }
 }
 
-struct SettingPublisher<T:Decodable>: Publisher {
+struct SettingPublisher<T: Decodable>: Publisher {
     typealias Output = Any?
     typealias Failure = Never
 
@@ -55,13 +52,12 @@ struct SettingPublisher<T:Decodable>: Publisher {
         self.settings = settings
         self.type = type
     }
-    
-    func receive<S>(subscriber: S) where S : Subscriber,
+
+    func receive<S>(subscriber: S) where S: Subscriber,
         S.Failure == SettingPublisher.Failure, S.Input == SettingPublisher.Output {
-            
-        // TODO
+        // TODO:
         let subscription = SettingSubscription(
-            settings: self.settings,
+            settings: settings,
             subscriber: subscriber,
             path: path,
             type: type
@@ -72,6 +68,6 @@ struct SettingPublisher<T:Decodable>: Publisher {
 
 extension Settings {
     func subscribe<T>(_ path: String, type: T.Type = T.self) -> SettingPublisher<T> {
-        return SettingPublisher(settings: self, path: path, type: T.self)
+        SettingPublisher(settings: self, path: path, type: T.self)
     }
 }

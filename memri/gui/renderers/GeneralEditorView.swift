@@ -1,28 +1,26 @@
 //
-//  GeneralEditorView.swift
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// GeneralEditorView.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import RealmSwift
 import SwiftUI
 
 let registerGeneralEditorRenderer = {
-	Renderers.register(
-		name: "generalEditor",
-		title: "Default",
-		order: 0,
-		icon: "pencil.circle.fill",
-		view: AnyView(GeneralEditorView()),
-		renderConfigType: CascadingGeneralEditorConfig.self,
-		canDisplayResults: { items -> Bool in items.count == 1 }
-	)
+    Renderers.register(
+        name: "generalEditor",
+        title: "Default",
+        order: 0,
+        icon: "pencil.circle.fill",
+        view: AnyView(GeneralEditorView()),
+        renderConfigType: CascadingGeneralEditorConfig.self,
+        canDisplayResults: { items -> Bool in items.count == 1 }
+    )
 }
 
 class CascadingGeneralEditorConfig: CascadingRenderConfig {
-	var type: String? = "generalEditor"
+    var type: String? = "generalEditor"
 
-	var layout: [GeneralEditorLayoutItem] {
+    var layout: [GeneralEditorLayoutItem] {
         cascadeList(
             "layout",
             uniqueKey: { $0["section"] as? String ?? "" },
@@ -36,41 +34,42 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
                         }
                     }
                 }
-                
+
                 return result
             }
         )
         .map { dict -> GeneralEditorLayoutItem in
-            GeneralEditorLayoutItem(dict:dict, viewArguments: self.viewArguments)
+            GeneralEditorLayoutItem(dict: dict, viewArguments: self.viewArguments)
         }
-	}
+    }
 }
 
 struct GeneralEditorLayoutItem {
     var id = UUID()
-    var dict: [String:Any?]
+    var dict: [String: Any?]
     var viewArguments: ViewArguments? = nil
-    
+
     func has(_ propName: String) -> Bool {
-        return dict[propName] != nil
+        dict[propName] != nil
     }
-    
-    func get<T>(_ propName:String, _ type:T.Type = T.self, _ item:Item? = nil) -> T? {
+
+    func get<T>(_ propName: String, _: T.Type = T.self, _ item: Item? = nil) -> T? {
         guard let propValue = dict[propName] else {
             if propName == "section" {
                 print("ERROR")
             }
-            
+
             return nil
         }
-        
-        var value:Any? = propValue
-        
+
+        var value: Any? = propValue
+
         // Execute expression to get the right value
         if let expr = propValue as? Expression {
             do {
                 value = try expr.execute(viewArguments)
-            } catch {
+            }
+            catch {
                 // TODO: Refactor error handling
                 debugHistory.error("Could note compute layout property \(propName)\n"
                     + "Arguments: [\(viewArguments?.description ?? "")]\n"
@@ -81,7 +80,7 @@ struct GeneralEditorLayoutItem {
                 return nil
             }
         }
-        
+
         if T.self == [Edge].self {
             if value is [Edge] {
                 return value as? T
@@ -96,15 +95,15 @@ struct GeneralEditorLayoutItem {
         else if T.self == [String].self && value is String {
             return [value] as? T
         }
-        
+
         return value as? T
     }
 }
 
 struct GeneralEditorView: View {
-	@EnvironmentObject var context: MemriContext
+    @EnvironmentObject var context: MemriContext
 
-	var name: String = "generalEditor"
+    var name: String = "generalEditor"
 
     var body: some View {
         let item = getItem()
@@ -116,7 +115,8 @@ struct GeneralEditorView: View {
             VStack(alignment: .leading, spacing: 0) {
                 if renderConfig == nil {
                     Text("Unable to render this view")
-                } else if layout.count > 0 {
+                }
+                else if layout.count > 0 {
                     ForEach(layout, id: \.id) { layoutSection in
                         GeneralEditorSection(
                             item: item,
@@ -139,20 +139,21 @@ struct GeneralEditorView: View {
             return [GeneralEditorLayoutItem(dict: ["section": "other", "fields": "*"])]
         }
     }
-    
+
     func getItem() -> Item {
         if let dataItem = context.currentView?.resultSet.singletonItem {
             return dataItem
-        } else {
+        }
+        else {
             debugHistory.warn("Could not load item from result set, creating empty item")
             return Item()
         }
     }
-    
+
     func getRenderConfig() -> CascadingGeneralEditorConfig? {
         context.currentView?.renderConfig as? CascadingGeneralEditorConfig
     }
-    
+
     func getUsedFields(_ layout: [GeneralEditorLayoutItem]) -> [String] {
         var result = [String]()
         for item in layout {
@@ -168,56 +169,59 @@ struct GeneralEditorView: View {
 }
 
 struct GeneralEditorView_Previews: PreviewProvider {
-	static var previews: some View {
-		let context = try! RootContext(name: "", key: "").mockBoot()
+    static var previews: some View {
+        let context = try! RootContext(name: "", key: "").mockBoot()
 
-		return ZStack {
-			VStack(alignment: .center, spacing: 0) {
-				TopNavigation()
-				GeneralEditorView()
-				Search()
-			}.fullHeight()
+        return ZStack {
+            VStack(alignment: .center, spacing: 0) {
+                TopNavigation()
+                GeneralEditorView()
+                Search()
+            }.fullHeight()
 
-			ContextPane()
-		}.environmentObject(context)
-	}
+            ContextPane()
+        }.environmentObject(context)
+    }
 }
 
 struct GeneralEditorSection: View {
-	@EnvironmentObject var context: MemriContext
+    @EnvironmentObject var context: MemriContext
 
-	var item: Item
-	var renderConfig: CascadingGeneralEditorConfig
+    var item: Item
+    var renderConfig: CascadingGeneralEditorConfig
     var layoutSection: GeneralEditorLayoutItem
     var usedFields: [String]
 
-	var body: some View {
+    var body: some View {
         let renderConfig = self.renderConfig
         let editMode = context.currentSession?.editMode ?? false
-        let fields:[String] = (layoutSection.get("fields", String.self) == "*"
+        let fields: [String] = (layoutSection.get("fields", String.self) == "*"
             ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
         let edgeNames = layoutSection.get("edges", [String].self, item) ?? []
         let edgeType = layoutSection.get("type", String.self, item)
         let edges = layoutSection.get("edges", [Edge].self, item) ?? []
         let groupKey = layoutSection.get("section", String.self) ?? ""
-        
+
         let sectionStyle = self.sectionStyle(groupKey)
         let readOnly = self.layoutSection.get("readOnly", Bool.self) ?? false
-        let isEmpty = self.layoutSection.has("edges") && edges.count == 0 && fields.count == 0 && !editMode
+        let isEmpty = self.layoutSection.has("edges") && edges.count == 0 && fields
+            .count == 0 && !editMode
         let hasGroup = renderConfig.hasGroup(groupKey)
-        
-        let title = (hasGroup ? sectionStyle.title : nil) ?? groupKey.camelCaseToWords().uppercased()
+
+        let title = (hasGroup ? sectionStyle.title : nil) ?? groupKey.camelCaseToWords()
+            .uppercased()
         let dividers = sectionStyle.dividers ?? !(sectionStyle.showTitle ?? false)
         let showTitle = sectionStyle.showTitle ?? true
         let action = editMode
-            ? sectionStyle.action ?? (!readOnly && edgeType != nil /* TODO support multiple / many types*/
+            ? sectionStyle
+            .action ?? (!readOnly && edgeType != nil /* TODO: support multiple / many types*/
                 ? getAction(edgeType: edgeNames[0], itemType: edgeType ?? "")
                 : nil)
             : nil
         let spacing = sectionStyle.spacing ?? 0
         let padding = sectionStyle.padding
-        
+
         return Section(
             header: Group {
                 if showTitle && !isEmpty {
@@ -239,24 +243,22 @@ struct GeneralEditorSection: View {
                     EmptyView()
                 }
             },
-            
+
             content: {
                 if isEmpty {
                     EmptyView()
                 }
                 else {
                     if dividers { Divider() }
-                    
+
                     // If a render group is defined in the render config
                     if hasGroup {
-                        
                         // Add spacing between the render elements
                         VStack(alignment: .leading, spacing: spacing) {
-                                
                             // layoutSection describes a render group defined in the render config
                             if fields.count == 0 && edges.count == 0 {
-                                // TODO error when group doesnt exist?
-                                
+                                // TODO: error when group doesnt exist?
+
                                 renderConfig.render(
                                     item: self.item,
                                     group: groupKey,
@@ -281,7 +283,8 @@ struct GeneralEditorSection: View {
                                 }
                                 // Render the edges
                                 if edges.count > 0 {
-                                    ForEach<[Edge], Edge, UIElementView>(edges, id: \.self) { edge in
+                                    ForEach<[Edge], Edge, UIElementView>(edges,
+                                                                         id: \.self) { edge in
                                         let targetItem = edge.item()
                                         return renderConfig.render(
                                             item: targetItem,
@@ -300,11 +303,11 @@ struct GeneralEditorSection: View {
                                             bottom: padding[2],
                                             trailing: padding[1]))
                     }
-                    
+
                     else if fields.count == 0 && edges.count == 0 {
                         // Error
                     }
-                        
+
                     // Default renderers
                     else {
                         // Render groups with the default render row
@@ -349,26 +352,27 @@ struct GeneralEditorSection: View {
                             .fixedSize(horizontal: false, vertical: true)
                         }
                     }
-                    
+
                     if dividers { Divider() }
                 }
             }
         )
-	}
+    }
 
     func getProperties(_ item: Item, _ used: [String]) -> [String] {
-		item.objectSchema.properties.filter {
-			!used.contains($0.name)
-				&& !$0.isArray
-		}.map { $0.name }
-	}
+        item.objectSchema.properties.filter {
+            !used.contains($0.name)
+                && !$0.isArray
+        }.map { $0.name }
+    }
 
-	func _args(groupKey: String = "",
-			   name: String = "",
-			   value _: Any? = nil,
-			   item: Item?,
-			   edge: Edge? = nil) -> ViewArguments? {
-		
+    func _args(
+        groupKey: String = "",
+        name: String = "",
+        value _: Any? = nil,
+        item: Item?,
+        edge: Edge? = nil
+    ) -> ViewArguments? {
         ViewArguments(
             [
                 "subject": item,
@@ -381,10 +385,10 @@ struct GeneralEditorSection: View {
             ],
             renderConfig.viewArguments?.cascadeStack
         )
-	}
-    
-    func getAction(edgeType:String, itemType:String) -> Action {
-        return ActionOpenViewByName(
+    }
+
+    func getAction(edgeType: String, itemType: String) -> Action {
+        ActionOpenViewByName(
             context,
             values: [
                 "name": "choose-item-by-query",
@@ -402,20 +406,20 @@ struct GeneralEditorSection: View {
             ]
         )
     }
-    
+
     struct SectionStyle {
         let title: String?
         let dividers: Bool?
-        let showTitle:Bool?
-        let action:Action?
-        let spacing:CGFloat?
-        let padding:[CGFloat]
+        let showTitle: Bool?
+        let action: Action?
+        let spacing: CGFloat?
+        let padding: [CGFloat]
     }
 
-	func sectionStyle(_ groupKey: String) -> SectionStyle {
+    func sectionStyle(_ groupKey: String) -> SectionStyle {
         let s = renderConfig.getGroupOptions(groupKey)
         let allPadding = getValue(groupKey, s["padding"] as Any?, CGFloat.self) ?? 0
-        
+
         return SectionStyle(
             title: getValue(groupKey, s["title"] as Any?, String.self)?.uppercased(),
             dividers: getValue(groupKey, s["dividers"] as Any?, Bool.self),
@@ -425,41 +429,42 @@ struct GeneralEditorSection: View {
             padding: getValue(groupKey, s["padding"] as Any?, [CGFloat].self)
                 ?? [allPadding, allPadding, allPadding, allPadding]
         )
-	}
+    }
 
-    func getValue<T>(_ groupKey:String, _ value: Any?, _:T.Type = T.self) -> T? {
+    func getValue<T>(_ groupKey: String, _ value: Any?, _: T.Type = T.self) -> T? {
         if value == nil { return nil }
-        
-		if let expr = value as? Expression {
-			let args = _args(groupKey: groupKey, name: groupKey, item: item)
-			do {
-                return try expr.execForReturnType(T.self, args: args)
-			} catch {
-				debugHistory.error("\(error)")
-				return nil
-			}
-		}
 
-		return value as? T
-	}
+        if let expr = value as? Expression {
+            let args = _args(groupKey: groupKey, name: groupKey, item: item)
+            do {
+                return try expr.execForReturnType(T.self, args: args)
+            }
+            catch {
+                debugHistory.error("\(error)")
+                return nil
+            }
+        }
+
+        return value as? T
+    }
 }
 
 struct DefaultGeneralEditorRow: View {
-	@EnvironmentObject var context: MemriContext
+    @EnvironmentObject var context: MemriContext
 
-	var item: Item
-	var prop: String
-	var readOnly: Bool
-	var isLast: Bool
-	var renderConfig: CascadingRenderConfig
-	var arguments: ViewArguments?
+    var item: Item
+    var prop: String
+    var readOnly: Bool
+    var isLast: Bool
+    var renderConfig: CascadingRenderConfig
+    var arguments: ViewArguments?
 
-	var body: some View {
-		// Get the type from the schema, because when the value is nil the type cannot be determined
-		let propType = item.objectSchema[prop]?.type
-        let propValue:Any? = self.item.get(self.prop)
+    var body: some View {
+        // Get the type from the schema, because when the value is nil the type cannot be determined
+        let propType = item.objectSchema[prop]?.type
+        let propValue: Any? = self.item.get(self.prop)
 
-		return VStack(spacing: 0) {
+        return VStack(spacing: 0) {
             if propValue == nil && readOnly {
                 EmptyView()
             }
@@ -468,23 +473,27 @@ struct DefaultGeneralEditorRow: View {
                     Text(prop
                         .camelCaseToWords()
                         .lowercased()
-                        .capitalizingFirst()
-                    )
-                    .generalEditorLabel()
+                        .capitalizingFirst())
+                        .generalEditorLabel()
 
                     if renderConfig.hasGroup(prop) {
                         renderConfig.render(item: item, group: prop, arguments: arguments)
-                    } else if readOnly {
+                    }
+                    else if readOnly {
                         if [.string, .bool, .date, .int, .double].contains(propType) {
                             defaultRow(ExprInterpreter.evaluateString(propValue, ""))
-                        } else if propType == .object {
+                        }
+                        else if propType == .object {
                             if propValue is Item {
                                 MemriButton(context: self._context, item: propValue as! Item)
-                            } else {
+                            }
+                            else {
                                 defaultRow()
                             }
-                        } else { defaultRow() }
-                    } else {
+                        }
+                        else { defaultRow() }
+                    }
+                    else {
                         if propType == .string { stringRow() }
                         else if propType == .bool { boolRow() }
                         else if propType == .date { dateRow() }
@@ -503,142 +512,142 @@ struct DefaultGeneralEditorRow: View {
                     Divider().padding(.leading, 35)
                 }
             }
-		}
-	}
+        }
+    }
 
-	func stringRow() -> some View {
-		let binding = Binding<String>(
-			get: { self.item.getString(self.prop) },
-			set: {
-				self.item.set(self.prop, $0)
-			}
-		)
+    func stringRow() -> some View {
+        let binding = Binding<String>(
+            get: { self.item.getString(self.prop) },
+            set: {
+                self.item.set(self.prop, $0)
+            }
+        )
 
-		return MemriTextField(value: binding)
-			.onEditingBegan {
-				self.context.currentSession?.editMode = true
-			}
-			.generalEditorCaption()
-	}
+        return MemriTextField(value: binding)
+            .onEditingBegan {
+                self.context.currentSession?.editMode = true
+            }
+            .generalEditorCaption()
+    }
 
-	func boolRow() -> some View {
-		let binding = Binding<Bool>(
-			get: { self.item[self.prop] as? Bool ?? false },
-			set: { _ in
+    func boolRow() -> some View {
+        let binding = Binding<Bool>(
+            get: { self.item[self.prop] as? Bool ?? false },
+            set: { _ in
                 do {
                     try self.item.toggle(self.prop)
                     self.context.objectWillChange.send()
                 }
-                catch{}
-			}
-		)
+                catch {}
+            }
+        )
 
-		return Toggle(isOn: binding) {
-			Text(prop
-				.camelCaseToWords()
-				.lowercased()
-				.capitalizingFirst())
-		}
-		.toggleStyle(MemriToggleStyle())
-		.generalEditorCaption()
-	}
+        return Toggle(isOn: binding) {
+            Text(prop
+                .camelCaseToWords()
+                .lowercased()
+                .capitalizingFirst())
+        }
+        .toggleStyle(MemriToggleStyle())
+        .generalEditorCaption()
+    }
 
-	func intRow() -> some View {
-		let binding = Binding<Int>(
-			get: { self.item[self.prop] as? Int ?? 0 },
-			set: {
-				self.item.set(self.prop, $0)
-				self.context.objectWillChange.send()
-			}
-		)
+    func intRow() -> some View {
+        let binding = Binding<Int>(
+            get: { self.item[self.prop] as? Int ?? 0 },
+            set: {
+                self.item.set(self.prop, $0)
+                self.context.objectWillChange.send()
+            }
+        )
 
-		return MemriTextField(value: binding)
-			.onEditingBegan {
-				self.context.currentSession?.editMode = true
-			}
-			.generalEditorCaption()
-	}
+        return MemriTextField(value: binding)
+            .onEditingBegan {
+                self.context.currentSession?.editMode = true
+            }
+            .generalEditorCaption()
+    }
 
-	func doubleRow() -> some View {
-		let binding = Binding<Double>(
-			get: { self.item[self.prop] as? Double ?? 0 },
-			set: {
-				self.item.set(self.prop, $0)
-				self.context.objectWillChange.send()
-			}
-		)
+    func doubleRow() -> some View {
+        let binding = Binding<Double>(
+            get: { self.item[self.prop] as? Double ?? 0 },
+            set: {
+                self.item.set(self.prop, $0)
+                self.context.objectWillChange.send()
+            }
+        )
 
-		return MemriTextField(value: binding)
-			.onEditingBegan {
-				self.context.currentSession?.editMode = true
-			}
-			.generalEditorCaption()
-	}
+        return MemriTextField(value: binding)
+            .onEditingBegan {
+                self.context.currentSession?.editMode = true
+            }
+            .generalEditorCaption()
+    }
 
-	func dateRow() -> some View {
-		let binding = Binding<Date>(
-			get: { self.item[self.prop] as? Date ?? Date() },
-			set: {
-				self.item.set(self.prop, $0)
-				self.context.objectWillChange.send()
-			}
-		)
+    func dateRow() -> some View {
+        let binding = Binding<Date>(
+            get: { self.item[self.prop] as? Date ?? Date() },
+            set: {
+                self.item.set(self.prop, $0)
+                self.context.objectWillChange.send()
+            }
+        )
 
-		return DatePicker("", selection: binding, displayedComponents: .date)
-			.frame(width: 300, height: 80, alignment: .center)
-			.clipped()
-			.padding(8)
-	}
+        return DatePicker("", selection: binding, displayedComponents: .date)
+            .frame(width: 300, height: 80, alignment: .center)
+            .clipped()
+            .padding(8)
+    }
 
-	func defaultRow(_ caption: String? = nil) -> some View {
-		Text(caption ?? prop.camelCaseToWords().lowercased().capitalizingFirst())
-			.generalEditorCaption()
-	}
+    func defaultRow(_ caption: String? = nil) -> some View {
+        Text(caption ?? prop.camelCaseToWords().lowercased().capitalizingFirst())
+            .generalEditorCaption()
+    }
 }
 
 public extension View {
-	func generalEditorLabel() -> some View { modifier(GeneralEditorLabel()) }
-	func generalEditorCaption() -> some View { modifier(GeneralEditorCaption()) }
-	func generalEditorHeader() -> some View { modifier(GeneralEditorHeader()) }
-	func generalEditorInput() -> some View { modifier(GeneralEditorInput()) }
+    func generalEditorLabel() -> some View { modifier(GeneralEditorLabel()) }
+    func generalEditorCaption() -> some View { modifier(GeneralEditorCaption()) }
+    func generalEditorHeader() -> some View { modifier(GeneralEditorHeader()) }
+    func generalEditorInput() -> some View { modifier(GeneralEditorInput()) }
 }
 
 private struct GeneralEditorInput: ViewModifier {
-	func body(content: Content) -> some View {
-		content
-			.fullHeight()
-			.font(.system(size: 16, weight: .regular))
-			.padding(10)
-			.border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
-			.generalEditorCaption()
-	}
+    func body(content: Content) -> some View {
+        content
+            .fullHeight()
+            .font(.system(size: 16, weight: .regular))
+            .padding(10)
+            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+            .generalEditorCaption()
+    }
 }
 
 private struct GeneralEditorLabel: ViewModifier {
-	func body(content: Content) -> some View {
-		content
-			.foregroundColor(Color(hex: "#38761d"))
-			.font(.system(size: 14, weight: .regular))
-			.padding(.top, 10)
-	}
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(Color(hex: "#38761d"))
+            .font(.system(size: 14, weight: .regular))
+            .padding(.top, 10)
+    }
 }
 
 private struct GeneralEditorCaption: ViewModifier {
-	func body(content: Content) -> some View {
-		content
-			.font(.system(size: 18, weight: .regular))
-			.foregroundColor(Color(hex: "#223322"))
-	}
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 18, weight: .regular))
+            .foregroundColor(Color(hex: "#223322"))
+    }
 }
 
 private struct GeneralEditorHeader: ViewModifier {
-	func body(content: Content) -> some View {
-		content
-			.font(Font.system(size: 15, weight: .regular))
-			.foregroundColor(Color(hex: "#434343"))
-			.padding(.bottom, 5)
-			.padding(.top, 24)
-			.padding(.horizontal, 36)
-			.foregroundColor(Color(hex: "#333"))
-	}
+    func body(content: Content) -> some View {
+        content
+            .font(Font.system(size: 15, weight: .regular))
+            .foregroundColor(Color(hex: "#434343"))
+            .padding(.bottom, 5)
+            .padding(.top, 24)
+            .padding(.horizontal, 36)
+            .foregroundColor(Color(hex: "#333"))
+    }
 }

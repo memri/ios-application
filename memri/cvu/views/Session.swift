@@ -1,9 +1,6 @@
 //
-//  Session.swift
-//  memri
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// Session.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Combine
 import Foundation
@@ -11,194 +8,197 @@ import RealmSwift
 import SwiftUI
 
 public class Session: DataItem {
-	override var genericType: String { "Session" }
+    override var genericType: String { "Session" }
 
-	@objc dynamic var name: String = ""
+    @objc dynamic var name: String = ""
 
-	@objc dynamic var currentViewIndex: Int = 0
+    @objc dynamic var currentViewIndex: Int = 0
 
-	let views = RealmSwift.List<SessionView>() // @Published
+    let views = RealmSwift.List<SessionView>() // @Published
 
-	@objc dynamic var showFilterPanel: Bool = false
+    @objc dynamic var showFilterPanel: Bool = false
 
-	@objc dynamic var showContextPane: Bool = false
+    @objc dynamic var showContextPane: Bool = false
 
-	@objc dynamic var editMode: Bool = false
+    @objc dynamic var editMode: Bool = false
 
-	@objc dynamic var screenshot: File?
+    @objc dynamic var screenshot: File?
 
-	var isEditMode: Bool {
-		get {
-			editMode
-		}
-		set {
-			realmWriteIfAvailable(realm) {
-				self.editMode = newValue
-			}
-		}
-	}
+    var isEditMode: Bool {
+        get {
+            editMode
+        }
+        set {
+            realmWriteIfAvailable(realm) {
+                self.editMode = newValue
+            }
+        }
+    }
 
-	var swiftUIEditMode: EditMode {
-		get {
-			if editMode { return .active }
-			else { return .inactive }
-		}
-		set(value) {
-			realmWriteIfAvailable(realm) {
-				if value == .active { self.editMode = true }
-				else { self.editMode = false }
-			}
-		}
-	}
+    var swiftUIEditMode: EditMode {
+        get {
+            if editMode { return .active }
+            else { return .inactive }
+        }
+        set(value) {
+            realmWriteIfAvailable(realm) {
+                if value == .active { self.editMode = true }
+                else { self.editMode = false }
+            }
+        }
+    }
 
-	private var rlmTokens: [NotificationToken] = []
-	private var cancellables: [AnyCancellable] = []
+    private var rlmTokens: [NotificationToken] = []
+    private var cancellables: [AnyCancellable] = []
 
-	var hasHistory: Bool {
-		currentViewIndex > 0
-	}
+    var hasHistory: Bool {
+        currentViewIndex > 0
+    }
 
-	public var currentView: SessionView {
-		views.count > 0 ? views[currentViewIndex] : SessionView()
-	}
+    public var currentView: SessionView {
+        views.count > 0 ? views[currentViewIndex] : SessionView()
+    }
 
-	public required convenience init(from decoder: Decoder) throws {
-		self.init()
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
 
-		jsonErrorHandling(decoder) {
-			currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
-			showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
-			showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
-			editMode = try decoder.decodeIfPresent("editMode") ?? editMode
+        jsonErrorHandling(decoder) {
+            currentViewIndex = try decoder.decodeIfPresent("currentViewIndex") ?? currentViewIndex
+            showFilterPanel = try decoder.decodeIfPresent("showFilterPanel") ?? showFilterPanel
+            showContextPane = try decoder.decodeIfPresent("showContextPane") ?? showContextPane
+            editMode = try decoder.decodeIfPresent("editMode") ?? editMode
 
-			decodeIntoList(decoder, "views", self.views)
+            decodeIntoList(decoder, "views", self.views)
 
-			try super.superDecode(from: decoder)
-		}
+            try super.superDecode(from: decoder)
+        }
 
-		//        self.postInit()
-	}
+        //        self.postInit()
+    }
 
-	required init() {
-		super.init()
+    required init() {
+        super.init()
 
-		postInit()
-	}
+        postInit()
+    }
 
-	public func postInit() {
-		if realm != nil {
-			for view in views {
-				decorate(view)
-			}
+    public func postInit() {
+        if realm != nil {
+            for view in views {
+                decorate(view)
+            }
 
-			rlmTokens.append(observe { objectChange in
-				if case .change = objectChange {
-					self.objectWillChange.send()
-				}
+            rlmTokens.append(observe { objectChange in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
             })
-		}
-	}
+        }
+    }
 
-	private func decorate(_ view: SessionView) {
-		// Set the .session property on views for easy querying
-		if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
+    private func decorate(_ view: SessionView) {
+        // Set the .session property on views for easy querying
+        if view.session == nil { realmWriteIfAvailable(realm) { view.session = self } }
 
-		// Observe and process changes for UI updates
-		if realm != nil {
-			// TODO: Refactor: What is the impact of this not happening in subviews
-			//                The impact is that for instance clicking on the showFilterPanel button
-			//                is not working. The UI won't update. Perhaps we need to implement
-			//                our own pub/sub structure. More thought is needed.
+        // Observe and process changes for UI updates
+        if realm != nil {
+            // TODO: Refactor: What is the impact of this not happening in subviews
+            //                The impact is that for instance clicking on the showFilterPanel button
+            //                is not working. The UI won't update. Perhaps we need to implement
+            //                our own pub/sub structure. More thought is needed.
 
-			rlmTokens.append(view.observe { objectChange in
-				if case .change = objectChange {
-					self.objectWillChange.send()
-				}
+            rlmTokens.append(view.observe { objectChange in
+                if case .change = objectChange {
+                    self.objectWillChange.send()
+                }
             })
-		}
-	}
+        }
+    }
 
-	//    deinit {
-	//        if let realm = self.realm {
-	//            try! realm.write {
-	//                realm.delete(self)
-	//            }
-	//        }
-	//    }
+    //    deinit {
+    //        if let realm = self.realm {
+    //            try! realm.write {
+    //                realm.delete(self)
+    //            }
+    //        }
+    //    }
 
-	public func setCurrentView(_ view: SessionView) {
-		if let index = views.firstIndex(of: view) {
-			realmWriteIfAvailable(realm) {
-				currentViewIndex = index
-			}
-		} else {
-			realmWriteIfAvailable(realm) {
-				// Remove all items after the current index
-				views.removeSubrange((currentViewIndex + 1)...)
+    public func setCurrentView(_ view: SessionView) {
+        if let index = views.firstIndex(of: view) {
+            realmWriteIfAvailable(realm) {
+                currentViewIndex = index
+            }
+        }
+        else {
+            realmWriteIfAvailable(realm) {
+                // Remove all items after the current index
+                views.removeSubrange((currentViewIndex + 1)...)
 
-				// Add the view to the session
-				views.append(view)
+                // Add the view to the session
+                views.append(view)
 
-				// Update the index pointer
-				currentViewIndex = views.count - 1
-			}
+                // Update the index pointer
+                currentViewIndex = views.count - 1
+            }
 
-			decorate(view)
-		}
-	}
+            decorate(view)
+        }
+    }
 
-	public func takeScreenShot() {
-		if let view = UIApplication.shared.windows[0].rootViewController?.view {
-			let uiImage = view.takeScreenShot()
+    public func takeScreenShot() {
+        if let view = UIApplication.shared.windows[0].rootViewController?.view {
+            let uiImage = view.takeScreenShot()
 
-			if screenshot == nil {
-				let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
+            if screenshot == nil {
+                let doIt = { self.screenshot = File(value: ["uri": File.generateFilePath()]) }
 
-				realmWriteIfAvailable(realm) {
-					doIt()
-				}
-			}
+                realmWriteIfAvailable(realm) {
+                    doIt()
+                }
+            }
 
-			do {
-				try screenshot?.write(uiImage)
-			} catch {
-				print(error)
-			}
-		} else {
-			print("No view available")
-		}
-	}
+            do {
+                try screenshot?.write(uiImage)
+            }
+            catch {
+                print(error)
+            }
+        }
+        else {
+            print("No view available")
+        }
+    }
 
-	public class func fromCVUDefinition(_ def: CVUParsedSessionDefinition) throws -> Session {
-		let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
-			.map { try SessionView.fromCVUDefinition(parsed: $0) }
+    public class func fromCVUDefinition(_ def: CVUParsedSessionDefinition) throws -> Session {
+        let views = try (def["viewDefinitions"] as? [CVUParsedViewDefinition] ?? [])
+            .map { try SessionView.fromCVUDefinition(parsed: $0) }
 
-		return Session(value: [
-			"selector": (def.selector ?? "[session]") as Any,
-			"name": (def["name"] as? String ?? "") as Any,
-			"currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
-			"showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
-			"showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
-			"editMode": (def["editMode"] as? Bool ?? false) as Any,
-			"screenshot": def["screenshot"] as? File as Any,
-			"views": views,
-		])
-	}
+        return Session(value: [
+            "selector": (def.selector ?? "[session]") as Any,
+            "name": (def["name"] as? String ?? "") as Any,
+            "currentViewIndex": Int(def["currentViewIndex"] as? Double ?? 0),
+            "showFilterPanel": (def["showFilterPanel"] as? Bool ?? false) as Any,
+            "showContextPane": (def["showContextPane"] as? Bool ?? false) as Any,
+            "editMode": (def["editMode"] as? Bool ?? false) as Any,
+            "screenshot": def["screenshot"] as? File as Any,
+            "views": views,
+        ])
+    }
 
-	public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
-		let jsonData = try jsonDataFromFile(file, ext)
-		let session: Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)
-		return session
-	}
+    public class func fromJSONFile(_ file: String, ext: String = "json") throws -> Session {
+        let jsonData = try jsonDataFromFile(file, ext)
+        let session: Session = try MemriJSONDecoder.decode(Session.self, from: jsonData)
+        return session
+    }
 
-	public class func fromJSONString(_ json: String) throws -> Session {
-		let session: Session = try MemriJSONDecoder.decode(Session.self, from: Data(json.utf8))
-		return session
-	}
+    public class func fromJSONString(_ json: String) throws -> Session {
+        let session: Session = try MemriJSONDecoder.decode(Session.self, from: Data(json.utf8))
+        return session
+    }
 
-	public static func == (lt: Session, rt: Session) -> Bool {
-		lt.memriID == rt.memriID
-	}
+    public static func == (lt: Session, rt: Session) -> Bool {
+        lt.memriID == rt.memriID
+    }
 }
 
 // extension UIView {
@@ -256,16 +256,16 @@ public class Session: DataItem {
 //   }
 
 extension UIView {
-	func takeScreenShot() -> UIImage? {
-		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
-		drawHierarchy(in: bounds, afterScreenUpdates: true)
+    func takeScreenShot() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+        drawHierarchy(in: bounds, afterScreenUpdates: true)
 
-		// NOTE: Allowed force unwrap
-		if let image = UIGraphicsGetImageFromCurrentImageContext() {
-			UIGraphicsEndImageContext()
-			return image
-		}
+        // NOTE: Allowed force unwrap
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            UIGraphicsEndImageContext()
+            return image
+        }
 
-		return nil
-	}
+        return nil
+    }
 }

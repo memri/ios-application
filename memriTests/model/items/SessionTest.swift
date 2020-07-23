@@ -1,3 +1,7 @@
+//
+// SessionTest.swift
+// Copyright © 2020 memri. All rights reserved.
+
 ////
 ////  SessionTest.swift
 ////  memriTests

@@ -1,23 +1,22 @@
 //
-//  File.swift
-//
-//
+// String+NSExpression.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
 
 extension String {
-	var isOnlyWhitespace: Bool {
-		!contains { !$0.isWhitespace }
-	}
+    var isOnlyWhitespace: Bool {
+        !contains { !$0.isWhitespace }
+    }
 
-	func replacePartsMatchingExpression(_ exp: NSRegularExpression, with string: String) -> String {
-		let mutable = NSMutableString(string: self)
-		let range = NSMakeRange(0, mutable.length)
-		exp.replaceMatches(in: mutable, options: [], range: range, withTemplate: string)
-		return mutable as String
-	}
+    func replacePartsMatchingExpression(_ exp: NSRegularExpression, with string: String) -> String {
+        let mutable = NSMutableString(string: self)
+        let range = NSMakeRange(0, mutable.length)
+        exp.replaceMatches(in: mutable, options: [], range: range, withTemplate: string)
+        return mutable as String
+    }
 
-	func removePartsMatchingExpression(_ exp: NSRegularExpression) -> String {
-		replacePartsMatchingExpression(exp, with: "")
-	}
+    func removePartsMatchingExpression(_ exp: NSRegularExpression) -> String {
+        replacePartsMatchingExpression(exp, with: "")
+    }
 }
