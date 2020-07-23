@@ -51,6 +51,7 @@ public class Renderers {
 		registerChartRenderer()
 		registerCalendarRenderer()
 		registerMessageRenderer()
+		registerPhotoViewerRenderer()
 	}
 
 	var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {
@@ -78,7 +79,7 @@ class FilterPanelRendererButton: Action, ActionExec {
 		super.init(context, "setRenderer", values: ["icon": icon, "title": title])
 	}
 
-	required init(_: MemriContext, arguments _: [String: Any?]? = nil, values _: [String: Any?] = [:]) {
+	required init(_: MemriContext, values _: [String: Any?] = [:]) {
 		fatalError("init(arguments:values:) has not been implemented")
 	}
 

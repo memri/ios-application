@@ -148,10 +148,10 @@ extension View {
 		case "frame":
 			if let value = value as? [Any?] {
 				return AnyView(frame(
-					minWidth: value[0] as? CGFloat ?? .none,
-					maxWidth: value[1] as? CGFloat ?? .greatestFiniteMagnitude,
-					minHeight: value[2] as? CGFloat ?? .none,
-					maxHeight: value[3] as? CGFloat ?? .greatestFiniteMagnitude,
+					minWidth: value[0] as? CGFloat,
+					maxWidth: value[1] as? CGFloat,
+					minHeight: value[2] as? CGFloat,
+					maxHeight: value[3] as? CGFloat,
 					alignment: value[4] as? Alignment ?? .top
 				))
 			}

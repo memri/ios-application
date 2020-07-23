@@ -63,7 +63,7 @@ public class Cascadable : CustomStringConvertible {
 
 		if result.count > 0 {
 			if let value = result as? [Action], T.self == Action.self {
-				return (ActionMultiAction(value[0].context, arguments: ["actions": value]) as? T)
+				return (ActionMultiAction(value[0].context, values: ["actions": value]) as? T)
 			}
 
 			return result as? T
@@ -73,6 +73,10 @@ public class Cascadable : CustomStringConvertible {
     func setState(_ propName:String, _ value:Any?) {
         head[propName] = value
         localCache.removeValue(forKey: propName)
+    }
+    
+    func isSet() -> Bool {
+        head.parsed?.count ?? 0 > 0 || tail.count > 0
     }
 
 	func cascadePropertyAsCGFloat(_ name: String) -> CGFloat? { // Renamed to avoid mistaken calls when comparing to nil

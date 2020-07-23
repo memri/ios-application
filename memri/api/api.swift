@@ -6,6 +6,9 @@ import RealmSwift
 /// executing actions
 public class PodAPI {
 	var key: String
+    var host: String? = nil
+    var username: String? = nil
+    var password: String? = nil
 
 	/// Specifies used http methods
 	enum HTTPMethod: String {
@@ -18,6 +21,10 @@ public class PodAPI {
 	enum HTTPError: Error {
 		case ClientError(Int, String)
 	}
+    
+    var isConfigured: Bool {
+        return (host ?? Settings.shared.getString("user/pod/host")) != ""
+    }
 
 	public init(_ podkey: String) {
 		key = podkey
@@ -27,11 +34,9 @@ public class PodAPI {
 					  _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void) {
         let settings = Settings()
 		let session = URLSession(configuration: .default, delegate: nil, delegateQueue: .main)
-		let podhost = settings.get("user/pod/host") ?? ""
+        let podhost = self.host ?? settings.getString("user/pod/host")
 		guard var baseUrl = URL(string: podhost) else {
-			let message = "Invalid pod host set in settings: \(podhost)"
-			debugHistory.error(message)
-			callback(message, nil)
+			callback("Invalid pod host set in settings: \(podhost)", nil)
 			return
 		}
 
@@ -42,13 +47,9 @@ public class PodAPI {
 		// TODO: when the backend sends the correct caching headers
 		// this can be changed: .reloadIgnoringCacheData
 
-		guard let username: String = settings.get("user/pod/username"),
-			let password: String = settings.get("user/pod/password") else {
-			// TODO: User error handling
-			print("ERROR: Could not find login credentials, so could not authenticate to pod")
-			return
-		}
-
+        #warning("Show banner saying the connection is insecure to the user")
+        let username: String = self.username ?? settings.getString("user/pod/username")
+        let password: String = self.password ?? settings.getString("user/pod/password")
 		let loginString = "\(username):\(password)"
 
 		guard let loginData = loginString.data(using: String.Encoding.utf8) else {
@@ -333,7 +334,7 @@ public class PodAPI {
             result["updateItems"] = try updateItems?.map { try simplify($0) }
         }
 		if deleteItems?.count ?? 0 > 0 {
-            result["deleteItems"] = try deleteItems?.map { try simplify($0) }
+            result["deleteItems"] = deleteItems?.map { $0.uid.value }
         }
 		if createEdges?.count ?? 0 > 0 {
             result["createEdges"] = try createEdges?.map { try simplify($0, create: true) }
@@ -341,6 +342,7 @@ public class PodAPI {
 		if updateEdges?.count ?? 0 > 0 {
             result["updateEdges"] = try updateEdges?.map { try simplify($0) }
         }
+        #warning("This is untested")
 		if deleteEdges?.count ?? 0 > 0 {
             result["deleteEdges"] = try deleteEdges?.map { try simplify($0) }
         }

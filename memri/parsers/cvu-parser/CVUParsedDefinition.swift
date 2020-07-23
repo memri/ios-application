@@ -108,6 +108,56 @@ public class CVUParsedDefinition: Equatable, CVUToString {
         
         self.parsed = try recur(parsed) as? [String:Any?]
     }
+    
+    /// Cascades a parsed definition into another one by copy
+    func mergeValuesWhenNotSet(_ other:CVUParsedDefinition) {
+        guard let dict = other.parsed else { return }
+        
+        for (key, value) in dict {
+            if key == "userState" || key == "viewArguments" {
+                if parsed == nil { parsed = [:] }
+                if let cascadableDict = parsed?[key] as? CascadableDict {
+                    _ = cascadableDict.deepMerge(value as? CascadableDict)
+                }
+                else {
+                    parsed?[key] = (value as? CascadableDict)?.copy()
+                }
+            }
+            else if parsed?[key] == nil {
+                if parsed == nil { parsed = [:] }
+                parsed?[key] = value
+            }
+            else if let def = value as? CVUParsedDefinition {
+                (parsed?[key] as? CVUParsedDefinition)?.mergeValuesWhenNotSet(def)
+            }
+            else if let list = value as? [CVUParsedDefinition] {
+                if var localList = parsed?[key] as? [CVUParsedDefinition] {
+                    for def in list {
+                        var found = false
+                        for localDef in localList {
+                            if localDef.selector == def.selector {
+                                localDef.mergeValuesWhenNotSet(def)
+                                found = true
+                                break
+                            }
+                        }
+                        if !found {
+                            localList.append(def)
+                            parsed?[key] = localList
+                        }
+                    }
+                }
+            }
+            else if let list = value as? [Any?] {
+                if var localList = parsed?[key] as? [Any?] {
+                    for item in list {
+                        localList.append(item)
+                    }
+                    parsed?[key] = localList
+                }
+            }
+        }
+    }
 }
 
 public class CVUParsedObjectDefinition: CVUParsedDefinition {

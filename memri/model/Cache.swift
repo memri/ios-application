@@ -37,20 +37,20 @@ public class Cache {
 	}
 
 	/// gets default item from database, and adds them to realm
-	public func install() throws {
+    public func install(_ dbName:String) throws {
 		let realm = DatabaseController.getRealm()
 		// Load default database from disk
 		do {
-			let jsonData = try jsonDataFromFile("default_database")
+			let jsonData = try jsonDataFromFile(dbName)
 			let dicts: [AnyCodable] = try MemriJSONDecoder.decode([AnyCodable].self, from: jsonData)
 			var items = [Item: [[String: Any]]]()
 			var lut = [Int: Int]()
 
-			func recur(_ dict: [String: Any]) throws -> Object {
+			func recur(_ dict: [String: Any]) throws -> Item {
 				var values = [String: Any?]()
 
 				guard let type = dict["_type"] as? String,
-					let itemType = ItemFamily(rawValue: type)?.getType() as? Object.Type else {
+					let itemType = ItemFamily(rawValue: type)?.getType() as? Item.Type else {
 					throw "Exception: Unable to determine type for item"
 				}
 
@@ -76,12 +76,12 @@ public class Cache {
 					}
 				}
 
-				let obj = try Cache.createItem(itemType, values: values)
-				if let item = obj as? Item, let allEdges = dict["allEdges"] as? [[String: Any]] {
+				let item = try Cache.createItem(itemType, values: values)
+				if let allEdges = dict["allEdges"] as? [[String: Any]] {
 					items[item] = allEdges
 				}
 
-				return obj
+				return item
 			}
 
 			// First create all items
@@ -267,7 +267,7 @@ public class Cache {
 	/// - Parameter item:Item to be added
 	/// - Throws: Sync conflict exception
 	/// - Returns: cached dataItem
-	public func addToCache(_ item: Item) throws -> Item {
+	public class func addToCache(_ item: Item) throws -> Item {
 		guard item.uid.value != nil else {
 			throw "Cannot add an item without uid to the cache"
 		}
@@ -283,12 +283,12 @@ public class Cache {
 			throw "Could not add item to cache: \(error)"
 		}
 
-		bindChangeListeners(item)
+//		bindChangeListeners(item)
 
 		return item
 	}
 
-	private func mergeWithCache(_ item: Item) throws -> Item? {
+	private class func mergeWithCache(_ item: Item) throws -> Item? {
 		guard let uid = item.uid.value else {
 			throw "Cannot add an item without uid to the cache"
 		}
@@ -296,7 +296,7 @@ public class Cache {
         // Fetch item from the cache to double check
         if let cachedItem: Item = getItem(item.genericType, uid) {
             // Do nothing when the version is not higher then what we already have
-            if item.version <= cachedItem.version {
+            if item.version <= cachedItem.version && !cachedItem._partial {
                 return cachedItem
             }
 
@@ -315,33 +315,33 @@ public class Cache {
         return nil
 	}
 
-	// TODO: does this work for subobjects?
-	private func bindChangeListeners(_ item: Item) {
-        // Update the sync state when the item changes
-        rlmTokens.append(item.observe { objectChange in
-            if case let .change(propChanges) = objectChange {
-                if item._action == nil {
-                    func doAction() {
-                        // Mark item for updating
-                        item._action = "update"
-                        item._changedInSession = true
-
-                        // Record which field was updated
-                        for prop in propChanges {
-                            if !item._updated.contains(prop.name) {
-                                item._updated.append(prop.name)
-                            }
-                        }
-                    }
-                    
-                    self.sync.schedule()
-                    
-					DatabaseController.writeSync { _ in doAction() }
-                }
-                self.scheduleUIUpdate?(nil)
-            }
-        })
-	}
+//	// TODO: does this work for subobjects?
+//	private func bindChangeListeners(_ item: Item) {
+//        // Update the sync state when the item changes
+//        rlmTokens.append(item.observe { objectChange in
+//            if case let .change(propChanges) = objectChange {
+//                if item._action == nil {
+//                    func doAction() {
+//                        // Mark item for updating
+//                        item._action = "update"
+//                        item._changedInSession = true
+//
+//                        // Record which field was updated
+//                        for prop in propChanges {
+//                            if !item._updated.contains(prop.name) {
+//                                item._updated.append(prop.name)
+//                            }
+//                        }
+//                    }
+//
+//                    self.sync.schedule()
+//
+//					DatabaseController.writeSync { _ in doAction() }
+//                }
+//                self.scheduleUIUpdate?(nil)
+//            }
+//        })
+//	}
 
 	/// marks an item to be deleted
 	/// - Parameter item: item to be deleted
@@ -408,7 +408,9 @@ public class Cache {
 		DatabaseController.writeSync { realm in
 			if cacheUIDCounter == -1 {
 				if
-					let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1),
+                    let setting = realm.objects(Setting.self)
+                        .filter("key = '\(try getDeviceID())/uid-counter'")
+                        .first,
 					let str = setting.json,
 					let counter = Int(str)
 				{
@@ -420,8 +422,10 @@ public class Cache {
 					// As an exception we are not using Cache.createItem here because it should
 					// not be synced to the backend
 					realm.create(Setting.self, value: [
-						"uid": -1,
-						"json": String(cacheUIDCounter),
+                        "uid": cacheUIDCounter - 1,
+                        "key": "\(try getDeviceID())/uid-counter",
+                        "_action": "create",
+						"json": String(cacheUIDCounter)
 					])
 					return
 				}
@@ -429,8 +433,15 @@ public class Cache {
 			
 			cacheUIDCounter += 1
 			
-			if let setting = realm.object(ofType: Setting.self, forPrimaryKey: -1) {
+			if let setting = realm.objects(Setting.self)
+                .filter("key = '\(try getDeviceID())/uid-counter'")
+                .first
+            {
 				setting.json = String(cacheUIDCounter)
+                if setting._action == nil {
+                    setting._action = "update"
+                    setting["_updated"] = ["json"]
+                }
 			}
 		}
 		return cacheUIDCounter
@@ -460,12 +471,13 @@ public class Cache {
         return newerItem
 	}
 
-	public class func createItem<T: Object>(_ type: T.Type, values: [String: Any?] = [:],
-											unique: String? = nil) throws -> T {
+    #warning("This doesnt trigger syncToPod()")
+	public class func createItem<T:Item>(_ type: T.Type, values: [String: Any?] = [:],
+                                         unique: String? = nil) throws -> T {
 		var item: T?
 		try DatabaseController.tryWriteSync { realm in
 			var dict = values
-
+            
 			// TODO:
 			// Always merge
 			var fromCache: T?
@@ -473,7 +485,7 @@ public class Cache {
 				// TODO: find item in DB & merge
 				// Uniqueness based on also not primary key
 				fromCache = realm.objects(type).filter(unique).first
-			} else if let uid = values["uid"] {
+			} else if let uid = dict["uid"] {
 				// TODO: find item in DB & merge
 				fromCache = realm.object(ofType: type, forPrimaryKey: uid)
 			}
@@ -482,28 +494,25 @@ public class Cache {
 				// mergeFromCache(fromCache, ....)
 				let properties = fromCache.objectSchema.properties
 				let excluded = ["uid", "dateCreated", "dateAccessed", "dateModified"]
+                
+                var fields = [String]()
+                
+                func setWhenChanged(_ name:String, _ value:Any?){
+                    guard !fromCache.isEqualValue(fromCache[name], value) else { return }
+                    fromCache[name] = value
+                    fields.append(name)
+                }
+                
 				for prop in properties {
-					if !excluded.contains(prop.name), values[prop.name] != nil {
-                        if prop.type == .date {
-                            if let date = values[prop.name] as? Int {
-                                fromCache[prop.name] = Date(timeIntervalSince1970: Double(date/1000))
-                            }
-                            else {
-                                throw "Invalid date received for \(prop.name) got \(String(describing: values[prop.name] ?? "") )"
-                            }
-                        }
-                        else {
-                            fromCache[prop.name] = values[prop.name] as Any?
-                        }
+					if !excluded.contains(prop.name), dict[prop.name] != nil {
+                        setWhenChanged(prop.name, dict[prop.name] as Any?)
 					}
 				}
-				fromCache["dateModified"] = Date()
+                if !fields.isEmpty {
+                    fromCache.modified(fields)
+                }
 
-                if let item = item, item["_action"] as? String != "create" {
-                    item["_action"] = "update"
-				}
-
-				if let item = item as? Item, type != AuditItem.self {
+                if let item = item, type != AuditItem.self {
 					let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "update"])
 					_ = try item.link(auditItem, type: "changelog")
 				}
@@ -517,7 +526,7 @@ public class Cache {
                 dict["uid"] = try Cache.incrementUID()
             }
             
-//            print("\(type) - \(dict["uid"])")
+            print("\(type) - \(dict["uid"])")
 
 			item = realm.create(type, value: dict)
 
@@ -525,7 +534,7 @@ public class Cache {
                 item["_action"] = "create"
 			}
 
-			if let item = item as? Item, type != AuditItem.self {
+            if let item = item, type != AuditItem.self {
 				let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "create"])
 				_ = try item.link(auditItem, type: "changelog")
 			}

@@ -8,102 +8,37 @@
 
 import ASCollectionView
 import SwiftUI
-
-struct BrowseSetting: Identifiable {
-	var id = UUID()
-	var name: String
-	var selected: Bool
-	var color: Color { selected ? Color(hex: "#6aa84f") : Color(hex: "#434343") }
-	var fontWeight: Font.Weight? { selected ? .semibold : .regular }
-}
+import RealmSwift
 
 struct FilterPanel: View {
 	@EnvironmentObject var context: MemriContext
-
-	@State var browseSettings = [BrowseSetting(name: "Default", selected: true),
-								 BrowseSetting(name: "Year-Month-Day view", selected: false)]
-
-	private func allOtherFields() -> [String] {
-		var list: [String] = []
-
-		if let item = context.currentView?.resultSet.items.first {
-			var excludeList = context.currentView?.sortFields
-			excludeList?.append(context.currentView?.datasource.sortProperty ?? "")
-			excludeList?.append("uid")
-			excludeList?.append("deleted")
-
-			let properties = item.objectSchema.properties
-			for prop in properties {
-				if !(excludeList?.contains(prop.name) ?? false), prop.type != .object, prop.type != .linkingObjects {
-					list.append(prop.name)
-				}
-			}
-		}
-
-		return list
-	}
-
-	private func toggleAscending() {
-        let ds = self.context.currentView?.datasource
-        ds?.sortAscending = !(ds?.sortAscending ?? true)
-		context.scheduleCascadableViewUpdate()
-	}
-
-	private func changeOrderProperty(_ fieldName: String) {
-        self.context.currentView?.datasource.sortProperty = fieldName
-		context.scheduleCascadableViewUpdate()
-	}
-
-	private func rendererCategories() -> [(String, FilterPanelRendererButton)] {
-		context.renderers.tuples
-			.map { ($0.0, $0.1(context)) }
-			.filter { (key, renderer) -> Bool in
-				!key.contains(".") && renderer.canDisplayResults(self.context.items)
-			}
-			.sorted(by: { $0.1.order < $1.1.order })
-	}
-
-	private func renderersAvailable() -> [(String, FilterPanelRendererButton)] {
-		if let currentCategory = context.currentView?.activeRenderer.split(separator: ".").first {
-			return context.renderers.all
-				.map { (arg0) -> (String, FilterPanelRendererButton) in
-					let (key, value) = arg0
-					return (key, value(context))
-				}
-				.filter { (_, renderer) -> Bool in
-					renderer.rendererName.split(separator: ".").first == currentCategory
-				}
-				.sorted(by: { $0.1.order < $1.1.order })
-		}
-		return []
-	}
-
-	private func isActive(_ renderer: FilterPanelRendererButton) -> Bool {
-		context.currentView?.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
-	}
-
+	
 	var body: some View {
 		let context = self.context
 		let cascadableView = self.context.currentView
+		let segmentedRendererCategories = getRendererCategories().segments(ofSize: 5).indexed()
 
 		return
 			HStack(alignment: .top, spacing: 0) {
 				VStack(alignment: .leading, spacing: 0) {
-					HStack(alignment: .top, spacing: 3) {
-						ForEach(rendererCategories(), id: \.0) { _, renderer in
-
-							Button(action: { context.executeAction(renderer) }) {
-								Image(systemName: renderer.getString("icon"))
-									.fixedSize()
-									.padding(.horizontal, 5)
-									.padding(.vertical, 5)
-									.frame(width: 40, height: 40, alignment: .center)
-									.foregroundColor(self.isActive(renderer)
-										? renderer.getColor("activeColor")
-										: renderer.getColor("inactiveColor"))
-									.background(self.isActive(renderer)
-										? renderer.getColor("activeBackgroundColor")
-										: renderer.getColor("inactiveBackgroundColor"))
+					VStack(spacing: 3) {
+						ForEach(segmentedRendererCategories, id: \.index) { categories in
+							HStack(alignment: .top, spacing: 3) {
+								ForEach(categories.element, id: \.0) { _, renderer in
+									Button(action: { context.executeAction(renderer) }) {
+										Image(systemName: renderer.getString("icon"))
+											.fixedSize()
+											.padding(.horizontal, 5)
+											.padding(.vertical, 5)
+											.frame(width: 35, height: 40, alignment: .center)
+											.foregroundColor(self.isActive(renderer)
+																? renderer.getColor("activeColor")
+																: renderer.getColor("inactiveColor"))
+											.background(self.isActive(renderer)
+															? renderer.getColor("activeBackgroundColor")
+															: renderer.getColor("inactiveBackgroundColor"))
+									}
+								}
 							}
 						}
 					}
@@ -113,7 +48,7 @@ struct FilterPanel: View {
 					.padding(.top, 1)
 
 					ASTableView(section:
-						ASSection(id: 0, data: renderersAvailable(), dataID: \.0) { (item: (key: String, renderer: FilterPanelRendererButton), _) in
+						ASSection(id: 0, data: getRenderersAvailable(forCategory: currentRendererCategory), dataID: \.0) { (item: (key: String, renderer: FilterPanelRendererButton), _) in
 							Button(action: { context.executeAction(item.renderer) }) {
 								Group {
 									if cascadableView?.activeRenderer == item.renderer.rendererName {
@@ -171,7 +106,7 @@ struct FilterPanel: View {
 							}
 						}
 
-						allOtherFields().map { fieldName in
+						getRelevantFields().map { fieldName in
 							Button(action: { self.changeOrderProperty(fieldName) }) {
 								Text(fieldName)
 									.foregroundColor(Color(hex: "#434343"))
@@ -196,6 +131,69 @@ struct FilterPanel: View {
 			.frame(maxWidth: .infinity, alignment: .topLeading)
 			.frame(height: 240)
 			.background(Color(hex: "#eee"))
+	}
+}
+
+private extension FilterPanel {
+	func getRendererCategories() -> [(String, FilterPanelRendererButton)] {
+		context.renderers.tuples
+			.map { ($0.0, $0.1(context)) }
+			.filter { (key, renderer) -> Bool in
+				!key.contains(".") && renderer.canDisplayResults(self.context.items)
+			}
+			.sorted(by: { $0.1.order < $1.1.order })
+	}
+	
+	var currentRendererCategory: String? {
+		context.currentView?.activeRenderer.split(separator: ".").first.map(String.init)
+	}
+	
+	func getRenderersAvailable(forCategory category: String?) -> [(String, FilterPanelRendererButton)] {
+		guard let category = category else { return [] }
+		return context.renderers.all
+			.map { (arg0) -> (String, FilterPanelRendererButton) in
+				let (key, value) = arg0
+				return (key, value(context))
+			}
+			.filter { (_, renderer) -> Bool in
+				renderer.rendererName.split(separator: ".").first.map(String.init) == category
+			}
+			.sorted(by: { $0.1.order < $1.1.order })
+	}
+	
+	func getRelevantFields(forType type: PropertyType? = nil) -> [String] {
+		guard let item = context.currentView?.resultSet.items.first else { return [] }
+		
+		var excludeList = context.currentView?.sortFields ?? []
+		excludeList.append(context.currentView?.datasource.sortProperty ?? "")
+		excludeList.append(contentsOf: ["uid", "deleted", "externalId"])
+		
+		let properties = item.objectSchema.properties
+		
+		return properties.compactMap { prop -> String? in
+			if !excludeList.contains(prop.name), !prop.name.hasPrefix("_"), prop.type != .object, prop.type != .linkingObjects {
+				return prop.name
+			} else {
+				return nil
+			}
+		}
+	}
+	
+	func isActive(_ renderer: FilterPanelRendererButton) -> Bool {
+		context.currentView?.activeRenderer.split(separator: ".").first ?? "" == renderer.rendererName
+	}
+}
+
+private extension FilterPanel {
+	func toggleAscending() {
+		let ds = self.context.currentView?.datasource
+		ds?.sortAscending = !(ds?.sortAscending ?? true)
+		context.scheduleCascadableViewUpdate()
+	}
+	
+	func changeOrderProperty(_ fieldName: String) {
+		self.context.currentView?.datasource.sortProperty = fieldName
+		context.scheduleCascadableViewUpdate()
 	}
 }
 

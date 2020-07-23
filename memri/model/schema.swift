@@ -746,7 +746,7 @@ public class Edge : SyncableItem, Codable {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            type = try decoder.decodeIfPresent("_type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
             targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
@@ -754,7 +754,7 @@ public class Edge : SyncableItem, Codable {
             version = try decoder.decodeIfPresent("version") ?? version
             edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
 
-            try parseTargetDict(try decoder.decodeIfPresent("target"))
+            try parseTargetDict(try decoder.decodeIfPresent("_target"))
         }
     }
 }
@@ -762,7 +762,7 @@ public class Edge : SyncableItem, Codable {
 /// Any type of file that can be stored on disk.
 public class File : Item {
     /// The uri property represents the Uniform Resource Identifier (URI) of a resource.
-    @objc dynamic var uri:String? = nil
+	@objc dynamic var uri:String? = UUID().uuidString
 
     /// An Item this Item is used by.
     var usedBy: [Item]? {
