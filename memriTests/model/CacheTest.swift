@@ -6,13 +6,7 @@
 import XCTest
 
 class CacheTest: XCTestCase {
-    var testCache: Cache
-
-    override init() {
-        testCache = try! Cache(PodAPI("test"))
-
-        super.init()
-    }
+    var testCache: Cache = try! Cache(PodAPI("test"))
 
     override func setUp() {
         // reset cache
