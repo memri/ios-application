@@ -165,34 +165,28 @@ class CVUValidatorTests: XCTestCase {
             navigateItems: [
                 openView {
                     title: 10
-                    arguments: {
-                        view: {
-                            defaultRenderer: timeline
+                    view: {
+                        defaultRenderer: timeline
 
-                            datasource {
-                                query: "AuditItem appliesTo:{.id}"
-                                sortProperty: dateCreated
-                                sortAscending: true
-                            }
+                        datasource {
+                            query: "AuditItem appliesTo:{.id}"
+                            sortProperty: dateCreated
+                            sortAscending: true
+                        }
 
-                            [renderer = "timeline"] {
-                                timeProperty: dateCreated
-                            }
+                        [renderer = "timeline"] {
+                            timeProperty: dateCreated
                         }
                     }
                 }
                 openViewByName {
                     title: "{$starred} {type.plural()}"
-                    arguments: {
-                        name: "filter-starred"
-                        include: "all-{type}"
-                    }
+                    viewName: "filter-starred"
+                    include: "all-{type}"
                 }
-                openViewByName {
+                openSessionByName {
                     title: "{$all} {type.lowercased().plural()}"
-                    arguments: {
-                        name: "all-{type}"
-                    }
+                    sessionName: "all-{type}"
                 }
             ]
         }
@@ -205,7 +199,7 @@ class CVUValidatorTests: XCTestCase {
         validator.debug()
 
         XCTAssertEqual(validator.errors.count, 1)
-        XCTAssertEqual(validator.warnings.count, 0)
+        XCTAssertEqual(validator.warnings.count, 1)
     }
 
     func testLargeCVU() throws {
@@ -223,7 +217,7 @@ class CVUValidatorTests: XCTestCase {
 
         validator.debug()
 
-        XCTAssertEqual(validator.errors.count, 0)
+        XCTAssertEqual(validator.errors.count, 5)
         XCTAssertEqual(validator.warnings.count, 1)
     }
 

@@ -414,6 +414,7 @@ public enum ActionFamily: String, CaseIterable {
     }
 }
 
+#warning("Check that the CVU validator is called. somehow with viewName missing defaults still passed")
 public enum ActionProperties: String, CaseIterable {
     case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
         backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title
@@ -428,9 +429,9 @@ public enum ActionProperties: String, CaseIterable {
 
         let prop = ActionProperties(rawValue: key)
         switch prop {
-        case .name, .path, .property, .edgeType: return value is String
+        case .name, .path, .property, .edgeType, .viewName, .sessionName, .title,
+             .showTitle, .icon: return value is String
         case .renderAs: return value is RenderType
-        case .title, .showTitle, .icon: return value is String
         case .opensView, .distinct, .all: return value is Bool
         case .color, .backgroundColor, .inactiveColor, .activeBackgroundColor,
              .inactiveBackgroundColor:
