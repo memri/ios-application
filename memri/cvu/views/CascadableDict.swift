@@ -1,19 +1,17 @@
 //
-//  CascadableDict.swift
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// CascadableDict.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Foundation
-import SwiftUI
 import RealmSwift
+import SwiftUI
 
 public class CascadableDict: Cascadable, Subscriptable {
-    func get<T>(_ name:String, type:T.Type = T.self) -> T? {
+    func get<T>(_ name: String, type: T.Type = T.self) -> T? {
         guard let value = cascadeProperty(name, type: Any?.self) else {
             return nil
         }
-        
+
         if let itemRef = value as? ItemReference {
             return itemRef.resolve() as? T
         }
@@ -24,11 +22,11 @@ public class CascadableDict: Cascadable, Subscriptable {
             } as? T
         }
         // Dicts are not support atm
-        
+
         return value as? T
     }
-    
-    func set(_ name:String, _ value:Any?) {
+
+    func set(_ name: String, _ value: Any?) {
         if let item = value as? Item {
             setState(name, ItemReference(to: item))
         }
@@ -42,15 +40,19 @@ public class CascadableDict: Cascadable, Subscriptable {
             setState(name, value)
         }
     }
-    
+
     subscript(name: String) -> Any? {
         get { get(name) }
-        set (value) { set(name, value) }
+        set(value) { set(name, value) }
     }
-    
-    public init(_ dict: [String:Any?]? = nil, _ tail: [CVUParsedDefinition]? = nil, host:Cascadable? = nil) {
-        var result = [String:Any?]()
-        
+
+    public init(
+        _ dict: [String: Any?]? = nil,
+        _ tail: [CVUParsedDefinition]? = nil,
+        host: Cascadable? = nil
+    ) {
+        var result = [String: Any?]()
+
         if let dict = dict {
             for (key, value) in dict {
                 if let item = value as? Item {
@@ -67,70 +69,75 @@ public class CascadableDict: Cascadable, Subscriptable {
                 }
             }
         }
-        
+
         super.init(CVUParsedObjectDefinition(result.isEmpty ? nil : result), tail, host)
     }
-    
+
     public init(_ other: CascadableDict? = nil, _ item: Item? = nil) {
         super.init(CVUParsedObjectDefinition(), other?.cascadeStack)
-        if let item = item { self.set(".", item) }
+        if let item = item { set(".", item) }
     }
-    
-    required init(_ head: CVUParsedDefinition? = nil, _ tail: [CVUParsedDefinition]? = nil, _ host: Cascadable? = nil) {
+
+    required init(
+        _ head: CVUParsedDefinition? = nil,
+        _ tail: [CVUParsedDefinition]? = nil,
+        _ host: Cascadable? = nil
+    ) {
         super.init(head, tail, host)
     }
-    
+
     func merge(_ other: CascadableDict?) -> CascadableDict {
         guard let other = other else { return self }
-        
+
         if let parsed = other.head.parsed {
             for (key, value) in parsed {
-                self.head[key] = value
+                head[key] = value
             }
         }
-        
+
         if !other.tail.isEmpty {
-            self.tail.append(contentsOf: other.tail)
-            self.cascadeStack.append(contentsOf: other.tail)
+            tail.append(contentsOf: other.tail)
+            cascadeStack.append(contentsOf: other.tail)
         }
-        
+
         return self
     }
-    
+
     func deepMerge(_ other: CascadableDict?) -> CascadableDict {
         guard let other = other else { return self }
-        
-        func merge(_ parsed:[String:Any?]?) {
+
+        func merge(_ parsed: [String: Any?]?) {
             guard let parsed = parsed else { return }
             for (key, value) in parsed {
-                self.head[key] = value
+                head[key] = value
             }
         }
-        
+
         merge(other.head.parsed)
         for item in other.tail {
             merge(item.parsed)
         }
-        
+
         return self
     }
-    
-    func resolve(_ item: Item?, _ viewArguments:ViewArguments? = nil) throws -> CascadableDict {
+
+    func resolve(_ item: Item?, _ viewArguments: ViewArguments? = nil) throws -> CascadableDict {
         // TODO: Only doing this for head, let's see if that is enough
         //       Currently the assumption is that tails never change.
         //       If they do, a copy is required
-        
+
         head.parsed = try Expression.resolve(head.parsed, viewArguments, dontResolveItems: true)
         set(".", item)
-        
+
         return self
     }
-    
+
     func copy(_ item: Item? = nil) -> CascadableDict {
-        let dict = CascadableDict(CVUParsedObjectDefinition(), self.cascadeStack)
+        let dict = CascadableDict(CVUParsedObjectDefinition(), cascadeStack)
         if let item = item { dict.set(".", item) }
         return dict
     }
 }
+
 public typealias UserState = CascadableDict
 public typealias ViewArguments = CascadableDict

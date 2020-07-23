@@ -5,4 +5,5 @@
 --maxwidth 100
 --header "\n{file}\nCopyright © {year} memri. All rights reserved."
 --wrapcollections before-first
---wrapparameters after-first
+--wrapparameters before-first
+--disable andOperator

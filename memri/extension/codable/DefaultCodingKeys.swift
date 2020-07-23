@@ -1,10 +1,6 @@
 //
-//  DefaultCodingKeys.swift
-//  memri
-//
-//  Created by Koen van der Veen on 06/03/2020.
-//  Copyright © 2020 memri. All rights reserved.
-//
+// DefaultCodingKeys.swift
+// Copyright © 2020 memri. All rights reserved.
 
 // import Foundation
 

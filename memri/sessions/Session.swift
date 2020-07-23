@@ -1,40 +1,41 @@
 //
-//  Session.swift
-//  memri
-//
-//  Copyright © 2020 memri. All rights reserved.
-//
+// Session.swift
+// Copyright © 2020 memri. All rights reserved.
 
 import Combine
 import Foundation
 import RealmSwift
 import SwiftUI
 
-public final class Session : Equatable, Subscriptable {
+public final class Session: Equatable, Subscriptable {
     /// The name of the item.
-    var name:String? {
+    var name: String? {
         get { parsed?["name"] as? String }
-        set (value) { setState("name", value) }
+        set(value) { setState("name", value) }
     }
+
     /// TBD
-    var currentViewIndex:Int {
+    var currentViewIndex: Int {
         get { Int(parsed?["currentViewIndex"] as? Double ?? 0) }
-        set (value) { setState("currentViewIndex", Double(value)) }
+        set(value) { setState("currentViewIndex", Double(value)) }
     }
+
     /// TBD
-    var editMode:Bool {
+    var editMode: Bool {
         get { parsed?["editMode"] as? Bool ?? false }
-        set (value) { setState("editMode", value) }
+        set(value) { setState("editMode", value) }
     }
+
     /// TBD
-    var showContextPane:Bool {
+    var showContextPane: Bool {
         get { parsed?["showContextPane"] as? Bool ?? false }
-        set (value) { setState("showContextPane", value) }
+        set(value) { setState("showContextPane", value) }
     }
+
     /// TBD
-    var showFilterPanel:Bool  {
+    var showFilterPanel: Bool {
         get { parsed?["showFilterPanel"] as? Bool ?? false }
-        set (value) { setState("showFilterPanel", value) }
+        set(value) { setState("showFilterPanel", value) }
     }
 
     /// TBD
@@ -42,7 +43,7 @@ public final class Session : Equatable, Subscriptable {
         get {
             state?.edge("screenshot")?.item(type: File.self)
         }
-        set (value) {
+        set(value) {
             if let file = value {
                 do { _ = try state?.link(file, type: "screenshot", distinct: true) }
                 catch {
@@ -56,76 +57,75 @@ public final class Session : Equatable, Subscriptable {
         }
     }
 
-    var uid: Int? = nil
+    var uid: Int?
     var parsed: CVUParsedSessionDefinition?
     var state: CVUStateDefinition? {
-		DatabaseController.read { realm in
+        DatabaseController.read { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
         }
     }
-    
+
     /// TBD
     var views = [CascadableView]()
     /// TBD
     var sessions: Sessions?
     var context: MemriContext?
-    
-	private var cancellables: [AnyCancellable] = []
+
+    private var cancellables: [AnyCancellable] = []
     private var lastViewIndex: Int = -1
 
-	var swiftUIEditMode: EditMode {
-		get {
-			if editMode { return .active }
-			else { return .inactive }
-		}
-		set(value) {
-            if value == .active { self.editMode = true }
-            else { self.editMode = false }
-		}
-	}
+    var swiftUIEditMode: EditMode {
+        get {
+            if editMode { return .active }
+            else { return .inactive }
+        }
+        set(value) {
+            if value == .active { editMode = true }
+            else { editMode = false }
+        }
+    }
 
-	var hasHistory: Bool {
-		currentViewIndex > 0
-	}
+    var hasHistory: Bool {
+        currentViewIndex > 0
+    }
 
-	public var currentView: CascadableView? {
+    public var currentView: CascadableView? {
         views[safe: currentViewIndex]
-	}
+    }
 
-    init(_ state: CVUStateDefinition?, _ sessions:Sessions) throws {
+    init(_ state: CVUStateDefinition?, _ sessions: Sessions) throws {
         self.sessions = sessions
-        self.context = sessions.context
-        
+        context = sessions.context
+
         if let state = state {
             guard let uid = state.uid.value else {
                 throw "CVU state object is unmanaged"
             }
-            
+
             self.uid = uid
-            
-            guard let p = try context?.views.parseDefinition(state) as? CVUParsedSessionDefinition else {
+
+            guard let p = try context?.views.parseDefinition(state) as? CVUParsedSessionDefinition
+            else {
                 throw "Unable to parse state definition"
             }
-            
-            self.parsed = p
-        
+
+            parsed = p
+
             // Check if there are views in the db
             if
                 let storedViewStates = state
-                    .edges("view")?
-                    .sorted(byKeyPath: "sequence")
-                    .items(type: CVUStateDefinition.self),
-                storedViewStates.count > 0
-            {
+                .edges("view")?
+                .sorted(byKeyPath: "sequence")
+                .items(type: CVUStateDefinition.self),
+                storedViewStates.count > 0 {
                 for viewState in storedViewStates {
                     views.append(try CascadableView(viewState, self))
                 }
             }
             // Or if the views are encoded in the definition
             else if
-                let parsedViews = self.parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
-                parsedViews.count > 0
-            {
+                let parsedViews = parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
+                parsedViews.count > 0 {
                 try DatabaseController.tryWriteSync { _ in
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
@@ -133,8 +133,8 @@ public final class Session : Equatable, Subscriptable {
                         views.append(try CascadableView(viewState, self))
                     }
                 }
-                
-                self.parsed?.parsed?.removeValue(forKey: "viewDefinitions")
+
+                parsed?.parsed?.removeValue(forKey: "viewDefinitions")
             }
             else {
                 throw "CVU state definition is missing views"
@@ -144,7 +144,7 @@ public final class Session : Equatable, Subscriptable {
             // Do nothing and expect a call to setCurrentView later
         }
     }
-    
+
     subscript(propName: String) -> Any? {
         get {
             switch propName {
@@ -170,34 +170,34 @@ public final class Session : Equatable, Subscriptable {
             }
         }
     }
-    
-    private func setState(_ name:String, _ value: Any?) {
+
+    private func setState(_ name: String, _ value: Any?) {
         if parsed == nil { parsed = CVUParsedSessionDefinition() }
         parsed?[name] = value
         schedulePersist()
     }
-    
+
     func schedulePersist() {
         sessions?.schedulePersist()
     }
-    
+
     public func persist() throws {
         try DatabaseController.tryWriteSync { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
             if state == nil {
                 debugHistory.warn("Could not find stored session CVU. Creating a new one.")
-                
+
                 state = try Cache.createItem(CVUStateDefinition.self, values: [:])
-                
+
                 guard let uid = state?.uid.value else {
                     throw "Exception: could not create state definition"
                 }
-                
+
                 self.uid = uid
             }
-            
+
             state?.set("definition", self.parsed?.toCVUString(0, "    "))
-            
+
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
                 for edge in stateViewEdges {
@@ -216,10 +216,10 @@ public final class Session : Equatable, Subscriptable {
                     }
                 }
             }
-            
+
             for view in views {
                 try view.persist()
-                
+
                 if let s = view.state {
                     _ = try state?.link(s, type: "view", sequence: .last, overwrite: false)
                 }
@@ -230,16 +230,16 @@ public final class Session : Equatable, Subscriptable {
         }
     }
 
-    public func setCurrentView (
+    public func setCurrentView(
         _ state: CVUStateDefinition? = nil,
         _ viewArguments: ViewArguments? = nil
     ) throws {
-		guard let storedView = state ?? self.currentView?.state else {
+        guard let storedView = state ?? currentView?.state else {
             throw "Exception: Unable to fetch stored CVU state for view"
         }
-        
-        var nextIndex:Int
-        
+
+        var nextIndex: Int
+
         // If the session already exists, we simply update the session index
         if let index = views.firstIndex(where: { view in view.uid == storedView.uid.value }) {
             nextIndex = index
@@ -250,67 +250,68 @@ public final class Session : Equatable, Subscriptable {
                 // Remove all items after the current index
                 views.removeSubrange((currentViewIndex + 1)...)
             }
-            
+
             // Add session to list
             views.append(try CascadableView(storedView, self))
             nextIndex = views.count - 1
         }
-        
+
         let isReload = lastViewIndex == nextIndex && sessions?.currentSession == self
         lastViewIndex = nextIndex
-        
+
         if !isReload { storedView.accessed() }
-        
+
         let nextView = views[nextIndex]
         _ = nextView.viewArguments?.deepMerge(viewArguments)
-        
+
         try nextView.load { error in
             if !isReload, error == nil, let item = nextView.resultSet.singletonItem {
                 item.accessed()
             }
         }
-        
+
         if sessions?.currentSession != self {
             try sessions?.setCurrentSession(self.state)
         }
-        
+
         currentViewIndex = nextIndex
-        
+
         if !isReload {
             // turn off editMode when navigating
             if editMode { editMode = false }
 
             // hide filterpanel if view doesnt have a button to open it
             if showFilterPanel {
-                if currentView?.filterButtons.first(where: { $0.name == .toggleFilterPanel }) == nil {
+                if currentView?.filterButtons
+                    .first(where: { $0.name == .toggleFilterPanel }) == nil {
                     showFilterPanel = false
                 }
             }
-        
+
             schedulePersist()
         }
-        
+
         // Update the UI
         currentView?.context?.scheduleUIUpdate(immediate: true)
     }
 
-    public func takeScreenShot(immediate:Bool = false) {
-		if let view = UIApplication.shared.windows[0].rootViewController?.view {
-			if let uiImage = view.takeScreenShot() {
-                
+    public func takeScreenShot(immediate: Bool = false) {
+        if let view = UIApplication.shared.windows[0].rootViewController?.view {
+            if let uiImage = view.takeScreenShot() {
                 func doIt() {
                     do {
-                        if self.screenshot == nil {
+                        if screenshot == nil {
                             let file = try Cache.createItem(File.self)
-                            self.screenshot = file
+                            screenshot = file
                         }
 
-                        try self.screenshot?.write(uiImage)
-                    } catch {
+                        try screenshot?.write(uiImage)
+                    }
+                    catch {
                         debugHistory.error("Unable to write screenshot: \(error)")
                     }
                 }
-                
+
                 if immediate { doIt() }
                 else {
                     DispatchQueue.global(qos: .userInitiated).async {
@@ -318,28 +319,28 @@ public final class Session : Equatable, Subscriptable {
                     }
                 }
 
-				return
-			}
-		}
+                return
+            }
+        }
 
-		debugHistory.error("Unable to create screenshot")
-	}
+        debugHistory.error("Unable to create screenshot")
+    }
 
-	public static func == (lt: Session, rt: Session) -> Bool {
-		lt.uid == rt.uid
-	}
+    public static func == (lt: Session, rt: Session) -> Bool {
+        lt.uid == rt.uid
+    }
 }
 
 extension UIView {
-	func takeScreenShot() -> UIImage? {
-		UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
-		drawHierarchy(in: bounds, afterScreenUpdates: true)
+    func takeScreenShot() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+        drawHierarchy(in: bounds, afterScreenUpdates: true)
 
-		if let image = UIGraphicsGetImageFromCurrentImageContext() {
-			UIGraphicsEndImageContext()
-			return image
-		}
+        if let image = UIGraphicsGetImageFromCurrentImageContext() {
+            UIGraphicsEndImageContext()
+            return image
+        }
 
-		return nil
-	}
+        return nil
+    }
 }
