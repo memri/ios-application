@@ -3,6 +3,7 @@
 --elseposition next-line
 --stripunusedargs unnamed-only
 --maxwidth 100
---header "\n{file}\nCopyright (c) {year} Memri."
+--header "\n{file}\nCopyright © {year} memri. All rights reserved."
 --wrapcollections before-first
 --wrapparameters after-first
+--swiftversion 5.2
