@@ -163,11 +163,11 @@ class CVUParserTests: XCTestCase {
 
 		XCTAssertEqual(try parseToCVUString(snippet), """
 		Person {
-
-		    group: {
-		        key: "value"
-		    }
-		}
+            
+            group: {
+                key: "value"
+            }
+        }
 		""")
 	}
 
