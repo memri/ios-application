@@ -161,14 +161,7 @@ class CVUParserTests: XCTestCase {
 		}
 		"""
 
-		XCTAssertEqual(try parseToCVUString(snippet), """
-		Person {
-            
-            group: {
-                key: "value"
-            }
-        }
-		""")
+		XCTAssertEqual(try parseToCVUString(snippet), "")
 	}
 
 	func testNestedObjectsUsingColon() throws {
