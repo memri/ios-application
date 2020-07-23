@@ -39,6 +39,8 @@ public class Views {
 	}
     
     public func listenForChanges() {
+        guard context?.podAPI.isConfigured ?? false else { return }
+        
         // Subscribe to changes in CVUStoredDefinition
         cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition").sink { items in // CVUStoredDefinition AND domain='user'
             self.reloadViews(items)

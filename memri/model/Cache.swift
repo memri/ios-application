@@ -296,10 +296,9 @@ public class Cache {
         // Fetch item from the cache to double check
         if let cachedItem: Item = getItem(item.genericType, uid) {
             // Do nothing when the version is not higher then what we already have
-            #warning("Disabled until the pod sends the right _partial")
-//            if item.version <= cachedItem.version && !cachedItem._partial {
-//                return cachedItem
-//            }
+            if item.version <= cachedItem.version && !cachedItem._partial {
+                return cachedItem
+            }
 
             // Check if there are local changes
             if cachedItem._action != nil {
@@ -479,12 +478,6 @@ public class Cache {
 		try DatabaseController.tryWriteSync { realm in
 			var dict = values
             
-//            for (key, value) in dict {
-//                if realm.schema["\(type)"]?[key]?.type == .date, let value = value as? Int {
-//                    dict[key] = Date(timeIntervalSince1970: Double(value / 1000))
-//                }
-//            }
-
 			// TODO:
 			// Always merge
 			var fromCache: T?

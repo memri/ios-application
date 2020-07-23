@@ -21,6 +21,10 @@ public class PodAPI {
 	enum HTTPError: Error {
 		case ClientError(Int, String)
 	}
+    
+    var isConfigured: Bool {
+        return (host ?? Settings.shared.getString("user/pod/host")) != ""
+    }
 
 	public init(_ podkey: String) {
 		key = podkey
