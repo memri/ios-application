@@ -38,7 +38,7 @@ public struct SubView: View {
             }
 			catch {
 				// TODO: Refactor error handling
-				throw "Cannot update CascadableView \(self): \(error)"
+				throw "Cannot update view \(self): \(error)"
 			}
 		} catch {
 			// TODO: Refactor: error handling
@@ -61,12 +61,12 @@ public struct SubView: View {
             try proxyMain?.currentSession?.setCurrentView(state, args)
 		} catch {
 			// TODO: Refactor error handling
-			debugHistory.error("Error: cannot init subview, failed to update CascadableView: \(error)")
+			debugHistory.error("Cannot init subview, failed to update view: \(error)")
 		}
 	}
 
 	public var body: some View {
-		Browser()
+        Browser(inSubView: true, showCloseButton: showCloseButton)
             .fullHeight()
             // NOTE: Allowed force unwrap
             .environmentObject(self.proxyMain!)

@@ -10,6 +10,19 @@ import SwiftUI
 
 struct Browser: View {
 	@EnvironmentObject var context: MemriContext
+    
+    let inSubView: Bool
+    let showCloseButton: Bool
+    
+    init() {
+        inSubView = false
+        showCloseButton = false
+    }
+
+    init(inSubView: Bool, showCloseButton: Bool) {
+        self.inSubView = inSubView
+        self.showCloseButton = showCloseButton
+    }
 
 	var activeRenderer: AnyView {
 		allRenderers?.allViews[context.currentView?.activeRenderer ?? ""] ?? AnyView(Spacer())
@@ -25,7 +38,7 @@ struct Browser: View {
             else {
                 VStack(alignment: .center, spacing: 0) {
                     if currentView.showToolbar && !currentView.fullscreen {
-                        TopNavigation()
+                        TopNavigation(inSubView: inSubView, showCloseButton: showCloseButton)
                             .background(Color(.systemBackground))
                     }
         

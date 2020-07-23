@@ -141,7 +141,9 @@ public struct ExprLookupNode: ExprNode {
 	}
     public func toExprString() -> String {
         sequence.map { node -> String in
-            node.toExprString()
+            let value = node.toExprString()
+            if value == "." && sequence.count > 1 { return "" }
+            return value
         }.joined(separator: ".")
     }
 }
