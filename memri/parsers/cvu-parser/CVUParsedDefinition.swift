@@ -61,7 +61,7 @@ public class CVUParsedDefinition: Equatable, CVUToString {
                 return (leftHasChildren ? 1 : 0, leftIsDict ? 1 : 0, lhp.lowercased())
                     < (rightHasChildren ? 1 : 0, rightIsDict ? 1 : 0, rhp.lowercased())
             }
-        return "\(selector ?? "") \(body)"
+        return "\(selector != "" ? "\(selector ?? "") " : "")\(body)"
     }
 
     enum CompileScope {

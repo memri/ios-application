@@ -158,7 +158,14 @@ class CVUParserTests: XCTestCase {
         }
         """
 
-        XCTAssertEqual(try parseToCVUString(snippet), "")
+        XCTAssertEqual(try parseToCVUString(snippet), """
+        Person {
+            
+            group: {
+                key: "value"
+            }
+        }
+        """)
     }
 
     func testNestedObjectsUsingColon() throws {
@@ -172,7 +179,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-
+            
             group: {
                 key: "value"
             }
@@ -193,7 +200,7 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
             key: 10
-
+            
             group: {
                 key: "value"
             }
@@ -443,7 +450,7 @@ class CVUParserTests: XCTestCase {
             bool: false
             number: 10
             string: "test"
-
+            
             object: {
                 test: 10
             }
@@ -462,7 +469,7 @@ class CVUParserTests: XCTestCase {
             bool: false
             number: 10
             string: "test"
-
+            
             object: {
                 test: 10
             }
@@ -512,7 +519,7 @@ class CVUParserTests: XCTestCase {
             background: #ffffff
             border: 1 "red"
             padding: 1 2 3 4
-
+            
             object: {
                 test: 1
             }
@@ -537,11 +544,11 @@ class CVUParserTests: XCTestCase {
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
             background: #ffffff
-
+            
             bla: {
                 test: 1
             }
-
+            
             object: {
                 test: 1
             }
@@ -578,7 +585,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(toCVUString([parsed!]), snippet)
 
-        guard let _ = parsed!["userState"] as? UserState else {
+        guard let _ = parsed!["userState"] as? CVUParsedDefinition else {
             XCTFail()
             throw "Error"
         }
@@ -589,7 +596,7 @@ class CVUParserTests: XCTestCase {
         let snippet = """
         Person {
             userState: {
-                selection: []]
+                selection: []
             }
         }
         """
@@ -598,7 +605,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(toCVUString([parsed!]), snippet)
 
-        guard let us = parsed!["userState"] as? UserState, us["selection"] is [Any?] else {
+        guard let us = parsed!["userState"] as? CVUParsedDefinition, us["selection"] is [Any?] else {
             XCTFail()
             throw "Error"
         }
@@ -617,7 +624,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(toCVUString([parsed!]), snippet)
 
-        guard let _ = parsed!["viewArguments"] as? ViewArguments else {
+        guard let _ = parsed!["viewArguments"] as? CVUParsedDefinition else {
             XCTFail()
             throw "Error"
         }
@@ -704,7 +711,7 @@ class CVUParserTests: XCTestCase {
         let snippet = """
         Person {
             [renderer = generalEditor] {
-
+                
                 picturesOfPerson: {
                     title: "Photos of {.computedTitle()}"
 
@@ -749,11 +756,9 @@ class CVUParserTests: XCTestCase {
         Person {
             [renderer = list] {
                 press: addItem {
-                    arguments: {
-                        template: {
-                            _type: "ImporterRun"
-                            name: {{.name}}
-                        }
+                    template: {
+                        name: {{.name}}
+                        _type: "ImporterRun"
                     }
                 }
             }
@@ -769,10 +774,8 @@ class CVUParserTests: XCTestCase {
             [renderer = list] {
                 press: [
                     link {
-                        arguments: {
-                            property: {{property}}
-                            dataItem: {{dataItem}}
-                        }
+                        dataItem: {{dataItem}}
+                        property: {{property}}
                     }
                     closePopup
                 ]

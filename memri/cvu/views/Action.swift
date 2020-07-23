@@ -329,8 +329,8 @@ public class Action: HashableClass, CVUToString {
     }
 
     func toCVUString(_ depth: Int, _ tab: String) -> String {
-        let tabs = Array(0 ..< depth).map { _ in tab }.joined()
-        let tabsEnd = depth > 0 ? Array(0 ..< depth - 1).map { _ in tab }.joined() : ""
+        let tabs = Array(0 ..< depth + 1).map { _ in tab }.joined()
+        let tabsEnd = depth > 0 ? Array(0 ..< depth).map { _ in tab }.joined() : ""
         var strBuilder: [String] = []
 
         if let value = values["binding"] as? Expression {
@@ -343,7 +343,7 @@ public class Action: HashableClass, CVUToString {
                 strBuilder.append("\(key): \(value.description)")
             }
             else if let value = values[key] {
-                strBuilder.append("\(key): \(CVUSerializer.valueToString(value, depth, tab))")
+                strBuilder.append("\(key): \(CVUSerializer.valueToString(value, depth + 1, tab))")
             }
             else {
                 strBuilder.append("\(key): null")

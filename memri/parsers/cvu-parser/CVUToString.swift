@@ -11,7 +11,7 @@ protocol CVUToString: CustomStringConvertible {
 
 class CVUSerializer {
     class func valueToString(_ value: Any?, _ depth: Int = 0, _ tab: String = "    ") -> String {
-        if value == nil || (value as? String != "nil") && "\(value!)" == "nil" {
+        if value == nil /*|| (value as? String != "nil") && "\(value!)" == "nil"*/ {
             return "null"
         }
         else if let p = value {
@@ -26,7 +26,7 @@ class CVUSerializer {
                 return dictToString(p, depth + 1, tab)
             }
             else if let p = p as? CVUToString {
-                return p.toCVUString(depth + 1, tab)
+                return p.toCVUString(depth, tab)
             }
             else if let p = p as? Item, let uid = p.uid.value {
                 return "{{ item(\(p.genericType), \(uid)) }}"
@@ -182,7 +182,7 @@ class CVUSerializer {
                 let value = dict[key]
                 let isDef = value is CVUParsedDefinition
                 let dict = (value as? CVUParsedDefinition)?.parsed
-
+                
                 if !isDef || dict != nil && dict?.count ?? 0 > 0 {
                     if let p = value as? [String: Any?] {
                         str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")
@@ -211,19 +211,19 @@ class CVUSerializer {
         }
         if let p = (dict["sessionDefinitions"] as? [CVUParsedSessionDefinition])?
             .filter({ $0.parsed != nil }), p.count > 0 {
-            let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
+            let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true
         }
         if let p = (dict["viewDefinitions"] as? [CVUParsedViewDefinition])?
             .filter({ $0.parsed != nil }), p.count > 0 {
-            let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
+            let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true
         }
         if let p = (dict["rendererDefinitions"] as? [CVUParsedRendererDefinition])?
             .filter({ $0.parsed != nil }), p.count > 0 {
-            let body = arrayToString(p, depth - 1, tab, withDef: false, extraNewLine: true)
+            let body = arrayToString(p, depth, tab, withDef: false, extraNewLine: true)
             definitions.append("\(hasPriorContent ? "\n\n\(tabs)" : "")\(body)")
             hasPriorContent = true
         }
