@@ -31,7 +31,11 @@ public class Installer: ObservableObject {
 
     public func ready() {
         isInstalled = true
-
+        
+        DatabaseController.writeSync { realm in
+            realm.create(AuditItem.self, value: ["uid": -2], update: .modified)
+        }
+        
         do {
             try readyCallback()
             readyCallback = {}
