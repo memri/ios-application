@@ -79,7 +79,7 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(@@DEFAULT@@), VariableNode(bar)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar), VariableNode(foo)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere)])))"
+            "BinaryOpNode(ConditionAND, lhs: BinaryOpNode(ConditionAND, lhs: LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(bar, type:propertyOrItem, list:single)]), rhs: CallNode(lookup: LookupNode([VariableNode(bar, type:propertyOrItem, list:single), VariableNode(foo, type:propertyOrItem, list:single)]), argument: [NumberNode(10.0)])), rhs: BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(bar, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo, type:propertyOrItem, list:single)]), rhs: NumberNode(10.0))])]), rhs: LookupNode([VariableNode(shouldNeverGetHere, type:propertyOrItem, list:single)])))"
         )
     }
 
@@ -88,7 +88,7 @@ class ExprParserTests: XCTestCase {
 
         let result = try parse(snippet)
 
-        XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@)])")
+        XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single)])")
     }
 
     func testMinusPlusModifier() throws {
@@ -205,7 +205,7 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "StringModeNode(expressions: [StringNode(Hello ), CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode(!)])"
+            "StringModeNode(expressions: [StringNode(Hello ), CallNode(lookup: LookupNode([VariableNode(fetchName, type:propertyOrItem, list:single)]), argument: []), StringNode(!)])"
         )
     }
 
@@ -221,7 +221,7 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(firstName)]), StringNode( ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(lastName)])])"
+            "StringModeNode(expressions: [StringNode(Hello ), LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(firstName, type:propertyOrItem, list:single)]), StringNode( ), LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(lastName, type:propertyOrItem, list:single)])])"
         )
     }
 
@@ -238,7 +238,7 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode( Hello)])"
+            "StringModeNode(expressions: [BinaryOpNode(ConditionOR, lhs: LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(title, type:propertyOrItem, list:single)]), rhs: StringNode(test)), StringNode( — ), LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(content, type:propertyOrItem, list:single), VariableNode(plainString, type:propertyOrItem, list:single)])])"
         )
     }
 
@@ -254,7 +254,7 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName)]), argument: []), StringNode( Hello)])"
+            "StringModeNode(expressions: [CallNode(lookup: LookupNode([VariableNode(fetchName, type:propertyOrItem, list:single)]), argument: []), StringNode( Hello)])"
         )
     }
 
@@ -268,7 +268,7 @@ class ExprParserTests: XCTestCase {
         print(result.description)
         XCTAssertEqual(
             result.description,
-            "StringModeNode(expressions: [StringNode(Photo AND ANY includes.uid = ), LookupNode([VariableNode(@@DEFAULT@@), VariableNode(uid)]), StringNode()])"
+            "StringModeNode(expressions: [StringNode(Photo AND ANY includes.uid = ), LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(uid, type:propertyOrItem, list:single)])])"
         )
     }
 
@@ -281,10 +281,10 @@ class ExprParserTests: XCTestCase {
 
         XCTAssertEqual(
             result.description,
-            "ConditionNode(condition: BinaryOpNode(ConditionOR, lhs: NegationNode(BinaryOpNode(Plus, lhs: LookupNode([VariableNode(test)]), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(5.63537)))), rhs: BinaryOpNode(Division, lhs: NumberNode(4.0), rhs: NumberNode(3.0))), trueExp: CallNode(lookup: LookupNode([VariableNode(variable), VariableNode(func)]), argument: []), falseExp: ConditionNode(condition: LookupNode([VariableNode(me), VariableNode(address), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(primary)]), rhs: BoolNode(true))]), VariableNode(country)]), trueExp: BinaryOpNode(Plus, lhs: BinaryOpNode(Plus, lhs: NumberNode(4.0), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(5.0), rhs: NumberNode(10.0))), rhs: LookupNode([VariableNode(test), LookupNode([NumberNode(10.0)])])), falseExp: BinaryOpNode(Plus, lhs: StringNode(asdads'asdad), rhs: StringNode())))"
+            "ConditionNode(condition: BinaryOpNode(ConditionOR, lhs: NegationNode(BinaryOpNode(Plus, lhs: LookupNode([VariableNode(test, type:propertyOrItem, list:single)]), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(5.63537)))), rhs: BinaryOpNode(Division, lhs: NumberNode(4.0), rhs: NumberNode(3.0))), trueExp: CallNode(lookup: LookupNode([VariableNode(variable, type:propertyOrItem, list:single), VariableNode(func, type:propertyOrItem, list:single)]), argument: []), falseExp: ConditionNode(condition: LookupNode([VariableNode(me, type:propertyOrItem, list:single), VariableNode(address, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(primary, type:propertyOrItem, list:single)]), rhs: BoolNode(true))]), VariableNode(country, type:propertyOrItem, list:single)]), trueExp: BinaryOpNode(Plus, lhs: BinaryOpNode(Plus, lhs: NumberNode(4.0), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(5.0), rhs: NumberNode(10.0))), rhs: LookupNode([VariableNode(test, type:propertyOrItem, list:list), LookupNode([NumberNode(10.0)])])), falseExp: BinaryOpNode(Plus, lhs: StringNode(asdads'asdad), rhs: StringNode())))"
         )
     }
-
+    
     func testErrorIncompleteCondition() throws {
         let snippet = "true ? 'yes'"
 

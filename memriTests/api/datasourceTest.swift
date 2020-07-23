@@ -23,7 +23,7 @@ class datasourceTest: XCTestCase {
 
         XCTAssertNotEqual(ds1.uniqueString, ds2.uniqueString)
         XCTAssertNotEqual(ds1.uniqueString, ds3.uniqueString)
-        XCTAssertNotEqual(ds1.uniqueString, ds4.uniqueString)
+        XCTAssertEqual(ds1.uniqueString, ds4.uniqueString)
     }
 
     func testCascading() throws {
@@ -48,7 +48,7 @@ class datasourceTest: XCTestCase {
         let def3 = CVUStoredDefinition(value: ["definition": strDef3])
 
         let root = try RootContext(name: "", key: "")
-        try root.boot()
+        try root.boot(isTesting: true)
 
         let parsed = [
             try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition,
@@ -74,6 +74,7 @@ class datasourceTest: XCTestCase {
         let def1 = CVUStoredDefinition(value: ["definition": strDef1])
 
         let root = try RootContext(name: "", key: "")
+        try root.boot(isTesting: true)
         let head = try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition
         let ds = CascadingDatasource(head)
 

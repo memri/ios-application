@@ -351,15 +351,19 @@ public class RootContext: MemriContext {
         return subContext
     }
 
-    public func boot(_ callback: (() -> Void)? = nil) throws {
+    public func boot(isTesting:Bool = false, _ callback: (() -> Void)? = nil) throws {
         #if targetEnvironment(simulator)
-            // Reload for easy adjusting
-            views.context = self
-            try views.install()
+            if !isTesting {
+                // Reload for easy adjusting
+                views.context = self
+                try views.install()
+            }
         #endif
 
         // Load views configuration
         try views.load(self) {
+            if isTesting { return }
+            
             // Load session
             try sessions.load(self)
 

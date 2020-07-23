@@ -117,12 +117,12 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(
             results[0].description,
-            "LookupNode([VariableNode(@@DEFAULT@@), VariableNode(bar)])"
+            "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(bar, type:propertyOrItem, list:single)])"
         )
-        XCTAssertEqual(results[1].description, "LookupNode([VariableNode(bar), VariableNode(foo)])")
+        XCTAssertEqual(results[1].description, "LookupNode([VariableNode(bar, type:propertyOrItem, list:single), VariableNode(foo, type:propertyOrItem, list:single)])")
         XCTAssertEqual(
             results[2].description,
-            "LookupNode([VariableNode(bar), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo)]), rhs: NumberNode(10.0))])])"
+            "LookupNode([VariableNode(bar, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo, type:propertyOrItem, list:single)]), rhs: NumberNode(10.0))])])"
         )
 
         XCTAssertEqual(result as! Bool, true)
@@ -159,7 +159,7 @@ class ExprInterpreterTests: XCTestCase {
         )
         let result = try interpreter.execute()
 
-        XCTAssertEqual(result as! Bool, false)
+        XCTAssertEqual(result as! Bool, true)
     }
 
     func testStringEscaping() throws {
