@@ -23,12 +23,6 @@
     {
         "_type": "NavigationItem",
         "type": "item",
-        "title": "shopping notes",
-        "sessionName": "shopping-notes"
-    },
-    {
-        "_type": "NavigationItem",
-        "type": "item",
         "title": "people",
         "sessionName": "all-people"
     },

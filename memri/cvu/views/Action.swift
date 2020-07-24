@@ -8,9 +8,17 @@ import RealmSwift
 import SwiftUI
 
 extension MemriContext {
-    private func getItem(_ dict: [String: Any?]?, _: Item?) throws -> Item {
-        // TODO: refactor: move to function
-        guard let stringType = dict?["_type"] as? String else {
+    private func getItem(_ dict: [String: Any?]?) throws -> Item {
+        let realm = DatabaseController.getRealm()
+        
+        guard let dict = dict else {
+            throw "Missing properties"
+        }
+        
+        guard
+            let stringType = dict["_type"] as? String,
+            let schema = realm.schema[stringType]
+        else {
             throw "Missing type attribute to indicate the type of the data item"
         }
 
@@ -22,12 +30,32 @@ extension MemriContext {
             throw "Cannot find family \(stringType)"
         }
 
-        var values = dict ?? [:]
-        if let _ = dict?["uid"] as? Int {}
-        else { values.removeValue(forKey: "uid") }
-        values.removeValue(forKey: "_type")
-
-        return try Cache.createItem(ItemType, values: values)
+        var values = [String:Any?]()
+        var edges = [String:Any?]()
+        for (key, value) in dict {
+            if key == "_type" || key == "uid" { continue }
+            if schema[key] != nil { values[key] = value }
+            else if value is Item { edges[key] = value }
+            else if value is [Item] { edges[key] = value }
+            else {
+                throw "Passed invalid value as \(key)"
+            }
+        }
+        
+        let item = try Cache.createItem(ItemType, values: values)
+        
+        for (edgeType, value) in edges {
+            if let list = value as? [Item] {
+                for target in list {
+                    _ = try item.link(target, type: edgeType)
+                }
+            }
+            else if let target = value as? Item {
+                _ = try item.link(target, type: edgeType, distinct: true)
+            }
+        }
+        
+        return item
     }
 
     func buildArguments(
@@ -62,7 +90,7 @@ extension MemriContext {
                     finalValue = try ViewArguments(dict).resolve(item, viewArgs)
                 }
                 else if action.argumentTypes[argName] == ItemFamily.self {
-                    finalValue = try getItem(Expression.resolve(dict, viewArgs), item)
+                    finalValue = try getItem(Expression.resolve(dict, viewArgs))
                 }
                 else if action.argumentTypes[argName] == CVUStateDefinition.self {
                     let viewDef = CVUParsedViewDefinition("[\(argName)]")

@@ -49,7 +49,9 @@ class ActionsTests: XCTestCase {
         context.executeAction(action, with: item)
         
         let realm = DatabaseController.getRealm()
-        XCTAssertNotNil(realm.objects(IndexerRun.self).filter("name = '\(name)'").first)
+        let indexerRun = realm.objects(IndexerRun.self).filter("name = '\(name)'").first
+        XCTAssertNotNil(indexerRun)
+        XCTAssertNotNil(indexerRun?.indexer)
     }
 
     func testActionOpenSession() throws {
