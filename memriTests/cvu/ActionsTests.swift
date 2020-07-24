@@ -19,6 +19,38 @@ class ActionsTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    
+    func getExpr(_ context:RootContext, _ code:String) -> Expression {
+        return Expression(code,
+            startInStringMode: false,
+            lookup: context.views.lookupValueOfVariables,
+            execFunc: context.views.executeFunction)
+    }
+    
+    func testActionAddItem() throws {
+        guard let context = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
+        
+        try context.sessions.load(context)
+        
+        let name = UUID().uuidString
+        let item = try Cache.createItem(Indexer.self, values: [ "name": name])
+        let values:[String:[String:Any?]] = [
+            "template": [
+                "targetDataType": "Address",
+                "name": getExpr(context, ".name"),
+                "indexer": getExpr(context, "."),
+                "_type": "IndexerRun"
+            ]
+        ]
+        let action = ActionAddItem(context, values: values)
+        
+        context.executeAction(action, with: item)
+        
+        let realm = DatabaseController.getRealm()
+        XCTAssertNotNil(realm.objects(IndexerRun.self).filter("name = '\(name)'").first)
+    }
 
     func testActionOpenSession() throws {
         guard let context = try installer.installForTesting() else {

@@ -126,7 +126,8 @@ public class CascadableDict: Cascadable, Subscriptable {
         //       Currently the assumption is that tails never change.
         //       If they do, a copy is required
 
-        head.parsed = try Expression.resolve(head.parsed, viewArguments, dontResolveItems: true)
+        let args = ViewArguments(viewArguments, item)
+        head.parsed = try Expression.resolve(head.parsed, args, dontResolveItems: true)
         set(".", item)
 
         return self

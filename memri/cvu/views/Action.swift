@@ -62,7 +62,7 @@ extension MemriContext {
                     finalValue = try ViewArguments(dict).resolve(item, viewArgs)
                 }
                 else if action.argumentTypes[argName] == ItemFamily.self {
-                    finalValue = try getItem(Expression.resolve(dict, viewArguments), item)
+                    finalValue = try getItem(Expression.resolve(dict, viewArgs), item)
                 }
                 else if action.argumentTypes[argName] == CVUStateDefinition.self {
                     let viewDef = CVUParsedViewDefinition("[\(argName)]")
