@@ -64,11 +64,13 @@ enum CVUParseErrors: Error {
             message = "Missing expression close token '}}' \(loc(parts))"
         }
 
-        let lines = code.split(separator: "\n")
+        let lines = code.split(separator: "\n", omittingEmptySubsequences: false)
         if let line = parts[safe: 2] as? Int {
             let ch = parts[safe: 3] as? Int ?? 0
-            let beforeLines = lines[max(0, line - 10) ... max(0, line - 1)].joined(separator: "\n")
-            let afterLines = lines[line ... min(line + 10, lines.count)].joined(separator: "\n")
+            let beforeLines = lines[max(0, line - 10) ... max(0, line)].joined(separator: "\n")
+            let afterLines = line + 1 < lines.count - 1
+                ? lines[line + 1 ... min(line + 10, lines.count - 1)].joined(separator: "\n")
+                : ""
 
             return message + "\n\n"
                 + beforeLines + "\n"

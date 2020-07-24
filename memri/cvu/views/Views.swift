@@ -87,42 +87,42 @@ public class Views {
                 }
             }
 
-            try DatabaseController
-                .tryWriteSync { _ in // Start write transaction outside loop for performance reasons
-                    // Loop over lookup table with named views
-                    for def in parsedDefinitions {
-                        var values: [String: Any?] = [
-                            "domain": "defaults",
-                            "definition": def.description,
-                        ]
+            // Start write transaction outside loop for performance reasons
+            try DatabaseController.tryWriteSync { _ in
+                // Loop over lookup table with named views
+                for def in parsedDefinitions {
+                    var values: [String: Any?] = [
+                        "domain": "defaults",
+                        "definition": def.description,
+                    ]
 
-                        if def.selector != nil { values["selector"] = def.selector }
-                        if def.name != nil { values["name"] = def.name }
+                    if def.selector != nil { values["selector"] = def.selector }
+                    if def.name != nil { values["name"] = def.name }
 
-                        guard let selector = def.selector else {
-                            throw "Exception: selector on parsed CVU is not defined"
-                        }
-
-                        if def is CVUParsedViewDefinition {
-                            values["type"] = "view"
-                            //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
-                        }
-                        else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
-                        else if def is CVUParsedDatasourceDefinition {
-                            values["type"] = "datasource"
-                        }
-                        else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-                        else if def is CVUParsedColorDefinition { values["type"] = "color" }
-                        else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-                        else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-                        else if def is CVUParsedSessionDefinition { values["type"] = "session" }
-                        else { throw "Exception: unknown definition" }
-
-                        // Store definition
-                        _ = try Cache.createItem(CVUStoredDefinition.self, values: values,
-                                                 unique: "selector = '\(selector)' and domain = 'defaults'")
+                    guard let selector = def.selector else {
+                        throw "Exception: selector on parsed CVU is not defined"
                     }
+
+                    if def is CVUParsedViewDefinition {
+                        values["type"] = "view"
+                        //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
+                    }
+                    else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                    else if def is CVUParsedDatasourceDefinition {
+                        values["type"] = "datasource"
+                    }
+                    else if def is CVUParsedStyleDefinition { values["type"] = "style" }
+                    else if def is CVUParsedColorDefinition { values["type"] = "color" }
+                    else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
+                    else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
+                    else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+                    else { throw "Exception: unknown definition" }
+
+                    // Store definition
+                    _ = try Cache.createItem(CVUStoredDefinition.self, values: values,
+                                             unique: "selector = '\(selector)' and domain = 'defaults'")
                 }
+            }
         }
         catch {
             if let error = error as? CVUParseErrors {

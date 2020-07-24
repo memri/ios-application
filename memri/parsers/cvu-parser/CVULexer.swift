@@ -144,6 +144,8 @@ public class CVULexer {
             ch += 1
 
             if isMode.rawValue >= Mode.string.rawValue {
+                if c == "\n" { ln += 1; ch = 0 }
+                
                 if isMode == .escapedString {
                     keyword.append(String(c))
                     isMode = .string
@@ -186,6 +188,7 @@ public class CVULexer {
                 else {
                     keyword.append(String(c))
                     lastChar = c
+                    if c == "\n" { ln += 1; ch = 0 }
                 }
 
                 return
@@ -194,6 +197,7 @@ public class CVULexer {
             if isMode == .comment {
                 if c == "/", lastChar == "*" { isMode = .idle }
                 lastChar = c
+                if c == "\n" { ln += 1; ch = 0 }
                 return
             }
 

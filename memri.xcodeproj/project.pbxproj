@@ -185,6 +185,7 @@
 		8693205B24CAA1490030863D /* ActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205A24CAA1490030863D /* ActionsTests.swift */; };
 		8693205D24CAAC350030863D /* CascadableDictTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205C24CAAC350030863D /* CascadableDictTests.swift */; };
 		8693205F24CAAFDE0030863D /* ExpressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205E24CAAFDE0030863D /* ExpressionTests.swift */; };
+		8693206124CB0BF30030863D /* CVUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206024CB0BF30030863D /* CVUTests.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */; };
@@ -443,6 +444,7 @@
 		8693205A24CAA1490030863D /* ActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsTests.swift; sourceTree = "<group>"; };
 		8693205C24CAAC350030863D /* CascadableDictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CascadableDictTests.swift; sourceTree = "<group>"; };
 		8693205E24CAAFDE0030863D /* ExpressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionTests.swift; sourceTree = "<group>"; };
+		8693206024CB0BF30030863D /* CVUTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUTests.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema_original.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema_original.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -1066,6 +1068,7 @@
 				868EF63B24766AA100C0375F /* CVUParserTests.swift */,
 				86DDB363247AD0400051A92F /* CVUValidatorTests.swift */,
 				8693205E24CAAFDE0030863D /* ExpressionTests.swift */,
+				8693206024CB0BF30030863D /* CVUTests.swift */,
 			);
 			path = parsers;
 			sourceTree = "<group>";
@@ -1773,6 +1776,7 @@
 				861C52C524A5B24500B3230C /* installerTest.swift in Sources */,
 				86DDB364247AD0400051A92F /* CVUValidatorTests.swift in Sources */,
 				5DD17B6F241294E90018A8F1 /* AnyEncodable.swift in Sources */,
+				8693206124CB0BF30030863D /* CVUTests.swift in Sources */,
 				5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */,
 				5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */,
 				863D0E0824794D9000DAB6C8 /* ExprInterpreterTests.swift in Sources */,
