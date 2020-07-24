@@ -6,6 +6,8 @@ import ASCollectionView
 import SwiftUI
 
 struct NavigationWrapper<Content: View>: View {
+    @EnvironmentObject var context: MemriContext
+
     init(isVisible: Binding<Bool>, @ViewBuilder content: () -> Content) {
         _isVisible = isVisible
         self.content = content()
@@ -61,7 +63,10 @@ struct NavigationWrapper<Content: View>: View {
             Color.clear
                 .contentShape(Rectangle())
                 .frame(minWidth: 10, maxWidth: 10, maxHeight: .infinity)
-                .simultaneousGesture(navigationDragGesture)
+                .simultaneousGesture(
+                    navigationDragGesture,
+                    including: (context.currentView?.fullscreen == true) ? .none : .all
+                )
             if isVisible || offset > 0 {
                 Color.black
                     .opacity(fractionVisible(geom) * 0.5)

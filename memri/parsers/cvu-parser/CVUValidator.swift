@@ -59,7 +59,7 @@ class CVUValidator {
             }
         }
 
-        for (key, value) in element.properties {
+        for (key, value) in element.propertyResolver.properties {
             if let prop = UIElementProperties(rawValue: key) {
                 if key == "frame" {
                     if let list = value as? [Any?] {

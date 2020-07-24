@@ -59,13 +59,8 @@ struct ThumbWaterfallRendererView: View {
                 GeometryReader { geom in
                     self.renderConfig.render(item: dataItem)
                         .environmentObject(self.context)
-                        .onTapGesture {
-                            if let press = self.renderConfig.press {
-                                self.context.executeAction(press, with: dataItem)
-                            }
-                        }
                         .frame(width: geom.size.width, height: geom.size.height)
-                        //                        .opacity(state.isSelected ? 0.7 : 1.0)
+                        .opacity(state.isSelected ? 0.7 : 1.0)
                         .clipped()
                 }
 
@@ -81,8 +76,6 @@ struct ThumbWaterfallRendererView: View {
                     .padding(10)
                 }
             }
-            //            .frame(width: geom.size.width, height: geom.size.height)
-            //            .clipped()
         }
         .onSelectSingle { index in
             if let press = self.renderConfig.press {

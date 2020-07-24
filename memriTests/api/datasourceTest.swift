@@ -1,5 +1,5 @@
 //
-// datasourceTest.swift
+// DatasourceTest.swift
 // Copyright © 2020 memri. All rights reserved.
 
 @testable import memri

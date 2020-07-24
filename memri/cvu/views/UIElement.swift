@@ -10,16 +10,16 @@ public class UIElement: CVUToString {
     var id = UUID()
     var type: UIElementFamily
     var children: [UIElement] = []
-    var properties: [String: Any?] = [:] // TODO: ViewParserDefinitionContext
+    var propertyResolver = CVUPropertyResolver()
 
     init(_ type: UIElementFamily, children: [UIElement]? = nil, properties: [String: Any?] = [:]) {
         self.type = type
         self.children = children ?? self.children
-        self.properties = properties
+        propertyResolver = CVUPropertyResolver(properties: properties)
     }
 
     public func has(_ propName: String) -> Bool {
-        properties[propName] != nil
+        propertyResolver.properties[propName] != nil
     }
 
     public func getString(_ propName: String, _ item: Item? = nil) -> String {
@@ -37,7 +37,7 @@ public class UIElement: CVUToString {
     ) -> T? {
         let args = viewArguments ?? ViewArguments([".": item])
 
-        if let prop = properties[propName] {
+        if let prop = propertyResolver.properties[propName] {
             let propValue = prop
 
             // Execute expression to get the right value
@@ -90,7 +90,7 @@ public class UIElement: CVUToString {
         _ item: Item,
         _ viewArguments: ViewArguments
     ) -> (PropertyType, Item, String) {
-        if let prop = properties[propName] {
+        if let prop = propertyResolver.properties[propName] {
             let propValue = prop
 
             // Execute expression to get the right value
@@ -123,9 +123,10 @@ public class UIElement: CVUToString {
     }
 
     func toCVUString(_ depth: Int, _ tab: String) -> String {
-        let tabs = Array(0 ..< depth + 1).map { _ in "" }.joined(separator: tab)
-        let tabsPlus = Array(0 ..< depth + 2).map { _ in "" }.joined(separator: tab)
+		let tabs = Array(0 ..< depth + 1).map { _ in "" }.joined(separator: tab)
+		let tabsPlus = Array(0 ..< depth + 2).map { _ in "" }.joined(separator: tab)
         //        let tabsEnd = Array(0..<depth - 1).map{_ in ""}.joined(separator: tab)
+        let properties = propertyResolver.properties
 
         return properties.count > 0 || children.count > 0
             ? "\(type) {\n"
@@ -187,7 +188,7 @@ public enum UIElementProperties: String, CaseIterable {
         case .address: return value is Address
         case .value: return true
         case .datasource: return value is Datasource
-        case .color, .background, .rowbackground: return value is Color
+        case .color, .background, .rowbackground: return value is ColorDefinition
         case .font:
             if let list = value as? [Any?] {
                 return list[0] is CGFloat || list[0] is CGFloat && list[1] is Font.Weight
@@ -201,12 +202,12 @@ public enum UIElementProperties: String, CaseIterable {
             else { return value is CGFloat }
         case .border:
             if let list = value as? [Any?] {
-                return list[0] is Color && list[1] is CGFloat
+                return list[0] is ColorDefinition && list[1] is CGFloat
             }
             else { return false }
         case .shadow:
             if let list = value as? [Any?] {
-                return list[0] is Color && list[1] is CGFloat
+                return list[0] is ColorDefinition && list[1] is CGFloat
                     && list[2] is CGFloat && list[3] is CGFloat
             }
             else { return false }

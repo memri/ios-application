@@ -187,30 +187,22 @@ Person {
         profilePicture {
             showTitle: false
         
-            ZStack {
+            HStack {
                 alignment: center
-            
-                Image {
-                    image: {{.profilePicture}}
-                    border: #ccc 1
-                    resizable: fill
-                    minHeight: 250
-                    maxHeight: 250
-                    opacity: 0.6
-                    align: center
-                }
+				minHeight: 180
+				maxHeight: 180
                 
                 ZStack {
                     border: #fff 27
                     padding: 12
                     maxWidth: 140
                     maxHeight: 140
-                    cornerRadius: 100
                     align: center
                 
                     Image {
                         image: {{.profilePicture}}
                         resizable: fill
+						cornerRadius: 100
                     }
                     
                     HStack {
@@ -246,6 +238,11 @@ Person {
                         }
                     }
                 }
+				
+				Text {
+					font: 20 bold
+					text: "{.firstName} {.lastName}"
+				}
             }
         }
         
@@ -371,10 +368,6 @@ Person[] {
                 alignment: center
                 
                 ZStack {
-                    padding: 12
-                    maxWidth: 25
-                    maxHeight: 25
-                    cornerRadius: 30
                     align: center
                     margin: 5 15 9 0
                 
@@ -383,6 +376,9 @@ Person[] {
                         resizable: fill
                         minHeight: 60
                         maxHeight: 60
+						minWidth: 60
+						maxWidth: 60
+						cornerRadius: 30
                     }
                 }
             
@@ -415,7 +411,7 @@ Person[] {
             Image {
                 image: {{.profilePicture}}
                 cornerRadius: 10
-                resizable: fit
+                resizable: fill
             }
             Text {
                 text: "{.firstName} {.lastName}"

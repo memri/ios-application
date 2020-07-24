@@ -11,7 +11,7 @@ protocol CVUToString: CustomStringConvertible {
 
 class CVUSerializer {
     class func valueToString(_ value: Any?, _ depth: Int = 0, _ tab: String = "    ") -> String {
-        if value == nil /*|| (value as? String != "nil") && "\(value!)" == "nil"*/ {
+        if value == nil /* || (value as? String != "nil") && "\(value!)" == "nil" */ {
             return "null"
         }
         else if let p = value {
@@ -35,9 +35,12 @@ class CVUSerializer {
                 let uid = p.uid.value {
                 return "{{ item(\(p.genericType), \(uid)) }}"
             }
-            else if let p = p as? Color {
-                return String(p.description.lowercased().prefix(7))
+			else if case let ColorDefinition.hex(hex) = p {
+				return hex
             }
+			else if case let ColorDefinition.system(uiColor) = p {
+				return uiColor.hexString()
+			}
             else if let p = p as? Double {
                 if p.truncatingRemainder(dividingBy: 1) == 0 {
                     return "\(Int(p))"
@@ -182,7 +185,7 @@ class CVUSerializer {
                 let value = dict[key]
                 let isDef = value is CVUParsedDefinition
                 let dict = (value as? CVUParsedDefinition)?.parsed
-                
+
                 if !isDef || dict != nil && dict?.count ?? 0 > 0 {
                     if let p = value as? [String: Any?] {
                         str.append((extraNewLine ? "\n" + (withDef ? tabs : tabsEnd) : "")

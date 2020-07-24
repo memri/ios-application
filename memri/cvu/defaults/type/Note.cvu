@@ -115,6 +115,7 @@ Note[] {
             HStack {
                 Text {
                     text: {{.title or "Untitled Note"}}
+					lineLimit: 1
                     font: 18 semibold
                     color: #333
                     padding: 0 0 0 0
@@ -129,6 +130,7 @@ Note[] {
             }
             Text {
                 text: "{.content.plainString}"
+				lineLimit: 1
                 removeWhiteSpace: true
                 maxChar: 100
                 color: #555
@@ -136,6 +138,7 @@ Note[] {
             }
             Text {
                 text: "{.dateModified}"
+				lineLimit: 1
                 font: 11 regular
                 color: #888
                 padding: 0 0 0 0

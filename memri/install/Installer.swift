@@ -21,7 +21,7 @@ public class Installer: ObservableObject {
     }
 
     public func await(_ callback: @escaping () throws -> Void) throws {
-        if isInstalled && !debugMode{
+        if isInstalled && !debugMode {
             try callback()
             return
         }
@@ -31,11 +31,11 @@ public class Installer: ObservableObject {
 
     public func ready() {
         isInstalled = true
-        
+
         _ = DatabaseController.writeSync { realm in
             realm.create(AuditItem.self, value: ["uid": -2], update: .modified)
         }
-        
+
         do {
             try readyCallback()
             readyCallback = {}
@@ -44,17 +44,17 @@ public class Installer: ObservableObject {
             debugHistory.error("\(error)")
         }
     }
-    
-    public func installForTesting(boot:Bool = true) throws {
+
+    public func installForTesting(boot: Bool = true) throws {
         if !isInstalled {
             let root = try RootContext(name: "", key: "")
-            
+
             try await {
                 if boot {
                     try root.boot(isTesting: true)
                 }
             }
-            
+
             installDefaultDatabase(root)
         }
     }
@@ -100,7 +100,7 @@ public class Installer: ObservableObject {
 
         ready()
     }
-    
+
     public func continueAsNormal(_ context: MemriContext) {
         debugMode = false
         context.scheduleUIUpdate(immediate: true)

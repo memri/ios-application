@@ -1,5 +1,5 @@
 //
-// ModelTest.swift
+// ModelTests.swift
 // Copyright © 2020 memri. All rights reserved.
 
 @testable import memri

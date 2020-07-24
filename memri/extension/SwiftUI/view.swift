@@ -83,9 +83,9 @@ extension View {
             break
         case "shadow":
             if let value = value as? [Any] {
-                if let c = value[0] as? Color, let r = value[1] as? CGFloat,
+                if let c = value[0] as? ColorDefinition, let r = value[1] as? CGFloat,
                     let x = value[2] as? CGFloat, let y = value[3] as? CGFloat {
-                    return AnyView(shadow(color: c, radius: r, x: x, y: y))
+                    return AnyView(shadow(color: c.color, radius: r, x: x, y: y))
                 }
                 else {
                     print("Exception: Invalid values for shadow")
@@ -116,30 +116,31 @@ extension View {
                 return AnyView(opacity(Double(value)))
             }
         case "color":
-            if let color = value as? Color {
-                return AnyView(foregroundColor(color)) // TODO: named colors do not work
+            if let color = value as? String {
+                return AnyView(foregroundColor(Color(hex: color)))
             }
-            else if let color = value as? String {
-                return AnyView(foregroundColor(Color(hex: color))) // TODO: named colors do not work
+        case "lineLimit":
+            if let lineLimit = value as? Int {
+                return AnyView(self.lineLimit(lineLimit))
             }
         case "background":
-            if let color = value as? Color {
-                return AnyView(background(color)) // TODO: named colors do not work
+            if let color = value as? ColorDefinition {
+                return AnyView(background(color.color)) // TODO: named colors do not work
             }
             else if let color = value as? String {
                 return AnyView(background(Color(hex: color))) // TODO: named colors do not work
             }
         case "rowbackground":
-            if let color = value as? Color {
-                return AnyView(listRowBackground(color)) // TODO: named colors do not work
+            if let color = value as? ColorDefinition {
+                return AnyView(listRowBackground(color.color)) // TODO: named colors do not work
             }
             else if let color = value as? String {
                 return AnyView(listRowBackground(Color(hex: color))) // TODO: named colors do not work
             }
         case "border":
             if let value = value as? [Any?] {
-                if let color = value[0] as? Color {
-                    return AnyView(border(color, width: value[1] as? CGFloat ?? 1.0))
+                if let color = value[0] as? ColorDefinition {
+                    return AnyView(border(color.color, width: value[1] as? CGFloat ?? 1.0))
                 }
                 else {
                     print("FIX BORDER HANDLING2")
@@ -163,10 +164,10 @@ extension View {
             else {}
         case "cornerborder":
             if let value = value as? [Any?] {
-                if let color = value[0] as? Color {
+                if let color = value[0] as? ColorDefinition {
                     return AnyView(overlay(
                         RoundedRectangle(cornerRadius: value[2] as? CGFloat ?? 1.0)
-                            .stroke(color, lineWidth: value[1] as? CGFloat ?? 1.0)
+                            .stroke(color.color, lineWidth: value[1] as? CGFloat ?? 1.0)
                             .padding(1)
                     ))
                 }
