@@ -93,27 +93,20 @@ public class ResultSet: ObservableObject {
     /// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
     /// - Throws: empty query error
     func load(syncWithRemote: Bool = true, _ callback: (_ error: Error?) throws -> Void) throws {
-        // Only execute one loading process at the time
         if !isLoading {
-            // Validate datasource
             if datasource.query == "" {
                 throw "Exception: No query specified when loading result set"
             }
 
-            // Set state to loading
             isLoading = true
 
-            // Make sure the loading state is updated in the UI
             updateUI()
 
-            // Execute the query
             try cache.query(datasource, syncWithRemote: syncWithRemote) { (error, result) -> Void in
                 if let result = result {
-                    // Set data and count
                     items = result
                     count = items.count
 
-                    // Resapply filter
                     if _unfilteredItems != nil {
                         _unfilteredItems = nil
                         filter()
@@ -122,21 +115,16 @@ public class ResultSet: ObservableObject {
                     // We've successfully loaded page 0
                     setPagesLoaded(0) // TODO: This is not used at the moment
 
-                    // First time loading is done
                     isLoading = false
 
-                    // Done
                     try callback(nil)
                 }
                 else if error != nil {
-                    // Set loading state to error
                     isLoading = false
 
-                    // Done with errors
                     try callback(error)
                 }
 
-                // Make sure the loading state is updated in the UI
                 updateUI()
             }
         }

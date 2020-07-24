@@ -10,8 +10,12 @@ class ItemReference {
     let type: Item.Type
 
     init(to: Item) {
-        uid = to.uid.value ?? -1
-        type = to.getType() ?? Item.self
+        guard let uid = to.uid.value, let type = to.getType(), to.realm != nil else {
+            fatalError("Trying to get a reference to an item that is not in realm or has no uid")
+        }
+        
+        self.uid = uid
+        self.type = type
     }
 
     func resolve() -> Item? {
@@ -25,9 +29,18 @@ class EdgeReference {
     let targetItemID: Int
 
     init(to: Edge) {
-        type = to.type ?? ""
-        sourceItemID = to.sourceItemID.value ?? -1
-        targetItemID = to.targetItemID.value ?? -1
+        guard
+            let type = to.type,
+            let targetItemID = to.targetItemID.value,
+            let sourceItemID = to.sourceItemID.value,
+            to.realm != nil
+        else {
+            fatalError("Trying to get a reference to an edge that is not in realm or has no uid")
+        }
+        
+        self.type = type
+        self.sourceItemID = sourceItemID
+        self.targetItemID = targetItemID
     }
 
     func resolve() -> Edge? {
@@ -237,6 +250,31 @@ class DatabaseController {
                 }
                 catch {
                     debugHistory.error("Realm Error: \(error)")
+                }
+            }
+        }
+    }
+    
+    static func clean() {
+        #warning("@Toby, deleting here on realm doesnt remove them from the db and thus this is called every time. Any idea why?")
+        DatabaseController.writeSync { realm in
+            for itemType in ItemFamily.allCases {
+                if itemType == .typeUserState { continue }
+
+                if let type = itemType.getType() as? Item.Type {
+                    let items = realm.objects(type).filter("_action == nil and deleted = true")
+                    for item in items {
+//                        item.allEdges.forEach { edge in
+//                            realm.delete(edge)
+//                        }
+                        realm.delete(item.allEdges)
+                        realm.delete(item)
+                    }
+                }
+                
+                let edges = realm.objects(Edge.self).filter("_action == nil and deleted = true")
+                for edge in edges {
+                    realm.delete(edge)
                 }
             }
         }

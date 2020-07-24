@@ -352,6 +352,10 @@ public class RootContext: MemriContext {
     }
 
     public func boot(isTesting:Bool = false, _ callback: (() -> Void)? = nil) throws {
+        if !isTesting {
+            DatabaseController.clean()
+        }
+        
         #if targetEnvironment(simulator)
             if !isTesting {
                 // Reload for easy adjusting

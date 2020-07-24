@@ -221,7 +221,7 @@ class Sync {
                             let item = item as? ItemReference,
                             let resolvedItem = item.resolve() {
                             if resolvedItem._action == "delete" {
-                                realm.delete(resolvedItem)
+                                resolvedItem._action = nil
                             }
                             else {
                                 resolvedItem._action = nil
@@ -232,7 +232,7 @@ class Sync {
                             let item = item as? EdgeReference,
                             let resolvedItem = item.resolve() {
                             if resolvedItem._action == "delete" {
-                                realm.delete(resolvedItem)
+                                resolvedItem._action = nil
                             }
                             else {
                                 resolvedItem._action = nil
