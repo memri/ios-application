@@ -182,6 +182,7 @@
 		86911E8A24C60647009AC8B1 /* Location.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 86911E8924C60647009AC8B1 /* Location.cvu */; };
 		8693205724C9DE0B0030863D /* DatabaseControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205624C9DE0B0030863D /* DatabaseControllerTests.swift */; };
 		8693205924C9DE970030863D /* FileStorageControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205824C9DE970030863D /* FileStorageControllerTests.swift */; };
+		8693205B24CAA1490030863D /* ActionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205A24CAA1490030863D /* ActionsTests.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */; };
@@ -433,6 +434,7 @@
 		86911E8924C60647009AC8B1 /* Location.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Location.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		8693205624C9DE0B0030863D /* DatabaseControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseControllerTests.swift; sourceTree = "<group>"; };
 		8693205824C9DE970030863D /* FileStorageControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileStorageControllerTests.swift; sourceTree = "<group>"; };
+		8693205A24CAA1490030863D /* ActionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsTests.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema_original.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema_original.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -601,6 +603,7 @@
 			children = (
 				5DB8EBFE24598E1E0028FD2E /* ViewsTest.swift */,
 				5DB8EC0A24599A080028FD2E /* CascadableViewTest.swift */,
+				8693205A24CAA1490030863D /* ActionsTests.swift */,
 			);
 			path = cvu;
 			sourceTree = "<group>";
@@ -1757,6 +1760,7 @@
 				5DD17B5E2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				5D3D962424168C810004040E /* AnyCodable.swift in Sources */,
 				5D487F272440776700B50202 /* ItemRendererTest.swift in Sources */,
+				8693205B24CAA1490030863D /* ActionsTests.swift in Sources */,
 				5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */,
 				5D4768E4247D274800008CA2 /* NoteTest.swift in Sources */,
 				5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */,

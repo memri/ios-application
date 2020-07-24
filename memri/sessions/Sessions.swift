@@ -157,6 +157,25 @@ public final class Sessions: ObservableObject, Equatable {
 
         schedulePersist()
     }
+    
+    public func setCurrentSession(_ session: Session) throws {
+        // If the session already exists, we simply update the session index
+        if let index = sessions.firstIndex(where: { s in
+            s.uid == session.uid
+        }) {
+            currentSessionIndex = index
+        }
+        // Otherwise lets create a new session
+        else {
+            // Add session to list
+            sessions.append(session)
+            currentSessionIndex = sessions.count - 1
+        }
+
+        session.state?.accessed()
+
+        schedulePersist()
+    }
 
     private var persistSubject = PassthroughSubject<Void, Never>()
     private var persistCancellable: AnyCancellable?

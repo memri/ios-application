@@ -65,7 +65,7 @@ extension MemriContext {
                     finalValue = try getItem(Expression.resolve(dict, viewArguments), item)
                 }
                 else if action.argumentTypes[argName] == CVUStateDefinition.self {
-                    let viewDef = CVUParsedViewDefinition("[view]")
+                    let viewDef = CVUParsedViewDefinition("[\(argName)]")
                     viewDef.parsed = dict
                     finalValue = try CVUStateDefinition.fromCVUParsedDefinition(viewDef)
                 }
@@ -1015,6 +1015,13 @@ class ActionOpenSession: Action, ActionExec {
         try sessions.setCurrentSession(session)
         try sessions.currentSession?.setCurrentView(nil, args)
     }
+    
+    func openSession(_ session: Session, _ args: ViewArguments? = nil) throws {
+        let sessions = context.sessions
+
+        try sessions.setCurrentSession(session)
+        try sessions.currentSession?.setCurrentView(nil, args)
+    }
 
     //    func openSession(_ context: MemriContext, _ name:String, _ variables:[String:Any]? = nil) throws {
 //
@@ -1035,9 +1042,12 @@ class ActionOpenSession: Action, ActionExec {
             if let session = item as? CVUStateDefinition {
                 try openSession(session, args)
             }
+            else if let session = item as? Session {
+                try openSession(session, args)
+            }
             else {
                 // TODO: Error handling
-                throw "Cannot execute openSession 'session' argmument cannot be casted to Session"
+                throw "Cannot execute openSession 'session' argmument cannot be cast to Session"
             }
         }
         else {
