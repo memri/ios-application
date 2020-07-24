@@ -64,12 +64,12 @@ public class Views {
 
     // TODO: Refactor: distinguish between views and sessions
     // Load the default views from the package
-    public func install() throws {
+    public func install(overrideCodeForTesting:String? = nil) throws {
         guard let context = context else {
             throw "Context is not set"
         }
 
-        let code = getDefaultViewContents()
+        let code = overrideCodeForTesting ?? getDefaultViewContents()
 
         do {
             let cvu = CVU(code, context, lookup: lookupValueOfVariables, execFunc: executeFunction)

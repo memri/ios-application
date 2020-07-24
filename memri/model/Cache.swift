@@ -6,8 +6,6 @@ import Combine
 import Foundation
 import RealmSwift
 
-var cacheUIDCounter: Int = -1
-
 public class Cache {
     /// PodAPI object
     var podAPI: PodAPI
@@ -197,10 +195,12 @@ public class Cache {
 
                 // Query based on a simple format:
                 // Query format: <type><space><filter-text>
-                let queryType = ItemFamily.getType(type)
+                guard let queryType = ItemFamily.getType(type)() as? Object.Type else {
+                    throw "Unknown type \(type)"
+                }
                 //                let t = queryType() as! Object.Type
 
-                var result = realm.objects(queryType() as! Object.Type)
+                var result = realm.objects(queryType)
                     .filter("deleted = false " + (filter ?? ""))
 
                 if let sortProperty = datasource.sortProperty, sortProperty != "" {
@@ -425,6 +425,8 @@ public class Cache {
         1_000_000_000
     }
 
+    static var cacheUIDCounter: Int = -1
+    
     public class func incrementUID() throws -> Int {
         DatabaseController.writeSync { realm in
             if cacheUIDCounter == -1 {

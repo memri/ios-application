@@ -48,6 +48,13 @@ public class Installer: ObservableObject {
     private var testRoot: RootContext? = nil
     public func installForTesting(boot:Bool = true) throws -> RootContext? {
         if testRoot == nil {
+            DatabaseController.realmTesting = true
+            
+            let realm = DatabaseController.getRealm()
+            if let _ = realm.object(ofType: AuditItem.self, forPrimaryKey: -2) {
+                isInstalled = true
+            }
+            
             testRoot = try RootContext(name: "", key: "")
             
             try await {
@@ -57,7 +64,10 @@ public class Installer: ObservableObject {
             }
             
             if isInstalled { ready() }
-            else { installDefaultDatabase(testRoot!) }
+            else {
+                clearDatabase(testRoot!)
+                installDefaultDatabase(testRoot!)
+            }
         }
         
         return testRoot
@@ -115,6 +125,8 @@ public class Installer: ObservableObject {
         DatabaseController.writeSync { realm in
             realm.deleteAll()
         }
+        
+        Cache.cacheUIDCounter = -1
 
         isInstalled = false
         debugMode = false

@@ -6,12 +6,8 @@
 import XCTest
 
 class installerTest: XCTestCase {
-    override init() {
-        super.init()
-
-        DatabaseController.realmTesting = true
-    }
-
+    var installer = Installer()
+    
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -21,9 +17,12 @@ class installerTest: XCTestCase {
     }
 
     func testClearDatabase() throws {
+        guard let context = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
+        
         // Delete DB
-        let root = try RootContext(name: "", key: "")
-        root.installer.clearDatabase(root)
+        installer.clearDatabase(context)
 
         let item = try Cache.createItem(AuditItem.self, values: ["json": "1"])
         guard let uid = item.uid.value, let _ = getItem("AuditItem", uid) else {
@@ -31,7 +30,7 @@ class installerTest: XCTestCase {
             return
         }
 
-        root.installer.clearDatabase(root)
+        installer.clearDatabase(context)
 
         if let _ = getItem("AuditItem", uid) {
             XCTFail("Failed clearing the database")
@@ -39,41 +38,50 @@ class installerTest: XCTestCase {
     }
 
     func testInstallDefaultDatabase() throws {
+        guard let context = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
+        
         // Delete DB
-        let root = try RootContext(name: "", key: "")
-        root.installer.clearDatabase(root)
+        installer.clearDatabase(context)
 
         // Install default db
-        root.installer.installDefaultDatabase(root)
+        installer.installDefaultDatabase(context)
 
         let realm = DatabaseController.getRealm()
         XCTAssertTrue(realm.objects(CVUStoredDefinition.self).count > 20)
     }
 
     func testInstallDemoDatabase() throws {
+        guard let context = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
+        
         // Delete DB
-        let root = try RootContext(name: "", key: "")
-        root.installer.clearDatabase(root)
+        installer.clearDatabase(context)
 
         // Install default db
-        root.installer.installDemoDatabase(root)
+        installer.installDemoDatabase(context)
 
         let realm = DatabaseController.getRealm()
         XCTAssertTrue(realm.objects(CVUStoredDefinition.self).count > 20)
     }
 
     func testClearSessions() throws {
+        guard let context = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
+        
         // Delete DB
-        let root = try RootContext(name: "", key: "")
-        root.installer.clearDatabase(root)
+        installer.clearDatabase(context)
 
         // Install default db
-        root.installer.installDefaultDatabase(root)
+        installer.installDefaultDatabase(context)
 
-        let uid = root.sessions.state?.uid.value
+        let uid = context.sessions.state?.uid.value
 
-        root.installer.clearSessions(root)
+        installer.clearSessions(context)
 
-        XCTAssertNotEqual(root.sessions.state?.uid.value, uid)
+        XCTAssertNotEqual(context.sessions.state?.uid.value, uid)
     }
 }

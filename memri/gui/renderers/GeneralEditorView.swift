@@ -71,7 +71,7 @@ struct GeneralEditorLayoutItem {
             }
             catch {
                 // TODO: Refactor error handling
-                debugHistory.error("Could note compute layout property \(propName)\n"
+                debugHistory.error("Could not compute layout property \(propName)\n"
                     + "Arguments: [\(viewArguments?.description ?? "")]\n"
                     + (expr.startInStringMode
                         ? "Expression: \"\(expr.code)\"\n"

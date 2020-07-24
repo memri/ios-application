@@ -597,7 +597,7 @@ public class Item: SchemaItem {
         // Compare all updated properties and make sure they are the same
         #warning("properly implement this for edges")
         for fieldName in updatedFields {
-            if !isEqualProperty(fieldName, item) { return false }
+            if item[fieldName] != nil && !isEqualProperty(fieldName, item) { return false }
         }
 
         // Merge with item
@@ -673,19 +673,25 @@ public class Item: SchemaItem {
 
     /// update the dateAccessed property to the current date
     public func modified(_ updatedFields: [String]) {
+        if self._action != "create" {
+            // Make sure that in between updates to this item are processed correctly
+            DatabaseController.writeSync { realm in
+                for field in updatedFields {
+                    if !self._updated.contains(field) {
+                        self._updated.append(field)
+                    }
+                }
+                self._action = "update"
+            }
+        }
+        
         let safeSelf = ItemReference(to: self)
         DatabaseController.writeAsync { _ in
             guard let item = safeSelf.resolve() else { return }
 
             let previousModified = item.dateModified
             item.dateModified = Date()
-
-            for field in updatedFields {
-                if !item._updated.contains(field) {
-                    item._updated.append(field)
-                }
-            }
-
+            
             if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
                 #warning("Test that .last gives the last added audit item")
                 if

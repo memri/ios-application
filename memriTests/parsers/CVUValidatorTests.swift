@@ -186,7 +186,9 @@ class CVUValidatorTests: XCTestCase {
                 }
                 openSessionByName {
                     title: "{$all} {type.lowercased().plural()}"
-                    sessionName: "all-{type}"
+                    arguments: {
+                        sessionName: "all-{type}"
+                    }
                 }
             ]
         }
@@ -198,7 +200,7 @@ class CVUValidatorTests: XCTestCase {
 
         validator.debug()
 
-        XCTAssertEqual(validator.errors.count, 1)
+        XCTAssertEqual(validator.errors.count, 2)
         XCTAssertEqual(validator.warnings.count, 1)
     }
 

@@ -24,7 +24,7 @@ class CVUParserTests: XCTestCase {
     }
 
     private func parseToCVUString(_ snippet: String) throws -> String {
-        toCVUString(try parse(snippet))
+        toCVUString(try parse(snippet)).replace(#"\n\s+\n"#, "\n\n")
     }
 
     func testColorDefinition() throws {
@@ -678,7 +678,6 @@ class CVUParserTests: XCTestCase {
                 }
 
                 Spacer
-
 
                 Text {
                     maxheight: 500
