@@ -119,7 +119,10 @@ class ExprInterpreterTests: XCTestCase {
             results[0].description,
             "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single), VariableNode(bar, type:propertyOrItem, list:single)])"
         )
-        XCTAssertEqual(results[1].description, "LookupNode([VariableNode(bar, type:propertyOrItem, list:single), VariableNode(foo, type:propertyOrItem, list:single)])")
+        XCTAssertEqual(
+            results[1].description,
+            "LookupNode([VariableNode(bar, type:propertyOrItem, list:single), VariableNode(foo, type:propertyOrItem, list:single)])"
+        )
         XCTAssertEqual(
             results[2].description,
             "LookupNode([VariableNode(bar, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(foo, type:propertyOrItem, list:single)]), rhs: NumberNode(10.0))])])"

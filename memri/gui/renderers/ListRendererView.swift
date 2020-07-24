@@ -52,8 +52,9 @@ class CascadingListConfig: CascadingRenderConfig, CascadingRendererDefaults {
     }
 
     public func setDefaultValues(_ element: UIElement) {
-        if element.properties["padding"] == nil {
-            element.properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
+        if element.propertyResolver.properties["padding"] == nil {
+            element.propertyResolver
+                .properties["padding"] = [CGFloat(10), CGFloat(10), CGFloat(10), CGFloat(20)]
         }
     }
 }

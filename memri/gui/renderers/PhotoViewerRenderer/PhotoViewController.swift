@@ -9,16 +9,19 @@ import UIKit
 struct PhotoViewerView: UIViewControllerRepresentable {
     var photoItemProvider: (Int) -> PhotoViewerController.PhotoItem?
     var initialIndex: Int
+    var onToggleOverlayVisibility: ((Bool) -> Void)?
 
     func makeUIViewController(context: Context) -> PhotoViewerController {
         let vc = PhotoViewerController()
         vc.initialIndex = initialIndex
         vc.photoItemProvider = photoItemProvider
+        vc.onToggleOverlayVisibility = onToggleOverlayVisibility
         return vc
     }
 
     func updateUIViewController(_ photosController: PhotoViewerController, context: Context) {
         photosController.photoItemProvider = photoItemProvider
+        photosController.onToggleOverlayVisibility = onToggleOverlayVisibility
     }
 }
 
@@ -29,8 +32,9 @@ class PhotoViewerController: UIViewController {
         var overlay: AnyView
     }
 
-    var initialIndex: Int = 0
     var photoItemProvider: (Int) -> PhotoViewerController.PhotoItem? = { _ in nil }
+    var initialIndex: Int = 0
+    var onToggleOverlayVisibility: ((Bool) -> Void)?
 
     let pageViewController = UIPageViewController(
         transitionStyle: .scroll,
@@ -53,7 +57,12 @@ class PhotoViewerController: UIViewController {
         _overlayVisible ? .systemBackground : .black
     }
 
-    var _overlayVisible: Bool = true
+    var _overlayVisible: Bool = true {
+        didSet {
+            onToggleOverlayVisibility?(_overlayVisible)
+        }
+    }
+
     func toggleOverlayVisibleAnimated(animated: Bool) {
         _overlayVisible.toggle()
         if animated {
@@ -74,6 +83,7 @@ class PhotoViewerController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.clipsToBounds = true
         pageViewController.willMove(toParent: self)
         view.addSubview(pageViewController.view)
         addChild(pageViewController)
@@ -115,11 +125,22 @@ class PhotoViewerController: UIViewController {
         }
     }
 
+    var forceFullHeight: Bool = true
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         let preferredOverlaySize = overlayViewController
             .sizeThatFits(in: CGSize(width: view.bounds.width, height: UIView.noIntrinsicMetric))
-        pageViewController.view.frame = view.bounds
+
+        let verticalFrame = forceFullHeight ?
+            (view.window.map { self.view.convert($0.bounds, from: $0) } ?? view.bounds) : view
+            .bounds
+
+        pageViewController.view.frame = CGRect(
+            x: view.bounds.origin.x,
+            y: verticalFrame.origin.y,
+            width: view.bounds.width,
+            height: verticalFrame.height
+        )
         overlayViewController.view.frame = CGRect(
             x: 0,
             y: view.bounds.height - preferredOverlaySize.height,
@@ -236,6 +257,7 @@ class PhotoScalingView: UIScrollView {
 
     init() {
         super.init(frame: .zero)
+        decelerationRate = .fast
         addSubview(imageView)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

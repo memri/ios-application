@@ -5,8 +5,8 @@
 @testable import memri
 import XCTest
 
-// TODO move to integration tests
-//class contextTest: XCTestCase {
+// TODO: move to integration tests
+// class contextTest: XCTestCase {
 ////    static var doneSetup:Bool = false
 ////    private let setUp: Void = {
 ////        guard !contextTest.doneSetup else { return }
@@ -81,4 +81,4 @@ import XCTest
 //    //            // Put the code you want to measure the time of here.
 //    //        }
 //    //    }
-//}
+// }

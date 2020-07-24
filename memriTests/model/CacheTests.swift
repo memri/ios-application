@@ -1,5 +1,5 @@
 //
-// CacheTest.swift
+// CacheTests.swift
 // Copyright © 2020 memri. All rights reserved.
 
 @testable import memri
@@ -25,7 +25,7 @@ class CacheTests: XCTestCase {
 
     func testCacheInstall() throws {
         installer.installForTesting()
-        
+
         let realm = DatabaseController.getRealm()
         XCTAssertTrue(realm.objects(Country.self).count > 0)
     }
