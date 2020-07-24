@@ -21,7 +21,7 @@ public class Installer: ObservableObject {
     }
 
     public func await(_ callback: @escaping () throws -> Void) throws {
-        if isInstalled && !debugMode{
+        if isInstalled && !debugMode {
             try callback()
             return
         }
@@ -31,11 +31,11 @@ public class Installer: ObservableObject {
 
     public func ready() {
         isInstalled = true
-        
+
         _ = DatabaseController.writeSync { realm in
             realm.create(AuditItem.self, value: ["uid": -2], update: .modified)
         }
-        
+
         do {
             try readyCallback()
             readyCallback = {}
@@ -104,7 +104,7 @@ public class Installer: ObservableObject {
 
         ready()
     }
-    
+
     public func continueAsNormal(_ context: MemriContext) {
         debugMode = false
         ready()

@@ -25,6 +25,7 @@ class PhotoViewerRendererConfig: CascadingRenderConfig {
 }
 
 struct PhotoViewerRenderer: View {
+    @State var overlayVisible: Bool = true
     @EnvironmentObject var context: MemriContext
     var renderConfig: PhotoViewerRendererConfig {
         context.currentView?
@@ -65,19 +66,18 @@ struct PhotoViewerRenderer: View {
                 ZStack(alignment: .topLeading) {
                     PhotoViewerView(
                         photoItemProvider: photoItemProvider,
-                        initialIndex: initialIndex
+                        initialIndex: initialIndex,
+                        onToggleOverlayVisibility: onToggleOverlayVisibility
                     )
                     .edgesIgnoringSafeArea(isFullScreen ? .all : [])
-                    Button(action: toggleFullscreen) {
-                        Image(systemName: isFullScreen ? "arrow.down.right.and.arrow.up.left" :
-                            "arrow.up.left.and.arrow.down.right")
-                            .padding(12)
-                            .background(RoundedRectangle(cornerRadius: 4).fill(Color(.systemFill)))
-                    }
-                    .padding(.top, 20)
-                    .padding(.leading, 20)
                 }
             }
+        }
+    }
+
+    func onToggleOverlayVisibility(_ visible: Bool) {
+        withAnimation {
+            self.isFullScreen = !visible
         }
     }
 

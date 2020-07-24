@@ -414,7 +414,9 @@ public enum ActionFamily: String, CaseIterable {
     }
 }
 
-#warning("Check that the CVU validator is called. somehow with viewName missing defaults still passed")
+#warning(
+    "Check that the CVU validator is called. somehow with viewName missing defaults still passed"
+)
 public enum ActionProperties: String, CaseIterable {
     case name, arguments, binding, icon, renderAs, showTitle, opensView, color,
         backgroundColor, inactiveColor, activeBackgroundColor, inactiveBackgroundColor, title

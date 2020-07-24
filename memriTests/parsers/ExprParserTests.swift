@@ -88,7 +88,10 @@ class ExprParserTests: XCTestCase {
 
         let result = try parse(snippet)
 
-        XCTAssertEqual(result.description, "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single)])")
+        XCTAssertEqual(
+            result.description,
+            "LookupNode([VariableNode(@@DEFAULT@@, type:propertyOrItem, list:single)])"
+        )
     }
 
     func testMinusPlusModifier() throws {
@@ -284,7 +287,7 @@ class ExprParserTests: XCTestCase {
             "ConditionNode(condition: BinaryOpNode(ConditionOR, lhs: NegationNode(BinaryOpNode(Plus, lhs: LookupNode([VariableNode(test, type:propertyOrItem, list:single)]), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(5.63537)))), rhs: BinaryOpNode(Division, lhs: NumberNode(4.0), rhs: NumberNode(3.0))), trueExp: CallNode(lookup: LookupNode([VariableNode(variable, type:propertyOrItem, list:single), VariableNode(func, type:propertyOrItem, list:single)]), argument: []), falseExp: ConditionNode(condition: LookupNode([VariableNode(me, type:propertyOrItem, list:single), VariableNode(address, type:propertyOrItem, list:list), LookupNode([BinaryOpNode(ConditionEquals, lhs: LookupNode([VariableNode(primary, type:propertyOrItem, list:single)]), rhs: BoolNode(true))]), VariableNode(country, type:propertyOrItem, list:single)]), trueExp: BinaryOpNode(Plus, lhs: BinaryOpNode(Plus, lhs: NumberNode(4.0), rhs: BinaryOpNode(Multiplication, lhs: NumberNode(5.0), rhs: NumberNode(10.0))), rhs: LookupNode([VariableNode(test, type:propertyOrItem, list:list), LookupNode([NumberNode(10.0)])])), falseExp: BinaryOpNode(Plus, lhs: StringNode(asdads'asdad), rhs: StringNode())))"
         )
     }
-    
+
     func testErrorIncompleteCondition() throws {
         let snippet = "true ? 'yes'"
 

@@ -319,7 +319,7 @@ class CVUParser {
             case let .Expression(v, _, _):
                 stack.append(createExpression(v))
             case let .Color(value, _, _):
-                stack.append(Color(hex: value))
+                stack.append(ColorDefinition.hex(value))
             case let .Identifier(value, _, _):
                 if lastKey == nil {
                     var nextToken = peekCurrentToken()

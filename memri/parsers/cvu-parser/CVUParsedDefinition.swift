@@ -105,8 +105,8 @@ public class CVUParsedDefinition: Equatable, CVUToString {
                 def.parsed = try recur(def.parsed) as? [String: Any?]
             }
             else if let el = notnil as? UIElement {
-                if let dict = try recur(el.properties) as? [String: Any?] {
-                    el.properties = dict
+                if let dict = try recur(el.propertyResolver.properties) as? [String: Any?] {
+                    el.propertyResolver.properties = dict
                 }
             }
 

@@ -3,6 +3,7 @@
 // Copyright © 2020 memri. All rights reserved.
 
 import Foundation
+import UIKit
 
 class FileStorageController {
     private init() {}
@@ -70,5 +71,10 @@ class FileStorageController {
     static func deleteFile(withUUID uuid: String) throws {
         let fileURL = getURLForFile(withUUID: uuid)
         try FileManager.default.removeItem(at: fileURL)
+    }
+
+    static func getImage(fromFileForUUID uuid: String) -> UIImage? {
+        let fileURL = getURLForFile(withUUID: uuid)
+        return UIImage(contentsOfFile: fileURL.path)
     }
 }
