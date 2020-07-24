@@ -7,7 +7,11 @@
     { "_type": "Setting", "key": "defaults/pod/host", "value": "http://localhost:3030"},
     { "_type": "Setting", "key": "defaults/debug/autoShowErrorConsole", "value": false},
     { "_type": "Setting", "key": "defaults/debug/autoReloadCVU", "value": true},
+<<<<<<< HEAD:memri/install/default_database.json
     { "_type": "Setting", "key": "defaults/auth/atStartup", "value": false},
+=======
+    
+>>>>>>> 16b17716... -:memri/model/defaults/default_database.json
     {
         "_type": "NavigationItem",
         "type": "heading",
