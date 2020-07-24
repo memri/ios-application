@@ -4,6 +4,10 @@ memri.xcodeproj/xcuserdata/
 xcuserdata
 memri.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/
 
+memri/Resources/DemoAssets/iphone-image*.jpg
+memri/Resources/DemoAssets/fake-person*.jpg
+memri/Resources/DemoAssets/unsplash-image*.jpg
+
 
 builds/
 
