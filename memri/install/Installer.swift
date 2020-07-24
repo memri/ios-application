@@ -45,18 +45,22 @@ public class Installer: ObservableObject {
         }
     }
     
-    public func installForTesting(boot:Bool = true) throws {
-        if !isInstalled {
-            let root = try RootContext(name: "", key: "")
+    private var testRoot: RootContext? = nil
+    public func installForTesting(boot:Bool = true) throws -> RootContext? {
+        if testRoot == nil {
+            testRoot = try RootContext(name: "", key: "")
             
             try await {
                 if boot {
-                    try root.boot(isTesting: true)
+                    try self.testRoot!.boot(isTesting: true)
                 }
             }
             
-            installDefaultDatabase(root)
+            if isInstalled { ready() }
+            else { installDefaultDatabase(testRoot!) }
         }
+        
+        return testRoot
     }
 
     public func installDefaultDatabase(_ context: MemriContext) {
@@ -103,6 +107,7 @@ public class Installer: ObservableObject {
     
     public func continueAsNormal(_ context: MemriContext) {
         debugMode = false
+        ready()
         context.scheduleUIUpdate(immediate: true)
     }
 

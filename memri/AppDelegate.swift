@@ -60,6 +60,10 @@ class CrashObserver {
     private init() {
         didCrashLastTime = (UserDefaults.standard
             .value(forKey: CrashObserver.defaultsKey) as? Bool) ?? false
+        
+        #if DEBUG
+        didCrashLastTime = false
+        #endif
     }
 
     func onLaunch() {

@@ -24,14 +24,14 @@ class CacheTests: XCTestCase {
     }
 
     func testCacheInstall() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         
         let realm = DatabaseController.getRealm()
         XCTAssertTrue(realm.objects(Country.self).count > 0)
     }
 
     func testGetItem() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         XCTAssertEqual(getCountry("Aruba")?.getString("name"), "Aruba")
     }
 
@@ -42,7 +42,7 @@ class CacheTests: XCTestCase {
     }
 
     func testTypeQuery() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
 
         for dtype in ItemFamily.allCases {
             try testCache.query(Datasource(query: dtype.rawValue)) { _, items in
@@ -76,7 +76,7 @@ class CacheTests: XCTestCase {
     }
 
     func testGetResultSet() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         // TODO: not sure what this should test yet
         _ = testCache.getResultSet(Datasource(query: "*"))
     }
@@ -88,7 +88,7 @@ class CacheTests: XCTestCase {
     }
 
     func testAddToCacheConflicts() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         // TODO: FIX
         //        let item: Country = testCache.getItemById("country", "Aruba")
         //        let cachedNote = try testCache.addToCache(note)
@@ -120,7 +120,7 @@ class CacheTests: XCTestCase {
     }
 
     func testDelete() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         let item = getCountry("Aruba")
         testCache.delete(item!)
         let item2 = getCountry("Aruba")
@@ -128,7 +128,7 @@ class CacheTests: XCTestCase {
     }
 
     func testDeleteMulti() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         let items = [
             getCountry("Aruba")!,
             getCountry("Antarctica")!,
@@ -145,7 +145,7 @@ class CacheTests: XCTestCase {
     }
 
     func testDuplicate() throws {
-        installer.installForTesting()
+        try installer.installForTesting()
         let item = getCountry("Aruba")
         let copy = try testCache.duplicate(item!)
         let cls = item!.getType()

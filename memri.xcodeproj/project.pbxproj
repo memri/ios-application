@@ -93,7 +93,7 @@
 		5DB66FB52431DD41007736D6 /* contextTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB66FB42431DD41007736D6 /* contextTest.swift */; };
 		5DB8EBFF24598E1E0028FD2E /* ViewsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB8EBFE24598E1E0028FD2E /* ViewsTest.swift */; };
 		5DB8EC0424598FA30028FD2E /* CascadableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB8EC0324598FA30028FD2E /* CascadableView.swift */; };
-		5DB8EC0B24599A080028FD2E /* ComputedViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB8EC0A24599A080028FD2E /* ComputedViewTest.swift */; };
+		5DB8EC0B24599A080028FD2E /* CascadableViewTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DB8EC0A24599A080028FD2E /* CascadableViewTest.swift */; };
 		5DC1692724093C3900367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692824093E6B00367905 /* sessions_manually_single.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692624093C3900367905 /* sessions_manually_single.json */; };
 		5DC1692924093E7000367905 /* sessions_manually_expanded.json in Resources */ = {isa = PBXBuildFile; fileRef = 5DC1692524093BD300367905 /* sessions_manually_expanded.json */; };
@@ -362,7 +362,7 @@
 		5DB66FB42431DD41007736D6 /* contextTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = contextTest.swift; sourceTree = "<group>"; };
 		5DB8EBFE24598E1E0028FD2E /* ViewsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewsTest.swift; sourceTree = "<group>"; };
 		5DB8EC0324598FA30028FD2E /* CascadableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CascadableView.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		5DB8EC0A24599A080028FD2E /* ComputedViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputedViewTest.swift; sourceTree = "<group>"; };
+		5DB8EC0A24599A080028FD2E /* CascadableViewTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CascadableViewTest.swift; sourceTree = "<group>"; };
 		5DC1692524093BD300367905 /* sessions_manually_expanded.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = sessions_manually_expanded.json; sourceTree = "<group>"; };
 		5DC1692624093C3900367905 /* sessions_manually_single.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = sessions_manually_single.json; sourceTree = "<group>"; };
 		5DC1692B2409453200367905 /* empty_sessions.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = empty_sessions.json; sourceTree = "<group>"; };
@@ -600,7 +600,7 @@
 			isa = PBXGroup;
 			children = (
 				5DB8EBFE24598E1E0028FD2E /* ViewsTest.swift */,
-				5DB8EC0A24599A080028FD2E /* ComputedViewTest.swift */,
+				5DB8EC0A24599A080028FD2E /* CascadableViewTest.swift */,
 			);
 			path = cvu;
 			sourceTree = "<group>";
@@ -1764,7 +1764,7 @@
 				5DB66FB52431DD41007736D6 /* contextTest.swift in Sources */,
 				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,
 				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
-				5DB8EC0B24599A080028FD2E /* ComputedViewTest.swift in Sources */,
+				5DB8EC0B24599A080028FD2E /* CascadableViewTest.swift in Sources */,
 				5DD17B6C241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1943,7 +1943,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;
@@ -1980,7 +1980,7 @@
 				CODE_SIGN_ENTITLEMENTS = memri/memri.entitlements;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_ASSET_PATHS = "\"memri/Preview Content\"";
 				DEVELOPMENT_TEAM = K92CHY7KDL;
 				ENABLE_PREVIEWS = YES;

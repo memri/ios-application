@@ -475,8 +475,17 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 throw "Exception: missing view definition"
             }
 
-            if let parsedDef = try context?.views.parseDefinition(def) {
+            if var parsedDef = try context?.views.parseDefinition(def) {
                 parsedDef.domain = domain
+                
+                if let views = parsedDef["viewDefinitions"] as? [CVUParsedViewDefinition] {
+                    if let view = views[safe: parsedDef["currentViewIndex"] as? Int ?? 0] {
+                        parsedDef = view
+                    }
+                    else {
+                        throw "Unable to find view in named session"
+                    }
+                }
 
                 try include(parsedDef, domain)
             }

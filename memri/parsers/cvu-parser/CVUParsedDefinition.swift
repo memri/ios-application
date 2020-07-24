@@ -123,11 +123,14 @@ public class CVUParsedDefinition: Equatable, CVUToString {
         for (key, value) in dict {
             if key == "userState" || key == "viewArguments" {
                 if parsed == nil { parsed = [:] }
-                if let cascadableDict = parsed?[key] as? CascadableDict {
-                    _ = cascadableDict.deepMerge(value as? CascadableDict)
-                }
-                else {
-                    parsed?[key] = (value as? CascadableDict)?.copy()
+                if let value = value as? CVUParsedObjectDefinition {
+                    if let parsedObject = parsed?[key] as? CVUParsedObjectDefinition {
+                        parsedObject.mergeValuesWhenNotSet(value)
+                        parsed?[key] = parsedObject
+                    }
+                    else {
+                        parsed?[key] = CVUParsedObjectDefinition(value.parsed)
+                    }
                 }
             }
             else if parsed?[key] == nil {
