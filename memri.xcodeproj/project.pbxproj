@@ -42,6 +42,7 @@
 		5D3EE57D2447701F00562AAC /* note.0x05.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57324476FFB00562AAC /* note.0x05.json */; };
 		5D3EE57E2447701F00562AAC /* note.0x01.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D3EE57424476FFB00562AAC /* note.0x01.json */; };
 		5D414AD8242B875F00A3DDFA /* FilterPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D414AD7242B875F00A3DDFA /* FilterPanel.swift */; };
+		5D4228B824CAEA1A00CC68AE /* demo_database.json in Resources */ = {isa = PBXBuildFile; fileRef = 5D4228B724CAEA1A00CC68AE /* demo_database.json */; };
 		5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4231AA247C2D7100CD1933 /* Datasource.swift */; };
 		5D42A8F7245AF1ED0093D85F /* ItemTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D42A8F6245AF1ED0093D85F /* ItemTest.swift */; };
 		5D4320E5247E60950052B224 /* exampleNote2.html in Resources */ = {isa = PBXBuildFile; fileRef = 5D4320E4247E60950052B224 /* exampleNote2.html */; };
@@ -325,6 +326,7 @@
 		5D3EE57324476FFB00562AAC /* note.0x05.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x05.json; sourceTree = "<group>"; };
 		5D3EE57424476FFB00562AAC /* note.0x01.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = note.0x01.json; sourceTree = "<group>"; };
 		5D414AD7242B875F00A3DDFA /* FilterPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterPanel.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		5D4228B724CAEA1A00CC68AE /* demo_database.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = demo_database.json; sourceTree = "<group>"; };
 		5D4231AA247C2D7100CD1933 /* Datasource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Datasource.swift; sourceTree = "<group>"; };
 		5D42A8F6245AF1ED0093D85F /* ItemTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemTest.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D4320E4247E60950052B224 /* exampleNote2.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = exampleNote2.html; sourceTree = "<group>"; };
@@ -1116,6 +1118,15 @@
 			path = install;
 			sourceTree = "<group>";
 		};
+		86CDB46D2469C1E4007EAE67 /* defaults */ = {
+			isa = PBXGroup;
+			children = (
+				86C3A7382452FFD4006D4F55 /* default_database.json */,
+				5D4228B724CAEA1A00CC68AE /* demo_database.json */,
+			);
+			path = defaults;
+			sourceTree = "<group>";
+		};
 		86CDB46E2469C1F0007EAE67 /* defaults */ = {
 			isa = PBXGroup;
 			children = (
@@ -1507,6 +1518,7 @@
 				865646332423A7D500D071B4 /* views_from_server.json in Resources */,
 				86911E8A24C60647009AC8B1 /* Location.cvu in Resources */,
 				5DAFB6212479527600719160 /* Address.cvu in Resources */,
+				5D4228B824CAEA1A00CC68AE /* demo_database.json in Resources */,
 				5DAFB628247952A800719160 /* choose-item-by-query.cvu in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
 				5DAFB633247952F500719160 /* UserNote.cvu-disabled in Resources */,
