@@ -18,7 +18,7 @@ public struct FlowStack<Data: RandomAccessCollection, ID, Content>: View
     }
 
     public var body: some View {
-        ScrollView(.horizontal, showsIndicators: true) {
+        ScrollView(.horizontal, showsIndicators: false) {
             HStack {
                 ForEach(self.data) { item in
                     self.content(item)

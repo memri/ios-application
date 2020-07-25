@@ -35,12 +35,12 @@ class CVUSerializer {
                 let uid = p.uid.value {
                 return "{{ item(\(p.genericType), \(uid)) }}"
             }
-			else if case let ColorDefinition.hex(hex) = p {
-				return hex
+            else if case let ColorDefinition.hex(hex) = p {
+				return "#\(hex.trimmingCharacters(in: CharacterSet(charactersIn: "#")))"
             }
-			else if case let ColorDefinition.system(uiColor) = p {
-				return uiColor.hexString()
-			}
+            else if case let ColorDefinition.system(uiColor) = p {
+                return uiColor.hexString()
+            }
             else if let p = p as? Double {
                 if p.truncatingRemainder(dividingBy: 1) == 0 {
                     return "\(Int(p))"
