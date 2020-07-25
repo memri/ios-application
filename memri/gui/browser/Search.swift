@@ -7,6 +7,7 @@ import SwiftUI
 
 struct Search: View {
     @EnvironmentObject var context: MemriContext
+    @State var isEditing: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -18,6 +19,12 @@ struct Search: View {
                 ),
                                placeholder: context.currentView?.searchHint ?? "",
                                showPrevNextButtons: false)
+                    .onEditingBegan {
+                        self.isEditing = true
+                    }
+                    .onEditingEnded {
+                        self.isEditing = false
+                    }
                     .layoutPriority(-1)
                 Text(context.currentView?.searchMatchText ?? "")
 
@@ -30,23 +37,24 @@ struct Search: View {
             .padding(.vertical, 6)
         }
         .background(Color.white)
-        .modifier(KeyboardModifier())
+        .modifier(KeyboardModifier(enabled: isEditing))
         .background(Color.white.edgesIgnoringSafeArea(.all))
     }
 }
 
 struct KeyboardModifier: ViewModifier {
+    var enabled: Bool = true
     @ObservedObject var keyboard = KeyboardResponder.shared
     @Environment(\.screenSize) var screenSize
     @State var contentBounds: CGRect?
 
     func body(content: Content) -> some View {
         content
-            .offset(x: 0, y: contentBounds.flatMap { contentBounds in
+            .offset(x: 0, y: enabled ? (contentBounds.flatMap { contentBounds in
                 screenSize.map { screenSize in
                     min(0, (screenSize.height - contentBounds.maxY) - keyboard.currentHeight)
                 }
-            } ?? 0)
+				} ?? 0) : 0)
             .background(
                 GeometryReader { geom in
                     Color.clear.preference(

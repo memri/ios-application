@@ -166,7 +166,6 @@ Person {
     [renderer = generalEditor] {
         layout: [
             { section: profilePicture }
-            { section: labels }
             { section: names, fields: firstName lastName }
             { section: picturesOfPerson }
             { section: phoneNumbers, edges: hasPhoneNumber, type: PhoneNumber }
@@ -202,7 +201,6 @@ Person {
                     Image {
                         image: {{.profilePicture}}
                         resizable: fill
-						cornerRadius: 100
                     }
                     
                     HStack {
@@ -239,9 +237,43 @@ Person {
                     }
                 }
 				
-				Text {
-					font: 20 bold
-					text: "{.firstName} {.lastName}"
+				VStack {
+					spacing: 6
+					Text {
+						font: 20 bold
+						text: "{.firstName} {.lastName}"
+					}
+					
+					Text {
+						show: {{ !.label }}
+						text: "no labels yet"
+					}
+					
+					FlowStack {
+						list: {{ .label[] }}
+						
+						button {
+							press: openViewByName {
+								viewName: "all-items-with-label"
+								viewArguments: {
+									name: "{.name}"
+									uid: {{.uid}}
+								}
+							}
+							
+							VStack {
+								background: {{.color}}
+								cornerRadius: 5
+								
+								Text {
+									text: "{.name}"
+									font: 16 semibold
+									color: #fff
+									padding: 5 8 5 8
+								}
+							}
+						}
+					}
 				}
             }
         }
@@ -269,46 +301,6 @@ Person {
                     showToolbar: false
                     showSearchbar: false
                     readOnly: true
-                }
-            }
-        }
-        
-        labels {
-            showTitle: false
-            dividers: false
-        
-            VStack {
-                padding: 10 36 5 36
-            
-                Text {
-                    show: {{ !.label }}
-                    text: "no labels yet"
-                }
-                
-                FlowStack {
-                    list: {{ .label[] }}
-                
-                    button {
-                        press: openViewByName {
-                            viewName: "all-items-with-label"
-                            viewArguments: {
-                                name: "{.name}"
-                                uid: {{.uid}}
-                            }
-                        }
-                    
-                        VStack {
-                            background: {{.color}}
-                            cornerRadius: 5
-                        
-                            Text {
-                                text: "{.name}"
-                                font: 16 semibold
-                                color: #fff
-                                padding: 5 8 5 8
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -412,6 +404,7 @@ Person[] {
                 image: {{.profilePicture}}
                 cornerRadius: 10
                 resizable: fill
+				forceAspect: true
             }
             Text {
                 text: "{.firstName} {.lastName}"
