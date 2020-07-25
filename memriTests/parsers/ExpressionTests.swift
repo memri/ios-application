@@ -33,11 +33,11 @@ class ExpressionTests: XCTestCase {
         XCTAssertEqual(try expr.execute(args) as? String, "hello")
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
 
 }

@@ -17,7 +17,7 @@ class CascadableViewTest: XCTestCase {
     }
 
     func testCascadeInheritNamedWithViewArguments() throws {
-        guard let context = try installer.installForTesting() else {
+        guard let context = try installer.installForTesting(boot: true) else {
             throw "Failed to initialize"
         }
         
@@ -51,7 +51,7 @@ class CascadableViewTest: XCTestCase {
     }
     
     func testCascadeInheritCopiedWithViewArguments() throws {
-        guard let context = try installer.installForTesting() else {
+        guard let context = try installer.installForTesting(boot: true) else {
             throw "Failed to initialize"
         }
         
@@ -96,10 +96,10 @@ class CascadableViewTest: XCTestCase {
         XCTAssertEqual(context.currentView?.activeRenderer, "photoViewer")
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
 }

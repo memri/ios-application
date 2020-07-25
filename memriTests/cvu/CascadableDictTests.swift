@@ -13,7 +13,9 @@ class CascadableDictTests: XCTestCase {
     var installer = Installer()
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        guard let _ = try installer.installForTesting() else {
+            throw "Failed to initialize"
+        }
     }
 
     override func tearDownWithError() throws {
@@ -49,8 +51,8 @@ class CascadableDictTests: XCTestCase {
     }
     
     func testResolveWithDot() throws {
-        guard let context = try installer.installForTesting() else {
-            throw "Failed to initialize"
+        guard let context = installer.testRoot else {
+            throw "Unable to initialize"
         }
         
         let item = try Cache.createItem(Note.self, values: [ "title": "hello"])

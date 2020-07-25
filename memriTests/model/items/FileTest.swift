@@ -6,36 +6,25 @@
 import XCTest
 
 class FileTest: XCTestCase {
-    var testFile: File = File()
+    var installer = Installer()
 
-    override func setUpWithError() throws {
-        // text file containing "test string\n")
-        testFile.uri = "testfile.txt"
-    }
-
-    func testDecode() throws {
-        let data = Data(
-            """
-            {
-              "uri" : "testfile.txt"
-            }
-            """.utf8
-        )
-        let file: File = try JSONDecoder().decode(File.self, from: data)
-        let fileContent: String? = try file.read()
-        XCTAssertTrue(fileContent == "test string\n")
-    }
-
-    func testCache() throws {
-        var _: String? = try testFile.read()
-        let cached: String? = InMemoryObjectCache.global.get("testfile.txt") as? String
-        XCTAssertTrue(cached == "test string\n")
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
+    func testWrite() throws {
+        guard let _ = try installer.installForTesting() else {
+            throw "Could not initialize"
         }
+        
+        let file = try Cache.createItem(File.self, values: [
+            "uri": "testfile.txt"
+        ])
+        
+        try file.write("Hello")
+        XCTAssertEqual(try file.read(), "Hello")
     }
+
+//    func testPerformanceExample() throws {
+//        // This is an example of a performance test case.
+//        measure {
+//            // Put the code you want to measure the time of here.
+//        }
+//    }
 }

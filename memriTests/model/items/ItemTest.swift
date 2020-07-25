@@ -16,43 +16,47 @@ class ItemTest: XCTestCase {
     }
 
     func testDeserializeItem() throws {
-        let data = Data("""
-        {
-            "memriID": "0x012345",
+        let str = """
+        [{
+            "_type": "Note",
+            "uid": \(try Cache.incrementUID()),
             "starred": true,
-            "dateCreated": "2020-04-10T11:11:11Z",
+            "dateCreated": 1586517071000,
             "version": 10
+        }]
+        """
+        guard let item = try Item.fromJSONString(str).first else {
+            throw "Unable to create item"
         }
-        """.utf8)
-        let item: Item = try MemriJSONDecoder.decode(Item.self, from: data)
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-        XCTAssertEqual(item.get("memriID"), "0x012345")
         XCTAssertEqual(item.get("starred"), true)
         XCTAssertEqual(
-            item.get("dateCreated", type: Date.self)!.timeIntervalSince1970,
+            item.get("dateCreated", type: Date.self)?.timeIntervalSince1970,
             1_586_517_071
         )
         XCTAssertEqual(item.get("version"), 10)
     }
 
     func testGetString() throws {
-        let data = Data("""
-        {
-            "memriID": "0x012345",
+        let str = """
+        [{
+            "_type": "Note",
+            "uid": \(try Cache.incrementUID()),
             "starred": true,
-            "dateCreated": "2020-04-10T11:11:11Z",
+            "dateCreated": 1586517071000,
             "version": 10
+        }]
+        """
+        guard let item = try Item.fromJSONString(str).first else {
+            throw "Unable to create item"
         }
-        """.utf8)
-        let item: Item = try MemriJSONDecoder.decode(Item.self, from: data)
 
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
 
-        XCTAssertEqual(item.getString("memriID"), "0x012345")
         XCTAssertEqual(item.getString("starred"), "true")
         XCTAssertEqual(item.getString("dateCreated"), "2020/04/10 13:11")
         XCTAssertEqual(item.getString("version"), "10")
@@ -159,15 +163,12 @@ class ItemTest: XCTestCase {
     }
 
     func testAccess() throws {
-        let data1 = Data("""
-        {
-            "memriID": "0x012345",
+        let item1 = try Cache.createItem(Note.self, values: [
+            "uid": "0x012345",
             "starred": true,
             "dateCreated": "2020-04-10T11:11:11Z",
             "version": 10
-        }
-        """.utf8)
-        let item1: Item = try MemriJSONDecoder.decode(Item.self, from: data1)
+        ])
 
         let dt = item1.dateAccessed
         item1.accessed()

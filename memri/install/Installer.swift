@@ -45,15 +45,11 @@ public class Installer: ObservableObject {
         }
     }
     
-    private var testRoot: RootContext? = nil
+    public var testRoot: RootContext? = nil
     public func installForTesting(boot:Bool = true) throws -> RootContext? {
         if testRoot == nil {
             DatabaseController.realmTesting = true
-            
-            let realm = DatabaseController.getRealm()
-            if let _ = realm.object(ofType: AuditItem.self, forPrimaryKey: -2) {
-                isInstalled = true
-            }
+            Settings.shared = Settings()
             
             testRoot = try RootContext(name: "", key: "")
             
@@ -61,6 +57,11 @@ public class Installer: ObservableObject {
                 if boot {
                     try self.testRoot!.boot(isTesting: true)
                 }
+            }
+            
+            let realm = DatabaseController.getRealm()
+            if let _ = realm.object(ofType: AuditItem.self, forPrimaryKey: -2) {
+                isInstalled = true
             }
             
             if isInstalled { ready() }
