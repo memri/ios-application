@@ -1175,6 +1175,20 @@ class ActionDelete: Action, ActionExec {
     }
 }
 
+class ActionSelectAll: Action, ActionExec {
+    required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+        super.init(context, "selectAll", values: values)
+    }
+
+    func exec(_: [String: Any?]) throws {
+        context.setSelection(context.items)
+    }
+
+    class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+        execWithoutThrow { try ActionSelectAll(context).exec(arguments) }
+    }
+}
+
 class ActionDuplicate: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
         "argumentTypes": ["item": ItemFamily.self],

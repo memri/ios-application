@@ -427,6 +427,10 @@ public struct UIElementView: SwiftUI.View {
                 else if from.type == .Image {
                     if has("systemName") {
                         Image(systemName: get("systemName") ?? "exclamationmark.bubble")
+                            .if(from.propertyResolver.properties["resizable"] != nil) {
+                                $0.resizable()
+                                    .aspectRatio(contentMode: .fit)
+                            }
                             .setProperties(
                                 from.propertyResolver.properties,
                                 self.item,
@@ -447,7 +451,7 @@ public struct UIElementView: SwiftUI.View {
                     else { // assuming image property
                         MemriImageView(imageURI: getFileURI("image"),
                                        fitContent: from.propertyResolver.fitContent,
-                                       forceAspect: false)
+                                       forceAspect: from.propertyResolver.forceAspect)
                             .setProperties(
                                 from.propertyResolver.properties,
                                 self.item,

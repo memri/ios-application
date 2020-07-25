@@ -52,6 +52,10 @@ public struct CVUPropertyResolver {
         default: return true
         }
     }
+
+    var forceAspect: Bool {
+        (properties["forceAspect"] as? Bool) ?? false
+    }
 }
 
 enum ColorDefinition {

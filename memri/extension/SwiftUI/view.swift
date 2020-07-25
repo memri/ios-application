@@ -116,6 +116,9 @@ extension View {
                 return AnyView(opacity(Double(value)))
             }
         case "color":
+            if let color = value as? ColorDefinition {
+                return AnyView(foregroundColor(color.color)) // TODO: named colors do not work
+            }
             if let color = value as? String {
                 return AnyView(foregroundColor(Color(hex: color)))
             }

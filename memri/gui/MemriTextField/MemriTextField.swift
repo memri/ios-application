@@ -24,6 +24,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
     var font: UIFont?
 
     private var onEditingBeganCallback: (() -> Void)?
+    private var onEditingEndedCallback: (() -> Void)?
 
     @Environment(\.multilineTextAlignment) var textAlignment
 
@@ -85,6 +86,12 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
         return this
     }
 
+    func onEditingEnded(_ callback: @escaping () -> Void) -> Self {
+        var this = self
+        this.onEditingEndedCallback = callback
+        return this
+    }
+
     public class Delegate: NSObject, UITextFieldDelegate {
         init(parent: MemriTextField<Value>) {
             self.parent = parent
@@ -120,6 +127,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
             parent.valueString = textField.text?.nilIfBlank
             assignIfChanged(textField, \.text, newValue: parent.valueString)
             textField.resignFirstResponder()
+            parent.onEditingEndedCallback?()
         }
 
         @objc

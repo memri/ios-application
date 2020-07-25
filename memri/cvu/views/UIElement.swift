@@ -131,7 +131,8 @@ public class UIElement: CVUToString {
         return properties.count > 0 || children.count > 0
             ? "\(type) {\n"
             + (properties.count > 0
-                ? "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth + 1, tab, withDef: false))"
+                ?
+                "\(tabsPlus)\(CVUSerializer.dictToString(properties, depth + 1, tab, withDef: false))"
                 : "")
             + (properties.count > 0 && children.count > 0
                 ? "\n\n"
