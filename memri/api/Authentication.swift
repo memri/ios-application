@@ -35,6 +35,8 @@ class Authentication {
 //            : .touch
 //    }
     
+    private static let RootKeyTag = "memriPrivateKey"
+    
     static func getErrorDescription(errorCode: Int) -> String {
         switch errorCode {
         case LAError.authenticationFailed.rawValue:
@@ -103,14 +105,71 @@ class Authentication {
             return
         }
         
+        let access = SecAccessControlCreateWithFlags(
+            kCFAllocatorDefault,
+            kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
+            .privateKeyUsage,
+            nil
+        )
+        
+        if let access = access {
+            let attributes: [String: Any] = [
+                kSecAttrKeyType as String: kSecAttrKeyTypeEC,
+                kSecAttrKeySizeInBits as String: 256,
+                kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
+                kSecPrivateKeyAttrs as String: [
+                    kSecAttrIsPermanent as String: true,
+                    kSecAttrApplicationTag as String: RootKeyTag,
+                    kSecAttrAccessControl as String: access
+                ]
+            ]
+            
+            // TODO: delete previous key with that tag???
+            
+            var error: Unmanaged<CFError>?
+            if let _ = SecKeyCreateRandomKey(attributes as CFDictionary, &error) {
+                callback(nil)
+            }
+            else {
+                // TODO Error Handling
+//                throw error!.takeRetainedValue() as Error
+            }
+        }
+        else {
+            // TODO error handling
+        }
     }
     
-    static func getPublicRootKey(_ callback: @escaping (Error?, Data?) throws -> Void) throws {
-        
+    static func getPublicRootKey(_ callback: @escaping (Error?, Data?) -> Void) throws {
+        do {
+            let publicKey = try getPublicRootKeySync()
+            callback(nil, publicKey)
+        }
+        catch {
+            //TODO error handling
+            callback(error, nil)
+        }
     }
     
     static func getPublicRootKeySync() throws -> Data {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassKey,
+            kSecAttrApplicationTag as String: RootKeyTag,
+            kSecAttrKeyType as String: kSecAttrKeyTypeEC,
+            kSecReturnRef as String: true
+        ]
         
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        guard status == errSecSuccess else {
+            // TODO Error handling
+            throw "Unable to get public key"
+        }
+        
+        let privateKey = item as! SecKey
+        let publicKey = SecKeyCopyPublicKey(privateKey)
+        
+        return publicKey
         
     }
     
