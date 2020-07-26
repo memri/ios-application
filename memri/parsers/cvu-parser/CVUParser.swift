@@ -553,7 +553,7 @@ class CVUParser {
                 dict["maxWidth"] = nil
                 dict["minHeight"] = nil
                 dict["maxHeight"] = nil
-                dict["align"] = nil
+//                dict["align"] = nil
 
                 dict["frame"] = values
                 break

@@ -113,6 +113,8 @@ Note[] {
             spacing: 3
             
             HStack {
+                align: left
+                
                 Text {
                     text: {{.title or "Untitled Note"}}
 					lineLimit: 1
@@ -193,9 +195,10 @@ Note[] {
             }
         }
     }
-	
+    
 	[renderer = calendar.timeline] {
 		dateTime: {{.dateModified}}
+        detailLevel: hour
 
 		TimelineItem {
 			icon: "square.and.pencil"
@@ -205,8 +208,11 @@ Note[] {
 	}
 	
 	[renderer = messages] {
-		sort: dateModified
-		
+        send: sendMessage {
+            network: {{.whatsapp}}
+            contents: {{composedText}}
+        }
+        
 		MessageBubble {
 			sender: {{.title}}
 			content: {{.content.plainString}}

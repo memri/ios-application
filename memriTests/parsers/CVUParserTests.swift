@@ -488,7 +488,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            background: #ffffff
+            background: #fff
             border: 1 "red"
             padding: 1 2 3 4
         }
@@ -502,7 +502,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            background: #ffffff
+            background: #fff
             border: 1 "red"
             padding: 1 2 3 4
         }
@@ -516,7 +516,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            background: #ffffff
+            background: #fff
             border: 1 "red"
             padding: 1 2 3 4
 
@@ -543,7 +543,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            background: #ffffff
+            background: #fff
 
             bla: {
                 test: 1

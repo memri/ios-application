@@ -196,6 +196,7 @@ Person {
                     padding: 12
                     maxWidth: 140
                     maxHeight: 140
+                    cornerRadius: 25
                     align: center
                 
                     Image {
@@ -280,7 +281,7 @@ Person {
         
         picturesOfPerson {
             title: "Photos of {.computedTitle()}"
-        
+            
             SubView {
                 minHeight: 165
                 
@@ -452,6 +453,8 @@ Person[] {
 		xAxis: {{.age()}} /* Feeling old? Try {{.age() - 10}} to give everyone back a decade ;) */
 		yAxis: {{.height}}
         label: "{.firstName}" /* The label to show over the point */
+        
+        lineWidth: 1
         
         /* line chart ignores sort (automatically sorted by x-axis) */
     }

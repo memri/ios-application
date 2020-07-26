@@ -17,11 +17,11 @@ private let ViewPropertyOrder = [
     "cornerRadius",
     "cornerborder",
     "border",
-    "margin",
     "shadow",
     "offset",
     "blur",
     "opacity",
+    "margin",
     "zindex",
 ]
 

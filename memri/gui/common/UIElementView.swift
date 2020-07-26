@@ -60,6 +60,7 @@ public struct UIElementView: SwiftUI.View {
                     VStack(alignment: get("alignment") ?? .leading, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
+//                    .frame(maxWidth: .infinity, alignment: get("align") ?? .top)
                     .clipped()
                     .animation(nil)
                     .setProperties(
@@ -73,6 +74,7 @@ public struct UIElementView: SwiftUI.View {
                     HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
+                    .frame(maxWidth: .infinity, alignment: get("align") ?? .leading)
                     .clipped()
                     .animation(nil)
                     .setProperties(
@@ -84,6 +86,7 @@ public struct UIElementView: SwiftUI.View {
                 }
                 else if from.type == .ZStack {
                     ZStack(alignment: get("alignment") ?? .top) { self.renderChildren }
+//                        .frame(maxWidth: .infinity)
                         .clipped()
                         .animation(nil)
                         .setProperties(

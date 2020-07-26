@@ -83,6 +83,8 @@ Photo[]: {
 		
 		VStack {
 			padding: 10
+/*            show: {{.caption != ""}}*/ /* THIS BREAKS PHOTO LOADING */
+            
 			VStack {
 				spacing: 5
 				padding: 12
@@ -92,9 +94,9 @@ Photo[]: {
 					text: "{.caption}"
 					font: 18 bold
 				}
-				Text {
-					text: "Photo taken: {.dateCreated}"
-				}
+/*				Text {*/
+/*					text: "Photo taken: {.dateCreated}"*/
+/*				}*/
 			}
 		}
 	}
