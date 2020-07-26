@@ -86,6 +86,6 @@ private struct BoundsPreferenceKey: PreferenceKey {
 
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
-        Search().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        Search().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

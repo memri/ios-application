@@ -31,7 +31,12 @@ public class Cache {
 
     /// gets default item from database, and adds them to realm
     public func install(_ dbName: String) throws {
-        let realm = DatabaseController.getRealm()
+        DatabaseController.writeSync { realm in
+            try _install(realm, dbName)
+        }
+    }
+    
+    private func _install(_ realm:Realm, _ dbName: String) throws {
         // Load default database from disk
         do {
             let jsonData = try jsonDataFromFile(dbName)
@@ -159,71 +164,72 @@ public class Cache {
         syncWithRemote: Bool = true,
         _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void
     ) throws {
-        let realm = DatabaseController.getRealm()
-        // Do nothing when the query is empty. Should not happen.
-        let q = datasource.query ?? ""
+        try DatabaseController.tryRead { realm in
+            // Do nothing when the query is empty. Should not happen.
+            let q = datasource.query ?? ""
 
-        // Log to a maker user
-        debugHistory.info("Executing query \(q)")
+            // Log to a maker user
+            debugHistory.info("Executing query \(q)")
 
-        if q == "" {
-            try callback("Empty Query", nil)
-        }
-        else {
-            // Schedule the query to sync from the pod
-            if syncWithRemote { sync.syncQuery(datasource) }
-
-            // Parse query
-            let (typeName, filter) = parseQuery(q)
-
-            if typeName == "*" {
-                var returnValue: [Item] = []
-
-                for dtype in ItemFamily.allCases {
-                    // NOTE: Allowed forced cast
-                    let objects = realm.objects(dtype.getType() as! Object.Type)
-                        .filter("deleted = false " + (filter ?? ""))
-                    for item in objects { returnValue.append(item as! Item) }
-                }
-
-                try callback(nil, returnValue)
-            }
-            // Fetch the type of the data item
-            else if let type = ItemFamily(rawValue: typeName) {
-                // Get primary key of data item
-                // let primKey = type.getPrimaryKey()
-
-                // Query based on a simple format:
-                // Query format: <type><space><filter-text>
-                guard let queryType = ItemFamily.getType(type)() as? Object.Type else {
-                    throw "Unknown type \(type)"
-                }
-                //                let t = queryType() as! Object.Type
-
-                var result = realm.objects(queryType)
-                    .filter("deleted = false " + (filter ?? ""))
-
-                if let sortProperty = datasource.sortProperty, sortProperty != "" {
-                    result = result.sorted(
-                        byKeyPath: sortProperty,
-                        ascending: datasource.sortAscending ?? true
-                    )
-                }
-
-                // Construct return array
-                var returnValue: [Item] = []
-                for item in result {
-                    if let item = item as? Item {
-                        returnValue.append(item)
-                    }
-                }
-
-                // Done
-                try callback(nil, returnValue)
+            if q == "" {
+                try callback("Empty Query", nil)
             }
             else {
-                // Done
-                try callback("Unknown type send by server: \(q)", nil)
+                // Schedule the query to sync from the pod
+                if syncWithRemote { sync.syncQuery(datasource) }
+
+                // Parse query
+                let (typeName, filter) = parseQuery(q)
+
+                if typeName == "*" {
+                    var returnValue: [Item] = []
+
+                    for dtype in ItemFamily.allCases {
+                        // NOTE: Allowed forced cast
+                        let objects = realm.objects(dtype.getType() as! Object.Type)
+                            .filter("deleted = false " + (filter ?? ""))
+                        for item in objects { returnValue.append(item as! Item) }
+                    }
+
+                    try callback(nil, returnValue)
+                }
+                // Fetch the type of the data item
+                else if let type = ItemFamily(rawValue: typeName) {
+                    // Get primary key of data item
+                    // let primKey = type.getPrimaryKey()
+
+                    // Query based on a simple format:
+                    // Query format: <type><space><filter-text>
+                    guard let queryType = ItemFamily.getType(type)() as? Object.Type else {
+                        throw "Unknown type \(type)"
+                    }
+                    //                let t = queryType() as! Object.Type
+
+                    var result = realm.objects(queryType)
+                        .filter("deleted = false " + (filter ?? ""))
+
+                    if let sortProperty = datasource.sortProperty, sortProperty != "" {
+                        result = result.sorted(
+                            byKeyPath: sortProperty,
+                            ascending: datasource.sortAscending ?? true
+                        )
+                    }
+
+                    // Construct return array
+                    var returnValue: [Item] = []
+                    for item in result {
+                        if let item = item as? Item {
+                            returnValue.append(item)
+                        }
+                    }
+
+                    // Done
+                    try callback(nil, returnValue)
+                }
+                else {
+                    // Done
+                    try callback("Unknown type send by server: \(q)", nil)
+                }
             }
         }
     }
@@ -554,7 +560,9 @@ public class Cache {
                 dict["uid"] = try Cache.incrementUID()
             }
 
-            print("\(type) - \(dict["uid"])")
+            #if DEBUG
+//            print("\(type) - \(dict["uid"])")
+            #endif
 
             item = realm.create(type, value: dict)
 

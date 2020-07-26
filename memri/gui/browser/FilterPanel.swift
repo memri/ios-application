@@ -209,6 +209,6 @@ private extension FilterPanel {
 
 struct FilterPanel_Previews: PreviewProvider {
     static var previews: some View {
-        FilterPanel().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        FilterPanel().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

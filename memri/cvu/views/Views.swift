@@ -191,7 +191,7 @@ public class Views {
     }
 
     func getGlobalReference(_ name: String, viewArguments: ViewArguments?) throws -> Any? {
-        let realm = DatabaseController.getRealm()
+        let realm = try DatabaseController.getRealmSync()
         // Fetch the value of the right property on the right object
         switch name {
         case "setting":

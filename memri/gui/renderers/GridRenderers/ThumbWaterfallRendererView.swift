@@ -112,7 +112,7 @@ struct ThumbWaterfallRendererView: View {
 
 struct ThumbWaterfallRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ThumbnailRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        ThumbnailRendererView().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }
 

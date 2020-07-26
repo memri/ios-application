@@ -151,6 +151,6 @@ struct ContextPaneForeground: View {
 
 struct ForgroundContextPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPaneForeground().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        ContextPaneForeground().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

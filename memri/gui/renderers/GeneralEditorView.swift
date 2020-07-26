@@ -170,7 +170,7 @@ struct GeneralEditorView: View {
 
 struct GeneralEditorView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = try! RootContext(name: "", key: "").mockBoot()
+        let context = try! RootContext(name: "").mockBoot()
 
         return ZStack {
             VStack(alignment: .center, spacing: 0) {

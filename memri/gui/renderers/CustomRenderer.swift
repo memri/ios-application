@@ -40,6 +40,6 @@ struct CustomRendererView: View {
 
 struct CustomRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        CustomRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        CustomRendererView().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

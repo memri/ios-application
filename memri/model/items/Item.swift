@@ -916,7 +916,7 @@ extension memri.Edge {
             throw "Invalid target item type specificed: \(itemType)"
         }
 
-        let realm = DatabaseController.getRealm()
+        let realm = try DatabaseController.getRealmSync()
         var item = type.init()
         for (key, value) in dict {
             guard let prop = realm.schema[itemType]?[key] else {

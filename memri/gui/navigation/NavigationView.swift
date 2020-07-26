@@ -272,6 +272,6 @@ struct NavigationLineView: View {
 
 struct Navigation_Previews: PreviewProvider {
     static var previews: some View {
-        Navigation().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        Navigation().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 extension MemriContext {
     private func getItem(_ dict: [String: Any?]?) throws -> Item {
-        let realm = DatabaseController.getRealm()
+        let realm = try DatabaseController.getRealmSync()
         
         guard let dict = dict else {
             throw "Missing properties"

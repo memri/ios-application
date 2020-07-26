@@ -41,7 +41,7 @@ struct ActionButton: View {
 
 struct ActionView_Previews: PreviewProvider {
     static var previews: some View {
-        let context = try! RootContext(name: "", key: "").mockBoot()
+        let context = try! RootContext(name: "").mockBoot()
         return ActionButton(action: ActionBack(context))
             .environmentObject(context)
     }

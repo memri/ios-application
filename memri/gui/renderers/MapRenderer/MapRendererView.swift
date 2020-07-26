@@ -104,6 +104,6 @@ struct MapRendererView: View {
 
 struct MapRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        MapRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        MapRendererView().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

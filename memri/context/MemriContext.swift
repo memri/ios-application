@@ -303,8 +303,8 @@ public class RootContext: MemriContext {
     var subContexts = [SubContext]()
 
     // TODO: Refactor: Should installer be moved to rootmain?
-
-    init(name: String, key: String) throws {
+    
+    init(name: String) throws {
         let podAPI = PodAPI(key)
         let cache = try Cache(podAPI)
         let views = Views()
@@ -344,7 +344,7 @@ public class RootContext: MemriContext {
         cache.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
         navigation.scheduleUIUpdate = { [weak self] in self?.scheduleUIUpdate($0) }
     }
-
+    
     public func createSubContext(_ state: CVUStateDefinition? = nil) throws -> MemriContext {
         let subContext = try SubContext(name: "Proxy", self, state)
         subContexts.append(subContext)

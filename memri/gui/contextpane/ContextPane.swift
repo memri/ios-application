@@ -80,6 +80,6 @@ struct ContextPane: View {
 
 struct ContentPane_Previews: PreviewProvider {
     static var previews: some View {
-        ContextPane().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        ContextPane().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

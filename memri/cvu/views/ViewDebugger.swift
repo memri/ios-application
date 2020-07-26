@@ -260,6 +260,6 @@ struct DebugConsole: View {
 
 struct ErrorConsole_Previews: PreviewProvider {
     static var previews: some View {
-        DebugConsole().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        DebugConsole().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

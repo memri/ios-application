@@ -176,6 +176,6 @@ struct ThumbGridRendererView: View {
 struct ThumbHorizontalGridRendererView_Previews: PreviewProvider {
     static var previews: some View {
         ThumbHorizontalGridRendererView()
-            .environmentObject(try! RootContext(name: "", key: "").mockBoot())
+            .environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

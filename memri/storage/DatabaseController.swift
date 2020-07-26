@@ -45,11 +45,11 @@ class EdgeReference {
 
     func resolve() -> Edge? {
         DatabaseController.read {
-            $0.objects(Edge.self)
-                .filter(
-                    "type = '\(type)' AND sourceItemID = \(sourceItemID) AND targetItemID = \(targetItemID)"
-                )
-                .first
+            $0.objects(Edge.self).filter("""
+                type = '\(type)'
+                    AND sourceItemID = \(sourceItemID)
+                    AND targetItemID = \(targetItemID)
+            """).first
         }
     }
 }
@@ -58,11 +58,12 @@ class DatabaseController {
     private init() {}
 
     static var realmTesting = false
-
+    
     private static var realmConfig: Realm.Configuration {
         Realm.Configuration(
             // Set the file url
             fileURL: try! getRealmURL(),
+            
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
             schemaVersion: 101,
@@ -113,12 +114,25 @@ class DatabaseController {
             return documentsDirectory.appendingPathComponent("memri.realm")
         #endif
     }
-
+    
     /// This function returns a Realm for the current thread
-    static func getRealm() -> Realm {
-        try! Realm(configuration: realmConfig)
+    static func getRealmAsync(_ receiveRealm: @escaping (Realm) throws -> Void) throws -> Void {
+        try Authentication.getPublicRootKey { error, encryptionKey in
+            var config = realmConfig
+            config.encryptionKey = encryptionKey
+            let realm = try Realm(configuration: config)
+            try receiveRealm(realm)
+        }
     }
 
+    /// This function returns a Realm for the current thread
+    static func getRealmSync() throws -> Realm {
+        let encryptionKey = try Authentication.getPublicRootKeySync()
+        var config = realmConfig
+        config.encryptionKey = encryptionKey
+        return try Realm(configuration: config)
+    }
+    
     private static var realmQueue: DispatchQueue = {
         let queue = DispatchQueue(label: "memri.realmQueue", qos: .utility)
         return queue
@@ -133,13 +147,14 @@ class DatabaseController {
     //		DispatchQueue.getSpecific(key: realmQueueSpecificKey) ?? false
     //	}
 
-    static func tryRead(_ doRead: (Realm) throws -> Void) throws {
-        let realm = getRealm()
-        try doRead(realm)
+    static func tryRead(_ doRead: @escaping (Realm) throws -> Void) throws {
+        try getRealmAsync { realm in
+            try doRead(realm)
+        }
     }
 
     static func tryRead<T>(_ doRead: (Realm) throws -> T) throws -> T {
-        let realm = getRealm()
+        let realm = try getRealmSync()
         return try doRead(realm)
     }
 
@@ -163,20 +178,21 @@ class DatabaseController {
     }
 
     /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
-    static func tryWriteSync(_ doWrite: (Realm) throws -> Void) throws {
-        let realm = getRealm()
-        guard !realm.isInWriteTransaction else {
-            try doWrite(realm)
-            return
-        }
-        try realm.write {
-            try doWrite(realm)
+    static func tryWriteSync(_ doWrite: @escaping (Realm) throws -> Void) throws {
+        try getRealmAsync { realm in
+            guard !realm.isInWriteTransaction else {
+                try doWrite(realm)
+                return
+            }
+            try realm.write {
+                try doWrite(realm)
+            }
         }
     }
 
     /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
     static func tryWriteSync<T>(_ doWrite: (Realm) throws -> T?) throws -> T? {
-        let realm = getRealm()
+        let realm = try getRealmSync()
         guard !realm.isInWriteTransaction else {
             return try doWrite(realm)
         }
@@ -212,40 +228,14 @@ class DatabaseController {
         realmQueue.async {
             autoreleasepool {
                 do {
-                    let realm = getRealm()
-                    guard !realm.isInWriteTransaction else {
-                        try doWrite(realm)
-                        return
-                    }
-                    try realm.write {
-                        try doWrite(realm)
-                    }
-                }
-                catch {
-                    debugHistory.error("Realm Error: \(error)")
-                }
-            }
-        }
-    }
-
-    /// Use this for writing to Realm in the background. It will run on a background thread.
-    static func writeAsync<T>(
-        withResolvedReferenceTo objectReference: ThreadSafeReference<T>,
-        _ doWrite: @escaping (Realm, T) throws -> Void
-    ) {
-        realmQueue.async {
-            autoreleasepool {
-                do {
-                    let realm = getRealm()
-                    guard let threadSafeObject = realm.resolve(objectReference) else { return }
-
-                    guard !realm.isInWriteTransaction else {
-                        try doWrite(realm, threadSafeObject)
-                        return
-                    }
-
-                    try realm.write {
-                        try doWrite(realm, threadSafeObject)
+                    try getRealmAsync { realm in
+                        guard !realm.isInWriteTransaction else {
+                            try doWrite(realm)
+                            return
+                        }
+                        try realm.write {
+                            try doWrite(realm)
+                        }
                     }
                 }
                 catch {

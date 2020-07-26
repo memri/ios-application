@@ -243,6 +243,6 @@ private extension View {
 
 struct Topnavigation_Previews: PreviewProvider {
     static var previews: some View {
-        TopNavigation().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        TopNavigation().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

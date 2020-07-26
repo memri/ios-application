@@ -207,6 +207,6 @@ struct ChartRendererView: View {
 struct ChartRendererView_Previews: PreviewProvider {
     static var previews: some View {
         ChartRendererView(type: .bar)
-            .environmentObject(try! RootContext(name: "", key: "").mockBoot())
+            .environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

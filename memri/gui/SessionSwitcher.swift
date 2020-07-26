@@ -214,6 +214,6 @@ struct SessionSwitcher: View {
 
 struct SessionSwitcher_Previews: PreviewProvider {
     static var previews: some View {
-        SessionSwitcher().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        SessionSwitcher().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

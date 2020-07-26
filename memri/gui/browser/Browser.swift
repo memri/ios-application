@@ -64,6 +64,6 @@ struct Browser: View {
 
 struct Browser_Previews: PreviewProvider {
     static var previews: some View {
-        Browser().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        Browser().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

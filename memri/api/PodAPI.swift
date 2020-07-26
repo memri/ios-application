@@ -9,11 +9,8 @@ import RealmSwift
 /// Provides functions to communicate asynchronously with a Pod (Personal Online Datastore) for storage of data and/or for
 /// executing actions
 public class PodAPI {
-    var key: String
-    var host: String?
-    var username: String?
-    var password: String?
-
+    var host: String? = nil
+    
     /// Specifies used http methods
     enum HTTPMethod: String {
         case GET
@@ -30,14 +27,34 @@ public class PodAPI {
         (host ?? Settings.shared.getString("user/pod/host")) != ""
     }
 
-    public init(_ podkey: String) {
-        key = podkey
-    }
-
-    private func http(
-        _ method: HTTPMethod = .GET,
+    private func http (
+        method: HTTPMethod = .GET,
         path: String = "",
         body: Data? = nil,
+        _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void
+    ) {
+        Authentication.getOwnerAndDBKey { error, ownerKey, databaseKey in
+            guard error == nil else {
+                // TODO
+                callback(error, nil)
+                return
+            }
+            
+            self.httpWithKeys (
+                method: method,
+                ownerKey: ownerKey,
+                databaseKey: databaseKey,
+                callback
+            )
+        }
+    }
+    
+    private func httpWithKeys (
+        method: HTTPMethod = .GET,
+        path: String = "",
+        body: Data? = nil,
+        ownerKey: String,
+        databaseKey: String,
         _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void
     ) {
         let settings = Settings()
@@ -55,15 +72,15 @@ public class PodAPI {
         // TODO: when the backend sends the correct caching headers
         // this can be changed: .reloadIgnoringCacheData
 
-        #warning("Show banner saying the connection is insecure to the user")
-        let username: String = self.username ?? settings.getString("user/pod/username")
-        let password: String = self.password ?? settings.getString("user/pod/password")
-        let loginString = "\(username):\(password)"
-
-        guard let loginData = loginString.data(using: String.Encoding.utf8) else {
-            return
-        }
-        let base64LoginString = loginData.base64EncodedString()
+//        #warning("Show banner saying the connection is insecure to the user")
+//        let username: String = self.username ?? settings.getString("user/pod/username")
+//        let password: String = self.password ?? settings.getString("user/pod/password")
+//        let loginString = "\(username):\(password)"
+//
+//        guard let loginData = loginString.data(using: String.Encoding.utf8) else {
+//            return
+//        }
+//        let base64LoginString = loginData.base64EncodedString()
 
         var urlRequest = URLRequest(
             url: baseUrl,
@@ -76,7 +93,7 @@ public class PodAPI {
         urlRequest.allowsCellularAccess = true
         urlRequest.allowsExpensiveNetworkAccess = true
         urlRequest.allowsConstrainedNetworkAccess = true
-        urlRequest.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
+//        urlRequest.setValue("Basic \(base64LoginString)", forHTTPHeaderField: "Authorization")
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             if let error = error {
@@ -326,7 +343,7 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ item: Item?) -> Void
     ) {
-        http(.POST, path: "item_with_edges/\(uid)") { error, data in
+        http(method: .POST, path: "item_with_edges/\(uid)") { error, data in
             if let data = data {
                 // TODO: Refactor: Error handling
                 let result: [Item]? = try? MemriJSONDecoder
@@ -343,7 +360,7 @@ public class PodAPI {
         _ item: SchemaItem,
         _ callback: @escaping (_ error: Error?) -> Void
     ) throws {
-        http(.POST, path: "bulk_action", body: try toJSON(try recursiveSearch(item))) { error, _ in
+        http(method: .POST, path: "bulk_action", body: try toJSON(try recursiveSearch(item))) { error, _ in
             callback(error)
         }
     }
@@ -378,7 +395,7 @@ public class PodAPI {
             result["deleteEdges"] = try deleteEdges?.map { try simplify($0) }
         }
 
-        http(.POST, path: "bulk_action", body: try toJSON(result)) { error, _ in
+        http(method: .POST, path: "bulk_action", body: try toJSON(result)) { error, _ in
             callback(error)
         }
     }
@@ -460,7 +477,7 @@ public class PodAPI {
             return
         }
 
-        http(.POST, path: "search_by_fields", body: data) { error, data in
+        http(method: .POST, path: "search_by_fields", body: data) { error, data in
             if let error = error {
                 debugHistory.error("Could not connect to pod: \n\(error)")
                 callback(error, nil)
@@ -477,7 +494,7 @@ public class PodAPI {
                         if withEdges {
                             let uids = items_.compactMap { $0.uid.value }
                             let data2 = uids.description.data(using: .utf8)
-                            self.http(.POST, path: "items_with_edges", body: data2) { error, data in
+                            self.http(method: .POST, path: "items_with_edges", body: data2) { error, data in
                                 do {
                                     if let error = error {
                                         debugHistory.error("Could not connect to pod: \n\(error)")
@@ -530,7 +547,7 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void
     ) {
-        http(.PUT, path: "import/\(uid)") { error, _ in
+        http(method: .PUT, path: "import/\(uid)") { error, _ in
             callback(error, error == nil)
         }
     }
@@ -543,7 +560,7 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void
     ) {
-        http(.POST, path: "run_service/indexers/\(uid)") { error, _ in
+        http(method: .POST, path: "run_service/indexers/\(uid)") { error, _ in
             callback(error, error == nil)
         }
     }

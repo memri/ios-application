@@ -120,6 +120,6 @@ struct ListRendererView: View {
 
 struct ListRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ListRendererView().environmentObject(try! RootContext(name: "", key: "").mockBoot())
+        ListRendererView().environmentObject(try! RootContext(name: "").mockBoot())
     }
 }
