@@ -10,6 +10,9 @@ struct BarChartModel {
     var sets: [ChartSetLabelledY]
     var hideGridLines: Bool = true
     var forceMinYOfZero: Bool = true
+	var primaryColor: ColorDefinition = ColorDefinition.system(.systemBlue)
+	var showValueLabels: Bool = true
+	var valueLabelFont: UIFont = UIFont.systemFont(ofSize: 14)
 
     func generateData() -> BarChartData {
         let dataSets: [BarChartDataSet] = sets.map { set in
@@ -20,6 +23,9 @@ struct BarChartModel {
                     data: ChartEntryInfo(dataIndex: indexedPoint.index)
                 )
       })
+			dataSet.drawValuesEnabled = showValueLabels
+			dataSet.valueFont = valueLabelFont
+			dataSet.setColor(primaryColor.uiColor)
             return dataSet
         }
         return BarChartData(dataSets: dataSets)

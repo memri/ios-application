@@ -196,6 +196,11 @@ Note[] {
         }
     }
     
+	[renderer = calendar] {
+		background: #FFF
+		color: #FF0000 /* set the primary color to red */
+	}
+	
 	[renderer = calendar.timeline] {
 		dateTime: {{.dateModified}}
         detailLevel: hour
@@ -208,6 +213,9 @@ Note[] {
 	}
 	
 	[renderer = messages] {
+		background: #D3E4D1
+		spacing: 8
+		
         send: sendMessage {
             network: {{.whatsapp}}
             contents: {{composedText}}

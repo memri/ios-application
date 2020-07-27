@@ -363,7 +363,9 @@ public struct UIElementView: SwiftUI.View {
                                                   .get("address", type: Results<Item>.self) as Any?)
 
                                       },
-                                      labelResolver: { _ in self.get("label") })
+                                      labelResolver: { _ in self.get("label") },
+									  moveable: self.get("moveable", type: Bool.self) ?? true
+									  )
                     )
                     .background(Color(.secondarySystemBackground))
                     .setProperties(
@@ -419,7 +421,8 @@ public struct UIElementView: SwiftUI.View {
                     MessageBubbleView(timestamp: get("dateTime"),
                                       sender: get("sender"),
                                       content: from.processText(get("content")) ?? "",
-                                      outgoing: get("isOutgoing") ?? false)
+                                      outgoing: get("isOutgoing") ?? false,
+									  font: get("font", type: FontDefinition.self))
                         .setProperties(
                             from.propertyResolver.properties,
                             self.item,
