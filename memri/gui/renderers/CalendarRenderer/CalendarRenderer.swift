@@ -107,7 +107,7 @@ struct CalendarView: View {
                 }
             }
             .padding(.horizontal, 20)
-            .background(Color(.secondarySystemBackground))
+			.background(Color.gray.opacity(0.2))
             ASCollectionView(sections: sections(withCalcs: calcs))
                 .scrollPositionSetter($scrollPosition)
                 .layout(ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 4) {
@@ -164,6 +164,7 @@ struct CalendarView: View {
                 .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
                 .alwaysBounceVertical()
         }
+		.background(renderConfig.backgroundColor.color)
     }
 
     func sections(withCalcs calcs: CalendarCalculations) -> [ASSection<Date>] {
@@ -180,30 +181,26 @@ struct CalendarView: View {
                         Spacer()
                         Text(self.calendarHelper.dayString(for: day))
                             .foregroundColor(self.calendarHelper
-                                .isToday(day) ? .red : Color(.label))
-                        HStack(spacing: 0) {
-                            if calcs.itemsOnDay(day).count > 4 {
-                                Circle()
-                                    .fill(Color.red)
-                                    .frame(width: 10, height: 10)
-                                    .padding(4)
-                                Text("×\(calcs.itemsOnDay(day).count)")
-                                    .font(Font.caption.bold())
-                                    .foregroundColor(Color.red)
-                                    .fixedSize()
-                            }
-                            else {
-                                CalendarDotShape(count: calcs.itemsOnDay(day).count)
-                                    .fill(Color.red)
-                                    .frame(height: 10)
-                                    .padding(4)
-                            }
-                        }
+                                .isToday(day) ? self.renderConfig.primaryColor.color : Color(.label))
+					
+						HStack(spacing: 0) {
+							Circle()
+								.fill(calcs.itemsOnDay(day).isEmpty ? .clear : self.renderConfig.primaryColor.color)
+								.frame(width: 10, height: 10)
+								.padding(4)
+							if calcs.itemsOnDay(day).count > 1 {
+								Text("×\(calcs.itemsOnDay(day).count)")
+									.font(Font.caption.bold())
+									.foregroundColor(self.renderConfig.primaryColor.color)
+									.fixedSize()
+							}
+						}
+						
                         Spacer()
                         Divider()
                     }
                     .background(cellContext
-                        .isHighlighted ? Color(.secondarySystemBackground) : .clear)
+					.isHighlighted ? Color(.darkGray).opacity(0.3) : .clear)
                 }
             }
         }
@@ -228,23 +225,23 @@ struct CalendarView: View {
     }
 }
 
-struct CalendarDotShape: Shape {
-    var count: Int
-    func path(in rect: CGRect) -> Path {
-        Path { path in
-            guard count > 0 else { return }
-            let boundedCountInt = max(min(count, 4), 0)
-            let boundedCount = CGFloat(boundedCountInt)
-            let radius = min(rect.width / 2 / (boundedCount + 1) - 1, rect.height * 0.5)
-            let spacing = rect.width / (boundedCount + 1)
-            for i in 1 ... boundedCountInt {
-                path.addEllipse(in: CGRect(
-                    x: spacing * CGFloat(i) - radius,
-                    y: rect.midY - radius,
-                    width: radius * 2,
-                    height: radius * 2
-                ))
-            }
-        }
-    }
-}
+//struct CalendarDotShape: Shape {
+//    var count: Int
+//    func path(in rect: CGRect) -> Path {
+//        Path { path in
+//            guard count > 0 else { return }
+//            let boundedCountInt = max(min(count, 4), 0)
+//            let boundedCount = CGFloat(boundedCountInt)
+//            let radius = min(rect.width / 2 / (boundedCount + 1) - 1, rect.height * 0.5)
+//            let spacing = rect.width / (boundedCount + 1)
+//            for i in 1 ... boundedCountInt {
+//                path.addEllipse(in: CGRect(
+//                    x: spacing * CGFloat(i) - radius,
+//                    y: rect.midY - radius,
+//                    width: radius * 2,
+//                    height: radius * 2
+//                ))
+//            }
+//        }
+//    }
+//}

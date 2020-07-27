@@ -48,13 +48,13 @@ struct ThumbGridRendererView: View {
                 let columns = 3
                 let spacing = self.renderConfig.spacing
 
-                let singleBlockSize = (environment.container.effectiveContentSize
-                    .width - contentInset.leading - contentInset.trailing - spacing
-                    .x * CGFloat(columns - 1)) / CGFloat(columns)
+                let singleBlockSize = (environment.container.effectiveContentSize.width
+					- contentInset.leading - contentInset.trailing
+					- spacing.width * CGFloat(columns - 1)) / CGFloat(columns)
                 func gridBlockSize(forSize size: Int, sizeY: Int? = nil) -> NSCollectionLayoutSize {
-                    let x = CGFloat(size) * singleBlockSize + spacing.x * CGFloat(size - 1)
-                    let y = CGFloat(sizeY ?? size) * singleBlockSize + spacing
-                        .y * CGFloat((sizeY ?? size) - 1)
+                    let x = CGFloat(size) * singleBlockSize + spacing.width * CGFloat(size - 1)
+                    let y = CGFloat(sizeY ?? size) * singleBlockSize
+						+ spacing.height * CGFloat((sizeY ?? size) - 1)
                     return NSCollectionLayoutSize(
                         widthDimension: .absolute(x),
                         heightDimension: .absolute(y)
@@ -70,7 +70,7 @@ struct ThumbGridRendererView: View {
                     subitem: item,
                     count: 2
                 )
-                verticalGroup.interItemSpacing = .fixed(spacing.y)
+                verticalGroup.interItemSpacing = .fixed(spacing.height)
 
                 let featureItemSize = gridBlockSize(forSize: 2)
                 let featureItem = NSCollectionLayoutItem(layoutSize: featureItemSize)
@@ -83,12 +83,12 @@ struct ThumbGridRendererView: View {
                     layoutSize: verticalAndFeatureGroupSize,
                     subitems: [verticalGroup, featureItem]
                 )
-                verticalAndFeatureGroupA.interItemSpacing = .fixed(spacing.x)
+                verticalAndFeatureGroupA.interItemSpacing = .fixed(spacing.width)
                 let verticalAndFeatureGroupB = NSCollectionLayoutGroup.horizontal(
                     layoutSize: verticalAndFeatureGroupSize,
                     subitems: [featureItem, verticalGroup]
                 )
-                verticalAndFeatureGroupB.interItemSpacing = .fixed(spacing.x)
+                verticalAndFeatureGroupB.interItemSpacing = .fixed(spacing.width)
 
                 let rowGroupSize = gridBlockSize(forSize: 3, sizeY: 1)
                 let rowGroup = NSCollectionLayoutGroup.horizontal(
@@ -96,7 +96,7 @@ struct ThumbGridRendererView: View {
                     subitem: item,
                     count: Int(columns)
                 )
-                rowGroup.interItemSpacing = .fixed(spacing.x)
+                rowGroup.interItemSpacing = .fixed(spacing.width)
 
                 let outerGroupSize = gridBlockSize(forSize: 3, sizeY: 7)
                 let outerGroup = NSCollectionLayoutGroup.vertical(
@@ -109,7 +109,7 @@ struct ThumbGridRendererView: View {
                         rowGroup,
                     ]
                 )
-                outerGroup.interItemSpacing = .fixed(spacing.y)
+                outerGroup.interItemSpacing = .fixed(spacing.height)
 
                 let section = NSCollectionLayoutSection(group: outerGroup)
                 section.contentInsets = contentInset
@@ -168,6 +168,7 @@ struct ThumbGridRendererView: View {
                 ASCollectionView(section: section)
                     .layout(self.layout)
                     .alwaysBounceVertical()
+					.background(renderConfig.backgroundColor.color)
             }
         }
     }

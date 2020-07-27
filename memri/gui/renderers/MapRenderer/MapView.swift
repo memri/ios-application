@@ -33,7 +33,8 @@ struct MapViewConfig {
     var addressResolver: (Item) -> Any?
     var labelResolver: (Item) -> String?
     var maxInitialZoom: Double = 16
-    var mapStyle: MapStyle = .street
+	var moveable: Bool = true
+//    var mapStyle: MapStyle = .street
 
     var onPress: ((Item) -> Void)?
 

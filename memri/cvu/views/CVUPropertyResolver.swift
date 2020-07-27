@@ -88,8 +88,7 @@ struct FontDefinition {
     var italic: Bool = false
 
     var font: Font {
-        #warning("IMPLEMENT ME")
-        return Font.system(.body)
+		Font(uiFont)
     }
 
     var uiFont: UIFont {

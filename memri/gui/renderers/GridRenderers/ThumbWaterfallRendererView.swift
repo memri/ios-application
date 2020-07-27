@@ -44,8 +44,8 @@ struct ThumbWaterfallRendererView: View {
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(createCustomLayout: ASWaterfallLayout.init) { layout in
             let spacing = self.renderConfig.spacing
-            layout.columnSpacing = spacing.x
-            layout.itemSpacing = spacing.y
+            layout.columnSpacing = spacing.width
+            layout.itemSpacing = spacing.height
             layout
                 .numberOfColumns =
                 .adaptive(minWidth: 150) // @State var columnMinSize: CGFloat = 150
@@ -105,6 +105,7 @@ struct ThumbWaterfallRendererView: View {
                     .customDelegate(WaterfallScreenLayoutDelegate.init)
                     .alwaysBounceVertical()
                     .contentInsets(renderConfig.edgeInset)
+					.background(renderConfig.backgroundColor.color)
             }
         }
     }

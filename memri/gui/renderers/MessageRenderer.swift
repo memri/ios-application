@@ -24,8 +24,10 @@ class CascadingMessageRendererConfig: CascadingRenderConfig {
     var type: String? = "messages"
 
     var press: Action? { cascadeProperty("press") }
+	
 
     var isOutgoing: Expression? { cascadeProperty("isOutgoing", type: Expression.self) }
+
 }
 
 struct MessageRenderer: View {
@@ -60,9 +62,13 @@ struct MessageRenderer: View {
     }
 
     var section: ASSection<Int> {
-        ASSection<Int>(id: 0, data: context.items, selectedItems: selectedItems) { item, _ in
+        ASSection<Int>(id: 0, data: context.items, selectedItems: selectedItems) { item, cellContext in
             self.renderConfig.render(item: item)
                 .environmentObject(self.context)
+				.padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.renderConfig.spacing.height / 2,
+									leading: self.renderConfig.edgeInset.left,
+									bottom: cellContext.isLastInSection ? 0 : self.renderConfig.spacing.height / 2,
+									trailing: self.renderConfig.edgeInset.right))
         }
         .onSelectSingle { index in
             guard let selectedItem = self.context.items[safe: index],
@@ -77,8 +83,9 @@ struct MessageRenderer: View {
             .separatorsEnabled(false)
             .scrollPositionSetter($scrollPosition)
             .alwaysBounce()
-            .contentInsets(.init(top: 5, left: 0, bottom: 5, right: 0))
+			.contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
             .edgesIgnoringSafeArea(.all)
+			.background(renderConfig.backgroundColor.color)
     }
 }
 
@@ -87,6 +94,7 @@ struct MessageBubbleView: View {
     var sender: String?
     var content: String
     var outgoing: Bool
+	var font: FontDefinition?
 
     var dateFormatter: DateFormatter {
         // TODO: If there is a user setting for a *short* date format, we should use that
@@ -113,21 +121,18 @@ struct MessageBubbleView: View {
                         .font(.caption)
                         .foregroundColor(Color(.secondaryLabel))
                 }
-                Text(content)
-                    .multilineTextAlignment(.leading)
+                MemriSmartTextView(string: content, detectLinks: true,
+								   font: font ?? FontDefinition(size: 18),
+								   color: outgoing ? ColorDefinition.system(.white) : ColorDefinition.system(.label),
+								   maxLines: nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.all, 10)
-                    .foregroundColor(
-                        outgoing ? Color.white : Color(.label)
-                    )
                     .background(
                         outgoing ? Color.blue : Color(.secondarySystemBackground)
                     )
                     .mask(RoundedRectangle(cornerRadius: 5, style: .continuous))
             }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity, alignment: outgoing ? .trailing : .leading)
         .padding(outgoing ? .leading : .trailing, 20)
     }
