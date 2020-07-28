@@ -92,7 +92,7 @@ public class ResultSet: ObservableObject {
     ///  Items
     /// - Parameter callback: Callback with params (error: Error, result: [Item]) that is executed on the returned result
     /// - Throws: empty query error
-    func load(syncWithRemote: Bool = true, _ callback: (_ error: Error?) throws -> Void) throws {
+    func load(syncWithRemote: Bool = true, _ callback: @escaping (_ error: Error?) throws -> Void) throws {
         if !isLoading {
             if datasource.query == "" {
                 throw "Exception: No query specified when loading result set"
@@ -104,28 +104,28 @@ public class ResultSet: ObservableObject {
 
             try cache.query(datasource, syncWithRemote: syncWithRemote) { (error, result) -> Void in
                 if let result = result {
-                    items = result
-                    count = items.count
+                    self.items = result
+                    self.count = self.items.count
 
-                    if _unfilteredItems != nil {
-                        _unfilteredItems = nil
-                        filter()
+                    if self._unfilteredItems != nil {
+                        self._unfilteredItems = nil
+                        self.filter()
                     }
 
                     // We've successfully loaded page 0
-                    setPagesLoaded(0) // TODO: This is not used at the moment
+                    self.setPagesLoaded(0) // TODO: This is not used at the moment
 
-                    isLoading = false
+                    self.isLoading = false
 
                     try callback(nil)
                 }
                 else if error != nil {
-                    isLoading = false
+                    self.isLoading = false
 
                     try callback(error)
                 }
 
-                updateUI()
+                self.updateUI()
             }
         }
     }

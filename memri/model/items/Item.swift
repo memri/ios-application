@@ -186,7 +186,7 @@ public class Item: SchemaItem {
     ///   - name: property name
     ///   - value: value
     public func set(_ name: String, _ value: Any?) {
-        DatabaseController.writeSync { _ in
+        DatabaseController.write(self.realm) {
             if let schema = self.objectSchema[name] {
                 guard !isEqualValue(self[name], value) else { return }
 
@@ -439,7 +439,7 @@ public class Item: SchemaItem {
         var edge = allEdges.filter(query).first
         let sequenceNumber: Int? = try determineSequenceNumber(edgeType, sequence)
 
-        DatabaseController.writeSync { _ in
+        DatabaseController.write(self.realm) {
             if item.realm == nil, let item = item as? Item {
                 item._action = "create"
                 realm?.add(item, update: .modified)
@@ -491,7 +491,7 @@ public class Item: SchemaItem {
 
     public func unlink(_ edge: Edge) throws {
         if edge.sourceItemID.value == uid.value, edge.sourceItemType == genericType {
-            DatabaseController.writeSync { _ in
+            DatabaseController.write(self.realm) {
                 edge.deleted = true
                 edge._action = "delete"
                 realm?.delete(edge)
@@ -516,7 +516,7 @@ public class Item: SchemaItem {
         let results = allEdges.filter(query)
 
         if results.count > 0 {
-            DatabaseController.writeSync { _ in
+            DatabaseController.write(self.realm) {
                 if all {
                     for edge in results {
                         edge.deleted = true
@@ -661,7 +661,7 @@ public class Item: SchemaItem {
     /// update the dateAccessed property to the current date
     public func accessed() {
         let safeSelf = ItemReference(to: self)
-        DatabaseController.writeAsync { _ in
+        DatabaseController.background(write:true) { _ in
             guard let item = safeSelf.resolve() else { return }
 
             item.dateAccessed = Date()
@@ -675,7 +675,7 @@ public class Item: SchemaItem {
     public func modified(_ updatedFields: [String]) {
         if self._action != "create" {
             // Make sure that in between updates to this item are processed correctly
-            DatabaseController.writeSync { realm in
+            DatabaseController.write(self.realm) {
                 for field in updatedFields {
                     if !self._updated.contains(field) {
                         self._updated.append(field)
@@ -686,7 +686,7 @@ public class Item: SchemaItem {
         }
         
         let safeSelf = ItemReference(to: self)
-        DatabaseController.writeAsync { _ in
+        DatabaseController.background(write:true) { _ in
             guard let item = safeSelf.resolve() else { return }
 
             let previousModified = item.dateModified
@@ -784,9 +784,9 @@ extension RealmSwift.Results where Element == Edge {
         }
 
         do {
-            return try DatabaseController.tryRead {
+            return try DatabaseController.tryCurrent {
                 let filter = "uid = "
-                    + compactMap {
+                    + self.compactMap {
                         if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID
                             .value) {
                             return String(value)
@@ -871,9 +871,9 @@ extension memri.Edge {
 
     func target<T: Object>(type _: T.Type? = T.self) -> T? {
         do {
-            return try DatabaseController.tryRead {
-                if let itemType = targetType {
-                    return $0.object(ofType: itemType, forPrimaryKey: targetItemID) as? T
+            return try DatabaseController.tryCurrent {
+                if let itemType = self.targetType {
+                    return $0.object(ofType: itemType, forPrimaryKey: self.targetItemID) as? T
                 }
                 else {
                     throw "Could not resolve edge target: \(self)"
@@ -889,9 +889,9 @@ extension memri.Edge {
 
     func source<T: Item>(type _: T.Type? = T.self) -> T? {
         do {
-            return try DatabaseController.tryRead {
-                if let itemType = sourceType {
-                    return $0.object(ofType: itemType, forPrimaryKey: sourceItemID) as? T
+            return try DatabaseController.tryCurrent {
+                if let itemType = self.sourceType {
+                    return $0.object(ofType: itemType, forPrimaryKey: self.sourceItemID) as? T
                 }
                 else {
                     throw "Could not resolve edge source: \(self)"

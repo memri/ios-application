@@ -1158,11 +1158,11 @@ class ActionDelete: Action, ActionExec {
         if
             let selection = context.currentView?.userState.get("selection", type: [Item].self),
             !selection.isEmpty {
-            context.cache.delete(selection)
+            try context.cache.delete(selection)
             context.scheduleCascadableViewUpdate(immediate: true)
         }
         else if let dataItem = arguments["item"] as? Item {
-            context.cache.delete(dataItem)
+            try context.cache.delete(dataItem)
             context.scheduleCascadableViewUpdate(immediate: true)
         }
         else {

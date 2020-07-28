@@ -19,7 +19,7 @@ class LocalSetting:Object {
     }
     
     public class func set(_ key:String, _ value:String) {
-        DatabaseController.writeSync { realm in
+        DatabaseController.current(write:true) { realm in
             if let setting = realm.object(ofType: LocalSetting.self, forPrimaryKey: key) {
                 setting.value = value
             }
@@ -30,7 +30,7 @@ class LocalSetting:Object {
     }
     
     public class func get(_ key:String) -> String? {
-        DatabaseController.writeSync { realm in
+        DatabaseController.current(write:true) { realm in
             if let setting = realm.object(ofType: LocalSetting.self, forPrimaryKey: key) {
                 return setting.value
             }

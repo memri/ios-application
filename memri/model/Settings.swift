@@ -12,7 +12,7 @@ public class Settings {
     /// Shared settings that can be used from the main thread
     static var shared: Settings = Settings()
     /// Default settings
-    var settings: Results<Setting>
+    var settings: Results<Setting>? = nil
 
     private var listeners = [String: [UUID]]()
     private var callbacks = [UUID: (Any?) -> Void]()
@@ -20,7 +20,7 @@ public class Settings {
     /// Init settings with the relam database
     /// - Parameter rlm: realm database object
     init() {
-        settings = try! DatabaseController.tryRead { realm in
+        settings = try? DatabaseController.tryCurrent { realm in
             realm.objects(Setting.self)
         }
     }
@@ -107,7 +107,7 @@ public class Settings {
     /// - Parameter path: path for the setting
     /// - Returns: setting value
     public func getSetting<T: Decodable>(_ path: String, type: T.Type = T.self) throws -> T? {
-        let item = settings.first(where: { $0.key == path })
+        let item = settings?.first(where: { $0.key == path })
 
         if let item = item, let json = item.json {
             let output: T? = try unserialize(json)
@@ -130,7 +130,7 @@ public class Settings {
     ///   - path: path of the setting
     ///   - value: setting Value
     public func setSetting(_ path: String, _ value: AnyCodable) throws {
-        DatabaseController.writeSync { realm in
+        try DatabaseController.tryCurrent(write:true) { realm in
             if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
                 s.json = try serialize(value)
 

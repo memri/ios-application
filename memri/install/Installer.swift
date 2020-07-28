@@ -4,6 +4,7 @@
 
 import Foundation
 import RealmSwift
+import XCTest
 
 public class Installer: ObservableObject {
     @Published var isInstalled: Bool = false
@@ -55,11 +56,23 @@ public class Installer: ObservableObject {
             }
             
             Authentication.generateOwnerAndDBKey { error in
-                self.installDefaultDatabase(context)
-                Settings.shared.set("user/pod/host", host)
+                if let error = error {
+                    // TODO Error Handling - show to the user
+                    debugHistory.warn("\(error)")
+                    return
+                }
                 
-                self.ready()
-                context.cache.sync.schedule()
+                self.installDefaultDatabase(context) { error in
+                    if let error = error {
+                        // TODO Error Handling - show to the user
+                        debugHistory.warn("\(error)")
+                        return
+                    }
+                    
+                    Settings.shared.set("user/pod/host", host)
+                    self.ready()
+                    context.cache.sync.schedule()
+                }
             }
         }
     }
@@ -83,7 +96,13 @@ public class Installer: ObservableObject {
                 ownerKey: ownerKey,
                 databaseKey: databaseKey
             ) { error in
-                context.cache.sync.syncAllFromPod {
+                if let error = error {
+                    // TODO Error Handling - show to the user
+                    debugHistory.warn("\(error)")
+                    return
+                }
+                
+                context.cache.sync.syncAllFromPod { // TODO error handling
                     Settings.shared.set("user/pod/host", host)
                     self.ready()
                 }
@@ -101,7 +120,11 @@ public class Installer: ObservableObject {
             
             try await {
                 if boot {
-                    try self.testRoot!.boot(isTesting: true)
+                    self.testRoot!.boot(isTesting: true) { error in
+                        if let error = error {
+                            XCTFail("\(error)")
+                        }
+                    }
                 }
             }
             
@@ -112,44 +135,71 @@ public class Installer: ObservableObject {
             if isInstalled { ready() }
             else {
                 clearDatabase(testRoot!)
-                installDefaultDatabase(testRoot!)
+                installDefaultDatabase(testRoot!) { error in
+                    if let error = error {
+                        XCTFail("\(error)")
+                    }
+                }
             }
         }
         
         return testRoot
     }
+    
+    public func handleInstallError(error:Error?) {
+        // TODO ERror handling - report to the user
+        debugHistory.warn("\(error!)")
+    }
 
-    public func installDefaultDatabase(_ context: MemriContext) {
+    public func installDefaultDatabase(_ context: MemriContext,
+                                       _ callback:((Error?) -> Void)? = nil) {
         debugHistory.info("Installing defaults in the database")
-
-        do { try install(context, dbName: "default_database") }
-        catch {
-            debugHistory.error("Unable to load: \(error)")
-        }
+        install(context, dbName: "default_database", callback ?? handleInstallError)
     }
 
-    public func installDemoDatabase(_ context: MemriContext) {
+    public func installDemoDatabase(_ context: MemriContext,
+                                    _ callback:((Error?) -> Void)? = nil) {
         debugHistory.info("Installing demo database")
-
-        do { try install(context, dbName: "demo_database") }
-        catch {
-            debugHistory.error("Unable to load: \(error)")
-        }
+        install(context, dbName: "demo_database", callback ?? handleInstallError)
     }
 
-    private func install(_ context: MemriContext, dbName: String) throws {
-        // Load default objects in database
-        try context.cache.install(dbName)
+    private func install(_ context: MemriContext, dbName: String, _ callback:@escaping (Error?) -> Void) {
+        do {
+            // Load default objects in database
+            try context.cache.install(dbName) { error in
+                
+                if let error = error {
+                    callback(error)
+                    return
+                }
 
-        // Load default views in database
-        context.views.context = context
-        try context.views.install()
+                // Load default views in database
+                context.views.context = context
+                context.views.install { error in
+                    
+                    if let error = error {
+                        callback(error)
+                        return
+                    }
 
-        // Load default sessions in database
-        try context.sessions.install(context)
-
-        // Installation complete
-        LocalSetting.set("memri/installed", Date().description)
+                    // Load default sessions in database
+                    context.sessions.install(context) { error in
+                        if let error = error {
+                            callback(error)
+                            return
+                        }
+                        
+                        // Installation complete
+                        LocalSetting.set("memri/installed", Date().description)
+                        
+                        callback(nil)
+                    }
+                }
+            }
+        }
+        catch {
+            callback(error)
+        }
     }
 
     public func continueAsNormal(_ context: MemriContext) {
@@ -159,7 +209,7 @@ public class Installer: ObservableObject {
     }
 
     public func clearDatabase(_ context: MemriContext) {
-        DatabaseController.writeSync { realm in
+        DatabaseController.current(write:true) { realm in
             realm.deleteAll()
         }
         
@@ -171,12 +221,18 @@ public class Installer: ObservableObject {
     }
 
     public func clearSessions(_ context: MemriContext) {
-        DatabaseController.writeSync { _ in
+        DatabaseController.current(write:true) { _ in
             // Create a new default session
-            try context.sessions.install(context)
+            context.sessions.install(context) { error in
+                if let error = error {
+                    // TODO Error Handling - show to the user
+                    debugHistory.warn("\(error)")
+                    return
+                }
+                
+                self.debugMode = false
+                self.ready()
+            }
         }
-
-        debugMode = false
-        ready()
     }
 }

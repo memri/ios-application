@@ -22,11 +22,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Create the SwiftUI view that provides the window contents.
         do {
-            let context = try RootContext(name: "Memri GUI", key: "ABCDEF")
+            let context = try RootContext(name: "Memri GUI")
             let application = Application().environmentObject(context as MemriContext)
 
             try context.installer.await {
-                try context.boot {
+                context.boot { error in
+                    if let error = error {
+                        // TODO present to the user!!
+                        debugHistory.error("\(error)")
+                        return
+                    }
+                    
                     self.settingWatcher = context.settings.subscribe(
                         "device/sensors/location/track",
                         type: Bool.self

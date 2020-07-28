@@ -60,8 +60,8 @@ public final class Session: Equatable, Subscriptable {
     var uid: Int?
     var parsed: CVUParsedSessionDefinition?
     var state: CVUStateDefinition? {
-        DatabaseController.read { realm in
-            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        DatabaseController.current { realm in
+            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
         }
     }
 
@@ -126,11 +126,11 @@ public final class Session: Equatable, Subscriptable {
             else if
                 let parsedViews = parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
                 parsedViews.count > 0 {
-                try DatabaseController.tryWriteSync { _ in
+                try DatabaseController.tryCurrent(write:true) { _ in
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                         _ = try state.link(viewState, type: "view", sequence: .last)
-                        views.append(try CascadableView(viewState, self))
+                        self.views.append(try CascadableView(viewState, self))
                     }
                 }
 
@@ -182,8 +182,8 @@ public final class Session: Equatable, Subscriptable {
     }
 
     public func persist() throws {
-        try DatabaseController.tryWriteSync { realm in
-            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        DatabaseController.current(write:true) { realm in
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored session CVU. Creating a new one.")
 
@@ -202,7 +202,7 @@ public final class Session: Equatable, Subscriptable {
                 var i = 0
                 for edge in stateViewEdges {
                     #warning("Hard crash when index out of range. Fix")
-                    if edge.targetItemID.value == views[i].uid {
+                    if edge.targetItemID.value == self.views[i].uid {
                         i += 1
                         continue
                     }
@@ -217,7 +217,7 @@ public final class Session: Equatable, Subscriptable {
                 }
             }
 
-            for view in views {
+            for view in self.views {
                 try view.persist()
 
                 if let s = view.state {

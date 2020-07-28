@@ -14,8 +14,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     var uid: Int
 
     var state: CVUStateDefinition? {
-        DatabaseController.read { realm in
-            realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        DatabaseController.current {
+            $0.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
         }
     }
 
@@ -400,8 +400,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     }
 
     public func persist() throws {
-        try DatabaseController.tryWriteSync { realm in
-            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: uid)
+        try DatabaseController.tryCurrent(write:true) { realm in
+            var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")
 
@@ -411,10 +411,10 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                     throw "Exception: could not create stored definition"
                 }
 
-                uid = stateUID
+                self.uid = stateUID
             }
 
-            state?.set("definition", head.toCVUString(0, "    "))
+            state?.set("definition", self.head.toCVUString(0, "    "))
         }
     }
 
@@ -556,7 +556,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             }
             else {
                 // Update the UI
-                context?.scheduleUIUpdate()
+                self.context?.scheduleUIUpdate()
             }
         }
     }
@@ -601,10 +601,10 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                     }
                     else {
                         // Update the UI
-                        context?.scheduleUIUpdate()
+                        self.context?.scheduleUIUpdate()
                     }
 
-                    loading = false
+                    self.loading = false
                     callback(error)
                 }
             }
@@ -626,10 +626,10 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
                 }
                 else {
                     // Load the cascade list of views
-                    try cascade(resultSet)
+                    try self.cascade(resultSet)
                 }
 
-                loading = false
+                self.loading = false
                 callback(error)
             }
         }

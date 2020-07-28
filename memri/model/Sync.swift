@@ -81,7 +81,7 @@ class Sync {
             ] as? [String: String])
 
             // Add to realm
-            DatabaseController.writeAsync { realm in
+            DatabaseController.background(write:true) { realm in
 
                 var safeRef: ItemReference?
                 if auditable {
@@ -105,7 +105,7 @@ class Sync {
                 self.prioritySync(datasource) {
                     if auditable {
                         // We no longer need to process this log item
-                        DatabaseController.writeAsync { _ in
+                        DatabaseController.background(write:true) { _ in
                             safeRef?.resolve()?._action = nil
                         }
                     }
@@ -214,7 +214,7 @@ class Sync {
 
     private func syncToPod() {
         func markAsDone(_ list: [String: Any], _ callback: @escaping () -> Void) {
-            DatabaseController.writeAsync { realm in
+            DatabaseController.background(write:true) { realm in
                 for (_, sublist) in list {
                     for item in sublist as? [Any] ?? [] {
                         if
@@ -246,7 +246,7 @@ class Sync {
             }
         }
 
-        DatabaseController.read { realm in
+        DatabaseController.current { realm in
             var found = 0
             var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
             var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]

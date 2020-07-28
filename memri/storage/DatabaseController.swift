@@ -19,7 +19,7 @@ class ItemReference {
     }
 
     func resolve() -> Item? {
-        DatabaseController.read { $0.object(ofType: type, forPrimaryKey: uid) }
+        DatabaseController.current { $0.object(ofType: self.type, forPrimaryKey: self.uid) }
     }
 }
 
@@ -44,11 +44,11 @@ class EdgeReference {
     }
 
     func resolve() -> Edge? {
-        DatabaseController.read {
+        DatabaseController.current {
             $0.objects(Edge.self).filter("""
-                type = '\(type)'
-                    AND sourceItemID = \(sourceItemID)
-                    AND targetItemID = \(targetItemID)
+                type = '\(self.type)'
+                    AND sourceItemID = \(self.sourceItemID)
+                    AND targetItemID = \(self.targetItemID)
             """).first
         }
     }
@@ -116,12 +116,21 @@ class DatabaseController {
     }
     
     /// This function returns a Realm for the current thread
-    static func getRealmAsync(_ receiveRealm: @escaping (Realm) throws -> Void) throws -> Void {
-        try Authentication.getPublicRootKey { error, encryptionKey in
+    static func getRealmAsync(_ receiveRealm: @escaping (Error?, Realm?) -> Void) -> Void {
+        Authentication.getPublicRootKey { error, encryptionKey in
             var config = realmConfig
             config.encryptionKey = encryptionKey
-            let realm = try Realm(configuration: config)
-            try receiveRealm(realm)
+            
+            do {
+                let realm = try Realm(configuration: config)
+                receiveRealm(nil, realm)
+            }
+            catch {
+                // TODO error handling
+                // Notify the user
+                debugHistory.error("\(error)")
+                receiveRealm(error, nil)
+            }
         }
     }
 
@@ -146,108 +155,130 @@ class DatabaseController {
     //	static var isOnRealmQueue: Bool {
     //		DispatchQueue.getSpecific(key: realmQueueSpecificKey) ?? false
     //	}
-
-    static func tryRead(_ doRead: @escaping (Realm) throws -> Void) throws {
-        try getRealmAsync { realm in
-            try doRead(realm)
-        }
-    }
-
-    static func tryRead<T>(_ doRead: (Realm) throws -> T) throws -> T {
-        let realm = try getRealmSync()
-        return try doRead(realm)
-    }
-
-    static func read(_ doRead: (Realm) throws -> Void) {
-        do {
-            try tryRead(doRead)
-        }
-        catch {
-            debugHistory.error("Realm Error: \(error)")
-        }
-    }
-
-    static func read<T>(_ doRead: (Realm) throws -> T?) -> T? {
-        do {
-            return try tryRead(doRead)
-        }
-        catch {
-            debugHistory.error("Realm Error: \(error)")
-            return nil
-        }
-    }
-
-    /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
-    static func tryWriteSync(_ doWrite: @escaping (Realm) throws -> Void) throws {
-        try getRealmAsync { realm in
-            guard !realm.isInWriteTransaction else {
-                try doWrite(realm)
+    
+    /// Execute a realm based function on the current thread
+    static func current(
+        write:Bool = false,
+        error:(@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec:@escaping (Realm) throws -> Void
+    ) {
+        getRealmAsync { err, realm in
+            if let err = err {
+                error(err)
                 return
             }
-            try realm.write {
-                try doWrite(realm)
+            
+            guard let realm = realm else {
+                error("Unable to initialize realm")
+                return
             }
-        }
-    }
-
-    /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
-    static func tryWriteSync<T>(_ doWrite: (Realm) throws -> T?) throws -> T? {
-        let realm = try getRealmSync()
-        guard !realm.isInWriteTransaction else {
-            return try doWrite(realm)
-        }
-        try realm.write {
-            return try doWrite(realm)
-        }
-        return nil
-    }
-
-    /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
-    static func writeSync(_ doWrite: (Realm) throws -> Void) {
-        do {
-            try tryWriteSync(doWrite)
-        }
-        catch {
-            debugHistory.error("Realm Error: \(error)")
-        }
-    }
-
-    /// Use this for tasks that will affect user-visible behaviour. It will run on the current-thread.
-    static func writeSync<T>(_ doWrite: (Realm) throws -> T?) -> T? {
-        do {
-            return try tryWriteSync(doWrite)
-        }
-        catch {
-            debugHistory.error("Realm Error: \(error)")
-            return nil
-        }
-    }
-
-    /// Use this for writing to Realm in the background. It will run on a background thread.
-    static func writeAsync(_ doWrite: @escaping (Realm) throws -> Void) {
-        realmQueue.async {
-            autoreleasepool {
-                do {
-                    try getRealmAsync { realm in
-                        guard !realm.isInWriteTransaction else {
-                            try doWrite(realm)
-                            return
-                        }
-                        try realm.write {
-                            try doWrite(realm)
-                        }
+            
+            do {
+                if write {
+                    guard !realm.isInWriteTransaction else {
+                        try exec(realm)
+                        return
+                    }
+                    
+                    try realm.write {
+                        try exec(realm)
                     }
                 }
-                catch {
-                    debugHistory.error("Realm Error: \(error)")
+                else {
+                    try exec(realm)
                 }
+            }
+            catch let err {
+                error(err)
             }
         }
     }
     
-    static func clean() {
+    /// Execute a realm based function that returns a value on the main thread
+    static func current<T>(
+        write:Bool = false,
+        _ exec:@escaping (Realm) throws -> T?
+    ) -> T? {
+        do {
+            return try tryCurrent(write: write, exec)
+        }
+        catch {
+            debugHistory.warn("\(error)")
+            return nil
+        }
+    }
+    
+    /// Execute a realm based function that throws and returns a value on the main thread
+    static func tryCurrent<T>(
+        write:Bool = false,
+        _ exec:@escaping (Realm) throws -> T?
+    ) throws -> T? {
+        let realm = try getRealmSync()
+        
+        if write {
+            guard !realm.isInWriteTransaction else {
+                return try exec(realm)
+            }
+            
+            return try realm.write {
+                try exec(realm)
+            }
+        }
+        else {
+            return try exec(realm)
+        }
+    }
+    
+    /// Execute a realm based function on a background thread
+    static func background(
+        write:Bool = false,
+        error:(@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec:@escaping (Realm) throws -> Void
+    ) {
+        realmQueue.async {
+            autoreleasepool {
+                current(write: write, error: error, exec)
+            }
+        }
+    }
+    
+    /// Execute a realm based function on the main thread (warning this blocks the UI)
+    static func main(
+        write:Bool = false,
+        error:(@escaping (Error) -> Void) = globalErrorHandler,
+        _ exec:@escaping (Realm) throws -> Void
+    ) {
+        DispatchQueue.main.async {
+            autoreleasepool {
+                current(write: write, error: error, exec)
+            }
+        }
+    }
+    
+    static func write(_ rlm:Realm?, _ exec: () throws -> Void) {
+        do {
+            let realm:Realm = rlm == nil ? try getRealmSync() : rlm!
+            
+            guard !realm.isInWriteTransaction else {
+                return try exec()
+            }
+            
+            return try realm.write {
+                try exec()
+            }
+        }
+        catch {
+            debugHistory.warn("\(error)")
+        }
+    }
+    
+    static func globalErrorHandler(error:Error) {
+        debugHistory.error("\(error)")
+    }
+
+    static func clean(_ callback:@escaping (Error?) -> Void) {
         #warning("@Toby, deleting here on realm doesnt remove them from the db and thus this is called every time. Any idea why?")
-        DatabaseController.writeSync { realm in
+        DatabaseController.background(write: true, error: callback) { realm in
             for itemType in ItemFamily.allCases {
                 if itemType == .typeUserState { continue }
 

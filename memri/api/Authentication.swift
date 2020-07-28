@@ -9,6 +9,8 @@
 import Foundation
 import LocalAuthentication
 
+/* WRITE TESTS TO GET THIS TO WORK !!! */
+
 class Authentication {
     /*
         TODO:
@@ -140,7 +142,7 @@ class Authentication {
         }
     }
     
-    static func getPublicRootKey(_ callback: @escaping (Error?, Data?) -> Void) throws {
+    static func getPublicRootKey(_ callback: @escaping (Error?, Data?) -> Void) {
         do {
             let publicKey = try getPublicRootKeySync()
             callback(nil, publicKey)
@@ -170,7 +172,6 @@ class Authentication {
         let publicKey = SecKeyCopyPublicKey(privateKey)
         
         return publicKey
-        
     }
     
     static func generateOwnerAndDBKey(_ callback: @escaping (Error?) -> Void) {

@@ -30,9 +30,10 @@ public class Cache {
     }
 
     /// gets default item from database, and adds them to realm
-    public func install(_ dbName: String) throws {
-        DatabaseController.writeSync { realm in
-            try _install(realm, dbName)
+    public func install(_ dbName: String, _ callback:@escaping (Error?) -> Void) throws {
+        DatabaseController.background(write:true, error:callback) { realm in
+            try self._install(realm, dbName)
+            callback(nil)
         }
     }
     
@@ -128,7 +129,7 @@ public class Cache {
                         )
                     }
 
-                    DatabaseController.writeSync { _ in
+                    DatabaseController.current(write:true) { _ in
                         item.allEdges.append(edge)
                     }
                 }
@@ -162,9 +163,9 @@ public class Cache {
     public func query(
         _ datasource: Datasource,
         syncWithRemote: Bool = true,
-        _ callback: (_ error: Error?, _ items: [Item]?) throws -> Void
+        _ callback: @escaping (_ error: Error?, _ items: [Item]?) throws -> Void
     ) throws {
-        try DatabaseController.tryRead { realm in
+        try DatabaseController.tryCurrent { realm in
             // Do nothing when the query is empty. Should not happen.
             let q = datasource.query ?? ""
 
@@ -176,10 +177,10 @@ public class Cache {
             }
             else {
                 // Schedule the query to sync from the pod
-                if syncWithRemote { sync.syncQuery(datasource) }
+                if syncWithRemote { self.sync.syncQuery(datasource) }
 
                 // Parse query
-                let (typeName, filter) = parseQuery(q)
+                let (typeName, filter) = self.parseQuery(q)
 
                 if typeName == "*" {
                     var returnValue: [Item] = []
@@ -291,7 +292,7 @@ public class Cache {
             }
 
             // Add item to realm
-            try DatabaseController.tryWriteSync { $0.add(item, update: .modified) }
+            try DatabaseController.tryCurrent(write:true) { $0.add(item, update: .modified) }
         }
         catch {
             throw "Could not add item to cache: \(error)"
@@ -360,9 +361,9 @@ public class Cache {
     /// marks an item to be deleted
     /// - Parameter item: item to be deleted
     /// - Remark: All methods and properties must throw when deleted = true;
-    public func delete(_ item: Item) {
+    public func delete(_ item: Item) throws {
         if !item.deleted {
-            DatabaseController.writeSync { _ in
+            try DatabaseController.tryCurrent(write:true) { _ in
                 item.deleted = true
                 item._action = "delete"
                 let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
@@ -375,8 +376,8 @@ public class Cache {
 
     /// marks a set of items to be deleted
     /// - Parameter items: items to be deleted
-    public func delete(_ items: [Item]) {
-        DatabaseController.writeSync { _ in
+    public func delete(_ items: [Item]) throws {
+        try DatabaseController.tryCurrent(write:true) { _ in
             for item in items {
                 if !item.deleted {
                     item.deleted = true
@@ -434,7 +435,7 @@ public class Cache {
     static var cacheUIDCounter: Int = -1
     
     public class func incrementUID() throws -> Int {
-        DatabaseController.writeSync { realm in
+        try DatabaseController.tryCurrent(write:true) { realm in
             if cacheUIDCounter == -1 {
                 if
                     let setting = realm.objects(Setting.self)
@@ -505,7 +506,7 @@ public class Cache {
         unique: String? = nil
     ) throws -> T {
         var item: T?
-        try DatabaseController.tryWriteSync { realm in
+        try DatabaseController.tryCurrent(write:true) { realm in
             var dict = values
 
             // TODO:
@@ -602,7 +603,7 @@ public class Cache {
         sequence: Int? = nil
     ) throws -> Edge {
         var edge: Edge?
-        try DatabaseController.tryWriteSync { realm in
+        try DatabaseController.tryCurrent(write:true) { realm in
             // TODO:
             // Always overwrite (see also link())
 

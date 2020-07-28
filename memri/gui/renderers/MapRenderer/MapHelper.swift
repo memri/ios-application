@@ -86,7 +86,7 @@ class MapHelper {
             if let location = location {
                 // Update the address with the location (avoid future lookups)
                 let safeRef = ItemReference(to: address)
-                DatabaseController.writeAsync { _ in
+                DatabaseController.background(write:true) { _ in
                     guard let address = safeRef.resolve() as? Address else { return }
 
                     let newLocation = try Cache.createItem(Location.self, values: [

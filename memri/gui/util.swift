@@ -166,8 +166,8 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
     let type = ItemFamily(rawValue: type)
     if let type = type {
         let item = ItemFamily.getType(type)
-        return DatabaseController.read { realm in
-            realm.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as? Item
+        return DatabaseController.current {
+            $0.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as? Item
         }
     }
     return nil

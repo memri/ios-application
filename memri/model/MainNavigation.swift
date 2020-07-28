@@ -27,8 +27,8 @@ public class MainNavigation: ObservableObject {
     public var scheduleUIUpdate: ((((_ context: MemriContext) -> Bool)?) -> Void)?
 
     required init() {
-        items = DatabaseController.read { realm in
-            realm.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
+        items = DatabaseController.current {
+            $0.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
         }
     }
 

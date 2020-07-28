@@ -20,7 +20,7 @@ public class Views {
 
     init() {}
 
-    public func load(_ context: MemriContext, _ callback: () throws -> Void) throws {
+    public func load(_ context: MemriContext) throws {
         self.context = context
 
         try setCurrentLanguage(context.settings.get("user/language") ?? "English")
@@ -37,9 +37,6 @@ public class Views {
                     }
                 }
             }
-
-        // Done
-        try callback()
     }
 
     public func listenForChanges() {
@@ -64,74 +61,80 @@ public class Views {
 
     // TODO: Refactor: distinguish between views and sessions
     // Load the default views from the package
-    public func install(overrideCodeForTesting:String? = nil) throws {
+    public func install(overrideCodeForTesting:String? = nil, _ callback: @escaping (Error?) -> Void) {
         guard let context = context else {
-            throw "Context is not set"
+            callback("Context is not set")
+            return
         }
 
         let code = overrideCodeForTesting ?? getDefaultViewContents()
 
+        var parsedDefinitions: [CVUParsedDefinition]
         do {
             let cvu = CVU(code, context, lookup: lookupValueOfVariables, execFunc: executeFunction)
-            let parsedDefinitions = try cvu.parse() // TODO: this could be optimized
-
-            let validator = CVUValidator()
-            if !validator.validate(parsedDefinitions) {
-                validator.debug()
-                if validator.warnings.count > 0 {
-                    for message in validator.warnings { debugHistory.warn(message) }
-                }
-                if validator.errors.count > 0 {
-                    for message in validator.errors { debugHistory.error(message) }
-                    throw "Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))"
-                }
-            }
-
-            // Start write transaction outside loop for performance reasons
-            try DatabaseController.tryWriteSync { _ in
-                // Loop over lookup table with named views
-                for def in parsedDefinitions {
-                    var values: [String: Any?] = [
-                        "domain": "defaults",
-                        "definition": def.description,
-                    ]
-
-                    if def.selector != nil { values["selector"] = def.selector }
-                    if def.name != nil { values["name"] = def.name }
-
-                    guard let selector = def.selector else {
-                        throw "Exception: selector on parsed CVU is not defined"
-                    }
-
-                    if def is CVUParsedViewDefinition {
-                        values["type"] = "view"
-                        //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
-                    }
-                    else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
-                    else if def is CVUParsedDatasourceDefinition {
-                        values["type"] = "datasource"
-                    }
-                    else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-                    else if def is CVUParsedColorDefinition { values["type"] = "color" }
-                    else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-                    else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-                    else if def is CVUParsedSessionDefinition { values["type"] = "session" }
-                    else { throw "Exception: unknown definition" }
-
-                    // Store definition
-                    _ = try Cache.createItem(CVUStoredDefinition.self, values: values,
-                                             unique: "selector = '\(selector)' and domain = 'defaults'")
-                }
-            }
+            parsedDefinitions = try cvu.parse() // TODO: this could be optimized
         }
         catch {
             if let error = error as? CVUParseErrors {
                 // TODO: Fatal error handling
-                throw "Parse Error: \(error.toString(code))"
+                callback("Parse Error: \(error.toString(code))")
             }
             else {
-                throw error
+                callback(error)
             }
+            return
+        }
+
+        let validator = CVUValidator()
+        if !validator.validate(parsedDefinitions) {
+            validator.debug()
+            if validator.warnings.count > 0 {
+                for message in validator.warnings { debugHistory.warn(message) }
+            }
+            if validator.errors.count > 0 {
+                for message in validator.errors { debugHistory.error(message) }
+                callback("Exception: Errors in default view set:    \n\(validator.errors.joined(separator: "\n    "))")
+                return
+            }
+        }
+
+        // Start write transaction outside loop for performance reasons
+        DatabaseController.background(write:true, error:callback) { _ in
+            // Loop over lookup table with named views
+            for def in parsedDefinitions {
+                var values: [String: Any?] = [
+                    "domain": "defaults",
+                    "definition": def.description,
+                ]
+
+                if def.selector != nil { values["selector"] = def.selector }
+                if def.name != nil { values["name"] = def.name }
+
+                guard let selector = def.selector else {
+                    throw "Exception: selector on parsed CVU is not defined"
+                }
+
+                if def is CVUParsedViewDefinition {
+                    values["type"] = "view"
+                    //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
+                }
+                else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is CVUParsedDatasourceDefinition {
+                    values["type"] = "datasource"
+                }
+                else if def is CVUParsedStyleDefinition { values["type"] = "style" }
+                else if def is CVUParsedColorDefinition { values["type"] = "color" }
+                else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
+                else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
+                else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+                else { throw "Exception: unknown definition" }
+
+                // Store definition
+                _ = try Cache.createItem(CVUStoredDefinition.self, values: values,
+                                         unique: "selector = '\(selector)' and domain = 'defaults'")
+            }
+            
+            callback(nil)
         }
     }
 
@@ -480,7 +483,7 @@ public class Views {
         if let domain = domain { filter.append("domain = '\(domain)'") }
 
         return Array(
-            DatabaseController.read {
+            DatabaseController.current {
                 $0.objects(CVUStoredDefinition.self)
                     .filter(filter.joined(separator: " AND "))
                     .map { (def) -> CVUStoredDefinition in def }

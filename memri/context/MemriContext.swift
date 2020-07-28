@@ -305,7 +305,7 @@ public class RootContext: MemriContext {
     // TODO: Refactor: Should installer be moved to rootmain?
     
     init(name: String) throws {
-        let podAPI = PodAPI(key)
+        let podAPI = PodAPI()
         let cache = try Cache(podAPI)
         let views = Views()
 
@@ -351,41 +351,65 @@ public class RootContext: MemriContext {
         return subContext
     }
 
-    public func boot(isTesting: Bool = false, _ callback: (() -> Void)? = nil) throws {
-        if !isTesting {
-            DatabaseController.clean()
+    public func boot(isTesting: Bool = false, _ callback: @escaping (Error?) -> Void) {
+        func doBoot() {
+            do {
+                // Load views configuration
+                try views.load(self)
+                
+                // Stop here is we're testing
+                if isTesting { return }
+
+                // Load session
+                try sessions.load(self)
+
+                // Update view when sessions changes
+                self.cancellable = self.sessions.objectWillChange.sink { _ in
+                    self.scheduleUIUpdate()
+                }
+
+                // Load current view
+                try self.currentSession?.setCurrentView()
+
+                callback(nil)
+            }
+            catch {
+                callback(error)
+            }
         }
         
-        #if targetEnvironment(simulator)
-            if !isTesting {
-                // Reload for easy adjusting
-                views.context = self
-                try views.install()
+        if !isTesting {
+            DatabaseController.clean { error in
+                if let error = error {
+                    callback(error)
+                    return
+                }
+                
+                #if targetEnvironment(simulator)
+                    // Reload for easy adjusting
+                    self.views.context = self
+                    
+                    self.views.install { error in
+                        if let error = error {
+                            callback(error)
+                            return
+                        }
+                        
+                        doBoot()
+                    }
+                #else
+                    doBoot()
+                #endif
             }
-        #endif
-
-        // Load views configuration
-        try views.load(self) {
-            if isTesting { return }
-
-            // Load session
-            try sessions.load(self)
-
-            // Update view when sessions changes
-            self.cancellable = self.sessions.objectWillChange.sink { _ in
-                self.scheduleUIUpdate()
-            }
-
-            // Load current view
-            try self.currentSession?.setCurrentView()
-
-            callback?()
+        }
+        else {
+            doBoot()
         }
     }
 
     public func mockBoot() -> MemriContext {
         do {
-            try boot()
+            try boot{_ in}
             return self
         }
         catch { print(error) }
