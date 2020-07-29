@@ -27,9 +27,9 @@ public class Installer: ObservableObject {
                     self.ready(context)
                 }
             }
-        
-            self.readyCallback = callback
         }
+        
+        self.readyCallback = callback
         
         if authAtStartup {
             Authentication.authenticateOwner { error in
@@ -76,23 +76,27 @@ public class Installer: ObservableObject {
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
                     
                 self.installDefaultDatabase(context) { error in
-                    if let error = error {
-                        // TODO Error Handling - show to the user
-                        debugHistory.warn("\(error)")
-                        return
+                    
+                    DispatchQueue.main.async {
+                        if let error = error {
+                            // TODO Error Handling - show to the user
+                            debugHistory.warn("\(error)")
+                            return
+                        }
+                        
+                        do {
+                            print("KEY: \(try Authentication.getPublicRootKeySync().hexEncodedString(options: .upperCase))")
+                            
+                            try Authentication.createOwnerAndDBKey()
+                        }
+                        catch { callback(error) }
+                        
+                        Settings.shared.set("user/pod/host", host)
+                        self.ready(context)
+                        context.cache.sync.schedule()
+                        
+                        callback(nil)
                     }
-                    
-                    do {
-                        try Authentication.createOwnerAndDBKey()
-                    }
-                    catch { callback(error) }
-                    
-                    Settings.shared.load()
-                    Settings.shared.set("user/pod/host", host)
-                    self.ready(context)
-                    context.cache.sync.schedule()
-                    
-                    callback(nil)
                 }
             }
             catch {
@@ -122,7 +126,6 @@ public class Installer: ObservableObject {
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
                 
                 context.cache.sync.syncAllFromPod { // TODO error handling
-                    Settings.shared.load()
                     Settings.shared.set("user/pod/host", host)
                     
                     do {

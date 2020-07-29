@@ -156,10 +156,17 @@ class DatabaseController {
     
     /// This function returns a Realm for the current thread
     static func getRealmSync() throws -> Realm {
-        let encryptionKey = try Authentication.getPublicRootKeySync()
+        let data = try Authentication.getPublicRootKeySync()
         var config = realmConfig
         if !realmTesting {
-            config.encryptionKey = encryptionKey
+            #if targetEnvironment(simulator)
+            if !reportedKey {
+                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                reportedKey = true
+            }
+            #endif
+            
+            config.encryptionKey = data
         }
         return try Realm(configuration: config)
     }
@@ -344,6 +351,8 @@ class DatabaseController {
                     realm.delete(edge)
                 }
             }
+            
+            callback(nil)
         }
     }
 }

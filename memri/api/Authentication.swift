@@ -20,6 +20,22 @@ extension Data {
         let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
         return map { String(format: format, $0) }.joined()
     }
+    
+    init?(hexString: String) {
+        let len = hexString.count / 2
+        var data = Data(capacity: len)
+        for i in 0..<len {
+            let j = hexString.index(hexString.startIndex, offsetBy: i*2)
+            let k = hexString.index(j, offsetBy: 2)
+            let bytes = hexString[j..<k]
+            if var num = UInt8(bytes, radix: 16) {
+                data.append(&num, count: 1)
+            } else {
+                return nil
+            }
+        }
+        self = data
+    }
 }
 
 class Authentication {
@@ -171,6 +187,8 @@ class Authentication {
             throw "This is a destructive operation and user must agree"
         }
         
+        lastRootPublicKey = nil
+        
         let access = SecAccessControlCreateWithFlags(
             kCFAllocatorDefault,
             kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
@@ -229,7 +247,7 @@ class Authentication {
         }
     }
     
-    private static var lastRootPublicKey: Data? = nil
+    private static var lastRootPublicKey: Data? = nil /*Data(hexString: "04F9A873A771CE81E3A4941236131B95DCF4C42761251892D207AF58EF0C821D29E8AA9DD5200265941E69290687C46AE1E89BFEB14C32749AB37A188CF9B6C5")*/
     
     static func getPublicRootKey(_ callback: @escaping (Error?, Data?) -> Void) {
         #warning("Possibly cache the result in memory for X time (5 mins?)")

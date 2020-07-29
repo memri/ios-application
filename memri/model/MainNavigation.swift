@@ -11,8 +11,6 @@ extension StringProtocol {
 }
 
 public class MainNavigation: ObservableObject {
-    var items: Results<NavigationItem>?
-
     var filterText: String {
         get {
             Settings.shared.get("device/navigation/filterText") ?? ""
@@ -30,14 +28,11 @@ public class MainNavigation: ObservableObject {
         
     }
     
-    public func load() {
-        items = DatabaseController.current {
-            $0.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
-        }
-    }
-
     public func getItems() -> [NavigationItem] {
         let needle = filterText.lowercased()
+        let items = DatabaseController.current {
+            $0.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
+        }
 
         return items?.filter {
             return needle == "" || $0.type == "item" && ($0.title ?? "").lowercased()

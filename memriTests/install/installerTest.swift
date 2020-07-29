@@ -27,7 +27,7 @@ class installerTest: XCTestCase {
                 XCTAssertNil(error)
                 
                 do {
-                    let item = try Cache.createItem(AuditItem.self, values: ["json": "1"])
+                    let item = try Cache.createItem(AuditItem.self, values: ["content": "1"])
                 
                     guard let uid = item.uid.value, let _ = getItem("AuditItem", uid) else {
                         XCTFail("Could not write to the database")
@@ -48,7 +48,7 @@ class installerTest: XCTestCase {
             }
         }
         
-        wait(for: [didFinish], timeout: 5)
+        wait(for: [didFinish], timeout: 500000)
     }
 
     func testInstallDefaultDatabase() throws {

@@ -354,9 +354,6 @@ public class RootContext: MemriContext {
     public func boot(isTesting: Bool = false, _ callback: @escaping (Error?) -> Void) {
         func doBoot() {
             do {
-                // Load main navigation
-                navigation.load()
-                
                 // Load views configuration
                 try views.load(self)
                 
@@ -378,7 +375,7 @@ public class RootContext: MemriContext {
                 try self.currentSession?.setCurrentView()
                 
                 // Start syncing
-                cache.sync.load()
+                self.cache.sync.load()
 
                 callback(nil)
             }
@@ -387,32 +384,32 @@ public class RootContext: MemriContext {
             }
         }
         
-        // Load settings
-        Settings.shared.load()
-        settings.load()
-        
         if !isTesting {
             DatabaseController.clean { error in
-                if let error = error {
-                    callback(error)
-                    return
-                }
-                
-                #if targetEnvironment(simulator)
+                DispatchQueue.main.async {
+                    if let error = error {
+                        callback(error)
+                        return
+                    }
+                    
+                    #if targetEnvironment(simulator)
                     // Reload for easy adjusting
                     self.views.context = self
                     
                     self.views.install { error in
-                        if let error = error {
-                            callback(error)
-                            return
+                        DispatchQueue.main.async {
+                            if let error = error {
+                                callback(error)
+                                return
+                            }
+                            
+                            doBoot()
                         }
-                        
-                        doBoot()
                     }
-                #else
+                    #else
                     doBoot()
-                #endif
+                    #endif
+                }
             }
         }
         else {

@@ -11,8 +11,6 @@ import RealmSwift
 public class Settings {
     /// Shared settings that can be used from the main thread
     static var shared: Settings = Settings()
-    /// Default settings
-    var settings: Results<Setting>? = nil
 
     private var listeners = [String: [UUID]]()
     private var callbacks = [UUID: (Any?) -> Void]()
@@ -23,12 +21,6 @@ public class Settings {
         
     }
     
-    public func load(){
-        settings = try? DatabaseController.tryCurrent { realm in
-            realm.objects(Setting.self)
-        }
-    }
-
     // TODO: Refactor this so that the default settings are always used if not found in Realm.
     // Otherwise anytime we add a new setting the get function will return nil instead of the default
 
@@ -111,14 +103,16 @@ public class Settings {
     /// - Parameter path: path for the setting
     /// - Returns: setting value
     public func getSetting<T: Decodable>(_ path: String, type: T.Type = T.self) throws -> T? {
-        let item = settings?.first(where: { $0.key == path })
+        try DatabaseController.tryCurrent { realm in
+            let item = realm.objects(Setting.self).first(where: { $0.key == path })
 
-        if let item = item, let json = item.json {
-            let output: T? = try unserialize(json)
-            return output
-        }
-        else {
-            return nil
+            if let item = item, let json = item.json {
+                let output: T? = try unserialize(json)
+                return output
+            }
+            else {
+                return nil
+            }
         }
     }
 
