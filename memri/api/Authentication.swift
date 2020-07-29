@@ -267,6 +267,10 @@ class Authentication {
             throw "Not yet authenticated"
         }
         
+        if let lastRootPublicKey = lastRootPublicKey {
+            return lastRootPublicKey
+        }
+        
         let query: [String: Any] = [
             kSecClass as String: kSecClassKey,
             kSecAttrApplicationTag as String: RootKeyTag,
@@ -291,7 +295,9 @@ class Authentication {
                 throw error!.takeRetainedValue() as Error
             }
             
-            return data
+            let key = data.subdata(in: Range(0...63))
+            lastRootPublicKey = key
+            return key
         }
         else {
             throw "Unable to fetch public key"

@@ -138,7 +138,7 @@ class DatabaseController {
                 }
                 #endif
                 
-                config.encryptionKey = data.subdata(in: Range(0...63))
+                config.encryptionKey = data
             }
             
             do {
@@ -156,7 +156,7 @@ class DatabaseController {
     
     /// This function returns a Realm for the current thread
     static func getRealmSync() throws -> Realm {
-        let encryptionKey = try Authentication.getPublicRootKeySync().subdata(in: Range(0...63))
+        let encryptionKey = try Authentication.getPublicRootKeySync()
         var config = realmConfig
         if !realmTesting {
             config.encryptionKey = encryptionKey
@@ -165,7 +165,7 @@ class DatabaseController {
     }
     
     private static var realmQueue: DispatchQueue = {
-        let queue = DispatchQueue(label: "memri.realmQueue", qos: .userInteractive)
+        let queue = DispatchQueue(label: "memri.realmQueue", qos: .utility)
         return queue
     }()
 

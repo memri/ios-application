@@ -173,13 +173,19 @@ public class Installer: ObservableObject {
                         catch { debugHistory.error("\(error)") }
                     }
                 }
+                else {
+                    do { try callback(nil, self.testRoot) }
+                    catch { debugHistory.error("\(error)") }
+                }
             }
             
             if let _ = LocalSetting.get("memri/installed") {
                 isInstalled = true
             }
             
-            if isInstalled { ready(testRoot!) }
+            if isInstalled {
+                ready(testRoot!)
+            }
             else {
                 clearDatabase(testRoot!) { error in
                     if let error = error {

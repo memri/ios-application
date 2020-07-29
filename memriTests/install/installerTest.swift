@@ -48,11 +48,12 @@ class installerTest: XCTestCase {
             }
         }
         
-        // 3. Wait until the expectation is fulfilled
-        wait(for: [didFinish], timeout: 20)
+        wait(for: [didFinish], timeout: 5)
     }
 
     func testInstallDefaultDatabase() throws {
+        let didFinish = self.expectation(description: #function)
+        
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
         
@@ -68,13 +69,19 @@ class installerTest: XCTestCase {
 
                     DatabaseController.current {
                         XCTAssertTrue($0.objects(CVUStoredDefinition.self).count > 20)
+                        
+                        didFinish.fulfill()
                     }
                 }
             }
         }
+        
+        wait(for: [didFinish], timeout: 1000)
     }
 
     func testInstallDemoDatabase() throws {
+        let didFinish = self.expectation(description: #function)
+        
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
             
@@ -90,13 +97,19 @@ class installerTest: XCTestCase {
 
                     DatabaseController.current {
                         XCTAssertTrue($0.objects(CVUStoredDefinition.self).count > 20)
+                        
+                        didFinish.fulfill()
                     }
                 }
             }
         }
+        
+        wait(for: [didFinish], timeout: 10)
     }
 
     func testClearSessions() throws {
+        let didFinish = self.expectation(description: #function)
+        
         installer.installForTesting { error, context in
             guard let context = context else { throw "Failed to initialize: \(error!)" }
             
@@ -115,9 +128,13 @@ class installerTest: XCTestCase {
                     self.installer.clearSessions(context) { error in
                         XCTAssertNil(error)
                         XCTAssertNotEqual(context.sessions.state?.uid.value, uid)
+                        
+                        didFinish.fulfill()
                     }
                 }
             }
         }
+        
+        wait(for: [didFinish], timeout: 10)
     }
 }

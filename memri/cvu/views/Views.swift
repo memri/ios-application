@@ -41,6 +41,7 @@ public class Views {
 
     public func listenForChanges() {
         guard context?.podAPI.isConfigured ?? false else { return }
+        guard !DatabaseController.realmTesting else { return }
 
         // Subscribe to changes in CVUStoredDefinition
         cvuWatcher = context?.cache.subscribe(query: "CVUStoredDefinition")

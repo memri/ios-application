@@ -361,7 +361,10 @@ public class RootContext: MemriContext {
                 try views.load(self)
                 
                 // Stop here is we're testing
-                if isTesting { return }
+                if isTesting {
+                    callback(nil)
+                    return
+                }
 
                 // Load session
                 try sessions.load(self)
@@ -418,12 +421,7 @@ public class RootContext: MemriContext {
     }
 
     public func mockBoot() -> MemriContext {
-        do {
-            try boot{_ in}
-            return self
-        }
-        catch { print(error) }
-
+        boot{_ in}
         return self
     }
 }
