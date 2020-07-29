@@ -148,6 +148,7 @@ public class Installer: ObservableObject {
         }
     }
     
+    #if targetEnvironment(simulator)
     public var testRoot: RootContext? = nil
     public func installForTesting(boot:Bool = true,
                                   _ callback:@escaping (Error?, RootContext?) throws -> Void) {
@@ -216,6 +217,7 @@ public class Installer: ObservableObject {
             catch { debugHistory.error("\(error)") }
         }
     }
+    #endif
     
     public func handleInstallError(error:Error?) {
         // TODO ERror handling - report to the user

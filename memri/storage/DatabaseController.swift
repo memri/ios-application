@@ -306,7 +306,7 @@ class DatabaseController {
     }
     
     static func deleteDatabase(_ callback:@escaping (Error?) -> Void) {
-        Authentication.authenticateOwner { error in
+        Authentication.authenticateOwnerByPasscode { error in
             if let error = error {
                 callback("Unable to authenticate: \(error)")
                 return
