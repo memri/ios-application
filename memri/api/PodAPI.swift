@@ -28,9 +28,9 @@ public class PodAPI {
     }
 
     private func http (
-        method: HTTPMethod = .GET,
+        method: HTTPMethod = .POST,
         path: String = "",
-        body: Data? = nil,
+        payload: Any? = nil,
         _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void
     ) {
         Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
@@ -42,6 +42,8 @@ public class PodAPI {
             
             self.httpWithKeys (
                 method: method,
+                path: path,
+                payload: payload,
                 ownerKey: ownerKey,
                 databaseKey: dbKey,
                 callback
@@ -50,9 +52,9 @@ public class PodAPI {
     }
     
     private func httpWithKeys (
-        method: HTTPMethod = .GET,
+        method: HTTPMethod = .POST,
         path: String = "",
-        body: Data? = nil,
+        payload: Any? = nil,
         ownerKey: String,
         databaseKey: String,
         _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void
@@ -66,7 +68,8 @@ public class PodAPI {
         }
 
         baseUrl = baseUrl
-            .appendingPathComponent("v1")
+            .appendingPathComponent("v2")
+            .appendingPathComponent(ownerKey)
             .appendingPathComponent(path)
 
         // TODO: when the backend sends the correct caching headers
@@ -89,7 +92,16 @@ public class PodAPI {
         )
         urlRequest.httpMethod = method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        if let body = body { urlRequest.httpBody = body }
+        
+        
+        let body:[String:Any] = [
+            "databaseKey": databaseKey,
+            "payload": payload as Any
+        ]
+        
+        do { urlRequest.httpBody = try toJSON(body) }
+        catch { callback(error, nil) }
+        
         urlRequest.allowsCellularAccess = true
         urlRequest.allowsExpensiveNetworkAccess = true
         urlRequest.allowsConstrainedNetworkAccess = true
@@ -343,7 +355,7 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ item: Item?) -> Void
     ) {
-        http(method: .POST, path: "item_with_edges/\(uid)") { error, data in
+        http(path: "item_with_edges/\(uid)") { error, data in
             if let data = data {
                 // TODO: Refactor: Error handling
                 let result: [Item]? = try? MemriJSONDecoder
@@ -360,7 +372,7 @@ public class PodAPI {
         _ item: SchemaItem,
         _ callback: @escaping (_ error: Error?) -> Void
     ) throws {
-        http(method: .POST, path: "bulk_action", body: try toJSON(try recursiveSearch(item))) { error, _ in
+        http(path: "bulk_action", payload: try recursiveSearch(item)) { error, _ in
             callback(error)
         }
     }
@@ -395,7 +407,7 @@ public class PodAPI {
             result["deleteEdges"] = try deleteEdges?.map { try simplify($0) }
         }
 
-        http(method: .POST, path: "bulk_action", body: try toJSON(result)) { error, _ in
+        http(path: "bulk_action", payload: result) { error, _ in
             callback(error)
         }
     }
@@ -450,7 +462,7 @@ public class PodAPI {
         //            return
         //        }
 
-        var data: Data?
+        var payload = [String:Any]()
 
         let query = queryOptions.query ?? ""
         let matches = query.match(#"^(\w+) AND uid = (.+)$"#)
@@ -458,26 +470,18 @@ public class PodAPI {
             let type = matches[1]
             let uid = matches[2]
 
-            data = """
-            {
-              "_type": "\(type)",
-              "uid": \(uid)
-            }
-            """.data(using: .utf8)
+            payload["_type"] = "\(type)"
+            payload["uid"] = "\(uid)"
         }
         else if let type = query.match(#"^(\w+)$"#)[safe: 1] {
-            data = """
-            {
-              "_type": "\(type)"
-            }
-            """.data(using: .utf8)
+            payload["_type"] = "\(type)"
         }
         else {
             callback("Not implemented yet", nil)
             return
         }
 
-        http(method: .POST, path: "search_by_fields", body: data) { error, data in
+        http(path: "search_by_fields", payload: payload) { error, data in
             if let error = error {
                 debugHistory.error("Could not connect to pod: \n\(error)")
                 callback(error, nil)
@@ -492,9 +496,8 @@ public class PodAPI {
 
                     if let items_ = items {
                         if withEdges {
-                            let uids = items_.compactMap { $0.uid.value }
-                            let data2 = uids.description.data(using: .utf8)
-                            self.http(method: .POST, path: "items_with_edges", body: data2) { error, data in
+                            let payload = items_.compactMap { $0.uid.value }
+                            self.http(path: "get_items_with_edges", payload: payload) { error, data in
                                 do {
                                     if let error = error {
                                         debugHistory.error("Could not connect to pod: \n\(error)")

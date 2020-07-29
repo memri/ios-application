@@ -329,8 +329,8 @@ class Authentication {
         let publicKey = privateKey.publicKey
         
         try setOwnerAndDBKey(
-            privateKey: privateKey.rawRepresentation.base64EncodedString(),
-            publicKey: publicKey.rawRepresentation.base64EncodedString(),
+            privateKey: privateKey.rawRepresentation.hexEncodedString(options: .upperCase),
+            publicKey: publicKey.rawRepresentation.hexEncodedString(options: .upperCase),
             dbKey: dbKey
         )
     }
