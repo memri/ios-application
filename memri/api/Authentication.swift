@@ -112,7 +112,7 @@ class Authentication {
 //            .devicePasscode,
 //            nil
 //        )!
-//        
+//
 //        let dataToStore = "AnyData".data(using: .utf8)!
 //
 //        let insertQuery: NSDictionary = [
@@ -126,6 +126,14 @@ class Authentication {
 //    }
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
+        #if targetEnvironment(simulator)
+        if DatabaseController.realmTesting {
+            isOwnerAuthenticated = true
+            callback(nil)
+            return
+        }
+        #endif
+        
         let query: NSDictionary = [
             kSecClass:  kSecClassGenericPassword,
             kSecAttrService  : "PasscodeAuthentication",
