@@ -21,16 +21,16 @@ class ExpressionTests: XCTestCase {
     }
 
     func testExecute() throws {
-        guard let context = try installer.installForTesting() else {
-            throw "Failed to initialize"
+        installer.installForTesting { error, context in
+            guard let context = context else { throw "Failed to initialize: \(error!)" }
+            
+            let item = try Cache.createItem(Note.self, values: [ "title": "hello"])
+            let expr = Expression(".title", startInStringMode: false,
+                                  lookup: context.views.lookupValueOfVariables,
+                                  execFunc: context.views.executeFunction)
+            let args = ViewArguments(nil, item)
+            XCTAssertEqual(try expr.execute(args) as? String, "hello")
         }
-        
-        let item = try Cache.createItem(Note.self, values: [ "title": "hello"])
-        let expr = Expression(".title", startInStringMode: false,
-                              lookup: context.views.lookupValueOfVariables,
-                              execFunc: context.views.executeFunction)
-        let args = ViewArguments(nil, item)
-        XCTAssertEqual(try expr.execute(args) as? String, "hello")
     }
 
 //    func testPerformanceExample() throws {

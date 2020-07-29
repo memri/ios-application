@@ -17,83 +17,83 @@ class CascadableViewTest: XCTestCase {
     }
 
     func testCascadeInheritNamedWithViewArguments() throws {
-        guard let context = try installer.installForTesting(boot: true) else {
-            throw "Failed to initialize"
-        }
-        
-        try context.sessions.load(context)
-        
-        let view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "definition": """
-            [view] {
-                defaultRenderer: "photoViewer"
-                inherit: "all-photos"
+        installer.installForTesting (boot:true) { error, context in
+            guard let context = context else { throw "Failed to initialize: \(error!)" }
+            
+            try context.sessions.load(context)
+            
+            let view = try Cache.createItem(CVUStateDefinition.self, values: [
+                "definition": """
+                [view] {
+                    defaultRenderer: "photoViewer"
+                    inherit: "all-photos"
+                }
+                """
+            ])
+            let realm = try DatabaseController.getRealmSync()
+            guard let photo = realm.objects(Photo.self).last else {
+                throw "No photos loaded in the database"
             }
-            """
-        ])
-        let realm = DatabaseController.getRealm()
-        guard let photo = realm.objects(Photo.self).last else {
-            throw "No photos loaded in the database"
+            let args = ViewArguments([
+                "currentItem": Expression("item(\(photo.genericType), \(photo.uid.value ?? -1))")
+            ])
+            
+            try context.currentSession?.setCurrentView(view, args)
+            
+            guard let parsedArgs = context.currentView?.head["viewArguments"] as? CVUParsedDefinition else {
+                throw "ViewArguments is not set"
+            }
+            
+            XCTAssertNotNil(parsedArgs["currentItem"])
+            XCTAssertEqual(context.currentView?.datasource.query, "Photo")
+            XCTAssertEqual(context.currentView?.activeRenderer, "photoViewer")
         }
-        let args = ViewArguments([
-            "currentItem": Expression("item(\(photo.genericType), \(photo.uid.value ?? -1))")
-        ])
-        
-        try context.currentSession?.setCurrentView(view, args)
-        
-        guard let parsedArgs = context.currentView?.head["viewArguments"] as? CVUParsedDefinition else {
-            throw "ViewArguments is not set"
-        }
-        
-        XCTAssertNotNil(parsedArgs["currentItem"])
-        XCTAssertEqual(context.currentView?.datasource.query, "Photo")
-        XCTAssertEqual(context.currentView?.activeRenderer, "photoViewer")
     }
     
     func testCascadeInheritCopiedWithViewArguments() throws {
-        guard let context = try installer.installForTesting(boot: true) else {
-            throw "Failed to initialize"
-        }
-        
-        try context.sessions.load(context)
-        
-        var view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "definition": """
-            [view] {
-                [datasource = pod] {
-                    query: "Photo"
+        installer.installForTesting (boot:true) { error, context in
+            guard let context = context else { throw "Failed to initialize: \(error!)" }
+            
+            try context.sessions.load(context)
+            
+            var view = try Cache.createItem(CVUStateDefinition.self, values: [
+                "definition": """
+                [view] {
+                    [datasource = pod] {
+                        query: "Photo"
+                    }
                 }
+                """
+            ])
+            
+            try context.currentSession?.setCurrentView(view)
+            
+            view = try Cache.createItem(CVUStateDefinition.self, values: [
+                "definition": """
+                [view] {
+                    defaultRenderer: "photoViewer"
+                    inherit: {{view}}
+                }
+                """
+            ])
+            let realm = try DatabaseController.getRealmSync()
+            guard let photo = realm.objects(Photo.self).last else {
+                throw "No photos loaded in the database"
             }
-            """
-        ])
-        
-        try context.currentSession?.setCurrentView(view)
-        
-        view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "definition": """
-            [view] {
-                defaultRenderer: "photoViewer"
-                inherit: {{view}}
+            let args = ViewArguments([
+                "currentItem": Expression("item(\(photo.genericType), \(photo.uid.value ?? -1))")
+            ])
+            
+            try context.currentSession?.setCurrentView(view, args)
+            
+            guard let parsedArgs = context.currentView?.head["viewArguments"] as? CVUParsedDefinition else {
+                throw "ViewArguments is not set"
             }
-            """
-        ])
-        let realm = DatabaseController.getRealm()
-        guard let photo = realm.objects(Photo.self).last else {
-            throw "No photos loaded in the database"
+            
+            XCTAssertNotNil(parsedArgs["currentItem"])
+            XCTAssertEqual(context.currentView?.datasource.query, "Photo")
+            XCTAssertEqual(context.currentView?.activeRenderer, "photoViewer")
         }
-        let args = ViewArguments([
-            "currentItem": Expression("item(\(photo.genericType), \(photo.uid.value ?? -1))")
-        ])
-        
-        try context.currentSession?.setCurrentView(view, args)
-        
-        guard let parsedArgs = context.currentView?.head["viewArguments"] as? CVUParsedDefinition else {
-            throw "ViewArguments is not set"
-        }
-        
-        XCTAssertNotNil(parsedArgs["currentItem"])
-        XCTAssertEqual(context.currentView?.datasource.query, "Photo")
-        XCTAssertEqual(context.currentView?.activeRenderer, "photoViewer")
     }
 
 //    func testPerformanceExample() throws {

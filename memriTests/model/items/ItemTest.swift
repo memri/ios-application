@@ -257,7 +257,7 @@ class ItemTest: XCTestCase {
         """.utf8)
         let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
-        DatabaseController.writeSync { realm in
+        DatabaseController.current(write:true) { realm in
             for item in items {
                 realm.add(item, update: .modified)
             }

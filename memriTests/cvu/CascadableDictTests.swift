@@ -13,9 +13,6 @@ class CascadableDictTests: XCTestCase {
     var installer = Installer()
 
     override func setUpWithError() throws {
-        guard let _ = try installer.installForTesting() else {
-            throw "Failed to initialize"
-        }
     }
 
     override func tearDownWithError() throws {
@@ -23,48 +20,64 @@ class CascadableDictTests: XCTestCase {
     }
 
     func testCreateWithDot() throws {
-        let item = try Cache.createItem(Note.self, values: [ "title": "test"])
-        let args = ViewArguments(nil, item)
-        XCTAssertEqual(args.get("."), item)
+        installer.installForTesting { error, _ in
+            if let error = error { throw "Failed to initialize: \(error)" }
+            
+            let item = try Cache.createItem(Note.self, values: [ "title": "test"])
+            let args = ViewArguments(nil, item)
+            XCTAssertEqual(args.get("."), item)
+        }
     }
     
     func testCreateFromOtherDictWithDot() throws {
-        let other = ViewArguments(["test": "hello"])
-        let item = try Cache.createItem(Note.self, values: [ "title": "test"])
-        let args = ViewArguments(other, item)
-        XCTAssertEqual(args.get("."), item)
-        XCTAssertEqual(args.get("test"), "hello")
+        installer.installForTesting { error, _ in
+            if let error = error { throw "Failed to initialize: \(error)" }
+            
+            let other = ViewArguments(["test": "hello"])
+            let item = try Cache.createItem(Note.self, values: [ "title": "test"])
+            let args = ViewArguments(other, item)
+            XCTAssertEqual(args.get("."), item)
+            XCTAssertEqual(args.get("test"), "hello")
+        }
     }
     
     func testMergeOtherDict() throws {
-        let other = ViewArguments(["test": "hello"])
-        let args = ViewArguments().merge(other)
-        XCTAssertEqual(args.get("test"), "hello")
+        installer.installForTesting { error, _ in
+            if let error = error { throw "Failed to initialize: \(error)" }
+                
+            let other = ViewArguments(["test": "hello"])
+            let args = ViewArguments().merge(other)
+            XCTAssertEqual(args.get("test"), "hello")
+        }
     }
     
     func testMergeOtherDictDotRemains() throws {
-        let other = ViewArguments(["test": "hello"])
-        let item = try Cache.createItem(Note.self, values: [ "title": "test"])
-        let args = ViewArguments(nil, item).merge(other)
-        XCTAssertEqual(args.get("."), item)
-        XCTAssertEqual(args.get("test"), "hello")
+        installer.installForTesting { error, _ in
+            if let error = error { throw "Failed to initialize: \(error)" }
+                
+            let other = ViewArguments(["test": "hello"])
+            let item = try Cache.createItem(Note.self, values: [ "title": "test"])
+            let args = ViewArguments(nil, item).merge(other)
+            XCTAssertEqual(args.get("."), item)
+            XCTAssertEqual(args.get("test"), "hello")
+        }
     }
     
     func testResolveWithDot() throws {
-        guard let context = installer.testRoot else {
-            throw "Unable to initialize"
+        installer.installForTesting { error, context in
+            guard let context = context else { throw "Failed to initialize: \(error!)" }
+        
+            let item = try Cache.createItem(Note.self, values: [ "title": "hello"])
+            let expr = Expression(".title",
+                startInStringMode: false,
+                lookup: context.views.lookupValueOfVariables,
+                execFunc: context.views.executeFunction)
+            let args = try ViewArguments(["test": expr]).resolve(item)
+            
+            XCTAssertEqual(args.get("."), item)
+            XCTAssertEqual(args.get("test"), "hello")
+            XCTAssertEqual(args.head["test"] as? String, "hello")
         }
-        
-        let item = try Cache.createItem(Note.self, values: [ "title": "hello"])
-        let expr = Expression(".title",
-            startInStringMode: false,
-            lookup: context.views.lookupValueOfVariables,
-            execFunc: context.views.executeFunction)
-        let args = try ViewArguments(["test": expr]).resolve(item)
-        
-        XCTAssertEqual(args.get("."), item)
-        XCTAssertEqual(args.get("test"), "hello")
-        XCTAssertEqual(args.head["test"] as? String, "hello")
     }
 
     func testPerformanceExample() throws {

@@ -13,7 +13,7 @@ class CVUParserTests: XCTestCase {
     private func parse(_ snippet: String) throws -> [CVUParsedDefinition] {
         let lexer = CVULexer(input: snippet)
         let tokens = try lexer.tokenize()
-        let parser = CVUParser(tokens, try RootContext(name: "", key: "").mockBoot(),
+        let parser = CVUParser(tokens, try RootContext(name: "").mockBoot(),
                                lookup: { _, _ in }, execFunc: { _, _, _ in })
         let x = try parser.parse()
         return x
@@ -691,14 +691,14 @@ class CVUParserTests: XCTestCase {
         let fileURL = Bundle.main.url(forResource: "example", withExtension: "view")
         let code = try String(contentsOf: fileURL!, encoding: String.Encoding.utf8)
 
-        let viewDef = CVU(code, try RootContext(name: "", key: "").mockBoot(),
+        let viewDef = CVU(code, try RootContext(name: "").mockBoot(),
                           lookup: { _, _ in 10 },
                           execFunc: { _, _, _ in 20 })
 
         let codeClone = toCVUString(try viewDef.parse())
         //        print(codeClone) // .prefix(1500))
 
-        let viewDefClone = CVU(codeClone, try RootContext(name: "", key: "").mockBoot(),
+        let viewDefClone = CVU(codeClone, try RootContext(name: "").mockBoot(),
                                lookup: { _, _ in 10 },
                                execFunc: { _, _, _ in 20 })
 

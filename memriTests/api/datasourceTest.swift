@@ -47,20 +47,30 @@ class DatasourceTest: XCTestCase {
         let def2 = CVUStoredDefinition(value: ["definition": strDef2])
         let def3 = CVUStoredDefinition(value: ["definition": strDef3])
 
-        let root = try RootContext(name: "", key: "")
-        try root.boot(isTesting: true)
+        let root = try RootContext(name: "")
+        root.boot(isTesting: true) { error in
+            guard error == nil else {
+                XCTFail("\(error!)")
+                return
+            }
+            
+            do {
+                let parsed = [
+                    try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition,
+                    try root.views.parseDefinition(def2) as! CVUParsedDatasourceDefinition,
+                    try root.views.parseDefinition(def3) as! CVUParsedDatasourceDefinition,
+                ]
 
-        let parsed = [
-            try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition,
-            try root.views.parseDefinition(def2) as! CVUParsedDatasourceDefinition,
-            try root.views.parseDefinition(def3) as! CVUParsedDatasourceDefinition,
-        ]
+                let ds = CascadingDatasource(nil, parsed)
 
-        let ds = CascadingDatasource(nil, parsed)
-
-        XCTAssertEqual(ds.query, "test")
-        XCTAssertEqual(ds.sortProperty, "foo")
-        XCTAssertEqual(ds.sortAscending, false)
+                XCTAssertEqual(ds.query, "test")
+                XCTAssertEqual(ds.sortProperty, "foo")
+                XCTAssertEqual(ds.sortAscending, false)
+            }
+            catch {
+                XCTFail("\(error)")
+            }
+        }
     }
 
     func testSubscript() throws {
@@ -73,13 +83,24 @@ class DatasourceTest: XCTestCase {
         """
         let def1 = CVUStoredDefinition(value: ["definition": strDef1])
 
-        let root = try RootContext(name: "", key: "")
-        try root.boot(isTesting: true)
-        let head = try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition
-        let ds = CascadingDatasource(head)
+        let root = try RootContext(name: "")
+        root.boot(isTesting: true) { error in
+            guard error == nil else {
+                XCTFail("\(error!)")
+                return
+            }
+            
+            do {
+                let head = try root.views.parseDefinition(def1) as! CVUParsedDatasourceDefinition
+                let ds = CascadingDatasource(head)
 
-        XCTAssertEqual(ds["query"] as? String, "test")
-        XCTAssertEqual(ds["sortProperty"] as? String, "foo")
-        XCTAssertEqual(ds["sortAscending"] as? Bool, false)
+                XCTAssertEqual(ds["query"] as? String, "test")
+                XCTAssertEqual(ds["sortProperty"] as? String, "foo")
+                XCTAssertEqual(ds["sortAscending"] as? Bool, false)
+            }
+            catch {
+                XCTFail("\(error)")
+            }
+        }
     }
 }

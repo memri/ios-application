@@ -9,16 +9,16 @@ class FileTest: XCTestCase {
     var installer = Installer()
 
     func testWrite() throws {
-        guard let _ = try installer.installForTesting() else {
-            throw "Could not initialize"
+        installer.installForTesting { error, context in
+            guard let _ = context else { throw "Failed to initialize: \(error!)" }
+                
+            let file = try Cache.createItem(File.self, values: [
+                "uri": "testfile.txt"
+            ])
+            
+            try file.write("Hello")
+            XCTAssertEqual(try file.read(), "Hello")
         }
-        
-        let file = try Cache.createItem(File.self, values: [
-            "uri": "testfile.txt"
-        ])
-        
-        try file.write("Hello")
-        XCTAssertEqual(try file.read(), "Hello")
     }
 
 //    func testPerformanceExample() throws {

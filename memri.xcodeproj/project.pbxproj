@@ -22,7 +22,7 @@
 		5D29AF2A24A9D4E8000C9E2D /* LabelIndexerNotesTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */; };
 		5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D301F61245C372400183BD2 /* ListRendererView.swift */; };
 		5D38DE11240576D200FF9B70 /* PodAPITest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE10240576D200FF9B70 /* PodAPITest.swift */; };
-		5D38DE132405775400FF9B70 /* api.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* api.swift */; };
+		5D38DE132405775400FF9B70 /* PodAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE122405775400FF9B70 /* PodAPI.swift */; };
 		5D38DE172405776B00FF9B70 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE162405776B00FF9B70 /* Item.swift */; };
 		5D38DE19240577BA00FF9B70 /* Views.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D38DE18240577BA00FF9B70 /* Views.swift */; };
 		5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D395B4F24A37A980008610E /* IndexerAPI.swift */; };
@@ -186,6 +186,10 @@
 		8693205D24CAAC350030863D /* CascadableDictTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205C24CAAC350030863D /* CascadableDictTests.swift */; };
 		8693205F24CAAFDE0030863D /* ExpressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693205E24CAAFDE0030863D /* ExpressionTests.swift */; };
 		8693206124CB0BF30030863D /* CVUTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206024CB0BF30030863D /* CVUTests.swift */; };
+		8693206324CDAF8B0030863D /* Authentication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206224CDAF8B0030863D /* Authentication.swift */; };
+		8693206524CDD4720030863D /* LocalSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206424CDD4720030863D /* LocalSettings.swift */; };
+		8693206724CDD4910030863D /* SetupWizard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206624CDD4910030863D /* SetupWizard.swift */; };
+		8693206924CFFCC10030863D /* AuthenticationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8693206824CFFCC10030863D /* AuthenticationTests.swift */; };
 		869789EC24344C7E0003756B /* HeterogeneousCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789EB24344C7E0003756B /* HeterogeneousCollections.swift */; };
 		869789EE2434CC750003756B /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869789ED2434CC750003756B /* Settings.swift */; };
 		8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8699AA2B247BA55D00EC85C0 /* CVUParseErrors.swift */; };
@@ -306,7 +310,7 @@
 		5D29AF2924A9D4E8000C9E2D /* LabelIndexerNotesTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelIndexerNotesTest.swift; sourceTree = "<group>"; };
 		5D301F61245C372400183BD2 /* ListRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListRendererView.swift; sourceTree = "<group>"; };
 		5D38DE10240576D200FF9B70 /* PodAPITest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPITest.swift; sourceTree = "<group>"; };
-		5D38DE122405775400FF9B70 /* api.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = api.swift; sourceTree = "<group>"; wrapsLines = 0; };
+		5D38DE122405775400FF9B70 /* PodAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodAPI.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE162405776B00FF9B70 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE18240577BA00FF9B70 /* Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D38DE3F240581E500FF9B70 /* memri.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = memri.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -445,6 +449,10 @@
 		8693205C24CAAC350030863D /* CascadableDictTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CascadableDictTests.swift; sourceTree = "<group>"; };
 		8693205E24CAAFDE0030863D /* ExpressionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpressionTests.swift; sourceTree = "<group>"; };
 		8693206024CB0BF30030863D /* CVUTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUTests.swift; sourceTree = "<group>"; };
+		8693206224CDAF8B0030863D /* Authentication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authentication.swift; sourceTree = "<group>"; };
+		8693206424CDD4720030863D /* LocalSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalSettings.swift; sourceTree = "<group>"; };
+		8693206624CDD4910030863D /* SetupWizard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupWizard.swift; sourceTree = "<group>"; };
+		8693206824CFFCC10030863D /* AuthenticationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationTests.swift; sourceTree = "<group>"; };
 		869789E924344A530003756B /* schema_original.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = schema_original.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		869789EB24344C7E0003756B /* HeterogeneousCollections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeterogeneousCollections.swift; sourceTree = "<group>"; };
 		869789ED2434CC750003756B /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -648,7 +656,9 @@
 		5D38DE1B2405788700FF9B70 /* api */ = {
 			isa = PBXGroup;
 			children = (
-				5D38DE122405775400FF9B70 /* api.swift */,
+				5D38DE122405775400FF9B70 /* PodAPI.swift */,
+				8693206224CDAF8B0030863D /* Authentication.swift */,
+				8693206424CDD4720030863D /* LocalSettings.swift */,
 				5D4231AA247C2D7100CD1933 /* Datasource.swift */,
 				5D395B4F24A37A980008610E /* IndexerAPI.swift */,
 			);
@@ -975,6 +985,7 @@
 			isa = PBXGroup;
 			children = (
 				861C52C424A5B24500B3230C /* installerTest.swift */,
+				8693206824CFFCC10030863D /* AuthenticationTests.swift */,
 			);
 			path = install;
 			sourceTree = "<group>";
@@ -1097,6 +1108,7 @@
 			isa = PBXGroup;
 			children = (
 				861439F12435942A008D6B5B /* Installer.swift */,
+				8693206624CDD4910030863D /* SetupWizard.swift */,
 			);
 			path = install;
 			sourceTree = "<group>";
@@ -1651,7 +1663,7 @@
 				B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
-				5D38DE132405775400FF9B70 /* api.swift in Sources */,
+				5D38DE132405775400FF9B70 /* PodAPI.swift in Sources */,
 				B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */,
 				5D4320E8247E79890052B224 /* HorizonalLine.swift in Sources */,
 				B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */,
@@ -1687,6 +1699,7 @@
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
 				868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */,
 				B8ABA93024C420E80038509F /* DatabaseController.swift in Sources */,
+				8693206524CDD4720030863D /* LocalSettings.swift in Sources */,
 				8690AF042472D8CB00FC49F4 /* string.swift in Sources */,
 				86C6D896246EC33A001B87D0 /* Session.swift in Sources */,
 				869789EE2434CC750003756B /* Settings.swift in Sources */,
@@ -1736,6 +1749,7 @@
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
 				B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */,
 				B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */,
+				8693206724CDD4910030863D /* SetupWizard.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* ThumbnailRendererView.swift in Sources */,
 				B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */,
 				5DB8EC0424598FA30028FD2E /* CascadableView.swift in Sources */,
@@ -1754,6 +1768,7 @@
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
 				8672C27C2497F35A006F0D42 /* CustomRenderer.swift in Sources */,
+				8693206324CDAF8B0030863D /* Authentication.swift in Sources */,
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
 				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
@@ -1771,6 +1786,7 @@
 				861C52C724A5BAD500B3230C /* DatasourceTest.swift in Sources */,
 				5D1A3E69240807C100A0583B /* SessionTest.swift in Sources */,
 				5D0A28B9240678EE00398B17 /* ModelTests.swift in Sources */,
+				8693206924CFFCC10030863D /* AuthenticationTests.swift in Sources */,
 				5DE95A6B241BC954003ABA63 /* DecodableDict.swift in Sources */,
 				5DB3466324585246008FE8A9 /* FileTest.swift in Sources */,
 				861C52C524A5B24500B3230C /* installerTest.swift in Sources */,

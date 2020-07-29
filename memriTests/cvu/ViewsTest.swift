@@ -17,47 +17,49 @@ class ViewsTest: XCTestCase {
     }
 
     func testCVUValidationErrorsBlockInstallation() throws {
-        guard let context = try installer.installForTesting() else {
-            throw "Failed to initialize"
-        }
-        
-        let code = """
-        Person {
-            viewArguments: { readonly: true }
+        installer.installForTesting { error, context in
+            guard let context = context else { throw "Failed to initialize: \(error!)" }
+                
+            let code = """
+            Person {
+                viewArguments: { readonly: true }
 
-            navigateItems: [
-                openView {
-                    title: 10
-                    view: {
-                        defaultRenderer: timeline
+                navigateItems: [
+                    openView {
+                        title: 10
+                        view: {
+                            defaultRenderer: timeline
 
-                        datasource {
-                            query: "AuditItem appliesTo:{.id}"
-                            sortProperty: dateCreated
-                            sortAscending: true
-                        }
+                            datasource {
+                                query: "AuditItem appliesTo:{.id}"
+                                sortProperty: dateCreated
+                                sortAscending: true
+                            }
 
-                        [renderer = "timeline"] {
-                            timeProperty: dateCreated
+                            [renderer = "timeline"] {
+                                timeProperty: dateCreated
+                            }
                         }
                     }
-                }
-                openViewByName {
-                    title: "{$starred} {type.plural()}"
-                    viewName: "filter-starred"
-                    include: "all-{type}"
-                }
-                openSessionByName {
-                    title: "{$all} {type.lowercased().plural()}"
-                    arguments: {
-                        sessionName: "all-{type}"
+                    openViewByName {
+                        title: "{$starred} {type.plural()}"
+                        viewName: "filter-starred"
+                        include: "all-{type}"
                     }
-                }
-            ]
+                    openSessionByName {
+                        title: "{$all} {type.lowercased().plural()}"
+                        arguments: {
+                            sessionName: "all-{type}"
+                        }
+                    }
+                ]
+            }
+            """
+            
+            context.views.install(overrideCodeForTesting: code) { error in
+                XCTAssertNotNil(error)
+            }
         }
-        """
-        
-        XCTAssertThrowsError(try context.views.install(overrideCodeForTesting: code))
     }
 
     func testPerformanceExample() throws {

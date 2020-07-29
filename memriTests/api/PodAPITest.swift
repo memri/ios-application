@@ -27,16 +27,11 @@ class PodAPITest: XCTestCase {
     var testPodAPI: PodAPI!
 
     override func setUp() {
-        let key = "mytestkey"
-        testPodAPI = PodAPI(key)
+        testPodAPI = PodAPI()
     }
 
     override func tearDown() {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testPodInit() {
-        XCTAssert(testPodAPI.key == "mytestkey")
     }
 
     // DISABLED due to not having a pod

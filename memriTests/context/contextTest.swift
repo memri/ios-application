@@ -13,7 +13,7 @@ import XCTest
 ////        contextTest.doneSetup = true
 ////
 ////        do {
-////            let root = try RootContext(name: "", key: "")
+////            let root = try RootContext(name: "")
 ////            root.installer.clearDatabase(root)
 ////            root.installer.installDefaultDatabase(root)
 ////        }
@@ -31,7 +31,7 @@ import XCTest
 //    }
 //
 //    func testBooting() throws {
-//        let root = try RootContext(name: "", key: "")
+//        let root = try RootContext(name: "")
 //        root.installer.clearDatabase(root)
 //        root.installer.installDefaultDatabase(root)
 //        try root.boot()
@@ -40,7 +40,7 @@ import XCTest
 //    }
 //
 //    func testSubContext() throws {
-//        let root = try RootContext(name: "", key: "")
+//        let root = try RootContext(name: "")
 //        root.installer.clearDatabase(root)
 //        root.installer.installDefaultDatabase(root)
 //        try root.boot()
@@ -59,7 +59,7 @@ import XCTest
 //    }
 //
 //    func testDynamicProperties() throws {
-//        let root = try RootContext(name: "", key: "")
+//        let root = try RootContext(name: "")
 //        root.installer.clearDatabase(root)
 //        root.installer.installDefaultDatabase(root)
 //        try root.boot()
