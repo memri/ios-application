@@ -132,6 +132,9 @@ class Authentication {
             callback(nil)
             return
         }
+        
+        authenticateOwner(callback)
+        return
         #endif
         
         let query: NSDictionary = [
@@ -170,11 +173,9 @@ class Authentication {
             LAPolicy.deviceOwnerAuthenticationWithBiometrics,
             error: &authorizationError
         ) {
-            let biometricType = localAuthenticationContext.biometryType == LABiometryType.faceID
-                ? "Face ID"
-                : "Touch ID"
-            
-            print("Supported Biometric type is: \( biometricType )")
+//            let biometricType = localAuthenticationContext.biometryType == LABiometryType.faceID
+//                ? "Face ID"
+//                : "Touch ID"
             
             localAuthenticationContext.evaluatePolicy (
                 LAPolicy.deviceOwnerAuthenticationWithBiometrics,

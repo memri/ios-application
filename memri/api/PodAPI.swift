@@ -129,143 +129,116 @@ public class PodAPI {
         task.resume()
     }
 
+//    private let MAXDEPTH = 2
+//    private func recursiveSearch(
+//        _ item: SchemaItem,
+//        removeUID _: Bool = false
+//    ) throws -> [String: Any] {
+//        if item._action == nil { throw "No action required" }
 //
-    //	private func getArray(_ item: Item, _ prop: String) -> [Item] {
-    //		let className = item.objectSchema[prop]?.objectClassName
+//        var createItems = [[String: Any]]()
+//        var updateItems = [[String: Any]]()
+//        var deleteItems = [[String: Any]]()
+//        var createEdges = [[String: Any]]()
+//        var updateEdges = [[String: Any]]()
+//        var deleteEdges = [[String: Any]]()
 //
-    //		if className == "Edge" {
-    //			var result = [Item]()
+//        func recurEdge(_ edge: Edge, forceInclude: Bool = false) throws {
+//            let a = edge._action
+//            if a == nil, !forceInclude { return }
+//            guard let action = a else { return }
 //
-    //			if let list = item[prop] as? List<Edge> {
-    //				for edge in list {
-    //					if let d = edge.item() {
-    //						result.append(d)
-    //					}
-    //				}
+//            var result = [String: Any]()
 //
-    //				return result
-    //			} else {
-    //				// TODO: error
-    //				return []
-    //			}
-    //		} else if className == "Item" {
-    //			// Unsupported
-    //			return []
-    //		} else {
-    //			return dataItemListToArray(item[prop] as Any)
-    //		}
-    //	}
-
-    private let MAXDEPTH = 2
-    private func recursiveSearch(
-        _ item: SchemaItem,
-        removeUID _: Bool = false
-    ) throws -> [String: Any] {
-        if item._action == nil { throw "No action required" }
-
-        var createItems = [[String: Any]]()
-        var updateItems = [[String: Any]]()
-        var deleteItems = [[String: Any]]()
-        var createEdges = [[String: Any]]()
-        var updateEdges = [[String: Any]]()
-        var deleteEdges = [[String: Any]]()
-
-        func recurEdge(_ edge: Edge, forceInclude: Bool = false) throws {
-            let a = edge._action
-            if a == nil, !forceInclude { return }
-            guard let action = a else { return }
-
-            var result = [String: Any]()
-
-            let properties = item.objectSchema.properties
-            for prop in properties {
-                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
-                    || prop.name == "deleted" || prop.name == "_changedInSession"
-                    || prop.name == "targetItemType" || prop.name == "targetItemID"
-                    || prop.name == "sourceItemType" || prop.name == "sourceItemID" {
-                    // Ignore
-                }
-                else {
-                    result[prop.name] = edge[prop.name]
-                }
-            }
-
-            if let tgt = edge.item() {
-                try recur(tgt)
-                result["_source"] = edge.sourceItemID
-                result["_target"] = edge.targetItemID
-            }
-            else {
-                // Database is corrupt
-                debugHistory.warn("Database corruption; edge to nowhere")
-            }
-
-            switch action {
-            case "create": createEdges.append(result)
-            case "update": updateEdges.append(result)
-            case "delete": deleteEdges.append(result)
-            default: throw "Unexpected action"
-            }
-        }
-
-        func recur(_ item: SchemaItem, forceInclude: Bool = false) throws {
-            let a = item._action
-            if a == nil, !forceInclude { return }
-            guard let action = a else { return }
-
-            let updatedFields = item._updated
-            var result: [String: Any] = [
-                "_type": item.genericType,
-            ]
-
-            let properties = item.objectSchema.properties
-            for prop in properties {
-                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
-                    || prop.name == "deleted" || prop.name == "_changedInSession" {
-                    // Ignore
-                }
-                else if prop.name == "allEdges" {
-                    for edge in item.allEdges {
-                        try recurEdge(edge, forceInclude: action == "create")
-                    }
-                }
-                else if updatedFields.contains(prop.name) {
-                    if prop.type == .object {
-                        throw "Unexpected object schema"
-                    }
-                    else {
-                        result[prop.name] = item[prop.name]
-                    }
-                }
-            }
-
-            switch action {
-            case "create": createItems.append(result)
-            case "update": updateItems.append(result)
-            case "delete": deleteItems.append(result)
-            default: throw "Unexpected action"
-            }
-        }
-
-        // TODO: refactor: error handling
-        do {
-            _ = try recur(item)
-
-            var result = [String: Any]()
-            if createItems.count > 0 { result["createItems"] = createItems }
-            if updateItems.count > 0 { result["updateItems"] = updateItems }
-            if deleteItems.count > 0 { result["deleteItems"] = deleteItems }
-            if createEdges.count > 0 { result["createEdges"] = createEdges }
-            if updateEdges.count > 0 { result["updateEdges"] = updateEdges }
-            if deleteEdges.count > 0 { result["deleteEdges"] = deleteEdges }
-
-            return result
-        }
-        catch {
-            debugHistory.error("Exception while communicating with the pod: \(error)")
-            return [:]
-        }
-    }
+//            let properties = item.objectSchema.properties
+//            for prop in properties {
+//                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+//                    || prop.name == "deleted" || prop.name == "_changedInSession"
+//                    || prop.name == "targetItemType" || prop.name == "targetItemID"
+//                    || prop.name == "sourceItemType" || prop.name == "sourceItemID" {
+//                    // Ignore
+//                }
+//                else {
+//                    result[prop.name] = edge[prop.name]
+//                }
+//            }
+//
+//            if let tgt = edge.item() {
+//                try recur(tgt)
+//                result["_source"] = edge.sourceItemID
+//                result["_target"] = edge.targetItemID
+//            }
+//            else {
+//                // Database is corrupt
+//                debugHistory.warn("Database corruption; edge to nowhere")
+//            }
+//
+//            switch action {
+//            case "create": createEdges.append(result)
+//            case "update": updateEdges.append(result)
+//            case "delete": deleteEdges.append(result)
+//            default: throw "Unexpected action"
+//            }
+//        }
+//
+//        func recur(_ item: SchemaItem, forceInclude: Bool = false) throws {
+//            let a = item._action
+//            if a == nil, !forceInclude { return }
+//            guard let action = a else { return }
+//
+//            let updatedFields = item._updated
+//            var result: [String: Any] = [
+//                "_type": item.genericType,
+//            ]
+//
+//            let properties = item.objectSchema.properties
+//            for prop in properties {
+//                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+//                    || prop.name == "deleted" || prop.name == "_changedInSession" {
+//                    // Ignore
+//                }
+//                else if prop.name == "allEdges" {
+//                    for edge in item.allEdges {
+//                        try recurEdge(edge, forceInclude: action == "create")
+//                    }
+//                }
+//                else if updatedFields.contains(prop.name) {
+//                    if prop.type == .object {
+//                        throw "Unexpected object schema"
+//                    }
+//                    else {
+//                        result[prop.name] = item[prop.name]
+//                    }
+//                }
+//            }
+//
+//            switch action {
+//            case "create": createItems.append(result)
+//            case "update": updateItems.append(result)
+//            case "delete": deleteItems.append(result)
+//            default: throw "Unexpected action"
+//            }
+//        }
+//
+//        // TODO: refactor: error handling
+//        do {
+//            _ = try recur(item)
+//
+//            var result = [String: Any]()
+//            if createItems.count > 0 { result["createItems"] = createItems }
+//            if updateItems.count > 0 { result["updateItems"] = updateItems }
+//            if deleteItems.count > 0 { result["deleteItems"] = deleteItems }
+//            if createEdges.count > 0 { result["createEdges"] = createEdges }
+//            if updateEdges.count > 0 { result["updateEdges"] = updateEdges }
+//            if deleteEdges.count > 0 { result["deleteEdges"] = deleteEdges }
+//
+//            return result
+//        }
+//        catch {
+//            debugHistory.error("Exception while communicating with the pod: \(error)")
+//            return [:]
+//        }
+//    }
 
     func toJSON(_ result: [String: Any]) throws -> Data {
         try MemriJSONEncoder.encode(AnyCodable(result))
@@ -368,14 +341,14 @@ public class PodAPI {
         }
     }
 
-    public func sync(
-        _ item: SchemaItem,
-        _ callback: @escaping (_ error: Error?) -> Void
-    ) throws {
-        http(path: "bulk_action", payload: try recursiveSearch(item)) { error, _ in
-            callback(error)
-        }
-    }
+//    public func sync(
+//        _ item: SchemaItem,
+//        _ callback: @escaping (_ error: Error?) -> Void
+//    ) throws {
+//        http(path: "bulk_action", payload: try recursiveSearch(item)) { error, _ in
+//            callback(error)
+//        }
+//    }
 
     public func sync(
         createItems: [SchemaItem]?,

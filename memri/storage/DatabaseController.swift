@@ -71,7 +71,7 @@ class DatabaseController {
             
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 101,
+            schemaVersion: 110,
 
             // Set the block which will be called automatically when opening a Realm with
             // a schema version lower than the one set above
@@ -161,8 +161,12 @@ class DatabaseController {
         if !realmTesting {
             #if targetEnvironment(simulator)
             if !reportedKey {
-                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 reportedKey = true
+                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                Authentication.getOwnerAndDBKey { err, owner, db in
+                    print("OWNER KEY: \(owner!)")
+                    print("DB KEY: \(db!)")
+                }
             }
             #endif
             
