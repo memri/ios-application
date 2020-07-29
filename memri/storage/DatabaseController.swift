@@ -57,7 +57,12 @@ class EdgeReference {
 class DatabaseController {
     private init() {}
 
+    #if targetEnvironment(simulator)
     static var realmTesting = false
+    static var reportedKey = false
+    #else
+    static let realmTesting = false
+    #endif
     
     private static var realmConfig: Realm.Configuration {
         Realm.Configuration(
@@ -117,9 +122,24 @@ class DatabaseController {
     
     /// This function returns a Realm for the current thread
     static func getRealmAsync(_ receiveRealm: @escaping (Error?, Realm?) -> Void) -> Void {
-        Authentication.getPublicRootKey { error, encryptionKey in
+        Authentication.getPublicRootKey { error, data in
+            guard let data = data else {
+                receiveRealm(error, nil)
+                return
+            }
+            
             var config = realmConfig
-            config.encryptionKey = encryptionKey
+            
+            if !realmTesting {
+                #if targetEnvironment(simulator)
+                if !reportedKey {
+                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                    reportedKey = true
+                }
+                #endif
+                
+                config.encryptionKey = data.subdata(in: Range(0...63))
+            }
             
             do {
                 let realm = try Realm(configuration: config)
@@ -133,17 +153,19 @@ class DatabaseController {
             }
         }
     }
-
+    
     /// This function returns a Realm for the current thread
     static func getRealmSync() throws -> Realm {
-        let encryptionKey = try Authentication.getPublicRootKeySync()
+        let encryptionKey = try Authentication.getPublicRootKeySync().subdata(in: Range(0...63))
         var config = realmConfig
-        config.encryptionKey = encryptionKey
+        if !realmTesting {
+            config.encryptionKey = encryptionKey
+        }
         return try Realm(configuration: config)
     }
     
     private static var realmQueue: DispatchQueue = {
-        let queue = DispatchQueue(label: "memri.realmQueue", qos: .utility)
+        let queue = DispatchQueue(label: "memri.realmQueue", qos: .userInteractive)
         return queue
     }()
 
@@ -274,6 +296,30 @@ class DatabaseController {
     
     static func globalErrorHandler(error:Error) {
         debugHistory.error("\(error)")
+    }
+    
+    static func deleteDatabase(_ callback:@escaping (Error?) -> Void) {
+        Authentication.authenticateOwner { error in
+            if let error = error {
+                callback("Unable to authenticate: \(error)")
+                return
+            }
+            
+            do {
+                let fileManager = FileManager.default
+                let realmUrl = try getRealmURL()
+                
+                // Check if realm database exists
+                if fileManager.fileExists(atPath: realmUrl.path) {
+                    try fileManager.removeItem(at: realmUrl)
+                }
+                
+                callback(nil)
+            }
+            catch {
+                callback("Could not remove realm database: \(error)")
+            }
+        }
     }
 
     static func clean(_ callback:@escaping (Error?) -> Void) {

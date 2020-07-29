@@ -54,7 +54,9 @@ class Sync {
     ///   - rlm: local Realm database object
     init(_ api: PodAPI) {
         podAPI = api
-
+    }
+    
+    public func load() {
         // Periodically sync data from the pod
         // TODO:
 

@@ -27,6 +27,10 @@ public class MainNavigation: ObservableObject {
     public var scheduleUIUpdate: ((((_ context: MemriContext) -> Bool)?) -> Void)?
 
     required init() {
+        
+    }
+    
+    public func load() {
         items = DatabaseController.current {
             $0.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
         }

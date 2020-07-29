@@ -20,6 +20,10 @@ public class Settings {
     /// Init settings with the relam database
     /// - Parameter rlm: realm database object
     init() {
+        
+    }
+    
+    public func load(){
         settings = try? DatabaseController.tryCurrent { realm in
             realm.objects(Setting.self)
         }

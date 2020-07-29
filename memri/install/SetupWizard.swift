@@ -13,7 +13,8 @@ struct SetupWizard: View {
     @EnvironmentObject var context: MemriContext
 
     @State private var host: String = "http://localhost:3030"
-    @State private var ownerKey: String = ""
+    @State private var privateKey: String = ""
+    @State private var publicKey: String = ""
     @State private var databaseKey: String = ""
     @State private var showingAlert = false
 
@@ -56,7 +57,9 @@ struct SetupWizard: View {
                                                 self.context,
                                                 areYouSure: true,
                                                 host: self.host
-                                            )
+                                            ) { error in
+                                                debugHistory.error("\(error)") // TODO: show this to the user
+                                            }
                                         }, secondaryButton: .cancel())
                                     }
                                 }
@@ -76,9 +79,14 @@ struct SetupWizard: View {
                                     MemriTextField(value: $host)
                                 }
                                 HStack {
-                                    Text("Owner Key:")
+                                    Text("Private Key:")
                                         .frame(width: 100, alignment: .leading)
-                                    SecureField("Owner Key:", text: $ownerKey)
+                                    SecureField("Private Key:", text: $privateKey)
+                                }
+                                HStack {
+                                    Text("Public Key:")
+                                        .frame(width: 100, alignment: .leading)
+                                    SecureField("Public Key:", text: $publicKey)
                                 }
                                 HStack {
                                     Text("Database Key:")
@@ -103,9 +111,12 @@ struct SetupWizard: View {
                                                 self.context,
                                                 areYouSure: true,
                                                 host: self.host,
-                                                ownerKey: self.ownerKey,
-                                                databaseKey: self.databaseKey
-                                            )
+                                                privateKey: self.privateKey,
+                                                publicKey: self.publicKey,
+                                                dbKey: self.databaseKey
+                                            ) { error in
+                                                debugHistory.error("\(error)") // TODO: show this to the user
+                                            }
                                         }, secondaryButton: .cancel())
                                     }
                                 }
@@ -119,13 +130,17 @@ struct SetupWizard: View {
                     ) {
                         Button(action: {
                             self.context.settings.set("user/pod/host", "")
-                            self.context.installer.installDefaultDatabase(self.context)
+                            self.context.installer.installDefaultDatabase(self.context) { _ in
+                                
+                            }
                         }) {
                             Text("Use memri without a pod")
                         }
                         Button(action: {
                             self.context.settings.set("user/pod/host", "")
-                            self.context.installer.installDemoDatabase(self.context)
+                            self.context.installer.installDemoDatabase(self.context) { _ in
+                                
+                            }
                         }) {
                             Text("Play around with the DEMO database")
                         }
@@ -149,13 +164,17 @@ struct SetupWizard: View {
                             Text("Continue as normal")
                         }
                         Button(action: {
-                            self.context.installer.clearDatabase(self.context)
+                            self.context.installer.clearDatabase(self.context) { error in
+                                debugHistory.error("\(error)") // TODO: show this to the user
+                            }
                         }) {
                             Text("Delete the local database and start over")
                         }
                         if context.installer.isInstalled {
                             Button(action: {
-                                self.context.installer.clearSessions(self.context)
+                                self.context.installer.clearSessions(self.context) { error in
+                                    debugHistory.error("\(error)") // TODO: show this to the user
+                                }
                             }) {
                                 Text("Clear the session history (to recover from an issue)")
                             }

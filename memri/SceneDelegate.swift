@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             let context = try RootContext(name: "Memri GUI")
             let application = Application().environmentObject(context as MemriContext)
 
-            try context.installer.await {
+            try context.installer.await (context) {
                 context.boot { error in
                     if let error = error {
                         // TODO present to the user!!

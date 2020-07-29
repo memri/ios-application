@@ -44,7 +44,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeOnlineProfile = "OnlineProfile"
     case typePerson = "Person"
     case typePhoneNumber = "PhoneNumber"
-    case typePublicKey = "PublicKey"
+    case typeCryptoKey = "CryptoKey"
     case typeSetting = "Setting"
     case typeUserState = "UserState"
     case typeViewArguments = "ViewArguments"
@@ -87,7 +87,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return Color(hex: "#93c47d")
         case .typePerson: return Color(hex: "#3a5eb2")
         case .typePhoneNumber: return Color(hex: "#eccf23")
-        case .typePublicKey: return Color(hex: "#93c47d")
+        case .typeCryptoKey: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
         case .typeUserState: return Color(hex: "#93c47d")
         case .typeViewArguments: return Color(hex: "#93c47d")
@@ -130,7 +130,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return Color(hex: "#ffffff")
         case .typePerson: return Color(hex: "#ffffff")
         case .typePhoneNumber: return Color(hex: "#ffffff")
-        case .typePublicKey: return Color(hex: "#ffffff")
+        case .typeCryptoKey: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
         case .typeUserState: return Color(hex: "#ffffff")
         case .typeViewArguments: return Color(hex: "#ffffff")
@@ -177,7 +177,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return OnlineProfile.self
         case .typePerson: return Person.self
         case .typePhoneNumber: return PhoneNumber.self
-        case .typePublicKey: return PublicKey.self
+        case .typeCryptoKey: return CryptoKey.self
         case .typeSetting: return Setting.self
         case .typeUserState: return UserState.self
         case .typeViewArguments: return ViewArguments.self
@@ -1154,8 +1154,8 @@ public class SchemaPerson: Item {
     }
 
     /// A public key used in an asymmetric cryptography protocol.
-    var publicKey: Results<PublicKey>? {
-        edges("publicKey")?.items(type: PublicKey.self)
+    var cryptoKey: Results<CryptoKey>? {
+        edges("cryptoKey")?.items(type: CryptoKey.self)
     }
 
     /// An online profile, typically on social media.
@@ -1221,14 +1221,18 @@ public class PhoneNumber: Item {
 }
 
 /// A public key used in an asymmetric cryptography protocol.
-public class PublicKey: Item {
+public class CryptoKey: Item {
     /// TBD
     @objc dynamic var type: String?
     /// A piece of information that determines the functional output of a cryptographic
     /// algorithm.
     @objc dynamic var key: String?
+    /// The role of this key (e.g. private, public)
+    @objc dynamic var role: String?
     /// The name of the item.
     @objc dynamic var name: String?
+    /// The name of the item.
+    @objc dynamic var active: Bool = false
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
@@ -1237,6 +1241,7 @@ public class PublicKey: Item {
             type = try decoder.decodeIfPresent("type") ?? type
             key = try decoder.decodeIfPresent("key") ?? key
             name = try decoder.decodeIfPresent("name") ?? name
+            active = try decoder.decodeIfPresent("active") ?? active
 
             try self.superDecode(from: decoder)
         }
@@ -1326,7 +1331,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<PublicKey> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CryptoKey> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
 

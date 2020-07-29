@@ -33,8 +33,8 @@ public class PodAPI {
         body: Data? = nil,
         _ callback: @escaping (_ error: Error?, _ data: Data?) -> Void
     ) {
-        Authentication.getOwnerAndDBKey { error, ownerKey, databaseKey in
-            guard error == nil else {
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
                 // TODO
                 callback(error, nil)
                 return
@@ -43,7 +43,7 @@ public class PodAPI {
             self.httpWithKeys (
                 method: method,
                 ownerKey: ownerKey,
-                databaseKey: databaseKey,
+                databaseKey: dbKey,
                 callback
             )
         }

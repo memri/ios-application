@@ -563,7 +563,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
     var loading: Bool = false
 
-    public func load(_ callback: (Error?) -> Void) throws {
+    public func load(_ callback: @escaping (Error?) -> Void) throws {
         guard !loading else { return }
         loading = true
 

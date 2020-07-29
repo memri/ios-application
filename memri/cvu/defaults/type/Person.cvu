@@ -177,7 +177,7 @@ Person {
             { section: companies, edges: company, type: Company }
             { section: diets, edges: diet, type: Diet }
             { section: medicalConditions, edges: medicalCondition, type: MedicalCondition }
-            { section: publicKeys, edges: publicKey, type: PublicKey }
+            { section: cryptoKeys, edges: cryptoKey, type: CryptoKey }
             { section: onlineProfiles, edges: onlineProfile, type: OnlineProfile }
             { section: other, fields: * }
             { section: dates }
@@ -306,7 +306,7 @@ Person {
             }
         }
         
-        publicKeys {
+        cryptoKeys {
             EditorRow {
                 title: "{.name}"
             

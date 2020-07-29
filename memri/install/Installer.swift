@@ -4,7 +4,7 @@
 
 import Foundation
 import RealmSwift
-import XCTest
+//import XCTest
 
 public class Installer: ObservableObject {
     @Published var isInstalled: Bool = false
@@ -13,22 +13,39 @@ public class Installer: ObservableObject {
     private var readyCallback: () throws -> Void = {}
 
     init() {
-        if let _ = LocalSetting.get("memri/installed") {
-            isInstalled = true
-        }
         debugMode = CrashObserver.shared.didCrashLastTime
     }
 
-    public func await(_ callback: @escaping () throws -> Void) throws {
-        if isInstalled && !debugMode {
-            try callback()
-            return
+    public func await(_ context:MemriContext, _ callback: @escaping () throws -> Void) throws {
+        let authAtStartup = Settings.shared.get("device/auth/atStartup", type: Bool.self) ?? true
+        
+        func check() {
+            if let _ = LocalSetting.get("memri/installed") {
+                self.isInstalled = true
+                
+                if !self.debugMode {
+                    self.ready(context)
+                }
+            }
+        
+            self.readyCallback = callback
         }
-
-        readyCallback = callback
+        
+        if authAtStartup {
+            Authentication.authenticateOwner { error in
+                if let error = error {
+                    fatalError("Unable to authenticate \(error)") // TODO report to user allow retry
+                }
+                    
+                check()
+            }
+        }
+        else {
+            check()
+        }
     }
 
-    public func ready() {
+    public func ready(_ context:MemriContext) {
         isInstalled = true
 
         LocalSetting.set("memri/installed", Date().description)
@@ -36,6 +53,7 @@ public class Installer: ObservableObject {
         do {
             try readyCallback()
             readyCallback = {}
+            context.scheduleUIUpdate(immediate: true)
         }
         catch {
             debugHistory.error("\(error)")
@@ -45,23 +63,18 @@ public class Installer: ObservableObject {
     public func installLocalAuthForNewPod(
         _ context:MemriContext,
         areYouSure: Bool,
-        host: String
+        host: String,
+        _ callback: @escaping (Error?) -> Void
     ) {
-//        self.context.installer.clearDatabase(self.context)
         
-        Authentication.installRootKey(areYouSure: areYouSure) { error in
-            guard error == nil else {
-                debugHistory.error("\(error!)") // TODO: show this to the user
-                return
-            }
-            
-            Authentication.generateOwnerAndDBKey { error in
+        DatabaseController.deleteDatabase { error in
+            do {
                 if let error = error {
-                    // TODO Error Handling - show to the user
-                    debugHistory.warn("\(error)")
-                    return
+                    throw "\(error)"
                 }
                 
+                _ = try Authentication.createRootKey(areYouSure: areYouSure)
+                    
                 self.installDefaultDatabase(context) { error in
                     if let error = error {
                         // TODO Error Handling - show to the user
@@ -69,10 +82,21 @@ public class Installer: ObservableObject {
                         return
                     }
                     
+                    do {
+                        try Authentication.createOwnerAndDBKey()
+                    }
+                    catch { callback(error) }
+                    
+                    Settings.shared.load()
                     Settings.shared.set("user/pod/host", host)
-                    self.ready()
+                    self.ready(context)
                     context.cache.sync.schedule()
+                    
+                    callback(nil)
                 }
+            }
+            catch {
+                callback(error)
             }
         }
     }
@@ -81,49 +105,72 @@ public class Installer: ObservableObject {
         _ context:MemriContext,
         areYouSure: Bool,
         host: String,
-        ownerKey: String,
-        databaseKey: String
+        privateKey: String,
+        publicKey: String,
+        dbKey: String,
+        _ callback: @escaping (Error?) -> Void
     ) {
-        context.podAPI.host = host
         
-        Authentication.installRootKey(areYouSure: areYouSure) { error in
-            guard error == nil else {
-                debugHistory.error("\(error!)") // TODO: show this to the user
-                return
-            }
-            
-            Authentication.setOwnerAndDBKey(
-                ownerKey: ownerKey,
-                databaseKey: databaseKey
-            ) { error in
+        DatabaseController.deleteDatabase { error in
+            do {
                 if let error = error {
-                    // TODO Error Handling - show to the user
-                    debugHistory.warn("\(error)")
-                    return
+                    throw "Unable to authenticate: \(error)"
                 }
                 
+                context.podAPI.host = host
+            
+                _ = try Authentication.createRootKey(areYouSure: areYouSure)
+                
                 context.cache.sync.syncAllFromPod { // TODO error handling
+                    Settings.shared.load()
                     Settings.shared.set("user/pod/host", host)
-                    self.ready()
+                    
+                    do {
+                        try Authentication.setOwnerAndDBKey(
+                            privateKey: privateKey,
+                            publicKey: publicKey,
+                            dbKey: dbKey
+                        )
+                    }
+                    catch { callback(error) }
+                    
+                    self.ready(context)
+                    
+                    callback(nil)
                 }
+            }
+            catch {
+                callback(error)
             }
         }
     }
     
     public var testRoot: RootContext? = nil
-    public func installForTesting(boot:Bool = true) throws -> RootContext? {
-        if testRoot == nil {
+    public func installForTesting(boot:Bool = true,
+                                  _ callback:@escaping (Error?, RootContext?) throws -> Void) {
+        do {
+            if let testRoot = testRoot {
+                try callback(nil, testRoot)
+                return
+            }
+            
             DatabaseController.realmTesting = true
             Settings.shared = Settings()
             
             testRoot = try RootContext(name: "")
             
-            try await {
+            try await (testRoot!) {
                 if boot {
                     self.testRoot!.boot(isTesting: true) { error in
                         if let error = error {
-                            XCTFail("\(error)")
+                            debugHistory.error("\(error)")
+                            do { try callback(error, nil) }
+                            catch { debugHistory.error("\(error)") }
+                            return
                         }
+                        
+                        do { try callback(nil, self.testRoot) }
+                        catch { debugHistory.error("\(error)") }
                     }
                 }
             }
@@ -132,18 +179,33 @@ public class Installer: ObservableObject {
                 isInstalled = true
             }
             
-            if isInstalled { ready() }
+            if isInstalled { ready(testRoot!) }
             else {
-                clearDatabase(testRoot!)
-                installDefaultDatabase(testRoot!) { error in
+                clearDatabase(testRoot!) { error in
                     if let error = error {
-                        XCTFail("\(error)")
+                        debugHistory.error("\(error)")
+                        do { try callback(error, nil) }
+                        catch { debugHistory.error("\(error)") }
+                        return
+                    }
+                    
+                    self.installDefaultDatabase(self.testRoot!) { error in
+                        if let error = error {
+                            debugHistory.error("\(error)")
+                            do { try callback(error, nil) }
+                            catch { debugHistory.error("\(error)") }
+                            return
+                        }
+                        
+                        self.ready(self.testRoot!)
                     }
                 }
             }
         }
-        
-        return testRoot
+        catch {
+            do { try callback(error, nil) }
+            catch { debugHistory.error("\(error)") }
+        }
     }
     
     public func handleInstallError(error:Error?) {
@@ -152,18 +214,19 @@ public class Installer: ObservableObject {
     }
 
     public func installDefaultDatabase(_ context: MemriContext,
-                                       _ callback:((Error?) -> Void)? = nil) {
+                                       _ callback:@escaping (Error?) -> Void) {
         debugHistory.info("Installing defaults in the database")
-        install(context, dbName: "default_database", callback ?? handleInstallError)
+        install(context, dbName: "default_database", callback)
     }
 
     public func installDemoDatabase(_ context: MemriContext,
-                                    _ callback:((Error?) -> Void)? = nil) {
+                                    _ callback:@escaping (Error?) -> Void) {
         debugHistory.info("Installing demo database")
-        install(context, dbName: "demo_database", callback ?? handleInstallError)
+        install(context, dbName: "demo_database", callback)
     }
 
-    private func install(_ context: MemriContext, dbName: String, _ callback:@escaping (Error?) -> Void) {
+    private func install(_ context: MemriContext, dbName: String,
+                         _ callback:@escaping (Error?) -> Void) {
         do {
             // Load default objects in database
             try context.cache.install(dbName) { error in
@@ -204,34 +267,41 @@ public class Installer: ObservableObject {
 
     public func continueAsNormal(_ context: MemriContext) {
         debugMode = false
-        ready()
-        context.scheduleUIUpdate(immediate: true)
+        ready(context)
     }
 
-    public func clearDatabase(_ context: MemriContext) {
-        DatabaseController.current(write:true) { realm in
+    public func clearDatabase(_ context: MemriContext,
+                              _ callback:@escaping (Error?) -> Void) {
+        DatabaseController.current(write:true, error:callback) { realm in
             realm.deleteAll()
-        }
-        
-        Cache.cacheUIDCounter = -1
+            
+            Cache.cacheUIDCounter = -1
 
-        isInstalled = false
-        debugMode = false
-        context.scheduleUIUpdate(immediate: true)
+            self.isInstalled = false
+            self.debugMode = false
+            context.scheduleUIUpdate(immediate: true)
+            
+            callback(nil)
+        }
     }
 
-    public func clearSessions(_ context: MemriContext) {
-        DatabaseController.current(write:true) { _ in
+    public func clearSessions(_ context: MemriContext,
+                              _ callback:@escaping (Error?) -> Void) {
+        
+        DatabaseController.current(write:true, error:callback) { _ in
+            
             // Create a new default session
             context.sessions.install(context) { error in
                 if let error = error {
                     // TODO Error Handling - show to the user
                     debugHistory.warn("\(error)")
+                    callback(error)
                     return
                 }
                 
                 self.debugMode = false
-                self.ready()
+                self.ready(context)
+                callback(nil)
             }
         }
     }

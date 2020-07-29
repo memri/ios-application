@@ -354,6 +354,9 @@ public class RootContext: MemriContext {
     public func boot(isTesting: Bool = false, _ callback: @escaping (Error?) -> Void) {
         func doBoot() {
             do {
+                // Load main navigation
+                navigation.load()
+                
                 // Load views configuration
                 try views.load(self)
                 
@@ -370,6 +373,9 @@ public class RootContext: MemriContext {
 
                 // Load current view
                 try self.currentSession?.setCurrentView()
+                
+                // Start syncing
+                cache.sync.load()
 
                 callback(nil)
             }
@@ -377,6 +383,10 @@ public class RootContext: MemriContext {
                 callback(error)
             }
         }
+        
+        // Load settings
+        Settings.shared.load()
+        settings.load()
         
         if !isTesting {
             DatabaseController.clean { error in
