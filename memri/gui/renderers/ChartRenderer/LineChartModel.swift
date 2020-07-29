@@ -8,10 +8,12 @@ import SwiftUI
 
 struct LineChartModel {
     var sets: [ChartSetXY]
-    var showValueLabels: Bool = true
     var lineWidth: CGFloat = 0
     var hideGridLines: Bool = false
     var forceMinYOfZero: Bool = true
+	var primaryColor: ColorDefinition = ColorDefinition.system(.systemBlue)
+	var showValueLabels: Bool = true
+	var valueLabelFont: UIFont = UIFont.systemFont(ofSize: 14)
 
     func generateData() -> LineChartData {
         let dataSets: [LineChartDataSet] = sets.map { set in
@@ -31,7 +33,8 @@ struct LineChartModel {
             dataSet.drawValuesEnabled = showValueLabels
             dataSet.lineWidth = lineWidth
             dataSet.valueFormatter = ChartLabelFormatter()
-            dataSet.valueFont = UIFont.systemFont(ofSize: 14)
+            dataSet.valueFont = valueLabelFont
+			dataSet.setColor(primaryColor.uiColor)
             return dataSet
         }
         return LineChartData(dataSets: dataSets)

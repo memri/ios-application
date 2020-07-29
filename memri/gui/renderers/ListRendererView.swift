@@ -102,9 +102,13 @@ struct ListRendererView: View {
                               onSwipeToDelete: { _, item in
                                   context.executeAction(ActionDelete(context), with: item)
                                   return true
-							  }) { dataItem, _ in
+							  }) { dataItem, cellContext in
                         self.renderConfig.render(item: dataItem)
                             .frame(maxWidth: .infinity, alignment: .leading)
+							.padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.renderConfig.spacing.height / 2,
+												leading: self.renderConfig.edgeInset.left,
+												bottom: cellContext.isLastInSection ? 0 : self.renderConfig.spacing.height / 2,
+												trailing: self.renderConfig.edgeInset.right))
                             .environmentObject(context)
                     }
                     .onSelectSingle { index in
@@ -113,6 +117,8 @@ struct ListRendererView: View {
                         }
                     })
                     .alwaysBounce()
+					.contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
+					.background(renderConfig.backgroundColor.color)
             }
         }
     }

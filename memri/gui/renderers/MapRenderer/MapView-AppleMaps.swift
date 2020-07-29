@@ -25,7 +25,7 @@ struct MapView_AppleMaps: UIViewRepresentable {
         context.coordinator.mapModel.locationResolver = config.locationResolver
         context.coordinator.mapModel.addressResolver = config.addressResolver
         context.coordinator.mapModel.labelResolver = config.labelResolver
-        context.coordinator.mapModel.mapStyle = config.mapStyle
+		context.coordinator.mapView?.isScrollEnabled = config.moveable
     }
 
     func makeCoordinator() -> MapView_AppleMaps.Coordinator {

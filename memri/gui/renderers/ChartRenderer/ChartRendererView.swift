@@ -75,6 +75,16 @@ class CascadingChartConfig: CascadingRenderConfig {
         get { cascadeProperty("hideGridlines") ?? false }
         set(value) { setState("hideGridlines", value) }
     }
+	
+	var showValueLabels: Bool {
+		get { cascadeProperty("showValueLabels") ?? true }
+		set(value) { setState("showValueLabels", value) }
+	}
+	
+	var valueLabelFont: FontDefinition {
+		get { cascadeProperty("valueLabelFont") ?? FontDefinition(size: 14) }
+		set(value) { setState("valueLabelFont", value) }
+	}
 }
 
 enum ChartType: String {
@@ -155,7 +165,10 @@ struct ChartRendererView: View {
                         sets: [data],
                         hideGridLines:
                         renderConfig.hideGridLines,
-                        forceMinYOfZero: renderConfig.yAxisStartAtZero
+                        forceMinYOfZero: renderConfig.yAxisStartAtZero,
+						primaryColor: renderConfig.primaryColor,
+						showValueLabels: renderConfig.showValueLabels,
+						valueLabelFont: renderConfig.valueLabelFont.uiFont
                     ),
                     onPress: { self.onPress(index: $0) }
                 )
@@ -183,7 +196,10 @@ struct ChartRendererView: View {
                         sets: [data],
                         lineWidth: renderConfig.lineWidth,
                         hideGridLines: renderConfig.hideGridLines,
-                        forceMinYOfZero: renderConfig.yAxisStartAtZero
+						forceMinYOfZero: renderConfig.yAxisStartAtZero,
+						primaryColor: renderConfig.primaryColor,
+						showValueLabels: renderConfig.showValueLabels,
+						valueLabelFont: renderConfig.valueLabelFont.uiFont
                     ),
                     onPress: { self.onPress(index: $0) }
                 )
@@ -201,6 +217,8 @@ struct ChartRendererView: View {
 
     var body: some View {
         chartView
+			.frame(maxWidth: .infinity, maxHeight: .infinity)
+			.background(renderConfig.backgroundColor.color)
     }
 }
 

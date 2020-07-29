@@ -441,6 +441,10 @@ Person[] {
         
         hideGridlines: true
         yAxisStartAtZero: true /* use this to force y-Axis to start at zero (vs fitting data)*/
+		
+		color: #7BC17E
+		
+		valueLabelFont: 20
         
         sortProperty: height
         sortAscending: true

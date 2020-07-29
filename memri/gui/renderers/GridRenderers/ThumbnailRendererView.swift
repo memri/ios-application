@@ -34,65 +34,6 @@ class CascadingThumbnailConfig: CascadingRenderConfig {
         get { Int(cascadeProperty("columns") as Double? ?? 3) }
         set(value) { setState("columns", value) }
     }
-
-    var edgeInset: UIEdgeInsets {
-        get {
-            if let edgeInset = cascadePropertyAsCGFloat("edgeInset") {
-                return UIEdgeInsets(
-                    top: edgeInset,
-                    left: edgeInset,
-                    bottom: edgeInset,
-                    right: edgeInset
-                )
-            }
-            else if let x: [Double?] = cascadeProperty("edgeInset") {
-                let insetArray = x.compactMap { $0.map { CGFloat($0) } }
-                switch insetArray.count {
-                case 2: return UIEdgeInsets(
-                    top: insetArray[1],
-                    left: insetArray[0],
-                    bottom: insetArray[1],
-                    right: insetArray[0]
-                )
-                case 4: return UIEdgeInsets(
-                    top: insetArray[0],
-                    left: insetArray[3],
-                    bottom: insetArray[2],
-                    right: insetArray[1]
-                )
-                default: return .init()
-                }
-            }
-            return .init()
-        }
-        set(value) { setState("edgeInset", value) }
-    }
-
-    var nsEdgeInset: NSDirectionalEdgeInsets {
-        let edgeInset = self.edgeInset
-        return NSDirectionalEdgeInsets(
-            top: edgeInset.top,
-            leading: edgeInset.left,
-            bottom: edgeInset.bottom,
-            trailing: edgeInset.right
-        )
-    }
-
-    // Calculated
-    var spacing: (x: CGFloat, y: CGFloat) {
-        get {
-            if let spacing = cascadePropertyAsCGFloat("spacing") {
-                return (spacing, spacing)
-            }
-            else if let x: [Double?] = cascadeProperty("spacing") {
-                let spacingArray = x.compactMap { $0.map { CGFloat($0) } }
-                guard spacingArray.count == 2 else { return (0, 0) }
-                return (spacingArray[0], spacingArray[1])
-            }
-            return (0, 0)
-        }
-        set(value) { setState("spacing", value) }
-    }
 }
 
 struct ThumbnailRendererView: View {
@@ -117,7 +58,7 @@ struct ThumbnailRendererView: View {
             ASCollectionLayoutSection { environment in
                 let contentInsets = self.renderConfig.nsEdgeInset
                 let numberOfColumns = self.renderConfig.columns
-                let xSpacing = self.renderConfig.spacing.x
+                let xSpacing = self.renderConfig.spacing.width
                 let estimatedGridBlockSize = (environment.container.effectiveContentSize
                     .width - contentInsets.leading - contentInsets
                     .trailing - xSpacing * (CGFloat(numberOfColumns) - 1)) /
@@ -140,7 +81,7 @@ struct ThumbnailRendererView: View {
                 itemsGroup.interItemSpacing = .fixed(xSpacing)
 
                 let section = NSCollectionLayoutSection(group: itemsGroup)
-                section.interGroupSpacing = self.renderConfig.spacing.y
+                section.interGroupSpacing = self.renderConfig.spacing.height
                 section.contentInsets = contentInsets
                 return section
             }
@@ -202,6 +143,7 @@ struct ThumbnailRendererView: View {
                         get: { self.context.currentSession?.swiftUIEditMode ?? EditMode.inactive },
                         set: { self.context.currentSession?.swiftUIEditMode = $0 }
                     ))
+					.background(renderConfig.backgroundColor.color)
             }
         }
     }

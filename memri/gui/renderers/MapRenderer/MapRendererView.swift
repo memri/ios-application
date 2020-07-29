@@ -47,9 +47,9 @@ class CascadingMapConfig: CascadingRenderConfig {
         set(value) { setState("label", value) }
     }
 
-    var mapStyle: MapStyle {
-        get { MapStyle(fromString: cascadeProperty("mapStyle")) }
-        set(value) { setState("mapStyle", value) }
+    var moveable: Bool {
+        get { cascadeProperty("moveable") ?? true }
+        set(value) { setState("moveable", value) }
     }
 }
 
@@ -89,8 +89,8 @@ struct MapRendererView: View {
             labelResolver: {
                 self.resolveExpression(self.renderConfig.label, forItem: $0)
             },
-            mapStyle: renderConfig.mapStyle,
-            onPress: self.onPress
+			moveable: renderConfig.moveable,
+			onPress: self.onPress
         )
 
         return MapView(useMapBox: useMapBox, config: config)

@@ -47,7 +47,7 @@ struct ThumbHorizontalGridRendererView: View {
             ASCollectionLayoutSection { environment in
                 let contentInsets = self.renderConfig.nsEdgeInset
                 let numberOfRows = self.renderConfig.columns
-                let ySpacing = self.renderConfig.spacing.y
+                let ySpacing = self.renderConfig.spacing.height
                 let calculatedGridBlockSize = (environment.container.effectiveContentSize
                     .height - contentInsets.top - contentInsets
                     .bottom - ySpacing * (CGFloat(numberOfRows) - 1)) / CGFloat(numberOfRows)
@@ -69,7 +69,7 @@ struct ThumbHorizontalGridRendererView: View {
                 itemsGroup.interItemSpacing = .fixed(ySpacing)
 
                 let section = NSCollectionLayoutSection(group: itemsGroup)
-                section.interGroupSpacing = self.renderConfig.spacing.x
+                section.interGroupSpacing = self.renderConfig.spacing.width
                 section.contentInsets = contentInsets
                 return section
             }
@@ -127,6 +127,7 @@ struct ThumbHorizontalGridRendererView: View {
                     .layout(self.layout)
             }
         }
+		.background(renderConfig.backgroundColor.color)
     }
 }
 

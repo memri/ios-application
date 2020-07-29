@@ -19,6 +19,7 @@ Location[] {
             Spacer
             Map {
                 location: {{.}}
+				moveable: false
                 minHeight: 80
                 maxHeight: 80
             }

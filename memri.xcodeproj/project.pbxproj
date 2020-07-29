@@ -231,6 +231,7 @@
 		B821D67F24C71274006D6CFF /* DemoAssets in Resources */ = {isa = PBXBuildFile; fileRef = B821D67E24C71274006D6CFF /* DemoAssets */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
+		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
 		B85A510024C9379E00AB1A41 /* MemriTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */; };
 		B85A510224C93CAB00AB1A41 /* CVUPropertyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A510124C93CAB00AB1A41 /* CVUPropertyResolver.swift */; };
 		B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* RichTextToolbar.swift */; };
@@ -493,6 +494,7 @@
 		B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerRenderer.swift; sourceTree = "<group>"; };
 		B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		B821D67E24C71274006D6CFF /* DemoAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DemoAssets; sourceTree = "<group>"; };
+		B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRenderConfig.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriTextView.swift; sourceTree = "<group>"; };
@@ -731,6 +733,7 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
+				B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */,
 				B881BECB24BD4A930016DBF5 /* TimelineRenderer */,
 				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
@@ -933,7 +936,6 @@
 		5DD1E9B623FD812C007BDF7B /* model */ = {
 			isa = PBXGroup;
 			children = (
-				86CDB46D2469C1E4007EAE67 /* defaults */,
 				863CDB6F2441E680000D7AC0 /* items */,
 				869789E924344A530003756B /* schema_original.swift */,
 				861C52C124A5A9B100B3230C /* schema.swift */,
@@ -1107,18 +1109,11 @@
 		86A5D83D243CEAB600F8FAD8 /* install */ = {
 			isa = PBXGroup;
 			children = (
+				86C3A7382452FFD4006D4F55 /* default_database.json */,
 				861439F12435942A008D6B5B /* Installer.swift */,
 				8693206624CDD4910030863D /* SetupWizard.swift */,
 			);
 			path = install;
-			sourceTree = "<group>";
-		};
-		86CDB46D2469C1E4007EAE67 /* defaults */ = {
-			isa = PBXGroup;
-			children = (
-				86C3A7382452FFD4006D4F55 /* default_database.json */,
-			);
-			path = defaults;
 			sourceTree = "<group>";
 		};
 		86CDB46E2469C1F0007EAE67 /* defaults */ = {
@@ -1672,6 +1667,7 @@
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				868EF63224766A8800C0375F /* CVUParser.swift in Sources */,
 				B8AA1DF024C82CBB000A879F /* FileStorageController.swift in Sources */,
+				B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */,
 				B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				B8E8E8BA24C99FC400F1291F /* UIImage+.swift in Sources */,

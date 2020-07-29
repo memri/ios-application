@@ -694,9 +694,12 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
         _ uids: [Int],
         with arguments: ViewArguments? = nil
     ) throws {
-        guard !uids.isEmpty else { throw "No UIDs specified" }
-
-        let arrayString = "{\(uids.map { String($0) }.joined(separator: ","))}"
+		
+		#warning("@Ruben - this action isn't working since recent changes. The only relevant code for when you merge into the `OpenView` action is constructing the UID query (IN vs =)")
+		guard let firstUID = uids.first else { throw "No UIDs specified" }
+		// note that the `IN` selector requires >1 item or it will throw an exception (use `=` if one item)
+		let uidQueryString = uids.count > 1 ? "uid IN {\(uids.map { String($0) }.joined(separator: ","))}" : "uid = \(firstUID)"
+		
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
@@ -705,7 +708,7 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
             "definition": """
                 [view] {
                     [datasource = pod] {
-                        query: "\(itemType) AND uid IN \(arrayString)"
+                        query: "\(itemType) AND \(uidQueryString)"
                     }
                 }
             """,

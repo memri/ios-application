@@ -166,5 +166,6 @@ extension String {
             .replacingOccurrences(of: "<[^>]+>", with: "",
                                   options: .regularExpression,
                                   range: nil)
+			.trimmingCharacters(in: .newlines) //Remove newlines at start/end
     }
 }
