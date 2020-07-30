@@ -57,7 +57,12 @@ class FileStorageController {
 
         return getFileStorageURL().appendingPathComponent(uuid, isDirectory: false)
     }
-
+    
+    static func exists(withUUID uuid: String) -> Bool {
+        let fileURL = getURLForFile(withUUID: uuid)
+        return FileManager.default.fileExists(atPath: fileURL.path)
+    }
+    
     static func getData(fromFileForUUID uuid: String) -> Data? {
         let fileURL = getURLForFile(withUUID: uuid)
         return try? Data(contentsOf: fileURL)

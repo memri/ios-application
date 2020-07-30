@@ -157,6 +157,8 @@
 		867527BC24B8290B002B5006 /* SettingsPubSub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 867527BB24B8290B002B5006 /* SettingsPubSub.swift */; };
 		8680189224D1D048004FC4E3 /* demo_database.json in Resources */ = {isa = PBXBuildFile; fileRef = 8680189124D1D048004FC4E3 /* demo_database.json */; };
 		8680189424D1D118004FC4E3 /* data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8680189324D1D118004FC4E3 /* data.swift */; };
+		8680189624D299C2004FC4E3 /* SyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8680189524D299C2004FC4E3 /* SyncTests.swift */; };
+		8680189C24D2C9F9004FC4E3 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8680189B24D2C9F9004FC4E3 /* Alamofire */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
 		86865D36244996900010271A /* styles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* styles.swift */; };
 		86865D38244996AA0010271A /* FlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* FlowStack.swift */; };
@@ -419,6 +421,7 @@
 		867527BB24B8290B002B5006 /* SettingsPubSub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPubSub.swift; sourceTree = "<group>"; };
 		8680189124D1D048004FC4E3 /* demo_database.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demo_database.json; sourceTree = "<group>"; };
 		8680189324D1D118004FC4E3 /* data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = data.swift; sourceTree = "<group>"; };
+		8680189524D299C2004FC4E3 /* SyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTests.swift; sourceTree = "<group>"; };
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		86865D35244996900010271A /* styles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = styles.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* FlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowStack.swift; sourceTree = "<group>"; };
@@ -562,6 +565,7 @@
 				B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */,
 				B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */,
 				5DD17B61241293010018A8F1 /* AnyCodable in Frameworks */,
+				8680189C24D2C9F9004FC4E3 /* Alamofire in Frameworks */,
 				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
 			);
@@ -622,6 +626,7 @@
 				5DB346602458522A008FE8A9 /* items */,
 				5D0A28B8240678EE00398B17 /* ModelTests.swift */,
 				86677DEA242A6751007A4782 /* CacheTests.swift */,
+				8680189524D299C2004FC4E3 /* SyncTests.swift */,
 			);
 			path = model;
 			sourceTree = "<group>";
@@ -1382,6 +1387,7 @@
 				B83E330E2496F3A100D88742 /* RealmSwift */,
 				B8FB4995249F21A6007A05C4 /* ASCollectionView */,
 				B809186424A4DFF400BD74D8 /* Charts */,
+				8680189B24D2C9F9004FC4E3 /* Alamofire */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -1464,6 +1470,8 @@
 				B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */,
 				B8FB4994249F21A6007A05C4 /* XCRemoteSwiftPackageReference "ascollectionview" */,
 				B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */,
+				8680189724D2A8ED004FC4E3 /* XCRemoteSwiftPackageReference "swift-sodium" */,
+				8680189A24D2C9F9004FC4E3 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1813,6 +1821,7 @@
 				5D0A28C324069A6500398B17 /* SessionViewTest.swift in Sources */,
 				8693205924C9DE970030863D /* FileStorageControllerTests.swift in Sources */,
 				8693205D24CAAC350030863D /* CascadableDictTests.swift in Sources */,
+				8680189624D299C2004FC4E3 /* SyncTests.swift in Sources */,
 				5DB66FB52431DD41007736D6 /* contextTest.swift in Sources */,
 				863D0E0624794D9000DAB6C8 /* CVUParserTests.swift in Sources */,
 				863D0E0524794D9000DAB6C8 /* ExprParserTests.swift in Sources */,
@@ -2204,6 +2213,22 @@
 				minimumVersion = 0.2.3;
 			};
 		};
+		8680189724D2A8ED004FC4E3 /* XCRemoteSwiftPackageReference "swift-sodium" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/jedisct1/swift-sodium";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
+			};
+		};
+		8680189A24D2C9F9004FC4E3 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.2.2;
+			};
+		};
 		B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://gitlab.memri.io/memri/ios-dependencies/charts";
@@ -2235,6 +2260,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 5DD17B5F241293010018A8F1 /* XCRemoteSwiftPackageReference "AnyCodable" */;
 			productName = AnyCodable;
+		};
+		8680189B24D2C9F9004FC4E3 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8680189A24D2C9F9004FC4E3 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 		B809186424A4DFF400BD74D8 /* Charts */ = {
 			isa = XCSwiftPackageProductDependency;

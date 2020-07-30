@@ -61,6 +61,13 @@ struct SettingsPane: View {
                             }
                         }
                     }
+                    Section(
+                        header: Text("Syncing")
+                    ) {
+                        Toggle(isOn: getBinding("/device/upload/cellular")) {
+                            Text("Enable upload of images while on cellular")
+                        }
+                    }
                 }) {
                     Text("Pod Connection")
                 }

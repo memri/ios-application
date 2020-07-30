@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import RealmSwift
+import Alamofire
 
 /// Provides functions to communicate asynchronously with a Pod (Personal Online Datastore) for storage of data and/or for
 /// executing actions
@@ -92,7 +93,6 @@ public class PodAPI {
         )
         urlRequest.httpMethod = method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
-        
         
         let body:[String:Any] = [
             "databaseKey": databaseKey,
@@ -382,6 +382,122 @@ public class PodAPI {
 
         http(path: "bulk_action", payload: result) { error, _ in
             callback(error)
+        }
+    }
+    
+    public func downloadFile(_ uuid:String,
+                             _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, nil, nil)
+                return
+            }
+            
+            let settings = Settings()
+            let podhost = self.host ?? settings.getString("user/pod/host")
+            guard var baseUrl = URL(string: podhost) else {
+                callback("Invalid pod host set in settings: \(podhost)", nil, nil)
+                return
+            }
+
+            baseUrl = baseUrl
+                .appendingPathComponent("v2")
+                .appendingPathComponent(ownerKey)
+                .appendingPathComponent("get_file")
+                .appendingPathComponent(dbKey)
+            
+            let destination: DownloadRequest.Destination = { _, _ in
+                return (FileStorageController.getURLForFile(withUUID: uuid), [])
+            }
+
+            AF.download(baseUrl, method: .post, requestModifier: {
+                $0.timeoutInterval = 5
+                $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                $0.allowsCellularAccess = settings.getBool("device/upload/cellular") ?? false
+                $0.allowsExpensiveNetworkAccess = false
+                $0.allowsConstrainedNetworkAccess = false
+                $0.cachePolicy = .reloadIgnoringCacheData
+                $0.timeoutInterval = .greatestFiniteMagnitude
+            }, to: destination)
+            .downloadProgress { progress in
+                print("Download Progress: \(progress.fractionCompleted)")
+            }
+            .response { response in
+                guard let httpResponse = response.response else {
+                    callback(response.error ?? "Unknown error", nil, nil)
+                    return
+                }
+                
+                guard httpResponse.statusCode < 400 else {
+                    let httpError = HTTPError.ClientError(
+                        httpResponse.statusCode,
+                        "URL: \(baseUrl.absoluteString)"
+                    )
+                    callback(httpError, nil, response.response)
+                    return
+                }
+                
+                callback(nil, nil, httpResponse)
+            }
+        }
+    }
+    
+    public func uploadFile(_ uuid:String,
+                           _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
+        
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, nil, nil)
+                return
+            }
+            
+            let settings = Settings()
+            let podhost = self.host ?? settings.getString("user/pod/host")
+            guard var baseUrl = URL(string: podhost) else {
+                callback("Invalid pod host set in settings: \(podhost)", nil, nil)
+                return
+            }
+
+            baseUrl = baseUrl
+                .appendingPathComponent("v2")
+                .appendingPathComponent(ownerKey)
+                .appendingPathComponent("put_file")
+                .appendingPathComponent(dbKey)
+            
+            let fileURL = FileStorageController.getURLForFile(withUUID: uuid)
+            
+            AF.upload(fileURL, to: baseUrl, method: .post, requestModifier: {
+                $0.timeoutInterval = 5
+                $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                $0.allowsCellularAccess = settings.getBool("device/upload/cellular") ?? false
+                $0.allowsExpensiveNetworkAccess = false
+                $0.allowsConstrainedNetworkAccess = false
+                $0.cachePolicy = .reloadIgnoringCacheData
+                $0.timeoutInterval = .greatestFiniteMagnitude
+            })
+            .uploadProgress { progress in
+                callback(nil, progress.fractionCompleted, nil)
+            }
+            .response { response in
+                guard let httpResponse = response.response else {
+                    callback(response.error ?? "Unknown error", nil, nil)
+                    return
+                }
+                
+                guard httpResponse.statusCode < 400 else {
+                    let httpError = HTTPError.ClientError(
+                        httpResponse.statusCode,
+                        "URL: \(baseUrl.absoluteString)\nBody:"
+                            + (String(data: response.data ?? Data(), encoding: .utf8) ?? "")
+                    )
+                    callback(httpError, nil, response.response)
+                    return
+                }
+                
+                callback(nil, nil, httpResponse)
+            }
         }
     }
 

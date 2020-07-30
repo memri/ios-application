@@ -7,7 +7,6 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-// TODO: using NSCache for OS level purging of cache when memory is needed
 public class InMemoryObjectCache {
     static var global = InMemoryObjectCache()
 

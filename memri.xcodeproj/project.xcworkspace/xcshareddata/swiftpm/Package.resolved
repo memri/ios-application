@@ -2,6 +2,15 @@
   "object": {
     "pins": [
       {
+        "package": "Alamofire",
+        "repositoryURL": "https://github.com/Alamofire/Alamofire",
+        "state": {
+          "branch": null,
+          "revision": "becd9a729a37bdbef5bc39dc3c702b99f9e3d046",
+          "version": "5.2.2"
+        }
+      },
+      {
         "package": "AnyCodable",
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
@@ -29,6 +38,15 @@
         }
       },
       {
+        "package": "Clibsodium",
+        "repositoryURL": "https://github.com/tiwoc/Clibsodium.git",
+        "state": {
+          "branch": null,
+          "revision": "2ac72772aae26b2da0b15c253d9bb79ba452f66a",
+          "version": "1.0.0"
+        }
+      },
+      {
         "package": "DifferenceKit",
         "repositoryURL": "https://github.com/ra1028/DifferenceKit",
         "state": {
@@ -53,6 +71,15 @@
           "branch": null,
           "revision": "35662ff940e340bf630ad1d1d88acfc7af18bee6",
           "version": "5.23.8"
+        }
+      },
+      {
+        "package": "Sodium",
+        "repositoryURL": "https://github.com/jedisct1/swift-sodium",
+        "state": {
+          "branch": null,
+          "revision": "5900a54dea817befa18f3148889fe922a38afe7f",
+          "version": "0.8.0"
         }
       }
     ]
