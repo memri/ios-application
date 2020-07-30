@@ -118,23 +118,17 @@ extension String: Error {
     }
 
     func camelCaseToWords() -> String {
-        unicodeScalars.reduce("") {
+		unicodeScalars.reduce("") {
             if CharacterSet.uppercaseLetters.contains($1) {
-                return ($0 + " " + String($1))
+				return ($0 + " " + String($1).lowercased())
             }
             else {
                 return $0 + String($1)
             }
-        }
+		}.capitalizingFirst()
     }
 
-    func removeHTML() -> String {
-        replacingOccurrences(of: "<[^>]+>", with: "",
-                             options: .regularExpression,
-                             range: nil)
-    }
-
-    public func camelCaseToTitleCase() -> String {
+    public func titleCase() -> String {
         split { $0.isWhitespace }.map { $0.capitalizingFirst() }.joined(separator: " ")
     }
 
@@ -154,18 +148,7 @@ extension RangeReplaceableCollection where Element == Character {
 
 extension String {
     func strippingHTMLtags() -> String {
-        // Remove style tags and content
-        replacingOccurrences(of: "<style[^>]*>[^>]*<[^>]*style>", with: "\n",
-                             options: .regularExpression,
-                             range: nil)
-            // replace br/p with a newline
-            .replacingOccurrences(of: "<br[^>]*>|<p[^>]*>", with: "\n",
-                                  options: .regularExpression,
-                                  range: nil)
-            // Remove all html tags
-            .replacingOccurrences(of: "<[^>]+>", with: "",
-                                  options: .regularExpression,
-                                  range: nil)
+        HTMLHelper.getPlainText(html: self)
 			.trimmingCharacters(in: .newlines) //Remove newlines at start/end
     }
 }

@@ -19,8 +19,13 @@ let registerMapRenderer = {
     )
 }
 
-class CascadingMapConfig: CascadingRenderConfig {
+class CascadingMapConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "map"
+    
+    var showSortInConfig: Bool = false
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        []
+    }
 
     var longPress: Action? {
         get { cascadeProperty("longPress") }

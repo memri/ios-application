@@ -105,9 +105,10 @@ struct ThumbWaterfallRendererView: View {
                     .customDelegate(WaterfallScreenLayoutDelegate.init)
                     .alwaysBounceVertical()
                     .contentInsets(renderConfig.edgeInset)
-					.background(renderConfig.backgroundColor.color)
+                    .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             }
         }
+            .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }
 

@@ -17,7 +17,7 @@ struct ContextPane: View {
         get { context.currentSession?.showContextPane ?? false }
         nonmutating set {
             self.context.currentSession?.showContextPane = newValue
-            self.context.scheduleUIUpdate(immediate: true)
+            self.context.scheduleUIUpdate(updateWithAnimation: true)
         }
     }
 

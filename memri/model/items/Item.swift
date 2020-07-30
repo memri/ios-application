@@ -12,6 +12,9 @@ public class Item: SchemaItem {
         "\(genericType) [\(uid.value ?? -1000)]"
     }
 
+    // Used by the filter panel to know what computed variables to show
+    var computedVars: [ComputedPropertyLink] { [] }
+    
     var functions: [String: (_ args: [Any?]?) -> Any?] = [:]
 
     /// Primary key used in the realm database of this Item

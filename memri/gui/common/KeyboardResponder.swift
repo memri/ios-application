@@ -13,6 +13,7 @@ class KeyboardResponder: ObservableObject {
     static var shared = KeyboardResponder()
 
     @Published var currentHeight: CGFloat = 0
+    var keyboardVisible: Bool { currentHeight > 0 }
 
     var _center: NotificationCenter
 

@@ -122,7 +122,7 @@ extension TimelineElement: Hashable, Identifiable {
 }
 
 extension TimelineModel {
-    enum DetailLevel: String {
+    enum DetailLevel: String, CaseIterable {
         case year
         case month
         case week
