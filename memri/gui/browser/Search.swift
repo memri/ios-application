@@ -44,17 +44,20 @@ struct Search: View {
 
 struct KeyboardModifier: ViewModifier {
     var enabled: Bool = true
+    var overrideHeightWhenVisible: CGFloat?
     @ObservedObject var keyboard = KeyboardResponder.shared
     @Environment(\.screenSize) var screenSize
     @State var contentBounds: CGRect?
 
     func body(content: Content) -> some View {
         content
-            .offset(x: 0, y: enabled ? (contentBounds.flatMap { contentBounds in
+            .offset(enabled ? (contentBounds.flatMap { contentBounds in
                 screenSize.map { screenSize in
-                    min(0, (screenSize.height - contentBounds.maxY) - keyboard.currentHeight)
+                    CGSize(width: 0,
+                            height: min(0, (screenSize.height - contentBounds.maxY) - keyboard.currentHeight))
                 }
-				} ?? 0) : 0)
+                } ?? .zero) : .zero)
+            .frame(height: keyboard.keyboardVisible ? overrideHeightWhenVisible : nil)
             .background(
                 GeometryReader { geom in
                     Color.clear.preference(

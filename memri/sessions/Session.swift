@@ -292,7 +292,7 @@ public final class Session: Equatable, Subscriptable {
         }
 
         // Update the UI
-        currentView?.context?.scheduleUIUpdate(immediate: true)
+        currentView?.context?.scheduleUIUpdate()
     }
 
     public func takeScreenShot(immediate: Bool = false) {

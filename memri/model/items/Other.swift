@@ -73,6 +73,17 @@ extension MedicalCondition {
 
 class Person: SchemaPerson {
     override var computedTitle: String {
+        fullName
+    }
+    
+    
+    override var computedVars: [ComputedPropertyLink] {[
+        ComputedPropertyLink(propertyName: "fullName", type: .string),
+        ComputedPropertyLink(propertyName: "age", type: .int)
+    ]}
+    
+    // Full name in western style (first last)
+    var fullName: String {
         "\(firstName ?? "") \(lastName ?? "")"
     }
 
@@ -88,6 +99,7 @@ class Person: SchemaPerson {
         super.init()
 
         functions["age"] = { _ in self.age }
+        functions["fullName"] = { _ in self.fullName }
     }
 }
 

@@ -9,31 +9,44 @@ import SwiftUI
 let registerChartRenderer = {
     Renderers.register(
         name: "chart",
-        title: "Bar",
+        title: "Chart",
         order: 500,
         icon: "chart.bar",
-        view: AnyView(ChartRendererView(type: .bar)),
-        renderConfigType: CascadingChartConfig.self,
-        canDisplayResults: { _ -> Bool in true }
-    )
-
-    Renderers.register(
-        name: "chart.line",
-        title: "Line",
-        order: 510,
-        icon: "chart.line",
-        view: AnyView(ChartRendererView(type: .line)),
+        view: AnyView(ChartRendererView()),
         renderConfigType: CascadingChartConfig.self,
         canDisplayResults: { _ -> Bool in true }
     )
 }
 
-class CascadingChartConfig: CascadingRenderConfig {
+class CascadingChartConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "chart"
+	
+    var showSortInConfig: Bool = false
+    
+    @ArrayBuilder<ConfigPanelModel.ConfigItem>
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        ConfigPanelModel.ConfigItem(displayName: "Chart type", propertyName: "chartType", type: .special(.chartType), isItemSpecific: false)
+        ConfigPanelModel.ConfigItem(displayName: "Chart title", propertyName: "chartTitle", type: .string, isItemSpecific: false)
+        ConfigPanelModel.ConfigItem(displayName: "Chart subtitle", propertyName: "chartSubtitle", type: .string, isItemSpecific: false)
+        if chartType == .line {
+            ConfigPanelModel.ConfigItem(displayName: "X-axis", propertyName: "xAxis", type: .number, isItemSpecific: true)
+        }
+        ConfigPanelModel.ConfigItem(displayName: "Y-axis", propertyName: "yAxis", type: .number, isItemSpecific: true)
+        ConfigPanelModel.ConfigItem(displayName: "Label", propertyName: "label", type: .string, isItemSpecific: true)
+        ConfigPanelModel.ConfigItem(displayName: "Hide gridlines", propertyName: "hideGridlines", type: .bool, isItemSpecific: false)
+        if chartType == .line {
+            ConfigPanelModel.ConfigItem(displayName: "Line width", propertyName: "lineWidth", type: .number, isItemSpecific: false)
+        }
+    }
 
     var press: Action? {
         get { cascadeProperty("press") }
         set(value) { setState("press", value) }
+    }
+    
+    var chartType: ChartType {
+        get { cascadeProperty("chartType", type: String.self).flatMap(ChartType.init) ?? .bar }
+        set(value) { setState("chartType", value.rawValue) }
     }
 
     var chartTitle: String? {
@@ -75,19 +88,24 @@ class CascadingChartConfig: CascadingRenderConfig {
         get { cascadeProperty("hideGridlines") ?? false }
         set(value) { setState("hideGridlines", value) }
     }
+    
+    var barLabelFont: FontDefinition {
+        get { cascadeProperty("barLabelFont") ?? FontDefinition(size: 13) }
+        set(value) { setState("barLabelFont", value) }
+    }
 	
 	var showValueLabels: Bool {
 		get { cascadeProperty("showValueLabels") ?? true }
 		set(value) { setState("showValueLabels", value) }
 	}
 	
-	var valueLabelFont: FontDefinition {
-		get { cascadeProperty("valueLabelFont") ?? FontDefinition(size: 14) }
-		set(value) { setState("valueLabelFont", value) }
-	}
+    var valueLabelFont: FontDefinition {
+        get { cascadeProperty("valueLabelFont") ?? FontDefinition(size: 14) }
+        set(value) { setState("valueLabelFont", value) }
+    }
 }
 
-enum ChartType: String {
+enum ChartType: String, CaseIterable {
     case line
     case bar
 }
@@ -96,7 +114,6 @@ struct ChartRendererView: View {
     @EnvironmentObject var context: MemriContext
 
     let name = "chart"
-    let type: ChartType
 
     var renderConfig: CascadingChartConfig {
         (context.currentView?.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig()
@@ -108,14 +125,6 @@ struct ChartRendererView: View {
 
     var chartTitle: String? {
         if let title = renderConfig.chartTitle { return title }
-
-        // Autogenerate title - TODO: Implement this for expressions
-        //		switch type {
-        //		case .bar:
-        //			return renderConfig.yAxisKey?.camelCaseToTitleCase()
-        //		case .line:
-        //			return "\(renderConfig.yAxisKey?.camelCaseToTitleCase() ?? "-") vs \(renderConfig.xAxisKey?.camelCaseToTitleCase() ?? "-")"
-        //		}
         return nil
     }
 
@@ -145,7 +154,7 @@ struct ChartRendererView: View {
 
     var chartView: AnyView {
         let dataItems = context.items
-        switch type {
+        switch renderConfig.chartType {
         case .bar:
             guard
                 let labelExpression = renderConfig.labelExpression,
@@ -163,10 +172,10 @@ struct ChartRendererView: View {
                 BarChartSwiftUIView(
                     model: BarChartModel(
                         sets: [data],
-                        hideGridLines:
-                        renderConfig.hideGridLines,
+                        hideGridLines: renderConfig.hideGridLines,
                         forceMinYOfZero: renderConfig.yAxisStartAtZero,
 						primaryColor: renderConfig.primaryColor,
+                        barLabelFont: renderConfig.barLabelFont.uiFont,
 						showValueLabels: renderConfig.showValueLabels,
 						valueLabelFont: renderConfig.valueLabelFont.uiFont
                     ),
@@ -218,13 +227,13 @@ struct ChartRendererView: View {
     var body: some View {
         chartView
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
-			.background(renderConfig.backgroundColor.color)
+            .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
     }
 }
 
 struct ChartRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartRendererView(type: .bar)
+        ChartRendererView()
             .environmentObject(try! RootContext(name: "").mockBoot())
     }
 }

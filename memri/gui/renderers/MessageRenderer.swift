@@ -85,7 +85,7 @@ struct MessageRenderer: View {
             .alwaysBounce()
 			.contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
             .edgesIgnoringSafeArea(.all)
-			.background(renderConfig.backgroundColor.color)
+            .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
     }
 }
 

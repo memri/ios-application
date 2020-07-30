@@ -174,7 +174,7 @@ extension MemriContext {
                 try binding.toggleBool()
 
                 // TODO: this should be removed and fixed more generally
-                scheduleUIUpdate(immediate: true)
+                scheduleUIUpdate(updateWithAnimation: true)
             }
 
             if let action = action as? ActionExec {
@@ -876,6 +876,7 @@ class ActionShowNavigation: Action, ActionExec {
         "icon": "line.horizontal.3",
         "binding": Expression("context.showNavigation"),
         "inactiveColor": Color(hex: "#434343"),
+        "withAnimation": true
     ] }
 
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {

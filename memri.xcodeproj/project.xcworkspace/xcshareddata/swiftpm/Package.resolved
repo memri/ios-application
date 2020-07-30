@@ -54,6 +54,15 @@
           "revision": "35662ff940e340bf630ad1d1d88acfc7af18bee6",
           "version": "5.23.8"
         }
+      },
+      {
+        "package": "SwiftSoup",
+        "repositoryURL": "https://github.com/scinfu/SwiftSoup",
+        "state": {
+          "branch": null,
+          "revision": "774dc9c7213085db8aa59595e27c1cd22e428904",
+          "version": "2.3.2"
+        }
       }
     ]
   },

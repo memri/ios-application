@@ -27,9 +27,14 @@ let registerCalendarRenderer = {
     )
 }
 
-class CascadingCalendarConfig: CascadingRenderConfig {
+class CascadingCalendarConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "calendar"
 
+    var showSortInConfig: Bool = false
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        []
+    }
+    
     var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
 }
 
@@ -164,7 +169,7 @@ struct CalendarView: View {
                 .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
                 .alwaysBounceVertical()
         }
-		.background(renderConfig.backgroundColor.color)
+        .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
     }
 
     func sections(withCalcs calcs: CalendarCalculations) -> [ASSection<Date>] {
