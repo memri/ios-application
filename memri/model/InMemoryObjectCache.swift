@@ -28,6 +28,10 @@ public class InMemoryObjectCache {
     public func get(_ key: String) -> Any? {
         cache[key] as Any?
     }
+    
+    public func clear(_ key: String) {
+        cache[key] = nil
+    }
 }
 
 public final class MemoryCache<Key: Hashable, Value> {

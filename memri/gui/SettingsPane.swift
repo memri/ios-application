@@ -13,6 +13,7 @@ struct SettingsPane: View {
         Binding<T>(
             get: { () -> T in
                 // TODO: Error handling
+                #warning("@Toby this is being called in a loop continuously when settings is opened. do you know why?")
                 if let x: T = self.context.settings.get(path) {
                     return x
                 }
@@ -47,18 +48,6 @@ struct SettingsPane: View {
                             Text("Host:")
                                 .frame(width: 100, alignment: .leading)
                             MemriTextField(value: getBinding("/user/pod/host") as Binding<String>)
-                        }
-                        HStack {
-                            Text("Username:")
-                                .frame(width: 100, alignment: .leading)
-                            MemriTextField(
-                                value: getBinding("/user/pod/username") as Binding<String>
-                            )
-                        }
-                        HStack {
-                            Text("Password:")
-                                .frame(width: 100, alignment: .leading)
-                            SecureField("Password", text: getBinding("/user/pod/password"))
                         }
                         HStack {
                             Button(action: {

@@ -34,10 +34,10 @@ public struct UIElementView: SwiftUI.View {
 
     public func getFileURI(_ propName: String) -> String? {
         if let file: File = get(propName) {
-            return file.uri
+            return file.sha256 ?? file.filename
         }
         else if let photo: Photo? = get(propName), let file = photo?.file {
-            return file.uri
+            return file.sha256 ?? file.filename
         }
         return nil
     }

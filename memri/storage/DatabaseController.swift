@@ -164,8 +164,13 @@ class DatabaseController {
                 reportedKey = true
                 print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 Authentication.getOwnerAndDBKey { err, owner, db in
-                    print("OWNER KEY: \(owner!)")
-                    print("DB KEY: \(db!)")
+                    if err != nil {
+                        reportedKey = false
+                        return
+                    }
+                    
+                    print("OWNER KEY: \(owner ?? "")")
+                    print("DB KEY: \(db ?? "")")
                 }
             }
             #endif

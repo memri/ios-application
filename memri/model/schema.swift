@@ -51,6 +51,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeOnlineProfile = "OnlineProfile"
     case typePerson = "Person"
     case typePhoneNumber = "PhoneNumber"
+    case typeResource = "Resource"
     case typeSetting = "Setting"
     case typeUserState = "UserState"
     case typeViewArguments = "ViewArguments"
@@ -95,6 +96,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return Color(hex: "#93c47d")
         case .typePerson: return Color(hex: "#3a5eb2")
         case .typePhoneNumber: return Color(hex: "#eccf23")
+        case .typeResource: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
         case .typeUserState: return Color(hex: "#93c47d")
         case .typeViewArguments: return Color(hex: "#93c47d")
@@ -139,6 +141,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return Color(hex: "#ffffff")
         case .typePerson: return Color(hex: "#ffffff")
         case .typePhoneNumber: return Color(hex: "#ffffff")
+        case .typeResource: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
         case .typeUserState: return Color(hex: "#ffffff")
         case .typeViewArguments: return Color(hex: "#ffffff")
@@ -187,6 +190,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeOnlineProfile: return OnlineProfile.self
         case .typePerson: return Person.self
         case .typePhoneNumber: return PhoneNumber.self
+        case .typeResource: return Resource.self
         case .typeSetting: return Setting.self
         case .typeUserState: return UserState.self
         case .typeViewArguments: return ViewArguments.self
@@ -969,10 +973,13 @@ public class Edge : SyncableItem, Codable {
     }
 }
 
+
 /// Any type of file that can be stored on disk.
 public class File : Item {
-    /// The uri property represents the Uniform Resource Identifier (URI) of a resource.
-    @objc dynamic var uri:String? = nil
+    /// The sha256 hash of a resource.
+    @objc dynamic var sha256:String? = nil
+    /// The filename of a resource.
+    @objc dynamic var filename:String? = nil
 
     /// An Item this Item is used by.
     var usedBy: [Item]? {
@@ -983,7 +990,8 @@ public class File : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            uri = try decoder.decodeIfPresent("uri") ?? uri
+            sha256 = try decoder.decodeIfPresent("sha256") ?? sha256
+            filename = try decoder.decodeIfPresent("filename") ?? filename
 
             try self.superDecode(from: decoder)
         }
@@ -1705,6 +1713,27 @@ public class PhoneNumber : Item {
     }
 }
 
+/// A universal resource location
+public class Resource : Item {
+    /// The url property represents the Uniform Resource Location (URL) of a resource.
+    @objc dynamic var url:String? = nil
+
+    /// An Item this Item is used by.
+    var usedBy: [Item]? {
+        edges("usedBy")?.itemsArray()
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            url = try decoder.decodeIfPresent("url") ?? url
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 /// TBD
 public class Setting : Item {
     /// A piece of information that determines the functional output of a cryptographic
@@ -1730,7 +1759,7 @@ public class Setting : Item {
 public class Website : Item {
     /// TBD
     @objc dynamic var type:String? = nil
-    /// The URL of an Item.
+    /// The url property represents the Uniform Resource Location (URL) of a resource.
     @objc dynamic var url:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
@@ -1783,6 +1812,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Resource> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
 
