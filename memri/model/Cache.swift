@@ -136,7 +136,7 @@ public class Cache {
             }
         }
         catch {
-            print("Failed to Install: \(error)")
+            fatalError("Failed to Install: \(error)")
         }
     }
 

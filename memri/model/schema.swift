@@ -17,135 +17,240 @@ public typealias List = RealmSwift.List
 // The family of all data item classes
 enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeAccount = "Account"
+    case typeAddress = "Address"
+    case typeArticle = "Article"
+    case typeAudio = "Audio"
     case typeAuditItem = "AuditItem"
     case typeCVUStateDefinition = "CVUStateDefinition"
     case typeCVUStoredDefinition = "CVUStoredDefinition"
-    case typeCompany = "Company"
-    case typeCreativeWork = "CreativeWork"
-    case typeDigitalDocument = "DigitalDocument"
     case typeComment = "Comment"
-    case typeMessage = "Message"
-    case typeMessageChannel = "MessageChannel"
-    case typeNote = "Note"
+    case typeCountry = "Country"
+    case typeCreativeWork = "CreativeWork"
     case typeCryptoKey = "CryptoKey"
     case typeDatasource = "Datasource"
     case typeDevice = "Device"
     case typeDiet = "Diet"
     case typeDownloader = "Downloader"
     case typeEdge = "Edge"
+    case typeEmailMessage = "EmailMessage"
+    case typeEvent = "Event"
+    case typeExercisePlan = "ExercisePlan"
     case typeFile = "File"
+    case typeFrequency = "Frequency"
+    case typeGame = "Game"
+    case typeGenericAttribute = "GenericAttribute"
+    case typeHowTo = "HowTo"
     case typeImporter = "Importer"
     case typeImporterRun = "ImporterRun"
     case typeIndexer = "Indexer"
     case typeIndexerRun = "IndexerRun"
+    case typeIndustry = "Industry"
+    case typeInvoice = "Invoice"
     case typeLabel = "Label"
+    case typeLead = "Lead"
     case typeLocation = "Location"
-    case typeAddress = "Address"
-    case typeCountry = "Country"
+    case typeMaterial = "Material"
+    case typeMeasure = "Measure"
     case typeMediaObject = "MediaObject"
-    case typeAudio = "Audio"
-    case typePhoto = "Photo"
-    case typeVideo = "Video"
     case typeMedicalCondition = "MedicalCondition"
+    case typeMessage = "Message"
+    case typeMessageChannel = "MessageChannel"
+    case typeModeOfTransport = "ModeOfTransport"
+    case typeMovingImage = "MovingImage"
     case typeNavigationItem = "NavigationItem"
-    case typeOnlineProfile = "OnlineProfile"
+    case typeNetwork = "Network"
+    case typeNote = "Note"
+    case typeOffer = "Offer"
+    case typeOpeningHours = "OpeningHours"
+    case typeOption = "Option"
+    case typeOrganization = "Organization"
+    case typePerformingArt = "PerformingArt"
     case typePerson = "Person"
     case typePhoneNumber = "PhoneNumber"
+    case typePhoto = "Photo"
+    case typePhysicalEntity = "PhysicalEntity"
+    case typeProduct = "Product"
+    case typeProductCode = "ProductCode"
+    case typeReceipt = "Receipt"
+    case typeRecipe = "Recipe"
+    case typeRecording = "Recording"
+    case typeReservation = "Reservation"
     case typeResource = "Resource"
+    case typeReview = "Review"
+    case typeRoute = "Route"
     case typeSetting = "Setting"
+    case typeTimeFrame = "TimeFrame"
+    case typeTransaction = "Transaction"
+    case typeTrip = "Trip"
+    case typeUnit = "Unit"
     case typeUserState = "UserState"
+    case typeVideo = "Video"
     case typeViewArguments = "ViewArguments"
+    case typeVisualArt = "VisualArt"
+    case typeVote = "Vote"
+    case typeVoteAction = "VoteAction"
     case typeWebsite = "Website"
+    case typeWrittenWork = "WrittenWork"
 
     static var discriminator: Discriminator = ._type
 
     var backgroundColor: Color {
         switch self {
         case .typeAccount: return Color(hex: "#93c47d")
+        case .typeAddress: return Color(hex: "#93c47d")
+        case .typeArticle: return Color(hex: "#93c47d")
+        case .typeAudio: return Color(hex: "#93c47d")
         case .typeAuditItem: return Color(hex: "#93c47d")
         case .typeCVUStateDefinition: return Color(hex: "#93c47d")
         case .typeCVUStoredDefinition: return Color(hex: "#93c47d")
-        case .typeCompany: return Color(hex: "#93c47d")
-        case .typeCreativeWork: return Color(hex: "#93c47d")
-        case .typeDigitalDocument: return Color(hex: "#93c47d")
         case .typeComment: return Color(hex: "#93c47d")
-        case .typeMessage: return Color(hex: "#93c47d")
-        case .typeMessageChannel: return Color(hex: "#93c47d")
-        case .typeNote: return Color(hex: "#93c47d")
+        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeCreativeWork: return Color(hex: "#93c47d")
         case .typeCryptoKey: return Color(hex: "#93c47d")
         case .typeDatasource: return Color(hex: "#93c47d")
         case .typeDevice: return Color(hex: "#93c47d")
         case .typeDiet: return Color(hex: "#37af1c")
         case .typeDownloader: return Color(hex: "#93c47d")
         case .typeEdge: return Color(hex: "#93c47d")
+        case .typeEmailMessage: return Color(hex: "#93c47d")
+        case .typeEvent: return Color(hex: "#93c47d")
+        case .typeExercisePlan: return Color(hex: "#93c47d")
         case .typeFile: return Color(hex: "#93c47d")
+        case .typeFrequency: return Color(hex: "#93c47d")
+        case .typeGame: return Color(hex: "#93c47d")
+        case .typeGenericAttribute: return Color(hex: "#93c47d")
+        case .typeHowTo: return Color(hex: "#93c47d")
         case .typeImporter: return Color(hex: "#93c47d")
         case .typeImporterRun: return Color(hex: "#93c47d")
         case .typeIndexer: return Color(hex: "#93c47d")
         case .typeIndexerRun: return Color(hex: "#93c47d")
+        case .typeIndustry: return Color(hex: "#93c47d")
+        case .typeInvoice: return Color(hex: "#93c47d")
         case .typeLabel: return Color(hex: "#93c47d")
+        case .typeLead: return Color(hex: "#93c47d")
         case .typeLocation: return Color(hex: "#93c47d")
-        case .typeAddress: return Color(hex: "#93c47d")
-        case .typeCountry: return Color(hex: "#93c47d")
+        case .typeMaterial: return Color(hex: "#3d57e2")
+        case .typeMeasure: return Color(hex: "#3d57e2")
         case .typeMediaObject: return Color(hex: "#93c47d")
-        case .typeAudio: return Color(hex: "#93c47d")
-        case .typePhoto: return Color(hex: "#93c47d")
-        case .typeVideo: return Color(hex: "#93c47d")
         case .typeMedicalCondition: return Color(hex: "#3dc8e2")
+        case .typeMessage: return Color(hex: "#93c47d")
+        case .typeMessageChannel: return Color(hex: "#93c47d")
+        case .typeModeOfTransport: return Color(hex: "#93c47d")
+        case .typeMovingImage: return Color(hex: "#93c47d")
         case .typeNavigationItem: return Color(hex: "#93c47d")
-        case .typeOnlineProfile: return Color(hex: "#93c47d")
+        case .typeNetwork: return Color(hex: "#93c47d")
+        case .typeNote: return Color(hex: "#93c47d")
+        case .typeOffer: return Color(hex: "#93c47d")
+        case .typeOpeningHours: return Color(hex: "#93c47d")
+        case .typeOption: return Color(hex: "#93c47d")
+        case .typeOrganization: return Color(hex: "#93c47d")
+        case .typePerformingArt: return Color(hex: "#93c47d")
         case .typePerson: return Color(hex: "#3a5eb2")
         case .typePhoneNumber: return Color(hex: "#eccf23")
+        case .typePhoto: return Color(hex: "#93c47d")
+        case .typePhysicalEntity: return Color(hex: "#93c47d")
+        case .typeProduct: return Color(hex: "#93c47d")
+        case .typeProductCode: return Color(hex: "#93c47d")
+        case .typeReceipt: return Color(hex: "#93c47d")
+        case .typeRecipe: return Color(hex: "#93c47d")
+        case .typeRecording: return Color(hex: "#93c47d")
+        case .typeReservation: return Color(hex: "#93c47d")
         case .typeResource: return Color(hex: "#93c47d")
+        case .typeReview: return Color(hex: "#93c47d")
+        case .typeRoute: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
+        case .typeTimeFrame: return Color(hex: "#93c47d")
+        case .typeTransaction: return Color(hex: "#3a5eb2")
+        case .typeTrip: return Color(hex: "#93c47d")
+        case .typeUnit: return Color(hex: "#93c47d")
         case .typeUserState: return Color(hex: "#93c47d")
+        case .typeVideo: return Color(hex: "#93c47d")
         case .typeViewArguments: return Color(hex: "#93c47d")
+        case .typeVisualArt: return Color(hex: "#93c47d")
+        case .typeVote: return Color(hex: "#93c47d")
+        case .typeVoteAction: return Color(hex: "#93c47d")
         case .typeWebsite: return Color(hex: "#3d57e2")
+        case .typeWrittenWork: return Color(hex: "#93c47d")
         }
     }
 
     var foregroundColor: Color {
         switch self {
         case .typeAccount: return Color(hex: "#ffffff")
+        case .typeAddress: return Color(hex: "#ffffff")
+        case .typeArticle: return Color(hex: "#ffffff")
+        case .typeAudio: return Color(hex: "#ffffff")
         case .typeAuditItem: return Color(hex: "#ffffff")
         case .typeCVUStateDefinition: return Color(hex: "#ffffff")
         case .typeCVUStoredDefinition: return Color(hex: "#ffffff")
-        case .typeCompany: return Color(hex: "#ffffff")
-        case .typeCreativeWork: return Color(hex: "#ffffff")
-        case .typeDigitalDocument: return Color(hex: "#ffffff")
         case .typeComment: return Color(hex: "#ffffff")
-        case .typeMessage: return Color(hex: "#ffffff")
-        case .typeMessageChannel: return Color(hex: "#ffffff")
-        case .typeNote: return Color(hex: "#ffffff")
+        case .typeCountry: return Color(hex: "#ffffff")
+        case .typeCreativeWork: return Color(hex: "#ffffff")
         case .typeCryptoKey: return Color(hex: "#ffffff")
         case .typeDatasource: return Color(hex: "#ffffff")
         case .typeDevice: return Color(hex: "#ffffff")
         case .typeDiet: return Color(hex: "#ffffff")
         case .typeDownloader: return Color(hex: "#ffffff")
         case .typeEdge: return Color(hex: "#ffffff")
+        case .typeEmailMessage: return Color(hex: "#ffffff")
+        case .typeEvent: return Color(hex: "#ffffff")
+        case .typeExercisePlan: return Color(hex: "#ffffff")
         case .typeFile: return Color(hex: "#ffffff")
+        case .typeFrequency: return Color(hex: "#ffffff")
+        case .typeGame: return Color(hex: "#ffffff")
+        case .typeGenericAttribute: return Color(hex: "#ffffff")
+        case .typeHowTo: return Color(hex: "#ffffff")
         case .typeImporter: return Color(hex: "#ffffff")
         case .typeImporterRun: return Color(hex: "#ffffff")
         case .typeIndexer: return Color(hex: "#ffffff")
         case .typeIndexerRun: return Color(hex: "#ffffff")
+        case .typeIndustry: return Color(hex: "#ffffff")
+        case .typeInvoice: return Color(hex: "#ffffff")
         case .typeLabel: return Color(hex: "#ffffff")
+        case .typeLead: return Color(hex: "#ffffff")
         case .typeLocation: return Color(hex: "#ffffff")
-        case .typeAddress: return Color(hex: "#ffffff")
-        case .typeCountry: return Color(hex: "#ffffff")
+        case .typeMaterial: return Color(hex: "#ffffff")
+        case .typeMeasure: return Color(hex: "#ffffff")
         case .typeMediaObject: return Color(hex: "#ffffff")
-        case .typeAudio: return Color(hex: "#ffffff")
-        case .typePhoto: return Color(hex: "#ffffff")
-        case .typeVideo: return Color(hex: "#ffffff")
         case .typeMedicalCondition: return Color(hex: "#ffffff")
+        case .typeMessage: return Color(hex: "#ffffff")
+        case .typeMessageChannel: return Color(hex: "#ffffff")
+        case .typeModeOfTransport: return Color(hex: "#ffffff")
+        case .typeMovingImage: return Color(hex: "#ffffff")
         case .typeNavigationItem: return Color(hex: "#ffffff")
-        case .typeOnlineProfile: return Color(hex: "#ffffff")
+        case .typeNetwork: return Color(hex: "#ffffff")
+        case .typeNote: return Color(hex: "#ffffff")
+        case .typeOffer: return Color(hex: "#ffffff")
+        case .typeOpeningHours: return Color(hex: "#ffffff")
+        case .typeOption: return Color(hex: "#ffffff")
+        case .typeOrganization: return Color(hex: "#ffffff")
+        case .typePerformingArt: return Color(hex: "#ffffff")
         case .typePerson: return Color(hex: "#ffffff")
         case .typePhoneNumber: return Color(hex: "#ffffff")
+        case .typePhoto: return Color(hex: "#ffffff")
+        case .typePhysicalEntity: return Color(hex: "#ffffff")
+        case .typeProduct: return Color(hex: "#ffffff")
+        case .typeProductCode: return Color(hex: "#ffffff")
+        case .typeReceipt: return Color(hex: "#ffffff")
+        case .typeRecipe: return Color(hex: "#ffffff")
+        case .typeRecording: return Color(hex: "#ffffff")
+        case .typeReservation: return Color(hex: "#ffffff")
         case .typeResource: return Color(hex: "#ffffff")
+        case .typeReview: return Color(hex: "#ffffff")
+        case .typeRoute: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
+        case .typeTimeFrame: return Color(hex: "#ffffff")
+        case .typeTransaction: return Color(hex: "#ffffff")
+        case .typeTrip: return Color(hex: "#ffffff")
+        case .typeUnit: return Color(hex: "#ffffff")
         case .typeUserState: return Color(hex: "#ffffff")
+        case .typeVideo: return Color(hex: "#ffffff")
         case .typeViewArguments: return Color(hex: "#ffffff")
+        case .typeVisualArt: return Color(hex: "#ffffff")
+        case .typeVote: return Color(hex: "#ffffff")
+        case .typeVoteAction: return Color(hex: "#ffffff")
         case .typeWebsite: return Color(hex: "#ffffff")
+        case .typeWrittenWork: return Color(hex: "#ffffff")
         }
     }
 
@@ -156,45 +261,80 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     func getType() -> AnyObject.Type {
         switch self {
         case .typeAccount: return Account.self
+        case .typeAddress: return Address.self
+        case .typeArticle: return Article.self
+        case .typeAudio: return Audio.self
         case .typeAuditItem: return AuditItem.self
         case .typeCVUStateDefinition: return CVUStateDefinition.self
         case .typeCVUStoredDefinition: return CVUStoredDefinition.self
-        case .typeCompany: return Company.self
-        case .typeCreativeWork: return CreativeWork.self
-        case .typeDigitalDocument: return DigitalDocument.self
         case .typeComment: return Comment.self
-        case .typeMessage: return Message.self
-        case .typeMessageChannel: return MessageChannel.self
-        case .typeNote: return Note.self
+        case .typeCountry: return Country.self
+        case .typeCreativeWork: return CreativeWork.self
         case .typeCryptoKey: return CryptoKey.self
         case .typeDatasource: return Datasource.self
         case .typeDevice: return Device.self
         case .typeDiet: return Diet.self
         case .typeDownloader: return Downloader.self
         case .typeEdge: return Edge.self
+        case .typeEmailMessage: return EmailMessage.self
+        case .typeEvent: return Event.self
+        case .typeExercisePlan: return ExercisePlan.self
         case .typeFile: return File.self
+        case .typeFrequency: return Frequency.self
+        case .typeGame: return Game.self
+        case .typeGenericAttribute: return GenericAttribute.self
+        case .typeHowTo: return HowTo.self
         case .typeImporter: return Importer.self
         case .typeImporterRun: return ImporterRun.self
         case .typeIndexer: return Indexer.self
         case .typeIndexerRun: return IndexerRun.self
+        case .typeIndustry: return Industry.self
+        case .typeInvoice: return Invoice.self
         case .typeLabel: return Label.self
+        case .typeLead: return Lead.self
         case .typeLocation: return Location.self
-        case .typeAddress: return Address.self
-        case .typeCountry: return Country.self
+        case .typeMaterial: return Material.self
+        case .typeMeasure: return Measure.self
         case .typeMediaObject: return MediaObject.self
-        case .typeAudio: return Audio.self
-        case .typePhoto: return Photo.self
-        case .typeVideo: return Video.self
         case .typeMedicalCondition: return MedicalCondition.self
+        case .typeMessage: return Message.self
+        case .typeMessageChannel: return MessageChannel.self
+        case .typeModeOfTransport: return ModeOfTransport.self
+        case .typeMovingImage: return MovingImage.self
         case .typeNavigationItem: return NavigationItem.self
-        case .typeOnlineProfile: return OnlineProfile.self
+        case .typeNetwork: return Network.self
+        case .typeNote: return Note.self
+        case .typeOffer: return Offer.self
+        case .typeOpeningHours: return OpeningHours.self
+        case .typeOption: return Option.self
+        case .typeOrganization: return Organization.self
+        case .typePerformingArt: return PerformingArt.self
         case .typePerson: return Person.self
         case .typePhoneNumber: return PhoneNumber.self
+        case .typePhoto: return Photo.self
+        case .typePhysicalEntity: return PhysicalEntity.self
+        case .typeProduct: return Product.self
+        case .typeProductCode: return ProductCode.self
+        case .typeReceipt: return Receipt.self
+        case .typeRecipe: return Recipe.self
+        case .typeRecording: return Recording.self
+        case .typeReservation: return Reservation.self
         case .typeResource: return Resource.self
+        case .typeReview: return Review.self
+        case .typeRoute: return Route.self
         case .typeSetting: return Setting.self
+        case .typeTimeFrame: return TimeFrame.self
+        case .typeTransaction: return Transaction.self
+        case .typeTrip: return Trip.self
+        case .typeUnit: return Unit.self
         case .typeUserState: return UserState.self
+        case .typeVideo: return Video.self
         case .typeViewArguments: return ViewArguments.self
+        case .typeVisualArt: return VisualArt.self
+        case .typeVote: return Vote.self
+        case .typeVoteAction: return VoteAction.self
         case .typeWebsite: return Website.self
+        case .typeWrittenWork: return WrittenWork.self
         }
     }
 }
@@ -215,50 +355,10 @@ public class CVUStateDefinition : CVUStoredDefinition {
     }
 }
 
-/// Item is the baseclass for all of the data classes.
-public class SchemaItem: SyncableItem, Codable, Identifiable {
-    /// Last access date of the Item.
-    @objc dynamic var dateAccessed:Date? = nil
-    /// Creation date of the Item.
-    @objc dynamic var dateCreated:Date? = nil
-    /// Last modification date of the Item.
-    @objc dynamic var dateModified:Date? = nil
-    /// Whether the Item is deleted.
-    @objc dynamic var deleted:Bool = false
-    /// The identifier of an external source.
-    @objc dynamic var externalId:String? = nil
-    /// A description of the item.
-    @objc dynamic var itemDescription:String? = nil
-    /// Whether the Item is starred.
-    @objc dynamic var starred:Bool = false
-    /// The last version loaded from the server.
-    @objc dynamic var version:Int = 1
-    /// The unique identifier of the Item set by the pod.
-    let uid = RealmOptional<Int>()
-    /// A collection of all edges of an Item.
-    let allEdges = List<Edge>()
-
-    public func superDecode(from decoder: Decoder) throws {
-            dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
-            dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
-            dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
-            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
-            externalId = try decoder.decodeIfPresent("externalId") ?? externalId
-            itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
-            starred = try decoder.decodeIfPresent("starred") ?? starred
-            version = try decoder.decodeIfPresent("version") ?? version
-            uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
-            decodeEdges(decoder, "allEdges", self as! Item)
-    }
-      
-    private enum CodingKeys: String, CodingKey {
-        case dateAccessed, dateCreated, dateModified, deleted, externalId, itemDescription, starred,
-            version, uid, allEdges
-    }
-}
-
-/// An account, typically for an online service, for instance an Apple account.
+/// An account or subscription, for instance for some online service, or a bank account or wallet.
 public class Account : Item {
+    /// A handle.
+    @objc dynamic var handle:String? = nil
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
@@ -266,25 +366,236 @@ public class Account : Item {
     let nameQuality = RealmOptional<Int>()
     /// Whether the Item should be displayed in the interfaces.
     @objc dynamic var enablePresence:Bool = false
-    ///
+    /// Whether you retrieve Messages from this Person.
     @objc dynamic var enableReceipts:Bool = false
     /// A service of any kind.
     @objc dynamic var service:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
 
     /// The Person this Item belongs to.
     var belongsTo: Results<Person>? {
         edges("belongsTo")?.items(type:Person.self)
     }
 
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Results<Location>? {
+        edges("location")?.items(type:Location.self)
+    }
+
+    /// An organization, for instance an NGO, company or school.
+    var organization: Results<Organization>? {
+        edges("organization")?.items(type:Organization.self)
+    }
+
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
+            handle = try decoder.decodeIfPresent("handle") ?? handle
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
             nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
             enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
             enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             service = try decoder.decodeIfPresent("service") ?? service
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A postal address.
+public class Address : Item {
+    /// The latitude of a location in WGS84 format.
+    let latitude = RealmOptional<Double>()
+    /// The longitude of a location in WGS84 format.
+    let longitude = RealmOptional<Double>()
+    /// A city or town.
+    @objc dynamic var city:String? = nil
+    /// The postal code. For example, 94043.
+    @objc dynamic var postalCode:String? = nil
+    /// A state or province of a country.
+    @objc dynamic var state:String? = nil
+    /// The street address. For example, 1600 Amphitheatre Pkwy.
+    @objc dynamic var street:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+    /// A location with a automatic lookup hash.
+    @objc dynamic var locationAutoLookupHash:String? = nil
+
+    /// A country.
+    var country: Country? {
+        edge("country")?.target(type:Country.self)
+    }
+
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Location? {
+        edge("location")?.target(type:Location.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
+            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
+            city = try decoder.decodeIfPresent("city") ?? city
+            postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
+            state = try decoder.decodeIfPresent("state") ?? state
+            street = try decoder.decodeIfPresent("street") ?? street
+            type = try decoder.decodeIfPresent("type") ?? type
+            locationAutoLookupHash = try decoder.decodeIfPresent("locationAutoLookupHash") ?? locationAutoLookupHash
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An article, for instance from a journal, magazine or newspaper.
+public class Article : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// A comment on this Item.
+    var comment: Results<Comment>? {
+        edges("comment")?.items(type:Comment.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An audio file.
+public class Audio : Item {
+    /// The bitrate of a media object.
+    let bitrate = RealmOptional<Int>()
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+    /// Location of the actual bytes of a File.
+    @objc dynamic var fileLocation:String? = nil
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+
+    /// Any type of file that can be stored on disk.
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
+
+    /// Items included within this Item. Included Items can be of any type.
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
 
             try self.superDecode(from: decoder)
         }
@@ -297,7 +608,7 @@ public class AuditItem : Item {
     @objc dynamic var date:Date? = nil
     /// The content of an Item.
     @objc dynamic var content:String? = nil
-    /// TBD
+    /// Some action that can be taken by some Item.
     @objc dynamic var action:String? = nil
 
     /// The Item this Item applies to.
@@ -331,7 +642,7 @@ public class CVUStoredDefinition : Item {
     @objc dynamic var query:String? = nil
     /// TBD
     @objc dynamic var selector:String? = nil
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
@@ -350,18 +661,118 @@ public class CVUStoredDefinition : Item {
     }
 }
 
-/// A business corporation.
-public class Company : Item {
-    /// TBD
+/// A comment.
+public class Comment : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
             type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A country.
+public class Country : Item {
+    /// The latitude of a location in WGS84 format.
+    let latitude = RealmOptional<Double>()
+    /// The longitude of a location in WGS84 format.
+    let longitude = RealmOptional<Double>()
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+
+    /// The flag that represents some Item, for instance a Country.
+    var flag: Photo? {
+        edge("flag")?.target(type:Photo.self)
+    }
+
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Location? {
+        edge("location")?.target(type:Location.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
+            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
             name = try decoder.decodeIfPresent("name") ?? name
 
             try self.superDecode(from: decoder)
@@ -372,412 +783,23 @@ public class Company : Item {
 /// The most generic kind of creative work, including books, movies, photographs, software programs,
 /// etc.
 public class CreativeWork : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
-
-    /// An audio object.
-    var audio: Results<Audio>? {
-        edges("audio")?.items(type:Audio.self)
-    }
-
-    /// A citation or reference to another creative work, such as another publication, web page,
-    /// scholarly article, etc.
-    var citation: Results<CreativeWork>? {
-        edges("citation")?.items(type:CreativeWork.self)
-    }
-
-    /// The location depicted or described in the content. For example, the location in a
-    /// photograph or painting.
-    var contentLocation: Results<Location>? {
-        edges("contentLocation")?.items(type:Location.self)
-    }
-
-    /// The location where the Item was created, which may not be the same as the location
-    /// depicted in the Item.
-    var locationCreated: Results<Location>? {
-        edges("locationCreated")?.items(type:Location.self)
-    }
-
-    /// A video object.
-    var video: Results<Video>? {
-        edges("video")?.items(type:Video.self)
-    }
-
-    /// The author of this content or rating.
-    var writtenBy: Results<Person>? {
-        edges("writtenBy")?.items(type:Person.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// An electronic file or document.
-public class DigitalDocument : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
-
-    /// An audio object.
-    var audio: Results<Audio>? {
-        edges("audio")?.items(type:Audio.self)
-    }
-
-    /// A citation or reference to another creative work, such as another publication, web page,
-    /// scholarly article, etc.
-    var citation: Results<CreativeWork>? {
-        edges("citation")?.items(type:CreativeWork.self)
-    }
-
-    /// The location depicted or described in the content. For example, the location in a
-    /// photograph or painting.
-    var contentLocation: Results<Location>? {
-        edges("contentLocation")?.items(type:Location.self)
-    }
-
-    /// The location where the Item was created, which may not be the same as the location
-    /// depicted in the Item.
-    var locationCreated: Results<Location>? {
-        edges("locationCreated")?.items(type:Location.self)
-    }
-
-    /// A video object.
-    var video: Results<Video>? {
-        edges("video")?.items(type:Video.self)
-    }
-
-    /// The author of this content or rating.
-    var writtenBy: Results<Person>? {
-        edges("writtenBy")?.items(type:Person.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// A comment.
-public class Comment : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
-    /// The content of an Item.
-    @objc dynamic var content:String? = nil
-    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
-    @objc dynamic var textContent:String? = nil
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
-
-    /// An audio object.
-    var audio: Results<Audio>? {
-        edges("audio")?.items(type:Audio.self)
-    }
-
-    /// A citation or reference to another creative work, such as another publication, web page,
-    /// scholarly article, etc.
-    var citation: Results<CreativeWork>? {
-        edges("citation")?.items(type:CreativeWork.self)
-    }
-
-    /// The location depicted or described in the content. For example, the location in a
-    /// photograph or painting.
-    var contentLocation: Results<Location>? {
-        edges("contentLocation")?.items(type:Location.self)
-    }
-
-    /// The location where the Item was created, which may not be the same as the location
-    /// depicted in the Item.
-    var locationCreated: Results<Location>? {
-        edges("locationCreated")?.items(type:Location.self)
-    }
-
-    /// A video object.
-    var video: Results<Video>? {
-        edges("video")?.items(type:Video.self)
-    }
-
-    /// The author of this content or rating.
-    var writtenBy: Results<Person>? {
-        edges("writtenBy")?.items(type:Person.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-            content = try decoder.decodeIfPresent("content") ?? content
-            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// A single message.
-public class Message : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
-    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
-    @objc dynamic var textContent:String? = nil
-    /// The content of an Item.
-    @objc dynamic var content:String? = nil
-    /// TBD
-    @objc dynamic var type:String? = nil
-    /// Data that cannot directly be imported in the appropriate Items (yet), in JSON format
-    @objc dynamic var importJson:String? = nil
-    /// TBD
-    @objc dynamic var subject:String? = nil
-    /// Datetime when Item was sent.
-    @objc dynamic var datetimeSent:Date? = nil
-    /// The sender of an Item.
-    @objc dynamic var sender:String? = nil
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
-
-    /// An audio object.
-    var audio: Results<Audio>? {
-        edges("audio")?.items(type:Audio.self)
-    }
-
-    /// A citation or reference to another creative work, such as another publication, web page,
-    /// scholarly article, etc.
-    var citation: Results<CreativeWork>? {
-        edges("citation")?.items(type:CreativeWork.self)
-    }
-
-    /// The location depicted or described in the content. For example, the location in a
-    /// photograph or painting.
-    var contentLocation: Results<Location>? {
-        edges("contentLocation")?.items(type:Location.self)
-    }
-
-    /// The location where the Item was created, which may not be the same as the location
-    /// depicted in the Item.
-    var locationCreated: Results<Location>? {
-        edges("locationCreated")?.items(type:Location.self)
-    }
-
-    /// A video object.
-    var video: Results<Video>? {
-        edges("video")?.items(type:Video.self)
-    }
-
-    /// The author of this content or rating.
-    var writtenBy: Results<Person>? {
-        edges("writtenBy")?.items(type:Person.self)
-    }
-
-    /// A message channel this Item belongs to, for instance a WhatsApp chat.
-    var messageChannel: Results<MessageChannel>? {
-        edges("messageChannel")?.items(type:MessageChannel.self)
-    }
-
-    /// The account that received, or is to receive, this Item.
-    var receiver: Results<Account>? {
-        edges("receiver")?.items(type:Account.self)
-    }
-
-    /// TBD
-    var cc: Results<Account>? {
-        edges("cc")?.items(type:Account.self)
-    }
-
-    /// TBD
-    var replyTo: Results<Account>? {
-        edges("replyTo")?.items(type:Account.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
-            content = try decoder.decodeIfPresent("content") ?? content
-            type = try decoder.decodeIfPresent("type") ?? type
-            importJson = try decoder.decodeIfPresent("importJson") ?? importJson
-            subject = try decoder.decodeIfPresent("subject") ?? subject
-            datetimeSent = try decoder.decodeIfPresent("datetimeSent") ?? datetimeSent
-            sender = try decoder.decodeIfPresent("sender") ?? sender
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// A chat is a collection of messages.
-public class MessageChannel : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-    /// The topic of an item, for instance a Chat.
-    @objc dynamic var topic:String? = nil
-    /// Whether the item is encrypted.
-    @objc dynamic var encrypted:Bool = false
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
-
-    /// An audio object.
-    var audio: Results<Audio>? {
-        edges("audio")?.items(type:Audio.self)
-    }
-
-    /// A citation or reference to another creative work, such as another publication, web page,
-    /// scholarly article, etc.
-    var citation: Results<CreativeWork>? {
-        edges("citation")?.items(type:CreativeWork.self)
-    }
-
-    /// The location depicted or described in the content. For example, the location in a
-    /// photograph or painting.
-    var contentLocation: Results<Location>? {
-        edges("contentLocation")?.items(type:Location.self)
-    }
-
-    /// The location where the Item was created, which may not be the same as the location
-    /// depicted in the Item.
-    var locationCreated: Results<Location>? {
-        edges("locationCreated")?.items(type:Location.self)
-    }
-
-    /// A video object.
-    var video: Results<Video>? {
-        edges("video")?.items(type:Video.self)
-    }
-
-    /// The author of this content or rating.
-    var writtenBy: Results<Person>? {
-        edges("writtenBy")?.items(type:Person.self)
-    }
-
-    /// A photo object.
-    var photo: Results<Photo>? {
-        edges("photo")?.items(type:Photo.self)
-    }
-
-    /// The account that received, or is to receive, this Item.
-    var receiver: Results<Account>? {
-        edges("receiver")?.items(type:Account.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
-            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
-            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-            name = try decoder.decodeIfPresent("name") ?? name
-            topic = try decoder.decodeIfPresent("topic") ?? topic
-            encrypted = try decoder.decodeIfPresent("encrypted") ?? encrypted
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// A file containing a note.
-public class Note : Item {
-    /// An abstract is a short description that summarizes an Items content.
-    @objc dynamic var abstract:String? = nil
-    /// Date of first broadcast/publication.
-    @objc dynamic var datePublished:Date? = nil
-    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
-    /// typically delimited by commas.
-    @objc dynamic var keyword:String? = nil
-    /// A text that belongs to this item.
-    @objc dynamic var text:String? = nil
     /// The title of an Item.
     @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
     /// The content of an Item.
     @objc dynamic var content:String? = nil
     /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
     @objc dynamic var textContent:String? = nil
-
-    /// A media object that encodes this Item.
-    var associatedMedia: Results<MediaObject>? {
-        edges("associatedMedia")?.items(type:MediaObject.self)
-    }
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -807,27 +829,38 @@ public class Note : Item {
         edges("video")?.items(type:Video.self)
     }
 
-    /// The author of this content or rating.
+    /// The author of this Item.
     var writtenBy: Results<Person>? {
         edges("writtenBy")?.items(type:Person.self)
     }
 
-    /// A comment on this Item.
-    var comment: Results<Comment>? {
-        edges("comment")?.items(type:Comment.self)
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
             abstract = try decoder.decodeIfPresent("abstract") ?? abstract
             datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
             keyword = try decoder.decodeIfPresent("keyword") ?? keyword
-            text = try decoder.decodeIfPresent("text") ?? text
-            title = try decoder.decodeIfPresent("title") ?? title
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
 
             try self.superDecode(from: decoder)
         }
@@ -836,7 +869,7 @@ public class Note : Item {
 
 /// A key used in an cryptography protocol.
 public class CryptoKey : Item {
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
     /// A role describes the function of the item in their context.
     @objc dynamic var role:String? = nil
@@ -900,20 +933,97 @@ public class Device : Item {
 /// A strategy of regulating the intake of food to achieve or maintain a specific health-related
 /// goal.
 public class Diet : Item {
-    /// TBD
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
-    /// TBD
-    @objc dynamic var addition:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// An included Product.
+    var includedProduct: Results<Product>? {
+        edges("includedProduct")?.items(type:Product.self)
+    }
+
+    /// An excluded Product.
+    var excludedProduct: Results<Product>? {
+        edges("excludedProduct")?.items(type:Product.self)
+    }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
             type = try decoder.decodeIfPresent("type") ?? type
-            addition = try decoder.decodeIfPresent("addition") ?? addition
-            name = try decoder.decodeIfPresent("name") ?? name
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
             try self.superDecode(from: decoder)
         }
@@ -934,11 +1044,7 @@ public class Downloader : Item {
 
 /// Edge is the Item that stores the specifics of an edge, used by front ends.
 public class Edge : SyncableItem, Codable {
-    /// Whether the Item is deleted.
-    @objc dynamic var deleted:Bool = false
-    /// The last version loaded from the server.
-    @objc dynamic var version:Int = 1
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
     /// The type of the target Item, or Item to where an edge points. Opposite of
     /// sourceItemType.
@@ -952,6 +1058,10 @@ public class Edge : SyncableItem, Codable {
     let sourceItemID = RealmOptional<Int>()
     /// Used to define position in a sequence, enables ordering based on this number.
     let sequence = RealmOptional<Int>()
+    /// Whether the Item is deleted.
+    @objc dynamic var deleted:Bool = false
+    /// The last version loaded from the server.
+    @objc dynamic var version:Int = 1
     /// A label of an edge.
     @objc dynamic var edgeLabel:String? = nil
 
@@ -959,7 +1069,6 @@ public class Edge : SyncableItem, Codable {
         self.init()
 
         jsonErrorHandling(decoder) {
-            version = try decoder.decodeIfPresent("version") ?? version
             type = try decoder.decodeIfPresent("type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
             targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
@@ -973,13 +1082,303 @@ public class Edge : SyncableItem, Codable {
     }
 }
 
+/// A single email message.
+public class EmailMessage : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+    /// The subject of some Item.
+    @objc dynamic var subject:String? = nil
+    /// Datetime when Item was sent.
+    @objc dynamic var dateSent:Date? = nil
+    /// Datetime when Item was received.
+    @objc dynamic var dateReceived:Date? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// A message channel this Item belongs to, for instance a WhatsApp chat.
+    var messageChannel: Results<MessageChannel>? {
+        edges("messageChannel")?.items(type:MessageChannel.self)
+    }
+
+    /// The sender of an Item.
+    var sender: Results<Account>? {
+        edges("sender")?.items(type:Account.self)
+    }
+
+    /// The account that received, or is to receive, this Item.
+    var receiver: Results<Account>? {
+        edges("receiver")?.items(type:Account.self)
+    }
+
+    /// Accounts this Message is sent to beside the receiver.
+    var cc: Results<Account>? {
+        edges("cc")?.items(type:Account.self)
+    }
+
+    /// Accounts this Message is sent to beside the receiver, without showing this to the
+    /// primary receiver.
+    var bcc: Results<Account>? {
+        edges("bcc")?.items(type:Account.self)
+    }
+
+    /// The Account that is replied to.
+    var replyTo: Results<Account>? {
+        edges("replyTo")?.items(type:Account.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+            subject = try decoder.decodeIfPresent("subject") ?? subject
+            dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
+            dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Any kind of event, for instance a music festival or a business meeting.
+public class Event : Item {
+    /// Intended group that would consume or receive this Item.
+    @objc dynamic var audience:String? = nil
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// The status of an event, for instance cancelled.
+    @objc dynamic var eventStatus:String? = nil
+
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Results<Location>? {
+        edges("location")?.items(type:Location.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// Another (smaller) organization that is part of this Organization.
+    var subEvent: Results<Organization>? {
+        edges("subEvent")?.items(type:Organization.self)
+    }
+
+    /// The capacity of an Item, for instance the maximum number of attendees of an Event.
+    var capacity: Results<Measure>? {
+        edges("capacity")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            audience = try decoder.decodeIfPresent("audience") ?? audience
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            eventStatus = try decoder.decodeIfPresent("eventStatus") ?? eventStatus
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Fitness-related activity designed for a specific health-related purpose, including defined
+/// exercise routines as well as activity prescribed by a clinician.
+public class ExercisePlan : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// The number of times something is repeated.
+    let repetitions = RealmOptional<Int>()
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// The amount of energy something takes.
+    var workload: Results<Measure>? {
+        edges("workload")?.items(type:Measure.self)
+    }
+
+    /// The frequency of an Item.
+    var frequency: Results<Frequency>? {
+        edges("frequency")?.items(type:Frequency.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            repetitions.value = try decoder.decodeIfPresent("repetitions") ?? repetitions.value
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
 
 /// Any type of file that can be stored on disk.
 public class File : Item {
+    /// The blake2b hash of a resource.
+    @objc dynamic var blake2b:String? = nil
     /// The sha256 hash of a resource.
     @objc dynamic var sha256:String? = nil
     /// The filename of a resource.
     @objc dynamic var filename:String? = nil
+
+    /// A universal resource location
+    var resource: Results<Resource>? {
+        edges("resource")?.items(type:Resource.self)
+    }
 
     /// An Item this Item is used by.
     var usedBy: [Item]? {
@@ -990,8 +1389,228 @@ public class File : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
+            blake2b = try decoder.decodeIfPresent("blake2b") ?? blake2b
             sha256 = try decoder.decodeIfPresent("sha256") ?? sha256
             filename = try decoder.decodeIfPresent("filename") ?? filename
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// The number of occurrences of a repeating event per measure of time.
+public class Frequency : Item {
+    /// The number of occurrences.
+    @objc dynamic var occurrences:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            occurrences = try decoder.decodeIfPresent("occurrences") ?? occurrences
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Any kind of (video) game, typically rule-governed recreational activities.
+public class Game : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A generic attribute that can be referenced by an Item.
+public class GenericAttribute : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// A boolean value.
+    @objc dynamic var boolValue:Bool = false
+    /// A datetime value.
+    @objc dynamic var datetimeValue:Date? = nil
+    /// A floating point value.
+    let floatValue = RealmOptional<Double>()
+    /// An integer value.
+    let intValue = RealmOptional<Int>()
+    /// A string value.
+    @objc dynamic var stringValue:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            boolValue = try decoder.decodeIfPresent("boolValue") ?? boolValue
+            datetimeValue = try decoder.decodeIfPresent("datetimeValue") ?? datetimeValue
+            floatValue.value = try decoder.decodeIfPresent("floatValue") ?? floatValue.value
+            intValue.value = try decoder.decodeIfPresent("intValue") ?? intValue.value
+            stringValue = try decoder.decodeIfPresent("stringValue") ?? stringValue
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Instructions that explain how to achieve a result by performing a sequence of steps.
+public class HowTo : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
 
             try self.superDecode(from: decoder)
         }
@@ -1004,9 +1623,9 @@ public class Importer : Item {
     @objc dynamic var name:String? = nil
     /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
-    /// TBD
+    /// A graphic symbol to represent some Item.
     @objc dynamic var icon:String? = nil
-    /// TBD
+    /// An image in the Xcode bundle.
     @objc dynamic var bundleImage:String? = nil
 
     /// A run of a certain Importer, that defines the details of the specific import.
@@ -1057,11 +1676,11 @@ public class ImporterRun : Item {
 public class Indexer : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
-    /// TBD
+    /// A graphic symbol to represent some Item.
     @objc dynamic var icon:String? = nil
     /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
-    /// TBD
+    /// An image in the Xcode bundle.
     @objc dynamic var bundleImage:String? = nil
     /// The destination of a run.
     @objc dynamic var runDestination:String? = nil
@@ -1120,7 +1739,90 @@ public class IndexerRun : Item {
     }
 }
 
-/// TBD
+/// A sector that produces goods or related services within an economy.
+public class Industry : Item {
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A Receipt is a confirmation of a transaction.
+public class Invoice : Item {
+    /// Any type of file that can be stored on disk.
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
+
+    /// An agreement between a buyer and a seller to exchange an asset for payment.
+    var transaction: Transaction? {
+        edge("transaction")?.target(type:Transaction.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Item is the baseclass for all of the data classes.
+public class SchemaItem: SyncableItem, Codable, Identifiable {
+    /// Last access date of the Item.
+    @objc dynamic var dateAccessed:Date? = nil
+    /// Creation date of the Item.
+    @objc dynamic var dateCreated:Date? = nil
+    /// Last modification date of the Item.
+    @objc dynamic var dateModified:Date? = nil
+    /// Whether the Item is deleted.
+    @objc dynamic var deleted:Bool = false
+    /// The identifier of an external source.
+    @objc dynamic var externalId:String? = nil
+    /// A description of the item.
+    @objc dynamic var itemDescription:String? = nil
+    /// Whether the Item is starred.
+    @objc dynamic var starred:Bool = false
+    /// The last version loaded from the server.
+    @objc dynamic var version:Int = 1
+    /// The unique identifier of the Item set by the pod.
+    let uid = RealmOptional<Int>()
+    /// Data that cannot directly be imported in the appropriate Items (yet), in JSON format
+    @objc dynamic var importJson:String? = nil
+    /// A collection of all edges of an Item.
+    let allEdges = List<Edge>()
+
+    public func superDecode(from decoder: Decoder) throws {
+            dateAccessed = try decoder.decodeIfPresent("dateAccessed") ?? dateAccessed
+            dateCreated = try decoder.decodeIfPresent("dateCreated") ?? dateCreated
+            dateModified = try decoder.decodeIfPresent("dateModified") ?? dateModified
+            deleted = try decoder.decodeIfPresent("deleted") ?? deleted
+            externalId = try decoder.decodeIfPresent("externalId") ?? externalId
+            itemDescription = try decoder.decodeIfPresent("itemDescription") ?? itemDescription
+            starred = try decoder.decodeIfPresent("starred") ?? starred
+            version = try decoder.decodeIfPresent("version") ?? version
+            uid.value = try decoder.decodeIfPresent("uid") ?? uid.value
+            importJson = try decoder.decodeIfPresent("importJson") ?? importJson
+            decodeEdges(decoder, "allEdges", self as! Item)
+    }
+      
+    private enum CodingKeys: String, CodingKey {
+        case dateAccessed, dateCreated, dateModified, deleted, externalId, itemDescription, starred,
+            version, uid, importJson, allEdges
+    }
+}
+
+/// Attached to an Item, to mark it to be something.
 public class Label : Item {
     /// The color of this Item.
     @objc dynamic var color:String? = nil
@@ -1149,6 +1851,23 @@ public class Label : Item {
     }
 }
 
+/// A potential offer.
+public class Lead : Item {
+    /// A potential offer.
+    var offer: Results<Offer>? {
+        edges("offer")?.items(type:Offer.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 /// The location of something.
 public class Location : Item {
     /// The latitude of a location in WGS84 format.
@@ -1168,81 +1887,65 @@ public class Location : Item {
     }
 }
 
-/// A postal address.
-public class Address : Item {
-    /// The latitude of a location in WGS84 format.
-    let latitude = RealmOptional<Double>()
-    /// The longitude of a location in WGS84 format.
-    let longitude = RealmOptional<Double>()
-    /// A city or town.
-    @objc dynamic var city:String? = nil
-    /// The postal code. For example, 94043.
-    @objc dynamic var postalCode:String? = nil
-    /// A state or province of a country.
-    @objc dynamic var state:String? = nil
-    /// The street address. For example, 1600 Amphitheatre Pkwy.
-    @objc dynamic var street:String? = nil
-    /// TBD
-    @objc dynamic var type:String? = nil
-    /// TBD
-    @objc dynamic var locationAutoLookupHash:String? = nil
+/// A material that an Item is (partially) made from, for instance cotton, paper, steel, etc.
+public class Material : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The default quantity, for instance 1 g or 0.25 L
+    @objc dynamic var defaultQuantity:String? = nil
 
-    /// A country.
-    var country: Country? {
-        edge("country")?.target(type:Country.self)
-    }
-
-    /// The location of for example where the event is happening, an organization is located, or
-    /// where an action takes place.
-    var location: Location? {
-        edge("location")?.target(type:Location.self)
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
-            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
-            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
-            city = try decoder.decodeIfPresent("city") ?? city
-            postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
-            state = try decoder.decodeIfPresent("state") ?? state
-            street = try decoder.decodeIfPresent("street") ?? street
-            type = try decoder.decodeIfPresent("type") ?? type
-            locationAutoLookupHash = try decoder.decodeIfPresent("locationAutoLookupHash") ?? locationAutoLookupHash
+            name = try decoder.decodeIfPresent("name") ?? name
+            defaultQuantity = try decoder.decodeIfPresent("defaultQuantity") ?? defaultQuantity
 
             try self.superDecode(from: decoder)
         }
     }
 }
 
-/// A country.
-public class Country : Item {
-    /// The latitude of a location in WGS84 format.
-    let latitude = RealmOptional<Double>()
-    /// The longitude of a location in WGS84 format.
-    let longitude = RealmOptional<Double>()
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
+/// A measure consists of a definition, symbol, unit and value (int, float, string, bool, or
+/// datetime).
+public class Measure : Item {
+    /// The definition of an Item.
+    @objc dynamic var definition:String? = nil
+    /// A symbol, for instance to represent a Unit or Measure.
+    @objc dynamic var symbol:String? = nil
+    /// An integer value.
+    let intValue = RealmOptional<Int>()
+    /// A floating point value.
+    let floatValue = RealmOptional<Double>()
+    /// A string value.
+    @objc dynamic var stringValue:String? = nil
+    /// A datetime value.
+    @objc dynamic var datetimeValue:Date? = nil
+    /// A boolean value.
+    @objc dynamic var boolValue:Bool = false
 
-    /// TBD
-    var flag: File? {
-        edge("flag")?.target(type:File.self)
-    }
-
-    /// The location of for example where the event is happening, an organization is located, or
-    /// where an action takes place.
-    var location: Location? {
-        edge("location")?.target(type:Location.self)
+    /// A unit, typically from International System of Units (SI).
+    var unit: Unit? {
+        edge("unit")?.target(type:Unit.self)
     }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
-            latitude.value = try decoder.decodeIfPresent("latitude") ?? latitude.value
-            longitude.value = try decoder.decodeIfPresent("longitude") ?? longitude.value
-            name = try decoder.decodeIfPresent("name") ?? name
+            definition = try decoder.decodeIfPresent("definition") ?? definition
+            symbol = try decoder.decodeIfPresent("symbol") ?? symbol
+            intValue.value = try decoder.decodeIfPresent("intValue") ?? intValue.value
+            floatValue.value = try decoder.decodeIfPresent("floatValue") ?? floatValue.value
+            stringValue = try decoder.decodeIfPresent("stringValue") ?? stringValue
+            datetimeValue = try decoder.decodeIfPresent("datetimeValue") ?? datetimeValue
+            boolValue = try decoder.decodeIfPresent("boolValue") ?? boolValue
 
             try self.superDecode(from: decoder)
         }
@@ -1265,18 +1968,11 @@ public class MediaObject : Item {
     @objc dynamic var endTime:Date? = nil
     /// Location of the actual bytes of a File.
     @objc dynamic var fileLocation:String? = nil
-    /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
-    /// KB will be assumed.
-    @objc dynamic var fileSize:String? = nil
-    /// The height of the item.
-    let height = RealmOptional<Int>()
     /// The startTime of something. For a reserved event or service, the time that it is
     /// expected to start. For actions that span a period of time, when the action was performed. e.g.
     /// John wrote a book from January to December. For media, including audio and video, it's the time
     /// offset of the start of a clip within a larger file.
     @objc dynamic var startTime:Date? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
 
     /// Any type of file that can be stored on disk.
     var file: File? {
@@ -1296,212 +1992,7 @@ public class MediaObject : Item {
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             endTime = try decoder.decodeIfPresent("endTime") ?? endTime
             fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
-            fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
             startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// An audio file.
-public class Audio : Item {
-    /// The bitrate of a media object.
-    let bitrate = RealmOptional<Int>()
-    /// The duration of an Item, for instance an event or an Audio file.
-    let duration = RealmOptional<Int>()
-    /// The endTime of something. For a reserved event or service, the time that it is expected
-    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
-    /// book from January to December. For media, including audio and video, it's the time offset of the
-    /// end of a clip within a larger file.
-    @objc dynamic var endTime:Date? = nil
-    /// Location of the actual bytes of a File.
-    @objc dynamic var fileLocation:String? = nil
-    /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
-    /// KB will be assumed.
-    @objc dynamic var fileSize:String? = nil
-    /// The height of the item.
-    let height = RealmOptional<Int>()
-    /// The startTime of something. For a reserved event or service, the time that it is
-    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
-    /// John wrote a book from January to December. For media, including audio and video, it's the time
-    /// offset of the start of a clip within a larger file.
-    @objc dynamic var startTime:Date? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
-    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
-    /// etc.) use MediaObject and indicate the encodingFormat.
-    @objc dynamic var caption:String? = nil
-    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
-    @objc dynamic var transcript:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-
-    /// Any type of file that can be stored on disk.
-    var file: Results<File>? {
-        edges("file")?.items(type:File.self)
-    }
-
-    /// Items included within this Item. Included Items can be of any type.
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
-            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
-            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
-            fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
-            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-            caption = try decoder.decodeIfPresent("caption") ?? caption
-            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            name = try decoder.decodeIfPresent("name") ?? name
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// An image file.
-public class Photo : Item {
-    /// The bitrate of a media object.
-    let bitrate = RealmOptional<Int>()
-    /// The duration of an Item, for instance an event or an Audio file.
-    let duration = RealmOptional<Int>()
-    /// The endTime of something. For a reserved event or service, the time that it is expected
-    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
-    /// book from January to December. For media, including audio and video, it's the time offset of the
-    /// end of a clip within a larger file.
-    @objc dynamic var endTime:Date? = nil
-    /// Location of the actual bytes of a File.
-    @objc dynamic var fileLocation:String? = nil
-    /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
-    /// KB will be assumed.
-    @objc dynamic var fileSize:String? = nil
-    /// The height of the item.
-    let height = RealmOptional<Int>()
-    /// The startTime of something. For a reserved event or service, the time that it is
-    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
-    /// John wrote a book from January to December. For media, including audio and video, it's the time
-    /// offset of the start of a clip within a larger file.
-    @objc dynamic var startTime:Date? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
-    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
-    /// etc.) use MediaObject and indicate the encodingFormat.
-    @objc dynamic var caption:String? = nil
-    /// Exif data of an image file.
-    @objc dynamic var exifData:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-
-    /// Any type of file that can be stored on disk.
-    var file: File? {
-        edge("file")?.target(type:File.self)
-    }
-
-    /// Items included within this Item. Included Items can be of any type.
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
-
-    /// Thumbnail image for an Item, typically an image or video.
-    var thumbnail: File? {
-        edge("thumbnail")?.target(type:File.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
-            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
-            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
-            fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
-            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-            caption = try decoder.decodeIfPresent("caption") ?? caption
-            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
-            name = try decoder.decodeIfPresent("name") ?? name
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
-
-/// A video file.
-public class Video : Item {
-    /// The bitrate of a media object.
-    let bitrate = RealmOptional<Int>()
-    /// The duration of an Item, for instance an event or an Audio file.
-    let duration = RealmOptional<Int>()
-    /// The endTime of something. For a reserved event or service, the time that it is expected
-    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
-    /// book from January to December. For media, including audio and video, it's the time offset of the
-    /// end of a clip within a larger file.
-    @objc dynamic var endTime:Date? = nil
-    /// Location of the actual bytes of a File.
-    @objc dynamic var fileLocation:String? = nil
-    /// Size of the application / package (e.g. 18MB). In the absence of a unit (MB, KB etc.),
-    /// KB will be assumed.
-    @objc dynamic var fileSize:String? = nil
-    /// The height of the item.
-    let height = RealmOptional<Int>()
-    /// The startTime of something. For a reserved event or service, the time that it is
-    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
-    /// John wrote a book from January to December. For media, including audio and video, it's the time
-    /// offset of the start of a clip within a larger file.
-    @objc dynamic var startTime:Date? = nil
-    /// The width of the item.
-    let width = RealmOptional<Int>()
-    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
-    /// etc.) use MediaObject and indicate the encodingFormat.
-    @objc dynamic var caption:String? = nil
-    /// Exif data of an image file.
-    @objc dynamic var exifData:String? = nil
-    /// The name of the item.
-    @objc dynamic var name:String? = nil
-
-    /// Any type of file that can be stored on disk.
-    var file: Results<File>? {
-        edges("file")?.items(type:File.self)
-    }
-
-    /// Items included within this Item. Included Items can be of any type.
-    var includes: [Item]? {
-        edges("includes")?.itemsArray()
-    }
-
-    /// Thumbnail image for an Item, typically an image or video.
-    var thumbnail: Results<File>? {
-        edges("thumbnail")?.items(type:File.self)
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
-            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
-            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
-            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
-            fileSize = try decoder.decodeIfPresent("fileSize") ?? fileSize
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
-            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
-            width.value = try decoder.decodeIfPresent("width") ?? width.value
-            caption = try decoder.decodeIfPresent("caption") ?? caption
-            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
-            name = try decoder.decodeIfPresent("name") ?? name
 
             try self.superDecode(from: decoder)
         }
@@ -1511,7 +2002,7 @@ public class Video : Item {
 /// Any condition of the human body that affects the normal functioning of a person, whether
 /// physically or mentally. Includes diseases, injuries, disabilities, disorders, syndromes, etc.
 public class MedicalCondition : Item {
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
@@ -1528,15 +2019,255 @@ public class MedicalCondition : Item {
     }
 }
 
+/// A single message.
+public class Message : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+    /// The subject of some Item.
+    @objc dynamic var subject:String? = nil
+    /// Datetime when Item was sent.
+    @objc dynamic var dateSent:Date? = nil
+    /// Datetime when Item was received.
+    @objc dynamic var dateReceived:Date? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// A message channel this Item belongs to, for instance a WhatsApp chat.
+    var messageChannel: Results<MessageChannel>? {
+        edges("messageChannel")?.items(type:MessageChannel.self)
+    }
+
+    /// The sender of an Item.
+    var sender: Results<Account>? {
+        edges("sender")?.items(type:Account.self)
+    }
+
+    /// The account that received, or is to receive, this Item.
+    var receiver: Results<Account>? {
+        edges("receiver")?.items(type:Account.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+            subject = try decoder.decodeIfPresent("subject") ?? subject
+            dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
+            dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A chat is a collection of messages.
+public class MessageChannel : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// The topic of an item, for instance a Chat.
+    @objc dynamic var topic:String? = nil
+    /// Whether the item is encrypted.
+    @objc dynamic var encrypted:Bool = false
+
+    /// A photo object.
+    var photo: Results<Photo>? {
+        edges("photo")?.items(type:Photo.self)
+    }
+
+    /// The account that received, or is to receive, this Item.
+    var receiver: Results<Account>? {
+        edges("receiver")?.items(type:Account.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            topic = try decoder.decodeIfPresent("topic") ?? topic
+            encrypted = try decoder.decodeIfPresent("encrypted") ?? encrypted
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A way of transportation, for instance a bus or airplane.
+public class ModeOfTransport : Item {
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Any type of video, for instance a movie, TV show, animation etc.
+public class MovingImage : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 /// TBD
 public class NavigationItem : Item {
     /// The title of an Item.
     @objc dynamic var title:String? = nil
-    /// TBD
+    /// Name of a Session.
     @objc dynamic var sessionName:String? = nil
     /// Used to define position in a sequence, enables ordering based on this number.
     let sequence = RealmOptional<Int>()
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
@@ -1553,19 +2284,340 @@ public class NavigationItem : Item {
     }
 }
 
-/// An online profile, typically on social media.
-public class OnlineProfile : Item {
-    /// TBD
-    @objc dynamic var type:String? = nil
-    /// TBD
-    @objc dynamic var handle:String? = nil
+/// A group or system of interconnected people or things, for instance a social network.
+public class Network : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+
+    /// An organization, for instance an NGO, company or school.
+    var organization: Organization? {
+        edge("organization")?.target(type:Organization.self)
+    }
+
+    /// A universal resource location
+    var resource: Results<Resource>? {
+        edges("resource")?.items(type:Resource.self)
+    }
+
+    /// A WebSite is a set of related web pages and other items typically served from a single
+    /// web domain and accessible via URLs.
+    var website: Results<Website>? {
+        edges("website")?.items(type:Website.self)
+    }
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A file containing a note.
+public class Note : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// A comment on this Item.
+    var comment: Results<Comment>? {
+        edges("comment")?.items(type:Comment.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
             type = try decoder.decodeIfPresent("type") ?? type
-            handle = try decoder.decodeIfPresent("handle") ?? handle
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An offer for some transaction, for instance to buy something or to get some service.
+public class Offer : Item {
+    /// An agreement between a buyer and a seller to exchange an asset for payment.
+    var transaction: Results<Transaction>? {
+        edges("transaction")?.items(type:Transaction.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Hours that an organization is open.
+public class OpeningHours : Item {
+    /// A timeframe.
+    var timeFrame: Results<TimeFrame>? {
+        edges("timeFrame")?.items(type:TimeFrame.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An option for some choice, for instance a Vote.
+public class Option : Item {
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An organization, for instance an NGO, company or school.
+public class Organization : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// Date that the Item was founded.
+    @objc dynamic var dateFounded:Date? = nil
+    /// The area that this Item operates in.
+    @objc dynamic var areaServed:String? = nil
+    /// A fiscal identifier.
+    @objc dynamic var taxId:String? = nil
+
+    /// Physical address of the event or place.
+    var address: Results<Address>? {
+        edges("address")?.items(type:Address.self)
+    }
+
+    /// The place where the Item was founded.
+    var foundingLocation: Results<Location>? {
+        edges("foundingLocation")?.items(type:Location.self)
+    }
+
+    /// A logo that belongs to an Item
+    var logo: Results<Photo>? {
+        edges("logo")?.items(type:Photo.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// Another (smaller) Event that takes place at this Event
+    var subOrganization: Results<Event>? {
+        edges("subOrganization")?.items(type:Event.self)
+    }
+
+    /// The Event this Item organizes.
+    var performsAt: Results<Event>? {
+        edges("performsAt")?.items(type:Event.self)
+    }
+
+    /// The Event this Item attends.
+    var attends: Results<Event>? {
+        edges("attends")?.items(type:Event.self)
+    }
+
+    /// The Event this Item attends.
+    var organizes: Results<Event>? {
+        edges("organizes")?.items(type:Event.self)
+    }
+
+    /// Hours that an organization is open.
+    var openingHours: Results<OpeningHours>? {
+        edges("openingHours")?.items(type:OpeningHours.self)
+    }
+
+    /// A sector that produces goods or related services within an economy.
+    var industry: Results<Industry>? {
+        edges("industry")?.items(type:Industry.self)
+    }
+
+    /// The buying party in a transaction.
+    var buyer: Results<Transaction>? {
+        edges("buyer")?.items(type:Transaction.self)
+    }
+
+    /// The buying party in a transaction.
+    var seller: Results<Transaction>? {
+        edges("seller")?.items(type:Transaction.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            dateFounded = try decoder.decodeIfPresent("dateFounded") ?? dateFounded
+            areaServed = try decoder.decodeIfPresent("areaServed") ?? areaServed
+            taxId = try decoder.decodeIfPresent("taxId") ?? taxId
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A work of performing art, for instance dance, theater, opera or musical.
+public class PerformingArt : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
 
             try self.superDecode(from: decoder)
         }
@@ -1591,12 +2643,6 @@ public class SchemaPerson : Item {
     @objc dynamic var gender:String? = nil
     /// The sexual orientation of a person.
     @objc dynamic var sexualOrientation:String? = nil
-    /// The height of the item.
-    let height = RealmOptional<Int>()
-    /// The shoulder width of an Item.
-    let shoulderWidth = RealmOptional<Double>()
-    /// The arm length of an Item.
-    let armLength = RealmOptional<Double>()
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
@@ -1604,8 +2650,10 @@ public class SchemaPerson : Item {
     let nameQuality = RealmOptional<Int>()
     /// Whether the Item should be displayed in the interfaces.
     @objc dynamic var enablePresence:Bool = false
-    ///
+    /// Whether you retrieve Messages from this Person.
     @objc dynamic var enableReceipts:Bool = false
+    /// A role describes the function of the item in their context.
+    @objc dynamic var role:String? = nil
 
     /// Physical address of the event or place.
     var address: Results<Address>? {
@@ -1643,9 +2691,9 @@ public class SchemaPerson : Item {
         edges("website")?.items(type:Website.self)
     }
 
-    /// A business or similar type of organization.
-    var company: Results<Company>? {
-        edges("company")?.items(type:Company.self)
+    /// A sector that produces goods or related services within an economy.
+    var industry: Results<Industry>? {
+        edges("industry")?.items(type:Industry.self)
     }
 
     /// A crypto key used in a cryptography protocol.
@@ -1653,9 +2701,10 @@ public class SchemaPerson : Item {
         edges("cryptoKey")?.items(type:CryptoKey.self)
     }
 
-    /// An online profile, typically on social media.
-    var onlineProfile: Results<OnlineProfile>? {
-        edges("onlineProfile")?.items(type:OnlineProfile.self)
+    /// An account or subscription, for instance for some online service, or a bank account or
+    /// wallet.
+    var account: Results<Account>? {
+        edges("account")?.items(type:Account.self)
     }
 
     /// A strategy of regulating the intake of food to achieve or maintain a specific
@@ -1670,6 +2719,41 @@ public class SchemaPerson : Item {
         edges("medicalCondition")?.items(type:MedicalCondition.self)
     }
 
+    /// The organization this Item is a member of.
+    var memberOf: Results<Organization>? {
+        edges("memberOf")?.items(type:Organization.self)
+    }
+
+    /// The Event this Item organizes.
+    var performsAt: Results<Event>? {
+        edges("performsAt")?.items(type:Event.self)
+    }
+
+    /// The Event this Item attends.
+    var attends: Results<Event>? {
+        edges("attends")?.items(type:Event.self)
+    }
+
+    /// The Event this Item attends.
+    var organizes: Results<Event>? {
+        edges("organizes")?.items(type:Event.self)
+    }
+
+    /// The Organization this Item has founded.
+    var founded: Results<Organization>? {
+        edges("founded")?.items(type:Organization.self)
+    }
+
+    /// The buying party in a transaction.
+    var buyer: Results<Transaction>? {
+        edges("buyer")?.items(type:Transaction.self)
+    }
+
+    /// The buying party in a transaction.
+    var seller: Results<Transaction>? {
+        edges("seller")?.items(type:Transaction.self)
+    }
+
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
@@ -1681,13 +2765,11 @@ public class SchemaPerson : Item {
             lastName = try decoder.decodeIfPresent("lastName") ?? lastName
             gender = try decoder.decodeIfPresent("gender") ?? gender
             sexualOrientation = try decoder.decodeIfPresent("sexualOrientation") ?? sexualOrientation
-            height.value = try decoder.decodeIfPresent("height") ?? height.value
-            shoulderWidth.value = try decoder.decodeIfPresent("shoulderWidth") ?? shoulderWidth.value
-            armLength.value = try decoder.decodeIfPresent("armLength") ?? armLength.value
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
             nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
             enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
             enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
+            role = try decoder.decodeIfPresent("role") ?? role
 
             try self.superDecode(from: decoder)
         }
@@ -1698,7 +2780,7 @@ public class SchemaPerson : Item {
 public class PhoneNumber : Item {
     /// A phone number with an area code.
     @objc dynamic var phoneNumber:String? = nil
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
@@ -1707,6 +2789,458 @@ public class PhoneNumber : Item {
         jsonErrorHandling(decoder) {
             phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
             type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An image file.
+public class Photo : Item {
+    /// The bitrate of a media object.
+    let bitrate = RealmOptional<Int>()
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+    /// Location of the actual bytes of a File.
+    @objc dynamic var fileLocation:String? = nil
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// Exif data of an image file.
+    @objc dynamic var exifData:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+
+    /// Any type of file that can be stored on disk.
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
+
+    /// Items included within this Item. Included Items can be of any type.
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
+
+    /// Thumbnail image for an Item, typically an image or video.
+    var thumbnail: File? {
+        edge("thumbnail")?.target(type:File.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
+            name = try decoder.decodeIfPresent("name") ?? name
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Some object that exists in the real world.
+public class PhysicalEntity : Item {
+    /// The Person this Item belongs to.
+    var belongsTo: Results<Person>? {
+        edges("belongsTo")?.items(type:Person.self)
+    }
+
+    /// An instance of an Item, for instance the PhysicalEntity instance of a Book.
+    var instanceOf: [Item]? {
+        edges("instanceOf")?.itemsArray()
+    }
+
+    /// The location of for example where the event is happening, an organization is located, or
+    /// where an action takes place.
+    var location: Results<Location>? {
+        edges("location")?.items(type:Location.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Any product.
+public class Product : Item {
+    /// Intended group that would consume or receive this Item.
+    @objc dynamic var audience:String? = nil
+    /// The color of this Item.
+    @objc dynamic var color:String? = nil
+    /// The manufacturer of the Item
+    @objc dynamic var manufacturer:String? = nil
+    /// The model number or name of an Item, for instance of a mobile phone.
+    @objc dynamic var model:String? = nil
+    /// A repeated decorative design.
+    @objc dynamic var pattern:String? = nil
+    /// The date this item was acquired.
+    @objc dynamic var dateAcquired:Date? = nil
+    /// A description of the condition of a product, for instance new.
+    @objc dynamic var productCondition:String? = nil
+    /// The date the Item was produced.
+    @objc dynamic var dateProduced:Date? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// A service of any kind.
+    @objc dynamic var service:String? = nil
+
+    /// The material the Item is (partially) made of.
+    var material: Results<Material>? {
+        edges("material")?.items(type:Material.self)
+    }
+
+    /// A type of code related to a Product.
+    var productCode: Results<ProductCode>? {
+        edges("productCode")?.items(type:ProductCode.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// Product fo which this Item is a spare part or accessory.
+    var accessoryOrSparePartFor: Results<Product>? {
+        edges("accessoryOrSparePartFor")?.items(type:Product.self)
+    }
+
+    /// Product that consumes this Item, for instance the printer that takes this ink
+    /// cartridge.
+    var consumableBy: Results<Product>? {
+        edges("consumableBy")?.items(type:Product.self)
+    }
+
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            audience = try decoder.decodeIfPresent("audience") ?? audience
+            color = try decoder.decodeIfPresent("color") ?? color
+            manufacturer = try decoder.decodeIfPresent("manufacturer") ?? manufacturer
+            model = try decoder.decodeIfPresent("model") ?? model
+            pattern = try decoder.decodeIfPresent("pattern") ?? pattern
+            dateAcquired = try decoder.decodeIfPresent("dateAcquired") ?? dateAcquired
+            productCondition = try decoder.decodeIfPresent("productCondition") ?? productCondition
+            dateProduced = try decoder.decodeIfPresent("dateProduced") ?? dateProduced
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            service = try decoder.decodeIfPresent("service") ?? service
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A code or number used to identify Products, for instance a UPC or GTIN.
+public class ProductCode : Item {
+    /// An identifier type for Products, for instance a UPC or GTIN.
+    @objc dynamic var productCodeType:String? = nil
+    /// An identifier for Products, for instance a UPC or GTIN.
+    @objc dynamic var productNumber:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            productCodeType = try decoder.decodeIfPresent("productCodeType") ?? productCodeType
+            productNumber = try decoder.decodeIfPresent("productNumber") ?? productNumber
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A bill that describes money owed for some Transaction.
+public class Receipt : Item {
+    /// The date something is due.
+    @objc dynamic var dateDue:Date? = nil
+
+    /// Any type of file that can be stored on disk.
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
+
+    /// An agreement between a buyer and a seller to exchange an asset for payment.
+    var transaction: Transaction? {
+        edge("transaction")?.target(type:Transaction.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            dateDue = try decoder.decodeIfPresent("dateDue") ?? dateDue
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A set of instructions for preparing a particular dish, including a list of the ingredients
+/// required.
+public class Recipe : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// A set of steps to reach a certain goal.
+    @objc dynamic var instructions:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// An ingredient of an Item.
+    var ingredient: Results<Product>? {
+        edges("ingredient")?.items(type:Product.self)
+    }
+
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    /// The amount produced or financial return.
+    var yield: Results<Measure>? {
+        edges("yield")?.items(type:Measure.self)
+    }
+
+    /// Some tool required by an Item.
+    var toolRequired: Results<Product>? {
+        edges("toolRequired")?.items(type:Product.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            instructions = try decoder.decodeIfPresent("instructions") ?? instructions
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A audio performance or production. Can be a single, album, radio show, podcast etc.
+public class Recording : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// Describes a reservation, for instance for a Route or Event, or at a Organization.
+public class Reservation : Item {
+    /// Reservation date.
+    @objc dynamic var dateReserved:Date? = nil
+    /// The status of a reservation, for instance cancelled.
+    @objc dynamic var reservationStatus:String? = nil
+
+    /// An organization, for instance an NGO, company or school.
+    var organization: Results<Organization>? {
+        edges("organization")?.items(type:Organization.self)
+    }
+
+    /// A route from one Location to another, using some ModeOfTransport.
+    var route: Results<Route>? {
+        edges("route")?.items(type:Route.self)
+    }
+
+    /// The Person who made this reservation.
+    var reservedBy: Results<Person>? {
+        edges("reservedBy")?.items(type:Person.self)
+    }
+
+    /// A Person for whom this reservation was made.
+    var reservedFor: Results<Person>? {
+        edges("reservedFor")?.items(type:Person.self)
+    }
+
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            dateReserved = try decoder.decodeIfPresent("dateReserved") ?? dateReserved
+            reservationStatus = try decoder.decodeIfPresent("reservationStatus") ?? reservationStatus
 
             try self.superDecode(from: decoder)
         }
@@ -1734,12 +3268,159 @@ public class Resource : Item {
     }
 }
 
-/// TBD
+/// A review of an Item, for instance a Organization, CreativeWork, or Product.
+public class Review : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// A rating is an evaluation using some Measure, for instance 1 to 5 stars.
+    var rating: Results<Measure>? {
+        edges("rating")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A route from one Location to another, using some ModeOfTransport.
+public class Route : Item {
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+
+    /// A way of transportation, for instance a bus or airplane.
+    var modeOfTransport: Results<ModeOfTransport>? {
+        edges("modeOfTransport")?.items(type:ModeOfTransport.self)
+    }
+
+    /// The location where some Item starts, for instance the start of a route.
+    var startLocation: Results<Location>? {
+        edges("startLocation")?.items(type:Location.self)
+    }
+
+    /// The location where some Item ends, for instance the destination of a route.
+    var endLocation: Results<Location>? {
+        edges("endLocation")?.items(type:Location.self)
+    }
+
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    /// A Receipt is a confirmation of a transaction.
+    var receipt: Results<Receipt>? {
+        edges("receipt")?.items(type:Receipt.self)
+    }
+
+    /// A ticket for an Event or Route.
+    var ticket: Results<File>? {
+        edges("ticket")?.items(type:File.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A setting, named by a key, specifications in JSON format.
 public class Setting : Item {
     /// A piece of information that determines the functional output of a cryptographic
     /// algorithm.
     @objc dynamic var key:String? = nil
-    /// TBD
+    /// A string in JSON (JavaScript Object Notation) format.
     @objc dynamic var json:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
@@ -1754,10 +3435,352 @@ public class Setting : Item {
     }
 }
 
+/// A specified period of time in which something occurs or is planned to take place.
+public class TimeFrame : Item {
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An agreement between a buyer and a seller to exchange an asset for payment.
+public class Transaction : Item {
+    /// Whether the Item is deleted.
+    @objc dynamic var orderStatus:Bool = false
+    /// Identifier of a transaction.
+    @objc dynamic var orderNumber:String? = nil
+    /// Can be used to get a discount.
+    @objc dynamic var discountCode:String? = nil
+    /// The date this Item was lost.
+    @objc dynamic var dateOrdered:Date? = nil
+    /// Date of execution.
+    @objc dynamic var dateExecuted:Date? = nil
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var purchaseLocation: Results<Location>? {
+        edges("purchaseLocation")?.items(type:Location.self)
+    }
+
+    /// Any Product.
+    var product: Results<Product>? {
+        edges("product")?.items(type:Product.self)
+    }
+
+    /// The address associated with financial purchases.
+    var billingAddress: Results<Address>? {
+        edges("billingAddress")?.items(type:Address.self)
+    }
+
+    /// The Account used to pay.
+    var payedWithAccount: Results<Account>? {
+        edges("payedWithAccount")?.items(type:Account.self)
+    }
+
+    /// A discount or price reduction.
+    var discount: Results<Measure>? {
+        edges("discount")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            orderStatus = try decoder.decodeIfPresent("orderStatus") ?? orderStatus
+            orderNumber = try decoder.decodeIfPresent("orderNumber") ?? orderNumber
+            discountCode = try decoder.decodeIfPresent("discountCode") ?? discountCode
+            dateOrdered = try decoder.decodeIfPresent("dateOrdered") ?? dateOrdered
+            dateExecuted = try decoder.decodeIfPresent("dateExecuted") ?? dateExecuted
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A trip or journey, consisting of Routes.
+public class Trip : Item {
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+
+    /// A route from one Location to another, using some ModeOfTransport.
+    var route: Results<Route>? {
+        edges("route")?.items(type:Route.self)
+    }
+
+    /// The location where some Item starts, for instance the start of a route.
+    var startLocation: Results<Location>? {
+        edges("startLocation")?.items(type:Location.self)
+    }
+
+    /// The location where some Item ends, for instance the destination of a route.
+    var endLocation: Results<Location>? {
+        edges("endLocation")?.items(type:Location.self)
+    }
+
+    /// The price or cost of an Item, typically for one instance of the Item or the
+    /// defaultQuantity.
+    var price: Results<Measure>? {
+        edges("price")?.items(type:Measure.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A unit, typically from International System of Units (SI).
+public class Unit : Item {
+    /// A symbol, for instance to represent a Unit or Measure.
+    @objc dynamic var symbol:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            symbol = try decoder.decodeIfPresent("symbol") ?? symbol
+            name = try decoder.decodeIfPresent("name") ?? name
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A video file.
+public class Video : Item {
+    /// The bitrate of a media object.
+    let bitrate = RealmOptional<Int>()
+    /// The duration of an Item, for instance an event or an Audio file.
+    let duration = RealmOptional<Int>()
+    /// The endTime of something. For a reserved event or service, the time that it is expected
+    /// to end. For actions that span a period of time, when the action was performed. e.g. John wrote a
+    /// book from January to December. For media, including audio and video, it's the time offset of the
+    /// end of a clip within a larger file.
+    @objc dynamic var endTime:Date? = nil
+    /// Location of the actual bytes of a File.
+    @objc dynamic var fileLocation:String? = nil
+    /// The startTime of something. For a reserved event or service, the time that it is
+    /// expected to start. For actions that span a period of time, when the action was performed. e.g.
+    /// John wrote a book from January to December. For media, including audio and video, it's the time
+    /// offset of the start of a clip within a larger file.
+    @objc dynamic var startTime:Date? = nil
+    /// The caption for this object. For downloadable machine formats (closed caption, subtitles
+    /// etc.) use MediaObject and indicate the encodingFormat.
+    @objc dynamic var caption:String? = nil
+    /// Exif data of an image file.
+    @objc dynamic var exifData:String? = nil
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+
+    /// Any type of file that can be stored on disk.
+    var file: File? {
+        edge("file")?.target(type:File.self)
+    }
+
+    /// Items included within this Item. Included Items can be of any type.
+    var includes: [Item]? {
+        edges("includes")?.itemsArray()
+    }
+
+    /// Thumbnail image for an Item, typically an image or video.
+    var thumbnail: Results<File>? {
+        edges("thumbnail")?.items(type:File.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            bitrate.value = try decoder.decodeIfPresent("bitrate") ?? bitrate.value
+            duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
+            endTime = try decoder.decodeIfPresent("endTime") ?? endTime
+            fileLocation = try decoder.decodeIfPresent("fileLocation") ?? fileLocation
+            startTime = try decoder.decodeIfPresent("startTime") ?? startTime
+            caption = try decoder.decodeIfPresent("caption") ?? caption
+            exifData = try decoder.decodeIfPresent("exifData") ?? exifData
+            name = try decoder.decodeIfPresent("name") ?? name
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A work of visual arts, for instance a painting, sculpture or drawing.
+public class VisualArt : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An occasion where a choice is made choose between two or more options, for instance an election.
+public class Vote : Item {
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An option for some choice, for instance a Vote.
+    var option: Results<Option>? {
+        edges("option")?.items(type:Option.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// The act casting a vote.
+public class VoteAction : Item {
+    /// Date of execution.
+    @objc dynamic var dateExecuted:Date? = nil
+
+    /// An occasion where a choice is made choose between two or more options, for instance an
+    /// election.
+    var vote: Results<Vote>? {
+        edges("vote")?.items(type:Vote.self)
+    }
+
+    /// An Item this Item is used by.
+    var usedBy: [Item]? {
+        edges("usedBy")?.itemsArray()
+    }
+
+    /// A chosen Option.
+    var choice: Results<Option>? {
+        edges("choice")?.items(type:Option.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            dateExecuted = try decoder.decodeIfPresent("dateExecuted") ?? dateExecuted
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 /// A Website is a set of related web pages and other items typically served from a single web
 /// domain and accessible via URLs.
 public class Website : Item {
-    /// TBD
+    /// The type or (sub)category of some Item.
     @objc dynamic var type:String? = nil
     /// The url property represents the Uniform Resource Location (URL) of a resource.
     @objc dynamic var url:String? = nil
@@ -1774,47 +3797,168 @@ public class Website : Item {
     }
 }
 
+/// A written work, for instance a book, article or note. Doesn't have to be published.
+public class WrittenWork : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var type:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            type = try decoder.decodeIfPresent("type") ?? type
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
 func dataItemListToArray(_ object: Any) -> [Item] {
     var collection: [Item] = []
 
-    if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Account> { list.forEach { collection.append($0) } }
+    if let list = object as? Results<Account> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Article> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<AuditItem> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CVUStateDefinition> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CVUStoredDefinition> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Company> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<DigitalDocument> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Comment> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Message> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<MessageChannel> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<CreativeWork> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<CryptoKey> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Device> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Diet> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Downloader> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Edge> { return list.itemsArray() }
+    else if let list = object as? Results<EmailMessage> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Event> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<ExercisePlan> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<File> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Frequency> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Game> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<GenericAttribute> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<HowTo> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Importer> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<ImporterRun> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Industry> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Invoice> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Lead> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Location> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Address> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Country> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Material> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Measure> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<MediaObject> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Audio> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<MedicalCondition> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Message> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<MessageChannel> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<ModeOfTransport> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<MovingImage> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<NavigationItem> { list.forEach { collection.append($0) } }
-    else if let list = object as? Results<OnlineProfile> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Network> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Offer> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<OpeningHours> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Option> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Organization> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<PerformingArt> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Person> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<PhoneNumber> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Photo> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<PhysicalEntity> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Product> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<ProductCode> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Receipt> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Recipe> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Recording> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Reservation> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Resource> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Review> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Route> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<TimeFrame> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Transaction> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Trip> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Unit> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Video> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<VisualArt> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Vote> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<VoteAction> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Website> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<WrittenWork> { list.forEach { collection.append($0) } }
 
     return collection
 }

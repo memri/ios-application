@@ -600,10 +600,20 @@
     { "_type": "PhoneNumber", "type": "mobile", "uid": 1003, "phoneNumber": "0654271340" },
     { "_type": "Website", "uid": 1004, "type": "blog", "url": "www.revolutionairyblog.com" },
     { "_type": "Website", "uid": 1005, "type": "website", "url": "www.eagleve.com" },
-    { "_type": "Company", "uid": 1006, "type": "freelance", "name": "eagle solutions" },
+    { "_type": "Organization", "uid": 1006, "type": "company", "name": "eagle solutions" },
     { "_type": "CryptoKey", "uid": 1007, "name": "PGP Email", "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517" },
-    { "_type": "OnlineProfile", "uid": 1008, "type": "twitter", "handle": "@eagleve91" },
-    { "_type": "OnlineProfile", "uid": 1009, "type": "facebook", "handle": "@eagleve2393" },
+    { "_type": "Network", "uid": 9998, "name": "Twitter" },
+    { "_type": "Network", "uid": 9999, "name": "Facebook" },
+    { "_type": "Account", "uid": 1008, "type": "twitter", "handle": "@eagleve91",
+        "allEdges": [
+            {"type":"network", "itemType": "Network", "uid": 9998}
+        ]
+    },
+    { "_type": "Account", "uid": 1009, "type": "facebook", "handle": "@eagleve2393",
+        "allEdges": [
+            {"type":"network", "itemType": "Network", "uid": 9999}
+        ]
+    },
     { "_type": "Diet", "uid": 1010, "type": "Vegan", "additions": "egg" },
     { "_type": "Diet", "uid": 1011, "type": "Gluten Free", "additions": "sourdough" },
     { "_type": "MedicalCondition", "uid": 1012, "type": "Psoriasis" },
@@ -657,10 +667,10 @@
             {"type":"hasPhoneNumber", "itemType": "PhoneNumber", "uid": 1003},
             {"type":"website", "itemType": "Website", "uid": 1004},
             {"type":"website", "itemType": "Website", "uid": 1005},
-            {"type":"company", "itemType": "Company", "uid": 1006},
+            {"type":"company", "itemType": "Organization", "uid": 1006, "label": "freelance"},
             {"type":"cryptoKey", "itemType": "CryptoKey", "uid": 1007},
-            {"type":"onlineProfile", "itemType": "OnlineProfile", "uid": 1008},
-            {"type":"onlineProfile", "itemType": "OnlineProfile", "uid": 1009},
+            {"type":"account", "itemType": "Account", "uid": 1008},
+            {"type":"account", "itemType": "Account", "uid": 1009},
             {"type":"diet", "itemType": "Diet", "uid": 1010},
             {"type":"diet", "itemType": "Diet", "uid": 1011},
             {"type":"medicalCondition", "itemType": "MedicalCondition", "uid": 1012},
