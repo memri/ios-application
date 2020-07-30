@@ -11,6 +11,7 @@ struct BarChartModel {
     var hideGridLines: Bool = true
     var forceMinYOfZero: Bool = true
 	var primaryColor: ColorDefinition = ColorDefinition.system(.systemBlue)
+    var barLabelFont: UIFont = UIFont.systemFont(ofSize: 13)
 	var showValueLabels: Bool = true
 	var valueLabelFont: UIFont = UIFont.systemFont(ofSize: 14)
 

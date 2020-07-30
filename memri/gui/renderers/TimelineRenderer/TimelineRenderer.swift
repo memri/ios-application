@@ -5,7 +5,7 @@
 import ASCollectionView
 import SwiftUI
 
-class CascadingTimelineConfig: CascadingRenderConfig {
+class CascadingTimelineConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "calendar.timeline"
 
     var press: Action? { cascadeProperty("press") }
@@ -15,6 +15,12 @@ class CascadingTimelineConfig: CascadingRenderConfig {
     var detailLevelString: String? { cascadeProperty("detailLevel") }
     var detailLevel: TimelineModel
         .DetailLevel { detailLevelString.flatMap(TimelineModel.DetailLevel.init) ?? .day }
+    
+    
+    var showSortInConfig: Bool = true
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {[
+        ConfigPanelModel.ConfigItem(displayName: "Time level", propertyName: "detailLevel", type: .special(.timeLevel), isItemSpecific: false)
+    ]}
 }
 
 struct TimelineRenderer: View {
@@ -81,7 +87,7 @@ struct TimelineRenderer: View {
     func renderElement(_ element: TimelineElement) -> some View {
         if element.isGroup {
             TimelineItemView(icon: Image(systemName: "rectangle.stack"),
-                             title: "\(element.items.count) \(element.itemType.camelCaseToTitleCase())\(element.items.count != 1 ? "s" : "")",
+                             title: "\(element.items.count) \(element.itemType.titleCase())\(element.items.count != 1 ? "s" : "")",
                              backgroundColor: ItemFamily(rawValue: element.itemType)?
                                  .backgroundColor ?? .gray)
                 .frame(maxWidth: .infinity, alignment: .leading)

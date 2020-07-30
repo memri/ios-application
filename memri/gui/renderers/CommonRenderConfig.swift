@@ -8,7 +8,12 @@
 
 import Foundation
 import SwiftUI
+import RealmSwift
 
+protocol ConfigurableRenderConfig {
+    var showSortInConfig: Bool { get }
+	func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem]
+}
 
 // MARK: Common variables needed by renderers
 extension CascadingRenderConfig {
@@ -17,8 +22,8 @@ extension CascadingRenderConfig {
 		set(value) { setState("color", value) }
 	}
 	
-	var backgroundColor: ColorDefinition {
-		get { cascadeProperty("background") ?? ColorDefinition.system(.systemBackground) }
+	var backgroundColor: ColorDefinition? {
+		get { cascadeProperty("background") }
 		set(value) { setState("background", value) }
 	}
 	

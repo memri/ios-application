@@ -430,6 +430,18 @@ public struct UIElementView: SwiftUI.View {
                             self.viewArguments
                         )
                 }
+                else if from.type == .EmailHeader {
+                    EmailHeaderView(senderName: get("title") ?? "Untitled",
+                                    recipientList: get("subtitle"),
+                                    dateString: get("rightSubtitle"),
+                                    color: get("color"))
+                        .setProperties(
+                            from.propertyResolver.properties,
+                            self.item,
+                            context,
+                            self.viewArguments
+                    )
+                }
                 else if from.type == .Image {
                     if has("systemName") {
                         Image(systemName: get("systemName") ?? "exclamationmark.bubble")

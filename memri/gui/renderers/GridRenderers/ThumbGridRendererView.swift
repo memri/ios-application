@@ -113,6 +113,7 @@ struct ThumbGridRendererView: View {
 
                 let section = NSCollectionLayoutSection(group: outerGroup)
                 section.contentInsets = contentInset
+                section.interGroupSpacing = 1
                 return section
             }
         }
@@ -168,9 +169,10 @@ struct ThumbGridRendererView: View {
                 ASCollectionView(section: section)
                     .layout(self.layout)
                     .alwaysBounceVertical()
-					.background(renderConfig.backgroundColor.color)
+                    .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             }
         }
+            .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }
 

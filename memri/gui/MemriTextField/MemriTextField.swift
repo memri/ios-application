@@ -312,6 +312,7 @@ public class MemriTextField_UIKit: UITextField {
     init() {
         super.init(frame: .zero)
         setContentHuggingPriority(.required, for: .vertical)
+        setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         updateToolbar()
     }
 

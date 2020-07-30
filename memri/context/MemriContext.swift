@@ -98,18 +98,14 @@ public class MemriContext: ObservableObject, Subscriptable {
     private var cascadableViewUpdateCancellable: AnyCancellable?
 
     func scheduleUIUpdate(
-        immediate: Bool = false,
+        updateWithAnimation: Bool = false,
         _ check: ((_ context: MemriContext) -> Bool)? = nil
     ) { // Update UI
-        if immediate {
-            #warning(
-                "@Toby how can we prevent the uiUpdateSubject from firing immediate after this?"
-            )
-
-            // Do this straight away, usually for the sake of correct animation
+        if updateWithAnimation {
             DispatchQueue.main.async {
-                // Update UI
-                self.objectWillChange.send()
+                withAnimation {
+                    self.objectWillChange.send()
+                }
             }
             return
         }
@@ -118,6 +114,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             guard check(self) else { return }
         }
 
+        // Queue an update
         uiUpdateSubject.send()
     }
 
@@ -187,7 +184,9 @@ public class MemriContext: ObservableObject, Subscriptable {
 
                 if let x = newValue as? Bool { x ? alias.on?() : alias.off?() }
 
-                scheduleUIUpdate(immediate: true)
+                let shouldAnimate = (propName == "showNavigation")
+                
+                scheduleUIUpdate(updateWithAnimation: shouldAnimate)
             }
             else {
                 print("Cannot set property \(propName), does not exist on context")

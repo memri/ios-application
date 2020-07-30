@@ -13,25 +13,27 @@ struct BarChartSwiftUIView: UIViewRepresentable {
     func makeUIView(context: Context) -> BarChartView {
         let chartView: BarChartView = BarChartView()
         chartView.delegate = context.coordinator
-
+        
         chartView.xAxis.labelPosition = .bottom
-        chartView.xAxis.labelFont = .systemFont(ofSize: 12)
         chartView.xAxis.granularity = 1
         chartView.xAxis.drawGridLinesEnabled = false
         chartView.xAxis.valueFormatter = BarChartXAxisFormatter()
-        chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
         chartView.rightAxis.enabled = false
         chartView.legend.enabled = false
         chartView.pinchZoomEnabled = false
         chartView.scaleXEnabled = false
         chartView.scaleYEnabled = false
         chartView.doubleTapToZoomEnabled = false
-        if model.forceMinYOfZero { chartView.leftAxis.axisMinimum = 0 }
 
         return chartView
     }
 
     func updateUIView(_ chartView: BarChartView, context _: Context) {
+        chartView.xAxis.labelFont = model.barLabelFont
+        chartView.leftAxis.drawGridLinesEnabled = !model.hideGridLines
+        if model.forceMinYOfZero { chartView.leftAxis.axisMinimum = 0 }
+        
+        
         chartView.data = model.generateData()
 
         let labels = model.getLabels()

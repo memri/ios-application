@@ -62,6 +62,7 @@ public class Renderers {
         registerCalendarRenderer()
         registerMessageRenderer()
         registerPhotoViewerRenderer()
+        registerEmailRenderers()
     }
 
     var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {
@@ -149,6 +150,9 @@ public class CascadingRenderConfig: Cascadable {
     ) {
         super.init(head, tail, host)
     }
+    
+    // Used for ui purposes. Random value that doesn't need to be persisted
+    let ui_UUID = UUID()
 
     func hasGroup(_ group: String) -> Bool {
         let x: Any? = cascadeProperty(group)

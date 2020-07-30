@@ -228,4 +228,16 @@ Note[] {
 			isOutgoing: {{.title = "To read list"}} /* This is just a demo until we have a Message type in the schema... */
 		}
 	}
+    
+    [renderer = email] {
+        background: #D3E4D1
+        content: {{.content}}
+        
+        EmailHeader {
+            color: #000000
+            title: {{.title}}
+            subtitle: "Testing out email renderer"
+            rightSubtitle: {{.dateModified}}
+        }
+    }
 }

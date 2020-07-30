@@ -229,10 +229,24 @@
 		B80E01A724C839250005D756 /* ProgressBarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E01A624C839250005D756 /* ProgressBarView.swift */; };
 		B80E01A924C8434F0005D756 /* Array+Segments.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80E01A824C8434F0005D756 /* Array+Segments.swift */; };
 		B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81237EC24A43E42003E8BCB /* MapHelper.swift */; };
+		B81B792F24D04A9E00C25CDF /* ConfigPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */; };
+		B81B793124D04AE700C25CDF /* RendererSelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */; };
+		B81B793324D04CB600C25CDF /* ConfigPanelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B793224D04CB600C25CDF /* ConfigPanelModel.swift */; };
 		B81C05A124C183E100A3738D /* RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81C05A024C183E100A3738D /* RichTextEditor.swift */; };
 		B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */; };
 		B821D67D24C70DCF006D6CFF /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */; };
 		B821D67F24C71274006D6CFF /* DemoAssets in Resources */ = {isa = PBXBuildFile; fileRef = B821D67E24C71274006D6CFF /* DemoAssets */; };
+		B826585324D2D7790051CCFE /* ArrayBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826585224D2D7790051CCFE /* ArrayBuilder.swift */; };
+		B826585524D2EE070051CCFE /* demo_database.json in Resources */ = {isa = PBXBuildFile; fileRef = B826585424D2EE070051CCFE /* demo_database.json */; };
+		B826585824D2F3120051CCFE /* HTMLResources in Resources */ = {isa = PBXBuildFile; fileRef = B826585724D2F3120051CCFE /* HTMLResources */; };
+		B826585A24D2F3250051CCFE /* HTMLHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826585924D2F3250051CCFE /* HTMLHelper.swift */; };
+		B826585D24D2F3620051CCFE /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = B826585C24D2F3620051CCFE /* SwiftSoup */; };
+		B826586124D2F4C50051CCFE /* EmailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586024D2F4C50051CCFE /* EmailView.swift */; };
+		B826586324D2F4FA0051CCFE /* EmailHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586224D2F4FA0051CCFE /* EmailHeaderView.swift */; };
+		B826586524D2F5D70051CCFE /* EmailViewUIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586424D2F5D70051CCFE /* EmailViewUIKit.swift */; };
+		B826586724D2F5EF0051CCFE /* EmailThreadCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586624D2F5EF0051CCFE /* EmailThreadCell.swift */; };
+		B826586B24D2F6CD0051CCFE /* EmailThreadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586A24D2F6CD0051CCFE /* EmailThreadViewController.swift */; };
+		B826586D24D2F86F0051CCFE /* EmailThreadRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586C24D2F86F0051CCFE /* EmailThreadRenderer.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
@@ -497,10 +511,23 @@
 		B80E01A624C839250005D756 /* ProgressBarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressBarView.swift; sourceTree = "<group>"; };
 		B80E01A824C8434F0005D756 /* Array+Segments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+Segments.swift"; sourceTree = "<group>"; };
 		B81237EC24A43E42003E8BCB /* MapHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapHelper.swift; sourceTree = "<group>"; };
+		B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigPanel.swift; sourceTree = "<group>"; };
+		B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSelectionPanel.swift; sourceTree = "<group>"; };
+		B81B793224D04CB600C25CDF /* ConfigPanelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigPanelModel.swift; sourceTree = "<group>"; };
 		B81C05A024C183E100A3738D /* RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RichTextEditor.swift; sourceTree = "<group>"; };
 		B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerRenderer.swift; sourceTree = "<group>"; };
 		B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		B821D67E24C71274006D6CFF /* DemoAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DemoAssets; sourceTree = "<group>"; };
+		B826585224D2D7790051CCFE /* ArrayBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayBuilder.swift; sourceTree = "<group>"; };
+		B826585424D2EE070051CCFE /* demo_database.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = demo_database.json; sourceTree = "<group>"; };
+		B826585724D2F3120051CCFE /* HTMLResources */ = {isa = PBXFileReference; lastKnownFileType = folder; path = HTMLResources; sourceTree = "<group>"; };
+		B826585924D2F3250051CCFE /* HTMLHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTMLHelper.swift; sourceTree = "<group>"; };
+		B826586024D2F4C50051CCFE /* EmailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailView.swift; sourceTree = "<group>"; };
+		B826586224D2F4FA0051CCFE /* EmailHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailHeaderView.swift; sourceTree = "<group>"; };
+		B826586424D2F5D70051CCFE /* EmailViewUIKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailViewUIKit.swift; sourceTree = "<group>"; };
+		B826586624D2F5EF0051CCFE /* EmailThreadCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailThreadCell.swift; sourceTree = "<group>"; };
+		B826586A24D2F6CD0051CCFE /* EmailThreadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailThreadViewController.swift; sourceTree = "<group>"; };
+		B826586C24D2F86F0051CCFE /* EmailThreadRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailThreadRenderer.swift; sourceTree = "<group>"; };
 		B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRenderConfig.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -568,6 +595,7 @@
 				8680189C24D2C9F9004FC4E3 /* Alamofire in Frameworks */,
 				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
+				B826585D24D2F3620051CCFE /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -743,16 +771,17 @@
 			isa = PBXGroup;
 			children = (
 				B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */,
-				B881BECB24BD4A930016DBF5 /* TimelineRenderer */,
-				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
 				8672C27B2497F35A006F0D42 /* CustomRenderer.swift */,
 				B8BF6F4924BEA16A0058067C /* MessageRenderer.swift */,
 				B88AAB3424A1AEF80007C9EB /* GridRenderers */,
+				B881BECB24BD4A930016DBF5 /* TimelineRenderer */,
+				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				B88AAB3324A1AEEE0007C9EB /* MapRenderer */,
 				B88AAB2624A1AE8C0007C9EB /* ChartRenderer */,
 				B821D67924C70DCF006D6CFF /* PhotoViewerRenderer */,
+				B826585624D2F2E10051CCFE /* EmailRenderer */,
 			);
 			path = renderers;
 			sourceTree = "<group>";
@@ -938,6 +967,9 @@
 				B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */,
 				5DD1E9B423FD7EB1007BDF7B /* Search.swift */,
 				5D414AD7242B875F00A3DDFA /* FilterPanel.swift */,
+				B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */,
+				B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */,
+				B81B793224D04CB600C25CDF /* ConfigPanelModel.swift */,
 			);
 			path = browser;
 			sourceTree = "<group>";
@@ -955,6 +987,7 @@
 				86A5D8392437321700F8FAD8 /* Sync.swift */,
 				5D78D071242531BE00F7BD3B /* MainNavigation.swift */,
 				869789ED2434CC750003756B /* Settings.swift */,
+				B826585924D2F3250051CCFE /* HTMLHelper.swift */,
 				8690AF092472F60600FC49F4 /* InMemoryObjectCache.swift */,
 			);
 			path = model;
@@ -1121,6 +1154,7 @@
 			children = (
 				86C3A7382452FFD4006D4F55 /* default_database.json */,
 				8680189124D1D048004FC4E3 /* demo_database.json */,
+				B826585424D2EE070051CCFE /* demo_database.json */,
 				861439F12435942A008D6B5B /* Installer.swift */,
 				8693206624CDD4910030863D /* SetupWizard.swift */,
 			);
@@ -1198,6 +1232,8 @@
 				B80E01A624C839250005D756 /* ProgressBarView.swift */,
 				B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */,
 				B8E8E8B724C99E1C00F1291F /* MemriImageView.swift */,
+				B826586024D2F4C50051CCFE /* EmailView.swift */,
+				B826586224D2F4FA0051CCFE /* EmailHeaderView.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1209,6 +1245,18 @@
 				B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */,
 			);
 			path = PhotoViewerRenderer;
+			sourceTree = "<group>";
+		};
+		B826585624D2F2E10051CCFE /* EmailRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B826585724D2F3120051CCFE /* HTMLResources */,
+				B826586424D2F5D70051CCFE /* EmailViewUIKit.swift */,
+				B826586624D2F5EF0051CCFE /* EmailThreadCell.swift */,
+				B826586A24D2F6CD0051CCFE /* EmailThreadViewController.swift */,
+				B826586C24D2F86F0051CCFE /* EmailThreadRenderer.swift */,
+			);
+			path = EmailRenderer;
 			sourceTree = "<group>";
 		};
 		B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */ = {
@@ -1274,6 +1322,7 @@
 			isa = PBXGroup;
 			children = (
 				B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */,
+				B826585224D2D7790051CCFE /* ArrayBuilder.swift */,
 				B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */,
 				B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */,
 				B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */,
@@ -1388,6 +1437,7 @@
 				B8FB4995249F21A6007A05C4 /* ASCollectionView */,
 				B809186424A4DFF400BD74D8 /* Charts */,
 				8680189B24D2C9F9004FC4E3 /* Alamofire */,
+				B826585C24D2F3620051CCFE /* SwiftSoup */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -1472,6 +1522,7 @@
 				B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */,
 				8680189724D2A8ED004FC4E3 /* XCRemoteSwiftPackageReference "swift-sodium" */,
 				8680189A24D2C9F9004FC4E3 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				B826585B24D2F3620051CCFE /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -1522,6 +1573,7 @@
 				86911E8A24C60647009AC8B1 /* Location.cvu in Resources */,
 				5DAFB6212479527600719160 /* Address.cvu in Resources */,
 				8680189224D1D048004FC4E3 /* demo_database.json in Resources */,
+				B826585524D2EE070051CCFE /* demo_database.json in Resources */,
 				5DAFB628247952A800719160 /* choose-item-by-query.cvu in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
 				5DAFB633247952F500719160 /* UserNote.cvu-disabled in Resources */,
@@ -1534,6 +1586,7 @@
 				861439F62435AF91008D6B5B /* test_sessions.json in Resources */,
 				8699AA2F247BCF1E00EC85C0 /* Note.cvu in Resources */,
 				5DAFB61D2479526900719160 /* SessionView.cvu in Resources */,
+				B826585824D2F3120051CCFE /* HTMLResources in Resources */,
 				5D1A3E66240805C700A0583B /* empty_sessionview.json in Resources */,
 				5DE95A67241BC92E003ABA63 /* openview_action.json in Resources */,
 				8699AA32247BCF3E00EC85C0 /* Person.cvu in Resources */,
@@ -1650,14 +1703,19 @@
 				B8E8E8B824C99E1C00F1291F /* MemriImageView.swift in Sources */,
 				B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */,
 				C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */,
+				B826586B24D2F6CD0051CCFE /* EmailThreadViewController.swift in Sources */,
+				B826585324D2D7790051CCFE /* ArrayBuilder.swift in Sources */,
 				868EF63724766A8800C0375F /* ExprLexer.swift in Sources */,
 				B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */,
 				B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */,
 				5D4C71ED2445E44B00DF09E8 /* GeneralEditorView.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
+				B826586324D2F4FA0051CCFE /* EmailHeaderView.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
 				B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */,
+				B81B792F24D04A9E00C25CDF /* ConfigPanel.swift in Sources */,
 				B88AAB3024A1AEBB0007C9EB /* BarChartView.swift in Sources */,
+				B826586124D2F4C50051CCFE /* EmailView.swift in Sources */,
 				869CA736243F9AA3009C56FF /* SessionSwitcher.swift in Sources */,
 				B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */,
 				86DDB361247AAD030051A92F /* Cascadable.swift in Sources */,
@@ -1670,6 +1728,7 @@
 				5D301F62245C372400183BD2 /* ListRendererView.swift in Sources */,
 				867527BC24B8290B002B5006 /* SettingsPubSub.swift in Sources */,
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
+				B81B793324D04CB600C25CDF /* ConfigPanelModel.swift in Sources */,
 				B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */,
 				868EF6992477960D00C0375F /* HashableClass.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
@@ -1681,6 +1740,7 @@
 				B8627E3B24A9EAAA005A1A8F /* MemriFittedTextEditor.swift in Sources */,
 				86B7A6702457333000292E81 /* ThumbWaterfallRendererView.swift in Sources */,
 				868EF63224766A8800C0375F /* CVUParser.swift in Sources */,
+				B826585A24D2F3250051CCFE /* HTMLHelper.swift in Sources */,
 				B8AA1DF024C82CBB000A879F /* FileStorageController.swift in Sources */,
 				B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */,
 				B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */,
@@ -1696,6 +1756,7 @@
 				5DD17B5D2412677D0018A8F1 /* DefaultCodingKeys.swift in Sources */,
 				B8627E3924A9EAAA005A1A8F /* RichTextToolbar.swift in Sources */,
 				B8627E3D24A9EAAA005A1A8F /* UIFont+.swift in Sources */,
+				B826586D24D2F86F0051CCFE /* EmailThreadRenderer.swift in Sources */,
 				86A5D83C243B3FFF00F8FAD8 /* Loading.swift in Sources */,
 				868EF63524766A8800C0375F /* Expression.swift in Sources */,
 				861439F22435942A008D6B5B /* Installer.swift in Sources */,
@@ -1709,6 +1770,7 @@
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
 				868EF63624766A8800C0375F /* ExprInterpreter.swift in Sources */,
+				B826586724D2F5EF0051CCFE /* EmailThreadCell.swift in Sources */,
 				B8ABA93024C420E80038509F /* DatabaseController.swift in Sources */,
 				8693206524CDD4720030863D /* LocalSettings.swift in Sources */,
 				8690AF042472D8CB00FC49F4 /* string.swift in Sources */,
@@ -1717,6 +1779,7 @@
 				863CDB712441E69F000D7AC0 /* File.swift in Sources */,
 				86A5D83A2437321700F8FAD8 /* Sync.swift in Sources */,
 				866F87EC24572525000E5FAB /* ThumbGridRendererView.swift in Sources */,
+				B826586524D2F5D70051CCFE /* EmailViewUIKit.swift in Sources */,
 				B881BECA24BD3C8B0016DBF5 /* CalendarRenderer.swift in Sources */,
 				86B7A6762457404C00292E81 /* MapRendererView.swift in Sources */,
 				B8627E3E24A9EAAA005A1A8F /* UIView+NextResponder.swift in Sources */,
@@ -1783,6 +1846,7 @@
 				8693206324CDAF8B0030863D /* Authentication.swift in Sources */,
 				8699AA2C247BA55D00EC85C0 /* CVUParseErrors.swift in Sources */,
 				868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */,
+				B81B793124D04AE700C25CDF /* RendererSelectionPanel.swift in Sources */,
 				B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */,
 				868EF63124766A8800C0375F /* CVU.swift in Sources */,
 				5DD17B6E241294E90018A8F1 /* AnyEncodable.swift in Sources */,
@@ -2237,6 +2301,14 @@
 				kind = branch;
 			};
 		};
+		B826585B24D2F3620051CCFE /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.3.2;
+			};
+		};
 		B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-cocoa";
@@ -2270,6 +2342,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B809186324A4DFF400BD74D8 /* XCRemoteSwiftPackageReference "charts" */;
 			productName = Charts;
+		};
+		B826585C24D2F3620051CCFE /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B826585B24D2F3620051CCFE /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
 		};
 		B83E330C2496F3A100D88742 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;

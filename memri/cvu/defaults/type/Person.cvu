@@ -434,9 +434,12 @@ Person[] {
     }
     
     [renderer = chart] {
-        chartTitle: "People by height" /* Use this to override the auto-generated chart title */
+        chartType: bar
+        chartTitle: "Dynamically chart your data"
+        chartSubtitle: "Use the filter panel to change chart types"
         
-        label: "{.firstName}" /* used for bar chart (also provides label on line chart) */
+        label: "{.firstName}" /* provides label for a point/bar */
+        xAxis: {{.age()}} /* used for linechart. Feeling old? Try {{.age() - 10}} to give everyone back a decade ;) */
 		yAxis: {{.height}}
         
         hideGridlines: true
@@ -448,18 +451,5 @@ Person[] {
         
         sortProperty: height
         sortAscending: true
-    }
-    
-    [renderer = chart.line] {
-        chartTitle: "Height vs. Age"
-        chartSubtitle: "A demo of dynamically graphing your data."
-        
-		xAxis: {{.age()}} /* Feeling old? Try {{.age() - 10}} to give everyone back a decade ;) */
-		yAxis: {{.height}}
-        label: "{.firstName}" /* The label to show over the point */
-        
-        lineWidth: 1
-        
-        /* line chart ignores sort (automatically sorted by x-axis) */
     }
 }

@@ -53,7 +53,7 @@ public class Installer: ObservableObject {
         do {
             try readyCallback()
             readyCallback = {}
-            context.scheduleUIUpdate(immediate: true)
+            context.scheduleUIUpdate()
         }
         catch {
             debugHistory.error("\(error)")
@@ -293,7 +293,7 @@ public class Installer: ObservableObject {
 
             self.isInstalled = false
             self.debugMode = false
-            context.scheduleUIUpdate(immediate: true)
+            context.scheduleUIUpdate()
             
             callback(nil)
         }

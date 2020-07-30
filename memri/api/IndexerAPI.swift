@@ -42,7 +42,7 @@ extension IndexerAPI {
                     let content_: String? = note.get("content")
                     guard let content = content_ else { continue }
 
-                    let contentString = content.removeHTML().lowercased()
+                    let contentString = content.strippingHTMLtags().lowercased()
 
                     if allAliases.contains(where: contentString.contains) {
                         // If any of the aliases matches

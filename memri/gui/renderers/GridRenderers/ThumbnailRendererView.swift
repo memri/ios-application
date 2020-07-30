@@ -143,9 +143,10 @@ struct ThumbnailRendererView: View {
                         get: { self.context.currentSession?.swiftUIEditMode ?? EditMode.inactive },
                         set: { self.context.currentSession?.swiftUIEditMode = $0 }
                     ))
-					.background(renderConfig.backgroundColor.color)
+                    .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             }
         }
+            .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }
 

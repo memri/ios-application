@@ -118,9 +118,10 @@ struct ListRendererView: View {
                     })
                     .alwaysBounce()
 					.contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
-					.background(renderConfig.backgroundColor.color)
+                    .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             }
         }
+        .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }
 
