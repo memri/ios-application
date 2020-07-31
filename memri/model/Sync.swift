@@ -301,8 +301,10 @@ class Sync {
                 }
             }
             else {
-                self.syncing = false
-                self.schedule(long: true)
+                self.syncFilesToPod() { _ in
+                    self.syncing = false
+                    self.schedule(long: true)
+                }
             }
         }
     }
@@ -382,7 +384,7 @@ class Sync {
             
             var i = 0
             while true {
-                guard let sha256 = list[safe:i]?.sha256 else {
+                guard let sha256 = list[safe:i]?["sha256"] as? String else {
                     callback(nil) // done
                     return
                 }

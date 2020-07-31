@@ -119,13 +119,25 @@ struct SettingsPane: View {
 
                 NavigationLink(destination: Form {
                     Section(
-                        header: Text("Debug")
+                        header: Text("Debug Settings")
                     ) {
                         Toggle(isOn: getBinding("/device/debug/autoShowErrorConsole")) {
                             Text("Automatically pop up the debug console on errors")
                         }
                         Toggle(isOn: getBinding("/device/debug/autoReloadCVU")) {
                             Text("Automatically reload CVU when it changes")
+                        }
+                    }
+                    
+                    Section(
+                        header: Text("Debug Actions")
+                    ) {
+                        HStack {
+                            Button(action: {
+                                self.context.cache.sync.schedule()
+                            }) {
+                                Text("Sync To Pod")
+                            }
                         }
                     }
                 }) {

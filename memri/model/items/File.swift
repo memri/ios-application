@@ -38,7 +38,14 @@ class LocalFileSyncQueue : Object {
 
 extension File {
     public var url: URL? {
-        sha256.flatMap { uuid in
+        guard sha256 != nil else {
+            return filename.flatMap { uuid in
+                // Normally we just want the URL
+                FileStorageController.getURLForFile(withUUID: uuid)
+            }
+        }
+        
+        return sha256.flatMap { uuid in
             // Normally we just want the URL
             FileStorageController.getURLForFile(withUUID: uuid)
         }
