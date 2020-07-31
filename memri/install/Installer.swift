@@ -76,6 +76,11 @@ public class Installer: ObservableObject {
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
                     
                 self.installDefaultDatabase(context) { error in
+                    if let error = error {
+                        // TODO Error Handling - show to the user
+                        debugHistory.warn("\(error)")
+                        return
+                    }
                     
                     DispatchQueue.main.async {
                         if let error = error {
@@ -148,6 +153,7 @@ public class Installer: ObservableObject {
         }
     }
     
+    #if targetEnvironment(simulator)
     public var testRoot: RootContext? = nil
     public func installForTesting(boot:Bool = true,
                                   _ callback:@escaping (Error?, RootContext?) throws -> Void) {
@@ -216,6 +222,7 @@ public class Installer: ObservableObject {
             catch { debugHistory.error("\(error)") }
         }
     }
+    #endif
     
     public func handleInstallError(error:Error?) {
         // TODO ERror handling - report to the user
@@ -239,7 +246,6 @@ public class Installer: ObservableObject {
         do {
             // Load default objects in database
             try context.cache.install(dbName) { error in
-                
                 if let error = error {
                     callback(error)
                     return
@@ -248,7 +254,6 @@ public class Installer: ObservableObject {
                 // Load default views in database
                 context.views.context = context
                 context.views.install { error in
-                    
                     if let error = error {
                         callback(error)
                         return

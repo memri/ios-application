@@ -47,13 +47,13 @@ extension Address {
     }
 }
 
-extension Company {
+extension Organization {
     override var computedTitle: String {
         name ?? ""
     }
 }
 
-extension OnlineProfile {
+extension Account {
     override var computedTitle: String {
         handle ?? ""
     }

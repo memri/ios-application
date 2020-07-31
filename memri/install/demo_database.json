@@ -150,7 +150,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image6"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image6"}}
         ]
     },
     {
@@ -158,7 +158,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager9"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager9"}}
         ]
     },
     {
@@ -166,7 +166,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager39"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager39"}}
         ]
     },
     {
@@ -174,7 +174,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image7"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image7"}}
         ]
     },
     {
@@ -183,7 +183,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image4"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image4"}}
         ]
     },
     {
@@ -192,7 +192,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image5"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image5"}}
         ]
     },
     {
@@ -200,7 +200,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image2"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image2"}}
         ]
     },
     {
@@ -208,7 +208,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image13"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image13"}}
         ]
     },
     {
@@ -216,7 +216,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "karen-penroz-06ZTGDcAQFs-unsplash"}}
+            {"type":"file", "target": {"_type": "File", "filename": "karen-penroz-06ZTGDcAQFs-unsplash"}}
         ]
     },
     {
@@ -224,7 +224,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image16"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image16"}}
         ]
     },
     {
@@ -232,7 +232,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager67"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager67"}}
         ]
     },
     {
@@ -240,7 +240,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager69"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager69"}}
         ]
     },
     {
@@ -248,7 +248,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager71"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager71"}}
         ]
     },
     {
@@ -256,7 +256,7 @@
         "width": 1000,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person30"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person30"}}
         ]
     },
     
@@ -267,7 +267,7 @@
         "height": 1500,
         "caption": "A bridge at night",
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "ave-calvar-ukuIJ6ReFms-unsplash"}}
+            {"type":"file", "target": {"_type": "File", "filename": "ave-calvar-ukuIJ6ReFms-unsplash"}}
         ]
     },
     {
@@ -275,7 +275,7 @@
         "width": 1482,
         "height": 1000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "karen-penroz-06ZTGDcAQFs-unsplash"}}
+            {"type":"file", "target": {"_type": "File", "filename": "karen-penroz-06ZTGDcAQFs-unsplash"}}
         ]
     },
     
@@ -285,7 +285,7 @@
         "height": 1500,
         "caption": "Lavender",
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash"}}
+            {"type":"file", "target": {"_type": "File", "filename": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash"}}
         ]
     },
     {
@@ -294,7 +294,7 @@
         "height": 1333,
         "caption": "Coffee is the answer!",
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "szabo-viktor-tarTTEaiIx4-unsplash"}}
+            {"type":"file", "target": {"_type": "File", "filename": "szabo-viktor-tarTTEaiIx4-unsplash"}}
         ]
     },
     {
@@ -303,7 +303,7 @@
         "height": 1024,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image12"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image12"}}
         ]
     },
     {
@@ -312,7 +312,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image2"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image2"}}
         ]
     },
     {
@@ -321,7 +321,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person1"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person1"}}
         ]
     },
     {
@@ -330,7 +330,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image1"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image1"}}
         ]
     },
     {
@@ -339,7 +339,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image3"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image3"}}
         ]
     },
     {
@@ -348,7 +348,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image6"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image6"}}
         ]
     },
     {
@@ -357,7 +357,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-imager43"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-imager43"}}
         ]
     },
     {
@@ -366,7 +366,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image7"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image7"}}
         ]
     },
     {
@@ -375,7 +375,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image8"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image8"}}
         ]
     },
     {
@@ -384,7 +384,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person6"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person6"}}
         ]
     },
     {
@@ -393,7 +393,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image9"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image9"}}
         ]
     },
     {
@@ -402,7 +402,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image10"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image10"}}
         ]
     },
     {
@@ -411,7 +411,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "iphone-image11"}}
+            {"type":"file", "target": {"_type": "File", "filename": "iphone-image11"}}
         ]
     },
     {
@@ -421,7 +421,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person9"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person9"}}
         ]
     },
     {
@@ -430,7 +430,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person10"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person10"}}
         ]
     },
     {
@@ -439,7 +439,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person11"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person11"}}
         ]
     },
     {
@@ -448,7 +448,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person12"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person12"}}
         ]
     },
     {
@@ -457,7 +457,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person13"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person13"}}
         ]
     },
     {
@@ -467,7 +467,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person2"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person2"}}
         ]
     },
     
@@ -477,7 +477,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person3"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person3"}}
         ]
     },
     {
@@ -486,7 +486,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person4"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person4"}}
         ]
     },
     {
@@ -495,7 +495,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person14"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person14"}}
         ]
     },
     {
@@ -504,7 +504,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person15"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person15"}}
         ]
     },
     {
@@ -513,7 +513,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person16"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person16"}}
         ]
     },
     {
@@ -522,7 +522,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person17"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person17"}}
         ]
     },
     {
@@ -531,7 +531,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person18"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person18"}}
         ]
     },
     {
@@ -541,7 +541,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person19"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person19"}}
         ]
     },
     {
@@ -551,7 +551,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person20"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person20"}}
         ]
     },
     {
@@ -561,7 +561,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person21"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person21"}}
         ]
     },
     {
@@ -571,7 +571,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person22"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person22"}}
         ]
     },
     {
@@ -581,7 +581,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person23"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person23"}}
         ]
     },
     {
@@ -590,7 +590,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person24"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person24"}}
         ]
     },
     {
@@ -600,7 +600,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person25"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person25"}}
         ]
     },
     {
@@ -610,7 +610,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person26"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person26"}}
         ]
     },
     {
@@ -620,7 +620,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person27"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person27"}}
         ]
     },
     {
@@ -630,7 +630,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person28"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person28"}}
         ]
     },
     {
@@ -639,7 +639,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person29"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person29"}}
         ]
     },
     {
@@ -648,7 +648,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person30"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person30"}}
         ]
     },
     {
@@ -658,7 +658,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person7"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person7"}}
         ]
     },
     
@@ -669,7 +669,7 @@
         "height": 250,
         "dateCreated": 1589691657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0001"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0001"}}
         ]
     },
     {
@@ -678,7 +678,7 @@
         "height": 250,
         "dateCreated": 1591765257000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0002"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0002"}}
         ]
     },
     {
@@ -688,7 +688,7 @@
         "height": 250,
         "dateCreated": 1592283657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0003"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0003"}}
         ]
     },
     {
@@ -697,7 +697,7 @@
         "height": 250,
         "dateCreated": 1592483657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0004"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0004"}}
         ]
     },
     {
@@ -706,7 +706,7 @@
         "height": 250,
         "dateCreated": 1591183657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0005"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0005"}}
         ]
     },
     {
@@ -715,7 +715,7 @@
         "height": 250,
         "dateCreated": 1591981657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0006"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0006"}}
         ]
     },
     {
@@ -724,7 +724,7 @@
         "height": 250,
         "dateCreated": 1590561657000,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0007"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0007"}}
         ]
     },
     {
@@ -732,7 +732,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0008"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0008"}}
         ]
     },
     {
@@ -740,7 +740,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0009"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0009"}}
         ]
     },
     {
@@ -748,7 +748,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0010"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0010"}}
         ]
     },
     {
@@ -756,7 +756,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0011"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0011"}}
         ]
     },
     {
@@ -764,7 +764,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0012"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0012"}}
         ]
     },
     {
@@ -772,7 +772,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0013"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0013"}}
         ]
     },
     {
@@ -780,7 +780,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0014"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0014"}}
         ]
     },
     {
@@ -788,7 +788,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0015"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0015"}}
         ]
     },
     {
@@ -796,7 +796,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0016"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0016"}}
         ]
     },
     {
@@ -804,7 +804,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0017"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0017"}}
         ]
     },
     {
@@ -812,7 +812,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0018"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0018"}}
         ]
     },
     {
@@ -820,7 +820,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0019"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0019"}}
         ]
     },
     {
@@ -828,7 +828,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0020"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0020"}}
         ]
     },
     {
@@ -836,7 +836,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0021"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0021"}}
         ]
     },
     {
@@ -844,7 +844,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0022"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0022"}}
         ]
     },
     {
@@ -852,7 +852,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0023"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0023"}}
         ]
     },
     {
@@ -860,7 +860,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0024"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0024"}}
         ]
     },
     {
@@ -868,7 +868,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0025"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0025"}}
         ]
     },
     {
@@ -876,7 +876,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0026"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0026"}}
         ]
     },
     {
@@ -884,7 +884,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0027"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0027"}}
         ]
     },
     {
@@ -892,7 +892,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0028"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0028"}}
         ]
     },
     {
@@ -900,7 +900,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0029"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0029"}}
         ]
     },
     {
@@ -908,7 +908,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0030"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0030"}}
         ]
     },
     {
@@ -916,7 +916,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0031"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0031"}}
         ]
     },
     {
@@ -924,7 +924,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0032"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0032"}}
         ]
     },
     {
@@ -932,7 +932,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0033"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0033"}}
         ]
     },
     {
@@ -940,7 +940,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0034"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0034"}}
         ]
     },
     {
@@ -948,7 +948,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0035"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0035"}}
         ]
     },
     {
@@ -956,7 +956,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0036"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0036"}}
         ]
     },
     {
@@ -964,7 +964,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0037"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0037"}}
         ]
     },
     {
@@ -972,7 +972,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0038"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0038"}}
         ]
     },
     {
@@ -980,7 +980,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0039"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0039"}}
         ]
     },
     {
@@ -988,7 +988,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0040"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0040"}}
         ]
     },
     {
@@ -996,7 +996,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0041"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0041"}}
         ]
     },
     {
@@ -1004,7 +1004,7 @@
         "width": 250,
         "height": 250,
         "allEdges": [
-            {"type":"file", "target": {"_type": "File", "uri": "Arnold_Schwarzenegger_0042"}}
+            {"type":"file", "target": {"_type": "File", "filename": "Arnold_Schwarzenegger_0042"}}
         ]
     },
     
@@ -1017,7 +1017,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person10"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person10"}}
         ]
     },
     {
@@ -1026,7 +1026,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image17"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image17"}}
         ]
     },
     {
@@ -1035,7 +1035,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image18"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image18"}}
         ]
     },
     {
@@ -1045,7 +1045,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person58"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person58"}}
         ]
     },
     {
@@ -1054,7 +1054,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image19"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image19"}}
         ]
     },
     {
@@ -1063,7 +1063,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person56"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person56"}}
         ]
     },
     {
@@ -1072,7 +1072,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image29"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image29"}}
         ]
     },
     {
@@ -1081,7 +1081,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image55"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image55"}}
         ]
     },
     {
@@ -1090,7 +1090,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person52"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person52"}}
         ]
     },
     {
@@ -1099,7 +1099,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 1},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image19"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image19"}}
         ]
     },
     
@@ -1113,7 +1113,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person34"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person34"}}
         ]
     },
     {
@@ -1122,7 +1122,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image20"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image20"}}
         ]
     },
     {
@@ -1131,7 +1131,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image19"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image19"}}
         ]
     },
     {
@@ -1140,7 +1140,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image24"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image24"}}
         ]
     },
     {
@@ -1149,7 +1149,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person0"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person0"}}
         ]
     },
     {
@@ -1158,7 +1158,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image19"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image19"}}
         ]
     },
     {
@@ -1168,7 +1168,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person43"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person43"}}
         ]
     },
     {
@@ -1177,7 +1177,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image57"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image57"}}
         ]
     },
     {
@@ -1186,7 +1186,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person36"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person36"}}
         ]
     },
     {
@@ -1195,7 +1195,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 2},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image-27"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image-27"}}
         ]
     },
     
@@ -1207,7 +1207,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person54"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person54"}}
         ]
     },
     {
@@ -1216,7 +1216,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image21"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image21"}}
         ]
     },
     {
@@ -1225,7 +1225,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image24"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image24"}}
         ]
     },
     {
@@ -1234,7 +1234,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person41"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person41"}}
         ]
     },
     {
@@ -1243,7 +1243,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person57"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person57"}}
         ]
     },
     {
@@ -1252,7 +1252,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image58"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image58"}}
         ]
     },
     {
@@ -1261,7 +1261,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image23"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image23"}}
         ]
     },
     {
@@ -1270,7 +1270,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 3},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person15"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person15"}}
         ]
     },
     
@@ -1285,7 +1285,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person6"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person6"}}
         ]
     },
     {
@@ -1294,7 +1294,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image18"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image18"}}
         ]
     },
     {
@@ -1303,7 +1303,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image59"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image59"}}
         ]
     },
     {
@@ -1312,7 +1312,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person49"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person49"}}
         ]
     },
     {
@@ -1321,7 +1321,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image25"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image25"}}
         ]
     },
     {
@@ -1330,7 +1330,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image60"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image60"}}
         ]
     },
     {
@@ -1339,7 +1339,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person50"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person50"}}
         ]
     },
     
@@ -1353,7 +1353,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person33"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person33"}}
         ]
     },
     {
@@ -1362,7 +1362,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image22"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image22"}}
         ]
     },
     {
@@ -1371,7 +1371,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image28"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image28"}}
         ]
     },
     {
@@ -1380,7 +1380,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "unsplash-image30"}}
+            {"type":"file", "target": {"_type": "File", "filename": "unsplash-image30"}}
         ]
     },
     {
@@ -1389,7 +1389,7 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person18"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person18"}}
         ]
     },
     {
@@ -1398,15 +1398,9 @@
         "height": 250,
         "allEdges": [
             {"type":"includes", "itemType": "Person", "uid": 4},
-            {"type":"file", "target": {"_type": "File", "uri": "fake-person33"}}
+            {"type":"file", "target": {"_type": "File", "filename": "fake-person33"}}
         ]
     },
-    
-    
-    
-    
-    
-    
     { "_type": "Label", "uid": 1000, "name": "Green house", "color": "#047a0a", "aliases": ["green house", "green-house"] },
     { "_type": "Label", "uid": 1001, "name": "Soccer team", "color": "#83ac06" },
     { "_type": "Label", "uid": 1002, "name": "Friends from University", "color": "#ffd966" },

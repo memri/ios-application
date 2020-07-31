@@ -13,6 +13,7 @@ struct SettingsPane: View {
         Binding<T>(
             get: { () -> T in
                 // TODO: Error handling
+                #warning("@Toby this is being called in a loop continuously when settings is opened. do you know why?")
                 if let x: T = self.context.settings.get(path) {
                     return x
                 }
@@ -49,18 +50,6 @@ struct SettingsPane: View {
                             MemriTextField(value: getBinding("/user/pod/host") as Binding<String>)
                         }
                         HStack {
-                            Text("Username:")
-                                .frame(width: 100, alignment: .leading)
-                            MemriTextField(
-                                value: getBinding("/user/pod/username") as Binding<String>
-                            )
-                        }
-                        HStack {
-                            Text("Password:")
-                                .frame(width: 100, alignment: .leading)
-                            SecureField("Password", text: getBinding("/user/pod/password"))
-                        }
-                        HStack {
                             Button(action: {
                                 if let datasource = self.context.currentView?.datasource
                                     .flattened() {
@@ -70,6 +59,13 @@ struct SettingsPane: View {
                             }) {
                                 Text("Connect")
                             }
+                        }
+                    }
+                    Section(
+                        header: Text("Syncing")
+                    ) {
+                        Toggle(isOn: getBinding("/device/upload/cellular")) {
+                            Text("Enable upload of images while on cellular")
                         }
                     }
                 }) {
@@ -123,13 +119,25 @@ struct SettingsPane: View {
 
                 NavigationLink(destination: Form {
                     Section(
-                        header: Text("Debug")
+                        header: Text("Debug Settings")
                     ) {
                         Toggle(isOn: getBinding("/device/debug/autoShowErrorConsole")) {
                             Text("Automatically pop up the debug console on errors")
                         }
                         Toggle(isOn: getBinding("/device/debug/autoReloadCVU")) {
                             Text("Automatically reload CVU when it changes")
+                        }
+                    }
+                    
+                    Section(
+                        header: Text("Debug Actions")
+                    ) {
+                        HStack {
+                            Button(action: {
+                                self.context.cache.sync.schedule()
+                            }) {
+                                Text("Sync To Pod")
+                            }
                         }
                     }
                 }) {

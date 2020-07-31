@@ -19,7 +19,14 @@ class ItemReference {
     }
 
     func resolve() -> Item? {
-        DatabaseController.current { $0.object(ofType: self.type, forPrimaryKey: self.uid) }
+        do {
+            return try DatabaseController.tryCurrent {
+                $0.object(ofType: self.type, forPrimaryKey: self.uid)
+            }
+        }
+        catch {
+            return nil
+        }
     }
 }
 
@@ -44,12 +51,17 @@ class EdgeReference {
     }
 
     func resolve() -> Edge? {
-        DatabaseController.current {
-            $0.objects(Edge.self).filter("""
-                type = '\(self.type)'
-                    AND sourceItemID = \(self.sourceItemID)
-                    AND targetItemID = \(self.targetItemID)
-            """).first
+        do {
+            return try DatabaseController.tryCurrent {
+                $0.objects(Edge.self).filter("""
+                    type = '\(self.type)'
+                        AND sourceItemID = \(self.sourceItemID)
+                        AND targetItemID = \(self.targetItemID)
+                """).first
+            }
+        }
+        catch {
+            return nil
         }
     }
 }
@@ -71,7 +83,7 @@ class DatabaseController {
             
             // Set the new schema version. This must be greater than the previously used
             // version (if you've never set a schema version before, the version is 0).
-            schemaVersion: 101,
+            schemaVersion: 110,
 
             // Set the block which will be called automatically when opening a Realm with
             // a schema version lower than the one set above
@@ -161,8 +173,17 @@ class DatabaseController {
         if !realmTesting {
             #if targetEnvironment(simulator)
             if !reportedKey {
-                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 reportedKey = true
+                print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
+                Authentication.getOwnerAndDBKey { err, owner, db in
+                    if err != nil {
+                        reportedKey = false
+                        return
+                    }
+                    
+                    print("OWNER KEY: \(owner ?? "")")
+                    print("DB KEY: \(db ?? "")")
+                }
             }
             #endif
             
@@ -306,7 +327,7 @@ class DatabaseController {
     }
     
     static func deleteDatabase(_ callback:@escaping (Error?) -> Void) {
-        Authentication.authenticateOwner { error in
+        Authentication.authenticateOwnerByPasscode { error in
             if let error = error {
                 callback("Unable to authenticate: \(error)")
                 return
