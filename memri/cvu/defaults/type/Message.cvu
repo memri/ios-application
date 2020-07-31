@@ -1,0 +1,127 @@
+[session = all-messages] {
+    [view] {
+        title: "All Messages"
+        [datasource = pod] {
+            query: "Message"
+        }
+    }
+}
+
+Message {
+    title: {{.title or "Untitled" }}
+    defaultRenderer: custom
+    editActionButton: toggleEditMode
+    filterButtons: [
+        openView {
+            icon: "increase.indent"
+            title: "Show Timeline"
+            
+            view: {
+                defaultRenderer: timeline
+                
+                [datasource = pod] {
+                    query: "AuditItem appliesTo:{.id}"
+                    sortProperty: dateCreated
+                    sortAscending: true
+                }
+                
+                [renderer = timeline] {
+                    timeProperty: dateCreated
+                }
+            }
+        }
+        showContextPane
+    ]
+    
+    contextPane {
+        buttons: star schedule
+        
+        actions: [
+            showOverlay { title: "Share with..." }
+            addToPanel { title: "Add to list..." }
+            duplicate { title: "Duplicate Note" }
+        ]
+        
+        navigate: [
+            openView {
+                title: "Timeline of this note"
+                view: {
+                    defaultRenderer: timeline
+                    
+                    [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
+                }
+            }
+            openViewByName {
+                title: "Starred notes"
+                viewName: "filter-starred"
+                viewArguments: {
+                    include: "all-notes"
+                }
+            }
+            openSessionByName {
+                title: "All notes"
+                sessionName: "all-notes"
+            }
+        ]
+    }
+    
+    [renderer = custom] {
+        RichTextfield {
+            htmlValue: {{.content}}
+            value: {{.textContent}}
+            title: {{.title}}
+            titleHint: "Untitled Note"
+            fontSize: 18
+        }
+    }
+}
+
+Message[] {
+    defaultRenderer: messages
+    filterButtons: showStarred toggleFilterPanel
+    
+    [renderer = list] {
+        MessageBubble {
+            sender: {{.subject}}
+            content: {{.content.plainString}}
+            dateTime: {{.dateSent}}
+            isOutgoing: {{.sender.owner = me}}
+        }
+    }
+    
+    [renderer = thumbnail] {
+        MessageBubble {
+            sender: {{.sender.displayName}}
+            content: {{.content.plainString}}
+            dateTime: {{.dateSent}}
+            isOutgoing: {{.sender.owner = me}}
+        }
+    }
+    
+    [renderer = messages] {
+        background: #D3E4D1
+        spacing: 8
+        
+        send: sendMessage {
+            network: {{.type}}
+            contents: {{composedText}}
+        }
+        
+        VStack {
+            MessageBubble {
+                sender: {{.sender.displayName}}
+                content: {{.content.plainString}}
+                dateTime: {{.dateSent}}
+                isOutgoing: {{.sender.owner = me}}
+            }
+        }
+    }
+}

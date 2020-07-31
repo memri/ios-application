@@ -7,7 +7,6 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
-// TODO: using NSCache for OS level purging of cache when memory is needed
 public class InMemoryObjectCache {
     static var global = InMemoryObjectCache()
 
@@ -27,6 +26,10 @@ public class InMemoryObjectCache {
 
     public func get(_ key: String) -> Any? {
         cache[key] as Any?
+    }
+    
+    public func clear(_ key: String) {
+        cache[key] = nil
     }
 }
 

@@ -5,6 +5,7 @@
 import Combine
 import Foundation
 import RealmSwift
+import Alamofire
 
 /// Provides functions to communicate asynchronously with a Pod (Personal Online Datastore) for storage of data and/or for
 /// executing actions
@@ -93,7 +94,6 @@ public class PodAPI {
         urlRequest.httpMethod = method.rawValue
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        
         let body:[String:Any] = [
             "databaseKey": databaseKey,
             "payload": payload as Any
@@ -129,143 +129,116 @@ public class PodAPI {
         task.resume()
     }
 
+//    private let MAXDEPTH = 2
+//    private func recursiveSearch(
+//        _ item: SchemaItem,
+//        removeUID _: Bool = false
+//    ) throws -> [String: Any] {
+//        if item._action == nil { throw "No action required" }
 //
-    //	private func getArray(_ item: Item, _ prop: String) -> [Item] {
-    //		let className = item.objectSchema[prop]?.objectClassName
+//        var createItems = [[String: Any]]()
+//        var updateItems = [[String: Any]]()
+//        var deleteItems = [[String: Any]]()
+//        var createEdges = [[String: Any]]()
+//        var updateEdges = [[String: Any]]()
+//        var deleteEdges = [[String: Any]]()
 //
-    //		if className == "Edge" {
-    //			var result = [Item]()
+//        func recurEdge(_ edge: Edge, forceInclude: Bool = false) throws {
+//            let a = edge._action
+//            if a == nil, !forceInclude { return }
+//            guard let action = a else { return }
 //
-    //			if let list = item[prop] as? List<Edge> {
-    //				for edge in list {
-    //					if let d = edge.item() {
-    //						result.append(d)
-    //					}
-    //				}
+//            var result = [String: Any]()
 //
-    //				return result
-    //			} else {
-    //				// TODO: error
-    //				return []
-    //			}
-    //		} else if className == "Item" {
-    //			// Unsupported
-    //			return []
-    //		} else {
-    //			return dataItemListToArray(item[prop] as Any)
-    //		}
-    //	}
-
-    private let MAXDEPTH = 2
-    private func recursiveSearch(
-        _ item: SchemaItem,
-        removeUID _: Bool = false
-    ) throws -> [String: Any] {
-        if item._action == nil { throw "No action required" }
-
-        var createItems = [[String: Any]]()
-        var updateItems = [[String: Any]]()
-        var deleteItems = [[String: Any]]()
-        var createEdges = [[String: Any]]()
-        var updateEdges = [[String: Any]]()
-        var deleteEdges = [[String: Any]]()
-
-        func recurEdge(_ edge: Edge, forceInclude: Bool = false) throws {
-            let a = edge._action
-            if a == nil, !forceInclude { return }
-            guard let action = a else { return }
-
-            var result = [String: Any]()
-
-            let properties = item.objectSchema.properties
-            for prop in properties {
-                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
-                    || prop.name == "deleted" || prop.name == "_changedInSession"
-                    || prop.name == "targetItemType" || prop.name == "targetItemID"
-                    || prop.name == "sourceItemType" || prop.name == "sourceItemID" {
-                    // Ignore
-                }
-                else {
-                    result[prop.name] = edge[prop.name]
-                }
-            }
-
-            if let tgt = edge.item() {
-                try recur(tgt)
-                result["_source"] = edge.sourceItemID
-                result["_target"] = edge.targetItemID
-            }
-            else {
-                // Database is corrupt
-                debugHistory.warn("Database corruption; edge to nowhere")
-            }
-
-            switch action {
-            case "create": createEdges.append(result)
-            case "update": updateEdges.append(result)
-            case "delete": deleteEdges.append(result)
-            default: throw "Unexpected action"
-            }
-        }
-
-        func recur(_ item: SchemaItem, forceInclude: Bool = false) throws {
-            let a = item._action
-            if a == nil, !forceInclude { return }
-            guard let action = a else { return }
-
-            let updatedFields = item._updated
-            var result: [String: Any] = [
-                "_type": item.genericType,
-            ]
-
-            let properties = item.objectSchema.properties
-            for prop in properties {
-                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
-                    || prop.name == "deleted" || prop.name == "_changedInSession" {
-                    // Ignore
-                }
-                else if prop.name == "allEdges" {
-                    for edge in item.allEdges {
-                        try recurEdge(edge, forceInclude: action == "create")
-                    }
-                }
-                else if updatedFields.contains(prop.name) {
-                    if prop.type == .object {
-                        throw "Unexpected object schema"
-                    }
-                    else {
-                        result[prop.name] = item[prop.name]
-                    }
-                }
-            }
-
-            switch action {
-            case "create": createItems.append(result)
-            case "update": updateItems.append(result)
-            case "delete": deleteItems.append(result)
-            default: throw "Unexpected action"
-            }
-        }
-
-        // TODO: refactor: error handling
-        do {
-            _ = try recur(item)
-
-            var result = [String: Any]()
-            if createItems.count > 0 { result["createItems"] = createItems }
-            if updateItems.count > 0 { result["updateItems"] = updateItems }
-            if deleteItems.count > 0 { result["deleteItems"] = deleteItems }
-            if createEdges.count > 0 { result["createEdges"] = createEdges }
-            if updateEdges.count > 0 { result["updateEdges"] = updateEdges }
-            if deleteEdges.count > 0 { result["deleteEdges"] = deleteEdges }
-
-            return result
-        }
-        catch {
-            debugHistory.error("Exception while communicating with the pod: \(error)")
-            return [:]
-        }
-    }
+//            let properties = item.objectSchema.properties
+//            for prop in properties {
+//                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+//                    || prop.name == "deleted" || prop.name == "_changedInSession"
+//                    || prop.name == "targetItemType" || prop.name == "targetItemID"
+//                    || prop.name == "sourceItemType" || prop.name == "sourceItemID" {
+//                    // Ignore
+//                }
+//                else {
+//                    result[prop.name] = edge[prop.name]
+//                }
+//            }
+//
+//            if let tgt = edge.item() {
+//                try recur(tgt)
+//                result["_source"] = edge.sourceItemID
+//                result["_target"] = edge.targetItemID
+//            }
+//            else {
+//                // Database is corrupt
+//                debugHistory.warn("Database corruption; edge to nowhere")
+//            }
+//
+//            switch action {
+//            case "create": createEdges.append(result)
+//            case "update": updateEdges.append(result)
+//            case "delete": deleteEdges.append(result)
+//            default: throw "Unexpected action"
+//            }
+//        }
+//
+//        func recur(_ item: SchemaItem, forceInclude: Bool = false) throws {
+//            let a = item._action
+//            if a == nil, !forceInclude { return }
+//            guard let action = a else { return }
+//
+//            let updatedFields = item._updated
+//            var result: [String: Any] = [
+//                "_type": item.genericType,
+//            ]
+//
+//            let properties = item.objectSchema.properties
+//            for prop in properties {
+//                if prop.name == "_updated" || prop.name == "_action" || prop.name == "_partial"
+//                    || prop.name == "deleted" || prop.name == "_changedInSession" {
+//                    // Ignore
+//                }
+//                else if prop.name == "allEdges" {
+//                    for edge in item.allEdges {
+//                        try recurEdge(edge, forceInclude: action == "create")
+//                    }
+//                }
+//                else if updatedFields.contains(prop.name) {
+//                    if prop.type == .object {
+//                        throw "Unexpected object schema"
+//                    }
+//                    else {
+//                        result[prop.name] = item[prop.name]
+//                    }
+//                }
+//            }
+//
+//            switch action {
+//            case "create": createItems.append(result)
+//            case "update": updateItems.append(result)
+//            case "delete": deleteItems.append(result)
+//            default: throw "Unexpected action"
+//            }
+//        }
+//
+//        // TODO: refactor: error handling
+//        do {
+//            _ = try recur(item)
+//
+//            var result = [String: Any]()
+//            if createItems.count > 0 { result["createItems"] = createItems }
+//            if updateItems.count > 0 { result["updateItems"] = updateItems }
+//            if deleteItems.count > 0 { result["deleteItems"] = deleteItems }
+//            if createEdges.count > 0 { result["createEdges"] = createEdges }
+//            if updateEdges.count > 0 { result["updateEdges"] = updateEdges }
+//            if deleteEdges.count > 0 { result["deleteEdges"] = deleteEdges }
+//
+//            return result
+//        }
+//        catch {
+//            debugHistory.error("Exception while communicating with the pod: \(error)")
+//            return [:]
+//        }
+//    }
 
     func toJSON(_ result: [String: Any]) throws -> Data {
         try MemriJSONEncoder.encode(AnyCodable(result))
@@ -368,14 +341,14 @@ public class PodAPI {
         }
     }
 
-    public func sync(
-        _ item: SchemaItem,
-        _ callback: @escaping (_ error: Error?) -> Void
-    ) throws {
-        http(path: "bulk_action", payload: try recursiveSearch(item)) { error, _ in
-            callback(error)
-        }
-    }
+//    public func sync(
+//        _ item: SchemaItem,
+//        _ callback: @escaping (_ error: Error?) -> Void
+//    ) throws {
+//        http(path: "bulk_action", payload: try recursiveSearch(item)) { error, _ in
+//            callback(error)
+//        }
+//    }
 
     public func sync(
         createItems: [SchemaItem]?,
@@ -409,6 +382,139 @@ public class PodAPI {
 
         http(path: "bulk_action", payload: result) { error, _ in
             callback(error)
+        }
+    }
+    
+    public func downloadFile(_ uuid:String,
+                             _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, nil, nil)
+                return
+            }
+            
+            let settings = Settings()
+            let podhost = self.host ?? settings.getString("user/pod/host")
+            guard var baseUrl = URL(string: podhost) else {
+                callback("Invalid pod host set in settings: \(podhost)", nil, nil)
+                return
+            }
+
+            baseUrl = baseUrl
+                .appendingPathComponent("v2")
+                .appendingPathComponent(ownerKey)
+                .appendingPathComponent("get_file")
+            
+            let destination: DownloadRequest.Destination = { _, _ in
+                return (FileStorageController.getURLForFile(withUUID: uuid), [])
+            }
+
+            AF.download(baseUrl, method: .post, requestModifier: {
+                $0.timeoutInterval = 5
+                $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                $0.allowsCellularAccess = settings.getBool("device/upload/cellular") ?? false
+                $0.allowsExpensiveNetworkAccess = false
+                $0.allowsConstrainedNetworkAccess = false
+                $0.cachePolicy = .reloadIgnoringCacheData
+                $0.timeoutInterval = .greatestFiniteMagnitude
+                
+                let body:[String:Any] = [
+                    "databaseKey": dbKey,
+                    "payload": ["sha256": uuid]
+                ]
+                
+                $0.httpBody = try self.toJSON(body)
+            }, to: destination)
+            .downloadProgress { progress in
+                print("Download Progress: \(progress.fractionCompleted)")
+            }
+            .response { response in
+                guard let httpResponse = response.response else {
+                    callback(response.error ?? "Unknown error", nil, nil)
+                    return
+                }
+                
+                guard httpResponse.statusCode < 400 else {
+                    let httpError = HTTPError.ClientError(
+                        httpResponse.statusCode,
+                        "URL: \(baseUrl.absoluteString)"
+                    )
+                    callback(httpError, nil, response.response)
+                    return
+                }
+                
+                callback(nil, nil, httpResponse)
+            }
+        }
+    }
+    
+    public func uploadFile(_ uuid:String,
+                           _ callback: @escaping (Error?, Double?, HTTPURLResponse?) -> Void) {
+        
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, nil, nil)
+                return
+            }
+            
+            let settings = Settings()
+            let podhost = self.host ?? settings.getString("user/pod/host")
+            guard var baseUrl = URL(string: podhost) else {
+                callback("Invalid pod host set in settings: \(podhost)", nil, nil)
+                return
+            }
+
+            baseUrl = baseUrl
+                .appendingPathComponent("v2")
+                .appendingPathComponent(ownerKey)
+                .appendingPathComponent("upload_file")
+                .appendingPathComponent(dbKey)
+                .appendingPathComponent(uuid)
+            
+            let fileURL = FileStorageController.getURLForFile(withUUID: uuid)
+            
+            print("Uploading \(uuid)")
+            
+            AF.upload(fileURL, to: baseUrl, method: .post, requestModifier: {
+                $0.timeoutInterval = 5
+                $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+                $0.allowsCellularAccess = settings.getBool("device/upload/cellular") ?? false
+                $0.allowsExpensiveNetworkAccess = false
+                $0.allowsConstrainedNetworkAccess = false
+                $0.cachePolicy = .reloadIgnoringCacheData
+                $0.timeoutInterval = .greatestFiniteMagnitude
+            })
+            .uploadProgress { progress in
+                callback(nil, progress.fractionCompleted, nil)
+            }
+            .response { response in
+                guard let httpResponse = response.response else {
+                    callback(response.error ?? "Unknown error", nil, nil)
+                    return
+                }
+                
+                if httpResponse.statusCode == 409 {
+                    print("File was already uploaded")
+                    callback(nil, nil, httpResponse)
+                    return
+                }
+                
+                guard httpResponse.statusCode < 400 else {
+                    let httpError = HTTPError.ClientError(
+                        httpResponse.statusCode,
+                        "URL: \(baseUrl.absoluteString)\nBody:"
+                            + (String(data: response.data ?? Data(), encoding: .utf8) ?? "")
+                    )
+                    callback(httpError, nil, response.response)
+                    return
+                }
+                
+                print("Upload success")
+                
+                callback(nil, nil, httpResponse)
+            }
         }
     }
 

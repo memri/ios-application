@@ -10,34 +10,6 @@ import Foundation
 import LocalAuthentication
 import CryptoKit
 
-extension Data {
-    struct HexEncodingOptions: OptionSet {
-        let rawValue: Int
-        static let upperCase = HexEncodingOptions(rawValue: 1 << 0)
-    }
-
-    func hexEncodedString(options: HexEncodingOptions = []) -> String {
-        let format = options.contains(.upperCase) ? "%02hhX" : "%02hhx"
-        return map { String(format: format, $0) }.joined()
-    }
-    
-    init?(hexString: String) {
-        let len = hexString.count / 2
-        var data = Data(capacity: len)
-        for i in 0..<len {
-            let j = hexString.index(hexString.startIndex, offsetBy: i*2)
-            let k = hexString.index(j, offsetBy: 2)
-            let bytes = hexString[j..<k]
-            if var num = UInt8(bytes, radix: 16) {
-                data.append(&num, count: 1)
-            } else {
-                return nil
-            }
-        }
-        self = data
-    }
-}
-
 class Authentication {
     /*
         TODO:
@@ -133,6 +105,56 @@ class Authentication {
         }
     }
     
+//    static private func setupPasscode() {
+//        let secAccessControlbject = SecAccessControlCreateWithFlags(
+//            kCFAllocatorDefault,
+//            kSecAttrAccessibleWhenUnlockedThisDeviceOnly,
+//            .devicePasscode,
+//            nil
+//        )!
+//
+//        let dataToStore = "AnyData".data(using: .utf8)!
+//
+//        let insertQuery: NSDictionary = [
+//            kSecClass: kSecClassGenericPassword,
+//            kSecAttrAccessControl: secAccessControlbject,
+//            kSecAttrService: "PasscodeAuthentication",
+//            kSecValueData: dataToStore as Any,
+//        ]
+//
+//        let _ = SecItemAdd(insertQuery as CFDictionary, nil)
+//    }
+    
+    static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
+        #if targetEnvironment(simulator)
+        if DatabaseController.realmTesting {
+            isOwnerAuthenticated = true
+            callback(nil)
+            return
+        }
+        
+        authenticateOwner(callback)
+        return
+        #endif
+        
+        let query: NSDictionary = [
+            kSecClass:  kSecClassGenericPassword,
+            kSecAttrService  : "PasscodeAuthentication",
+            kSecUseOperationPrompt : "Sign in"
+        ]
+
+        var typeRef : CFTypeRef?
+
+        let status: OSStatus = SecItemCopyMatching(query, &typeRef) //This will prompt the passcode.
+
+        if (status == errSecSuccess) {
+           callback(nil)
+        }
+        else {
+            callback("Authentication failed")
+        }
+    }
+    
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator)
         if DatabaseController.realmTesting {
@@ -148,17 +170,15 @@ class Authentication {
         var authorizationError: NSError?
         let reason = "Authentication is required for you to continue"
         if localAuthenticationContext.canEvaluatePolicy(
-            LAPolicy.deviceOwnerAuthentication,
+            LAPolicy.deviceOwnerAuthenticationWithBiometrics,
             error: &authorizationError
         ) {
-            let biometricType = localAuthenticationContext.biometryType == LABiometryType.faceID
-                ? "Face ID"
-                : "Touch ID"
-            
-            print("Supported Biometric type is: \( biometricType )")
+//            let biometricType = localAuthenticationContext.biometryType == LABiometryType.faceID
+//                ? "Face ID"
+//                : "Touch ID"
             
             localAuthenticationContext.evaluatePolicy (
-                LAPolicy.deviceOwnerAuthentication,
+                LAPolicy.deviceOwnerAuthenticationWithBiometrics,
                 localizedReason: reason
             ) { (success, evaluationError) in
                 
@@ -178,7 +198,25 @@ class Authentication {
             }
               
         } else {
-            callback("User has not enrolled into using Biometrics")
+            localAuthenticationContext.evaluatePolicy (
+                LAPolicy.deviceOwnerAuthentication,
+                localizedReason: reason
+            ) { (success, evaluationError) in
+                
+                if success {
+                    isOwnerAuthenticated = true
+                    
+                    callback(nil)
+                } else {
+                    #warning("Log all errors in the database — how?? At next successful login")
+//                    if let errorObj = evaluationError {
+//                        let messageToDisplay = self.getErrorDescription(errorCode: errorObj._code)
+//                        print(messageToDisplay)
+//                    }
+                    
+                    callback(evaluationError)
+                }
+            }
         }
     }
     

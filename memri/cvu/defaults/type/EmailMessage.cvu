@@ -1,0 +1,137 @@
+[session = all-email-messages] {
+    [view] {
+        title: "All Email Messages"
+        [datasource = pod] {
+            query: "EmailMessage"
+        }
+    }
+}
+
+EmailMessage {
+    title: {{.title or "Untitled" }}
+    defaultRenderer: custom
+    editActionButton: toggleEditMode
+    filterButtons: [
+        openView {
+            icon: "increase.indent"
+            title: "Show Timeline"
+            
+            view: {
+                defaultRenderer: timeline
+                
+                [datasource = pod] {
+                    query: "AuditItem appliesTo:{.id}"
+                    sortProperty: dateCreated
+                    sortAscending: true
+                }
+                
+                [renderer = timeline] {
+                    timeProperty: dateCreated
+                }
+            }
+        }
+        showContextPane
+    ]
+    
+    contextPane {
+        buttons: star schedule
+        
+        actions: [
+            showOverlay { title: "Share with..." }
+            addToPanel { title: "Add to list..." }
+            duplicate { title: "Duplicate Note" }
+        ]
+        
+        navigate: [
+            openView {
+                title: "Timeline of this note"
+                view: {
+                    defaultRenderer: timeline
+                    
+                    [datasource = pod] {
+                        query: "AuditItem appliesTo:{.id}"
+                        sortProperty: dateCreated
+                        sortAscending: true
+                    }
+                    
+                    [renderer = timeline] {
+                        timeProperty: dateCreated
+                    }
+                }
+            }
+            openViewByName {
+                title: "Starred notes"
+                viewName: "filter-starred"
+                viewArguments: {
+                    include: "all-notes"
+                }
+            }
+            openSessionByName {
+                title: "All notes"
+                sessionName: "all-notes"
+            }
+        ]
+    }
+    
+    [renderer = custom] {
+        RichTextfield {
+            htmlValue: {{.content}}
+            value: {{.textContent}}
+            title: {{.title}}
+            titleHint: "Untitled Note"
+            fontSize: 18
+        }
+    }
+}
+
+EmailMessage[] {
+    defaultRenderer: messages
+    filterButtons: showStarred toggleFilterPanel
+    
+    [renderer = list] {
+        MessageBubble {
+            sender: {{.subject}}
+            content: {{.content.plainString}}
+            dateTime: {{.dateSent}}
+            isOutgoing: {{.sender = me}}
+        }
+    }
+    
+    [renderer = thumbnail] {
+        MessageBubble {
+            sender: {{.sender.displayName}}
+            content: {{.content.plainString}}
+            dateTime: {{.dateSent}}
+            isOutgoing: {{.sender = me}}
+        }
+    }
+    
+    [renderer = messages] {
+        background: #D3E4D1
+        spacing: 8
+        
+        send: sendMessage {
+            network: {{.whatsapp}}
+            contents: {{composedText}}
+        }
+        
+        MessageBubble {
+            sender: {{.sender.displayName}}
+            content: {{.content.plainString}}
+            dateTime: {{.dateSent}}
+            isOutgoing: {{.sender = me}}
+        }
+    }
+    
+    [renderer = email] {
+        background: #D3E4D1
+        content: {{.content}}
+        
+        EmailHeader {
+            color: #000000
+            title: {{.subject}}
+            subtitle: "Testing out email renderer"
+            rightSubtitle: {{.dateSent}}
+        }
+    }
+}
