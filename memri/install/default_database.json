@@ -26,6 +26,11 @@
     },
     {
         "_type": "Setting",
+        "key": "defaults/formatting/time",
+        "value": "HH:mm"
+    },
+    {
+        "_type": "Setting",
         "key": "defaults/pod/host",
         "value": "http://localhost:3030"
     },
@@ -220,6 +225,7 @@
     },
     {
         "_type": "Photo",
+        "uid": 79200,
         "width": 1000,
         "height": 1500,
         "caption": "A bridge at night",
@@ -1190,6 +1196,7 @@
         "name": "PGP Email",
         "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517"
     },
+    { "_type": "Network", "uid": 9997, "name": "Whatsapp" },
     { "_type": "Network", "uid": 9998, "name": "Twitter" },
     { "_type": "Network", "uid": 9999, "name": "Facebook" },
     { "_type": "Account", "uid": 1008, "type": "twitter", "handle": "@eagleve91",
@@ -2545,6 +2552,11 @@
                 "itemType": "Person",
                 "uid": 3,
                 "_type": "owner"
+            },
+            {
+                "itemType": "Network",
+                "uid": 9997,
+                "_type": "network"
             }
         ]
     },
@@ -2556,7 +2568,13 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "itemType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "Account",
@@ -2566,7 +2584,13 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "itemType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "Account",
@@ -2576,7 +2600,13 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "itemType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "MessageChannel",
@@ -2642,8 +2672,8 @@
         "_type": "Message",
         "uid": 20000000008,
         "externalId": "93463F7980167E92C28FF0781E650E80",
-        "content": "{\"conversation\":\"test 123\"}\n",
-        "type": "whatsapp",
+        "content": "test 123",
+        "dateSent": 1589691657000,
         "allEdges": [
             {
                 "itemType": "MessageChannel",
@@ -2661,9 +2691,14 @@
         "_type": "Message",
         "uid": 20000000009,
         "externalId": "9BDD372B9D4F7486D2A0",
-        "content": "{\"conversation\":\"hello\"}\n",
-        "type": "whatsapp",
+        "content": "hello",
+        "dateSent": 1589691670000,
         "allEdges": [
+            {
+                "itemType": "Message",
+                "uid": 20000000008,
+                "_type": "message"
+            },
             {
                 "itemType": "MessageChannel",
                 "uid": 20000000005,
@@ -2680,9 +2715,13 @@
         "_type": "Message",
         "uid": 20000000010,
         "externalId": "36A3043A22AC7524060B23FB54815B39",
-        "content": "{\"stickerMessage\":{\"url\":\"https://mmg.whatsapp.net/d/f/Al3HEpTJz7J37BOTcIGyq-saI_dzDoqX9DM7Xdcjtqbz.enc\",\"fileSha256\":\"wFKPp8ZAcSDLaORuLWW33nC7ZywuIazegAu31cyim2g=\",\"fileEncSha256\":\"pKPi4J6vFw6qafQuKuK+ilTS52B2LLU8jIzqg+QFFig=\",\"mediaKey\":\"wZZ50hD9n8UbGPCBV7Kg74FoGV//T7gm4XJhXrTNJi4=\",\"mimetype\":\"image/webp\",\"directPath\":\"/v/t62.7118-24/18863256_177570407071070_7709928085717181665_n.enc?oh=40d6d8a5f81b24df512138c48851ad67\\u0026oe=C64EA1DB\",\"fileLength\":63064,\"mediaKeyTimestamp\":1594989169,\"isAnimated\":false}}\n",
-        "type": "whatsapp",
+        "dateSent": 1589691680000,
         "allEdges": [
+            {
+                "itemType": "Photo",
+                "uid": 79200,
+                "_type": "photo"
+            },
             {
                 "itemType": "MessageChannel",
                 "uid": 20000000005,
@@ -2699,8 +2738,8 @@
         "_type": "Message",
         "uid": 20000000011,
         "externalId": "7A1FCF21F8E4216509EF8300D7C5CC57",
-        "content": "{\"conversation\":\"where r u?\"}\n",
-        "type": "whatsapp",
+        "content": "where r u?",
+        "dateSent": 1589691690000,
         "allEdges": [
             {
                 "itemType": "MessageChannel",
@@ -2718,8 +2757,8 @@
         "_type": "Message",
         "uid": 20000000012,
         "externalId": "EE9E22BD54F93EC48CF9",
-        "content": "{\"conversation\":\"at home\"}\n",
-        "type": "whatsapp",
+        "content": "at home",
+        "dateSent": 1589691700000,
         "allEdges": [
             {
                 "itemType": "MessageChannel",

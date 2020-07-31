@@ -107,7 +107,7 @@ Message[] {
     }
     
     [renderer = messages] {
-        background: #D3E4D1
+        background: #ede6de
         spacing: 8
         
         send: sendMessage {
@@ -115,12 +115,74 @@ Message[] {
             contents: {{composedText}}
         }
         
-        VStack {
-            MessageBubble {
-                sender: {{.sender.displayName}}
-                content: {{.content.plainString}}
-                dateTime: {{.dateSent}}
-                isOutgoing: {{.sender.owner = me}}
+        HStack {
+            align: {{ .sender.owner = me ? "right" : "left" }}
+            padding: {{ .sender.owner = me ? "0 0 0 20" : "0 20 0 0" }}
+            maxWidth: 100000
+            
+            VStack {
+                spacing: 2
+                padding: 6
+                background: {{ .sender.owner = me ? "#dbf7c5" : "#f9f9f9" }} /* TODO: secondarySystemBackground */
+                cornerRadius: 5
+                
+                Text {
+/*                        show: {{previous.dateSent - .dateSent < 30000}}*/
+                    show: {{ !(.sender.owner = me) }}
+                    text: "{.sender.displayName}"
+                    font: 10 bold
+                    color: #743a4c
+                    lineLimit: 1
+                }
+
+                VStack {
+                    show: {{.message}}
+                    background: #CCC
+                    border: #f00 3 /* TODO: Left border only */
+                    cornerRadius: 3
+                    padding: 6
+                    
+                    Text {
+    /*                        show: {{previous.dateSent - .dateSent < 30000}}*/
+                        text: "{.message.sender.displayName}"
+                        font: 10 bold
+                        color: #743a4c
+                        lineLimit: 1
+                    }
+                    
+                    SmartText {
+                        text: {{.message.content.plainString}}
+                        color: #333
+                        font: 8 regular
+                        padding: 6
+                        maxLines: 2
+                    }
+                }
+                
+                SmartText {
+                    show: {{.content}}
+                    text: {{.content.plainString}}
+                    font: 12 regular
+                    color: {{ .sender.owner = me ? "#fff" : "#333" }} /* TODO: label */
+                    maxLines: 100
+                }
+                
+                Image {
+                    show: {{.photo}}
+                    image: {{.photo}}
+                }
+
+                HStack {
+                    align: right
+                    maxWidth: nil
+                    
+                    Text {
+                        font: 10 bold /* TODO: caption?? */
+                        color: #bebec0  /* TODO: SecondaryLabel */
+                        text: "{.dateSent.format('time')}"
+                        lineLimit: 1
+                    }
+                }
             }
         }
     }

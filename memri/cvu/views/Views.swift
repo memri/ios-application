@@ -148,10 +148,12 @@ public class Views {
             if dateFormat != nil || showAgoDate == false || date
                 .timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
                 let dateFormatter = DateFormatter()
-
-                dateFormatter.dateFormat = dateFormat
-                    ?? Settings.shared.get("user/formatting/date")
-                    ?? "yyyy/MM/dd HH:mm"
+                
+                dateFormatter.dateFormat = dateFormat == "time"
+                    ? Settings.shared.get("user/formatting/time")
+                    : dateFormat
+                        ?? Settings.shared.get("user/formatting/date")
+                        ?? "yyyy/MM/dd HH:mm"
 
                 dateFormatter.locale = Locale(identifier: "en_US")
                 dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -222,6 +224,16 @@ public class Views {
                 return getItem(typeName, uid)
             }
             return f
+        case "debug":
+            let f = { (args: [Any?]?) -> Any? in
+                guard args?.count ?? 0 > 0 else {
+                    debugHistory.info("nil")
+                    return nil
+                }
+                debugHistory.info(args?.map{"\($0 ?? "")"}.joined(separator: " ") ?? "")
+                return nil
+            }
+            return f
         case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
         case "context": return context
         case "sessions": return context?.sessions
@@ -242,6 +254,8 @@ public class Views {
             }
         default:
             if let value: Any = viewArguments?.get(name) { return value }
+            
+            debugHistory.warn("Undefined variable \(name)")
             return nil
             //			throw "Exception: Unknown object for property getter: \(name)"
         }
