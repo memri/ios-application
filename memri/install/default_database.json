@@ -52,6 +52,29 @@
     {
         "_type": "NavigationItem",
         "type": "heading",
+        "title": "Inbox"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "inbox",
+        "sessionName": "inbox"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "messages",
+        "sessionName": "all-messages"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "email",
+        "sessionName": "all-email-messages"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "heading",
         "title": "General"
     },
     {
@@ -129,7 +152,13 @@
     {
         "_type": "NavigationItem",
         "type": "item",
-        "title": "location",
+        "title": "locations",
+        "sessionName": "all-locations"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "crypto keys",
         "sessionName": "all-locations"
     },
     {
@@ -196,8 +225,8 @@
         "caption": "A bridge at night",
         "allEdges": [
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "ave-calvar-ukuIJ6ReFms-unsplash"
                 }
@@ -210,8 +239,8 @@
         "height": 1000,
         "allEdges": [
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "karen-penroz-06ZTGDcAQFs-unsplash"
                 }
@@ -225,8 +254,8 @@
         "caption": "Lavender",
         "allEdges": [
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash"
                 }
@@ -240,8 +269,8 @@
         "caption": "Coffee is the answer!",
         "allEdges": [
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "szabo-viktor-tarTTEaiIx4-unsplash"
                 }
@@ -255,13 +284,13 @@
         "dateCreated": 1589691657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0001"
                 }
@@ -275,13 +304,13 @@
         "dateCreated": 1591765257000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0002"
                 }
@@ -296,13 +325,13 @@
         "dateCreated": 1592283657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0003"
                 }
@@ -316,13 +345,13 @@
         "dateCreated": 1592483657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0004"
                 }
@@ -336,13 +365,13 @@
         "dateCreated": 1591183657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0005"
                 }
@@ -356,13 +385,13 @@
         "dateCreated": 1591981657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0006"
                 }
@@ -376,13 +405,13 @@
         "dateCreated": 1590561657000,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0007"
                 }
@@ -395,13 +424,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0008"
                 }
@@ -414,13 +443,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0009"
                 }
@@ -433,13 +462,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0010"
                 }
@@ -452,13 +481,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0011"
                 }
@@ -471,13 +500,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0012"
                 }
@@ -490,13 +519,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0013"
                 }
@@ -509,13 +538,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0014"
                 }
@@ -528,13 +557,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0015"
                 }
@@ -547,13 +576,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0016"
                 }
@@ -566,13 +595,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0017"
                 }
@@ -585,13 +614,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0018"
                 }
@@ -604,13 +633,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0019"
                 }
@@ -623,13 +652,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0020"
                 }
@@ -642,13 +671,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0021"
                 }
@@ -661,13 +690,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0022"
                 }
@@ -680,13 +709,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0023"
                 }
@@ -699,13 +728,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0024"
                 }
@@ -718,13 +747,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0025"
                 }
@@ -737,13 +766,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0026"
                 }
@@ -756,13 +785,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0027"
                 }
@@ -775,13 +804,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0028"
                 }
@@ -794,13 +823,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0029"
                 }
@@ -813,13 +842,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0030"
                 }
@@ -832,13 +861,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0031"
                 }
@@ -851,13 +880,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0032"
                 }
@@ -870,13 +899,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0033"
                 }
@@ -889,13 +918,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0034"
                 }
@@ -908,13 +937,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0035"
                 }
@@ -927,13 +956,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0036"
                 }
@@ -946,13 +975,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0037"
                 }
@@ -965,13 +994,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0038"
                 }
@@ -984,13 +1013,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0039"
                 }
@@ -1003,13 +1032,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0040"
                 }
@@ -1022,13 +1051,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0041"
                 }
@@ -1041,13 +1070,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Arnold_Schwarzenegger_0042"
                 }
@@ -1061,13 +1090,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 2
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Michael_Douglas_0005"
                 }
@@ -1081,13 +1110,13 @@
         "height": 250,
         "allEdges": [
             {
-                "type": "includes",
+                "_type": "includes",
                 "itemType": "Person",
                 "uid": 1
             },
             {
-                "type": "file",
-                "target": {
+                "_type": "file",
+                "_target": {
                     "_type": "File",
                     "filename": "Norah_Jones_0007"
                 }
@@ -1165,12 +1194,12 @@
     { "_type": "Network", "uid": 9999, "name": "Facebook" },
     { "_type": "Account", "uid": 1008, "type": "twitter", "handle": "@eagleve91",
         "allEdges": [
-            {"type":"network", "itemType": "Network", "uid": 9998}
+            {"_type":"network", "itemType": "Network", "uid": 9998}
         ]
     },
     { "_type": "Account", "uid": 1009, "type": "facebook", "handle": "@eagleve2393",
         "allEdges": [
-            {"type":"network", "itemType": "Network", "uid": 9999}
+            {"_type":"network", "itemType": "Network", "uid": 9999}
         ]
     },
     {
@@ -1200,12 +1229,12 @@
         "postalCode": "20500",
         "allEdges": [
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1017
             },
             {
-                "type": "country",
+                "_type": "country",
                 "itemType": "Country",
                 "uid": 1401
             }
@@ -1221,7 +1250,7 @@
         "postalCode": "EL29",
         "allEdges": [
             {
-                "type": "country",
+                "_type": "country",
                 "itemType": "Country",
                 "uid": 1402
             }
@@ -1233,7 +1262,7 @@
         "type": "Indexer example",
         "allEdges": [
             {
-                "type": "location",
+                "_type": "location",
                 "itemType": "Location",
                 "uid": 100017
             },
@@ -1257,86 +1286,86 @@
         "armLength": 73,
         "allEdges": [
             {
-                "type": "me",
+                "_type": "me",
                 "itemType": "Person",
                 "uid": 3
             },
             {
-                "type": "relationship",
+                "_type": "relationship",
                 "itemType": "Person",
                 "uid": 2
             },
             {
-                "type": "relationship",
+                "_type": "relationship",
                 "itemType": "Person",
                 "uid": 1
             },
             {
-                "type": "profilePicture",
+                "_type": "profilePicture",
                 "itemType": "Photo",
                 "uid": 500
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1000
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1001
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1002
             },
             {
-                "type": "hasPhoneNumber",
+                "_type": "hasPhoneNumber",
                 "itemType": "PhoneNumber",
                 "uid": 1003
             },
             {
-                "type": "website",
+                "_type": "website",
                 "itemType": "Website",
                 "uid": 1004
             },
             {
-                "type": "website",
+                "_type": "website",
                 "itemType": "Website",
                 "uid": 1005
             },
-            {"type":"company", "itemType": "Organization", "uid": 1006, "label": "freelance"},
+            {"_type":"company", "itemType": "Organization", "uid": 1006, "label": "freelance"},
             {
-                "type": "cryptoKey",
+                "_type": "cryptoKey",
                 "itemType": "CryptoKey",
                 "uid": 1007
             },
-            {"type":"account", "itemType": "Account", "uid": 1008},
-            {"type":"account", "itemType": "Account", "uid": 1009},
+            {"_type":"account", "itemType": "Account", "uid": 1008},
+            {"_type":"account", "itemType": "Account", "uid": 1009},
             {
-                "type": "diet",
+                "_type": "diet",
                 "itemType": "Diet",
                 "uid": 1010
             },
             {
-                "type": "diet",
+                "_type": "diet",
                 "itemType": "Diet",
                 "uid": 1011
             },
             {
-                "type": "medicalCondition",
+                "_type": "medicalCondition",
                 "itemType": "MedicalCondition",
                 "uid": 1012
             },
             {
-                "type": "address",
+                "_type": "address",
                 "edgeLabel": "Home",
                 "itemType": "Address",
                 "uid": 1013
             },
             {
-                "type": "address",
+                "_type": "address",
                 "edgeLabel": "Holiday home in France",
                 "itemType": "Address",
                 "uid": 1014
@@ -1355,22 +1384,22 @@
         "armLength": 91,
         "allEdges": [
             {
-                "type": "relationship",
+                "_type": "relationship",
                 "itemType": "Person",
                 "uid": 1
             },
             {
-                "type": "profilePicture",
+                "_type": "profilePicture",
                 "itemType": "Photo",
                 "uid": 501
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1015
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1016
             },
@@ -1390,17 +1419,17 @@
         "starred": true,
         "allEdges": [
             {
-                "type": "profilePicture",
+                "_type": "profilePicture",
                 "itemType": "Photo",
                 "uid": 502
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1015
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1016
             },
@@ -2448,12 +2477,12 @@
         "dateModified": 1593710745298,
         "allEdges": [
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1015
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1016
             }
@@ -2467,12 +2496,12 @@
         "content": "Age of surveillance capitalism",
         "allEdges": [
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1015
             },
             {
-                "type": "label",
+                "_type": "label",
                 "itemType": "Label",
                 "uid": 1016
             }
@@ -2501,5 +2530,207 @@
         "content": "Be in time with hour administration",
         "dateModified": 1593717745298,
         "version": 1
+    },
+    {
+        "_type": "Account",
+        "uid": 20000000000,
+        "displayName": "Myself (WA)",
+        "externalId": "101010101010@s.whatsapp.net",
+        "nameQuality": 2,
+        "enablePresence": true,
+        "enableReceipts": true,
+        "service": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "Person",
+                "uid": 3,
+                "_type": "owner"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 20000000001,
+        "displayName": "+123456789 (WA)",
+        "externalId": "123456789@s.whatsapp.net",
+        "nameQuality": 2,
+        "enablePresence": true,
+        "enableReceipts": true,
+        "service": "whatsapp"
+    },
+    {
+        "_type": "Account",
+        "uid": 20000000002,
+        "displayName": "+987654321 (WA)",
+        "externalId": "987654321@s.whatsapp.net",
+        "nameQuality": 2,
+        "enablePresence": true,
+        "enableReceipts": true,
+        "service": "whatsapp"
+    },
+    {
+        "_type": "Account",
+        "uid": 20000000003,
+        "displayName": "John Doe (WA)",
+        "externalId":"1357924680@s.whatsapp.net",
+        "nameQuality": 2,
+        "enablePresence": true,
+        "enableReceipts": true,
+        "service": "whatsapp"
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000004,
+        "externalId": "status@broadcast",
+        "name": "WhatsApp Status Broadcast",
+        "topic": "WhatsApp status updates from your contacts",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000005,
+        "externalId": "123456789@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000006,
+        "externalId": "987654321@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "MessageChannel",
+        "uid": 20000000007,
+        "externalId": "1357924680@s.whatsapp.net",
+        "name": "",
+        "topic": "WhatsApp private chat",
+        "encrypted": false,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "receiver"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000008,
+        "externalId": "93463F7980167E92C28FF0781E650E80",
+        "content": "{\"conversation\":\"test 123\"}\n",
+        "type": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000005,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000009,
+        "externalId": "9BDD372B9D4F7486D2A0",
+        "content": "{\"conversation\":\"hello\"}\n",
+        "type": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000005,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000010,
+        "externalId": "36A3043A22AC7524060B23FB54815B39",
+        "content": "{\"stickerMessage\":{\"url\":\"https://mmg.whatsapp.net/d/f/Al3HEpTJz7J37BOTcIGyq-saI_dzDoqX9DM7Xdcjtqbz.enc\",\"fileSha256\":\"wFKPp8ZAcSDLaORuLWW33nC7ZywuIazegAu31cyim2g=\",\"fileEncSha256\":\"pKPi4J6vFw6qafQuKuK+ilTS52B2LLU8jIzqg+QFFig=\",\"mediaKey\":\"wZZ50hD9n8UbGPCBV7Kg74FoGV//T7gm4XJhXrTNJi4=\",\"mimetype\":\"image/webp\",\"directPath\":\"/v/t62.7118-24/18863256_177570407071070_7709928085717181665_n.enc?oh=40d6d8a5f81b24df512138c48851ad67\\u0026oe=C64EA1DB\",\"fileLength\":63064,\"mediaKeyTimestamp\":1594989169,\"isAnimated\":false}}\n",
+        "type": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000005,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000011,
+        "externalId": "7A1FCF21F8E4216509EF8300D7C5CC57",
+        "content": "{\"conversation\":\"where r u?\"}\n",
+        "type": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000006,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000002,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000012,
+        "externalId": "EE9E22BD54F93EC48CF9",
+        "content": "{\"conversation\":\"at home\"}\n",
+        "type": "whatsapp",
+        "allEdges": [
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000006,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "sender"
+            }
+        ]
     }
 ]

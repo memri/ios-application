@@ -405,7 +405,6 @@ public class PodAPI {
                 .appendingPathComponent("v2")
                 .appendingPathComponent(ownerKey)
                 .appendingPathComponent("get_file")
-                .appendingPathComponent(dbKey)
             
             let destination: DownloadRequest.Destination = { _, _ in
                 return (FileStorageController.getURLForFile(withUUID: uuid), [])
@@ -419,6 +418,13 @@ public class PodAPI {
                 $0.allowsConstrainedNetworkAccess = false
                 $0.cachePolicy = .reloadIgnoringCacheData
                 $0.timeoutInterval = .greatestFiniteMagnitude
+                
+                let body:[String:Any] = [
+                    "databaseKey": dbKey,
+                    "payload": ["sha256": uuid]
+                ]
+                
+                $0.httpBody = try self.toJSON(body)
             }, to: destination)
             .downloadProgress { progress in
                 print("Download Progress: \(progress.fractionCompleted)")
@@ -463,8 +469,9 @@ public class PodAPI {
             baseUrl = baseUrl
                 .appendingPathComponent("v2")
                 .appendingPathComponent(ownerKey)
-                .appendingPathComponent("put_file")
+                .appendingPathComponent("upload_file")
                 .appendingPathComponent(dbKey)
+                .appendingPathComponent(uuid)
             
             let fileURL = FileStorageController.getURLForFile(withUUID: uuid)
             

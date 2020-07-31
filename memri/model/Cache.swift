@@ -97,12 +97,12 @@ public class Cache {
             // Then create all edges
             for (item, allEdges) in items {
                 for edgeDict in allEdges {
-                    guard let edgeType = edgeDict["type"] as? String else {
+                    guard let edgeType = edgeDict["_type"] as? String else {
                         throw "Exception: Ill defined edge"
                     }
 
                     var edge: Edge
-                    if let targetDict = edgeDict["target"] as? [String: Any] {
+                    if let targetDict = edgeDict["_target"] as? [String: Any] {
                         let target = try recur(targetDict)
                         edge = try Cache.createEdge(
                             source: item,
