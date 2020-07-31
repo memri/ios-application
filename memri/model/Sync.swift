@@ -289,7 +289,7 @@ class Sync {
                                     #warning("Should this hold up further syncing?")
                                     self.syncFilesToPod() { _ in
                                         self.syncing = false
-                                        self.schedule()
+                                        self.schedule(long: true)
                                     }
                                 }
                             }
@@ -311,27 +311,36 @@ class Sync {
     
     public func syncFilesFromPod(_ callback: @escaping (Error?) -> Void ) {
         DatabaseController.background { realm in
-            let list = realm.objects(LocalFileSyncQueue.self).filter("task = 'download'")
+            var list = [String]()
+            let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
+            items.forEach {
+                if let s = $0["sha256"] as? String {
+                    list.append(s)
+                }
+            }
+            
             guard list.count > 0 else {
                 callback(nil) // done
                 return
             }
             
             func validate(_ sha256:String) -> Bool {
-                #warning("Delete QueueItem when file does not exist")
-                guard
-                    let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
-                    file._action != "create",
-                    !file._updated.contains("sha256")
-                else {
-                    return false
-                }
-                return true
+                return DatabaseController.current { realm -> Bool? in
+                    guard
+                        let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
+                        file._action != "create",
+                        !file._updated.contains("sha256")
+                    else {
+                        return false
+                    }
+                    return true
+                } ?? true
             }
             
-            var i = 0
-            while true {
-                guard let sha256 = list[safe:i]?.sha256 else {
+            var i = -1
+            func next() {
+                i += 1
+                guard let sha256 = list[safe:i] else {
                     callback(nil) // done
                     return
                 }
@@ -346,7 +355,8 @@ class Sync {
                             print("Download progress \(progress)")
                         }
                         else if let _ = response {
-                            self.syncFilesToPod(callback)
+                            LocalFileSyncQueue.remove(sha256)
+                            next()
                         }
                         else {
                             debugHistory.warn("Unknown error") // TODO ERror handling
@@ -356,35 +366,46 @@ class Sync {
                     return
                 }
                 else {
-                    i += 1
+                    LocalFileSyncQueue.remove(sha256)
+                    next()
                 }
             }
+            next()
         }
     }
     
     public func syncFilesToPod(_ callback: @escaping (Error?) -> Void ) {
         DatabaseController.background { realm in
-            let list = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
+            var list = [String]()
+            let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
+            items.forEach {
+                if let s = $0["sha256"] as? String {
+                    list.append(s)
+                }
+            }
+            
             guard list.count > 0 else {
                 callback(nil) // done
                 return
             }
             
             func validate(_ sha256:String) -> Bool {
-                #warning("Delete QueueItem when file does not exist")
-                guard
-                    let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
-                    file._action != "create",
-                    !file._updated.contains("sha256")
-                else {
-                    return false
-                }
-                return true
+                return DatabaseController.current { realm -> Bool? in
+                    guard
+                        let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
+                        file._action != "create",
+                        !file._updated.contains("sha256")
+                    else {
+                        return false
+                    }
+                    return true
+                } ?? true
             }
             
-            var i = 0
-            while true {
-                guard let sha256 = list[safe:i]?["sha256"] as? String else {
+            var i = -1
+            func next() {
+                i += 1
+                guard let sha256 = list[safe:i] else {
                     callback(nil) // done
                     return
                 }
@@ -399,7 +420,8 @@ class Sync {
                             print("Upload progress \(progress)")
                         }
                         else if let _ = response {
-                            self.syncFilesToPod(callback)
+                            LocalFileSyncQueue.remove(sha256)
+                            next()
                         }
                         else {
                             debugHistory.warn("Unknown error") // TODO ERror handling
@@ -409,9 +431,11 @@ class Sync {
                     return
                 }
                 else {
-                    i += 1
+                    LocalFileSyncQueue.remove(sha256)
+                    next()
                 }
             }
+            next()
         }
     }
 

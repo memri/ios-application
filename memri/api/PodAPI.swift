@@ -475,6 +475,8 @@ public class PodAPI {
             
             let fileURL = FileStorageController.getURLForFile(withUUID: uuid)
             
+            print("Uploading \(uuid)")
+            
             AF.upload(fileURL, to: baseUrl, method: .post, requestModifier: {
                 $0.timeoutInterval = 5
                 $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
@@ -493,6 +495,12 @@ public class PodAPI {
                     return
                 }
                 
+                if httpResponse.statusCode == 409 {
+                    print("File was already uploaded")
+                    callback(nil, nil, httpResponse)
+                    return
+                }
+                
                 guard httpResponse.statusCode < 400 else {
                     let httpError = HTTPError.ClientError(
                         httpResponse.statusCode,
@@ -502,6 +510,8 @@ public class PodAPI {
                     callback(httpError, nil, response.response)
                     return
                 }
+                
+                print("Upload success")
                 
                 callback(nil, nil, httpResponse)
             }

@@ -19,7 +19,14 @@ class ItemReference {
     }
 
     func resolve() -> Item? {
-        DatabaseController.current { $0.object(ofType: self.type, forPrimaryKey: self.uid) }
+        do {
+            return try DatabaseController.tryCurrent {
+                $0.object(ofType: self.type, forPrimaryKey: self.uid)
+            }
+        }
+        catch {
+            return nil
+        }
     }
 }
 
@@ -44,12 +51,17 @@ class EdgeReference {
     }
 
     func resolve() -> Edge? {
-        DatabaseController.current {
-            $0.objects(Edge.self).filter("""
-                type = '\(self.type)'
-                    AND sourceItemID = \(self.sourceItemID)
-                    AND targetItemID = \(self.targetItemID)
-            """).first
+        do {
+            return try DatabaseController.tryCurrent {
+                $0.objects(Edge.self).filter("""
+                    type = '\(self.type)'
+                        AND sourceItemID = \(self.sourceItemID)
+                        AND targetItemID = \(self.targetItemID)
+                """).first
+            }
+        }
+        catch {
+            return nil
         }
     }
 }
