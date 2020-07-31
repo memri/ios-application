@@ -137,6 +137,12 @@ extension String: Error {
         guard contains(where: { !$0.isWhitespace }) else { return nil }
         return self
     }
+    
+    // Return nil if string is only whitespace and has no newlines
+    var nilIfBlankOrSingleLine: String? {
+        guard contains(where: { !$0.isWhitespace || $0.isNewline }) else { return nil }
+        return self
+    }
 }
 
 extension RangeReplaceableCollection where Element == Character {

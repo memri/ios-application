@@ -566,27 +566,17 @@ public struct UIElementView: SwiftUI.View {
 
     func renderRichTextfield() -> some View {
         let (_, contentDataItem, contentPropertyName) = from
-            .getType("htmlValue", item, viewArguments)
-        let (_, plainContentDataItem, plainContentPropertyName) = from
-            .getType("value", item, viewArguments)
+            .getType("content", item, viewArguments)
 
-        guard contentDataItem.hasProperty(contentPropertyName),
-            plainContentDataItem.hasProperty(plainContentPropertyName)
-        else {
+        guard contentDataItem.hasProperty(contentPropertyName) else {
             return Text("Invalid property value set on RichTextEditor").eraseToAnyView()
         }
 
         // CONTENT
-        let contentBinding = Binding<String?>(
-            get: { (contentDataItem[contentPropertyName] as? String)?.nilIfBlank },
+        let contentBinding = Binding<String>(
+            get: { (contentDataItem[contentPropertyName] as? String) ?? "" },
             set: { contentDataItem.set(contentPropertyName, $0) }
         )
-
-        let plainContentBinding = Binding<String?>(
-            get: { (plainContentDataItem[plainContentPropertyName] as? String)?.nilIfBlank },
-            set: { plainContentDataItem.set(plainContentPropertyName, $0) }
-        )
-
         let fontSize = get("fontSize", type: CGFloat.self)
 
         // TITLE
@@ -599,18 +589,22 @@ public struct UIElementView: SwiftUI.View {
         let titleFontSize = get("titleFontSize", type: CGFloat.self)
 
         // Filter (unimplemented)
-        let filterTextBinding = Binding<String>(
-            get: { self.context.currentView?.filterText ?? "" },
-            set: { self.context.currentView?.filterText = $0 }
-        )
+//        let filterTextBinding = Binding<String>(
+//            get: { self.context.currentView?.filterText ?? "" },
+//            set: { self.context.currentView?.filterText = $0 }
+//        )
 
-        return _RichTextEditor(htmlContentBinding: contentBinding,
-                               plainContentBinding: plainContentBinding,
+        let editModeBinding = Binding<Bool>(
+            get: { self.context.currentSession?.editMode ?? false },
+            set: { self.context.currentSession?.editMode = $0 })
+        
+        return MemriTextEditor(contentHTMLBinding: contentBinding,
                                titleBinding: titleBinding,
-                               titleHint: titleHint,
+                               titlePlaceholder: titleHint,
                                fontSize: fontSize ?? 18,
                                headingFontSize: titleFontSize ?? 26,
-                               filterText: filterTextBinding)
+                               backgroundColor: nil,
+                               isEditing: editModeBinding)
             .eraseToAnyView()
     }
 

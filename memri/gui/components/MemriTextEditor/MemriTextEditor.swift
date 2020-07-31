@@ -7,48 +7,52 @@ import SwiftUI
 
 public struct MemriTextEditor: UIViewRepresentable {
     init(
-        initialContentHTML: String? = nil,
+        contentHTMLBinding: Binding<String>,
         titleBinding: Binding<String?>? = nil,
         titlePlaceholder: String? = nil,
         fontSize: CGFloat = 18,
         headingFontSize: CGFloat = 26,
+        backgroundColor: ColorDefinition? = nil,
         isEditing: Binding<Bool>? = nil,
-        preferredHeight: Binding<CGFloat>? = nil,
-        onTextChanged: ((NSAttributedString) -> Void)? = nil
+        onContentChanged: ((String) -> Void)? = nil
     ) {
-        self.initialContentHTML = initialContentHTML
+        self.contentHTMLBinding = contentHTMLBinding
         self.titleBinding = titleBinding
         self.titlePlaceholder = titlePlaceholder
         self.fontSize = fontSize
         self.headingFontSize = headingFontSize
+        self.backgroundColor = backgroundColor
         self.isEditing = isEditing
-        self.preferredHeight = preferredHeight
-        self.onTextChanged = onTextChanged
+        self.onContentChanged = onContentChanged
     }
 
-    var initialContentHTML: String?
+    var contentHTMLBinding: Binding<String>
     var titleBinding: Binding<String?>?
     var titlePlaceholder: String?
     var fontSize: CGFloat
     var headingFontSize: CGFloat
     var isEditing: Binding<Bool>?
-    var preferredHeight: Binding<CGFloat>?
-    var onTextChanged: ((NSAttributedString) -> Void)?
+    var onContentChanged: ((String) -> Void)?
+    var backgroundColor: ColorDefinition?
 
     public func makeUIView(context _: Context) -> MemriTextEditorWrapper_UIKit {
         MemriTextEditorWrapper_UIKit(
-            MemriTextEditor_UIKit(initialContentHTML: initialContentHTML,
+            MemriTextEditor_UIKit(initialContentHTML: contentHTMLBinding.wrappedValue,
                                   titleBinding: titleBinding,
                                   titlePlaceholder: titlePlaceholder,
                                   fontSize: fontSize,
-                                  headingFontSize: headingFontSize)
+                                  headingFontSize: headingFontSize,
+                                  backgroundColor: backgroundColor)
         )
     }
 
     public func updateUIView(_ wrapper: MemriTextEditorWrapper_UIKit, context _: Context) {
         wrapper.textEditor.titleBinding = titleBinding
-        wrapper.textEditor.preferredHeightBinding = preferredHeight
-        wrapper.textEditor.onTextChanged = onTextChanged
+        wrapper.textEditor.onTextChanged = { attribString in
+            let htmlString = attribString.toHTML()
+            self.contentHTMLBinding.wrappedValue = htmlString ?? ""
+            self.onContentChanged?(htmlString ?? "")
+        }
         wrapper.textEditor.fontSize = fontSize
         wrapper.textEditor.isEditingBinding = isEditing
     }

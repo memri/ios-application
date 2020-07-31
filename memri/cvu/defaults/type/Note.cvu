@@ -75,8 +75,7 @@ Note {
     
     [renderer = custom] {
         RichTextfield {
-            htmlValue: {{.content}}
-            value: {{.textContent}}
+            content: {{.content}}
             title: {{.title}}
             titleHint: "Untitled Note"
             fontSize: 18
@@ -172,6 +171,7 @@ Note[] {
                 align: left top
             }
             HStack {
+                align: center
                 Text {
                     text: {{.title or "Untitled Note"}}
                     padding: 5 0 0 0
