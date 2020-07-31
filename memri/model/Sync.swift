@@ -135,6 +135,7 @@ class Sync {
                         // TODO: handle sync errors
                         do {
                             let finalItem = try Cache.addToCache(item)
+                            #warning("When loading photos, edges dont have any data")
                             if let file = finalItem as? File {
                                 file.queueForDownload()
                             }

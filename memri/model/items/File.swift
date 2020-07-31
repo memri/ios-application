@@ -7,7 +7,7 @@ import RealmSwift
 import SwiftUI
 import CryptoKit
 
-class LocalFileSyncQueue:Object {
+class LocalFileSyncQueue : Object {
     @objc var sha256: String? = nil
     @objc var task: String? = nil
     
@@ -22,7 +22,7 @@ class LocalFileSyncQueue:Object {
                 return
             }
             else {
-                realm.create(LocalSetting.self, value: ["sha256": sha256, "task": task])
+                realm.create(LocalFileSyncQueue.self, value: ["sha256": sha256, "task": task])
             }
         }
     }
@@ -97,11 +97,13 @@ extension File {
             }
         }) { }
 
-        return sha256er.finalize().description
+        let digest = sha256er.finalize()
+        return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
     
     private func createSHA256(_ data:Data) throws -> String {
-        return SHA256.hash(data: data).description
+        let digest = SHA256.hash(data: data)
+        return digest.compactMap { String(format: "%02x", $0) }.joined()
     }
     
     public func queueForDownload() {

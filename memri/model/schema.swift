@@ -1069,7 +1069,7 @@ public class Edge : SyncableItem, Codable {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            type = try decoder.decodeIfPresent("_type") ?? type
             targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
             targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
@@ -1077,7 +1077,7 @@ public class Edge : SyncableItem, Codable {
             version = try decoder.decodeIfPresent("version") ?? version
             edgeLabel = try decoder.decodeIfPresent("edgeLabel") ?? edgeLabel
 
-            try parseTargetDict(try decoder.decodeIfPresent("target"))
+            try parseTargetDict(try decoder.decodeIfPresent("_target"))
         }
     }
 }

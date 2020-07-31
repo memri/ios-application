@@ -37,7 +37,7 @@
     {
         "_type": "Setting",
         "key": "defaults/debug/autoReloadCVU",
-        "value": true
+        "value": false
     },
     {
         "_type": "Setting",
