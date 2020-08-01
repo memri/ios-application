@@ -30,8 +30,10 @@ public struct MemriFittedTextEditor: View {
                                     fontSize: fontSize,
                                     isEditing: isEditing,
                                     preferredHeight: $preferredHeight,
-                                    onTextChanged: {
-            self.contentBinding.wrappedValue = $0
+                                    onTextChanged: { newText in
+                                        DispatchQueue.main.async {
+                                            self.contentBinding.wrappedValue = newText
+                                        }
         })
             .background(placeholderView)
             .background(backgroundColor?.color ?? Color(.systemBackground))

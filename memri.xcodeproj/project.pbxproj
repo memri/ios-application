@@ -257,7 +257,7 @@
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
-		B85A510024C9379E00AB1A41 /* MemriTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */; };
+		B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */; };
 		B85A510224C93CAB00AB1A41 /* CVUPropertyResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A510124C93CAB00AB1A41 /* CVUPropertyResolver.swift */; };
 		B8627E3924A9EAAA005A1A8F /* MemriTextEditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2C24A9EAAA005A1A8F /* MemriTextEditorToolbar.swift */; };
 		B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */; };
@@ -299,6 +299,8 @@
 		B8E8E8BA24C99FC400F1291F /* UIImage+.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E8E8B924C99FC400F1291F /* UIImage+.swift */; };
 		B8FB4996249F21A6007A05C4 /* ASCollectionView in Frameworks */ = {isa = PBXBuildFile; productRef = B8FB4995249F21A6007A05C4 /* ASCollectionView */; };
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
+		B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FD53B224D506E100CA0709 /* FileRenderer.swift */; };
+		B8FD53B624D5079F00CA0709 /* FileViewerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FD53B524D5079F00CA0709 /* FileViewerController.swift */; };
 		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8630B2B2418609200C36D6F /* ContextPane.swift */; };
@@ -544,7 +546,7 @@
 		B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRenderConfig.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriTextView.swift; sourceTree = "<group>"; };
+		B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriSmartTextView.swift; sourceTree = "<group>"; };
 		B85A510124C93CAB00AB1A41 /* CVUPropertyResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVUPropertyResolver.swift; sourceTree = "<group>"; };
 		B8627E2C24A9EAAA005A1A8F /* MemriTextEditorToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditorToolbar.swift; sourceTree = "<group>"; };
 		B8627E2D24A9EAAA005A1A8F /* MemriTextEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextEditor.swift; sourceTree = "<group>"; };
@@ -587,6 +589,8 @@
 		B8E8E8B724C99E1C00F1291F /* MemriImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriImageView.swift; sourceTree = "<group>"; };
 		B8E8E8B924C99FC400F1291F /* UIImage+.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+.swift"; sourceTree = "<group>"; };
 		B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit+FirstResponder.swift"; sourceTree = "<group>"; };
+		B8FD53B224D506E100CA0709 /* FileRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRenderer.swift; sourceTree = "<group>"; };
+		B8FD53B524D5079F00CA0709 /* FileViewerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileViewerController.swift; sourceTree = "<group>"; };
 		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
 		C806E06D2426694300C050E9 /* ContextPaneBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneBackground.swift; sourceTree = "<group>"; };
 		C8630B2B2418609200C36D6F /* ContextPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPane.swift; sourceTree = "<group>"; };
@@ -784,6 +788,7 @@
 		5D41E2A52417A20E001D4482 /* renderers */ = {
 			isa = PBXGroup;
 			children = (
+				B8FD53B124D506D600CA0709 /* FileRenderer */,
 				B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */,
 				5D4C71EC2445E44B00DF09E8 /* GeneralEditorView.swift */,
 				5D301F61245C372400183BD2 /* ListRendererView.swift */,
@@ -1245,14 +1250,11 @@
 		B80E01A524C839160005D756 /* components */ = {
 			isa = PBXGroup;
 			children = (
+				B8FD53B424D5079300CA0709 /* FileViewer */,
 				B80E01A624C839250005D756 /* ProgressBarView.swift */,
-				B85A50FF24C9379E00AB1A41 /* MemriTextView.swift */,
-				B8E8E8B724C99E1C00F1291F /* MemriImageView.swift */,
-				B826586024D2F4C50051CCFE /* EmailView.swift */,
-				B826586224D2F4FA0051CCFE /* EmailHeaderView.swift */,
-				B826587224D437DD0051CCFE /* MemriFittedTextEditor */,
-				B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */,
-				B8627E3624A9EAAA005A1A8F /* MemriTextField */,
+				B8FD53AE24D5066600CA0709 /* Text */,
+				B8FD53B024D5067C00CA0709 /* Images */,
+				B8FD53AF24D5066E00CA0709 /* Email */,
 			);
 			path = components;
 			sourceTree = "<group>";
@@ -1410,6 +1412,50 @@
 				B88AAB3824A1B10F0007C9EB /* UIColor.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		B8FD53AE24D5066600CA0709 /* Text */ = {
+			isa = PBXGroup;
+			children = (
+				B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */,
+				B826587224D437DD0051CCFE /* MemriFittedTextEditor */,
+				B8627E2B24A9EAAA005A1A8F /* MemriTextEditor */,
+				B8627E3624A9EAAA005A1A8F /* MemriTextField */,
+			);
+			path = Text;
+			sourceTree = "<group>";
+		};
+		B8FD53AF24D5066E00CA0709 /* Email */ = {
+			isa = PBXGroup;
+			children = (
+				B826586024D2F4C50051CCFE /* EmailView.swift */,
+				B826586224D2F4FA0051CCFE /* EmailHeaderView.swift */,
+			);
+			path = Email;
+			sourceTree = "<group>";
+		};
+		B8FD53B024D5067C00CA0709 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				B8E8E8B724C99E1C00F1291F /* MemriImageView.swift */,
+			);
+			path = Images;
+			sourceTree = "<group>";
+		};
+		B8FD53B124D506D600CA0709 /* FileRenderer */ = {
+			isa = PBXGroup;
+			children = (
+				B8FD53B224D506E100CA0709 /* FileRenderer.swift */,
+			);
+			path = FileRenderer;
+			sourceTree = "<group>";
+		};
+		B8FD53B424D5079300CA0709 /* FileViewer */ = {
+			isa = PBXGroup;
+			children = (
+				B8FD53B524D5079F00CA0709 /* FileViewerController.swift */,
+			);
+			path = FileViewer;
 			sourceTree = "<group>";
 		};
 		C892B3E924A5530D006707EC /* Sensors */ = {
@@ -1735,6 +1781,7 @@
 				5D4C71ED2445E44B00DF09E8 /* GeneralEditorView.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
 				B826586324D2F4FA0051CCFE /* EmailHeaderView.swift in Sources */,
+				B8FD53B624D5079F00CA0709 /* FileViewerController.swift in Sources */,
 				5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */,
 				B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */,
 				B81B792F24D04A9E00C25CDF /* ConfigPanel.swift in Sources */,
@@ -1816,6 +1863,7 @@
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
 				5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */,
+				B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */,
 				B80E01A724C839250005D756 /* ProgressBarView.swift in Sources */,
 				5D395B5024A37A980008610E /* IndexerAPI.swift in Sources */,
 				5DD17B6B241294DC0018A8F1 /* AnyDecodable.swift in Sources */,
@@ -1861,7 +1909,7 @@
 				86911E8224C543C3009AC8B1 /* CascadableDict.swift in Sources */,
 				5DD1E9B323FD7E59007BDF7B /* TopNavigation.swift in Sources */,
 				5DFB0CBF24179FA6002FBDE7 /* Sessions.swift in Sources */,
-				B85A510024C9379E00AB1A41 /* MemriTextView.swift in Sources */,
+				B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */,
 				5DD1E9BA23FD81C5007BDF7B /* Renderers.swift in Sources */,
 				86865D36244996900010271A /* styles.swift in Sources */,
 				5DD1E9B523FD7EB1007BDF7B /* Search.swift in Sources */,

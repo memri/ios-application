@@ -75,8 +75,7 @@ Message {
     
     [renderer = custom] {
         RichTextfield {
-            htmlValue: {{.content}}
-            value: {{.textContent}}
+            content: {{.content}}
             title: {{.title}}
             titleHint: "Untitled Note"
             fontSize: 18

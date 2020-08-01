@@ -78,7 +78,6 @@ struct MessageRenderer: View {
         }
     }
 
-    @State private var composedMessage: String?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -95,9 +94,12 @@ struct MessageRenderer: View {
         .modifier(KeyboardPaddingModifier())
     }
     
+    @State private var isEditingComposedMessage: Bool = false
+    @State private var composedMessage: String?
+    
     var messageComposer: some View {
         HStack(spacing: 6) {
-            MemriFittedTextEditor(contentBinding: $composedMessage, placeholder: "Type a message...", backgroundColor: ColorDefinition.system(.systemBackground))
+            MemriFittedTextEditor(contentBinding: $composedMessage, placeholder: "Type a message...", backgroundColor: ColorDefinition.system(.systemBackground), isEditing: $isEditingComposedMessage)
                 
             Button(action: onPressSend) {
                 Image(systemName: "arrow.up.circle.fill")
@@ -120,6 +122,7 @@ struct MessageRenderer: View {
         #warning("@Ruben: we will need to decide how `sending` a message is handled")
         print(composedMessage ?? "Empty message")
         composedMessage = nil
+        isEditingComposedMessage = false
     }
 }
 
