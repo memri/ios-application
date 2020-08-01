@@ -132,6 +132,7 @@ struct MessageBubbleView: View {
 
     var dateFormatter: DateFormatter {
         // TODO: If there is a user setting for a *short* date format, we should use that
+        #warning("@Toby lets discuss this")
         let format = DateFormatter()
         format.dateStyle = .short
         format.timeStyle = .short

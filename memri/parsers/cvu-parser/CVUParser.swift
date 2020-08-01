@@ -214,7 +214,7 @@ class CVUParser {
 
         func setPropertyValue() {
             if stack.count > 0 {
-                if forUIElement, let convert = specialTypedProperties[lastKey!] {
+                if forUIElement, let convert = CVUParser.specialTypedProperties[lastKey!] {
                     if !isArrayMode && stack.count == 1 {
                         dict[lastKey!] = convert(stack[0], uiElementName!)
                     }
@@ -470,7 +470,7 @@ class CVUParser {
     // Same as above to be converted once per dict
     let frameProperties = ["minWidth": 1, "maxWidth": 1, "minHeight": 1, "maxHeight": 1, "align": 1]
     // Based on key when its added to the dict (only needed within rendererDefinition / UIElement)
-    let specialTypedProperties = [
+    static let specialTypedProperties = [
         "alignment": { (value: Any?, type: String) -> Any? in
             switch value as? String {
             case "left": return HorizontalAlignment.leading

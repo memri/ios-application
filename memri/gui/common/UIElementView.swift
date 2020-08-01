@@ -25,7 +25,17 @@ public struct UIElementView: SwiftUI.View {
     }
 
     public func get<T>(_ propName: String, type _: T.Type = T.self) -> T? {
-        from.get(propName, item, viewArguments)
+        #warning("@Toby We need to rearchitect these properties. Its getting messy with expressions interweaved.")
+        if propName == "align" {
+            if let align:T? = from.get(propName, item, viewArguments) {
+                return align
+            }
+            else if let align:String? = from.get(propName, item, viewArguments) {
+                return CVUParser.specialTypedProperties["align"]?(align, "") as? T
+            }
+        }
+        
+        return from.get(propName, item, viewArguments)
     }
 
     public func get<T>(_ propName: String, defaultValue: T, type _: T.Type = T.self) -> T {
@@ -74,7 +84,7 @@ public struct UIElementView: SwiftUI.View {
                     HStack(alignment: get("alignment") ?? .top, spacing: get("spacing") ?? 0) {
                         self.renderChildren
                     }
-                    .frame(maxWidth: .infinity, alignment: get("align") ?? .leading)
+//                    .frame(maxWidth: .infinity, alignment: get("align") ?? .leading)
                     .clipped()
                     .animation(nil)
                     .setProperties(
@@ -429,6 +439,20 @@ public struct UIElementView: SwiftUI.View {
                             context,
                             self.viewArguments
                         )
+                }
+                else if from.type == .SmartText {
+                    MemriSmartTextView(string: get("text") ?? "",
+                                       detectLinks: get("detectLinks") ?? true,
+                                       font: get("font", type: FontDefinition.self) ?? FontDefinition(size: 18),
+                                       color: get("color") ?? ColorDefinition.system(.label),
+                                       maxLines: get("maxLines"))
+                    .fixedSize(horizontal: false, vertical: true)
+                    .setProperties(
+                        from.propertyResolver.properties,
+                        self.item,
+                        context,
+                        self.viewArguments
+                    )
                 }
                 else if from.type == .EmailHeader {
                     EmailHeaderView(senderName: get("title") ?? "Untitled",

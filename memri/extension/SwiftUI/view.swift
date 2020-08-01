@@ -54,7 +54,7 @@ extension View {
         if properties.count == 0 {
             return view
         }
-
+        
         for name in ViewPropertyOrder {
             if var value = properties[name] {
                 if let expr = value as? Expression {
@@ -66,6 +66,21 @@ extension View {
                         print("Could not set property. Executing expression \(expr) failed")
                         continue
                     }
+                }
+                else if var list = value as? [Any?] {
+                    for i in 0..<list.count {
+                        if let expr = list[i] as? Expression {
+                            do {
+                                list[i] = try expr.execute(viewArguments) as Any?
+                            }
+                            catch {
+                                // TODO: refactor: Error handling
+                                print("Could not set property. Executing expression \(expr) failed")
+                                continue
+                            }
+                        }
+                    }
+                    value = list
                 }
 
                 view = view.setProperty(name, value)
@@ -106,6 +121,17 @@ extension View {
             }
             else if let value = value as? CGFloat {
                 return AnyView(padding(value))
+            }
+            else if let value = (value as? String)?
+                .split(separator: " ")
+                .compactMap({ CGFloat(Int(String($0)) ?? 0) })
+            {
+                return AnyView(padding(EdgeInsets(
+                    top: value[safe: 0] ?? 0,
+                    leading: value[safe: 3] ?? 0,
+                    bottom: value[safe: 2] ?? 0,
+                    trailing: value[safe: 1] ?? 0
+                )))
             }
         case "blur":
             if let value = value as? CGFloat {
@@ -176,7 +202,13 @@ extension View {
                 }
             }
         case "frame":
-            if let value = value as? [Any?] {
+            if var value = value as? [Any?] {
+                #warning("@Toby We need to rearchitect these properties. Its getting messy with expressions interweaved.")
+                
+                if let str = value[4] as? String {
+                    value[4] = CVUParser.specialTypedProperties["align"]?(str, "") ?? nil
+                }
+                
                 return AnyView(frame(
                     minWidth: value[0] as? CGFloat,
                     maxWidth: value[1] as? CGFloat,
