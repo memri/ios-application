@@ -169,6 +169,7 @@ Message[] {
                 Image {
                     show: {{.photo}}
                     image: {{.photo}}
+                    forceAspect: true
                 }
 
                 HStack {
