@@ -150,6 +150,21 @@ class ExprInterpreter {
             case .ConditionEquals:
                 let otherResult = try execSingle(expr.rhs, args)
                 return compare(result, otherResult)
+            case .ConditionNotEquals:
+                let otherResult = try execSingle(expr.rhs, args)
+                return !compare(result, otherResult)
+            case .ConditionGreaterThan:
+                let otherResult = try execSingle(expr.rhs, args)
+                return IP.evaluateNumber(result) > IP.evaluateNumber(otherResult)
+            case .ConditionGreaterThanOrEqual:
+                let otherResult = try execSingle(expr.rhs, args)
+                return IP.evaluateNumber(result) >= IP.evaluateNumber(otherResult)
+            case .ConditionLessThan:
+                let otherResult = try execSingle(expr.rhs, args)
+                return IP.evaluateNumber(result) < IP.evaluateNumber(otherResult)
+            case .ConditionLessThanOrEqual:
+                let otherResult = try execSingle(expr.rhs, args)
+                return IP.evaluateNumber(result) <= IP.evaluateNumber(otherResult)
             case .ConditionAND:
                 let boolLHS = IP.evaluateBoolean(result)
                 if !boolLHS { return false }

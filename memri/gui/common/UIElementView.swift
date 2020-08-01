@@ -441,11 +441,23 @@ public struct UIElementView: SwiftUI.View {
                         )
                 }
                 else if from.type == .SmartText {
-                    MemriSmartTextView(string: get("text") ?? "",
-                                       detectLinks: get("detectLinks") ?? true,
-                                       font: get("font", type: FontDefinition.self) ?? FontDefinition(size: 18),
-                                       color: get("color") ?? ColorDefinition.system(.label),
-                                       maxLines: get("maxLines"))
+                    MemriSmartTextView(
+                        string: get("text") ?? "",
+                        detectLinks: get("detectLinks") ?? true,
+                        font: {
+                            #warning("@Toby another example of hacks")
+                            if let value = get("font", type:[Any?].self) {
+                                return FontDefinition(
+                                    size: value[0] as? CGFloat,
+                                    weight: value[1] as? Font.Weight ?? Font.Weight.regular
+                                )
+                            }
+                            else {
+                                return FontDefinition(size: 12)
+                            }
+                        }(),
+                        color: get("color") ?? ColorDefinition.system(.label),
+                        maxLines: get("maxLines"))
                     .fixedSize(horizontal: false, vertical: true)
                     .setProperties(
                         from.propertyResolver.properties,

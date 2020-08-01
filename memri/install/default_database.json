@@ -2771,5 +2771,29 @@
                 "_type": "sender"
             }
         ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000012,
+        "externalId": "EE9E22BD54F93EC48CF9",
+        "content": "That's cool",
+        "dateSent": 1589691700000,
+        "allEdges": [
+            {
+                "itemType": "Message",
+                "uid": 20000000010,
+                "_type": "message"
+            },
+            {
+                "itemType": "MessageChannel",
+                "uid": 20000000006,
+                "_type": "messageChannel"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "sender"
+            }
+        ]
     }
 ]
