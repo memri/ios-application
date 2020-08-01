@@ -383,6 +383,7 @@ public class Views {
                     case "plural": value = v + "s" // TODO:
                     case "firstUppercased": value = v.capitalizingFirst()
                     case "plainString": value = v.strippingHTMLtags()
+                    case "count": value = v.count
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on string")
@@ -496,8 +497,8 @@ public class Views {
             if let f = f as? ([Any?]?) -> Any? {
                 return f(args) as Any?
             }
-            else {
-                throw "Could not find function to execute: \(lookup.description)"
+            else if "\(f)" != "nil" { #warning("Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
+                throw "Could not find function to execute: \(lookup.toExprString())"
             }
         }
 

@@ -127,7 +127,7 @@ Message[] {
                 
                 Text {
 /*                        show: {{previous.dateSent - .dateSent < 30000}}*/
-                    show: {{ messageChannel.receiver.count > 1 AND !(.sender.owner = me) }}
+                    show: {{ .messageChannel._receiver[].count > 1 AND .sender.owner != me }}
                     text: "{.sender.displayName}"
                     font: 12 bold
                     color: #743a4c

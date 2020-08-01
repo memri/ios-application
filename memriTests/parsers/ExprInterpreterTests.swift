@@ -244,6 +244,14 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! String, "yes")
     }
+    
+    func testTypeConversionStringToBool() throws {
+        let snippet = "''"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, false)
+    }
 
     func testStringModeStartWithString() throws {
         let snippet = "Hello {fetchName()}!"

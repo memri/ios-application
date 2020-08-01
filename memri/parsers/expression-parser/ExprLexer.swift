@@ -126,31 +126,38 @@ public class ExprLexer {
         try input.forEach { c in
             i += 1
             
-            switch lastChar {
-            case "!":
-                addToken(c == "="
-                    ? .Operator(ExprOperator.ConditionNotEquals, i)
-                    : .Negation(i)
-                )
+            if lastChar != nil {
+                let l = lastChar
                 lastChar = nil
-                return
-            case ">":
-                addToken(c == "="
-                    ? .Operator(ExprOperator.ConditionGreaterThanOrEqual, i)
-                    : .Operator(ExprOperator.ConditionGreaterThan, i)
-                )
-                lastChar = nil
-                return
-            case "<":
-                addToken(c == "="
-                    ? .Operator(ExprOperator.ConditionLessThanOrEqual, i)
-                    : .Operator(ExprOperator.ConditionLessThan, i)
-                )
-                lastChar = nil
-                return
-            default:
-                // do Nothing
-                lastChar = nil
+            
+                switch l {
+                case "!":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionNotEquals, i))
+                        return
+                    }
+                    else {
+                        addToken(.Negation(i))
+                    }
+                case ">":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionGreaterThanOrEqual, i))
+                        return
+                    }
+                    else {
+                        addToken(.Operator(ExprOperator.ConditionGreaterThan, i))
+                    }
+                case "<":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionLessThanOrEqual, i))
+                        return
+                    }
+                    else {
+                        addToken(.Operator(ExprOperator.ConditionLessThan, i))
+                    }
+                default:
+                    fatalError("Should never get here")
+                }
             }
 
             if isMode.rawValue >= Mode.string.rawValue {

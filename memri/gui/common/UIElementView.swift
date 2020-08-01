@@ -406,13 +406,16 @@ public struct UIElementView: SwiftUI.View {
                         )
                 }
                 else if from.type == .MemriButton {
-                    MemriButton(item: self.item)
-                        .setProperties(
-                            from.propertyResolver.properties,
-                            self.item,
-                            context,
-                            self.viewArguments
-                        )
+                    MemriButton(
+                        item: get("item"),
+                        edge: get("edge")
+                    )
+                    .setProperties(
+                        from.propertyResolver.properties,
+                        self.item,
+                        context,
+                        self.viewArguments
+                    )
                 }
                 else if from.type == .TimelineItem {
                     TimelineItemView(icon: Image(systemName: get("icon") ?? "arrowtriangle.right"),

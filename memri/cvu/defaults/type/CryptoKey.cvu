@@ -1,4 +1,4 @@
-[session = all-cryptokey] {
+[session = all-cryptokeys] {
     [view] {
         title: "All Crypto Keys"
         [datasource = pod] {
@@ -7,113 +7,208 @@
     }
 }
 
-CyptoKey {
-    title: {{.title or "Untitled" }}
-    defaultRenderer: custom
+CryptoKey {
+    title: "CryptoKey"
+    defaultRenderer: generalEditor
     editActionButton: toggleEditMode
-    filterButtons: [
-        openView {
-            icon: "increase.indent"
-            title: "Show Timeline"
+    contextButtons: star
+    
+    [renderer = generalEditor] {
+        layout: [
+            { section: header, exclude: starred }
+/*            { section: owner, edges: owner, type: Person } */ /* TODO: Single edge */ /* TODO: Hard crash when edge iso edges */
+            { section: "Key Information", fields: name type role key active }
+            { section: other, fields: * }
+            { section: dates }
+        ]
+        
+        header {
+            showTitle: false
             
-            view: {
-                defaultRenderer: timeline
+            VStack {
+                padding: 20 36 20 36
                 
-                [datasource = pod] {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
+                HStack {
+                    Text {
+                        text: "{.active ? '' : '[INACTIVE] '}{.name or .type or '<Unnamed Key>'}"
+                        font: 20 semibold
+                        padding: 0 5 0 0
+                    }
+                    Action {
+                        press: star
+                    }
+                }
+                FlowStack {
+                    show: {{.label}}
+                    list: {{ .label[] }}
+                    
+                    Button {
+                        press: openViewByName {
+                            viewName: all-items-with-label
+                            viewArguments: {
+                                name: "{.name}"
+                                uid: {{.uid}}
+                            }
+                        }
+                        
+                        VStack {
+                            background: {{.color}}
+                            cornerRadius: 5
+                            
+                            Text {
+                                text: "{.computedTitle()}"
+                                font: 16 semibold
+                                color: #fff
+                                padding: 5 8 5 8
+                            }
+                        }
+                    }
                 }
                 
-                [renderer = timeline] {
-                    timeProperty: dateCreated
+                HStack {
+                    alignment: center
+                    
+                    MemriButton {
+                        edge: {{._owner}}
+                        padding: 10 0 0 0
+                    }
+                    
+                    Action {
+                        show: {{!readOnly}}
+                        font: 12 regular
+                        margin: 8 0 0 10
+                        
+                        press: openViewByName {
+                            renderAs: popup
+                            title: "Set Owner"
+                            color: #2a3fe0 /* TODO: Unable to set the color */
+                            
+                            viewName: "choose-item-by-query"
+                            viewArguments: {
+                                query: "Person" /* AND ANY allEdges.targetItemID = {.uid} */
+                                type: Person
+                                renderer: "list"
+                                subject: {{.}}
+                                edgeType: "owner"
+                                distinct: true
+                                title: "Choose the owner"
+                            }
+                        }
+                    }
                 }
             }
         }
-        showContextPane
-    ]
-    
-    contextPane {
-        buttons: star schedule
         
-        actions: [
-            showOverlay { title: "Share with..." }
-            addToPanel { title: "Add to list..." }
-            duplicate { title: "Duplicate Note" }
-        ]
-        
-        navigate: [
-            openView {
-                title: "Timeline of this note"
-                view: {
-                    defaultRenderer: timeline
+        key {
+            ZStack {
+                HStack {
+                    show: {{readOnly}}
                     
-                    [datasource = pod] {
-                        query: "AuditItem appliesTo:{.id}"
-                        sortProperty: dateCreated
-                        sortAscending: true
+                    Text {
+                        text: "******"
+                        padding: 0 20 0 0
                     }
-                    
-                    [renderer = timeline] {
-                        timeProperty: dateCreated
+                    Button {
+                        press: copyToClipboard {
+                            value: {{.key}}
+                        }
+                        
+                        Text { text: "copy" }
                     }
                 }
-            }
-            openViewByName {
-                title: "Starred notes"
-                viewName: "filter-starred"
-                viewArguments: {
-                    include: "all-notes"
+                SecureField {
+                    value: {{.key}}
                 }
             }
-            openSessionByName {
-                title: "All notes"
-                sessionName: "all-notes"
-            }
-        ]
-    }
-    
-    [renderer = custom] {
-        RichTextfield {
-            content: {{.content}}
-            title: {{.title}}
-            titleHint: "Untitled Note"
-            fontSize: 18
         }
     }
 }
 
-CyptoKey[] {
+
+CryptoKey[] {
+    title: "All Crypto Keys"
+    emptyResultText: "There are no keys here yet"
     defaultRenderer: list
-    filterButtons: [ showStarred toggleFilterPanel ]
+    sortFields: title dateModified dateAccessed dateCreated
+    
+    [datasource = pod] {
+        sortProperty: dateAccessed
+        sortAscending: false
+    }
+    
+    actionButton:
+        addItem {
+            template {
+                _type: CryptoKey
+            }
+        }
+        
+    editActionButton: toggleEditMode
+    filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {
         VStack {
             alignment: left
-            padding: 0 20 0 20
+            spacing: 3
             
-            Text {
-                text: "{.computedTitle()}"
-                padding: 10 0 10 0
+            HStack {
+                align: left
+                
+                Text {
+                    /* TODO: Bug when .role is not set still displays - {.role ? ' — ' : ''}{.role ? .role : ''} */
+                    text: "{.active ? '' : '[INACTIVE] '}{.name or .type or '<Unnamed Key>'}"
+                    lineLimit: 1
+                    font: 18 semibold
+                    color: {{.active ? "#333" : "#999"}}
+                    padding: 0 0 0 0
+                }
+                Image {
+                    systemName: "star.fill"
+                    font: 14
+                    color: #eecc00
+                    margin: 5
+                    show: {{.starred}}
+                }
             }
-        }
-    }
-    
-    [renderer = generalEditor] {
-        EditorRow {
-            title: "{title}"
-            
-            Text {
-                text: {{.name}}
-                show: {{readOnly}}
-            }
-            Picker {
-                empty: Country
-                value: {{.}}
-                title: "Select a country"
-                default: {{me.address[primary = true].country}}
-                optionsFromQuery: country
-                show: {{!readOnly}}
+            HStack {
+                align: bottomright
+                
+                VStack {
+                    Text {
+                        show: {{.type}}
+                        text: "{.type}"
+                        lineLimit: 1
+                        removeWhiteSpace: true
+                        maxChar: 100
+                        color: #333
+                        font: 14 regular
+                    }
+                    Text {
+                        /* TODO: Why does .role not work?? */
+                        show: {{.role.count > 0}}
+                        text: "Role: {.role.firstUppercased}"
+                        lineLimit: 1
+                        removeWhiteSpace: true
+                        maxChar: 100
+                        color: #555
+                        font: 14 regular
+                        padding: 3 0 0 0
+                    }
+                    Text {
+                        text: "{.dateAccessed.format() or .dateCreated.format()}"
+                        lineLimit: 1
+                        font: 11 regular
+                        color: #888
+                        padding: 5 0 0 0
+                    }
+                }
+                
+                Spacer
+                
+                MemriButton {
+                    show: {{.owner}}
+                    edge: {{._owner}}
+                }
             }
         }
     }

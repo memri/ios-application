@@ -782,7 +782,7 @@ class ActionToggleFilterPanel: Action, ActionExec {
 class ActionStar: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
         "icon": "star.fill",
-        "binding": Expression("dataItem.starred"),
+        "binding": Expression(".starred"),
     ] }
 
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {

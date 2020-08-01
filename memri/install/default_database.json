@@ -164,7 +164,7 @@
         "_type": "NavigationItem",
         "type": "item",
         "title": "crypto keys",
-        "sessionName": "all-locations"
+        "sessionName": "all-cryptokeys"
     },
     {
         "_type": "NavigationItem",
@@ -1194,7 +1194,28 @@
         "_type": "CryptoKey",
         "uid": 1007,
         "name": "PGP Email",
-        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517"
+        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
+        "allEdges": [
+            {
+                "itemType": "Person",
+                "uid": 2,
+                "_type": "owner"
+            }
+        ]
+    },
+    {
+        "_type": "CryptoKey",
+        "uid": 1007,
+        "name": "PGP Email",
+        "active": true,
+        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
+        "allEdges": [
+            {
+                "itemType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            }
+        ]
     },
     { "_type": "Network", "uid": 9997, "name": "Whatsapp" },
     { "_type": "Network", "uid": 9998, "name": "Twitter" },

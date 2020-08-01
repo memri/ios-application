@@ -388,7 +388,7 @@ class Authentication {
             let dbKeyItem = try Cache.createItem(CryptoKey.self, values: [
                 "type": "64BytesRandomHex",
                 "key": dbKey,
-                "name": "memriDBKey",
+                "name": "Memri Database Key",
                 "active": true
             ])
             _ = try dbKeyItem.link(myself, type: "owner")
@@ -397,14 +397,14 @@ class Authentication {
                 "type": "ED25519",
                 "role": "private",
                 "key": privateKey,
-                "name": "memriOwnerKey",
+                "name": "Memri Owner Key",
                 "active": true
             ])
             let ownerPublicKeyItem = try Cache.createItem(CryptoKey.self, values: [
                 "type": "ED25519",
                 "role": "public",
                 "key": publicKey,
-                "name": "memriOwnerKey",
+                "name": "Memri Owner Key",
                 "active": true
             ])
             _ = try ownerPrivateKeyItem.link(myself, type: "owner")
