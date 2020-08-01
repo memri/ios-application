@@ -34,8 +34,17 @@ class EmailViewUIKit: UIView {
     
     // Internal
     private let webView: WKWebView
-    private var isLoaded: Bool = false
+    private var isLoaded: Bool = false {
+        didSet {
+            if isLoaded {
+                activityIndicator.stopAnimating()
+            } else {
+                activityIndicator.startAnimating()
+            }
+        }
+    }
     private var heightConstraint: NSLayoutConstraint?
+    private let activityIndicator = UIActivityIndicatorView()
     
     init() {
         let config = WKWebViewConfiguration()
@@ -51,9 +60,20 @@ class EmailViewUIKit: UIView {
         webView.scrollView.isScrollEnabled = false
         addSubview(webView)
         
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .medium
+        
+        addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        
+        
         heightConstraint = heightAnchor.constraint(equalToConstant: defaultSize)
-        heightConstraint?.priority = .defaultHigh
+        heightConstraint?.priority = .defaultLow
         heightConstraint?.isActive = true
+        
+        activityIndicator.startAnimating()
     }
     
     required init?(coder: NSCoder) {
@@ -89,6 +109,7 @@ class EmailViewUIKit: UIView {
     }
     
     func _loadPlaceholder() {
+        isLoaded = false
         let bundleURL = Bundle.main.bundleURL
         self.webView.loadHTMLString(emailHTML ?? "", baseURL: bundleURL)
     }
@@ -121,8 +142,10 @@ var images = document.getElementsByTagName('img');
     
     func evaluateWebViewHeight(_ webview: WKWebView){
         let script = """
-document.documentElement.scrollHeight
+document.documentElement.offsetHeight
 """
+        
+        //document.documentElement.scrollHeight - issue when webview larger than content
         
         webView.evaluateJavaScript(script) { (result, error) in
             guard let height = result as? CGFloat else {

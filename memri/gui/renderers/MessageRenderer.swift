@@ -78,14 +78,51 @@ struct MessageRenderer: View {
         }
     }
 
+    
     var body: some View {
-        ASTableView(editMode: editMode, section: section)
-            .separatorsEnabled(false)
-            .scrollPositionSetter($scrollPosition)
-            .alwaysBounce()
-			.contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
-            .edgesIgnoringSafeArea(.all)
-            .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
+        VStack(spacing: 0) {
+            ASTableView(editMode: editMode, section: section)
+                .separatorsEnabled(false)
+                .scrollPositionSetter($scrollPosition)
+                .alwaysBounce()
+                .contentInsets(.init(top: renderConfig.edgeInset.top, left: 0, bottom: renderConfig.edgeInset.bottom, right: 0))
+                .edgesIgnoringSafeArea(.all)
+                .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
+            Divider()
+            messageComposer
+        }
+        .modifier(KeyboardPaddingModifier())
+    }
+    
+    @State private var isEditingComposedMessage: Bool = false
+    @State private var composedMessage: String?
+    
+    var messageComposer: some View {
+        HStack(spacing: 6) {
+            MemriFittedTextEditor(contentBinding: $composedMessage, placeholder: "Type a message...", backgroundColor: ColorDefinition.system(.systemBackground), isEditing: $isEditingComposedMessage)
+                
+            Button(action: onPressSend) {
+                Image(systemName: "arrow.up.circle.fill")
+                    .foregroundColor(canSend ? .blue : Color(.systemFill))
+                    .font(.system(size: 30))
+            }
+            .disabled(!canSend)
+        }
+        .padding(.vertical, 5)
+        .padding(.leading, min(max(self.renderConfig.edgeInset.left, 5), 15)) // Follow user-defined insets where within a reasonable range
+        .padding(.trailing, min(max(self.renderConfig.edgeInset.right, 5), 15)) // Follow user-defined insets where within a reasonable range
+        .background(Color(.secondarySystemBackground))
+    }
+    
+    var canSend: Bool {
+        !(composedMessage?.isOnlyWhitespace ?? true)
+    }
+    
+    func onPressSend() {
+        #warning("@Ruben: we will need to decide how `sending` a message is handled")
+        print(composedMessage ?? "Empty message")
+        composedMessage = nil
+        isEditingComposedMessage = false
     }
 }
 

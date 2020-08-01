@@ -32,7 +32,7 @@ class EmailThreadedViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resizeCancellable = resizeSubject.throttle(for: .milliseconds(100), scheduler: DispatchQueue.main, latest: true).sink { [weak self] in
+        resizeCancellable = resizeSubject.throttle(for: .milliseconds(500), scheduler: DispatchQueue.main, latest: true).sink { [weak self] in
             self?.invalidateCellLayout()
         }
         
@@ -79,20 +79,30 @@ class EmailThreadedViewController: UITableViewController {
     
     func onDataSourceUpdated() {
         isLoadingMoreItems = false
+        if !userHasScrolled {
+            scrollToLast()
+        }
+    }
+    
+    func scrollToLast() {
+        guard let snapshot = dataSource?.snapshot(), snapshot.numberOfItems > 0 else { return }
+        let lastSection = max(0, snapshot.numberOfSections - 1)
+        let lastIndexPath = IndexPath(row: max(0, snapshot.numberOfItems(inSection: lastSection) - 1), section: lastSection)
+        tableView.scrollToRow(at: lastIndexPath, at: .top, animated: false)
     }
     
     func invalidateCellLayout() {
-        print(Date())
-        tableView.beginUpdates()
-        tableView.endUpdates()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if !userHasScrolled, let snapshot = dataSource?.snapshot(), snapshot.numberOfItems > 0 {
-            let lastSection = max(0, snapshot.numberOfSections - 1)
-            let lastIndexPath = IndexPath(row: max(0, snapshot.numberOfItems(inSection: lastSection) - 1), section: lastSection)
-            tableView.scrollToRow(at: lastIndexPath, at: .bottom, animated: false)
+        if userHasScrolled {
+            tableView.beginUpdates()
+            tableView.endUpdates()
+        } else {
+            UIView.performWithoutAnimation {
+                tableView.beginUpdates()
+                tableView.endUpdates()
+                if !userHasScrolled {
+                    scrollToLast()
+                }
+            }
         }
     }
     

@@ -75,10 +75,6 @@ class MapModel {
             return [location]
         }
 
-        #warning(
-            "@Toby Note that the location implementation above was wrong and is also faulty for MapBOx"
-        )
-
         let addresses: [Address]
         let addressExpressionResult = addressResolver?(dataItem)
         if let addressesList = addressExpressionResult as? Results<Item> {

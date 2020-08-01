@@ -5,7 +5,7 @@
 import Foundation
 import SwiftUI
 
-struct RichTextToolbarView: View {
+struct MemriTextEditorToolbar: View {
     weak var textView: MemriTextEditor_UIKit?
 
     var state_bold: Bool = false
@@ -121,6 +121,6 @@ struct RichTextToolbarView: View {
 
 struct RichTextToolbar_Previews: PreviewProvider {
     static var previews: some View {
-        RichTextToolbarView(state_italic: true)
+        MemriTextEditorToolbar(state_italic: true)
     }
 }

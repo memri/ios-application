@@ -75,8 +75,7 @@ Message {
     
     [renderer = custom] {
         RichTextfield {
-            htmlValue: {{.content}}
-            value: {{.textContent}}
+            content: {{.content}}
             title: {{.title}}
             titleHint: "Untitled Note"
             fontSize: 18
@@ -170,6 +169,7 @@ Message[] {
                 Image {
                     show: {{.photo}}
                     image: {{.photo}}
+                    forceAspect: true
                 }
 
                 HStack {
