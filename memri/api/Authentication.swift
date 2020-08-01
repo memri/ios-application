@@ -383,10 +383,13 @@ class Authentication {
                 key.active = false
             }
             
-            let myself = try me()
+            let myself = me()
+            guard myself.realm != nil else {
+                throw "Could not find a reference to 'me'"
+            }
             
             let dbKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "64BytesRandomHex",
+                "type": "64CharacterRandomHex",
                 "key": dbKey,
                 "name": "Memri Database Key",
                 "active": true

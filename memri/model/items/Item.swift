@@ -232,7 +232,7 @@ public class Item: SchemaItem {
 
         // Should this create a temporary edge for which item() is source() ?
         return realm?.objects(Edge.self)
-            .filter("targetItemID = \(uid) AND type = '\(edgeType)")
+            .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)'")
     }
 
     public func reverseEdge(_ edgeType: String) -> Edge? {
@@ -245,7 +245,7 @@ public class Item: SchemaItem {
 
         // Should this create a temporary edge for which item() is source() ?
         return realm?.objects(Edge.self)
-            .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)").first
+            .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)'").first
     }
 
     public func edges(_ edgeType: String) -> Results<Edge>? {

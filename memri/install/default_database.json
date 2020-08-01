@@ -74,6 +74,12 @@
     {
         "_type": "NavigationItem",
         "type": "item",
+        "title": "message channels",
+        "sessionName": "all-message-channels"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
         "title": "email",
         "sessionName": "all-email-messages"
     },
@@ -2591,6 +2597,11 @@
         "enableReceipts": true,
         "allEdges": [
             {
+                "itemType": "Person",
+                "uid": 2,
+                "_type": "owner"
+            },
+            {
                 "itemType": "Network",
                 "uid": 9997,
                 "_type": "network"
@@ -2606,6 +2617,11 @@
         "enablePresence": true,
         "enableReceipts": true,
         "allEdges": [
+            {
+                "itemType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            },
             {
                 "itemType": "Network",
                 "uid": 9997,
@@ -2623,6 +2639,11 @@
         "enableReceipts": true,
         "allEdges": [
             {
+                "itemType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            },
+            {
                 "itemType": "Network",
                 "uid": 9997,
                 "_type": "network"
@@ -2639,7 +2660,7 @@
         "allEdges": [
             {
                 "itemType": "Account",
-                "uid": 20000000000,
+                "uid": 20000000001,
                 "_type": "receiver"
             }
         ]
@@ -2654,7 +2675,7 @@
         "allEdges": [
             {
                 "itemType": "Account",
-                "uid": 20000000000,
+                "uid": 20000000002,
                 "_type": "receiver"
             }
         ]
@@ -2669,7 +2690,7 @@
         "allEdges": [
             {
                 "itemType": "Account",
-                "uid": 20000000000,
+                "uid": 20000000003,
                 "_type": "receiver"
             }
         ]
@@ -2684,7 +2705,7 @@
         "allEdges": [
             {
                 "itemType": "Account",
-                "uid": 20000000000,
+                "uid": 20000000003,
                 "_type": "receiver"
             }
         ]

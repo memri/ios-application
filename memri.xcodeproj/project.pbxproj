@@ -494,7 +494,7 @@
 		86A5D847243EC46700F8FAD8 /* named_views.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = named_views.json; sourceTree = "<group>"; };
 		86AECB1624D3FFD90024D7B9 /* inbox.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = inbox.cvu; sourceTree = "<group>"; };
 		86AECB1824D400040024D7B9 /* Message.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Message.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		86AECB1924D400040024D7B9 /* MessageChannel.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessageChannel.cvu; sourceTree = "<group>"; };
+		86AECB1924D400040024D7B9 /* MessageChannel.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessageChannel.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86AECB1A24D400050024D7B9 /* Account.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Account.cvu; sourceTree = "<group>"; };
 		86AECB1B24D400050024D7B9 /* CryptoKey.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CryptoKey.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86AECB1C24D400050024D7B9 /* EmailMessage.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EmailMessage.cvu; sourceTree = "<group>"; };

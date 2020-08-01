@@ -314,7 +314,7 @@ public class Views {
 
         if recursionCounter > 4 {
             recursionCounter = 0
-            throw "Exception: Recursion detected while expanding variable \(lookup)"
+            throw "Exception: Recursion detected while expanding variable \(lookup.toExprString())"
         }
 
         var i = 0
@@ -325,6 +325,7 @@ public class Views {
                 if first {
                     // TODO: move to CVU validator??
                     if node.list == .list || node.type != .propertyOrItem {
+                        recursionCounter = 0
                         throw "Unexpected edge lookup. No source specified"
                     }
 
@@ -392,7 +393,10 @@ public class Views {
                 else if let date = value as? Date {
                     switch node.name {
                     case "format":
-                        guard isFunction else { throw "You must call .format() as a function" }
+                        guard isFunction else {
+                            recursionCounter = 0
+                            throw "You must call .format() as a function"
+                        }
 
                         value = { (args: [Any?]?) -> Any? in
                             if args?.count == 0 { return Views.formatDate(date) }
@@ -432,6 +436,26 @@ public class Views {
                         debugHistory.warn("Could not find property \(node.name) on list of edges")
                     }
                 }
+                else if let v = value as? RealmSwift.Results<Item> {
+                    switch node.name {
+                    case "count": value = v.count
+                    case "first": value = v.first
+                    case "last": value = v.last
+                    default:
+                        // TODO: Warn
+                        debugHistory.warn("Could not find property \(node.name) on list of items")
+                    }
+                }
+                else if let v = value as? [Any?] {
+                    switch node.name {
+                    case "count": value = v.count
+                    case "first": value = v.first
+                    case "last": value = v.last
+                    default:
+                        // TODO: Warn
+                        debugHistory.warn("Could not find property \(node.name) on list")
+                    }
+                }
                 else if let v = value as? RealmSwift.ListBase {
                     switch node.name {
                     case "count": value = v.count
@@ -453,6 +477,10 @@ public class Views {
                     else {
                         value = v[node.name] // How to handle errors?
                     }
+                }
+                else if "\(value ?? "")" != "nil" { #warning("Fix Any issue")
+                    recursionCounter = 0
+                    throw "Unexpected fetch \(node.name) on \(value)"
                 }
             }
             // .addresses[primary = true] || [0]

@@ -10,75 +10,21 @@
 MessageChannel {
     title: {{.title or "Untitled" }}
     defaultRenderer: custom
-    editActionButton: toggleEditMode
-    filterButtons: [
-        openView {
-            icon: "increase.indent"
-            title: "Show Timeline"
-            
-            view: {
-                defaultRenderer: timeline
-                
-                [datasource = pod] {
-                    query: "AuditItem appliesTo:{.id}"
-                    sortProperty: dateCreated
-                    sortAscending: true
-                }
-                
-                [renderer = timeline] {
-                    timeProperty: dateCreated
-                }
-            }
-        }
-        showContextPane
-    ]
-    
-    contextPane {
-        buttons: star schedule
-        
-        actions: [
-            showOverlay { title: "Share with..." }
-            addToPanel { title: "Add to list..." }
-            duplicate { title: "Duplicate Note" }
-        ]
-        
-        navigate: [
-            openView {
-                title: "Timeline of this note"
-                view: {
-                    defaultRenderer: timeline
-                    
-                    [datasource = pod] {
-                        query: "AuditItem appliesTo:{.id}"
-                        sortProperty: dateCreated
-                        sortAscending: true
-                    }
-                    
-                    [renderer = timeline] {
-                        timeProperty: dateCreated
-                    }
-                }
-            }
-            openViewByName {
-                title: "Starred notes"
-                viewName: "filter-starred"
-                viewArguments: {
-                    include: "all-notes"
-                }
-            }
-            openSessionByName {
-                title: "All notes"
-                sessionName: "all-notes"
-            }
-        ]
-    }
     
     [renderer = custom] {
-        RichTextfield {
-            content: {{.content}}
-            title: {{.title}}
-            titleHint: "Untitled Note"
-            fontSize: 18
+        SubView {
+            view: {
+                showToolbar: false
+                showSearchbar: false
+                
+                [datasource = pod] {
+                    query: "Message and ANY allEdges.targetItemID = {uid}"
+                    sortProperty: "dateSent"
+                }
+            }
+            arguments {
+                uid: {{.uid}}
+            }
         }
     }
 }
@@ -88,32 +34,49 @@ MessageChannel[] {
     filterButtons: [ showStarred toggleFilterPanel ]
     
     [renderer = list] {
-        VStack {
-            alignment: left
-            padding: 0 20 0 20
+        HStack {
+            alignment: center
             
-            Text {
-                text: "{.computedTitle()}"
-                padding: 10 0 10 0
-            }
-        }
-    }
-    
-    [renderer = generalEditor] {
-        EditorRow {
-            title: "{title}"
+            ZStack {
+                align: top
+                margin: 0 15 0 0
             
-            Text {
-                text: {{.name}}
-                show: {{readOnly}}
+                Image {
+                    image: {{.receiver.owner.profilePicture}}
+                    resizable: fill
+                    minHeight: 50
+                    maxHeight: 50
+                    minWidth: 50
+                    maxWidth: 50
+                    cornerRadius: 30
+                }
             }
-            Picker {
-                empty: Country
-                value: {{.}}
-                title: "Select a country"
-                default: {{me.address[primary = true].country}}
-                optionsFromQuery: country
-                show: {{!readOnly}}
+            
+            VStack {
+                HStack {
+                    Text {
+                        text: "{.receiver.displayName}"
+                        font: 18 semibold
+                        color: #333
+                        padding: 0 0 3 0
+                    }
+                    
+                    Spacer
+                    
+                    Text {
+                        text: "{.~messageChannel[].last.dateSent.format()}" /* TODO: This could be optimized to do _message[].last.item under the hood*/
+                        font: 9 regular
+                        color: #888
+                        padding: 4 0 3 0
+                    }
+                }
+                Text {
+                    text: "{.~messageChannel[].last.photo ? '[Photo]' : .~messageChannel[].last.content.plainString or 'No messages yet'}"
+                    lineLimit: 2
+                    font: 14 regular
+                    color: #888
+                    padding: 0 0 5 0
+                }
             }
         }
     }
