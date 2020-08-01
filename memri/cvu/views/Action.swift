@@ -397,9 +397,8 @@ public enum RenderType: String {
 
 public enum ActionFamily: String, CaseIterable {
     case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode,
-        toggleFilterPanel,
-        star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel,
-        duplicate,
+        toggleFilterPanel, star, showStarred, showContextPane, showOverlay, share, showNavigation,
+        addToPanel, duplicate, copyToClipboard,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
@@ -436,6 +435,7 @@ public enum ActionFamily: String, CaseIterable {
         case .runImporter: return ActionRunImporter.self
         case .setProperty: return ActionSetProperty.self
         case .setSetting: return ActionSetSetting.self
+        case .copyToClipboard: return ActionCopyToClipboard.self
         case .noop: fallthrough
         default: return ActionNoop.self
         }
@@ -545,6 +545,33 @@ class ActionAddItem: Action, ActionExec {
 
     class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
         execWithoutThrow { try ActionAddItem(context).exec(arguments) }
+    }
+}
+
+class ActionCopyToClipboard: Action, ActionExec {
+    override var defaultValues: [String: Any?] { [
+        "icon": "doc.on.doc",
+        "argumentTypes": ["value": AnyObject.self],
+        "opensView": true,
+        "color": Color(hex: "#6aa84f"),
+        "inactiveColor": Color(hex: "#434343"),
+    ] }
+
+    required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+        super.init(context, "copyToClipboard", values: values)
+    }
+
+    func exec(_ arguments: [String: Any?]) throws {
+        if let value = arguments["value"] as? String {
+            UIPasteboard.general.string = value
+        }
+        else if arguments["value"] != nil {
+            throw "Not implemented yet"
+        }
+    }
+
+    class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+        execWithoutThrow { try ActionCopyToClipboard(context).exec(arguments) }
     }
 }
 

@@ -24,9 +24,10 @@ CryptoKey {
         
         header {
             showTitle: false
+            dividers: false
             
             VStack {
-                padding: 20 36 20 36
+                padding: 20 36 10 36
                 
                 HStack {
                     Text {
