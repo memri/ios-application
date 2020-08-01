@@ -234,6 +234,32 @@ public class Views {
                 return nil
             }
             return f
+        case "min":
+            let f = { (args: [Any?]?) -> Any? in
+                let first = args?[0] as? Double ?? Double.nan
+                let second = args?[1] as? Double ?? Double.nan
+                return min(first, second)
+            }
+            return f
+        case "max":
+            let f = { (args: [Any?]?) -> Any? in
+                let first = args?[0] as? Double ?? Double.nan
+                let second = args?[1] as? Double ?? Double.nan
+                return max(first, second)
+            }
+            return f
+        case "floor":
+            let f = { (args: [Any?]?) -> Any? in
+                let value = args?[0] as? Double ?? Double.nan
+                return floor(value)
+            }
+            return f
+        case "ceil":
+            let f = { (args: [Any?]?) -> Any? in
+                let value = args?[0] as? Double ?? Double.nan
+                return ceil(value)
+            }
+            return f
         case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
         case "context": return context
         case "sessions": return context?.sessions
@@ -397,8 +423,8 @@ public class Views {
                     case "first": value = v.first
                     case "last": value = v.last
                     //                        case "sum": value = v.sum
-                    case "min": value = v.min
-                    case "max": value = v.max
+//                    case "min": value = v.min
+//                    case "max": value = v.max
                     case "items": value = v.items()
                     default:
                         // TODO: Warn

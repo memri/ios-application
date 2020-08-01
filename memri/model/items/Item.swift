@@ -95,24 +95,6 @@ public class Item: SchemaItem {
 
             return nil
         }
-        functions["min"] = { args in
-            let first = args?[0] as? Double ?? Double.nan
-            let second = args?[1] as? Double ?? Double.nan
-            return min(first, second)
-        }
-        functions["max"] = { args in
-            let first = args?[0] as? Double ?? Double.nan
-            let second = args?[1] as? Double ?? Double.nan
-            return max(first, second)
-        }
-        functions["floor"] = { args in
-            let value = args?[0] as? Double ?? Double.nan
-            return floor(value)
-        }
-        functions["ceil"] = { args in
-            let value = args?[0] as? Double ?? Double.nan
-            return ceil(value)
-        }
     }
 
     required init(from _: Decoder) throws {

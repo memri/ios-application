@@ -144,7 +144,7 @@ public final class Session: Equatable, Subscriptable {
             // Do nothing and expect a call to setCurrentView later
         }
     }
-
+    
     subscript(propName: String) -> Any? {
         get {
             switch propName {
