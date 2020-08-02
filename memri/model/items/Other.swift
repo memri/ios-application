@@ -71,6 +71,12 @@ extension MedicalCondition {
     }
 }
 
+extension Network {
+    override var computedTitle: String {
+        name ?? ""
+    }
+}
+
 class Person: SchemaPerson {
     override var computedTitle: String {
         fullName

@@ -14,7 +14,6 @@ MessageChannel {
     [renderer = generalEditor] {
         layout: [
             { section: profilePicture }
-            { section: owner, edges: owner, readOnly: true }
             { section: other, fields: * }
             { section: dates }
         ]
@@ -22,9 +21,29 @@ MessageChannel {
         profilePicture {
             showTitle: false
         
-            Image {
-                image: {{.receiver.owner.profilePicture}}
-                resizable: fill
+            ZStack {
+                align: bottomright
+                maxHeight: 300
+                
+                Image {
+                    image: {{.receiver.owner.profilePicture}}
+                    resizable: fill
+                }
+                
+                HStack {
+                    alignment: bottom
+                    maxHeight: 300
+                    align: bottom
+                    padding: 0 5 10 5
+                    
+                    MemriButton {
+                        item: {{.receiver.owner}}
+                    }
+                    Spacer
+                    MemriButton {
+                        item: {{.receiver.network}}
+                    }
+                }
             }
         }
     }
