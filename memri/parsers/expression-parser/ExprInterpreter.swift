@@ -60,7 +60,12 @@ class ExprInterpreter {
     class func evaluateString(_ x: Any?, _ defaultValue: String = "") -> String {
         if let x = x as? Bool { return x ? "true" : "false" }
         else if let x = x as? Int { return String(x) }
-        else if let x = x as? Double { return String(x) }
+        else if let x = x as? Double {
+            if x.truncatingRemainder(dividingBy: 1) == 0 {
+                return String(Int(x))
+            }
+            return String(x)
+        }
         else if let x = x as? String { return x }
         else if let x = x as? Date {
             let formatter = DateFormatter()

@@ -11,6 +11,10 @@ import LocalAuthentication
 import CryptoKit
 
 class Authentication {
+    #if targetEnvironment(simulator)
+    private static let autologin = true
+    #endif
+    
     /*
         TODO:
             - Enable passcode / bio ID to access the app
@@ -127,7 +131,7 @@ class Authentication {
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator)
-        if DatabaseController.realmTesting {
+        if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)
             return
@@ -157,7 +161,7 @@ class Authentication {
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator)
-        if DatabaseController.realmTesting {
+        if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)
             return

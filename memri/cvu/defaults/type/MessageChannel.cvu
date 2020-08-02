@@ -8,32 +8,55 @@
 }
 
 MessageChannel {
-    title: {{.title or "Untitled" }}
-    defaultRenderer: custom
+    title: {{.receiver.displayName or .name or .topic}}
+    defaultRenderer: generalEditor
     
-    [renderer = custom] {
-        SubView {
-            view: {
-                showToolbar: false
-                showSearchbar: false
-                
-                [datasource = pod] {
-                    query: "Message and ANY allEdges.targetItemID = {uid}"
-                    sortProperty: "dateSent"
-                }
-            }
-            arguments {
-                uid: {{.uid}}
+    [renderer = generalEditor] {
+        layout: [
+            { section: profilePicture }
+            { section: owner, edges: owner, readOnly: true }
+            { section: other, fields: * }
+            { section: dates }
+        ]
+        
+        profilePicture {
+            showTitle: false
+        
+            Image {
+                image: {{.receiver.owner.profilePicture}}
+                resizable: fill
             }
         }
     }
 }
 
 MessageChannel[] {
+    title: "Channels"
     defaultRenderer: list
     filterButtons: [ showStarred toggleFilterPanel ]
     
     [renderer = list] {
+        press: openView {
+            view: {
+                /* TODO: Here is a case for serializing dot. The first time it works, but not on reload */
+                title: {{channel.receiver.displayName or channel.name or channel.topic}}
+                
+                editActionButton: openView {
+                    icon: "gear"
+                    item: {{channel}}
+                }
+                
+                [datasource = pod] {
+                    query: "Message and ANY allEdges.targetItemID = {uid}"
+                    sortProperty: "dateSent"
+                }
+            }
+            viewArguments {
+                uid: {{.uid}}
+                channel: {{.}}
+            }
+        }
+        
         HStack {
             alignment: center
             

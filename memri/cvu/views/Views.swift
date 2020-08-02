@@ -215,13 +215,14 @@ public class Views {
         case "item":
             let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
                 guard let typeName = args?[safe: 0] as? String,
-                    let uid = args?[safe: 1] as? Int else {
+                      let uid = args?[safe: 1] as? Double
+                else {
                     if args?.count == 0 {
                         return self.context?.currentView?.resultSet.singletonItem
                     }
                     return nil
                 }
-                return getItem(typeName, uid)
+                return getItem(typeName, Int(uid))
             }
             return f
         case "debug":
@@ -431,6 +432,7 @@ public class Views {
 //                    case "min": value = v.min
 //                    case "max": value = v.max
                     case "items": value = v.items()
+                    #warning("Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list of edges")
@@ -441,6 +443,7 @@ public class Views {
                     case "count": value = v.count
                     case "first": value = v.first
                     case "last": value = v.last
+                    #warning("Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list of items")
@@ -449,8 +452,9 @@ public class Views {
                 else if let v = value as? [Any?] {
                     switch node.name {
                     case "count": value = v.count
-                    case "first": value = v.first
-                    case "last": value = v.last
+                    case "first": value = v.first as Any?
+                    case "last": value = v.last as Any?
+                    #warning("Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list")

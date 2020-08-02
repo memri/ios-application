@@ -143,7 +143,9 @@ extension MemriContext {
         }
 
         // Last element of arguments array is the context data item
-        args["item"] = item ?? currentView?.resultSet.singletonItem
+        if args["item"] == nil {
+            args["item"] = item ?? currentView?.resultSet.singletonItem
+        }
 
         return args
     }
@@ -577,7 +579,11 @@ class ActionCopyToClipboard: Action, ActionExec {
 
 class ActionOpenView: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
-        "argumentTypes": ["view": CVUStateDefinition.self, "viewArguments": ViewArguments.self],
+        "argumentTypes": [
+            "item": ItemFamily.self,
+            "view": CVUStateDefinition.self,
+            "viewArguments": ViewArguments.self
+        ],
         "withAnimation": false,
         "opensView": true,
     ] }
@@ -642,7 +648,7 @@ class ActionOpenView: Action, ActionExec {
         }
         else {
             // TODO: Error handling
-            throw "Cannot execute ActionOpenView, arguments require a SessionView. passed arguments:\n \(arguments), "
+            throw "Cannot execute ActionOpenView, arguments require a view. passed arguments:\n \(arguments), "
         }
     }
 

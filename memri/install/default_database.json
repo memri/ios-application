@@ -2757,6 +2757,7 @@
         "_type": "Message",
         "uid": 20000000010,
         "externalId": "36A3043A22AC7524060B23FB54815B39",
+        "content": "Check out this photo!",
         "dateSent": 1589691680000,
         "allEdges": [
             {
