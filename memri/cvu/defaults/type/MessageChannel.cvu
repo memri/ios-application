@@ -8,7 +8,7 @@
 }
 
 MessageChannel {
-    title: {{.receiver.displayName or .name or .topic}}
+    title: "Channel Info"
     defaultRenderer: generalEditor
     
     [renderer = generalEditor] {
@@ -21,7 +21,7 @@ MessageChannel {
         profilePicture {
             showTitle: false
         
-            ZStack {
+            VStack {
                 align: bottomright
                 maxHeight: 300
                 
@@ -31,10 +31,8 @@ MessageChannel {
                 }
                 
                 HStack {
-                    alignment: bottom
-                    maxHeight: 300
-                    align: bottom
-                    padding: 0 5 10 5
+                    padding: 10
+                    background: #efef /* TODO: Support opacity in the background */
                     
                     MemriButton {
                         item: {{.receiver.owner}}
@@ -60,8 +58,7 @@ MessageChannel[] {
                 /* TODO: Here is a case for serializing dot. The first time it works, but not on reload */
                 title: {{channel.receiver.displayName or channel.name or channel.topic}}
                 
-                editActionButton: openView {
-                    icon: "gear"
+                titleActionButton: openView {
                     item: {{channel}}
                 }
                 
