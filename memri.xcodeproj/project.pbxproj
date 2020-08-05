@@ -497,7 +497,7 @@
 		86AECB1924D400040024D7B9 /* MessageChannel.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MessageChannel.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86AECB1A24D400050024D7B9 /* Account.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Account.cvu; sourceTree = "<group>"; };
 		86AECB1B24D400050024D7B9 /* CryptoKey.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CryptoKey.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		86AECB1C24D400050024D7B9 /* EmailMessage.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EmailMessage.cvu; sourceTree = "<group>"; };
+		86AECB1C24D400050024D7B9 /* EmailMessage.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EmailMessage.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		86B7A66E2457333000292E81 /* ThumbWaterfallRendererView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThumbWaterfallRendererView.swift; sourceTree = "<group>"; };
 		86B7A6752457404C00292E81 /* MapRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapRendererView.swift; sourceTree = "<group>"; };
 		86B7A6772457F28A00292E81 /* KeyboardResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardResponder.swift; sourceTree = "<group>"; };

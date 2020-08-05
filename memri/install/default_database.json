@@ -1223,6 +1223,7 @@
             }
         ]
     },
+    { "_type": "Network", "uid": 9996, "name": "Email" },
     { "_type": "Network", "uid": 9997, "name": "Whatsapp" },
     { "_type": "Network", "uid": 9998, "name": "Twitter" },
     { "_type": "Network", "uid": 9999, "name": "Facebook" },
@@ -2832,6 +2833,133 @@
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Account",
+        "uid": 209003,
+        "displayName": "john@example.com",
+        "allEdges": [
+            {
+                "itemType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            },
+            {
+                "itemType": "Network",
+                "uid": 9996,
+                "_type": "network"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000008,
+        "subject": "Hello",
+        "externalId": "93463F7980167E92C28FF0781E650E80",
+        "content": "test 123",
+        "dateSent": 1589691657000,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000009,
+        "externalId": "9BDD372B9D4F7486D2A0",
+        "subject": "Re: Hello",
+        "content": "hello",
+        "dateSent": 1589691670000,
+        "allEdges": [
+            {
+                "itemType": "Message",
+                "uid": 22000000008,
+                "_type": "message"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000010,
+        "externalId": "36A3043A22AC7524060B23FB54815B39",
+        "subject": "Re: Hello",
+        "content": "Check out this photo!",
+        "dateSent": 1589691680000,
+        "allEdges": [
+            {
+                "itemType": "Photo",
+                "uid": 79200,
+                "_type": "photo"
+            },
+            {
+                "itemType": "Message",
+                "uid": 22000000009,
+                "_type": "message"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000001,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000011,
+        "externalId": "7A1FCF21F8E4216509EF8300D7C5CC57",
+        "subject": "Re: Hello",
+        "content": "where r u?",
+        "dateSent": 1589691690000,
+        "allEdges": [
+            {
+                "itemType": "Message",
+                "uid": 22000000010,
+                "_type": "message"
+            },
+            {
+                "itemType": "Account",
+                "uid": 20000000002,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000012,
+        "externalId": "EE9E22BD54F93EC48CF9",
+        "subject": "Interesting information",
+        "content": "at home",
+        "dateSent": 1589691700000,
+        "allEdges": [
+            {
+                "itemType": "Account",
+                "uid": 20000000000,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "EmailMessage",
+        "uid": 22000000012,
+        "externalId": "EE9E22BD54F93EC48CF9",
+        "subject": "Check this out",
+        "content": "That's cool",
+        "dateSent": 1589691700000,
+        "allEdges": [
             {
                 "itemType": "Account",
                 "uid": 20000000000,
