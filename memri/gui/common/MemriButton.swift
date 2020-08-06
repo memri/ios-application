@@ -23,9 +23,9 @@ public struct MemriButton: View {
         }
         
         let family = ItemFamily(rawValue: inputItem?.genericType ?? "Note")
-        var type = edge?.type?.capitalizingFirst() ?? (inputItem?.objectSchema["type"] == nil
+        var type = edge?.type?.capitalizingFirst() ?? (inputItem?.objectSchema["itemType"] == nil
             ? inputItem?.genericType
-            : inputItem?.getString("type"))
+            : inputItem?.getString("itemType"))
         if type == "" { type = inputItem?.genericType }
         
         var title = inputItem?.computedTitle ?? ""

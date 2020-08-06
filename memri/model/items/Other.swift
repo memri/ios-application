@@ -61,13 +61,13 @@ extension Account {
 
 extension Diet {
     override var computedTitle: String {
-        type ?? ""
+        itemType ?? ""
     }
 }
 
 extension MedicalCondition {
     override var computedTitle: String {
-        type ?? ""
+        itemType ?? ""
     }
 }
 
@@ -211,7 +211,7 @@ extension CVUStateDefinition {
                 "name": stored.name,
                 "query": stored.query,
                 "selector": stored.selector,
-                "type": stored.type,
+                "itemType": stored.itemType,
             ])
         }
 
@@ -223,7 +223,7 @@ extension CVUStateDefinition {
                 "name": parsed.name,
 //            "query": stores.query,
                 "selector": parsed.selector,
-                "type": parsed.definitionType,
+                "itemType": parsed.definitionType,
             ])
         }
 }

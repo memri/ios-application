@@ -616,7 +616,7 @@ class ActionOpenView: Action, ActionExec {
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "type": "view",
+            "itemType": "view",
             "selector": "[view]",
             "definition": """
                 [view] {
@@ -737,7 +737,7 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "type": "view",
+            "itemType": "view",
             "selector": "[view]",
             "definition": """
                 [view] {
@@ -1269,11 +1269,24 @@ class ActionRunImporter: Action, ActionExec {
         // TODO: parse options
 
         if let run = arguments["importer"] as? ImporterRun {
-            guard let uid = run.uid.value else { throw "Uninitialized import run" }
+            
+            context.cache.isOnRemote(run) { error in
+                if error != nil {
+                    // How to handle??
+                    #warning("Look at this when implementing syncing")
+                    debugHistory.error("Polling timeout. All polling services disabled")
+                    return
+                }
 
-            context.podAPI.runImporter(uid) { error, _ in
-                if let error = error {
-                    print("Cannot execute actionImport: \(error)")
+                guard let uid = run.uid.value else {
+                    debugHistory.error("Item does not have a uid")
+                    return
+                }
+
+                self.context.podAPI.runImporter(uid) { error, _ in
+                    if let error = error {
+                        print("Cannot execute actionImport: \(error)")
+                    }
                 }
             }
         }

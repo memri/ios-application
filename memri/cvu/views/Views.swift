@@ -116,18 +116,18 @@ public class Views {
                 }
 
                 if def is CVUParsedViewDefinition {
-                    values["type"] = "view"
+                    values["itemType"] = "view"
                     //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
                 }
-                else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is CVUParsedRendererDefinition { values["itemType"] = "renderer" }
                 else if def is CVUParsedDatasourceDefinition {
-                    values["type"] = "datasource"
+                    values["itemType"] = "datasource"
                 }
-                else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-                else if def is CVUParsedColorDefinition { values["type"] = "color" }
-                else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-                else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-                else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+                else if def is CVUParsedStyleDefinition { values["itemType"] = "style" }
+                else if def is CVUParsedColorDefinition { values["itemType"] = "color" }
+                else if def is CVUParsedLanguageDefinition { values["itemType"] = "language" }
+                else if def is CVUParsedSessionsDefinition { values["itemType"] = "sessions" }
+                else if def is CVUParsedSessionDefinition { values["itemType"] = "session" }
                 else { throw "Exception: unknown definition" }
 
                 // Store definition
@@ -549,7 +549,7 @@ public class Views {
 
         if let selector = selector { filter.append("selector = '\(selector)'") }
         else {
-            if let type = type { filter.append("type = '\(type)'") }
+            if let type = type { filter.append("itemType = '\(type)'") }
             if let name = name { filter.append("name = '\(name)'") }
             if let query = query { filter.append("query = '\(query)'") }
         }
@@ -615,10 +615,10 @@ public class Views {
     /// Takes a stored definition and fetches the view definition or when its a session definition, the currentView of that session
     func getViewStateDefinition(from stored: CVUStoredDefinition) throws -> CVUStateDefinition {
         var view: CVUStateDefinition
-        if stored.type == "view" {
+        if stored.itemType == "view" {
             view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
         }
-        else if stored.type == "session" {
+        else if stored.itemType == "session" {
             guard let parsed = try parseDefinition(stored) else {
                 throw "Unable to parse state definition"
             }
@@ -678,7 +678,7 @@ public class Views {
             if let viewOverride = viewOverride {
                 if let viewDefinition = context.views.fetchDefinitions(selector: viewOverride)
                     .first {
-                    if viewDefinition.type == "renderer" {
+                    if viewDefinition.itemType == "renderer" {
                         if let parsed = try context.views
                             .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
@@ -690,11 +690,11 @@ public class Views {
                             throw "Exception: View definition is missing: \(viewOverride)"
                         }
                     }
-                    else if viewDefinition.type == "view" {
+                    else if viewDefinition.itemType == "view" {
                         _ = try searchForRenderer(in: viewDefinition)
                     }
                     else {
-                        throw "Exception: incompatible view type of \(viewDefinition.type ?? ""), expected renderer or view"
+                        throw "Exception: incompatible view type of \(viewDefinition.itemType ?? ""), expected renderer or view"
                     }
                 }
                 else {

@@ -84,7 +84,7 @@ EmailMessage {
 }
 
 EmailMessage[] {
-    defaultRenderer: messages
+    defaultRenderer: email
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {

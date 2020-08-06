@@ -35,7 +35,7 @@ public class MainNavigation: ObservableObject {
         }
 
         return items?.filter {
-            return needle == "" || $0.type == "item" && ($0.title ?? "").lowercased()
+            return needle == "" || $0.itemType == "item" && ($0.title ?? "").lowercased()
                 .contains(needle)
         } ?? []
     }

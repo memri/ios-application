@@ -577,7 +577,7 @@ public class PodAPI {
             let uid = matches[2]
 
             payload["_type"] = "\(type)"
-            payload["uid"] = "\(uid)"
+            payload["uid"] = uid
         }
         else if let type = query.match(#"^(\w+)$"#)[safe: 1] {
             payload["_type"] = "\(type)"
@@ -656,8 +656,25 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void
     ) {
-        http(method: .PUT, path: "import/\(uid)") { error, _ in
-            callback(error, error == nil)
+
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, false)
+                return
+            }
+            var payload = [String:Any]()
+            
+            payload["uid"] = uid
+            payload["servicePayload"] = [
+                "databaseKey": dbKey,
+                "ownerKey": ownerKey
+            ]
+            // WARNING: WE ARE CALLING DOWNLOADER HERE, WHICH FIRST CALLS THE DOWNLOADER
+            // AND THEN, THE DOWNLOADER CALLS THE IMPORTER
+            self.http(path: "run_downloader", payload:payload) { error, _ in
+                callback(error, error == nil)
+            }
         }
     }
 
@@ -669,8 +686,22 @@ public class PodAPI {
         _ uid: Int,
         _ callback: @escaping (_ error: Error?, _ success: Bool) -> Void
     ) {
-        http(method: .POST, path: "run_service/indexers/\(uid)") { error, _ in
-            callback(error, error == nil)
+        Authentication.getOwnerAndDBKey { error, ownerKey, dbKey in
+            guard let ownerKey = ownerKey, let dbKey = dbKey else {
+                // TODO
+                callback(error, false)
+                return
+            }
+            var payload = [String:Any]()
+            payload["uid"] = uid
+
+            payload["servicePayload"] = [
+                "databaseKey": dbKey,
+                "ownerKey": ownerKey
+            ]
+            self.http(path: "run_indexer", payload:payload) { error, _ in
+                callback(error, error == nil)
+            }
         }
     }
 
