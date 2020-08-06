@@ -8,7 +8,8 @@ struct ContextualBottomBar: View {
     @EnvironmentObject var context: MemriContext
 
     var shouldShow: Bool {
-        context.currentSession?.editMode ?? false
+        ((context.currentView?.renderConfig as? ConfigurableRenderConfig)?.showContextualBarInEditMode ?? true)
+        && (context.currentSession?.editMode ?? false)
     }
 
     var nonEmptySelection: Bool {

@@ -18,8 +18,15 @@ let registerCustomRenderer = {
     )
 }
 
-class CascadingCustomConfig: CascadingRenderConfig {
+class CascadingCustomConfig: CascadingRenderConfig, ConfigurableRenderConfig {
+    
     var type: String? = "custom"
+    
+    var showSortInConfig: Bool = false
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        []
+    }
+    let showContextualBarInEditMode: Bool = false
 }
 
 struct CustomRendererView: View {

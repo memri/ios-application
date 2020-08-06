@@ -71,7 +71,7 @@ public class Item: SchemaItem {
             let views = self.changelog?.filter { $0.action == "read" }.count ?? 0
             let edits = self.changelog?.filter { $0.action == "update" }.count ?? 0
             let timeSinceCreated = Views.formatDateSinceCreated(self.dateCreated)
-            return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) times and edited it \(edits) times over the past \(timeSinceCreated)"
+            return "You created this \(self.genericType) \(dateCreated) and viewed it \(views) \(views == 1 ? "time" : "times") and edited it \(edits) \(edits == 1 ? "time" : "times") over the past \(timeSinceCreated)"
         }
         functions["computedTitle"] = { _ in
             self.computedTitle

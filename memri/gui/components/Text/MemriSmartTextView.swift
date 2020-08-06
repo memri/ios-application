@@ -4,43 +4,6 @@
 
 import SwiftUI
 
-// struct MemriTextView: UIViewRepresentable {
-//	var string: String
-//	var detectLinks: Bool = true
-//	var font: FontDefinition
-//	var color: ColorDefinition?
-//	var maxLines: Int?
-//
-//	func makeUIView(context: Context) -> MemriTextView_UIKit {
-//		let textView = MemriTextView_UIKit()
-//		textView.font = font.uiFont
-//		textView.textColor = color?.uiColor ?? .label
-//		textView.text = string
-//		textView.numberOfLines = maxLines ?? 0
-//
-//		return textView
-//	}
-//
-//	func updateUIView(_ textView: MemriTextView_UIKit, context: Context) {
-//		textView.text = string
-//	}
-// }
-//
-//
-// class MemriTextView_UIKit: UILabel {
-//	init() {
-//		super.init(frame: .zero)
-//
-//		setContentCompressionResistancePriority(.required, for: .vertical)
-//		setContentHuggingPriority(.defaultHigh, for: .horizontal)
-//		setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-//	}
-//
-//	required init?(coder: NSCoder) {
-//		fatalError("init(coder:) has not been implemented")
-//	}
-// }
-
 struct MemriSmartTextView: View {
 	var string: String
 	var detectLinks: Bool = true

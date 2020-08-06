@@ -40,9 +40,9 @@ struct ContextPaneForeground: View {
                         .padding(.bottom, 15)
 
                         Divider()
-                        Text(
-                            "You created this note in August 2017 and viewed it 12 times and edited it 3 times over the past 1.5 years."
-                        )
+                        (context.item?.functions["describeChangelog"]?(nil) as? String).map { description in
+                            Text(description)
+                        }
                         .padding(.horizontal, paddingLeft)
                         .padding(.vertical, 10)
                         .multilineTextAlignment(.center)

@@ -103,6 +103,8 @@ class CascadingChartConfig: CascadingRenderConfig, ConfigurableRenderConfig {
         get { cascadeProperty("valueLabelFont") ?? FontDefinition(size: 14) }
         set(value) { setState("valueLabelFont", value) }
     }
+    
+    let showContextualBarInEditMode: Bool = false
 }
 
 enum ChartType: String, CaseIterable {

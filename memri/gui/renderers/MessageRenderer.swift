@@ -63,7 +63,8 @@ struct MessageRenderer: View {
 
     var section: ASSection<Int> {
         ASSection<Int>(id: 0, data: context.items, selectedItems: selectedItems) { item, cellContext in
-            self.renderConfig.render(item: item)
+            //let previousItem = context.items[safe: cellContext.index - 1])
+            return self.renderConfig.render(item: item)//, ViewArguments(["previousItem": previousItem]))
                 .environmentObject(self.context)
 				.padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.renderConfig.spacing.height / 2,
 									leading: self.renderConfig.edgeInset.left,
@@ -135,7 +136,6 @@ struct MessageBubbleView: View {
 
     var dateFormatter: DateFormatter {
         // TODO: If there is a user setting for a *short* date format, we should use that
-        #warning("@Toby lets discuss this")
         let format = DateFormatter()
         format.dateStyle = .short
         format.timeStyle = .short

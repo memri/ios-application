@@ -102,7 +102,9 @@ struct ListRendererView: View {
                               onSwipeToDelete: { _, item in
                                   context.executeAction(ActionDelete(context), with: item)
                                   return true
-							  }) { dataItem, cellContext in
+							  },
+                              contextMenuProvider: contextMenuProvider
+                    ) { dataItem, cellContext in
                         self.renderConfig.render(item: dataItem)
                             .frame(maxWidth: .infinity, alignment: .leading)
 							.padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.renderConfig.spacing.height / 2,
@@ -122,6 +124,18 @@ struct ListRendererView: View {
             }
         }
         .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
+    }
+    
+    func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak context] (suggested) -> UIMenu? in
+            let children: [UIMenuElement] = self.renderConfig.contextMenuActions.map { [weak context] action in
+                UIAction(title: action.getString("title"),
+                         image: nil) { [weak context] (_) in
+                            context?.executeAction(action, with: item)
+                }
+            }
+            return UIMenu(title: "", children: children)
+        }
     }
 }
 

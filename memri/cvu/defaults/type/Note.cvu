@@ -107,6 +107,12 @@ Note[] {
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {
+        contextMenu: [
+            showOverlay { title: "Share" }
+            addToPanel { title: "Add to list" }
+            duplicate { title: "Duplicate" }
+        ]
+        
         VStack {
             alignment: left
             spacing: 3

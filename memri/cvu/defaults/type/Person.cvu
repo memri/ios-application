@@ -353,6 +353,10 @@ Person[] {
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {
+        contextMenu: [
+        star { title: "Favourite" }
+        ]
+        
         VStack {
             alignment: left
             padding: 5 0 0 20
@@ -397,6 +401,10 @@ Person[] {
     [renderer = thumbnail] {
         spacing: 10
         edgeInset: 10
+        
+        contextMenu: [
+        star { title: "Favourite" }
+        ]
         
         VStack {
             alignment: center
