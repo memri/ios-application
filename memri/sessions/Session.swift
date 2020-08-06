@@ -144,7 +144,7 @@ public final class Session: Equatable, Subscriptable {
             // Do nothing and expect a call to setCurrentView later
         }
     }
-
+    
     subscript(propName: String) -> Any? {
         get {
             switch propName {
@@ -201,8 +201,8 @@ public final class Session: Equatable, Subscriptable {
             if let stateViewEdges = state?.edges("view")?.sorted(byKeyPath: "sequence") {
                 var i = 0
                 for edge in stateViewEdges {
-                    #warning("Hard crash when index out of range. Fix")
-                    if edge.targetItemID.value == self.views[i].uid {
+                    #warning("Hard crash when index out of range. Notify developer")
+                    if edge.targetItemID.value == self.views[safe: i]?.uid {
                         i += 1
                         continue
                     }

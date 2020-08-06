@@ -60,6 +60,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeNavigationItem = "NavigationItem"
     case typeNetwork = "Network"
     case typeNote = "Note"
+    case typeNoteList = "NoteList"
     case typeOffer = "Offer"
     case typeOpeningHours = "OpeningHours"
     case typeOption = "Option"
@@ -79,6 +80,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeReview = "Review"
     case typeRoute = "Route"
     case typeSetting = "Setting"
+    case typeSpan = "Span"
     case typeTimeFrame = "TimeFrame"
     case typeTransaction = "Transaction"
     case typeTrip = "Trip"
@@ -140,6 +142,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeNavigationItem: return Color(hex: "#93c47d")
         case .typeNetwork: return Color(hex: "#93c47d")
         case .typeNote: return Color(hex: "#93c47d")
+        case .typeNoteList: return Color(hex: "#93c47d")
         case .typeOffer: return Color(hex: "#93c47d")
         case .typeOpeningHours: return Color(hex: "#93c47d")
         case .typeOption: return Color(hex: "#93c47d")
@@ -159,6 +162,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeReview: return Color(hex: "#93c47d")
         case .typeRoute: return Color(hex: "#93c47d")
         case .typeSetting: return Color(hex: "#93c47d")
+        case .typeSpan: return Color(hex: "#93c47d")
         case .typeTimeFrame: return Color(hex: "#93c47d")
         case .typeTransaction: return Color(hex: "#3a5eb2")
         case .typeTrip: return Color(hex: "#93c47d")
@@ -220,6 +224,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeNavigationItem: return Color(hex: "#ffffff")
         case .typeNetwork: return Color(hex: "#ffffff")
         case .typeNote: return Color(hex: "#ffffff")
+        case .typeNoteList: return Color(hex: "#ffffff")
         case .typeOffer: return Color(hex: "#ffffff")
         case .typeOpeningHours: return Color(hex: "#ffffff")
         case .typeOption: return Color(hex: "#ffffff")
@@ -239,6 +244,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeReview: return Color(hex: "#ffffff")
         case .typeRoute: return Color(hex: "#ffffff")
         case .typeSetting: return Color(hex: "#ffffff")
+        case .typeSpan: return Color(hex: "#ffffff")
         case .typeTimeFrame: return Color(hex: "#ffffff")
         case .typeTransaction: return Color(hex: "#ffffff")
         case .typeTrip: return Color(hex: "#ffffff")
@@ -304,6 +310,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeNavigationItem: return NavigationItem.self
         case .typeNetwork: return Network.self
         case .typeNote: return Note.self
+        case .typeNoteList: return NoteList.self
         case .typeOffer: return Offer.self
         case .typeOpeningHours: return OpeningHours.self
         case .typeOption: return Option.self
@@ -323,6 +330,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeReview: return Review.self
         case .typeRoute: return Route.self
         case .typeSetting: return Setting.self
+        case .typeSpan: return Span.self
         case .typeTimeFrame: return TimeFrame.self
         case .typeTransaction: return Transaction.self
         case .typeTrip: return Trip.self
@@ -371,7 +379,7 @@ public class Account : Item {
     /// A service of any kind.
     @objc dynamic var service:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// The Person this Item belongs to.
     var belongsTo: Results<Person>? {
@@ -405,7 +413,7 @@ public class Account : Item {
             enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
             enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             service = try decoder.decodeIfPresent("service") ?? service
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -427,7 +435,7 @@ public class Address : Item {
     /// The street address. For example, 1600 Amphitheatre Pkwy.
     @objc dynamic var street:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// A location with a automatic lookup hash.
     @objc dynamic var locationAutoLookupHash:String? = nil
 
@@ -452,7 +460,7 @@ public class Address : Item {
             postalCode = try decoder.decodeIfPresent("postalCode") ?? postalCode
             state = try decoder.decodeIfPresent("state") ?? state
             street = try decoder.decodeIfPresent("street") ?? street
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             locationAutoLookupHash = try decoder.decodeIfPresent("locationAutoLookupHash") ?? locationAutoLookupHash
 
             try self.superDecode(from: decoder)
@@ -478,7 +486,7 @@ public class Article : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -544,7 +552,7 @@ public class Article : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -643,7 +651,7 @@ public class CVUStoredDefinition : Item {
     /// TBD
     @objc dynamic var selector:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
@@ -654,7 +662,7 @@ public class CVUStoredDefinition : Item {
             name = try decoder.decodeIfPresent("name") ?? name
             query = try decoder.decodeIfPresent("query") ?? query
             selector = try decoder.decodeIfPresent("selector") ?? selector
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -679,7 +687,7 @@ public class Comment : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -740,7 +748,7 @@ public class Comment : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -799,7 +807,7 @@ public class CreativeWork : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -860,7 +868,7 @@ public class CreativeWork : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -870,7 +878,7 @@ public class CreativeWork : Item {
 /// A key used in an cryptography protocol.
 public class CryptoKey : Item {
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// A role describes the function of the item in their context.
     @objc dynamic var role:String? = nil
     /// A piece of information that determines the functional output of a cryptographic
@@ -885,7 +893,7 @@ public class CryptoKey : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             role = try decoder.decodeIfPresent("role") ?? role
             key = try decoder.decodeIfPresent("key") ?? key
             active = try decoder.decodeIfPresent("active") ?? active
@@ -949,7 +957,7 @@ public class Diet : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The duration of an Item, for instance an event or an Audio file.
     let duration = RealmOptional<Int>()
 
@@ -1022,7 +1030,7 @@ public class Diet : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
 
             try self.superDecode(from: decoder)
@@ -1044,7 +1052,7 @@ public class Downloader : Item {
 
 /// Edge is the Item that stores the specifics of an edge, used by front ends.
 public class Edge : SyncableItem, Codable {
-    /// The type or (sub)category of some Item.
+    /// Used to describe edge types in front end, will be deprecated in the near future.
     @objc dynamic var type:String? = nil
     /// The type of the target Item, or Item to where an edge points. Opposite of
     /// sourceItemType.
@@ -1070,7 +1078,7 @@ public class Edge : SyncableItem, Codable {
 
         jsonErrorHandling(decoder) {
             type = try decoder.decodeIfPresent("_type") ?? type
-            targetItemType = try decoder.decodeIfPresent("itemType") ?? targetItemType
+            targetItemType = try decoder.decodeIfPresent("targetType") ?? targetItemType
             targetItemID.value = try decoder.decodeIfPresent("uid") ?? targetItemID.value
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
             deleted = try decoder.decodeIfPresent("deleted") ?? deleted
@@ -1100,7 +1108,7 @@ public class EmailMessage : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The subject of some Item.
     @objc dynamic var subject:String? = nil
     /// Datetime when Item was sent.
@@ -1198,7 +1206,7 @@ public class EmailMessage : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
@@ -1282,7 +1290,7 @@ public class ExercisePlan : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The duration of an Item, for instance an event or an Audio file.
     let duration = RealmOptional<Int>()
     /// The number of times something is repeated.
@@ -1357,7 +1365,7 @@ public class ExercisePlan : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             repetitions.value = try decoder.decodeIfPresent("repetitions") ?? repetitions.value
 
@@ -1366,12 +1374,15 @@ public class ExercisePlan : Item {
     }
 }
 
-/// Any type of file that can be stored on disk.
+/// Any file that can be stored on disk.
 public class File : Item {
-    /// The blake2b hash of a resource.
-    @objc dynamic var blake2b:String? = nil
     /// The sha256 hash of a resource.
     @objc dynamic var sha256:String? = nil
+    /// A cryptographic nonce https://en.wikipedia.org/wiki/Cryptographic_nonce
+    @objc dynamic var nonce:String? = nil
+    /// A piece of information that determines the functional output of a cryptographic
+    /// algorithm.
+    @objc dynamic var key:String? = nil
     /// The filename of a resource.
     @objc dynamic var filename:String? = nil
 
@@ -1389,8 +1400,9 @@ public class File : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            blake2b = try decoder.decodeIfPresent("blake2b") ?? blake2b
             sha256 = try decoder.decodeIfPresent("sha256") ?? sha256
+            nonce = try decoder.decodeIfPresent("nonce") ?? nonce
+            key = try decoder.decodeIfPresent("key") ?? key
             filename = try decoder.decodeIfPresent("filename") ?? filename
 
             try self.superDecode(from: decoder)
@@ -1432,7 +1444,7 @@ public class Game : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -1493,7 +1505,7 @@ public class Game : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -1549,7 +1561,7 @@ public class HowTo : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -1610,7 +1622,7 @@ public class HowTo : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -1651,8 +1663,15 @@ public class Importer : Item {
 public class ImporterRun : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
+    /// The progress an Item made. The number could be a (rounded) percentage or a count of a
+    /// (potentially unknown) total.
+    let progress = RealmOptional<Int>()
     /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
+    /// Username of an importer.
+    @objc dynamic var username:String? = nil
+    /// Password for a username.
+    @objc dynamic var password:String? = nil
 
     /// An Importer is used to import data from an external source to the Pod database.
     var importer: Importer? {
@@ -1664,7 +1683,10 @@ public class ImporterRun : Item {
 
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
+            progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
+            username = try decoder.decodeIfPresent("username") ?? username
+            password = try decoder.decodeIfPresent("password") ?? password
 
             try self.superDecode(from: decoder)
         }
@@ -1742,13 +1764,13 @@ public class IndexerRun : Item {
 /// A sector that produces goods or related services within an economy.
 public class Industry : Item {
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -1797,7 +1819,7 @@ public class SchemaItem: SyncableItem, Codable, Identifiable {
     @objc dynamic var version:Int = 1
     /// The unique identifier of the Item set by the pod.
     let uid = RealmOptional<Int>()
-    /// Data that cannot directly be imported in the appropriate Items (yet), in JSON format
+    /// Data that cannot directly be imported in the appropriate Items (yet), in JSON format 
     @objc dynamic var importJson:String? = nil
     /// A collection of all edges of an Item.
     let allEdges = List<Edge>()
@@ -2003,7 +2025,7 @@ public class MediaObject : Item {
 /// physically or mentally. Includes diseases, injuries, disabilities, disorders, syndromes, etc.
 public class MedicalCondition : Item {
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The name of the item.
     @objc dynamic var name:String? = nil
 
@@ -2011,7 +2033,7 @@ public class MedicalCondition : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             name = try decoder.decodeIfPresent("name") ?? name
 
             try self.superDecode(from: decoder)
@@ -2037,7 +2059,7 @@ public class Message : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The subject of some Item.
     @objc dynamic var subject:String? = nil
     /// Datetime when Item was sent.
@@ -2119,7 +2141,7 @@ public class Message : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
@@ -2191,7 +2213,7 @@ public class MovingImage : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -2252,7 +2274,7 @@ public class MovingImage : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -2268,7 +2290,7 @@ public class NavigationItem : Item {
     /// Used to define position in a sequence, enables ordering based on this number.
     let sequence = RealmOptional<Int>()
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
@@ -2277,7 +2299,7 @@ public class NavigationItem : Item {
             title = try decoder.decodeIfPresent("title") ?? title
             sessionName = try decoder.decodeIfPresent("sessionName") ?? sessionName
             sequence.value = try decoder.decodeIfPresent("sequence") ?? sequence.value
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -2334,7 +2356,7 @@ public class Note : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -2389,6 +2411,11 @@ public class Note : Item {
         edges("comment")?.items(type:Comment.self)
     }
 
+    /// List occurs in Note.
+    var noteList: Results<NoteList>? {
+        edges("noteList")?.items(type:NoteList.self)
+    }
+
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
@@ -2400,7 +2427,111 @@ public class Note : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A list in a note.
+public class NoteList : Item {
+    /// The title of an Item.
+    @objc dynamic var title:String? = nil
+    /// An abstract is a short description that summarizes an Items content.
+    @objc dynamic var abstract:String? = nil
+    /// Date of first broadcast/publication.
+    @objc dynamic var datePublished:Date? = nil
+    /// Keywords or tags used to describe this content. Multiple entries in a keywords list are
+    /// typically delimited by commas.
+    @objc dynamic var keyword:String? = nil
+    /// The content of an Item.
+    @objc dynamic var content:String? = nil
+    /// The plain text content of an Item, without styling or syntax for Markdown, HTML, etc.
+    @objc dynamic var textContent:String? = nil
+    /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
+    @objc dynamic var transcript:String? = nil
+    /// The type or (sub)category of some Item.
+    @objc dynamic var itemType:String? = nil
+    /// Category of this item.
+    @objc dynamic var category:String? = nil
+
+    /// An audio object.
+    var audio: Results<Audio>? {
+        edges("audio")?.items(type:Audio.self)
+    }
+
+    /// A citation or reference to another creative work, such as another publication, web page,
+    /// scholarly article, etc.
+    var citation: Results<CreativeWork>? {
+        edges("citation")?.items(type:CreativeWork.self)
+    }
+
+    /// The location depicted or described in the content. For example, the location in a
+    /// photograph or painting.
+    var contentLocation: Results<Location>? {
+        edges("contentLocation")?.items(type:Location.self)
+    }
+
+    /// The location where the Item was created, which may not be the same as the location
+    /// depicted in the Item.
+    var locationCreated: Results<Location>? {
+        edges("locationCreated")?.items(type:Location.self)
+    }
+
+    /// A video object.
+    var video: Results<Video>? {
+        edges("video")?.items(type:Video.self)
+    }
+
+    /// The author of this Item.
+    var writtenBy: Results<Person>? {
+        edges("writtenBy")?.items(type:Person.self)
+    }
+
+    /// Any type of file that can be stored on disk.
+    var file: Results<File>? {
+        edges("file")?.items(type:File.self)
+    }
+
+    /// The event where something is recorded.
+    var recordedAt: Results<Event>? {
+        edges("recordedAt")?.items(type:Event.self)
+    }
+
+    /// A review of the Item.
+    var review: Results<Review>? {
+        edges("review")?.items(type:Review.self)
+    }
+
+    /// Range of an item in a piece of text.
+    var span: Results<Span>? {
+        edges("span")?.items(type:Span.self)
+    }
+
+    /// span of an item in a list that lives in text.
+    var itemSpan: Results<Span>? {
+        edges("itemSpan")?.items(type:Span.self)
+    }
+
+    /// Note of an item.
+    var note: Results<Note>? {
+        edges("note")?.items(type:Note.self)
+    }
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            title = try decoder.decodeIfPresent("title") ?? title
+            abstract = try decoder.decodeIfPresent("abstract") ?? abstract
+            datePublished = try decoder.decodeIfPresent("datePublished") ?? datePublished
+            keyword = try decoder.decodeIfPresent("keyword") ?? keyword
+            content = try decoder.decodeIfPresent("content") ?? content
+            textContent = try decoder.decodeIfPresent("textContent") ?? textContent
+            transcript = try decoder.decodeIfPresent("transcript") ?? transcript
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
+            category = try decoder.decodeIfPresent("category") ?? category
 
             try self.superDecode(from: decoder)
         }
@@ -2556,7 +2687,7 @@ public class PerformingArt : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -2617,7 +2748,7 @@ public class PerformingArt : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -2781,14 +2912,14 @@ public class PhoneNumber : Item {
     /// A phone number with an area code.
     @objc dynamic var phoneNumber:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     public required convenience init(from decoder: Decoder) throws {
         self.init()
 
         jsonErrorHandling(decoder) {
             phoneNumber = try decoder.decodeIfPresent("phoneNumber") ?? phoneNumber
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3021,7 +3152,7 @@ public class Recipe : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The duration of an Item, for instance an event or an Audio file.
     let duration = RealmOptional<Int>()
     /// A set of steps to reach a certain goal.
@@ -3087,8 +3218,8 @@ public class Recipe : Item {
     }
 
     /// The amount produced or financial return.
-    var yield: Results<Measure>? {
-        edges("yield")?.items(type:Measure.self)
+    var yields: Results<Measure>? {
+        edges("yields")?.items(type:Measure.self)
     }
 
     /// Some tool required by an Item.
@@ -3107,7 +3238,7 @@ public class Recipe : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             duration.value = try decoder.decodeIfPresent("duration") ?? duration.value
             instructions = try decoder.decodeIfPresent("instructions") ?? instructions
 
@@ -3134,7 +3265,7 @@ public class Recording : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -3195,7 +3326,7 @@ public class Recording : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3286,7 +3417,7 @@ public class Review : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -3352,7 +3483,7 @@ public class Review : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3429,6 +3560,25 @@ public class Setting : Item {
         jsonErrorHandling(decoder) {
             key = try decoder.decodeIfPresent("key") ?? key
             json = try decoder.decodeIfPresent("json") ?? json
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// A class that represents a position of an element in a string.
+public class Span : Item {
+    /// Start position of an element.
+    let startIdx = RealmOptional<Int>()
+    /// End position of an element.
+    let endIdx = RealmOptional<Int>()
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            startIdx.value = try decoder.decodeIfPresent("startIdx") ?? startIdx.value
+            endIdx.value = try decoder.decodeIfPresent("endIdx") ?? endIdx.value
 
             try self.superDecode(from: decoder)
         }
@@ -3656,7 +3806,7 @@ public class VisualArt : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -3717,7 +3867,7 @@ public class VisualArt : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3727,7 +3877,7 @@ public class VisualArt : Item {
 /// An occasion where a choice is made choose between two or more options, for instance an election.
 public class Vote : Item {
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An option for some choice, for instance a Vote.
     var option: Results<Option>? {
@@ -3738,7 +3888,7 @@ public class Vote : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3781,7 +3931,7 @@ public class VoteAction : Item {
 /// domain and accessible via URLs.
 public class Website : Item {
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
     /// The url property represents the Uniform Resource Location (URL) of a resource.
     @objc dynamic var url:String? = nil
 
@@ -3789,7 +3939,7 @@ public class Website : Item {
         self.init()
 
         jsonErrorHandling(decoder) {
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
             url = try decoder.decodeIfPresent("url") ?? url
 
             try self.superDecode(from: decoder)
@@ -3815,7 +3965,7 @@ public class WrittenWork : Item {
     /// If this MediaObject is an AudioObject or VideoObject, the transcript of that object.
     @objc dynamic var transcript:String? = nil
     /// The type or (sub)category of some Item.
-    @objc dynamic var type:String? = nil
+    @objc dynamic var itemType:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -3876,7 +4026,7 @@ public class WrittenWork : Item {
             content = try decoder.decodeIfPresent("content") ?? content
             textContent = try decoder.decodeIfPresent("textContent") ?? textContent
             transcript = try decoder.decodeIfPresent("transcript") ?? transcript
-            type = try decoder.decodeIfPresent("type") ?? type
+            itemType = try decoder.decodeIfPresent("itemType") ?? itemType
 
             try self.superDecode(from: decoder)
         }
@@ -3930,6 +4080,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<NavigationItem> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Network> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Note> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<NoteList> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Offer> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<OpeningHours> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Option> { list.forEach { collection.append($0) } }
@@ -3949,6 +4100,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<Review> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Route> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Setting> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Span> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<TimeFrame> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Transaction> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Trip> { list.forEach { collection.append($0) } }

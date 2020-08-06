@@ -75,8 +75,7 @@ EmailMessage {
     
     [renderer = custom] {
         RichTextfield {
-            htmlValue: {{.content}}
-            value: {{.textContent}}
+            content: {{.content}}
             title: {{.title}}
             titleHint: "Untitled Note"
             fontSize: 18
@@ -85,7 +84,7 @@ EmailMessage {
 }
 
 EmailMessage[] {
-    defaultRenderer: messages
+    defaultRenderer: email
     filterButtons: showStarred toggleFilterPanel
     
     [renderer = list] {

@@ -41,7 +41,7 @@ class HTMLHelper {
 	/// This MUST be run on the *main thread *
 	static func getAttributedString(html: String) -> NSAttributedString? {
 		do {
-			guard let cleanHTML = cleanHTMLBasic(html),
+			guard let cleanHTML = cleanHTMLMaintainingStructuralElements(html),
 				  let data = cleanHTML.data(using: .utf8)
 			else {
 				// Invalid HTML, even after generous parsing

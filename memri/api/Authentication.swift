@@ -11,6 +11,10 @@ import LocalAuthentication
 import CryptoKit
 
 class Authentication {
+    #if targetEnvironment(simulator)
+    private static let autologin = true
+    #endif
+    
     /*
         TODO:
             - Enable passcode / bio ID to access the app
@@ -127,7 +131,7 @@ class Authentication {
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator)
-        if DatabaseController.realmTesting {
+        if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)
             return
@@ -157,7 +161,7 @@ class Authentication {
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
         #if targetEnvironment(simulator)
-        if DatabaseController.realmTesting {
+        if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)
             return
@@ -383,28 +387,31 @@ class Authentication {
                 key.active = false
             }
             
-            let myself = try me()
+            let myself = me()
+            guard myself.realm != nil else {
+                throw "Could not find a reference to 'me'"
+            }
             
             let dbKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "64BytesRandomHex",
+                "itemType": "64CharacterRandomHex",
                 "key": dbKey,
-                "name": "memriDBKey",
+                "name": "Memri Database Key",
                 "active": true
             ])
             _ = try dbKeyItem.link(myself, type: "owner")
             
             let ownerPrivateKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "ED25519",
+                "itemType": "ED25519",
                 "role": "private",
                 "key": privateKey,
-                "name": "memriOwnerKey",
+                "name": "Memri Owner Key",
                 "active": true
             ])
             let ownerPublicKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "ED25519",
+                "itemType": "ED25519",
                 "role": "public",
                 "key": publicKey,
-                "name": "memriOwnerKey",
+                "name": "Memri Owner Key",
                 "active": true
             ])
             _ = try ownerPrivateKeyItem.link(myself, type: "owner")
@@ -416,13 +423,13 @@ class Authentication {
     
     static func getOwnerAndDBKey(_ callback: @escaping (Error?, String?, String?) -> Void) {
         DatabaseController.current { realm in
-            let dbQuery = "name = 'memriDBKey' and active = true"
+            let dbQuery = "name = 'Memri Database Key' and active = true"
             guard let dbKey = realm.objects(CryptoKey.self).filter(dbQuery).first else {
                 callback("Database key is not set", nil, nil)
                 return
             }
             
-            let query = "name = 'memriOwnerKey' and role = 'public' and active = true"
+            let query = "name = 'Memri Owner Key' and role = 'public' and active = true"
             guard let ownerKey = realm.objects(CryptoKey.self).filter(query).first else {
                 callback("Owner key is not set", nil, nil)
                 return

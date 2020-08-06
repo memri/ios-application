@@ -58,7 +58,7 @@ public struct CVUPropertyResolver {
     }
 }
 
-enum ColorDefinition {
+public enum ColorDefinition {
     case hex(String)
     case system(UIColor)
 

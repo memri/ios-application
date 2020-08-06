@@ -15,7 +15,10 @@ public struct ExprNumberNode: ExprNode {
     }
 
     public func toExprString() -> String {
-        "\(value)"
+        if value.truncatingRemainder(dividingBy: 1) == 0 {
+            return "\(Int(value))"
+        }
+        return "\(value)"
     }
 }
 
@@ -160,8 +163,9 @@ public struct ExprBinaryOpNode: ExprNode {
         "BinaryOpNode(\(op), lhs: \(lhs), rhs: \(rhs))"
     }
 
+    #warning("hide () when possible")
     public func toExprString() -> String {
-        "\(lhs.toExprString()) \(op) \(rhs.toExprString())"
+        "(\(lhs.toExprString()) \(op.rawValue) \(rhs.toExprString()))"
     }
 }
 

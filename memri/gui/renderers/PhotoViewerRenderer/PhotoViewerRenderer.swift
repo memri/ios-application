@@ -25,7 +25,6 @@ class PhotoViewerRendererConfig: CascadingRenderConfig {
 }
 
 struct PhotoViewerRenderer: View {
-    @State var overlayVisible: Bool = true
     @EnvironmentObject var context: MemriContext
     var renderConfig: PhotoViewerRendererConfig {
         context.currentView?

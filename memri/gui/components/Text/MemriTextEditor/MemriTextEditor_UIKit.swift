@@ -47,7 +47,6 @@ public class MemriTextEditorWrapper_UIKit: UIView {
 }
 
 public class MemriTextEditor_UIKit: UITextView {
-    var preferredHeightBinding: Binding<CGFloat>?
     var titleBinding: Binding<String?>?
     var titlePlaceholder: String?
     var fontSize: CGFloat
@@ -75,7 +74,8 @@ public class MemriTextEditor_UIKit: UITextView {
         titleBinding: Binding<String?>?,
         titlePlaceholder: String?,
         fontSize: CGFloat = 18,
-        headingFontSize: CGFloat = 26
+        headingFontSize: CGFloat = 26,
+        backgroundColor: ColorDefinition?
     ) {
         self.titleBinding = titleBinding
         self.titlePlaceholder = titlePlaceholder
@@ -96,6 +96,9 @@ public class MemriTextEditor_UIKit: UITextView {
         // Scroll to dismiss keyboard
         keyboardDismissMode = .interactive
         alwaysBounceVertical = true
+        
+        //Set background color
+        backgroundColor.map { self.backgroundColor = $0.uiColor }
 
         // Set up toolbar
         updateToolbar()
@@ -108,7 +111,6 @@ public class MemriTextEditor_UIKit: UITextView {
         ]
 
         delegate = self
-        layoutManager.delegate = self
 
         updateHeader()
     }
@@ -197,10 +199,10 @@ public class MemriTextEditor_UIKit: UITextView {
         #endif
     }
 
-    var toolbarHost: UIHostingController<RichTextToolbarView>?
+    var toolbarHost: UIHostingController<MemriTextEditorToolbar>?
 
     func updateToolbar() {
-        let view = RichTextToolbarView(
+        let view = MemriTextEditorToolbar(
             textView: self,
             state_bold: state_isBold,
             state_italic: state_isItalic,
@@ -304,20 +306,10 @@ public class MemriTextEditor_UIKit: UITextView {
     }
 }
 
-extension MemriTextEditor_UIKit: NSLayoutManagerDelegate {
-    public func layoutManager(
-        _: NSLayoutManager,
-        didCompleteLayoutFor textContainer: NSTextContainer?,
-        atEnd _: Bool
-    ) {
-        if
-            let desiredHeight = textContainer?.size.height,
-            let heightBinding = preferredHeightBinding,
-            heightBinding.wrappedValue != desiredHeight {
-            DispatchQueue.main.async {
-                heightBinding.wrappedValue = desiredHeight
-            }
-        }
+extension MemriTextEditor_UIKit {
+    public func getTextContentSize() -> CGSize {
+        let size = sizeThatFits(CGSize(width: self.bounds.width, height: CGFloat.infinity))
+        return .init(width: size.width, height: max(size.height, 30))
     }
 }
 
@@ -408,6 +400,7 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
             textStorage.replaceCharacters(in: currentLineRange, with: "")
             textStorage.endEditing()
             selectedRange = NSRange(location: max(0, currentLineRange.location - 1), length: 0)
+            fireTextChange()
             return false
         }
         return true
@@ -439,6 +432,7 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
                     textStorage.replaceCharacters(in: oldLineRange, with: "\n")
                     textStorage.endEditing()
                     selectedRange = NSRange(location: oldLineRange.location, length: 0)
+                    fireTextChange()
                     return false
                 }
             case .none:
@@ -465,6 +459,7 @@ extension MemriTextEditor_UIKit: UITextViewDelegate {
                 location: range.upperBound + 1 + (textToInsert as NSString).length,
                 length: 0
             )
+            fireTextChange()
             return false
         }
         else {
@@ -704,6 +699,7 @@ extension MemriTextEditor_UIKit {
                 range: paragraphRange
             )
             textStorage.endEditing()
+            fireTextChange()
         }
     }
 }
@@ -765,6 +761,7 @@ extension MemriTextEditor_UIKit {
             location: paragraphRange.lowerBound + modifiedSection.length - 1,
             length: 0
         )
+        fireTextChange()
     }
 }
 

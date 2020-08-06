@@ -62,6 +62,7 @@ public class Renderers {
         registerCalendarRenderer()
         registerMessageRenderer()
         registerPhotoViewerRenderer()
+        registerFileViewerRenderer()
         registerEmailRenderers()
     }
 

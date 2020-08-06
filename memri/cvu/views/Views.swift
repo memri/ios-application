@@ -116,18 +116,18 @@ public class Views {
                 }
 
                 if def is CVUParsedViewDefinition {
-                    values["type"] = "view"
+                    values["itemType"] = "view"
                     //                    values["query"] = (def as! CVUParsedViewDefinition)?.query ?? ""
                 }
-                else if def is CVUParsedRendererDefinition { values["type"] = "renderer" }
+                else if def is CVUParsedRendererDefinition { values["itemType"] = "renderer" }
                 else if def is CVUParsedDatasourceDefinition {
-                    values["type"] = "datasource"
+                    values["itemType"] = "datasource"
                 }
-                else if def is CVUParsedStyleDefinition { values["type"] = "style" }
-                else if def is CVUParsedColorDefinition { values["type"] = "color" }
-                else if def is CVUParsedLanguageDefinition { values["type"] = "language" }
-                else if def is CVUParsedSessionsDefinition { values["type"] = "sessions" }
-                else if def is CVUParsedSessionDefinition { values["type"] = "session" }
+                else if def is CVUParsedStyleDefinition { values["itemType"] = "style" }
+                else if def is CVUParsedColorDefinition { values["itemType"] = "color" }
+                else if def is CVUParsedLanguageDefinition { values["itemType"] = "language" }
+                else if def is CVUParsedSessionsDefinition { values["itemType"] = "sessions" }
+                else if def is CVUParsedSessionDefinition { values["itemType"] = "session" }
                 else { throw "Exception: unknown definition" }
 
                 // Store definition
@@ -148,10 +148,12 @@ public class Views {
             if dateFormat != nil || showAgoDate == false || date
                 .timeIntervalSince(Date(timeIntervalSinceNow: -129_600)) < 0 {
                 let dateFormatter = DateFormatter()
-
-                dateFormatter.dateFormat = dateFormat
-                    ?? Settings.shared.get("user/formatting/date")
-                    ?? "yyyy/MM/dd HH:mm"
+                
+                dateFormatter.dateFormat = dateFormat == "time"
+                    ? Settings.shared.get("user/formatting/time")
+                    : dateFormat
+                        ?? Settings.shared.get("user/formatting/date")
+                        ?? "yyyy/MM/dd HH:mm"
 
                 dateFormatter.locale = Locale(identifier: "en_US")
                 dateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
@@ -213,13 +215,50 @@ public class Views {
         case "item":
             let f = { (args: [Any?]?) -> Any? in // (value:String) -> Any? in
                 guard let typeName = args?[safe: 0] as? String,
-                    let uid = args?[safe: 1] as? Int else {
+                      let uid = args?[safe: 1] as? Double
+                else {
                     if args?.count == 0 {
                         return self.context?.currentView?.resultSet.singletonItem
                     }
                     return nil
                 }
-                return getItem(typeName, uid)
+                return getItem(typeName, Int(uid))
+            }
+            return f
+        case "debug":
+            let f = { (args: [Any?]?) -> Any? in
+                guard args?.count ?? 0 > 0 else {
+                    debugHistory.info("nil")
+                    return nil
+                }
+                debugHistory.info(args?.map{"\($0 ?? "")"}.joined(separator: " ") ?? "")
+                return nil
+            }
+            return f
+        case "min":
+            let f = { (args: [Any?]?) -> Any? in
+                let first = args?[0] as? Double ?? Double.nan
+                let second = args?[1] as? Double ?? Double.nan
+                return min(first, second)
+            }
+            return f
+        case "max":
+            let f = { (args: [Any?]?) -> Any? in
+                let first = args?[0] as? Double ?? Double.nan
+                let second = args?[1] as? Double ?? Double.nan
+                return max(first, second)
+            }
+            return f
+        case "floor":
+            let f = { (args: [Any?]?) -> Any? in
+                let value = args?[0] as? Double ?? Double.nan
+                return floor(value)
+            }
+            return f
+        case "ceil":
+            let f = { (args: [Any?]?) -> Any? in
+                let value = args?[0] as? Double ?? Double.nan
+                return ceil(value)
             }
             return f
         case "me": return realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first
@@ -242,6 +281,8 @@ public class Views {
             }
         default:
             if let value: Any = viewArguments?.get(name) { return value }
+            
+            debugHistory.warn("Undefined variable \(name)")
             return nil
             //			throw "Exception: Unknown object for property getter: \(name)"
         }
@@ -274,7 +315,7 @@ public class Views {
 
         if recursionCounter > 4 {
             recursionCounter = 0
-            throw "Exception: Recursion detected while expanding variable \(lookup)"
+            throw "Exception: Recursion detected while expanding variable \(lookup.toExprString())"
         }
 
         var i = 0
@@ -285,6 +326,7 @@ public class Views {
                 if first {
                     // TODO: move to CVU validator??
                     if node.list == .list || node.type != .propertyOrItem {
+                        recursionCounter = 0
                         throw "Unexpected edge lookup. No source specified"
                     }
 
@@ -343,6 +385,7 @@ public class Views {
                     case "plural": value = v + "s" // TODO:
                     case "firstUppercased": value = v.capitalizingFirst()
                     case "plainString": value = v.strippingHTMLtags()
+                    case "count": value = v.count
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on string")
@@ -351,7 +394,10 @@ public class Views {
                 else if let date = value as? Date {
                     switch node.name {
                     case "format":
-                        guard isFunction else { throw "You must call .format() as a function" }
+                        guard isFunction else {
+                            recursionCounter = 0
+                            throw "You must call .format() as a function"
+                        }
 
                         value = { (args: [Any?]?) -> Any? in
                             if args?.count == 0 { return Views.formatDate(date) }
@@ -383,12 +429,35 @@ public class Views {
                     case "first": value = v.first
                     case "last": value = v.last
                     //                        case "sum": value = v.sum
-                    case "min": value = v.min
-                    case "max": value = v.max
+//                    case "min": value = v.min
+//                    case "max": value = v.max
                     case "items": value = v.items()
+                    #warning("Add sort")
                     default:
                         // TODO: Warn
                         debugHistory.warn("Could not find property \(node.name) on list of edges")
+                    }
+                }
+                else if let v = value as? RealmSwift.Results<Item> {
+                    switch node.name {
+                    case "count": value = v.count
+                    case "first": value = v.first
+                    case "last": value = v.last
+                    #warning("Add sort")
+                    default:
+                        // TODO: Warn
+                        debugHistory.warn("Could not find property \(node.name) on list of items")
+                    }
+                }
+                else if let v = value as? [Any?] {
+                    switch node.name {
+                    case "count": value = v.count
+                    case "first": value = v.first as Any?
+                    case "last": value = v.last as Any?
+                    #warning("Add sort")
+                    default:
+                        // TODO: Warn
+                        debugHistory.warn("Could not find property \(node.name) on list")
                     }
                 }
                 else if let v = value as? RealmSwift.ListBase {
@@ -412,6 +481,10 @@ public class Views {
                     else {
                         value = v[node.name] // How to handle errors?
                     }
+                }
+                else if "\(value ?? "")" != "nil" { #warning("Fix Any issue")
+                    recursionCounter = 0
+                    throw "Unexpected fetch \(node.name) on \(value)"
                 }
             }
             // .addresses[primary = true] || [0]
@@ -456,8 +529,8 @@ public class Views {
             if let f = f as? ([Any?]?) -> Any? {
                 return f(args) as Any?
             }
-            else {
-                throw "Could not find function to execute: \(lookup.description)"
+            else if "\(f)" != "nil" { #warning("Temporary hack to detect nil that is not nil — .dateAccessed.format where .dateAccessed is nil")
+                throw "Could not find function to execute: \(lookup.toExprString())"
             }
         }
 
@@ -476,7 +549,7 @@ public class Views {
 
         if let selector = selector { filter.append("selector = '\(selector)'") }
         else {
-            if let type = type { filter.append("type = '\(type)'") }
+            if let type = type { filter.append("itemType = '\(type)'") }
             if let name = name { filter.append("name = '\(name)'") }
             if let query = query { filter.append("query = '\(query)'") }
         }
@@ -542,10 +615,10 @@ public class Views {
     /// Takes a stored definition and fetches the view definition or when its a session definition, the currentView of that session
     func getViewStateDefinition(from stored: CVUStoredDefinition) throws -> CVUStateDefinition {
         var view: CVUStateDefinition
-        if stored.type == "view" {
+        if stored.itemType == "view" {
             view = try CVUStateDefinition.fromCVUStoredDefinition(stored)
         }
-        else if stored.type == "session" {
+        else if stored.itemType == "session" {
             guard let parsed = try parseDefinition(stored) else {
                 throw "Unable to parse state definition"
             }
@@ -605,7 +678,7 @@ public class Views {
             if let viewOverride = viewOverride {
                 if let viewDefinition = context.views.fetchDefinitions(selector: viewOverride)
                     .first {
-                    if viewDefinition.type == "renderer" {
+                    if viewDefinition.itemType == "renderer" {
                         if let parsed = try context.views
                             .parseDefinition(viewDefinition) as? CVUParsedRendererDefinition {
                             if parsed["children"] != nil { cascadeStack.append(parsed) }
@@ -617,11 +690,11 @@ public class Views {
                             throw "Exception: View definition is missing: \(viewOverride)"
                         }
                     }
-                    else if viewDefinition.type == "view" {
+                    else if viewDefinition.itemType == "view" {
                         _ = try searchForRenderer(in: viewDefinition)
                     }
                     else {
-                        throw "Exception: incompatible view type of \(viewDefinition.type ?? ""), expected renderer or view"
+                        throw "Exception: incompatible view type of \(viewDefinition.itemType ?? ""), expected renderer or view"
                     }
                 }
                 else {

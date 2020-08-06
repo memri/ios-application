@@ -42,51 +42,6 @@ struct Search: View {
     }
 }
 
-struct KeyboardModifier: ViewModifier {
-    var enabled: Bool = true
-    var overrideHeightWhenVisible: CGFloat?
-    @ObservedObject var keyboard = KeyboardResponder.shared
-    @Environment(\.screenSize) var screenSize
-    @State var contentBounds: CGRect?
-
-    func body(content: Content) -> some View {
-        content
-            .offset(enabled ? (contentBounds.flatMap { contentBounds in
-                screenSize.map { screenSize in
-                    CGSize(width: 0,
-                            height: min(0, (screenSize.height - contentBounds.maxY) - keyboard.currentHeight))
-                }
-                } ?? .zero) : .zero)
-            .frame(height: keyboard.keyboardVisible ? overrideHeightWhenVisible : nil)
-            .background(
-                GeometryReader { geom in
-                    Color.clear.preference(
-                        key: BoundsPreferenceKey.self,
-                        value: geom.frame(in: .global)
-                    )
-                }
-            )
-            .onPreferenceChange(BoundsPreferenceKey.self, perform: { value in
-                DispatchQueue.main.async {
-                    self.contentBounds = value
-                }
-            })
-    }
-}
-
-private struct BoundsPreferenceKey: PreferenceKey {
-    typealias Value = CGRect?
-
-    static var defaultValue: Value = nil
-
-    static func reduce(
-        value: inout Value,
-        nextValue: () -> Value
-    ) {
-        value = nextValue() ?? value
-    }
-}
-
 struct Search_Previews: PreviewProvider {
     static var previews: some View {
         Search().environmentObject(try! RootContext(name: "").mockBoot())

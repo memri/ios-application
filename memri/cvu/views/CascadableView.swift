@@ -76,10 +76,15 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         get { cascadeProperty("actionButton") }
         set(value) { setState("actionButton", value) }
     }
-
+    
     var editActionButton: Action? {
         get { cascadeProperty("editActionButton") }
         set(value) { setState("editActionButton", value) }
+    }
+    
+    var titleActionButton: Action? {
+        get { cascadeProperty("titleActionButton") }
+        set(value) { setState("titleActionButton", value) }
     }
 
     var sortFields: [String] {
@@ -348,6 +353,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             case "searchHint": return searchHint
             case "actionButton": return actionButton
             case "editActionButton": return editActionButton
+            case "titleActionButton": return titleActionButton
             case "sortFields": return sortFields
             case "filterButtons": return filterButtons
             case "contextButtons": return contextButtons

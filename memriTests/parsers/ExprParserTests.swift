@@ -71,6 +71,72 @@ class ExprParserTests: XCTestCase {
             "ConditionNode(condition: BoolNode(true), trueExp: ConditionNode(condition: BinaryOpNode(ConditionAND, lhs: BoolNode(false), rhs: BoolNode(true)), trueExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)), falseExp: ConditionNode(condition: BinaryOpNode(ConditionOR, lhs: BoolNode(false), rhs: BoolNode(true)), trueExp: StringNode(yes), falseExp: StringNode(no))), falseExp: BinaryOpNode(Multiplication, lhs: NumberNode(-1.0), rhs: NumberNode(1.0)))"
         )
     }
+    
+    func testConditionEquals() throws {
+        let snippet = "true = false"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionEquals, lhs: BoolNode(true), rhs: BoolNode(false))"
+        )
+    }
+    
+    func testConditionNotEquals() throws {
+        let snippet = "true != false"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionNotEquals, lhs: BoolNode(true), rhs: BoolNode(false))"
+        )
+    }
+    
+    func testConditionGreaterThan() throws {
+        let snippet = "5 > 10"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionGreaterThan, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
+        )
+    }
+    
+    func testConditionGreaterThanOrEqual() throws {
+        let snippet = "5 >= 10"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionGreaterThanOrEqual, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
+        )
+    }
+    
+    func testConditionLessThan() throws {
+        let snippet = "5 < 10"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionLessThan, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
+        )
+    }
+    
+    func testConditionLessThanOrEqual() throws {
+        let snippet = "5 <= 10"
+
+        let result = try parse(snippet)
+
+        XCTAssertEqual(
+            result.description,
+            "BinaryOpNode(ConditionLessThanOrEqual, lhs: NumberNode(5.0), rhs: NumberNode(10.0))"
+        )
+    }
 
     func testLookup() throws {
         let snippet = ".bar and bar.foo(10) and bar[foo = 10] or shouldNeverGetHere"

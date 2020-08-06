@@ -29,6 +29,11 @@ public enum ExprOperator: String {
     case ConditionAND = "AND"
     case ConditionOR = "OR"
     case ConditionEquals = "="
+    case ConditionNotEquals = "!="
+    case ConditionGreaterThan = ">"
+    case ConditionGreaterThanOrEqual = ">="
+    case ConditionLessThan = "<"
+    case ConditionLessThanOrEqual = "<="
     case Plus = "+"
     case Minus = "-"
     case Multiplication = "*"
@@ -41,6 +46,11 @@ public enum ExprOperator: String {
         case .ConditionAND: return 20
         case .ConditionOR: return 30
         case .ConditionEquals: return 35
+        case .ConditionNotEquals: return 35
+        case .ConditionGreaterThan: return 35
+        case .ConditionGreaterThanOrEqual: return 35
+        case .ConditionLessThan: return 35
+        case .ConditionLessThanOrEqual: return 35
         case .Plus: return 40
         case .Minus: return 40
         case .Multiplication: return 50
@@ -72,6 +82,14 @@ public class ExprLexer {
         "OR": { i in ExprToken.Operator(ExprOperator.ConditionOR, i) },
         "equals": { i in ExprToken.Operator(ExprOperator.ConditionEquals, i) },
         "EQUALS": { i in ExprToken.Operator(ExprOperator.ConditionEquals, i) },
+        "eq": { i in ExprToken.Operator(ExprOperator.ConditionEquals, i) },
+        "EQ": { i in ExprToken.Operator(ExprOperator.ConditionEquals, i) },
+        "neq": { i in ExprToken.Operator(ExprOperator.ConditionNotEquals, i) },
+        "NEQ": { i in ExprToken.Operator(ExprOperator.ConditionNotEquals, i) },
+        "gt": { i in ExprToken.Operator(ExprOperator.ConditionGreaterThan, i) },
+        "GT": { i in ExprToken.Operator(ExprOperator.ConditionGreaterThan, i) },
+        "lt": { i in ExprToken.Operator(ExprOperator.ConditionLessThan, i) },
+        "LT": { i in ExprToken.Operator(ExprOperator.ConditionLessThan, i) },
     ]
 
     init(input: String, startInStringMode: Bool = false) {
@@ -104,9 +122,43 @@ public class ExprLexer {
             if token != nil { tokens.append(token!) }
         }
 
-        var i = -1, startChar: Character?
+        var i = -1, startChar: Character?, lastChar: Character? = nil
         try input.forEach { c in
             i += 1
+            
+            if lastChar != nil {
+                let l = lastChar
+                lastChar = nil
+            
+                switch l {
+                case "!":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionNotEquals, i))
+                        return
+                    }
+                    else {
+                        addToken(.Negation(i))
+                    }
+                case ">":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionGreaterThanOrEqual, i))
+                        return
+                    }
+                    else {
+                        addToken(.Operator(ExprOperator.ConditionGreaterThan, i))
+                    }
+                case "<":
+                    if c == "=" {
+                        addToken(.Operator(ExprOperator.ConditionLessThanOrEqual, i))
+                        return
+                    }
+                    else {
+                        addToken(.Operator(ExprOperator.ConditionLessThan, i))
+                    }
+                default:
+                    fatalError("Should never get here")
+                }
+            }
 
             if isMode.rawValue >= Mode.string.rawValue {
                 if isMode == .string,
@@ -140,7 +192,7 @@ public class ExprLexer {
             case "/": addToken(.Operator(ExprOperator.Division, i))
             case "+": addToken(.Operator(ExprOperator.Plus, i))
             case "-": addToken(.Operator(ExprOperator.Minus, i))
-            case "!": addToken(.Negation(i))
+            case "!": lastChar = c; return
             case "?": addToken(.Operator(ExprOperator.ConditionStart, i))
             case ":": addToken(.Operator(ExprOperator.ConditionElse, i))
             case "(": addToken(.ParensOpen(i))
@@ -148,6 +200,8 @@ public class ExprLexer {
             case "[": addToken(.BracketOpen(i))
             case "]": addToken(.BracketClose(i))
             case "=": addToken(.Operator(ExprOperator.ConditionEquals, i))
+            case ">": lastChar = c; return
+            case "<": lastChar = c; return
             case ",": addToken(.Comma(i))
             case "'", "\"":
                 isMode = .string
@@ -175,6 +229,8 @@ public class ExprLexer {
                 isMode = .keyword
                 keyword.append(String(c))
             }
+            
+            lastChar = nil
         }
 
         if keyword.count > 0 {

@@ -143,7 +143,9 @@ extension MemriContext {
         }
 
         // Last element of arguments array is the context data item
-        args["item"] = item ?? currentView?.resultSet.singletonItem
+        if args["item"] == nil {
+            args["item"] = item ?? currentView?.resultSet.singletonItem
+        }
 
         return args
     }
@@ -397,9 +399,8 @@ public enum RenderType: String {
 
 public enum ActionFamily: String, CaseIterable {
     case back, addItem, openView, openDynamicView, openViewByName, openGroup, toggleEditMode,
-        toggleFilterPanel,
-        star, showStarred, showContextPane, showOverlay, share, showNavigation, addToPanel,
-        duplicate,
+        toggleFilterPanel, star, showStarred, showContextPane, showOverlay, share, showNavigation,
+        addToPanel, duplicate, copyToClipboard,
         schedule, addToList, duplicateNote, noteTimeline, starredNotes, allNotes, exampleUnpack,
         delete, setRenderer, select, selectAll, unselectAll, showAddLabel, openLabelView,
         showSessionSwitcher, forward, forwardToFront, backAsSession, openSession, openSessionByName,
@@ -436,6 +437,7 @@ public enum ActionFamily: String, CaseIterable {
         case .runImporter: return ActionRunImporter.self
         case .setProperty: return ActionSetProperty.self
         case .setSetting: return ActionSetSetting.self
+        case .copyToClipboard: return ActionCopyToClipboard.self
         case .noop: fallthrough
         default: return ActionNoop.self
         }
@@ -481,6 +483,7 @@ protocol ActionExec {
     func exec(_ arguments: [String: Any?]) throws
 }
 
+#warning("Make this Subscriptable and add to expression docs on the wiki")
 class ActionBack: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
         "icon": "chevron.left",
@@ -547,9 +550,40 @@ class ActionAddItem: Action, ActionExec {
     }
 }
 
+class ActionCopyToClipboard: Action, ActionExec {
+    override var defaultValues: [String: Any?] { [
+        "icon": "doc.on.doc",
+        "argumentTypes": ["value": AnyObject.self],
+        "opensView": true,
+        "color": Color(hex: "#6aa84f"),
+        "inactiveColor": Color(hex: "#434343"),
+    ] }
+
+    required init(_ context: MemriContext, values: [String: Any?] = [:]) {
+        super.init(context, "copyToClipboard", values: values)
+    }
+
+    func exec(_ arguments: [String: Any?]) throws {
+        if let value = arguments["value"] as? String {
+            UIPasteboard.general.string = value
+        }
+        else if arguments["value"] != nil {
+            throw "Not implemented yet"
+        }
+    }
+
+    class func exec(_ context: MemriContext, _ arguments: [String: Any?]) throws {
+        execWithoutThrow { try ActionCopyToClipboard(context).exec(arguments) }
+    }
+}
+
 class ActionOpenView: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
-        "argumentTypes": ["view": CVUStateDefinition.self, "viewArguments": ViewArguments.self],
+        "argumentTypes": [
+            "item": ItemFamily.self,
+            "view": CVUStateDefinition.self,
+            "viewArguments": ViewArguments.self
+        ],
         "withAnimation": false,
         "opensView": true,
     ] }
@@ -582,7 +616,7 @@ class ActionOpenView: Action, ActionExec {
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "type": "view",
+            "itemType": "view",
             "selector": "[view]",
             "definition": """
                 [view] {
@@ -614,7 +648,7 @@ class ActionOpenView: Action, ActionExec {
         }
         else {
             // TODO: Error handling
-            throw "Cannot execute ActionOpenView, arguments require a SessionView. passed arguments:\n \(arguments), "
+            throw "Cannot execute ActionOpenView, arguments require a view. passed arguments:\n \(arguments), "
         }
     }
 
@@ -703,7 +737,7 @@ class ActionOpenViewWithUIDs: Action, ActionExec {
 
         // Create a new view
         let view = try Cache.createItem(CVUStateDefinition.self, values: [
-            "type": "view",
+            "itemType": "view",
             "selector": "[view]",
             "definition": """
                 [view] {
@@ -781,7 +815,7 @@ class ActionToggleFilterPanel: Action, ActionExec {
 class ActionStar: Action, ActionExec {
     override var defaultValues: [String: Any?] { [
         "icon": "star.fill",
-        "binding": Expression("dataItem.starred"),
+        "binding": Expression(".starred"),
     ] }
 
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {
@@ -1235,11 +1269,24 @@ class ActionRunImporter: Action, ActionExec {
         // TODO: parse options
 
         if let run = arguments["importer"] as? ImporterRun {
-            guard let uid = run.uid.value else { throw "Uninitialized import run" }
+            
+            context.cache.isOnRemote(run) { error in
+                if error != nil {
+                    // How to handle??
+                    #warning("Look at this when implementing syncing")
+                    debugHistory.error("Polling timeout. All polling services disabled")
+                    return
+                }
 
-            context.podAPI.runImporter(uid) { error, _ in
-                if let error = error {
-                    print("Cannot execute actionImport: \(error)")
+                guard let uid = run.uid.value else {
+                    debugHistory.error("Item does not have a uid")
+                    return
+                }
+
+                self.context.podAPI.runImporter(uid) { error, _ in
+                    if let error = error {
+                        print("Cannot execute actionImport: \(error)")
+                    }
                 }
             }
         }

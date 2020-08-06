@@ -77,6 +77,11 @@ Photo[] {
 		}
 	}
 	
+    [renderer = fileViewer] {
+        file: {{.file}}
+        itemTitle: {{.caption}}
+        initialItem: {{currentItem}}
+    }
 	
 	[renderer = photoViewer] {
 		file: {{.file}}

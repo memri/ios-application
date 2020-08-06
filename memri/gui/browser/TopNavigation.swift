@@ -188,13 +188,29 @@ public struct TopNavigation: View {
         .padding(.bottom, 0)
         .centeredOverlayWithinBoundsPreferenceKey {
             Button(action: {
-                self.showingTitleActions = true
+                if !self.showingTitleActions,
+                    let titleActionButton = context.currentView?.titleActionButton {
+                        context.executeAction(titleActionButton)
+                }
             }) {
                 Text(context.currentView?.title ?? "")
-                    .font(.headline)
-                    .foregroundColor(Color(hex: "#333"))
-                    .truncationMode(.tail)
+                .font(.headline)
+                .foregroundColor(Color(hex: "#333"))
+                .truncationMode(.tail)
             }
+            .onLongPressGesture(minimumDuration: 0.5, maximumDistance: 10, pressing: { someBool in
+                if self.isPressing || someBool {
+                    self.isPressing = someBool
+
+                    if someBool {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            if self.isPressing {
+                                self.showingTitleActions = true
+                            }
+                        }
+                    }
+                }
+            }, perform: {})
             .actionSheet(isPresented: self.$showingTitleActions) {
                 self.createTitleActionSheet()
             }

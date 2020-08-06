@@ -7,6 +7,7 @@ import Foundation
 import RealmSwift
 import SwiftUI
 
+#warning("Make this subscriptable and add to the expression docs")
 public final class Sessions: ObservableObject, Equatable {
     /// TBD
     var currentSessionIndex: Int {

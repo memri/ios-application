@@ -26,6 +26,11 @@
     },
     {
         "_type": "Setting",
+        "key": "defaults/formatting/time",
+        "value": "HH:mm"
+    },
+    {
+        "_type": "Setting",
         "key": "defaults/pod/host",
         "value": "http://localhost:3030"
     },
@@ -51,124 +56,130 @@
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "Inbox"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "inbox",
         "sessionName": "inbox"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "messages",
         "sessionName": "all-messages"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
+        "title": "message channels",
+        "sessionName": "all-message-channels"
+    },
+    {
+        "_type": "NavigationItem",
+        "itemType": "item",
         "title": "email",
         "sessionName": "all-email-messages"
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "General"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "notes",
         "sessionName": "all-notes"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "people",
         "sessionName": "all-people"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "photos",
         "sessionName": "all-photos"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "addresses",
         "sessionName": "all-addresses"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "log",
         "sessionName": "all-audit-items"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "labels",
         "sessionName": "all-labels"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "sessions",
         "sessionName": "all-sessions"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "importers",
         "sessionName": "all-importers"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "importer instances",
         "sessionName": "all-importer-instances"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "indexers",
         "sessionName": "all-indexers"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "indexer instances",
         "sessionName": "all-indexer-instances"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "views",
         "sessionName": "all-sessionviews"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "locations",
         "sessionName": "all-locations"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "crypto keys",
-        "sessionName": "all-locations"
+        "sessionName": "all-cryptokeys"
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "Macros"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "starred",
         "sessionName": "filter-starred"
     },
@@ -183,6 +194,12 @@
         "name": "Evernote notes",
         "datatype": "Note",
         "bundleImage": "evernote-icon"
+    },
+    {
+        "_type": "Importer",
+        "name": "Gmail",
+        "datatype": "Email",
+        "bundleImage": "envelope"
     },
     {
         "_type": "Indexer",
@@ -220,6 +237,7 @@
     },
     {
         "_type": "Photo",
+        "uid": 79200,
         "width": 1000,
         "height": 1500,
         "caption": "A bridge at night",
@@ -285,7 +303,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -305,7 +323,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -326,7 +344,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -346,7 +364,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -366,7 +384,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -386,7 +404,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -406,7 +424,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -425,7 +443,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -444,7 +462,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -463,7 +481,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -482,7 +500,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -501,7 +519,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -520,7 +538,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -539,7 +557,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -558,7 +576,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -577,7 +595,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -596,7 +614,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -615,7 +633,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -634,7 +652,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -653,7 +671,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -672,7 +690,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -691,7 +709,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -710,7 +728,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -729,7 +747,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -748,7 +766,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -767,7 +785,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -786,7 +804,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -805,7 +823,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -824,7 +842,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -843,7 +861,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -862,7 +880,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -881,7 +899,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -900,7 +918,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -919,7 +937,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -938,7 +956,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -957,7 +975,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -976,7 +994,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -995,7 +1013,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1014,7 +1032,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1033,7 +1051,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1052,7 +1070,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1071,7 +1089,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1091,7 +1109,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2
             },
             {
@@ -1111,7 +1129,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
@@ -1167,62 +1185,84 @@
     },
     {
         "_type": "PhoneNumber",
-        "type": "mobile",
+        "itemType": "mobile",
         "uid": 1003,
         "phoneNumber": "0654271340"
     },
     {
         "_type": "Website",
         "uid": 1004,
-        "type": "blog",
+        "itemType": "blog",
         "url": "www.revolutionairyblog.com"
     },
     {
         "_type": "Website",
         "uid": 1005,
-        "type": "website",
+        "itemType": "website",
         "url": "www.eagleve.com"
     },
-    { "_type": "Organization", "uid": 1006, "type": "company", "name": "eagle solutions" },
+    { "_type": "Organization", "uid": 1006, "itemType": "company", "name": "eagle solutions" },
     {
         "_type": "CryptoKey",
         "uid": 1007,
         "name": "PGP Email",
-        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517"
-    },
-    { "_type": "Network", "uid": 9998, "name": "Twitter" },
-    { "_type": "Network", "uid": 9999, "name": "Facebook" },
-    { "_type": "Account", "uid": 1008, "type": "twitter", "handle": "@eagleve91",
+        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
         "allEdges": [
-            {"_type":"network", "itemType": "Network", "uid": 9998}
+            {
+                "targetType": "Person",
+                "uid": 2,
+                "_type": "owner"
+            }
         ]
     },
-    { "_type": "Account", "uid": 1009, "type": "facebook", "handle": "@eagleve2393",
+    {
+        "_type": "CryptoKey",
+        "uid": 1007,
+        "name": "PGP Email",
+        "active": true,
+        "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
         "allEdges": [
-            {"_type":"network", "itemType": "Network", "uid": 9999}
+            {
+                "targetType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            }
+        ]
+    },
+    { "_type": "Network", "uid": 9997, "name": "Whatsapp" },
+    { "_type": "Network", "uid": 9998, "name": "Twitter" },
+    { "_type": "Network", "uid": 9999, "name": "Facebook" },
+    { "_type": "Account", "uid": 1008, "itemType": "twitter", "handle": "@eagleve91",
+        "allEdges": [
+            {"_type":"network", "targetType": "Network", "uid": 9998}
+        ]
+    },
+    { "_type": "Account", "uid": 1009, "itemType": "facebook", "handle": "@eagleve2393",
+        "allEdges": [
+            {"_type":"network", "targetType": "Network", "uid": 9999}
         ]
     },
     {
         "_type": "Diet",
         "uid": 1010,
-        "type": "Vegan",
+        "itemType": "Vegan",
         "additions": "egg"
     },
     {
         "_type": "Diet",
         "uid": 1011,
-        "type": "Gluten Free",
+        "itemType": "Gluten Free",
         "additions": "sourdough"
     },
     {
         "_type": "MedicalCondition",
         "uid": 1012,
-        "type": "Psoriasis"
+        "itemType": "Psoriasis"
     },
     {
         "_type": "Address",
         "uid": 1013,
-        "type": "Home",
+        "itemType": "Home",
         "city": "Washington, DC",
         "state": "NW",
         "street": "1600 Pennsylvania Ave",
@@ -1230,12 +1270,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1017
             },
             {
                 "_type": "country",
-                "itemType": "Country",
+                "targetType": "Country",
                 "uid": 1401
             }
         ]
@@ -1243,7 +1283,7 @@
     {
         "_type": "Address",
         "uid": 1014,
-        "type": "Work",
+        "itemType": "Work",
         "city": "Paris",
         "state": "",
         "street": "45 Rue de la plage",
@@ -1251,7 +1291,7 @@
         "allEdges": [
             {
                 "_type": "country",
-                "itemType": "Country",
+                "targetType": "Country",
                 "uid": 1402
             }
         ]
@@ -1259,11 +1299,11 @@
     {
         "_type": "Address",
         "uid": 100013,
-        "type": "Indexer example",
+        "itemType": "Indexer example",
         "allEdges": [
             {
                 "_type": "location",
-                "itemType": "Location",
+                "targetType": "Location",
                 "uid": 100017
             },
         ]
@@ -1287,87 +1327,87 @@
         "allEdges": [
             {
                 "_type": "me",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2
             },
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 500
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1000
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1001
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1002
             },
             {
                 "_type": "hasPhoneNumber",
-                "itemType": "PhoneNumber",
+                "targetType": "PhoneNumber",
                 "uid": 1003
             },
             {
                 "_type": "website",
-                "itemType": "Website",
+                "targetType": "Website",
                 "uid": 1004
             },
             {
                 "_type": "website",
-                "itemType": "Website",
+                "targetType": "Website",
                 "uid": 1005
             },
-            {"_type":"company", "itemType": "Organization", "uid": 1006, "label": "freelance"},
+            {"_type":"company", "targetType": "Organization", "uid": 1006, "label": "freelance"},
             {
                 "_type": "cryptoKey",
-                "itemType": "CryptoKey",
+                "targetType": "CryptoKey",
                 "uid": 1007
             },
-            {"_type":"account", "itemType": "Account", "uid": 1008},
-            {"_type":"account", "itemType": "Account", "uid": 1009},
+            {"_type":"account", "targetType": "Account", "uid": 1008},
+            {"_type":"account", "targetType": "Account", "uid": 1009},
             {
                 "_type": "diet",
-                "itemType": "Diet",
+                "targetType": "Diet",
                 "uid": 1010
             },
             {
                 "_type": "diet",
-                "itemType": "Diet",
+                "targetType": "Diet",
                 "uid": 1011
             },
             {
                 "_type": "medicalCondition",
-                "itemType": "MedicalCondition",
+                "targetType": "MedicalCondition",
                 "uid": 1012
             },
             {
                 "_type": "address",
                 "edgeLabel": "Home",
-                "itemType": "Address",
+                "targetType": "Address",
                 "uid": 1013
             },
             {
                 "_type": "address",
                 "edgeLabel": "Holiday home in France",
-                "itemType": "Address",
+                "targetType": "Address",
                 "uid": 1014
             },
         ],
@@ -1385,22 +1425,22 @@
         "allEdges": [
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 501
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             },
         ],
@@ -1420,17 +1460,17 @@
         "allEdges": [
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 502
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             },
         ],
@@ -2478,12 +2518,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             }
         ],
@@ -2497,12 +2537,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             }
         ],
@@ -2542,9 +2582,14 @@
         "service": "whatsapp",
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3,
                 "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
             }
         ]
     },
@@ -2556,7 +2601,18 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 2,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "Account",
@@ -2566,7 +2622,18 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "Account",
@@ -2576,7 +2643,18 @@
         "nameQuality": 2,
         "enablePresence": true,
         "enableReceipts": true,
-        "service": "whatsapp"
+        "allEdges": [
+            {
+                "targetType": "Person",
+                "uid": 1,
+                "_type": "owner"
+            },
+            {
+                "targetType": "Network",
+                "uid": 9997,
+                "_type": "network"
+            }
+        ]
     },
     {
         "_type": "MessageChannel",
@@ -2587,8 +2665,8 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
-                "uid": 20000000000,
+                "targetType": "Account",
+                "uid": 20000000001,
                 "_type": "receiver"
             }
         ]
@@ -2602,8 +2680,8 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
-                "uid": 20000000000,
+                "targetType": "Account",
+                "uid": 20000000002,
                 "_type": "receiver"
             }
         ]
@@ -2617,8 +2695,8 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
-                "uid": 20000000000,
+                "targetType": "Account",
+                "uid": 20000000003,
                 "_type": "receiver"
             }
         ]
@@ -2632,8 +2710,8 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
-                "uid": 20000000000,
+                "targetType": "Account",
+                "uid": 20000000003,
                 "_type": "receiver"
             }
         ]
@@ -2642,16 +2720,16 @@
         "_type": "Message",
         "uid": 20000000008,
         "externalId": "93463F7980167E92C28FF0781E650E80",
-        "content": "{\"conversation\":\"test 123\"}\n",
-        "type": "whatsapp",
+        "content": "test 123",
+        "dateSent": 1589691657000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2661,16 +2739,21 @@
         "_type": "Message",
         "uid": 20000000009,
         "externalId": "9BDD372B9D4F7486D2A0",
-        "content": "{\"conversation\":\"hello\"}\n",
-        "type": "whatsapp",
+        "content": "hello",
+        "dateSent": 1589691670000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "Message",
+                "uid": 20000000008,
+                "_type": "message"
+            },
+            {
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2680,16 +2763,21 @@
         "_type": "Message",
         "uid": 20000000010,
         "externalId": "36A3043A22AC7524060B23FB54815B39",
-        "content": "{\"stickerMessage\":{\"url\":\"https://mmg.whatsapp.net/d/f/Al3HEpTJz7J37BOTcIGyq-saI_dzDoqX9DM7Xdcjtqbz.enc\",\"fileSha256\":\"wFKPp8ZAcSDLaORuLWW33nC7ZywuIazegAu31cyim2g=\",\"fileEncSha256\":\"pKPi4J6vFw6qafQuKuK+ilTS52B2LLU8jIzqg+QFFig=\",\"mediaKey\":\"wZZ50hD9n8UbGPCBV7Kg74FoGV//T7gm4XJhXrTNJi4=\",\"mimetype\":\"image/webp\",\"directPath\":\"/v/t62.7118-24/18863256_177570407071070_7709928085717181665_n.enc?oh=40d6d8a5f81b24df512138c48851ad67\\u0026oe=C64EA1DB\",\"fileLength\":63064,\"mediaKeyTimestamp\":1594989169,\"isAnimated\":false}}\n",
-        "type": "whatsapp",
+        "content": "Check out this photo!",
+        "dateSent": 1589691680000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "Photo",
+                "uid": 79200,
+                "_type": "photo"
+            },
+            {
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2699,16 +2787,16 @@
         "_type": "Message",
         "uid": 20000000011,
         "externalId": "7A1FCF21F8E4216509EF8300D7C5CC57",
-        "content": "{\"conversation\":\"where r u?\"}\n",
-        "type": "whatsapp",
+        "content": "where r u?",
+        "dateSent": 1589691690000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000002,
                 "_type": "sender"
             }
@@ -2718,19 +2806,44 @@
         "_type": "Message",
         "uid": 20000000012,
         "externalId": "EE9E22BD54F93EC48CF9",
-        "content": "{\"conversation\":\"at home\"}\n",
-        "type": "whatsapp",
+        "content": "at home",
+        "dateSent": 1589691700000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
+                "uid": 20000000000,
+                "_type": "sender"
+            }
+        ]
+    },
+    {
+        "_type": "Message",
+        "uid": 20000000012,
+        "externalId": "EE9E22BD54F93EC48CF9",
+        "content": "That's cool",
+        "dateSent": 1589691700000,
+        "allEdges": [
+            {
+                "targetType": "Message",
+                "uid": 20000000010,
+                "_type": "message"
+            },
+            {
+                "targetType": "MessageChannel",
+                "uid": 20000000006,
+                "_type": "messageChannel"
+            },
+            {
+                "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
             }
         ]
     }
 ]
+

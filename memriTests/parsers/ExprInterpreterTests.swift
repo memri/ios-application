@@ -94,6 +94,54 @@ class ExprInterpreterTests: XCTestCase {
 
         XCTAssertEqual(result as! String, "yes")
     }
+    
+    func testConditionEquals() throws {
+        let snippet = "true = false"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, false)
+    }
+    
+    func testConditionNotEquals() throws {
+        let snippet = "true != false"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, true)
+    }
+    
+    func testConditionGreaterThan() throws {
+        let snippet = "5 > 10"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, false)
+    }
+    
+    func testConditionGreaterThanOrEqual() throws {
+        let snippet = "5 >= 5"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, true)
+    }
+    
+    func testConditionLessThan() throws {
+        let snippet = "5 < 10"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, true)
+    }
+    
+    func testConditionLessThanOrEqual() throws {
+        let snippet = "5 <= 5"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, true)
+    }
 
     func testLookup() throws {
         let snippet = ".bar and bar.foo(10) and bar[foo = 10] or shouldNeverGetHere"
@@ -195,6 +243,14 @@ class ExprInterpreterTests: XCTestCase {
         let result = try exec(snippet)
 
         XCTAssertEqual(result as! String, "yes")
+    }
+    
+    func testTypeConversionStringToBool() throws {
+        let snippet = "''"
+
+        let result = try exec(snippet)
+
+        XCTAssertEqual(result as! Bool, false)
     }
 
     func testStringModeStartWithString() throws {
