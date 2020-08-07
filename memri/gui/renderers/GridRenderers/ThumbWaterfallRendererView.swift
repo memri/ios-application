@@ -54,7 +54,8 @@ struct ThumbWaterfallRendererView: View {
 
     var section: ASCollectionViewSection<Int> {
         ASCollectionViewSection(id: 0, data: context.items,
-                                selectedItems: selectedIndices) { dataItem, state in
+                                selectedItems: selectedIndices,
+                                contextMenuProvider: contextMenuProvider) { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 GeometryReader { geom in
                     self.renderConfig.render(item: dataItem)
@@ -84,6 +85,18 @@ struct ThumbWaterfallRendererView: View {
         }
     }
 
+    func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
+        UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak context] (suggested) -> UIMenu? in
+            let children: [UIMenuElement] = self.renderConfig.contextMenuActions.map { [weak context] action in
+                UIAction(title: action.getString("title"),
+                         image: nil) { [weak context] (_) in
+                            context?.executeAction(action, with: item)
+                }
+            }
+            return UIMenu(title: "", children: children)
+        }
+    }
+    
     var body: some View {
         VStack {
             if context.currentView?.resultSet.count == 0 {

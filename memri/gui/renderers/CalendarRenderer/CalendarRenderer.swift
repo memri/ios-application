@@ -34,6 +34,7 @@ class CascadingCalendarConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
     }
+    let showContextualBarInEditMode: Bool = false
     
     var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
 }

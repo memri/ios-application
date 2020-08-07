@@ -213,8 +213,6 @@ public class MemriContext: ObservableObject, Subscriptable {
 
     public func setSelection(_ selection: [Item]) {
         currentView?.userState.set("selection", selection)
-        #warning("@Toby this is causing an infinite loop of SwiftUI rendering the UI")
-//        scheduleUIUpdate()
     }
 
     init(

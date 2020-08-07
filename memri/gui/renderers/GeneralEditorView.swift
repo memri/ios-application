@@ -17,7 +17,8 @@ let registerGeneralEditorRenderer = {
     )
 }
 
-class CascadingGeneralEditorConfig: CascadingRenderConfig {
+class CascadingGeneralEditorConfig: CascadingRenderConfig, ConfigurableRenderConfig {
+    
     var type: String? = "generalEditor"
 
     var layout: [GeneralEditorLayoutItem] {
@@ -41,6 +42,14 @@ class CascadingGeneralEditorConfig: CascadingRenderConfig {
         .map { dict -> GeneralEditorLayoutItem in
             GeneralEditorLayoutItem(dict: dict, viewArguments: self.viewArguments)
         }
+    }
+    
+    var showSortInConfig: Bool = false
+    
+    var showContextualBarInEditMode: Bool = false
+    
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        []
     }
 }
 

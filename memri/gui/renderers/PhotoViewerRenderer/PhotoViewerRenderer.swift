@@ -17,11 +17,18 @@ let registerPhotoViewerRenderer = {
     )
 }
 
-class PhotoViewerRendererConfig: CascadingRenderConfig {
+class PhotoViewerRendererConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "photoViewer"
 
     var imageFile: Expression? { cascadeProperty("file", type: Expression.self) }
     var initialItem: Item? { cascadeProperty("initialItem", type: Item.self) }
+    
+    
+    var showSortInConfig: Bool = true
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
+        []
+    }
+    let showContextualBarInEditMode: Bool = false
 }
 
 struct PhotoViewerRenderer: View {

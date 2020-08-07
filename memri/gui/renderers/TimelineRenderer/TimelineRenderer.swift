@@ -21,6 +21,7 @@ class CascadingTimelineConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {[
         ConfigPanelModel.ConfigItem(displayName: "Time level", propertyName: "detailLevel", type: .special(.timeLevel), isItemSpecific: false)
     ]}
+    var showContextualBarInEditMode: Bool = false
 }
 
 struct TimelineRenderer: View {

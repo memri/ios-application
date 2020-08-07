@@ -301,7 +301,7 @@
 		B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */; };
 		B8FD53B324D506E100CA0709 /* FileRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FD53B224D506E100CA0709 /* FileRenderer.swift */; };
 		B8FD53B624D5079F00CA0709 /* FileViewerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8FD53B524D5079F00CA0709 /* FileViewerController.swift */; };
-		C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForground.swift */; };
+		C80442D62427192300FE39A0 /* ContextPaneForeground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80442D52427192300FE39A0 /* ContextPaneForeground.swift */; };
 		C806E06E2426694300C050E9 /* ContextPaneBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = C806E06D2426694300C050E9 /* ContextPaneBackground.swift */; };
 		C8630B2C2418609200C36D6F /* ContextPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8630B2B2418609200C36D6F /* ContextPane.swift */; };
 		C892B3E824A5455D006707EC /* SensorManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C892B3E724A5455D006707EC /* SensorManager.swift */; };
@@ -591,7 +591,7 @@
 		B8FB4999249F3187007A05C4 /* UIKit+FirstResponder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIKit+FirstResponder.swift"; sourceTree = "<group>"; };
 		B8FD53B224D506E100CA0709 /* FileRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileRenderer.swift; sourceTree = "<group>"; };
 		B8FD53B524D5079F00CA0709 /* FileViewerController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileViewerController.swift; sourceTree = "<group>"; };
-		C80442D52427192300FE39A0 /* ContextPaneForground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForground.swift; sourceTree = "<group>"; };
+		C80442D52427192300FE39A0 /* ContextPaneForeground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneForeground.swift; sourceTree = "<group>"; };
 		C806E06D2426694300C050E9 /* ContextPaneBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPaneBackground.swift; sourceTree = "<group>"; };
 		C8630B2B2418609200C36D6F /* ContextPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextPane.swift; sourceTree = "<group>"; };
 		C892B3E724A5455D006707EC /* SensorManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SensorManager.swift; sourceTree = "<group>"; };
@@ -780,7 +780,7 @@
 			children = (
 				C8630B2B2418609200C36D6F /* ContextPane.swift */,
 				C806E06D2426694300C050E9 /* ContextPaneBackground.swift */,
-				C80442D52427192300FE39A0 /* ContextPaneForground.swift */,
+				C80442D52427192300FE39A0 /* ContextPaneForeground.swift */,
 			);
 			path = contextpane;
 			sourceTree = "<group>";
@@ -1772,7 +1772,7 @@
 			files = (
 				B8E8E8B824C99E1C00F1291F /* MemriImageView.swift in Sources */,
 				B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */,
-				C80442D62427192300FE39A0 /* ContextPaneForground.swift in Sources */,
+				C80442D62427192300FE39A0 /* ContextPaneForeground.swift in Sources */,
 				B826586B24D2F6CD0051CCFE /* EmailThreadViewController.swift in Sources */,
 				B826585324D2D7790051CCFE /* ArrayBuilder.swift in Sources */,
 				868EF63724766A8800C0375F /* ExprLexer.swift in Sources */,
