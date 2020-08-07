@@ -19,7 +19,8 @@ let registerEmailRenderers = {
         renderConfigType: CascadingEmailThreadRendererConfig.self,
         canDisplayResults: { items -> Bool in
             items.first?.genericType == "Message" ||
-                items.first?.genericType == "Note"
+                items.first?.genericType == "Note" ||
+                items.first?.genericType == "EmailMessage"
     }
     )
 }

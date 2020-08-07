@@ -341,9 +341,10 @@ class Authentication {
         
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
-        guard status == errSecSuccess else {
-            // TODO Error handling
-            throw "Unable to fetch public key"
+        switch status {
+        case noErr: break
+        case errSecItemNotFound: throw "Keychain item not found"
+        default: throw "Unable to fetch public key"
         }
         
         if

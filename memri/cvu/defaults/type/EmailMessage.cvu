@@ -1,6 +1,6 @@
 [session = all-email-messages] {
     [view] {
-        title: "All Email Messages"
+        title: "All Emails"
         [datasource = pod] {
             query: "EmailMessage AND NOT ANY allEdges.targetItemType = 'message'"
         }
@@ -20,7 +20,7 @@ EmailMessage[] {
     
     [datasource = pod] {
         sortProperty: dateSent
-        sortAscending: false
+        sortAscending: true
     }
     
     actionButton:
@@ -99,9 +99,9 @@ EmailMessage[] {
         
         EmailHeader {
             color: #000000
-            title: {{.subject}}
-            subtitle: "Testing out email renderer"
-            rightSubtitle: {{.dateSent}}
+            title: "{.subject}"
+            subtitle: "{.sender.owner.fullName()}"
+            rightSubtitle: "{.dateSent}"
         }
     }
 }

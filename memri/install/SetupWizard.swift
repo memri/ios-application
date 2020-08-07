@@ -115,7 +115,7 @@ struct SetupWizard: View {
                                                 publicKey: self.publicKey,
                                                 dbKey: self.databaseKey
                                             ) { error in
-                                                debugHistory.error("\(error)") // TODO: show this to the user
+                                                error.map { debugHistory.error("\($0)") } // TODO: show this to the user
                                             }
                                         }, secondaryButton: .cancel())
                                     }
@@ -129,9 +129,8 @@ struct SetupWizard: View {
                         header: Text("Or use Memri locally")
                     ) {
                         Button(action: {
-                            self.context.installer.installDefaultDatabase(self.context) { _ in
-                                self.context.settings.set("user/pod/host", "")
-                                self.context.installer.ready(self.context)
+                            self.context.installer.installLocalAuthForLocalInstallation(self.context, areYouSure: true) { error in
+                                error.map { debugHistory.error("\($0)") } // TODO: show this to the user
                             }
                         }) {
                             Text("Use memri without a pod")

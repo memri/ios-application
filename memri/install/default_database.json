@@ -2852,12 +2852,12 @@
         "displayName": "john@example.com",
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1,
                 "_type": "owner"
             },
             {
-                "itemType": "Network",
+                "targetType": "Network",
                 "uid": 9996,
                 "_type": "network"
             }
@@ -2872,7 +2872,7 @@
         "dateSent": 1589691657000,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2887,12 +2887,12 @@
         "dateSent": 1589691670000,
         "allEdges": [
             {
-                "itemType": "Message",
+                "targetType": "Message",
                 "uid": 22000000008,
                 "_type": "message"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2907,17 +2907,17 @@
         "dateSent": 1589691680000,
         "allEdges": [
             {
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 79200,
                 "_type": "photo"
             },
             {
-                "itemType": "Message",
+                "targetType": "Message",
                 "uid": 22000000009,
                 "_type": "message"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2932,12 +2932,12 @@
         "dateSent": 1589691690000,
         "allEdges": [
             {
-                "itemType": "Message",
+                "targetType": "Message",
                 "uid": 22000000010,
                 "_type": "message"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000002,
                 "_type": "sender"
             }
@@ -2952,7 +2952,7 @@
         "dateSent": 1589691700000,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
             }
@@ -2967,7 +2967,7 @@
         "dateSent": 1589691700000,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
             }
