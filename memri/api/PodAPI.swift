@@ -575,8 +575,10 @@ public class PodAPI {
         let matches = query.match(#"^(\w+) AND uid = (.+)$"#)
         if matches.count == 3 {
             let type = matches[1]
-            let uid = matches[2]
-
+            guard let uid = Int(matches[2]) else {
+                callback("Invalid UID (not an integer)", nil)
+                return
+            }
             payload["_type"] = "\(type)"
             payload["uid"] = uid
         }
