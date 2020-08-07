@@ -114,7 +114,7 @@ public class Cache {
                     }
                     else {
                         guard
-                            let itemType = edgeDict["itemType"] as? String,
+                            let targetType = edgeDict["targetType"] as? String,
                             let _itemUID = edgeDict["uid"] as? Int,
                             let itemUID = lut[_itemUID] else {
                             throw "Exception: Ill defined edge: \(edgeDict)"
@@ -122,7 +122,7 @@ public class Cache {
 
                         edge = try Cache.createEdge(
                             source: item,
-                            target: (itemType, itemUID),
+                            target: (targetType, itemUID),
                             type: edgeType,
                             label: edgeDict["edgeLabel"] as? String,
                             sequence: edgeDict["sequence"] as? Int

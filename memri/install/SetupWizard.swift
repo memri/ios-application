@@ -136,14 +136,14 @@ struct SetupWizard: View {
                         }) {
                             Text("Use memri without a pod")
                         }
-                        Button(action: {
-                            self.context.installer.installDemoDatabase(self.context) { _ in
-                                self.context.settings.set("user/pod/host", "")
-                                self.context.installer.ready(self.context)
-                            }
-                        }) {
-                            Text("Play around with the DEMO database")
-                        }
+//                        Button(action: {
+//                            self.context.installer.installDemoDatabase(self.context) { _ in
+//                                self.context.settings.set("user/pod/host", "")
+//                                self.context.installer.ready(self.context)
+//                            }
+//                        }) {
+//                            Text("Play around with the DEMO database")
+//                        }
 //                        Button(action: {
 //                            fatalError()
 //                        }) {

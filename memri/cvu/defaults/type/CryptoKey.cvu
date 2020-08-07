@@ -31,7 +31,7 @@ CryptoKey {
                 
                 HStack {
                     Text {
-                        text: "{.active ? '' : '[INACTIVE] '}{.name or .type or '<Unnamed Key>'}"
+                        text: "{.active ? '' : '[INACTIVE] '}{.name or .itemType or '<Unnamed Key>'}"
                         font: 20 semibold
                         padding: 0 5 0 0
                     }
@@ -157,7 +157,7 @@ CryptoKey[] {
                 
                 Text {
                     /* TODO: Bug when .role is not set still displays - {.role ? ' — ' : ''}{.role ? .role : ''} */
-                    text: "{.active ? '' : '[INACTIVE] '}{.name or .type or '<Unnamed Key>'}"
+                    text: "{.active ? '' : '[INACTIVE] '}{.name or .itemType or '<Unnamed Key>'}"
                     lineLimit: 1
                     font: 18 semibold
                     color: {{.active ? "#333" : "#999"}}
@@ -176,8 +176,8 @@ CryptoKey[] {
                 
                 VStack {
                     Text {
-                        show: {{.type}}
-                        text: "{.type}"
+                        show: {{.itemType}}
+                        text: "{.itemType}"
                         lineLimit: 1
                         removeWhiteSpace: true
                         maxChar: 100

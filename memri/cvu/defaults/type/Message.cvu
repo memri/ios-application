@@ -110,7 +110,7 @@ Message[] {
         spacing: 8
         
         send: sendMessage {
-            network: {{.type}}
+            network: {{.itemType}}
             contents: {{composedText}}
         }
         

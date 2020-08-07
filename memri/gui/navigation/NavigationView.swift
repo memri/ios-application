@@ -174,7 +174,7 @@ struct Navigation: View {
             ASTableView(section:
                 ASSection(id: 0, data: context.navigation.getItems(),
                           dataID: \.self) { navItem, _ -> AnyView in
-                    switch navItem.type {
+                    switch navItem.itemType {
                     case "item":
                         return AnyView(NavigationItemView(item: navItem, hide: {
                             withAnimation {

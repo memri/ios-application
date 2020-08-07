@@ -56,130 +56,130 @@
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "Inbox"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "inbox",
         "sessionName": "inbox"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "messages",
         "sessionName": "all-messages"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "message channels",
         "sessionName": "all-message-channels"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "email",
         "sessionName": "all-email-messages"
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "General"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "notes",
         "sessionName": "all-notes"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "people",
         "sessionName": "all-people"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "photos",
         "sessionName": "all-photos"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "addresses",
         "sessionName": "all-addresses"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "log",
         "sessionName": "all-audit-items"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "labels",
         "sessionName": "all-labels"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "sessions",
         "sessionName": "all-sessions"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "importers",
         "sessionName": "all-importers"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "importer instances",
         "sessionName": "all-importer-instances"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "indexers",
         "sessionName": "all-indexers"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "indexer instances",
         "sessionName": "all-indexer-instances"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "views",
         "sessionName": "all-sessionviews"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "locations",
         "sessionName": "all-locations"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "crypto keys",
         "sessionName": "all-cryptokeys"
     },
     {
         "_type": "NavigationItem",
-        "type": "heading",
+        "itemType": "heading",
         "title": "Macros"
     },
     {
         "_type": "NavigationItem",
-        "type": "item",
+        "itemType": "item",
         "title": "starred",
         "sessionName": "filter-starred"
     },
@@ -194,6 +194,12 @@
         "name": "Evernote notes",
         "datatype": "Note",
         "bundleImage": "evernote-icon"
+    },
+    {
+        "_type": "Importer",
+        "name": "Gmail",
+        "datatype": "Email",
+        "bundleImage": "envelope"
     },
     {
         "_type": "Indexer",
@@ -297,7 +303,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -317,7 +323,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -338,7 +344,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -358,7 +364,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -378,7 +384,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -398,7 +404,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -418,7 +424,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -437,7 +443,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -456,7 +462,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -475,7 +481,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -494,7 +500,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -513,7 +519,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -532,7 +538,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -551,7 +557,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -570,7 +576,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -589,7 +595,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -608,7 +614,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -627,7 +633,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -646,7 +652,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -665,7 +671,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -684,7 +690,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -703,7 +709,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -722,7 +728,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -741,7 +747,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -760,7 +766,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -779,7 +785,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -798,7 +804,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -817,7 +823,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -836,7 +842,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -855,7 +861,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -874,7 +880,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -893,7 +899,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -912,7 +918,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -931,7 +937,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -950,7 +956,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -969,7 +975,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -988,7 +994,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1007,7 +1013,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1026,7 +1032,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1045,7 +1051,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1064,7 +1070,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1083,7 +1089,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
@@ -1103,7 +1109,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2
             },
             {
@@ -1123,7 +1129,7 @@
         "allEdges": [
             {
                 "_type": "includes",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
@@ -1179,23 +1185,23 @@
     },
     {
         "_type": "PhoneNumber",
-        "type": "mobile",
+        "itemType": "mobile",
         "uid": 1003,
         "phoneNumber": "0654271340"
     },
     {
         "_type": "Website",
         "uid": 1004,
-        "type": "blog",
+        "itemType": "blog",
         "url": "www.revolutionairyblog.com"
     },
     {
         "_type": "Website",
         "uid": 1005,
-        "type": "website",
+        "itemType": "website",
         "url": "www.eagleve.com"
     },
-    { "_type": "Organization", "uid": 1006, "type": "company", "name": "eagle solutions" },
+    { "_type": "Organization", "uid": 1006, "itemType": "company", "name": "eagle solutions" },
     {
         "_type": "CryptoKey",
         "uid": 1007,
@@ -1203,7 +1209,7 @@
         "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2,
                 "_type": "owner"
             }
@@ -1217,7 +1223,7 @@
         "key": "A999 B749 8D1A 8DC4 73E5 3C92 309F 635D AD1B 5517",
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1,
                 "_type": "owner"
             }
@@ -1227,37 +1233,37 @@
     { "_type": "Network", "uid": 9997, "name": "Whatsapp" },
     { "_type": "Network", "uid": 9998, "name": "Twitter" },
     { "_type": "Network", "uid": 9999, "name": "Facebook" },
-    { "_type": "Account", "uid": 1008, "type": "twitter", "handle": "@eagleve91",
+    { "_type": "Account", "uid": 1008, "itemType": "twitter", "handle": "@eagleve91",
         "allEdges": [
-            {"_type":"network", "itemType": "Network", "uid": 9998}
+            {"_type":"network", "targetType": "Network", "uid": 9998}
         ]
     },
-    { "_type": "Account", "uid": 1009, "type": "facebook", "handle": "@eagleve2393",
+    { "_type": "Account", "uid": 1009, "itemType": "facebook", "handle": "@eagleve2393",
         "allEdges": [
-            {"_type":"network", "itemType": "Network", "uid": 9999}
+            {"_type":"network", "targetType": "Network", "uid": 9999}
         ]
     },
     {
         "_type": "Diet",
         "uid": 1010,
-        "type": "Vegan",
+        "itemType": "Vegan",
         "additions": "egg"
     },
     {
         "_type": "Diet",
         "uid": 1011,
-        "type": "Gluten Free",
+        "itemType": "Gluten Free",
         "additions": "sourdough"
     },
     {
         "_type": "MedicalCondition",
         "uid": 1012,
-        "type": "Psoriasis"
+        "itemType": "Psoriasis"
     },
     {
         "_type": "Address",
         "uid": 1013,
-        "type": "Home",
+        "itemType": "Home",
         "city": "Washington, DC",
         "state": "NW",
         "street": "1600 Pennsylvania Ave",
@@ -1265,12 +1271,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1017
             },
             {
                 "_type": "country",
-                "itemType": "Country",
+                "targetType": "Country",
                 "uid": 1401
             }
         ]
@@ -1278,7 +1284,7 @@
     {
         "_type": "Address",
         "uid": 1014,
-        "type": "Work",
+        "itemType": "Work",
         "city": "Paris",
         "state": "",
         "street": "45 Rue de la plage",
@@ -1286,7 +1292,7 @@
         "allEdges": [
             {
                 "_type": "country",
-                "itemType": "Country",
+                "targetType": "Country",
                 "uid": 1402
             }
         ]
@@ -1294,11 +1300,11 @@
     {
         "_type": "Address",
         "uid": 100013,
-        "type": "Indexer example",
+        "itemType": "Indexer example",
         "allEdges": [
             {
                 "_type": "location",
-                "itemType": "Location",
+                "targetType": "Location",
                 "uid": 100017
             },
         ]
@@ -1322,87 +1328,87 @@
         "allEdges": [
             {
                 "_type": "me",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3
             },
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2
             },
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 500
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1000
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1001
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1002
             },
             {
                 "_type": "hasPhoneNumber",
-                "itemType": "PhoneNumber",
+                "targetType": "PhoneNumber",
                 "uid": 1003
             },
             {
                 "_type": "website",
-                "itemType": "Website",
+                "targetType": "Website",
                 "uid": 1004
             },
             {
                 "_type": "website",
-                "itemType": "Website",
+                "targetType": "Website",
                 "uid": 1005
             },
-            {"_type":"company", "itemType": "Organization", "uid": 1006, "label": "freelance"},
+            {"_type":"company", "targetType": "Organization", "uid": 1006, "label": "freelance"},
             {
                 "_type": "cryptoKey",
-                "itemType": "CryptoKey",
+                "targetType": "CryptoKey",
                 "uid": 1007
             },
-            {"_type":"account", "itemType": "Account", "uid": 1008},
-            {"_type":"account", "itemType": "Account", "uid": 1009},
+            {"_type":"account", "targetType": "Account", "uid": 1008},
+            {"_type":"account", "targetType": "Account", "uid": 1009},
             {
                 "_type": "diet",
-                "itemType": "Diet",
+                "targetType": "Diet",
                 "uid": 1010
             },
             {
                 "_type": "diet",
-                "itemType": "Diet",
+                "targetType": "Diet",
                 "uid": 1011
             },
             {
                 "_type": "medicalCondition",
-                "itemType": "MedicalCondition",
+                "targetType": "MedicalCondition",
                 "uid": 1012
             },
             {
                 "_type": "address",
                 "edgeLabel": "Home",
-                "itemType": "Address",
+                "targetType": "Address",
                 "uid": 1013
             },
             {
                 "_type": "address",
                 "edgeLabel": "Holiday home in France",
-                "itemType": "Address",
+                "targetType": "Address",
                 "uid": 1014
             },
         ],
@@ -1420,22 +1426,22 @@
         "allEdges": [
             {
                 "_type": "relationship",
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1
             },
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 501
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             },
         ],
@@ -1455,17 +1461,17 @@
         "allEdges": [
             {
                 "_type": "profilePicture",
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 502
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             },
         ],
@@ -2513,12 +2519,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             }
         ],
@@ -2532,12 +2538,12 @@
         "allEdges": [
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1015
             },
             {
                 "_type": "label",
-                "itemType": "Label",
+                "targetType": "Label",
                 "uid": 1016
             }
         ],
@@ -2577,12 +2583,12 @@
         "service": "whatsapp",
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 3,
                 "_type": "owner"
             },
             {
-                "itemType": "Network",
+                "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
             }
@@ -2598,12 +2604,12 @@
         "enableReceipts": true,
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 2,
                 "_type": "owner"
             },
             {
-                "itemType": "Network",
+                "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
             }
@@ -2619,12 +2625,12 @@
         "enableReceipts": true,
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1,
                 "_type": "owner"
             },
             {
-                "itemType": "Network",
+                "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
             }
@@ -2640,12 +2646,12 @@
         "enableReceipts": true,
         "allEdges": [
             {
-                "itemType": "Person",
+                "targetType": "Person",
                 "uid": 1,
                 "_type": "owner"
             },
             {
-                "itemType": "Network",
+                "targetType": "Network",
                 "uid": 9997,
                 "_type": "network"
             }
@@ -2660,7 +2666,7 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "receiver"
             }
@@ -2675,7 +2681,7 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000002,
                 "_type": "receiver"
             }
@@ -2690,7 +2696,7 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000003,
                 "_type": "receiver"
             }
@@ -2705,7 +2711,7 @@
         "encrypted": false,
         "allEdges": [
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000003,
                 "_type": "receiver"
             }
@@ -2719,12 +2725,12 @@
         "dateSent": 1589691657000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2738,17 +2744,17 @@
         "dateSent": 1589691670000,
         "allEdges": [
             {
-                "itemType": "Message",
+                "targetType": "Message",
                 "uid": 20000000008,
                 "_type": "message"
             },
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2762,17 +2768,17 @@
         "dateSent": 1589691680000,
         "allEdges": [
             {
-                "itemType": "Photo",
+                "targetType": "Photo",
                 "uid": 79200,
                 "_type": "photo"
             },
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000005,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000001,
                 "_type": "sender"
             }
@@ -2786,12 +2792,12 @@
         "dateSent": 1589691690000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000002,
                 "_type": "sender"
             }
@@ -2805,12 +2811,12 @@
         "dateSent": 1589691700000,
         "allEdges": [
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
             }
@@ -2824,17 +2830,17 @@
         "dateSent": 1589691700000,
         "allEdges": [
             {
-                "itemType": "Message",
+                "targetType": "Message",
                 "uid": 20000000010,
                 "_type": "message"
             },
             {
-                "itemType": "MessageChannel",
+                "targetType": "MessageChannel",
                 "uid": 20000000006,
                 "_type": "messageChannel"
             },
             {
-                "itemType": "Account",
+                "targetType": "Account",
                 "uid": 20000000000,
                 "_type": "sender"
             }
@@ -2968,3 +2974,4 @@
         ]
     }
 ]
+

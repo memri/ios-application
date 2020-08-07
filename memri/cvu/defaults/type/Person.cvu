@@ -318,7 +318,7 @@ Person {
         
         onlineProfiles {
             EditorRow {
-                title: "{.type}"
+                title: "{.itemType}"
             
                 VStack {
                     cornerRadius: 5

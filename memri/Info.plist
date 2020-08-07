@@ -41,6 +41,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Access to your data is protected using face ID</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Used for tracking your day-to-day movements</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -83,7 +85,5 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Access to your data is protected using face ID</string>
 </dict>
 </plist>

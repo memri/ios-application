@@ -14,7 +14,7 @@
 EmailMessage[] {
     title: "All Emails"
     emptyResultText: "There are no emails here yet"
-    defaultRenderer: list
+    defaultRenderer: email
     filterButtons: showStarred toggleFilterPanel
     sortFields: subject dateModified dateAccessed dateCreated
     

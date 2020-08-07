@@ -393,7 +393,7 @@ class Authentication {
             }
             
             let dbKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "64CharacterRandomHex",
+                "itemType": "64CharacterRandomHex",
                 "key": dbKey,
                 "name": "Memri Database Key",
                 "active": true
@@ -401,14 +401,14 @@ class Authentication {
             _ = try dbKeyItem.link(myself, type: "owner")
             
             let ownerPrivateKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "ED25519",
+                "itemType": "ED25519",
                 "role": "private",
                 "key": privateKey,
                 "name": "Memri Owner Key",
                 "active": true
             ])
             let ownerPublicKeyItem = try Cache.createItem(CryptoKey.self, values: [
-                "type": "ED25519",
+                "itemType": "ED25519",
                 "role": "public",
                 "key": publicKey,
                 "name": "Memri Owner Key",
@@ -423,13 +423,13 @@ class Authentication {
     
     static func getOwnerAndDBKey(_ callback: @escaping (Error?, String?, String?) -> Void) {
         DatabaseController.current { realm in
-            let dbQuery = "name = 'memriDBKey' and active = true"
+            let dbQuery = "name = 'Memri Database Key' and active = true"
             guard let dbKey = realm.objects(CryptoKey.self).filter(dbQuery).first else {
                 callback("Database key is not set", nil, nil)
                 return
             }
             
-            let query = "name = 'memriOwnerKey' and role = 'public' and active = true"
+            let query = "name = 'Memri Owner Key' and role = 'public' and active = true"
             guard let ownerKey = realm.objects(CryptoKey.self).filter(query).first else {
                 callback("Owner key is not set", nil, nil)
                 return
