@@ -1247,7 +1247,7 @@ class ActionDuplicate: Action, ActionExec {
         }
         else {
             // TODO: Error handling
-            throw "Cannot execute ActionDupliate. The user either needs to make a selection, or a dataItem needs to be passed to this call."
+            throw "Cannot execute ActionDuplicate. The user either needs to make a selection, or a dataItem needs to be passed to this call."
         }
     }
 

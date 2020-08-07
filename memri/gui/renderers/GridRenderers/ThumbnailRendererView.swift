@@ -91,7 +91,8 @@ struct ThumbnailRendererView: View {
     var section: ASCollectionViewSection<Int> {
         ASCollectionViewSection(id: 0,
                                 data: context.items,
-                                selectedItems: selectedIndices)
+                                selectedItems: selectedIndices,
+                                contextMenuProvider: contextMenuProvider)
         { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
                 self.renderConfig.render(item: dataItem)
@@ -117,6 +118,19 @@ struct ThumbnailRendererView: View {
             if let press = self.renderConfig.press {
                 self.context.executeAction(press, with: self.context.items[safe: index])
             }
+        }
+    }
+    
+    func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {
+        let children: [UIMenuElement] = self.renderConfig.contextMenuActions.map { [weak context] action in
+            UIAction(title: action.getString("title"),
+                     image: nil) { [weak context] (_) in
+                        context?.executeAction(action, with: item)
+            }
+        }
+        guard !children.isEmpty else { return nil }
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { (suggested) -> UIMenu? in
+            return UIMenu(title: "", children: children)
         }
     }
 

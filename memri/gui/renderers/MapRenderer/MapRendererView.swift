@@ -56,6 +56,8 @@ class CascadingMapConfig: CascadingRenderConfig, ConfigurableRenderConfig {
         get { cascadeProperty("moveable") ?? true }
         set(value) { setState("moveable", value) }
     }
+    
+    let showContextualBarInEditMode: Bool = false
 }
 
 struct MapRendererView: View {

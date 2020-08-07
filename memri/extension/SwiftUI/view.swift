@@ -202,9 +202,7 @@ extension View {
                 }
             }
         case "frame":
-            if var value = value as? [Any?] {
-                #warning("@Toby We need to rearchitect these properties. Its getting messy with expressions interweaved.")
-                
+            if var value = value as? [Any?] {                
                 if let str = value[4] as? String {
                     value[4] = CVUParser.specialTypedProperties["align"]?(str, "") ?? nil
                 }

@@ -79,6 +79,7 @@ public class Installer: ObservableObject {
                     if let error = error {
                         // TODO Error Handling - show to the user
                         debugHistory.warn("\(error)")
+                        callback(error)
                         return
                     }
                     
@@ -86,6 +87,7 @@ public class Installer: ObservableObject {
                         if let error = error {
                             // TODO Error Handling - show to the user
                             debugHistory.warn("\(error)")
+                            callback(error)
                             return
                         }
                         
@@ -123,6 +125,7 @@ public class Installer: ObservableObject {
         DatabaseController.deleteDatabase { error in
             do {
                 if let error = error {
+                    callback(error)
                     throw "Unable to authenticate: \(error)"
                 }
                 
@@ -142,6 +145,38 @@ public class Installer: ObservableObject {
                     }
                     catch { callback(error) }
                     
+                    self.ready(context)
+                    
+                    callback(nil)
+                }
+            }
+            catch {
+                callback(error)
+            }
+        }
+    }
+    
+    
+    public func installLocalAuthForLocalInstallation(
+        _ context:MemriContext,
+        areYouSure: Bool,
+        _ callback: @escaping (Error?) -> Void
+    ) {
+        
+        DatabaseController.deleteDatabase { error in
+            do {
+                if let error = error {
+                    throw "Unable to authenticate: \(error)"
+                }
+                
+                _ = try Authentication.createRootKey(areYouSure: areYouSure)
+                
+                self.installDefaultDatabase(context) { error in
+                    if let error = error {
+                        // TODO Error Handling - show to the user
+                        debugHistory.warn("\(error)")
+                        callback(error)
+                    }
                     self.ready(context)
                     
                     callback(nil)

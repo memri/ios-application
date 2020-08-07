@@ -12,6 +12,7 @@ import RealmSwift
 
 protocol ConfigurableRenderConfig {
     var showSortInConfig: Bool { get }
+    var showContextualBarInEditMode: Bool { get }
 	func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem]
 }
 
@@ -84,4 +85,9 @@ extension CascadingRenderConfig {
 			trailing: edgeInset.right
 		)
 	}
+    
+    var contextMenuActions: [Action] {
+        get { cascadeList("contextMenu") }
+        set(value) { setState("contextMenu", value) }
+    }
 }

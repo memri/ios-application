@@ -25,7 +25,6 @@ public struct UIElementView: SwiftUI.View {
     }
 
     public func get<T>(_ propName: String, type _: T.Type = T.self) -> T? {
-        #warning("@Toby We need to rearchitect these properties. Its getting messy with expressions interweaved.")
         if propName == "align" {
             if let align:T? = from.get(propName, item, viewArguments) {
                 return align
@@ -447,18 +446,7 @@ public struct UIElementView: SwiftUI.View {
                     MemriSmartTextView(
                         string: get("text") ?? "",
                         detectLinks: get("detectLinks") ?? true,
-                        font: {
-                            #warning("@Toby another example of hacks")
-                            if let value = get("font", type:[Any?].self) {
-                                return FontDefinition(
-                                    size: value[0] as? CGFloat,
-                                    weight: value[1] as? Font.Weight ?? Font.Weight.regular
-                                )
-                            }
-                            else {
-                                return FontDefinition(size: 12)
-                            }
-                        }(),
+                        font: from.propertyResolver.font,
                         color: get("color") ?? ColorDefinition.system(.label),
                         maxLines: get("maxLines"))
                     .fixedSize(horizontal: false, vertical: true)

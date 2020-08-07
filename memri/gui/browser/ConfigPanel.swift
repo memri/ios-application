@@ -12,6 +12,7 @@ import RealmSwift
 struct ConfigPanel: View {
 	@EnvironmentObject var context: MemriContext
     @ObservedObject var keyboard = KeyboardResponder.shared
+    @State var shouldMoveAboveKeyboard = false
     
     var body: some View {
         let configItems = getConfigItems()
@@ -30,7 +31,9 @@ struct ConfigPanel: View {
             }
         }
         .environment(\.verticalSizeClass, .compact)
-        .modifier(KeyboardModifier(overrideHeightWhenVisible: 150))
+        .clipShape(RoundedRectangle(cornerRadius: shouldMoveAboveKeyboard ? 15 : 0))
+        .overlay(RoundedRectangle(cornerRadius: 15).strokeBorder(shouldMoveAboveKeyboard ? Color(.systemFill) : .clear))
+        .modifier(KeyboardModifier(enabled: shouldMoveAboveKeyboard, overrideHeightWhenVisible: 120))
     }
     
     var showSortItem: Bool {
@@ -78,7 +81,7 @@ struct ConfigPanel: View {
                     Text(configItem.displayName)
                 }.eraseToAnyView()
             default:
-                return NavigationLink(destination: ConfigPanelStringView(configItem: configItem)) {
+                return NavigationLink(destination: ConfigPanelStringView(configItem: configItem, shouldMoveAboveKeyboard: $shouldMoveAboveKeyboard)) {
                     Text(configItem.displayName)
                 }.eraseToAnyView()
             }
@@ -139,6 +142,7 @@ struct ConfigPanelStringView: View {
     @EnvironmentObject var context: MemriContext
     
 	var configItem: ConfigPanelModel.ConfigItem
+    @Binding var shouldMoveAboveKeyboard: Bool
 	
 	var body: some View {
 		VStack(alignment: .leading) {
@@ -148,6 +152,12 @@ struct ConfigPanelStringView: View {
                            clearButtonMode: .whileEditing,
                            returnKeyType: UIReturnKeyType.done,
 						   showPrevNextButtons: false)
+                .onEditingBegan {
+                    self.shouldMoveAboveKeyboard = true
+            }
+            .onEditingEnded {
+                self.shouldMoveAboveKeyboard = false
+            }
 				.padding(5)
 				.background(Color(.systemFill).cornerRadius(5))
 		}
