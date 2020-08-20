@@ -156,32 +156,3 @@ func decodeEdges(_ decoder: Decoder, _ key: String, _ source: Item) {
         debugHistory.error("\(error)")
     }
 }
-
-/// retrieves item from realm by type and uid.
-/// - Parameters:
-///   - type: realm type
-///   - memriID: item memriID
-/// - Returns: retrieved item. If the item does not exist, returns nil.
-func getItem(_ type: String, _ uid: Int) -> Item? {
-    let type = ItemFamily(rawValue: type)
-    if let type = type {
-        let item = ItemFamily.getType(type)
-        return DatabaseController.current {
-            $0.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as? Item
-        }
-    }
-    return nil
-}
-
-func me() -> Person {
-    do {
-        let realm = try DatabaseController.getRealmSync()
-        guard let myself = realm.objects(Person.self).filter("ANY allEdges.type = 'me'").first else {
-            throw "Unexpected error. Cannot find 'me' in the database"
-        }
-        return myself
-    }
-    catch {
-        return Person()
-    }
-}
