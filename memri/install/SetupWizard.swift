@@ -135,14 +135,14 @@ struct SetupWizard: View {
                         }) {
                             Text("Use memri without a pod")
                         }
-//                        Button(action: {
-//                            self.context.installer.installDemoDatabase(self.context) { _ in
-//                                self.context.settings.set("user/pod/host", "")
-//                                self.context.installer.ready(self.context)
-//                            }
-//                        }) {
-//                            Text("Play around with the DEMO database")
-//                        }
+                        Button(action: {
+                            self.context.installer.installDemoDatabase(self.context) { _ in
+                                self.context.settings.set("user/pod/host", "")
+                                self.context.installer.ready(self.context)
+                            }
+                        }) {
+                            Text("Play around with the DEMO database")
+                        }
 //                        Button(action: {
 //                            fatalError()
 //                        }) {
@@ -164,7 +164,7 @@ struct SetupWizard: View {
                         }
                         Button(action: {
                             self.context.installer.clearDatabase(self.context) { error in
-                                debugHistory.error("\(error)") // TODO: show this to the user
+                                debugHistory.error("\(error ?? "")") // TODO: show this to the user
                             }
                         }) {
                             Text("Delete the local database and start over")
@@ -172,7 +172,7 @@ struct SetupWizard: View {
                         if context.installer.isInstalled {
                             Button(action: {
                                 self.context.installer.clearSessions(self.context) { error in
-                                    debugHistory.error("\(error)") // TODO: show this to the user
+                                    debugHistory.error("\(error ?? "")") // TODO: show this to the user
                                 }
                             }) {
                                 Text("Clear the session history (to recover from an issue)")

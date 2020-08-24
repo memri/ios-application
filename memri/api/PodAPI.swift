@@ -427,7 +427,7 @@ public class PodAPI {
                 $0.httpBody = try self.toJSON(body)
             }, to: destination)
             .downloadProgress { progress in
-                print("Download Progress: \(progress.fractionCompleted)")
+                callback(nil, progress.fractionCompleted, nil)
             }
             .response { response in
                 guard let httpResponse = response.response else {
