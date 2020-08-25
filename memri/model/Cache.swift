@@ -45,12 +45,13 @@ public class Cache {
             var items = [Item: [[String: Any]]]()
             var lut = [Int: Int]()
 
-            func recur(_ dict: [String: Any]) throws -> Item {
+            func recur(_ dict: [String: Any]) throws -> Item? {
                 var values = [String: Any?]()
 
                 guard let type = dict["_type"] as? String,
                     let itemType = ItemFamily(rawValue: type)?.getType() as? Item.Type else {
-                    throw "Exception: Unable to determine type for item"
+                        print("DEMO DATABASE ERROR: Type does not exist: \(dict["_type"] ?? "No type")")
+                    return nil
                 }
 
                 for (key, value) in dict {
@@ -102,8 +103,8 @@ public class Cache {
                     }
 
                     var edge: Edge
-                    if let targetDict = edgeDict["_target"] as? [String: Any] {
-                        let target = try recur(targetDict)
+                    if let targetDict = edgeDict["_target"] as? [String: Any],
+                        let target = try recur(targetDict) {
                         edge = try Cache.createEdge(
                             source: item,
                             target: target,
@@ -115,9 +116,13 @@ public class Cache {
                     else {
                         guard
                             let targetType = edgeDict["targetType"] as? String,
-                            let _itemUID = edgeDict["uid"] as? Int,
-                            let itemUID = lut[_itemUID] else {
+                            let _itemUID = edgeDict["uid"] as? Int else {
                             throw "Exception: Ill defined edge: \(edgeDict)"
+                        }
+                        
+                        guard let itemUID = lut[_itemUID] else {
+                            print("DEMO DATABASE ERROR: Pointing to non-existing UID: \(_itemUID)")
+                            return
                         }
 
                         edge = try Cache.createEdge(

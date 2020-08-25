@@ -4,6 +4,7 @@
 
 import Foundation
 import UIKit
+import ZIPFoundation
 
 class FileStorageController {
     private init() {}
@@ -51,7 +52,7 @@ class FileStorageController {
 
     static func getURLForFile(withUUID uuid: String) -> URL {
         // Little hack to make our demo data work
-        if let url = Bundle.main.url(forResource: "DemoAssets/\(uuid)", withExtension: "jpg") {
+        if let url = Bundle.main.url(forResource: "DemoAssets/\(uuid.split(separator: Character(".")).first.map(String.init) ?? uuid))", withExtension: "jpg") {
             return url
         }
 
@@ -81,5 +82,28 @@ class FileStorageController {
     static func getImage(fromFileForUUID uuid: String) -> UIImage? {
         let fileURL = getURLForFile(withUUID: uuid)
         return UIImage(contentsOfFile: fileURL.path)
+    }
+    
+    static func getDownsampledImage(fromFileForUUID uuid: String, maxDimension: CGFloat) -> UIImage? {
+        let fileURL = getURLForFile(withUUID: uuid)
+        let sourceOptions = [kCGImageSourceShouldCache:false] as CFDictionary
+        guard let source = CGImageSourceCreateWithURL(fileURL as CFURL, sourceOptions) else { return nil }
+        let downsampleOptions = [
+            kCGImageSourceCreateThumbnailFromImageAlways:true,
+            kCGImageSourceThumbnailMaxPixelSize:maxDimension,
+            kCGImageSourceShouldCacheImmediately:true,
+            kCGImageSourceCreateThumbnailWithTransform:true,
+            ] as CFDictionary
+        
+        guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(source, 0, downsampleOptions) else { return nil }
+        
+        return UIImage(cgImage: downsampledImage)
+    }
+    
+    static func unzipFile(from sourceURL: URL, progress: Progress? = nil) throws {
+        try FileManager().unzipItem(at: sourceURL, to: getFileStorageURL(), progress: progress)
+    }
+    static func deleteFile(at url: URL) throws {
+        try FileManager.default.removeItem(at: url)
     }
 }

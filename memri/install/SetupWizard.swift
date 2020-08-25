@@ -136,7 +136,7 @@ struct SetupWizard: View {
                             Text("Use memri without a pod")
                         }
                         Button(action: {
-                            self.context.installer.installDemoDatabase(self.context) { _ in
+                            self.context.installer.installDemoDatabase(self.context) { _,_  in
                                 self.context.settings.set("user/pod/host", "")
                                 self.context.installer.ready(self.context)
                             }

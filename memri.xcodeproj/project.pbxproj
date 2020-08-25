@@ -253,6 +253,7 @@
 		B826586F24D432080051CCFE /* MemriFittedTextEditor_UIKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826586E24D432080051CCFE /* MemriFittedTextEditor_UIKit.swift */; };
 		B826587124D436A50051CCFE /* MemriFittedTextEditorToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826587024D436A50051CCFE /* MemriFittedTextEditorToolbar.swift */; };
 		B826587524D440C50051CCFE /* KeyboardModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = B826587424D440C50051CCFE /* KeyboardModifiers.swift */; };
+		B8287C1A24F4E1DD003A3EB7 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = B8287C1924F4E1DD003A3EB7 /* ZIPFoundation */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
 		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
@@ -610,6 +611,7 @@
 				B809186524A4DFF400BD74D8 /* Charts in Frameworks */,
 				B83E330D2496F3A100D88742 /* Realm in Frameworks */,
 				B826585D24D2F3620051CCFE /* SwiftSoup in Frameworks */,
+				B8287C1A24F4E1DD003A3EB7 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1530,6 +1532,7 @@
 				B809186424A4DFF400BD74D8 /* Charts */,
 				8680189B24D2C9F9004FC4E3 /* Alamofire */,
 				B826585C24D2F3620051CCFE /* SwiftSoup */,
+				B8287C1924F4E1DD003A3EB7 /* ZIPFoundation */,
 			);
 			productName = memri;
 			productReference = 5D38DE3F240581E500FF9B70 /* memri.app */;
@@ -1615,6 +1618,7 @@
 				8680189724D2A8ED004FC4E3 /* XCRemoteSwiftPackageReference "swift-sodium" */,
 				8680189A24D2C9F9004FC4E3 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				B826585B24D2F3620051CCFE /* XCRemoteSwiftPackageReference "SwiftSoup" */,
+				B8287C1824F4E1DD003A3EB7 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
 			);
 			productRefGroup = 5D599BAE23F2B77500F218A0;
 			projectDirPath = "";
@@ -2409,6 +2413,14 @@
 				minimumVersion = 2.3.2;
 			};
 		};
+		B8287C1824F4E1DD003A3EB7 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.11;
+			};
+		};
 		B83E330B2496F3A100D88742 /* XCRemoteSwiftPackageReference "realm-cocoa" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/realm-cocoa";
@@ -2447,6 +2459,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B826585B24D2F3620051CCFE /* XCRemoteSwiftPackageReference "SwiftSoup" */;
 			productName = SwiftSoup;
+		};
+		B8287C1924F4E1DD003A3EB7 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B8287C1824F4E1DD003A3EB7 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
 		};
 		B83E330C2496F3A100D88742 /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;

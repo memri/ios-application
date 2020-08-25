@@ -276,11 +276,13 @@ public class Installer: ObservableObject {
         debugHistory.info("Installing demo database")
         
         // Download database file
+        let destinationURL = FileStorageController.getURLForFile(withUUID: "ios-demo-resources.zip")
+        
         let destination: DownloadRequest.Destination = { _, _ in
-            return (FileStorageController.getURLForFile(withUUID: "ios-demo-resources.zip"), [])
+            return (destinationURL, [])
         }
 
-        let url = "https://gitlab.memri.io/memri/demo-data/-/blob/master/data/ios-demo-resources.zip"
+        let url = "https://gitlab.memri.io/memri/demo-data/-/raw/master/data/ios-demo-resources.zip?inline=false"
         AF.download(url, method: .get, requestModifier: {
             $0.timeoutInterval = 5
             $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
@@ -290,6 +292,7 @@ public class Installer: ObservableObject {
             $0.timeoutInterval = .greatestFiniteMagnitude
         }, to: destination)
         .downloadProgress { progress in
+            print(String(format: "PROGRESS: Download %.1f%%", progress.fractionCompleted * 100))
             callback(nil, progress.fractionCompleted)
         }
         .response { response in
@@ -306,6 +309,11 @@ public class Installer: ObservableObject {
                 callback(httpError, nil)
                 return
             }
+            
+            print("PROGRESS: Download completed, attempting unzip")
+            try? FileStorageController.unzipFile(from: destinationURL)
+            try? FileStorageController.deleteFile(at: destinationURL)
+            print("PROGRESS: Unzip completed, attempt install of database")
             
             self.install(context, dbName: "demo_database", { error in callback(error, nil) })
             
