@@ -98,6 +98,10 @@ class DatabaseController {
         )
     }
 
+    #if targetEnvironment(simulator)
+    static var hasPrintedURL: Bool = false
+    #endif
+    
     /// Computes the Realm database path at /home/<user>/realm.memri/memri.realm and creates the directory (realm.memri) if it does not exist.
     /// - Returns: the computed database file path
     static func getRealmURL() throws -> URL {
@@ -117,7 +121,10 @@ class DatabaseController {
                     print(error)
                 }
 
-//            print("Using realm at \(realmDir + "/memri.realm")")
+                if !DatabaseController.hasPrintedURL {
+                    print("Using realm at \(realmDir + "/memri.realm")")
+                    DatabaseController.hasPrintedURL = true
+                }
 
                 let realmURL = URL(fileURLWithPath: realmDir + "/memri.realm")
                 return realmURL

@@ -122,6 +122,9 @@ struct MessageRenderer: View {
     func onPressSend() {
         #warning("@Ruben: we will need to decide how `sending` a message is handled")
         print(composedMessage ?? "Empty message")
+        // Handle message here
+        
+        // Clear composer state
         composedMessage = nil
         isEditingComposedMessage = false
     }
