@@ -28,7 +28,7 @@ struct Search: View {
                     .layoutPriority(-1)
                 Text(context.currentView?.searchMatchText ?? "")
 
-                ForEach(context.currentView?.filterButtons ?? [], id: \.self) { filterButton in
+                ForEach(context.currentView?.filterButtons ?? [], id: \.transientUID) { filterButton in
                     ActionButton(action: filterButton)
                         .font(Font.system(size: 20, weight: .medium))
                 }

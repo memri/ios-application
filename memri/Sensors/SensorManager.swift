@@ -86,7 +86,7 @@ public class SensorManager: NSObject, CLLocationManagerDelegate {
                 if CLLocationManager.significantLocationChangeMonitoringAvailable() {
                     usingSignificantLocationChangeMonitoring =
                         true // This could be a user setting, but it's default for now
-                    debugHistory.info("Significant Change Location Servics Enabled")
+                    debugHistory.info("Significant Change Location Services Enabled")
                 }
                 else {
                     coreLocationManager?

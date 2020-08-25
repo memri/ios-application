@@ -58,11 +58,12 @@ class CrashObserver {
     static let defaultsKey = "memri.crashObserver.didCrash"
 
     private init() {
+        #if DEBUG
+        // Don't handle crashes because everytime you press stop in Xcode this is considered a crash
+        didCrashLastTime = false
+        #else
         didCrashLastTime = (UserDefaults.standard
             .value(forKey: CrashObserver.defaultsKey) as? Bool) ?? false
-        
-        #if DEBUG
-        didCrashLastTime = false
         #endif
     }
 

@@ -4,7 +4,7 @@
 
 import Foundation
 import RealmSwift
-//import XCTest
+import Alamofire
 
 public class Installer: ObservableObject {
     @Published var isInstalled: Bool = false
@@ -271,9 +271,54 @@ public class Installer: ObservableObject {
     }
 
     public func installDemoDatabase(_ context: MemriContext,
-                                    _ callback:@escaping (Error?) -> Void) {
+                                    _ callback:@escaping (Error?, Double?) -> Void) {
+        
         debugHistory.info("Installing demo database")
-        install(context, dbName: "demo_database", callback)
+        
+        // Download database file
+        let destinationURL = FileStorageController.getURLForFile(withUUID: "ios-demo-resources.zip")
+        
+        let destination: DownloadRequest.Destination = { _, _ in
+            return (destinationURL, [])
+        }
+
+        let url = "https://gitlab.memri.io/memri/demo-data/-/raw/master/data/ios-demo-resources.zip?inline=false"
+        AF.download(url, method: .get, requestModifier: {
+            $0.timeoutInterval = 5
+            $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+            $0.allowsExpensiveNetworkAccess = false
+            $0.allowsConstrainedNetworkAccess = false
+            $0.cachePolicy = .reloadIgnoringCacheData
+            $0.timeoutInterval = .greatestFiniteMagnitude
+        }, to: destination)
+        .downloadProgress { progress in
+            print(String(format: "PROGRESS: Download %.1f%%", progress.fractionCompleted * 100))
+            callback(nil, progress.fractionCompleted)
+        }
+        .response { response in
+            guard let httpResponse = response.response else {
+                callback(response.error ?? "Unknown error", nil)
+                return
+            }
+            
+            guard httpResponse.statusCode < 400 else {
+                let httpError = PodAPI.HTTPError.ClientError(
+                    httpResponse.statusCode,
+                    "URL: \(url)"
+                )
+                callback(httpError, nil)
+                return
+            }
+            
+            print("PROGRESS: Download completed, attempting unzip")
+            try? FileStorageController.unzipFile(from: destinationURL)
+            try? FileStorageController.deleteFile(at: destinationURL)
+            print("PROGRESS: Unzip completed, attempt install of database")
+            
+            self.install(context, dbName: "demo_database", { error in callback(error, nil) })
+            
+            callback(nil, nil)
+        }
     }
 
     private func install(_ context: MemriContext, dbName: String,

@@ -15,7 +15,7 @@ public class Settings {
     private var listeners = [String: [UUID]]()
     private var callbacks = [UUID: (Any?) -> Void]()
 
-    /// Init settings with the relam database
+    /// Init settings with the realm database
     /// - Parameter rlm: realm database object
     init() {
         

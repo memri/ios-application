@@ -223,7 +223,7 @@ extension MemriContext {
     }
 }
 
-public class Action: HashableClass, CVUToString {
+public class Action: CVUToString {
     var name: ActionFamily = .noop
 
     var binding: Expression? {
@@ -290,12 +290,12 @@ public class Action: HashableClass, CVUToString {
     public var description: String {
         toCVUString(0, "    ")
     }
+    
+    var transientUID = UUID() // Used to identify this object in SwiftUI
 
     init(_ context: MemriContext, _ name: String, values: [String: Any?] = [:]) {
         self.context = context
-
-        super.init()
-
+        
         if let actionName = ActionFamily(rawValue: name) { self.name = actionName }
         else { self.name = .noop } // TODO: REfactor: Report error to user
 
