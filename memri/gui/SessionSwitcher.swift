@@ -8,10 +8,15 @@ struct SessionSwitcher: View {
     @EnvironmentObject var context: MemriContext
     let items: [CGFloat] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    @State private var offset = CGSize.zero
-
-    @State private var lastGlobalOffset: CGFloat = 0
-    @State private var globalOffset: CGFloat = 0
+    @State private var _globalOffset: CGFloat = 0
+    @State private var dragOffset: CGFloat = 0
+    
+    private var globalOffset: CGFloat {
+        min(
+            CGFloat(self.context.sessions.count) * self
+                .height / 2,
+            max(0, _globalOffset + dragOffset))
+    }
 
     let height: CGFloat = 738
 
@@ -20,11 +25,6 @@ struct SessionSwitcher: View {
 
     let bounds: [CGFloat] = [0.0, 0.17, 0.2, 0.23, 0.245, 0.266, 0.5, 1.0]
 
-    private func iterate() {
-        globalOffset += 0.1
-        if globalOffset > 1.1 { globalOffset = 0 }
-    }
-
     private func getOffsetX(_ i: CGFloat, _ geometry: GeometryProxy) -> CGFloat {
         (geometry.size.width - getWidth(i)) / 2
     }
@@ -32,13 +32,7 @@ struct SessionSwitcher: View {
     private func getWidth(_: CGFloat) -> CGFloat {
         360
     }
-
-    //    let heightInPoints = image.size.height
-    //    let heightInPixels = heightInPoints * image.scale
-//
-    //    let widthInPoints = image.size.width
-    //    let widthInPixels = widthInPoints * image.scale
-
+    
     private func getAnchorZ(_ i: CGFloat, _ geometry: GeometryProxy) -> CGFloat {
         let speeds: [CGFloat] = [0, -2000, -4000, 0, 1000, 0, 0] // [0, -1000, -2000, 1000, 0, 0, 0]
 
@@ -187,26 +181,20 @@ struct SessionSwitcher: View {
             }
             .edgesIgnoringSafeArea(.vertical)
         }
-        .gesture(
+        .simultaneousGesture(
             DragGesture()
-                .onChanged { gesture in
-                    self.offset = gesture.translation
-                    let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions.count) * self
-                        .height / 2
-                    self.globalOffset = min(
-                        maxGlobalOffset,
-                        max(0, self.lastGlobalOffset + self.offset.height)
-                    )
+                .onChanged { gestureState in
+                    self.dragOffset = gestureState.translation.height
                 }
 
-                .onEnded { _ in
-                    let maxGlobalOffset: CGFloat = CGFloat(self.context.sessions.count) * self
-                        .height / 2
-                    self.globalOffset = min(
-                        maxGlobalOffset,
-                        max(0, self.lastGlobalOffset + self.offset.height)
-                    )
-                    self.lastGlobalOffset = self.globalOffset
+                .onEnded { gestureState in
+                    self.dragOffset = .zero
+                    let origOffset = self._globalOffset
+                    self._globalOffset = origOffset + gestureState.translation.height
+                    //Add inertia
+                    withAnimation(.easeOut(duration: 0.5)) {
+                        self._globalOffset = origOffset + gestureState.predictedEndTranslation.height
+                    }
                 }
         )
     }
