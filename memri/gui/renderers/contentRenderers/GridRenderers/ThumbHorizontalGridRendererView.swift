@@ -1,26 +1,26 @@
 //
-// ThumbWaterfallRendererView.swift
+// ThumbHorizontalGridRendererView.swift
 // Copyright © 2020 memri. All rights reserved.
 
 import ASCollectionView
 import SwiftUI
+//
+//let registerThumbHorizontalGridRenderer = {
+//    Renderers.register(
+//        name: "thumbnail.horizontalgrid",
+//        title: "Horizontal Grid",
+//        order: 120,
+//        icon: "square.grid.3x2.fill",
+//        view: AnyView(ThumbHorizontalGridRendererView()),
+//        renderConfigType: CascadingThumbnailConfig.self,
+//        canDisplayResults: { _ -> Bool in true }
+//    )
+//}
 
-let registerThumbWaterfallRenderer = {
-    Renderers.register(
-        name: "thumbnail.waterfall",
-        title: "Waterfall Grid",
-        order: 130,
-        icon: "square.grid.3x2.fill",
-        view: AnyView(ThumbWaterfallRendererView()),
-        renderConfigType: CascadingThumbnailConfig.self,
-        canDisplayResults: { _ -> Bool in true }
-    )
-}
-
-struct ThumbWaterfallRendererView: View {
+struct ThumbHorizontalGridRendererView: View {
     @EnvironmentObject var context: MemriContext
 
-    var name: String = "thumbnail_waterfall"
+    var name: String = "thumbnail_horizontalgrid"
 
     var selectedIndices: Binding<Set<Int>> {
         Binding<Set<Int>>(
@@ -38,17 +38,41 @@ struct ThumbWaterfallRendererView: View {
     //    }
 
     var renderConfig: CascadingThumbnailConfig {
-        context.currentView?.renderConfig as? CascadingThumbnailConfig ?? CascadingThumbnailConfig()
+        (context.currentView?.renderConfig as? CascadingThumbnailConfig) ??
+            CascadingThumbnailConfig()
     }
 
     var layout: ASCollectionLayout<Int> {
-        ASCollectionLayout(createCustomLayout: ASWaterfallLayout.init) { layout in
-            let spacing = self.renderConfig.spacing
-            layout.columnSpacing = spacing.width
-            layout.itemSpacing = spacing.height
-            layout
-                .numberOfColumns =
-                .adaptive(minWidth: 150) // @State var columnMinSize: CGFloat = 150
+        ASCollectionLayout(scrollDirection: .horizontal, interSectionSpacing: 0) {
+            ASCollectionLayoutSection { environment in
+                let contentInsets = self.renderConfig.nsEdgeInset
+                let numberOfRows = self.renderConfig.columns
+                let ySpacing = self.renderConfig.spacing.height
+                let calculatedGridBlockSize = (environment.container.effectiveContentSize
+                    .height - contentInsets.top - contentInsets
+                    .bottom - ySpacing * (CGFloat(numberOfRows) - 1)) / CGFloat(numberOfRows)
+
+                let item = NSCollectionLayoutItem(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: .fractionalHeight(1.0)
+                    )
+                )
+
+                let itemsGroup = NSCollectionLayoutGroup.vertical(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .absolute(calculatedGridBlockSize),
+                        heightDimension: .fractionalHeight(1.0)
+                    ),
+                    subitem: item, count: numberOfRows
+                )
+                itemsGroup.interItemSpacing = .fixed(ySpacing)
+
+                let section = NSCollectionLayoutSection(group: itemsGroup)
+                section.interGroupSpacing = self.renderConfig.spacing.width
+                section.contentInsets = contentInsets
+                return section
+            }
         }
     }
 
@@ -61,7 +85,6 @@ struct ThumbWaterfallRendererView: View {
                     self.renderConfig.render(item: dataItem)
                         .environmentObject(self.context)
                         .frame(width: geom.size.width, height: geom.size.height)
-                        .opacity(state.isSelected ? 0.7 : 1.0)
                         .clipped()
                 }
 
@@ -115,35 +138,15 @@ struct ThumbWaterfallRendererView: View {
             else {
                 ASCollectionView(section: section)
                     .layout(self.layout)
-                    .customDelegate(WaterfallScreenLayoutDelegate.init)
-                    .alwaysBounceVertical()
-                    .contentInsets(renderConfig.edgeInset)
-                    .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             }
         }
+        .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
             .id(renderConfig.ui_UUID) // Fix swiftUI wrongly animating between different lists
     }
 }
 
-struct ThumbWaterfallRendererView_Previews: PreviewProvider {
+struct ThumbGridRendererView_Previews: PreviewProvider {
     static var previews: some View {
         ThumbnailRendererView().environmentObject(try! RootContext(name: "").mockBoot())
-    }
-}
-
-class WaterfallScreenLayoutDelegate: ASCollectionViewDelegate, ASWaterfallLayoutDelegate {
-    func heightForHeader(sectionIndex _: Int) -> CGFloat? {
-        0
-    }
-
-    let heights: [CGFloat] = [1.5, 1.0, 0.75, 1.75, 0.6]
-    /// We explicitely provide a height here. If providing no delegate, this layout will use auto-sizing, however this causes problems if rotating the device (due to limitaitons in UICollecitonView and autosizing cells that are not visible)
-    func heightForCell(
-        at indexPath: IndexPath,
-        context: ASWaterfallLayout.CellLayoutContext
-    ) -> CGFloat {
-        //        guard let item: Item = getDataForItem(at: indexPath) else { return 100 }
-        let rand = indexPath.item % heights.count
-        return context.width * (heights[safe: rand] ?? 1)
     }
 }

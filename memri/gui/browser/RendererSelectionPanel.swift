@@ -78,12 +78,13 @@ struct RendererSelectionPanel: View {
 
 private extension RendererSelectionPanel {
 	func getRendererCategories() -> [(String, FilterPanelRendererButton)] {
-		context.renderers.tuples
-			.map { ($0.0, $0.1(context)) }
-			.filter { (key, renderer) -> Bool in
-				!key.contains(".") && renderer.canDisplayResults(self.context.items)
-			}
-			.sorted(by: { $0.1.order < $1.1.order })
+        []
+//		context.renderers.tuples
+//			.map { ($0.0, $0.1(context)) }
+//			.filter { (key, renderer) -> Bool in
+//				!key.contains(".") && renderer.canDisplayResults(self.context.items)
+//			}
+//			.sorted(by: { $0.1.order < $1.1.order })
 	}
 	
 	var currentRendererCategory: String? {
@@ -93,15 +94,16 @@ private extension RendererSelectionPanel {
 	func getRenderersAvailable(forCategory category: String?)
 	-> [(String, FilterPanelRendererButton)] {
 		guard let category = category else { return [] }
-		return context.renderers.all
-			.map { (arg0) -> (String, FilterPanelRendererButton) in
-				let (key, value) = arg0
-				return (key, value(context))
-			}
-			.filter { (_, renderer) -> Bool in
-				renderer.rendererName.split(separator: ".").first.map(String.init) == category
-			}
-			.sorted(by: { $0.1.order < $1.1.order })
+        return []
+//		return context.renderers.all
+//			.map { (arg0) -> (String, FilterPanelRendererButton) in
+//				let (key, value) = arg0
+//				return (key, value(context))
+//			}
+//			.filter { (_, renderer) -> Bool in
+//				renderer.rendererName.split(separator: ".").first.map(String.init) == category
+//			}
+//			.sorted(by: { $0.1.order < $1.1.order })
 	}
 	
 	func isActive(_ renderer: FilterPanelRendererButton) -> Bool {

@@ -9,18 +9,18 @@
 import Foundation
 import SwiftUI
 
-
-let registerFileViewerRenderer = {
-    Renderers.register(
-        name: "fileViewer",
-        title: "Default",
-        order: 10,
-        icon: "doc.text",
-        view: AnyView(FileViewerRenderer()),
-        renderConfigType: FileViewerRendererConfig.self,
-        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
-    )
-}
+//
+//let registerFileViewerRenderer = {
+//    Renderers.register(
+//        name: "fileViewer",
+//        title: "Default",
+//        order: 10,
+//        icon: "doc.text",
+//        view: AnyView(FileViewerRenderer()),
+//        renderConfigType: FileViewerRendererConfig.self,
+//        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
+//    )
+//}
 
 class FileViewerRendererConfig: CascadingRenderConfig {
     var type: String? = "fileViewer"

@@ -5,18 +5,18 @@
 import Combine
 import Foundation
 import SwiftUI
-
-let registerChartRenderer = {
-    Renderers.register(
-        name: "chart",
-        title: "Chart",
-        order: 500,
-        icon: "chart.bar",
-        view: AnyView(ChartRendererView()),
-        renderConfigType: CascadingChartConfig.self,
-        canDisplayResults: { _ -> Bool in true }
-    )
-}
+//
+//let registerChartRenderer = {
+//    Renderers.register(
+//        name: "chart",
+//        title: "Chart",
+//        order: 500,
+//        icon: "chart.bar",
+//        view: AnyView(ChartRendererView()),
+//        renderConfigType: CascadingChartConfig.self,
+//        canDisplayResults: { _ -> Bool in true }
+//    )
+//}
 
 class CascadingChartConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "chart"

@@ -6,69 +6,20 @@ import Combine
 import RealmSwift
 import SwiftUI
 
-// Potential solution: https://stackoverflow.com/questions/42746981/list-all-subclasses-of-one-class
-var allRenderers: Renderers?
 
 public class Renderers {
-    var all: [String: (MemriContext) -> FilterPanelRendererButton] = [:]
-    var allViews: [String: AnyView] = [:]
-    var allConfigTypes: [String: CascadingRenderConfig.Type] = [:]
+    static var rendererTypes: [String: RendererType] = {
+        [
+            ListRendererController.rendererTypeName: RendererType(makeController: ListRendererController.init, makeConfig: ListRendererController.makeConfig),
+            LabelAnnotationRendererController.rendererTypeName: RendererType(makeController: LabelAnnotationRendererController.init, makeConfig: LabelAnnotationRendererController.makeConfig)
+        ]
+    }()
+    private init() {}
+}
 
-    func register(
-        name: String,
-        title: String,
-        order: Int,
-        icon: String = "",
-        view: AnyView,
-        renderConfigType: CascadingRenderConfig.Type,
-        canDisplayResults: @escaping (_ items: [Item]) -> Bool
-    ) {
-        all[name] = { context in FilterPanelRendererButton(context,
-                                                           name: name,
-                                                           order: order,
-                                                           title: title,
-                                                           icon: icon,
-                                                           canDisplayResults: canDisplayResults) }
-        allViews[name] = view
-        allConfigTypes[name] = renderConfigType
-    }
-
-    class func register(
-        name: String,
-        title: String,
-        order: Int,
-        icon: String = "",
-        view: AnyView,
-        renderConfigType: CascadingRenderConfig.Type,
-        canDisplayResults: @escaping (_ items: [Item]) -> Bool
-    ) {
-        allRenderers?.register(name: name, title: title, order: order, icon: icon, view: view,
-                               renderConfigType: renderConfigType,
-                               canDisplayResults: canDisplayResults)
-    }
-
-    init() {
-        if allRenderers == nil { allRenderers = self }
-
-        registerCustomRenderer()
-        registerListRenderer()
-        registerGeneralEditorRenderer()
-        registerThumbnailRenderer()
-        registerThumbGridRenderer()
-        registerThumbHorizontalGridRenderer()
-        registerThumbWaterfallRenderer()
-        registerMapRenderer()
-        registerChartRenderer()
-        registerCalendarRenderer()
-        registerMessageRenderer()
-        registerPhotoViewerRenderer()
-        registerFileViewerRenderer()
-        registerEmailRenderers()
-    }
-
-    var tuples: [(key: String, value: (MemriContext) -> FilterPanelRendererButton)] {
-        all.sorted { $0.key < $1.key }
-    }
+struct RendererType {
+    var makeController: (_ context: MemriContext, _ config: CascadingRenderConfig?) -> RendererController
+    var makeConfig: (_ head: CVUParsedDefinition?, _ tail: [CVUParsedDefinition]?, _ host: Cascadable?) -> CascadingRenderConfig
 }
 
 class FilterPanelRendererButton: Action, ActionExec {

@@ -4,18 +4,18 @@
 
 import RealmSwift
 import SwiftUI
-
-let registerGeneralEditorRenderer = {
-    Renderers.register(
-        name: "generalEditor",
-        title: "Default",
-        order: 0,
-        icon: "pencil.circle.fill",
-        view: AnyView(GeneralEditorView()),
-        renderConfigType: CascadingGeneralEditorConfig.self,
-        canDisplayResults: { items -> Bool in items.count == 1 }
-    )
-}
+//
+//let registerGeneralEditorRenderer = {
+//    Renderers.register(
+//        name: "generalEditor",
+//        title: "Default",
+//        order: 0,
+//        icon: "pencil.circle.fill",
+//        view: AnyView(GeneralEditorView()),
+//        renderConfigType: CascadingGeneralEditorConfig.self,
+//        canDisplayResults: { items -> Bool in items.count == 1 }
+//    )
+//}
 
 class CascadingGeneralEditorConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     

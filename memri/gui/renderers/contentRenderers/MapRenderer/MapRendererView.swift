@@ -6,18 +6,18 @@ import Combine
 import Foundation
 import RealmSwift
 import SwiftUI
-
-let registerMapRenderer = {
-    Renderers.register(
-        name: "map",
-        title: "Default",
-        order: 300,
-        icon: "map",
-        view: AnyView(MapRendererView()),
-        renderConfigType: CascadingMapConfig.self,
-        canDisplayResults: { _ -> Bool in true }
-    )
-}
+//
+//let registerMapRenderer = {
+//    Renderers.register(
+//        name: "map",
+//        title: "Default",
+//        order: 300,
+//        icon: "map",
+//        view: AnyView(MapRendererView()),
+//        renderConfigType: CascadingMapConfig.self,
+//        canDisplayResults: { _ -> Bool in true }
+//    )
+//}
 
 class CascadingMapConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "map"

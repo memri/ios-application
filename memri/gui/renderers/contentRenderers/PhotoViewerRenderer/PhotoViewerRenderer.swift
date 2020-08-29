@@ -4,18 +4,18 @@
 
 import Foundation
 import SwiftUI
-
-let registerPhotoViewerRenderer = {
-    Renderers.register(
-        name: "photoViewer",
-        title: "Default",
-        order: 10,
-        icon: "camera",
-        view: AnyView(PhotoViewerRenderer()),
-        renderConfigType: PhotoViewerRendererConfig.self,
-        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
-    )
-}
+//
+//let registerPhotoViewerRenderer = {
+//    Renderers.register(
+//        name: "photoViewer",
+//        title: "Default",
+//        order: 10,
+//        icon: "camera",
+//        view: AnyView(PhotoViewerRenderer()),
+//        renderConfigType: PhotoViewerRendererConfig.self,
+//        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
+//    )
+//}
 
 class PhotoViewerRendererConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     var type: String? = "photoViewer"

@@ -64,6 +64,9 @@ class EmailThreadCell: UITableViewCell {
         containerView.translatesAutoresizingMaskIntoConstraints = false
         emailView.translatesAutoresizingMaskIntoConstraints = false
         emailHeaderView.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        emailView.enableHeightConstraint = true
+        
         let outerInset: CGFloat = 10
         let innerInset: CGFloat = 10
         NSLayoutConstraint.activate([

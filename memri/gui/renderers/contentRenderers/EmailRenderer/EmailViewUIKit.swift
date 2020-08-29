@@ -22,6 +22,11 @@ class EmailViewUIKit: UIView {
         }
     }
     var loadRemoteContent: Bool = false
+    var enableHeightConstraint = false {
+        didSet {
+            heightConstraint?.isActive = enableHeightConstraint
+        }
+    }
     
     var onSizeUpdated: ((CGFloat) -> Void)?
     
@@ -57,7 +62,7 @@ class EmailViewUIKit: UIView {
         webView.navigationDelegate = self
         webView.scrollView.delegate = self
         webView.scrollView.alwaysBounceVertical = false
-        webView.scrollView.isScrollEnabled = false
+//        webView.scrollView.isScrollEnabled = false
         addSubview(webView)
         
         activityIndicator.hidesWhenStopped = true
@@ -71,7 +76,7 @@ class EmailViewUIKit: UIView {
         
         heightConstraint = heightAnchor.constraint(equalToConstant: defaultSize)
         heightConstraint?.priority = .defaultLow
-        heightConstraint?.isActive = true
+        heightConstraint?.isActive = enableHeightConstraint
         
         activityIndicator.startAnimating()
     }
@@ -151,11 +156,13 @@ document.documentElement.offsetHeight
             guard let height = result as? CGFloat else {
                 return
             }
-            guard height != self.contentHeight else {
+            let adjustedHeight = ceil(height) + 1
+            
+            guard adjustedHeight != self.contentHeight else {
                 return
             }
-            self.contentHeight = height
-            self.onSizeUpdated?(height)
+            self.contentHeight = adjustedHeight
+            self.onSizeUpdated?(adjustedHeight)
         }
     }
     

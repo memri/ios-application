@@ -5,20 +5,20 @@
 import ASCollectionView
 import SwiftUI
 
-let registerMessageRenderer = {
-    Renderers.register(
-        name: "messages",
-        title: "Messages",
-        order: 0,
-        icon: "message",
-        view: AnyView(MessageRenderer()),
-        renderConfigType: CascadingMessageRendererConfig.self,
-        canDisplayResults: { items -> Bool in
-            items.first?.genericType == "Message" ||
-                items.first?.genericType == "Note"
-        }
-    )
-}
+//let registerMessageRenderer = {
+//    Renderers.register(
+//        name: "messages",
+//        title: "Messages",
+//        order: 0,
+//        icon: "message",
+//        view: AnyView(MessageRenderer()),
+//        renderConfigType: CascadingMessageRendererConfig.self,
+//        canDisplayResults: { items -> Bool in
+//            items.first?.genericType == "Message" ||
+//                items.first?.genericType == "Note"
+//        }
+//    )
+//}
 
 class CascadingMessageRendererConfig: CascadingRenderConfig {
     var type: String? = "messages"

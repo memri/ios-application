@@ -293,6 +293,15 @@ public struct UIElementView: SwiftUI.View {
                     //                .environmentObject(self.context)
                     //                .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
+                else if from.type == .EmailContent {
+                    EmailView(emailHTML: self.get("content"))
+                        .setProperties(
+                            from.propertyResolver.properties,
+                            self.item,
+                            context,
+                            self.viewArguments
+                    )
+                }
                 else if from.type == .SubView {
                     if has("viewName") {
                         SubView(

@@ -8,22 +8,22 @@
 
 import SwiftUI
 
-
-let registerEmailRenderers = {
-    Renderers.register(
-        name: "email",
-        title: "Email Thread",
-        order: 0,
-        icon: "envelope.fill",
-        view: AnyView(EmailThreadRenderer()),
-        renderConfigType: CascadingEmailThreadRendererConfig.self,
-        canDisplayResults: { items -> Bool in
-            items.first?.genericType == "Message" ||
-                items.first?.genericType == "Note" ||
-                items.first?.genericType == "EmailMessage"
-    }
-    )
-}
+//
+//let registerEmailRenderers = {
+//    Renderers.register(
+//        name: "email",
+//        title: "Email Thread",
+//        order: 0,
+//        icon: "envelope.fill",
+//        view: AnyView(EmailThreadRenderer()),
+//        renderConfigType: CascadingEmailThreadRendererConfig.self,
+//        canDisplayResults: { items -> Bool in
+//            items.first?.genericType == "Message" ||
+//                items.first?.genericType == "Note" ||
+//                items.first?.genericType == "EmailMessage"
+//    }
+//    )
+//}
 
 class CascadingEmailThreadRendererConfig: CascadingRenderConfig {
     var type: String? = "email"

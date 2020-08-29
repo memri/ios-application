@@ -291,6 +291,8 @@ public final class Session: Equatable, Subscriptable {
             schedulePersist()
         }
 
+        context?.currentRendererController = currentView?.makeRendererController()
+        
         // Update the UI
         currentView?.context?.scheduleUIUpdate()
     }

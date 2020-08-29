@@ -6,17 +6,17 @@ import Combine
 import Foundation
 import SwiftUI
 
-let registerCustomRenderer = {
-    Renderers.register(
-        name: "custom",
-        title: "",
-        order: 0,
-        icon: "",
-        view: AnyView(CustomRendererView()),
-        renderConfigType: CascadingCustomConfig.self,
-        canDisplayResults: { _ -> Bool in false }
-    )
-}
+//let registerCustomRenderer = {
+//    Renderers.register(
+//        name: "custom",
+//        title: "",
+//        order: 0,
+//        icon: "",
+//        view: AnyView(CustomRendererView()),
+//        renderConfigType: CascadingCustomConfig.self,
+//        canDisplayResults: { _ -> Bool in false }
+//    )
+//}
 
 class CascadingCustomConfig: CascadingRenderConfig, ConfigurableRenderConfig {
     

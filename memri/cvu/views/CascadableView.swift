@@ -27,18 +27,26 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
     var activeRenderer: String {
         get {
-            if let s: String = cascadeProperty("defaultRenderer") { return s }
-            debugHistory
-                .error(
-                    "Exception: Unable to determine the active renderer. Missing defaultRenderer in view?"
+            guard let s: String = cascadeProperty("defaultRenderer") else {
+                debugHistory
+                    .error(
+                        "Exception: Unable to determine the active renderer. Missing defaultRenderer in view?"
                 )
-            return ""
+                return ""
+            }
+            return s
         }
         set(value) {
-            //			localCache.removeValue(forKey: value) // Remove renderConfig reference
-            #warning("TODO: Store value in userstate for other context based on .")
             setState("defaultRenderer", value)
+            if context?.currentRendererController?.rendererTypeName != value {
+                context?.currentRendererController = makeRendererController(forRendererType: value)
+            }
         }
+    }
+
+    func makeRendererController(forRendererType: String? = nil) -> RendererController? {
+        guard let context = context else { return nil }
+        return Renderers.rendererTypes[forRendererType ?? activeRenderer]?.makeController(context, renderConfig)
     }
 
     var fullscreen: Bool {
@@ -220,9 +228,9 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
         insertRenderDefs(&tail)
 
-        if let all = allRenderers, let RenderConfigType = all.allConfigTypes[activeRenderer] {
+        if let rendererType = Renderers.rendererTypes[activeRenderer] {
             // swiftformat:disable:next redundantInit
-            let renderConfig = RenderConfigType.init(head, tail, self)
+            let renderConfig = rendererType.makeConfig(head, tail, self)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
             return renderConfig

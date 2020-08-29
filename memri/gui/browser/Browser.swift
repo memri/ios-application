@@ -21,8 +21,8 @@ struct Browser: View {
         self.showCloseButton = showCloseButton
     }
 
-    var activeRenderer: AnyView {
-        allRenderers?.allViews[context.currentView?.activeRenderer ?? ""] ?? AnyView(Spacer())
+    var activeRendererController: RendererController? {
+        self.context.currentRendererController
     }
 
     var body: some View {
@@ -39,10 +39,17 @@ struct Browser: View {
                             .background(Color(.systemBackground))
                     }
 
-                    activeRenderer
-                        .fullHeight().layoutPriority(1)
-                        .background((currentView.fullscreen ? Color.black : Color.clear)
-                            .edgesIgnoringSafeArea(.all))
+                    if activeRendererController != nil {
+                        activeRendererController.map { activeRendererController in
+                            activeRendererController.makeView()
+                            .fullHeight().layoutPriority(1)
+                            .background((currentView.fullscreen ? Color.black : Color.clear)
+                                .edgesIgnoringSafeArea(.all))
+                        }
+                    } else {
+                        Text("No renderer active").padding().frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                    
 
                     ContextualBottomBar()
 

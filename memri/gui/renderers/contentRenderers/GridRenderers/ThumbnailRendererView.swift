@@ -4,18 +4,18 @@
 
 import ASCollectionView
 import SwiftUI
-
-let registerThumbnailRenderer = {
-    Renderers.register(
-        name: "thumbnail",
-        title: "Default",
-        order: 100,
-        icon: "square.grid.3x2.fill",
-        view: AnyView(ThumbnailRendererView()),
-        renderConfigType: CascadingThumbnailConfig.self,
-        canDisplayResults: { _ -> Bool in true }
-    )
-}
+//
+//let registerThumbnailRenderer = {
+//    Renderers.register(
+//        name: "thumbnail",
+//        title: "Default",
+//        order: 100,
+//        icon: "square.grid.3x2.fill",
+//        view: AnyView(ThumbnailRendererView()),
+//        renderConfigType: CascadingThumbnailConfig.self,
+//        canDisplayResults: { _ -> Bool in true }
+//    )
+//}
 
 class CascadingThumbnailConfig: CascadingRenderConfig {
     var type: String? = "thumbnail"
