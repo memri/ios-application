@@ -9,9 +9,10 @@ class ItemReference {
     let uid: Int
     let type: Item.Type
 
-    init(to: Item) {
+    init?(to: Item) {
         guard let uid = to.uid.value, let type = to.getType(), to.realm != nil else {
-            fatalError("Trying to get a reference to an item that is not in realm or has no uid")
+            print("Trying to get a reference to an item that is not in realm or has no uid")
+            return nil
         }
         
         self.uid = uid

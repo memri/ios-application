@@ -4,18 +4,6 @@
 //
 //import ASCollectionView
 //import SwiftUI
-////
-////let registerThumbWaterfallRenderer = {
-////    Renderers.register(
-////        name: "thumbnail.waterfall",
-////        title: "Waterfall Grid",
-////        order: 130,
-////        icon: "square.grid.3x2.fill",
-////        view: AnyView(ThumbWaterfallRendererView()),
-////        renderConfigType: GridRendererConfig.self,
-////        canDisplayResults: { _ -> Bool in true }
-////    )
-////}
 //
 //struct ThumbWaterfallRendererView: View {
 //    @EnvironmentObject var context: MemriContext

@@ -4,18 +4,7 @@
 //
 //import ASCollectionView
 //import SwiftUI
-////
-////let registerThumbHorizontalGridRenderer = {
-////    Renderers.register(
-////        name: "thumbnail.horizontalgrid",
-////        title: "Horizontal Grid",
-////        order: 120,
-////        icon: "square.grid.3x2.fill",
-////        view: AnyView(ThumbHorizontalGridRendererView()),
-////        renderConfigType: GridRendererConfig.self,
-////        canDisplayResults: { _ -> Bool in true }
-////    )
-////}
+//
 //
 //struct ThumbHorizontalGridRendererView: View {
 //    @EnvironmentObject var context: MemriContext

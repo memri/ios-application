@@ -7,16 +7,23 @@ import SwiftUI
 struct FilterPanel: View {
     @EnvironmentObject var context: MemriContext
 
+    var clipShape: some Shape {
+        RoundedCornerRectangle(radius: 20, corners: [.topLeft, .topRight])
+    }
+    
     var body: some View {
             HStack(alignment: .top, spacing: 0) {
                 RendererSelectionPanel()
+                    .frame(minWidth: 200)
 				Divider()
 				ConfigPanel()
-					.frame(width: 200)
+					.frame(minWidth: 200)
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
-            .frame(height: 240)
-            .background(Color(hex: "#eee"))
+                .frame(maxWidth: .infinity)
+                .frame(height: 250)
+                .clipShape(clipShape)
+                .background(clipShape.fill(Color(.systemBackground)).shadow(radius: 10).edgesIgnoringSafeArea([.bottom]))
+                
     }
 }
 

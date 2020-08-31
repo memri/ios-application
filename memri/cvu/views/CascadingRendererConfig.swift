@@ -29,7 +29,7 @@ public class CascadingRendererConfig: Cascadable {
     // Used for ui purposes. Random value that doesn't need to be persisted
     let ui_UUID = UUID()
     
-    // Defaults (intended for renderers to override)
+    // Defaults (intended for renderers to override if they desire a different default)
     var defaultEdgeInset: UIEdgeInsets { .zero }
     var defaultSpacing: CGSize { .zero }
 

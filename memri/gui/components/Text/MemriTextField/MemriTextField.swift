@@ -23,6 +23,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
     var selectAllOnEdit: Bool = false
     var font: UIFont?
 
+    var isEditing: Binding<Bool>?
     private var onEditingBeganCallback: (() -> Void)?
     private var onEditingEndedCallback: (() -> Void)?
 
@@ -73,6 +74,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
         assignIfChanged(textField, \.returnKeyType, newValue: returnKeyType)
         assignIfChanged(textField, \.textAlignment, newValue: textAlignment.nsTextAlignment)
         assignIfChanged(textField, \.showPrevNextButtons, newValue: showPrevNextButtons)
+        textField.isEditingBinding = isEditing
     }
 
     public func makeCoordinator() -> Delegate {
@@ -118,6 +120,9 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
 
         public func textFieldDidBeginEditing(_ textField: UITextField) {
             parent.onEditingBeganCallback?()
+            if parent.isEditing?.wrappedValue == false {
+                parent.isEditing?.wrappedValue = true
+            }
             if parent.selectAllOnEdit {
                 textField.selectAll(nil)
             }
@@ -128,6 +133,9 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
             assignIfChanged(textField, \.text, newValue: parent.valueString)
             textField.resignFirstResponder()
             parent.onEditingEndedCallback?()
+            if parent.isEditing?.wrappedValue == true {
+                parent.isEditing?.wrappedValue = false
+            }
         }
 
         @objc
@@ -181,7 +189,8 @@ public extension MemriTextField where Value == String? {
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
-        selectAllOnEdit: Bool = false
+        selectAllOnEdit: Bool = false,
+        isEditing: Binding<Bool>? = nil
     ) {
         _value = value
         valueToString = { $0 }
@@ -195,6 +204,7 @@ public extension MemriTextField where Value == String? {
         self.returnKeyType = returnKeyType
         self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
+        self.isEditing = isEditing
     }
 }
 
@@ -209,7 +219,8 @@ public extension MemriTextField where Value == String {
         keyboardType: UIKeyboardType = .default,
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
-        selectAllOnEdit: Bool = false
+        selectAllOnEdit: Bool = false,
+        isEditing: Binding<Bool>? = nil
     ) {
         _value = value
         valueToString = { $0 }
@@ -223,6 +234,7 @@ public extension MemriTextField where Value == String {
         self.returnKeyType = returnKeyType
         self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
+        self.isEditing = isEditing
     }
 }
 
@@ -231,7 +243,8 @@ public extension MemriTextField where Value == Int {
         value: Binding<Int>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
-        selectAllOnEdit: Bool = false
+        selectAllOnEdit: Bool = false,
+        isEditing: Binding<Bool>? = nil
     ) {
         _value = value
         valueToString = { "\($0)" }
@@ -242,6 +255,7 @@ public extension MemriTextField where Value == Int {
         keyboardType = .numberPad
         returnKeyType = .done
         self.selectAllOnEdit = selectAllOnEdit
+        self.isEditing = isEditing
     }
 }
 
@@ -250,7 +264,8 @@ public extension MemriTextField where Value == Double {
         value: Binding<Double>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
-        selectAllOnEdit: Bool = false
+        selectAllOnEdit: Bool = false,
+        isEditing: Binding<Bool>? = nil
     ) {
         _value = value
         valueToString = { "\($0)" }
@@ -261,6 +276,7 @@ public extension MemriTextField where Value == Double {
         keyboardType = .numberPad
         returnKeyType = .done
         self.selectAllOnEdit = selectAllOnEdit
+        self.isEditing = isEditing
     }
 }
 
@@ -305,6 +321,20 @@ public class MemriTextField_UIKit: UITextField {
         didSet {
             if showPrevNextButtons != oldValue {
                 updateToolbar()
+            }
+        }
+    }
+    
+    var isEditingBinding: Binding<Bool>? {
+        didSet {
+            if let bindingIsEditing = isEditingBinding?.wrappedValue,
+                bindingIsEditing != isEditing {
+                if bindingIsEditing {
+                    becomeFirstResponder()
+                }
+                else {
+                    resignFirstResponder()
+                }
             }
         }
     }

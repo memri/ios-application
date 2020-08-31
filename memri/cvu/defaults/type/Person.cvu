@@ -286,7 +286,7 @@ Person {
                 minHeight: 165
                 
                 view {
-                    defaultRenderer: grid.horizontalgrid
+                    defaultRenderer: grid
                     
                     [datasource = pod] {
                         query: "Photo AND ANY allEdges.targetItemID = {.uid}"

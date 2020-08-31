@@ -130,20 +130,17 @@ struct GeneralEditorRendererView: View {
 
     var body: some View {
         let item = getItem()
-        let layout = getLayout()
-        let renderConfig = getRenderConfig()
+        let layout = controller.config.layout
+        let renderConfig = controller.config
         let usedFields = getUsedFields(layout)
 
         return ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                if renderConfig == nil {
-                    Text("Unable to render this view")
-                }
-                else if layout.count > 0 {
+                if layout.count > 0 {
                     ForEach(layout, id: \.id) { layoutSection in
                         GeneralEditorSection(
                             item: item,
-                            renderConfig: renderConfig!,
+                            renderConfig: renderConfig,
                             layoutSection: layoutSection,
                             usedFields: usedFields
                         )
@@ -151,15 +148,6 @@ struct GeneralEditorRendererView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-        }
-    }
-
-    func getLayout() -> [GeneralEditorLayoutItem] {
-        if let l = getRenderConfig()?.layout {
-            return l
-        }
-        else {
-            return [GeneralEditorLayoutItem(dict: ["section": "other", "fields": "*"])]
         }
     }
 
@@ -171,10 +159,6 @@ struct GeneralEditorRendererView: View {
             debugHistory.warn("Could not load item from result set, creating empty item")
             return Item()
         }
-    }
-
-    func getRenderConfig() -> GeneralEditorRendererConfig? {
-        context.currentView?.renderConfig as? GeneralEditorRendererConfig
     }
 
     func getUsedFields(_ layout: [GeneralEditorLayoutItem]) -> [String] {
@@ -191,21 +175,21 @@ struct GeneralEditorRendererView: View {
     }
 }
 
-struct GeneralEditorView_Previews: PreviewProvider {
-    static var previews: some View {
-        let context = try! RootContext(name: "").mockBoot()
-
-        return ZStack {
-            VStack(alignment: .center, spacing: 0) {
-                TopNavigation()
-                GeneralEditorRendererView(controller: GeneralEditorRendererController(context: context, config: nil))
-                Search()
-            }.fullHeight()
-
-            ContextPane()
-        }.environmentObject(context)
-    }
-}
+//struct GeneralEditorView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let context = try! RootContext(name: "").mockBoot()
+//
+//        return ZStack {
+//            VStack(alignment: .center, spacing: 0) {
+//                TopNavigation()
+//                GeneralEditorRendererView(controller: GeneralEditorRendererController(context: context, config: nil))
+//                Search()
+//            }.fullHeight()
+//
+//            ContextPane()
+//        }.environmentObject(context)
+//    }
+//}
 
 struct GeneralEditorSection: View {
     @EnvironmentObject var context: MemriContext
@@ -469,209 +453,5 @@ struct GeneralEditorSection: View {
         }
 
         return value as? T
-    }
-}
-
-struct DefaultGeneralEditorRow: View {
-    @EnvironmentObject var context: MemriContext
-
-    var item: Item
-    var prop: String
-    var readOnly: Bool
-    var isLast: Bool
-    var renderConfig: CascadingRendererConfig
-    var arguments: ViewArguments?
-
-    var body: some View {
-        // Get the type from the schema, because when the value is nil the type cannot be determined
-        let propType = item.objectSchema[prop]?.type
-        let propValue: Any? = self.item.get(self.prop)
-
-        return VStack(spacing: 0) {
-            if propValue == nil && readOnly {
-                EmptyView()
-            }
-            else {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(prop
-                        .camelCaseToWords()
-                        .lowercased()
-                        .capitalizingFirst())
-                        .generalEditorLabel()
-
-                    if renderConfig.hasGroup(prop) {
-                        renderConfig.render(item: item, group: prop, arguments: arguments)
-                    }
-                    else if readOnly {
-                        if [.string, .bool, .date, .int, .double].contains(propType) {
-                            defaultRow(ExprInterpreter.evaluateString(propValue, ""))
-                        }
-                        else if propType == .object {
-                            if propValue is Item {
-                                MemriButton(item: propValue as? Item)
-                                    .environmentObject(self.context)
-                            }
-                            else {
-                                defaultRow()
-                            }
-                        }
-                        else { defaultRow() }
-                    }
-                    else {
-                        if propType == .string { stringRow() }
-                        else if propType == .bool { boolRow() }
-                        else if propType == .date { dateRow() }
-                        else if propType == .int { intRow() }
-                        else if propType == .double { doubleRow() }
-                        else if propType == .object { defaultRow() }
-                        else { defaultRow() }
-                    }
-                }
-                .fullWidth()
-                .padding(.bottom, 10)
-                .padding(.horizontal, 36)
-                .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
-
-                if !isLast {
-                    Divider().padding(.leading, 35)
-                }
-            }
-        }
-    }
-
-    func stringRow() -> some View {
-        let binding = Binding<String>(
-            get: { self.item.getString(self.prop) },
-            set: {
-                self.item.set(self.prop, $0)
-            }
-        )
-
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-            }
-            .generalEditorCaption()
-    }
-
-    func boolRow() -> some View {
-        let binding = Binding<Bool>(
-            get: { self.item[self.prop] as? Bool ?? false },
-            set: { _ in
-                do {
-                    try self.item.toggle(self.prop)
-                    self.context.objectWillChange.send()
-                }
-                catch {}
-            }
-        )
-
-        return Toggle(isOn: binding) {
-            Text(prop
-                .camelCaseToWords()
-                .lowercased()
-                .capitalizingFirst())
-        }
-        .toggleStyle(MemriToggleStyle())
-        .generalEditorCaption()
-    }
-
-    func intRow() -> some View {
-        let binding = Binding<Int>(
-            get: { self.item[self.prop] as? Int ?? 0 },
-            set: {
-                self.item.set(self.prop, $0)
-                self.context.objectWillChange.send()
-            }
-        )
-
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-            }
-            .generalEditorCaption()
-    }
-
-    func doubleRow() -> some View {
-        let binding = Binding<Double>(
-            get: { self.item[self.prop] as? Double ?? 0 },
-            set: {
-                self.item.set(self.prop, $0)
-                self.context.objectWillChange.send()
-            }
-        )
-
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-            }
-            .generalEditorCaption()
-    }
-
-    func dateRow() -> some View {
-        let binding = Binding<Date>(
-            get: { self.item[self.prop] as? Date ?? Date() },
-            set: {
-                self.item.set(self.prop, $0)
-                self.context.objectWillChange.send()
-            }
-        )
-
-        return DatePicker("", selection: binding, displayedComponents: .date)
-            .frame(width: 300, height: 80, alignment: .center)
-            .clipped()
-            .padding(8)
-    }
-
-    func defaultRow(_ caption: String? = nil) -> some View {
-        Text(caption ?? prop.camelCaseToWords().lowercased().capitalizingFirst())
-            .generalEditorCaption()
-    }
-}
-
-public extension View {
-    func generalEditorLabel() -> some View { modifier(GeneralEditorLabel()) }
-    func generalEditorCaption() -> some View { modifier(GeneralEditorCaption()) }
-    func generalEditorHeader() -> some View { modifier(GeneralEditorHeader()) }
-    func generalEditorInput() -> some View { modifier(GeneralEditorInput()) }
-}
-
-private struct GeneralEditorInput: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .fullHeight()
-            .font(.system(size: 16, weight: .regular))
-            .padding(10)
-            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
-            .generalEditorCaption()
-    }
-}
-
-private struct GeneralEditorLabel: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .foregroundColor(Color(hex: "#38761d"))
-            .font(.system(size: 14, weight: .regular))
-            .padding(.top, 10)
-    }
-}
-
-private struct GeneralEditorCaption: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: 18, weight: .regular))
-            .foregroundColor(Color(hex: "#223322"))
-    }
-}
-
-private struct GeneralEditorHeader: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(Font.system(size: 15, weight: .regular))
-            .foregroundColor(Color(hex: "#434343"))
-            .padding(.bottom, 5)
-            .padding(.top, 24)
-            .padding(.horizontal, 36)
-            .foregroundColor(Color(hex: "#333"))
     }
 }

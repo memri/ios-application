@@ -14,9 +14,7 @@ struct RendererSelectionPanel: View {
     var body: some View {
         SwiftUI.List {
             ForEach(
-                Renderers.rendererTypes.sorted(by: { (a, b) -> Bool in
-                    a.value.name > b.value.name
-                }).map { $0.value },
+                getSupported().compactMap { Renderers.rendererTypes[$0] },
                 id: \.name
             ) { (rendererType) in
                 Button(action: { self.activateRenderer(name: rendererType.name) }) {
@@ -38,7 +36,14 @@ struct RendererSelectionPanel: View {
     }
     
     func isActive(_ renderer: String) -> Bool {
-                context.currentView?.activeRenderer == renderer
+        context.currentView?.activeRenderer == renderer
+    }
+    
+    func getSupported() -> [String] {
+        let renderDefinitions: [CVUParsedDefinition] = context.currentView?.cascadeList("rendererDefinitions") ?? []
+        return renderDefinitions.compactMap {
+            $0.name
+        }
     }
 }
 //

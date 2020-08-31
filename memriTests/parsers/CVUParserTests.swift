@@ -410,12 +410,12 @@ class CVUParserTests: XCTestCase {
 
     func testIdentifierProperty() throws {
         let snippet = """
-        Person { defaultRenderer: grid.grid }
+        Person { defaultRenderer: grid }
         """
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            defaultRenderer: "thumbnail.grid"
+            defaultRenderer: "grid"
         }
         """)
     }

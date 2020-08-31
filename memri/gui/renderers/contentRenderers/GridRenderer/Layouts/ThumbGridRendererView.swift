@@ -4,18 +4,7 @@
 //
 //import ASCollectionView
 //import SwiftUI
-////
-////let registerThumbGridRenderer = {
-////    Renderers.register(
-////        name: "thumbnail.grid",
-////        title: "Photo Grid",
-////        order: 110,
-////        icon: "square.grid.3x2.fill",
-////        view: AnyView(ThumbGridRendererView()),
-////        renderConfigType: GridRendererConfig.self,
-////        canDisplayResults: { _ -> Bool in true }
-////    )
-////}
+//
 //
 //struct ThumbGridRendererView: View {
 //    @EnvironmentObject var context: MemriContext

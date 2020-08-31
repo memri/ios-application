@@ -647,7 +647,7 @@ public class Item: SchemaItem {
     public func accessed() {
         let safeSelf = ItemReference(to: self)
         DatabaseController.background(write:true) { _ in
-            guard let item = safeSelf.resolve() else { return }
+            guard let item = safeSelf?.resolve() else { return }
 
             item.dateAccessed = Date()
 
@@ -672,7 +672,7 @@ public class Item: SchemaItem {
         
         let safeSelf = ItemReference(to: self)
         DatabaseController.background(write:true) { _ in
-            guard let item = safeSelf.resolve() else { return }
+            guard let item = safeSelf?.resolve() else { return }
 
             let previousModified = item.dateModified
             item.dateModified = Date()
