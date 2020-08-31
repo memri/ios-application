@@ -149,7 +149,7 @@ ImporterRun[] {
     name: "all-importer-instances"
     title: "All ImporterRuns"
     emptyResultText: "There are no ImporterRuns"
-    defaultRenderer: thumbnail
+    defaultRenderer: grid
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
@@ -169,7 +169,7 @@ ImporterRun[] {
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
     
-    [renderer = thumbnail] {
+    [renderer = grid] {
         VStack {
             alignment: left
             rowInset: 12 20 -12 20

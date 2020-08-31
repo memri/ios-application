@@ -199,7 +199,7 @@ Person {
                 minHeight: 165
                 
                 view {
-                    defaultRenderer: thumbnail.grid
+                    defaultRenderer: grid.grid
                     
                     datasource {
                         query: "photo AND ANY includes.memriID = '0x013'"

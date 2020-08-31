@@ -5,32 +5,35 @@
 import ASCollectionView
 import SwiftUI
 
-class CascadingTimelineConfig: CascadingRenderConfig, ConfigurableRenderConfig {
-    var type: String? = "calendar.timeline"
-
-    var press: Action? { cascadeProperty("press") }
-    var mostRecentFirst: Bool = true
-
-    var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
-    var detailLevelString: String? { cascadeProperty("detailLevel") }
-    var detailLevel: TimelineModel
-        .DetailLevel { detailLevelString.flatMap(TimelineModel.DetailLevel.init) ?? .day }
+class TimelineRendererController: RendererController, ObservableObject {
+    static let rendererType = RendererType(name: "timeline", icon: "hourglass.bottomhalf.fill", makeController: TimelineRendererController.init, makeConfig: TimelineRendererController.makeConfig)
     
-    
-    var showSortInConfig: Bool = true
-    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {[
-        ConfigPanelModel.ConfigItem(displayName: "Time level", propertyName: "detailLevel", type: .special(.timeLevel), isItemSpecific: false)
-    ]}
-    var showContextualBarInEditMode: Bool = false
-}
-
-struct TimelineRenderer: View {
-    @EnvironmentObject var context: MemriContext
-
-    var renderConfig: CascadingTimelineConfig {
-        (context.currentView?.renderConfig as? CascadingTimelineConfig) ?? CascadingTimelineConfig()
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
+        self.context = context
+        self.config = (config as? TimelineRendererConfig) ?? TimelineRendererConfig()
     }
-
+    
+    let context: MemriContext
+    let config: TimelineRendererConfig
+    
+    func makeView() -> AnyView {
+        TimelineRendererView(controller: self).eraseToAnyView()
+    }
+    
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+        TimelineRendererConfig(head, tail, host)
+    }
+    
+    
+    func view(for item: Item) -> some View {
+        config.render(item: item)
+            .environmentObject(context)
+    }
+    
     func resolveExpression<T>(
         _ expression: Expression?,
         toType _: T.Type = T.self,
@@ -39,10 +42,40 @@ struct TimelineRenderer: View {
         let args = ViewArguments(context.currentView?.viewArguments, dataItem)
         return try? expression?.execForReturnType(T.self, args: args)
     }
-
+    
     func resolveItemDateTime(_ item: Item) -> Date? {
-        resolveExpression(renderConfig.dateTimeExpression, toType: Date.self, forItem: item)
+        resolveExpression(config.dateTimeExpression, toType: Date.self, forItem: item)
     }
+    
+    var model: TimelineModel {
+        TimelineModel(
+            dataItems: context.items,
+            itemDateTimeResolver: resolveItemDateTime,
+            detailLevel: config.detailLevel,
+            mostRecentFirst: config.mostRecentFirst
+        )
+    }
+}
+
+class TimelineRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
+    var press: Action? { cascadeProperty("press") }
+    var mostRecentFirst: Bool = true
+
+    var dateTimeExpression: Expression? { cascadeProperty("timeProperty", type: Expression.self) }
+    var detailLevelString: String? { cascadeProperty("detailLevel") }
+    var detailLevel: TimelineModel
+        .DetailLevel { detailLevelString.flatMap(TimelineModel.DetailLevel.init) ?? .day }
+    
+    
+    var showSortInConfig: Bool = false
+    func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {[
+        ConfigPanelModel.ConfigItem(displayName: "Time level", propertyName: "detailLevel", type: .special(.timeLevel), isItemSpecific: false)
+    ]}
+    var showContextualBarInEditMode: Bool = false
+}
+
+struct TimelineRendererView: View {
+    @ObservedObject var controller: TimelineRendererController
 
     let minSectionHeight: CGFloat = 40
 
@@ -56,12 +89,12 @@ struct TimelineRenderer: View {
                 guard let element = group.items[safe: index] else { return }
                 if element.isGroup {
                     let uids = element.items.compactMap { $0.uid }
-                    try? ActionOpenViewWithUIDs(self.context)
+                    try? ActionOpenViewWithUIDs(self.controller.context)
                         .exec(["itemType": element.itemType, "uids": uids])
                 }
                 else {
-                    if let press = self.renderConfig.press, let item = element.items.first {
-                        self.context.executeAction(press, with: item)
+                    if let press = self.controller.config.press, let item = element.items.first {
+                        self.controller.context.executeAction(press, with: item)
                     }
                 }
             }
@@ -98,22 +131,14 @@ struct TimelineRenderer: View {
         }
         else {
             element.items.first.map {
-                self.renderConfig.render(item: $0)
+                self.controller.view(for: $0)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .environmentObject(context)
             }
         }
     }
 
     var body: some View {
-        let model = TimelineModel(
-            dataItems: context.items,
-            itemDateTimeResolver: resolveItemDateTime,
-            detailLevel: renderConfig.detailLevel,
-            mostRecentFirst: renderConfig.mostRecentFirst
-        )
-
-        return ASCollectionView(sections: sections(withModel: model))
+        return ASCollectionView(sections: sections(withModel: controller.model))
             .layout(layout)
             .alwaysBounceVertical()
     }
@@ -126,7 +151,7 @@ struct TimelineRenderer: View {
         ASCollectionLayout(scrollDirection: .vertical,
                            interSectionSpacing: 0) { () -> ASCollectionLayoutSection in
             ASCollectionLayoutSection { _ -> NSCollectionLayoutSection in
-                let hasFullWidthHeader: Bool = self.renderConfig.detailLevel == .year
+                let hasFullWidthHeader: Bool = self.controller.config.detailLevel == .year
 
                 let itemLayoutSize = NSCollectionLayoutSize(
                     widthDimension: .fractionalWidth(1.0),
@@ -202,16 +227,16 @@ struct TimelineRenderer: View {
     }
 }
 
-extension TimelineRenderer {
+extension TimelineRendererView {
     // TODO: Clean up this function. Should probably define for each `DetailLevel` individually
     func header(for group: TimelineGroup, calendarHelper: CalendarHelper) -> some View {
         let matchesNow = calendarHelper.isSameAsNow(
             group.date,
-            byComponents: renderConfig.detailLevel.relevantComponents
+            byComponents: controller.config.detailLevel.relevantComponents
         )
 
         let flipOrder: Bool = {
-            switch renderConfig.detailLevel {
+            switch controller.config.detailLevel {
             case .hour: return true
             default:
                 return false
@@ -219,7 +244,7 @@ extension TimelineRenderer {
         }()
 
         let alignment: HorizontalAlignment = {
-            switch renderConfig.detailLevel {
+            switch controller.config.detailLevel {
             case .year: return .leading
             case .day: return .center
             default: return .trailing
@@ -227,7 +252,7 @@ extension TimelineRenderer {
         }()
 
         let largeString: String? = {
-            switch renderConfig.detailLevel {
+            switch controller.config.detailLevel {
             case .hour:
                 if group.isStartOf.contains(.day) {
                     let format = DateFormatter()
@@ -255,7 +280,7 @@ extension TimelineRenderer {
         }()
 
         let smallString: String? = {
-            switch renderConfig.detailLevel {
+            switch controller.config.detailLevel {
             case .hour:
                 let format = DateFormatter()
                 format.dateFormat = "h a"
@@ -312,7 +337,7 @@ extension TimelineRenderer {
     }
 
     var useFillToIndicateNow: Bool {
-        switch renderConfig.detailLevel {
+        switch controller.config.detailLevel {
         case .day:
             return true
         default:

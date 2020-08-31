@@ -6,22 +6,36 @@ import Combine
 import Foundation
 import SwiftUI
 
-//let registerCustomRenderer = {
-//    Renderers.register(
-//        name: "custom",
-//        title: "",
-//        order: 0,
-//        icon: "",
-//        view: AnyView(CustomRendererView()),
-//        renderConfigType: CascadingCustomConfig.self,
-//        canDisplayResults: { _ -> Bool in false }
-//    )
-//}
+class CustomRendererController: RendererController, ObservableObject {
+    static let rendererType = RendererType(name: "custom", icon: "lightbulb", makeController: CustomRendererController.init, makeConfig: CustomRendererController.makeConfig)
+    
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
+        self.context = context
+        self.config = (config as? CustomRendererConfig) ?? CustomRendererConfig()
+    }
+    
+    let context: MemriContext
+    let config: CustomRendererConfig
+    
+    func makeView() -> AnyView {
+        CustomRendererView(controller: self).eraseToAnyView()
+    }
+    
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+        CustomRendererConfig(head, tail, host)
+    }
+    
+    func customView() -> some View {
+        config.render(item: context.item)
+            .environmentObject(context)
+    }
+}
 
-class CascadingCustomConfig: CascadingRenderConfig, ConfigurableRenderConfig {
-    
-    var type: String? = "custom"
-    
+class CustomRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var showSortInConfig: Bool = false
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
@@ -30,23 +44,17 @@ class CascadingCustomConfig: CascadingRenderConfig, ConfigurableRenderConfig {
 }
 
 struct CustomRendererView: View {
-    @EnvironmentObject var context: MemriContext
-
-    let name = "custom"
-
-    var renderConfig: CascadingCustomConfig? {
-        context.currentView?.renderConfig as? CascadingCustomConfig
-    }
+    @ObservedObject var controller: CustomRendererController
 
     var body: some View {
         VStack {
-            self.renderConfig?.render(item: self.context.item ?? Item())
+            controller.customView()
         }
     }
 }
 
 struct CustomRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        CustomRendererView().environmentObject(try! RootContext(name: "").mockBoot())
+        CustomRendererView(controller: CustomRendererController(context: try! RootContext(name: "").mockBoot(), config: nil))
     }
 }

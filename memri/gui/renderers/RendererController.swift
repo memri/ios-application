@@ -10,12 +10,13 @@ import Foundation
 import SwiftUI
 
 public protocol RendererController {
-    static var rendererTypeName: String { get }
+    static var rendererType: RendererType { get }
     var rendererTypeName: String { get }
-    init(context: MemriContext, config: CascadingRenderConfig?)
+    init(context: MemriContext, config: CascadingRendererConfig?)
     func makeView() -> AnyView
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRenderConfig
+    func update()
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig
 }
 extension RendererController {
-    var rendererTypeName: String { Self.rendererTypeName }
+    var rendererTypeName: String { Self.rendererType.name }
 }

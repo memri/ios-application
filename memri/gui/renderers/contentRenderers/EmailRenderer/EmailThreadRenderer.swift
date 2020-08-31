@@ -25,7 +25,7 @@ import SwiftUI
 //    )
 //}
 
-class CascadingEmailThreadRendererConfig: CascadingRenderConfig {
+class CascadingEmailThreadRendererConfig: CascadingRendererConfig {
     var type: String? = "email"
     
     var content: Expression? {

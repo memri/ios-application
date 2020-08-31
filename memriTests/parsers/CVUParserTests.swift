@@ -410,7 +410,7 @@ class CVUParserTests: XCTestCase {
 
     func testIdentifierProperty() throws {
         let snippet = """
-        Person { defaultRenderer: thumbnail.grid }
+        Person { defaultRenderer: grid.grid }
         """
 
         XCTAssertEqual(try parseToCVUString(snippet), """
@@ -1008,7 +1008,7 @@ class CVUParserTests: XCTestCase {
      Photo {
          name: "all-photos"
          title: "All Photos"
-         defaultRenderer: thumbnail
+         defaultRenderer: grid
          datasource {
              query: "photo"
              sortProperty: dateModified
@@ -1019,7 +1019,7 @@ class CVUParserTests: XCTestCase {
          editActionButton: toggleEditMode
          filterButtons: [ showStarred toggleFilterPanel ]
 
-         [renderer = thumbnail] {
+         [renderer = grid] {
              itemInset: 1
              edgeInset: 0 0 0 0
              Image, {

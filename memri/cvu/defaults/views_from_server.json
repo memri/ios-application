@@ -39,7 +39,7 @@
         }
     },
     
-    "[renderer = thumbnail]": {
+    "[renderer = grid]": {
         "renderConfigs": {
             "thumbnail": {
                 "press": { "actionName": "openView" },

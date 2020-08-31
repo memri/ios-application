@@ -105,6 +105,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             DispatchQueue.main.async {
                 withAnimation {
                     self.objectWillChange.send()
+                    self.currentRendererController?.update()
                 }
             }
             return
@@ -246,6 +247,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.objectWillChange.send()
+                self?.currentRendererController?.update()
             }
 
         // Setup update publishers

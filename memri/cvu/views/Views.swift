@@ -735,14 +735,14 @@ public class Views {
 
             // Create a new view
             #warning("viewArguments are not passed to cascading config, is that bad?")
-            let cascadingRenderConfig = CascadingRenderConfig(
+            let cascadingRendererConfig = CascadingRendererConfig(
                 nil,
                 cascadeStack,
                 context.currentView
             )
 
             // Return the rendered UIElements in a UIElementView
-            return cascadingRenderConfig.render(item: item, arguments: viewArguments)
+            return cascadingRendererConfig.render(item: item, arguments: viewArguments)
         }
         catch {
             debugHistory.error("Unable to render ItemCell: \(error)")

@@ -78,7 +78,7 @@ Importer[] {
     name: "all-importers"
     title: "All Importers"
     emptyResultText: "There are no Importers"
-    defaultRenderer: thumbnail
+    defaultRenderer: grid
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
@@ -89,7 +89,7 @@ Importer[] {
     
     filterButtons: showStarred toggleFilterPanel
     
-    [renderer = thumbnail] {
+    [renderer = grid] {
         press: addItem {
             template {
                 _type: ImporterRun

@@ -17,8 +17,8 @@ struct LabelOption {
     var id: String { text }
 }
 class LabelAnnotationRendererController: RendererController, ObservableObject {
-    static let rendererTypeName: String = "labelAnnotation"
-    required init(context: MemriContext, config: CascadingRenderConfig?) {
+    static let rendererType = RendererType(name: "labelAnnotation", icon: "tag.circle.fill", makeController: LabelAnnotationRendererController.init, makeConfig: LabelAnnotationRendererController.makeConfig)
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? LabelAnnotationRendererConfig) ?? LabelAnnotationRendererConfig()
     }
@@ -30,7 +30,11 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
         LabelAnnotationRendererView(controller: self).eraseToAnyView()
     }
     
-    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRenderConfig {
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
         LabelAnnotationRendererConfig(head, tail, host)
     }
     
@@ -81,7 +85,7 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
 }
 
 
-class LabelAnnotationRendererConfig: CascadingRenderConfig, ConfigurableRenderConfig {
+class LabelAnnotationRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var showSortInConfig: Bool = false
     var showContextualBarInEditMode: Bool = false
     

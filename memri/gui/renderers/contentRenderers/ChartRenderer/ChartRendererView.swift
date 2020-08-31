@@ -18,7 +18,7 @@ import SwiftUI
 //    )
 //}
 
-class CascadingChartConfig: CascadingRenderConfig, ConfigurableRenderConfig {
+class CascadingChartConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var type: String? = "chart"
 	
     var showSortInConfig: Bool = false

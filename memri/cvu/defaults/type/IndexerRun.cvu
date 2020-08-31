@@ -171,7 +171,7 @@ IndexerRun[] {
     name: "all-indexer-instances"
     title: "All IndexerRuns"
     emptyResultText: "There are no IndexerRuns"
-    defaultRenderer: thumbnail
+    defaultRenderer: grid
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
@@ -191,7 +191,7 @@ IndexerRun[] {
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
     
-    [renderer = thumbnail] {
+    [renderer = grid] {
         VStack {
             alignment: left
             rowInset: 12 20 -12 20

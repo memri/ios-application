@@ -205,8 +205,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-    var renderConfig: CascadingRenderConfig? {
-        if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
+    var renderConfig: CascadingRendererConfig? {
+        if let x = localCache[activeRenderer] as? CascadingRendererConfig { return x }
 
         func getConfig(_ a: CVUParsedDefinition) -> CVUParsedRendererDefinition? {
             let definitions = (a["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
@@ -240,7 +240,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             debugHistory.error("Unable to cascade render config for \(activeRenderer)")
         }
 
-        return CascadingRenderConfig()
+        return CascadingRendererConfig()
     }
 
     private var _emptyResultTextTemp: String?

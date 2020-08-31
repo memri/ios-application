@@ -4,39 +4,72 @@
 
 import ASCollectionView
 import SwiftUI
-//
-//let registerCalendarRenderer = {
-//    Renderers.register(
-//        name: "calendar",
-//        title: "Calendar",
-//        order: 500,
-//        icon: "calendar",
-//        view: AnyView(CalendarView()),
-//        renderConfigType: CascadingCalendarConfig.self,
-//        canDisplayResults: { _ -> Bool in true }
-//    )
-//
-//    Renderers.register(
-//        name: "calendar.timeline",
-//        title: "Timeline",
-//        order: 500,
-//        icon: "hourglass.bottomhalf.fill",
-//        view: AnyView(TimelineRenderer()),
-//        renderConfigType: CascadingTimelineConfig.self,
-//        canDisplayResults: { _ -> Bool in true }
-//    )
-//}
 
-class CascadingCalendarConfig: CascadingRenderConfig, ConfigurableRenderConfig {
-    var type: String? = "calendar"
+class CalendarRendererController: RendererController, ObservableObject {
+    static let rendererType = RendererType(name: "calendar", icon: "calendar", makeController: CalendarRendererController.init, makeConfig: CalendarRendererController.makeConfig)
+    
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
+        self.context = context
+        self.config = (config as? CalendarRendererConfig) ?? CalendarRendererConfig()
+    }
+    
+    let context: MemriContext
+    let config: CalendarRendererConfig
+    
+    func makeView() -> AnyView {
+        CalendarRendererView(controller: self).eraseToAnyView()
+    }
+    
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+        CalendarRendererConfig(head, tail, host)
+    }
+    
+    
+    func view(for item: Item) -> some View {
+        config.render(item: item)
+            .environmentObject(context)
+    }
+    
+    func resolveExpression<T>(
+        _ expression: Expression?,
+        toType _: T.Type = T.self,
+        forItem dataItem: Item
+    ) -> T? {
+        let args = ViewArguments(context.currentView?.viewArguments, dataItem)
+        return try? expression?.execForReturnType(T.self, args: args)
+    }
+    
+    func resolveItemDateTime(_ item: Item) -> Date? {
+        resolveExpression(config.dateTimeExpression, toType: Date.self, forItem: item)
+    }
+    
+    var calendarHelper = CalendarHelper()
+    
+    var calcs: CalendarCalculations {
+        CalendarCalculations(calendarHelper: calendarHelper,
+                             data: context.items,
+                             dateResolver: {
+                                self.resolveExpression(
+                                    config.dateTimeExpression,
+                                    forItem: $0
+                                )
+        },
+                             renderConfig: config)
+    }
+}
 
+class CalendarRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var showSortInConfig: Bool = false
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
     }
     let showContextualBarInEditMode: Bool = false
     
-    var dateTimeExpression: Expression? { cascadeProperty("dateTime", type: Expression.self) }
+    var dateTimeExpression: Expression? { cascadeProperty("timeProperty", type: Expression.self) }
 }
 
 struct CalendarCalculations {
@@ -44,7 +77,7 @@ struct CalendarCalculations {
         calendarHelper: CalendarHelper,
         data: [Item],
         dateResolver: (Item) -> Date?,
-        renderConfig: CascadingCalendarConfig
+        renderConfig: CalendarRendererConfig
     ) {
         let datesWithItems: [Date: [Item]] = data.reduce(into: [:]) { result, item in
             guard let dateTime = dateResolver(item),
@@ -70,43 +103,16 @@ struct CalendarCalculations {
     }
 }
 
-struct CalendarView: View {
-    @EnvironmentObject var context: MemriContext
-
-    var renderConfig: CascadingCalendarConfig {
-        (context.currentView?.renderConfig as? CascadingCalendarConfig) ?? CascadingCalendarConfig()
-    }
-
-    var data: [Item] {
-        context.items
-    }
-
-    func resolveExpression<T>(
-        _ expression: Expression?,
-        toType _: T.Type = T.self,
-        forItem dataItem: Item
-    ) -> T? {
-        let args = ViewArguments(context.currentView?.viewArguments, dataItem)
-        return try? expression?.execForReturnType(T.self, args: args)
-    }
+struct CalendarRendererView: View {
+    @ObservedObject var controller: CalendarRendererController
 
     @State var scrollPosition: ASCollectionViewScrollPosition? = .bottom
 
-    var calendarHelper = CalendarHelper()
 
     var body: some View {
-        let calcs = CalendarCalculations(calendarHelper: calendarHelper,
-                                         data: context.items,
-                                         dateResolver: {
-                                             self.resolveExpression(
-                                                 renderConfig.dateTimeExpression,
-                                                 forItem: $0
-                                             )
-                                         },
-                                         renderConfig: renderConfig)
         return VStack(spacing: 0) {
             HStack(spacing: 0) {
-                ForEach(calendarHelper.daysInWeek, id: \.self) { dayString in
+                ForEach(controller.calendarHelper.daysInWeek, id: \.self) { dayString in
                     Text(dayString)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
@@ -114,7 +120,7 @@ struct CalendarView: View {
             }
             .padding(.horizontal, 20)
 			.background(Color.gray.opacity(0.2))
-            ASCollectionView(sections: sections(withCalcs: calcs))
+            ASCollectionView(sections: sections(withCalcs: controller.calcs))
                 .scrollPositionSetter($scrollPosition)
                 .layout(ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 4) {
                     ASCollectionLayoutSection { (_) -> NSCollectionLayoutSection in
@@ -170,34 +176,34 @@ struct CalendarView: View {
                 .contentInsets(UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0))
                 .alwaysBounceVertical()
         }
-        .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
+        .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
     }
 
     func sections(withCalcs calcs: CalendarCalculations) -> [ASSection<Date>] {
-        calendarHelper.getMonths(from: calcs.start, to: calcs.end)
+        controller.calendarHelper.getMonths(from: calcs.start, to: calcs.end)
             .map { section(forMonth: $0, withCalcs: calcs) }
     }
 
     func section(forMonth month: Date, withCalcs calcs: CalendarCalculations) -> ASSection<Date> {
-        let days = calendarHelper.getPaddedDays(forMonth: month)
+        let days = controller.calendarHelper.getPaddedDays(forMonth: month)
         return ASSection(id: month, data: days, dataID: \.self) { day, cellContext in
             Group {
                 day.map { day in
                     VStack(spacing: 0) {
                         Spacer()
-                        Text(self.calendarHelper.dayString(for: day))
-                            .foregroundColor(self.calendarHelper
-                                .isToday(day) ? self.renderConfig.primaryColor.color : Color(.label))
+                        Text(self.controller.calendarHelper.dayString(for: day))
+                            .foregroundColor(self.controller.calendarHelper
+                                .isToday(day) ? self.controller.config.primaryColor.color : Color(.label))
 					
 						HStack(spacing: 0) {
 							Circle()
-								.fill(calcs.itemsOnDay(day).isEmpty ? .clear : self.renderConfig.primaryColor.color)
+                                .fill(calcs.itemsOnDay(day).isEmpty ? .clear : self.controller.config.primaryColor.color)
 								.frame(width: 10, height: 10)
 								.padding(4)
 							if calcs.itemsOnDay(day).count > 1 {
 								Text("×\(calcs.itemsOnDay(day).count)")
 									.font(Font.caption.bold())
-									.foregroundColor(self.renderConfig.primaryColor.color)
+									.foregroundColor(self.controller.config.primaryColor.color)
 									.fixedSize()
 							}
 						}
@@ -211,7 +217,7 @@ struct CalendarView: View {
             }
         }
         .sectionHeader {
-            Text(calendarHelper.monthYearString(for: month))
+            Text(controller.calendarHelper.monthYearString(for: month))
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -226,7 +232,7 @@ struct CalendarView: View {
 
             guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
 
-            try? ActionOpenViewWithUIDs(self.context).exec(["itemType": itemType, "uids": uids])
+            try? ActionOpenViewWithUIDs(self.controller.context).exec(["itemType": itemType, "uids": uids])
         }
     }
 }

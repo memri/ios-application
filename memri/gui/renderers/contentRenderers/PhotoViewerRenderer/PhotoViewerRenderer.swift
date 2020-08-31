@@ -17,7 +17,7 @@ import SwiftUI
 //    )
 //}
 
-class PhotoViewerRendererConfig: CascadingRenderConfig, ConfigurableRenderConfig {
+class PhotoViewerRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var type: String? = "photoViewer"
 
     var imageFile: Expression? { cascadeProperty("file", type: Expression.self) }

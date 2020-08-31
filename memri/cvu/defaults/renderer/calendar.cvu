@@ -1,7 +1,7 @@
 [renderer = calendar] {
-	dateTime: {{.dateModified}}
+	timeProperty: {{.dateModified}}
 }
 
-[renderer = calendar.timeline] {
+[renderer = timeline] {
 	press: openView
 }
