@@ -52,13 +52,7 @@
     {
         "_type": "NavigationItem",
         "itemType": "item",
-        "title": "messages",
-        "sessionName": "all-messages"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "message channels",
+        "title": "Messages",
         "sessionName": "all-message-channels"
     },
     {

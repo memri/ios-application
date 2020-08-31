@@ -5,22 +5,109 @@
 import Combine
 import Foundation
 import SwiftUI
-//
-//let registerChartRenderer = {
-//    Renderers.register(
-//        name: "chart",
-//        title: "Chart",
-//        order: 500,
-//        icon: "chart.bar",
-//        view: AnyView(ChartRendererView()),
-//        renderConfigType: CascadingChartConfig.self,
-//        canDisplayResults: { _ -> Bool in true }
-//    )
-//}
 
-class CascadingChartConfig: CascadingRendererConfig, ConfigurableRenderConfig {
-    var type: String? = "chart"
-	
+class ChartRendererController: RendererController, ObservableObject {
+    static let rendererType = RendererType(name: "chart", icon: "chart.bar", makeController: ChartRendererController.init, makeConfig: ChartRendererController.makeConfig)
+    
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
+        self.context = context
+        self.config = (config as? ChartRendererConfig) ?? ChartRendererConfig()
+    }
+    
+    let context: MemriContext
+    let config: ChartRendererConfig
+    
+    func makeView() -> AnyView {
+        ChartRendererView(controller: self).eraseToAnyView()
+    }
+    
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+        ChartRendererConfig(head, tail, host)
+    }
+    
+    func resolveExpression<T>(
+        _ expression: Expression?,
+        toType _: T.Type = T.self,
+        forItem dataItem: Item
+    ) -> T? {
+        let args = ViewArguments(context.currentView?.viewArguments, dataItem)
+        return try? expression?.execForReturnType(T.self, args: args)
+    }
+    
+    var chartTitle: String? {
+        config.chartTitle
+    }
+    var chartSubtitle: String? {
+        config.chartSubtitle
+    }
+
+    var items: [Item] {
+        context.items
+    }
+    
+    
+    func makeBarChartModel() -> BarChartModel? {
+        guard
+            let labelExpression = config.labelExpression,
+            let yAxisExpression = config.yAxisExpression
+            else { return nil }
+        
+        let data = ChartHelper.generateLabelledYChartSetFromItems(
+            items,
+            labelExpression: { self.resolveExpression(labelExpression, forItem: $0) },
+            yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) }
+        )
+        
+        return BarChartModel(
+            sets: [data],
+            hideGridLines: config.hideGridLines,
+            forceMinYOfZero: config.yAxisStartAtZero,
+            primaryColor: config.primaryColor,
+            barLabelFont: config.barLabelFont.uiFont,
+            showValueLabels: config.showValueLabels,
+            valueLabelFont: config.valueLabelFont.uiFont
+        )
+    }
+    
+    func makeLineChartModel() -> LineChartModel? {
+        guard
+            let xAxisExpression = config.xAxisExpression,
+            let yAxisExpression = config.yAxisExpression
+            else { return nil }
+        
+        let data = ChartHelper.generateXYChartSetFromItems(
+            items,
+            xAxis: { self.resolveExpression(xAxisExpression, forItem: $0) },
+            yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) },
+            labelExpression: {
+                self.resolveExpression(self.config.labelExpression, forItem: $0)
+        }
+        )
+        
+        return LineChartModel(
+            sets: [data],
+            lineWidth: config.lineWidth,
+            hideGridLines: config.hideGridLines,
+            forceMinYOfZero: config.yAxisStartAtZero,
+            primaryColor: config.primaryColor,
+            showValueLabels: config.showValueLabels,
+            valueLabelFont: config.valueLabelFont.uiFont
+        )
+    }
+    
+    
+    func onPress(index: Int) {
+        if let press = config.press {
+            context.executeAction(press, with: context.items[safe: index])
+        }
+    }
+}
+
+class ChartRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
     var showSortInConfig: Bool = false
     
     @ArrayBuilder<ConfigPanelModel.ConfigItem>
@@ -113,40 +200,20 @@ enum ChartType: String, CaseIterable {
 }
 
 struct ChartRendererView: View {
-    @EnvironmentObject var context: MemriContext
+    @ObservedObject var controller: ChartRendererController
 
-    let name = "chart"
-
-    var renderConfig: CascadingChartConfig {
-        (context.currentView?.renderConfig as? CascadingChartConfig) ?? CascadingChartConfig()
-    }
 
     var missingDataView: some View {
         Text("You need to define x/y axes in CVU")
     }
-
-    var chartTitle: String? {
-        if let title = renderConfig.chartTitle { return title }
-        return nil
-    }
-
-    func resolveExpression<T>(
-        _ expression: Expression?,
-        toType _: T.Type = T.self,
-        forItem item: Item
-    ) -> T? {
-        let args = ViewArguments(context.currentView?.viewArguments, item)
-
-        return try? expression?.execForReturnType(T.self, args: args)
-    }
-
+    
     var chartTitleView: some View {
         VStack {
-            chartTitle.map {
+            controller.chartTitle.map {
                 Text($0)
                     .font(.title)
             }
-            renderConfig.chartSubtitle.map {
+            controller.chartSubtitle.map {
                 Text($0)
                     .foregroundColor(Color(.secondaryLabel))
                     .font(.body)
@@ -155,64 +222,31 @@ struct ChartRendererView: View {
     }
 
     var chartView: AnyView {
-        let dataItems = context.items
-        switch renderConfig.chartType {
+        switch controller.config.chartType {
         case .bar:
-            guard
-                let labelExpression = renderConfig.labelExpression,
-                let yAxisExpression = renderConfig.yAxisExpression
-            else { return missingDataView.eraseToAnyView() }
-
-            let data = ChartHelper.generateLabelledYChartSetFromItems(
-                dataItems,
-                labelExpression: { self.resolveExpression(labelExpression, forItem: $0) },
-                yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) }
-            )
+            guard let model = controller.makeBarChartModel() else {
+                return missingDataView.eraseToAnyView()
+            }
 
             return VStack(spacing: 0) {
                 chartTitleView
                 BarChartSwiftUIView(
-                    model: BarChartModel(
-                        sets: [data],
-                        hideGridLines: renderConfig.hideGridLines,
-                        forceMinYOfZero: renderConfig.yAxisStartAtZero,
-						primaryColor: renderConfig.primaryColor,
-                        barLabelFont: renderConfig.barLabelFont.uiFont,
-						showValueLabels: renderConfig.showValueLabels,
-						valueLabelFont: renderConfig.valueLabelFont.uiFont
-                    ),
-                    onPress: { self.onPress(index: $0) }
+                    model: model,
+                    onPress: { self.controller.onPress(index: $0) }
                 )
             }
             .padding(10)
             .eraseToAnyView()
         case .line:
-            guard
-                let xAxisExpression = renderConfig.xAxisExpression,
-                let yAxisExpression = renderConfig.yAxisExpression
-            else { return missingDataView.eraseToAnyView() }
-
-            let data = ChartHelper.generateXYChartSetFromItems(
-                dataItems,
-                xAxis: { self.resolveExpression(xAxisExpression, forItem: $0) },
-                yAxis: { self.resolveExpression(yAxisExpression, forItem: $0) },
-                labelExpression: {
-                    self.resolveExpression(self.renderConfig.labelExpression, forItem: $0)
-                }
-            )
+            guard let model = controller.makeLineChartModel() else {
+                return missingDataView.eraseToAnyView()
+            }
+            
             return VStack(spacing: 0) {
                 chartTitleView
                 LineChartSwiftUIView(
-                    model: LineChartModel(
-                        sets: [data],
-                        lineWidth: renderConfig.lineWidth,
-                        hideGridLines: renderConfig.hideGridLines,
-						forceMinYOfZero: renderConfig.yAxisStartAtZero,
-						primaryColor: renderConfig.primaryColor,
-						showValueLabels: renderConfig.showValueLabels,
-						valueLabelFont: renderConfig.valueLabelFont.uiFont
-                    ),
-                    onPress: { self.onPress(index: $0) }
+                    model: model,
+                    onPress: { self.controller.onPress(index: $0) }
                 )
             }
             .padding(10)
@@ -220,22 +254,16 @@ struct ChartRendererView: View {
         }
     }
 
-    func onPress(index: Int) {
-        if let press = renderConfig.press {
-            context.executeAction(press, with: context.items[safe: index])
-        }
-    }
 
     var body: some View {
         chartView
 			.frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(renderConfig.backgroundColor?.color ?? Color(.systemBackground))
+            .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
     }
 }
 
 struct ChartRendererView_Previews: PreviewProvider {
     static var previews: some View {
-        ChartRendererView()
-            .environmentObject(try! RootContext(name: "").mockBoot())
+        ChartRendererView(controller: ChartRendererController(context: try! RootContext(name: "").mockBoot(), config: nil))
     }
 }

@@ -21,7 +21,10 @@ public class Renderers {
             LabelAnnotationRendererController.rendererType,
             MessageRendererController.rendererType,
             CalendarRendererController.rendererType,
-            TimelineRendererController.rendererType
+            TimelineRendererController.rendererType,
+            ChartRendererController.rendererType,
+            PhotoViewerRendererController.rendererType,
+            EmailThreadRendererController.rendererType
             ].map { ($0.name, $0) })
     }()
     private init() {}

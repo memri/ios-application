@@ -4,22 +4,77 @@
 
 import Foundation
 import SwiftUI
-//
-//let registerPhotoViewerRenderer = {
-//    Renderers.register(
-//        name: "photoViewer",
-//        title: "Default",
-//        order: 10,
-//        icon: "camera",
-//        view: AnyView(PhotoViewerRenderer()),
-//        renderConfigType: PhotoViewerRendererConfig.self,
-//        canDisplayResults: { items -> Bool in items.first?.genericType == "Photo" }
-//    )
-//}
+
+class PhotoViewerRendererController: RendererController, ObservableObject {
+    static let rendererType = RendererType(name: "photoViewer", icon: "camera", makeController: PhotoViewerRendererController.init, makeConfig: PhotoViewerRendererController.makeConfig)
+    
+    required init(context: MemriContext, config: CascadingRendererConfig?) {
+        self.context = context
+        self.config = (config as? PhotoViewerRendererConfig) ?? PhotoViewerRendererConfig()
+    }
+    
+    let context: MemriContext
+    let config: PhotoViewerRendererConfig
+    
+    func makeView() -> AnyView {
+        PhotoViewerRendererView(controller: self).eraseToAnyView()
+    }
+    
+    func update() {
+        objectWillChange.send()
+    }
+    
+    static func makeConfig(head: CVUParsedDefinition?, tail: [CVUParsedDefinition]?, host: Cascadable?) -> CascadingRendererConfig {
+        PhotoViewerRendererConfig(head, tail, host)
+    }
+    
+    
+    func resolveExpression<T>(
+        _ expression: Expression?,
+        toType _: T.Type = T.self,
+        forItem dataItem: Item
+    ) -> T? {
+        let args = ViewArguments(context.currentView?.viewArguments)
+        args.set(".", dataItem)
+        return try? expression?.execForReturnType(T.self, args: args)
+    }
+    
+    var initialIndex: Int {
+        config.initialItem.flatMap { context.items.firstIndex(of: $0) } ?? 0
+    }
+    
+    var hasItems: Bool {
+        !context.items.isEmpty
+    }
+    
+    func photoItemProvider(forIndex index: Int) -> PhotoViewerController.PhotoItem? {
+        guard let item = context.items[safe: index],
+            let file = resolveExpression(config.imageFile, toType: File.self, forItem: item),
+            let url = file.url
+            else {
+                return nil
+        }
+        let overlay = config.render(item: item).environmentObject(context).eraseToAnyView()
+        return PhotoViewerController.PhotoItem(index: index, imageURL: url, overlay: overlay)
+    }
+
+    func onToggleOverlayVisibility(_ visible: Bool) {
+        withAnimation {
+            self.isFullScreen = !visible
+        }
+    }
+    
+    func toggleFullscreen() {
+        isFullScreen.toggle()
+    }
+    
+    var isFullScreen: Bool {
+        get { context.currentView?.fullscreen ?? false }
+        set { context.currentView?.fullscreen = newValue }
+    }
+}
 
 class PhotoViewerRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
-    var type: String? = "photoViewer"
-
     var imageFile: Expression? { cascadeProperty("file", type: Expression.self) }
     var initialItem: Item? { cascadeProperty("initialItem", type: Item.self) }
     
@@ -31,74 +86,24 @@ class PhotoViewerRendererConfig: CascadingRendererConfig, ConfigurableRenderConf
     let showContextualBarInEditMode: Bool = false
 }
 
-struct PhotoViewerRenderer: View {
-    @EnvironmentObject var context: MemriContext
-    var renderConfig: PhotoViewerRendererConfig {
-        context.currentView?
-            .renderConfig as? PhotoViewerRendererConfig ?? PhotoViewerRendererConfig()
-    }
-
-    func resolveExpression<T>(
-        _ expression: Expression?,
-        toType _: T.Type = T.self,
-        forItem dataItem: Item
-    ) -> T? {
-        let args = ViewArguments(context.currentView?.viewArguments)
-        args.set(".", dataItem)
-        return try? expression?.execForReturnType(T.self, args: args)
-    }
-
-    var initialIndex: Int {
-        renderConfig.initialItem.flatMap { context.items.firstIndex(of: $0) } ?? 0
-    }
-
-    func photoItemProvider(forIndex index: Int) -> PhotoViewerController.PhotoItem? {
-        guard let item = context.items[safe: index],
-            let file = resolveExpression(renderConfig.imageFile, toType: File.self, forItem: item),
-            let url = file.url
-        else {
-            return nil
-        }
-        let overlay = renderConfig.render(item: item).environmentObject(context).eraseToAnyView()
-        return PhotoViewerController.PhotoItem(index: index, imageURL: url, overlay: overlay)
-    }
+struct PhotoViewerRendererView: View {
+    @ObservedObject var controller: PhotoViewerRendererController
 
     var body: some View {
         Group {
-            if context.items.isEmpty {
-                Text("No photos found")
-            }
-            else {
+            if controller.hasItems {
                 ZStack(alignment: .topLeading) {
                     PhotoViewerView(
-                        photoItemProvider: photoItemProvider,
-                        initialIndex: initialIndex,
-                        onToggleOverlayVisibility: onToggleOverlayVisibility
+                        photoItemProvider: controller.photoItemProvider,
+                        initialIndex: controller.initialIndex,
+                        onToggleOverlayVisibility: controller.onToggleOverlayVisibility
                     )
-                    .edgesIgnoringSafeArea(isFullScreen ? .all : [])
+                        .edgesIgnoringSafeArea(controller.isFullScreen ? .all : [])
                 }
+            } else {
+                Text("No photos found").bold().frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
     }
 
-    func onToggleOverlayVisibility(_ visible: Bool) {
-        withAnimation {
-            self.isFullScreen = !visible
-        }
-    }
-
-    func toggleFullscreen() {
-        isFullScreen.toggle()
-    }
-
-    var isFullScreen: Bool {
-        get { context.currentView?.fullscreen ?? false }
-        nonmutating set { context.currentView?.fullscreen = newValue }
-    }
-}
-
-struct PhotoViewerRenderer_Previews: PreviewProvider {
-    static var previews: some View {
-        PhotoViewerRenderer()
-    }
 }

@@ -10,25 +10,35 @@ import SwiftUI
 import ASCollectionView
 
 struct RendererSelectionPanel: View {
-	@EnvironmentObject var context: MemriContext
+    @EnvironmentObject var context: MemriContext
     var body: some View {
-        ASTableView(section:
-            ASSection(
-                id: 0,
-                data: Renderers.rendererTypes.keys.sorted(),
-                dataID: \.self
-            ) { (rendererName, _) in
-                Button(action: { self.activateRenderer(name: rendererName) }) {
-                    Text(rendererName.titleCase())
-                    .padding(.horizontal)
-                    .padding(.vertical, 6)
+        SwiftUI.List {
+            ForEach(
+                Renderers.rendererTypes.sorted(by: { (a, b) -> Bool in
+                    a.value.name > b.value.name
+                }).map { $0.value },
+                id: \.name
+            ) { (rendererType) in
+                Button(action: { self.activateRenderer(name: rendererType.name) }) {
+                    HStack {
+                        Image(systemName: rendererType.icon)
+                            .frame(width: 30)
+                        Text(rendererType.name.titleCase())
+                            .font(self.isActive(rendererType.name) ? Font.body.bold() : Font.body)
+                        Spacer()
+                    }
                 }
-        })
+            }
+        }
     }
     
     func activateRenderer(name: String)
     {
         context.currentView?.activeRenderer = name
+    }
+    
+    func isActive(_ renderer: String) -> Bool {
+                context.currentView?.activeRenderer == renderer
     }
 }
 //

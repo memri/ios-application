@@ -276,7 +276,7 @@
 		B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */; };
 		B881BED124BD4AA00016DBF5 /* TimelineItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */; };
 		B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B881BED224BD4F4D0016DBF5 /* calendar.cvu */; };
-		B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */; };
+		B88AAB2524A1AD2F0007C9EB /* ChartRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2424A1AD2F0007C9EB /* ChartRenderer.swift */; };
 		B88AAB2D24A1AEBB0007C9EB /* ChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */; };
 		B88AAB2E24A1AEBB0007C9EB /* BarChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */; };
 		B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2924A1AEBA0007C9EB /* LineChartModel.swift */; };
@@ -569,7 +569,7 @@
 		B881BECD24BD4AA00016DBF5 /* TimelineRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineRenderer.swift; sourceTree = "<group>"; };
 		B881BECE24BD4AA00016DBF5 /* TimelineItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimelineItemView.swift; sourceTree = "<group>"; };
 		B881BED224BD4F4D0016DBF5 /* calendar.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = calendar.cvu; sourceTree = "<group>"; };
-		B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRendererView.swift; sourceTree = "<group>"; };
+		B88AAB2424A1AD2F0007C9EB /* ChartRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChartRenderer.swift; sourceTree = "<group>"; };
 		B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartModel.swift; sourceTree = "<group>"; };
 		B88AAB2924A1AEBA0007C9EB /* LineChartModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineChartModel.swift; sourceTree = "<group>"; };
@@ -1268,16 +1268,16 @@
 			path = PhotoViewerRenderer;
 			sourceTree = "<group>";
 		};
-		B826585624D2F2E10051CCFE /* EmailRenderer */ = {
+		B826585624D2F2E10051CCFE /* EmailThreadRenderer */ = {
 			isa = PBXGroup;
 			children = (
+				B826586C24D2F86F0051CCFE /* EmailThreadRenderer.swift */,
 				B826585724D2F3120051CCFE /* HTMLResources */,
 				B826586424D2F5D70051CCFE /* EmailViewUIKit.swift */,
 				B826586624D2F5EF0051CCFE /* EmailThreadCell.swift */,
 				B826586A24D2F6CD0051CCFE /* EmailThreadViewController.swift */,
-				B826586C24D2F86F0051CCFE /* EmailThreadRenderer.swift */,
 			);
-			path = EmailRenderer;
+			path = EmailThreadRenderer;
 			sourceTree = "<group>";
 		};
 		B826587224D437DD0051CCFE /* MemriFittedTextEditor */ = {
@@ -1346,7 +1346,7 @@
 				B881BEC624BD3C700016DBF5 /* CalendarRenderer */,
 				B88AAB2624A1AE8C0007C9EB /* ChartRenderer */,
 				B821D67924C70DCF006D6CFF /* PhotoViewerRenderer */,
-				B826585624D2F2E10051CCFE /* EmailRenderer */,
+				B826585624D2F2E10051CCFE /* EmailThreadRenderer */,
 			);
 			path = contentRenderers;
 			sourceTree = "<group>";
@@ -1400,14 +1400,8 @@
 		B88AAB2624A1AE8C0007C9EB /* ChartRenderer */ = {
 			isa = PBXGroup;
 			children = (
-				B88AAB2424A1AD2F0007C9EB /* ChartRendererView.swift */,
-				B826585224D2D7790051CCFE /* ArrayBuilder.swift */,
-				B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */,
-				B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */,
-				B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */,
-				B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */,
-				B88AAB2924A1AEBA0007C9EB /* LineChartModel.swift */,
-				B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */,
+				B88AAB2424A1AD2F0007C9EB /* ChartRenderer.swift */,
+				B8EA5C7724FCCBB80031854D /* ChartTypes */,
 			);
 			path = ChartRenderer;
 			sourceTree = "<group>";
@@ -1476,6 +1470,20 @@
 				B88AAB3424A1AEF80007C9EB /* Layouts */,
 			);
 			path = GridRenderer;
+			sourceTree = "<group>";
+		};
+		B8EA5C7724FCCBB80031854D /* ChartTypes */ = {
+			isa = PBXGroup;
+			children = (
+				B826585224D2D7790051CCFE /* ArrayBuilder.swift */,
+				B88AAB2824A1AEBA0007C9EB /* BarChartModel.swift */,
+				B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */,
+				B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */,
+				B88AAB2724A1AEBA0007C9EB /* ChartModel.swift */,
+				B88AAB2924A1AEBA0007C9EB /* LineChartModel.swift */,
+				B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */,
+			);
+			path = ChartTypes;
 			sourceTree = "<group>";
 		};
 		B8FB4998249F317E007A05C4 /* UIKit */ = {
@@ -1849,7 +1857,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B8E8E8B824C99E1C00F1291F /* MemriImageView.swift in Sources */,
-				B88AAB2524A1AD2F0007C9EB /* ChartRendererView.swift in Sources */,
+				B88AAB2524A1AD2F0007C9EB /* ChartRenderer.swift in Sources */,
 				C80442D62427192300FE39A0 /* ContextPaneForeground.swift in Sources */,
 				B826586B24D2F6CD0051CCFE /* EmailThreadViewController.swift in Sources */,
 				B826585324D2D7790051CCFE /* ArrayBuilder.swift in Sources */,
