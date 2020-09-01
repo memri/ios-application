@@ -14,7 +14,7 @@ struct LabelOption {
     var text: String
     var icon: Image
     
-    var id: String { text }
+    var id: String { labelID }
 }
 class LabelAnnotationRendererController: RendererController, ObservableObject {
     static let rendererType = RendererType(name: "labelAnnotation", icon: "tag.circle.fill", makeController: LabelAnnotationRendererController.init, makeConfig: LabelAnnotationRendererController.makeConfig)
@@ -44,6 +44,7 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     @Published
     var selectedLabels = Set<String>()
     
+    var labelType: String = "emailLabels"
     var options: [LabelOption] = [
         LabelOption(labelID: "personal", text: "Personal", icon: Image(systemName: "person.circle")),
         LabelOption(labelID: "important", text: "Important", icon: Image(systemName: "bell")),
@@ -64,7 +65,15 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     }
     
     func applyCurrentItem() {
+        guard let currentItem = currentItem else { return }
         print("Labels confirmed: \(selectedLabels)")
+        
+        let annotationItem = LabelAnnotation()
+        annotationItem.annotatedItem = currentItem
+        annotationItem.labelType = labelType
+        annotationItem.labels.removeAll()
+        annotationItem.labels.append(objectsIn: selectedLabels)
+        
         moveToNextItem()
     }
     

@@ -40,7 +40,7 @@ struct RendererSelectionPanel: View {
     }
     
     func getSupported() -> [String] {
-        let renderDefinitions: [CVUParsedDefinition] = context.currentView?.cascadeList("rendererDefinitions") ?? []
+        let renderDefinitions: [CVUParsedDefinition] = context.currentView?.cascadeList("rendererDefinitions", selectorType: .list) ?? []
         return renderDefinitions.compactMap {
             $0.name
         }

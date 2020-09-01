@@ -30,6 +30,10 @@ public class CVUParsedDefinition: Equatable, CVUToString {
     public var description: String {
         toCVUString(0, "    ")
     }
+    
+    var selectorIsForList: Bool {
+        selector?.hasSuffix("[]") ?? false
+    }
 
     convenience init(_ parsed: [String: Any?]? = nil) {
         self.init(parsed: parsed)

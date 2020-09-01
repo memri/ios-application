@@ -1034,8 +1034,8 @@
 				B82792B724E39D2B0085DB8A /* helpers */,
 				B80E01A524C839160005D756 /* components */,
 				B826587324D440B80051CCFE /* modifiers */,
-				5DB8EC09245992D60028FD2E /* browser */,
 				86865D342449965B0010271A /* common */,
+				5DB8EC09245992D60028FD2E /* browser */,
 				5D41E2A52417A20E001D4482 /* renderers */,
 				86A5D83B243B3FFF00F8FAD8 /* Loading.swift */,
 				869CA735243F9AA3009C56FF /* SessionSwitcher.swift */,
@@ -1078,7 +1078,6 @@
 		86865D342449965B0010271A /* common */ = {
 			isa = PBXGroup;
 			children = (
-				86865D37244996AA0010271A /* FlowStack.swift */,
 				86C3A7362452BF65006D4F55 /* MemriButton.swift */,
 				86C3A73424518763006D4F55 /* ItemCell.swift */,
 				866F87C8245434A1000E5FAB /* SubView.swift */,
@@ -1257,6 +1256,7 @@
 				B8FD53B024D5067C00CA0709 /* Images */,
 				B8FD53AF24D5066E00CA0709 /* Email */,
 				B8EA5C7524FCC4900031854D /* MessageBubbleView.swift */,
+				86865D37244996AA0010271A /* FlowStack.swift */,
 			);
 			path = components;
 			sourceTree = "<group>";

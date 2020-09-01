@@ -5,6 +5,11 @@
 import CoreGraphics
 import Foundation
 
+enum SelectorType {
+    case singleItem
+    case list
+}
+
 public class Cascadable: CustomStringConvertible {
     var host: Cascadable?
     var cascadeStack: [CVUParsedDefinition]
@@ -169,12 +174,27 @@ public class Cascadable: CustomStringConvertible {
     }
 
     // TODO: support deleting items
-    func cascadeList<T>(_ name: String, merge: Bool = true) -> [T] {
+    func cascadeList<T>(_ name: String, selectorType: SelectorType? = nil, merge: Bool = true) -> [T] {
         if let x = localCache[name] as? [T] { return x }
 
         var result = [T]()
 
         for def in cascadeStack {
+            if let selectorType = selectorType {
+                // Check if this matches the selector type, otherwise continue to next definition
+                switch selectorType {
+                case .list:
+                    // Only include definitions for list selectors
+                    guard def.selectorIsForList else {
+                        continue
+                    }
+                case .singleItem:
+                    // Only include definitions for single item selectors
+                    guard !def.selectorIsForList else {
+                        continue
+                    }
+                }
+            }
             if let x = def[name] as? [T] {
                 if !merge {
                     localCache[name] = x
