@@ -3,7 +3,6 @@
         title: "Email Annotations"
         defaultRenderer: labelAnnotation
         emptyResultText: "There are no emails here yet"
-        defaultRenderer: labelAnnotation
 
         sortFields: subject dateModified dateAccessed dateCreated
         
