@@ -108,7 +108,6 @@ struct DefaultGeneralEditorRow: View {
                 .lowercased()
                 .capitalizingFirst())
         }
-        .toggleStyle(MemriToggleStyle())
         .generalEditorCaption()
     }
     

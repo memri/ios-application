@@ -160,7 +160,6 @@
 		8680189624D299C2004FC4E3 /* SyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8680189524D299C2004FC4E3 /* SyncTests.swift */; };
 		8680189C24D2C9F9004FC4E3 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 8680189B24D2C9F9004FC4E3 /* Alamofire */; };
 		86865D3324487B390010271A /* SettingsPane.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D3224487B390010271A /* SettingsPane.swift */; };
-		86865D36244996900010271A /* ToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D35244996900010271A /* ToggleStyle.swift */; };
 		86865D38244996AA0010271A /* FlowStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86865D37244996AA0010271A /* FlowStack.swift */; };
 		868EF62E24766A8800C0375F /* CVULexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62124766A8800C0375F /* CVULexer.swift */; };
 		868EF63024766A8800C0375F /* CVUParsedDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868EF62424766A8800C0375F /* CVUParsedDefinition.swift */; };
@@ -455,7 +454,6 @@
 		8680189324D1D118004FC4E3 /* data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = data.swift; sourceTree = "<group>"; };
 		8680189524D299C2004FC4E3 /* SyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncTests.swift; sourceTree = "<group>"; };
 		86865D3224487B390010271A /* SettingsPane.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsPane.swift; sourceTree = "<group>"; wrapsLines = 0; };
-		86865D35244996900010271A /* ToggleStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToggleStyle.swift; sourceTree = "<group>"; };
 		86865D37244996AA0010271A /* FlowStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowStack.swift; sourceTree = "<group>"; };
 		868EF62124766A8800C0375F /* CVULexer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CVULexer.swift; sourceTree = "<group>"; };
 		868EF62324766A8800C0375F /* example.view */ = {isa = PBXFileReference; lastKnownFileType = archive.rsrc; path = example.view; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
@@ -1326,7 +1324,6 @@
 		B82792B624E39D0A0085DB8A /* Styles */ = {
 			isa = PBXGroup;
 			children = (
-				86865D35244996900010271A /* ToggleStyle.swift */,
 			);
 			path = Styles;
 			sourceTree = "<group>";
@@ -2040,7 +2037,6 @@
 				B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */,
 				5DD1E9BA23FD81C5007BDF7B /* CascadingRendererConfig.swift in Sources */,
 				B8348BE424FD236700BF12F8 /* BottomBar.swift in Sources */,
-				86865D36244996900010271A /* ToggleStyle.swift in Sources */,
 				5DD1E9B523FD7EB1007BDF7B /* SearchView.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,

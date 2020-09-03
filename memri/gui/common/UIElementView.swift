@@ -660,6 +660,7 @@ public struct UIElementView: SwiftUI.View {
             get: { dataItem[propName] as? Bool ?? false },
             set: { dataItem.set(propName, $0) }
         )) { EmptyView() }
+        .labelsHidden()
     }
 
     func renderTextfield() -> some View {
