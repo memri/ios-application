@@ -100,7 +100,7 @@ public class Views {
         }
 
         // Start write transaction outside loop for performance reasons
-        DatabaseController.background(write:true, error:callback) { _ in
+        DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { _ in
             // Loop over lookup table with named views
             for def in parsedDefinitions {
                 var values: [String: Any?] = [
@@ -414,7 +414,7 @@ public class Views {
                     switch node.name {
                     case "source": value = v.source()
                     case "target": value = v.target()
-                    case "item": value = v.item()
+                    case "item": value = v.target()
                     case "label": value = v.edgeLabel
                     case "type": value = v.type
                     case "sequence": value = v.sequence
@@ -557,7 +557,7 @@ public class Views {
         if let domain = domain { filter.append("domain = '\(domain)'") }
 
         return Array(
-            DatabaseController.current {
+            DatabaseController.sync {
                 $0.objects(CVUStoredDefinition.self)
                     .filter(filter.joined(separator: " AND "))
                     .map { (def) -> CVUStoredDefinition in def }

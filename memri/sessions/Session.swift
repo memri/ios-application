@@ -41,7 +41,7 @@ public final class Session: Equatable, Subscriptable {
     /// TBD
     var screenshot: File? {
         get {
-            state?.edge("screenshot")?.item(type: File.self)
+            state?.edge("screenshot")?.target(type: File.self)
         }
         set(value) {
             if let file = value {
@@ -60,7 +60,7 @@ public final class Session: Equatable, Subscriptable {
     var uid: Int?
     var parsed: CVUParsedSessionDefinition?
     var state: CVUStateDefinition? {
-        DatabaseController.current { realm in
+        DatabaseController.sync { realm in
             realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
         }
     }
@@ -126,7 +126,7 @@ public final class Session: Equatable, Subscriptable {
             else if
                 let parsedViews = parsed?["viewDefinitions"] as? [CVUParsedViewDefinition],
                 parsedViews.count > 0 {
-                try DatabaseController.tryCurrent(write:true) { _ in
+                try DatabaseController.trySync(write:true) { _ in
                     for parsed in parsedViews {
                         let viewState = try CVUStateDefinition.fromCVUParsedDefinition(parsed)
                         _ = try state.link(viewState, type: "view", sequence: .last)
@@ -182,7 +182,7 @@ public final class Session: Equatable, Subscriptable {
     }
 
     public func persist() throws {
-        DatabaseController.current(write:true) { realm in
+        DatabaseController.asyncOnCurrentThread(write:true) { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored session CVU. Creating a new one.")

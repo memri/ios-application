@@ -93,6 +93,8 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeVoteAction = "VoteAction"
     case typeWebsite = "Website"
     case typeWrittenWork = "WrittenWork"
+    case typeLabelAnnotation = "LabelAnnotation"
+    case typeLabelAnnotationCollection = "LabelAnnotationCollection"
 
     static var discriminator: Discriminator = ._type
 
@@ -175,6 +177,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeVoteAction: return Color(hex: "#93c47d")
         case .typeWebsite: return Color(hex: "#3d57e2")
         case .typeWrittenWork: return Color(hex: "#93c47d")
+        default: return Color(hex: "#93c47d")
         }
     }
 
@@ -257,6 +260,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeVoteAction: return Color(hex: "#ffffff")
         case .typeWebsite: return Color(hex: "#ffffff")
         case .typeWrittenWork: return Color(hex: "#ffffff")
+        default: return Color.white
         }
     }
 
@@ -343,6 +347,8 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeVoteAction: return VoteAction.self
         case .typeWebsite: return Website.self
         case .typeWrittenWork: return WrittenWork.self
+        case .typeLabelAnnotation: return LabelAnnotation.self
+        case .typeLabelAnnotationCollection: return LabelAnnotationCollection.self
         }
     }
 }

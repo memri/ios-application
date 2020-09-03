@@ -14,7 +14,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     var uid: Int
 
     var state: CVUStateDefinition? {
-        DatabaseController.current {
+        DatabaseController.sync {
             $0.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
         }
     }
@@ -414,7 +414,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     }
 
     public func persist() throws {
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")

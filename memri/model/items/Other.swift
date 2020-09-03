@@ -42,7 +42,7 @@ extension Address {
         \(street ?? "")
         \(city ?? "")
         \(postalCode == nil ? "" : postalCode! + ",") \(state ?? "")
-        \(edge("country")?.item()?.computedTitle ?? "")
+        \(edge("country")?.target()?.computedTitle ?? "")
         """
     }
 }
@@ -246,7 +246,7 @@ func getItem(_ type: String, _ uid: Int) -> Item? {
     let type = ItemFamily(rawValue: type)
     if let type = type {
         let item = ItemFamily.getType(type)
-        return DatabaseController.current {
+        return DatabaseController.sync {
             $0.object(ofType: item() as! Object.Type, forPrimaryKey: uid) as? Item
         }
     }

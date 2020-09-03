@@ -6,9 +6,19 @@ import Foundation
 import RealmSwift
 import Alamofire
 
+
 public class Installer: ObservableObject {
     @Published var isInstalled: Bool = false
     @Published var debugMode: Bool = false
+    
+    
+    enum InstallerState {
+        case inactive
+        case downloadingDemoData(Double)
+        case extractingDemoData
+        case installingDatabase
+    }
+    @Published var state: InstallerState = .inactive // For future use in reporting progress of installation
 
     private var readyCallback: () throws -> Void = {}
 
@@ -292,7 +302,7 @@ public class Installer: ObservableObject {
             $0.timeoutInterval = .greatestFiniteMagnitude
         }, to: destination)
         .downloadProgress { progress in
-            print(String(format: "PROGRESS: Download %.1f%%", progress.fractionCompleted * 100))
+            self.state = .downloadingDemoData(progress.fractionCompleted)
             callback(nil, progress.fractionCompleted)
         }
         .response { response in
@@ -310,7 +320,7 @@ public class Installer: ObservableObject {
                 return
             }
             
-            print("PROGRESS: Download completed, attempting unzip")
+            self.state = .extractingDemoData
             try? FileStorageController.unzipFile(from: destinationURL)
             try? FileStorageController.deleteFile(at: destinationURL)
             print("PROGRESS: Unzip completed, attempt install of database")
@@ -323,6 +333,7 @@ public class Installer: ObservableObject {
 
     private func install(_ context: MemriContext, dbName: String,
                          _ callback:@escaping (Error?) -> Void) {
+        self.state = .installingDatabase
         do {
             // Load default objects in database
             try context.cache.install(dbName) { error in
@@ -348,6 +359,7 @@ public class Installer: ObservableObject {
                         
                         // Installation complete
                         LocalSetting.set("memri/installed", Date().description)
+                        self.state = .inactive
                         
                         callback(nil)
                     }
@@ -366,7 +378,7 @@ public class Installer: ObservableObject {
 
     public func clearDatabase(_ context: MemriContext,
                               _ callback:@escaping (Error?) -> Void) {
-        DatabaseController.current(write:true, error:callback) { realm in
+        DatabaseController.asyncOnCurrentThread(write:true, error:callback) { realm in
             realm.deleteAll()
             
             Cache.cacheUIDCounter = -1
@@ -382,8 +394,7 @@ public class Installer: ObservableObject {
     public func clearSessions(_ context: MemriContext,
                               _ callback:@escaping (Error?) -> Void) {
         
-        DatabaseController.current(write:true, error:callback) { _ in
-            
+        DatabaseController.asyncOnCurrentThread(write:true, error:callback) { _ in
             // Create a new default session
             context.sessions.install(context) { error in
                 if let error = error {

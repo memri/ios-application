@@ -14,10 +14,8 @@ struct FilterPanel: View {
     var body: some View {
             HStack(alignment: .top, spacing: 0) {
                 RendererSelectionPanel()
-                    .frame(minWidth: 200)
 				Divider()
 				ConfigPanel()
-					.frame(minWidth: 200)
             }
                 .frame(maxWidth: .infinity)
                 .frame(height: 250)

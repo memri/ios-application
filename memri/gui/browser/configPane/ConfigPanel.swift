@@ -46,6 +46,7 @@ struct ConfigPanel: View {
             ConfigPanelSortView()
         } else {
             Text("No configurable settings")
+                .navigationBarItems(trailing: EmptyView())
                 .padding()
                 .foregroundColor(Color(.secondaryLabel))
                 .multilineTextAlignment(.center)

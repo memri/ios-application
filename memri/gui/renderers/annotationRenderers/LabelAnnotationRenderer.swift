@@ -21,6 +21,7 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     required init(context: MemriContext, config: CascadingRendererConfig?) {
         self.context = context
         self.config = (config as? LabelAnnotationRendererConfig) ?? LabelAnnotationRendererConfig()
+        self.loadExistingAnnotation()
     }
     
     let context: MemriContext
@@ -39,10 +40,17 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     }
     
     @Published
-    var currentIndex: Int = .zero
+    var currentIndex: Int = .zero {
+        didSet {
+            if currentIndex != oldValue {
+                loadExistingAnnotation()
+            }
+        }
+    }
     
     @Published
     var selectedLabels = Set<String>()
+    
     
     var labelType: String = "emailLabels"
     var options: [LabelOption] = [
@@ -60,21 +68,43 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     
     func moveToNextItem() {
         guard currentIndex < context.items.endIndex - 1 else { return }
-        selectedLabels.removeAll()
         currentIndex += 1
+    }
+    
+    func loadExistingAnnotation() {
+        selectedLabels = currentAnnotationLabels
     }
     
     func applyCurrentItem() {
         guard let currentItem = currentItem else { return }
-        print("Labels confirmed: \(selectedLabels)")
         
-        let annotationItem = LabelAnnotation()
-        annotationItem.annotatedItem = currentItem
-        annotationItem.labelType = labelType
-        annotationItem.labels.removeAll()
-        annotationItem.labels.append(objectsIn: selectedLabels)
+        let oldAnnotation = currentAnnotation()
+        DatabaseController.sync(write: true) { realm in
+            let annotationItem = oldAnnotation ?? LabelAnnotation()
+            annotationItem.labelType = self.labelType
+            annotationItem.labelsSet = self.selectedLabels
+            do {
+                if oldAnnotation == nil {
+                    annotationItem.uid.value = try annotationItem.uid.value ?? Cache.incrementUID()
+                    realm.add(annotationItem)
+                }
+                let _ = try annotationItem.link(currentItem, type: "annotatedItem", distinct: true, overwrite: true)
+            } catch {
+                print("Couldn't link item to annotation: \(error)")
+            }
+        }
         
         moveToNextItem()
+    }
+    
+    func currentAnnotation() -> LabelAnnotation? {
+        DatabaseController.sync { realm in
+            let edge = self.currentItem?.reverseEdge("annotatedItem")
+            return edge?.source(type: LabelAnnotation.self)
+        }
+    }
+    var currentAnnotationLabels: Set<String> {
+        currentAnnotation()?.labelsSet ?? []
     }
     
     var currentItem: Item? {
@@ -90,6 +120,14 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     var progressText: String? {
         guard !context.items.isEmpty else { return nil }
         return "Item \(currentIndex + 1) of \(context.items.count)"
+    }
+    
+    var enableBackButton: Bool {
+        currentIndex > 0
+    }
+    
+    var enableSkipButton: Bool {
+        currentIndex < context.items.endIndex - 1
     }
 }
 
@@ -135,6 +173,9 @@ struct LabelAnnotationRendererView: View {
                            onBackPressed: controller.moveToPreviousItem,
                            onCheckmarkPressed: controller.applyCurrentItem,
                            onSkipPressed: controller.moveToNextItem,
+                           enableBackButton: controller.enableBackButton,
+                           enableCheckmarkButton: true,
+                           enableSkipButton: controller.enableSkipButton,
                            topText: controller.progressText,
                            content: currentContent,
                            useScrollView: false)
@@ -150,6 +191,10 @@ struct LabelSelectionView<Content: View>: View {
     var onBackPressed: () -> Void
     var onCheckmarkPressed: () -> Void
     var onSkipPressed: () -> Void
+    
+    var enableBackButton: Bool
+    var enableCheckmarkButton: Bool
+    var enableSkipButton: Bool
     
     var topText: String?
     
@@ -214,20 +259,25 @@ struct LabelSelectionView<Content: View>: View {
                     Image(systemName: "arrow.uturn.left").font(.system(size: 20))
                         .padding(.horizontal, 20)
                         .contentShape(Rectangle())
+                        .foregroundColor(enableBackButton ? Color.blue : Color.gray.opacity(0.5))
                 }
+                .disabled(!enableBackButton)
                 Button(action: onCheckmarkPressed) {
                     Image(systemName: "checkmark").font(.system(size: 25))
                         .padding()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .foregroundColor(.white)
-                        .background(Color.green)
+                        .background(Color.green.opacity(enableCheckmarkButton ? 1 : 0.5))
                         .contentShape(Rectangle())
                 }
+                .disabled(!enableCheckmarkButton)
                 Button(action: onSkipPressed) {
                     Text("Skip").font(.system(size: 20))
                         .padding(.horizontal, 20)
                         .contentShape(Rectangle())
+                        .foregroundColor(enableSkipButton ? Color.blue : Color.gray.opacity(0.5))
                 }
+                .disabled(!enableSkipButton)
             }
             .opacity(enabled ? 1 : 0.4)
             .frame(height: 50)

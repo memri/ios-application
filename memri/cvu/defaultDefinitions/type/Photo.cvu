@@ -87,9 +87,8 @@ Photo[] {
 		file: {{.file}}
 		initialItem: {{currentItem}}
 		
-		VStack {
+		/*VStack {
 			padding: 10
-/*            show: {{.caption != ""}}*/ /* TODO: THIS BREAKS PHOTO LOADING */
             
 			VStack {
 				spacing: 5
@@ -101,10 +100,7 @@ Photo[] {
 					text: "{.caption}"
 					font: 18 bold
 				}
-/*				Text {*/
-/*					text: "Photo taken: {.dateCreated}"*/
-/*				}*/
 			}
-		}
+		}*/
 	}
 }

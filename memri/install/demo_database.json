@@ -51,6 +51,11 @@
     },
     {
         "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "Inbox"
+    },
+    {
+        "_type": "NavigationItem",
         "itemType": "item",
         "title": "Messages",
         "sessionName": "all-message-channels"
@@ -60,6 +65,11 @@
         "itemType": "item",
         "title": "email",
         "sessionName": "all-email-messages"
+    },
+    {
+        "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "General"
     },
     {
         "_type": "NavigationItem",
@@ -138,6 +148,18 @@
         "type": "item",
         "title": "location",
         "sessionName": "all-locations"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "Email Annotation UI",
+        "sessionName": "annotationUIExample"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "Email Annotation List",
+        "sessionName": "annotationListExample"
     },
     {
         "_type": "Importer",
@@ -3732,21 +3754,6 @@
         ]
     },
     {
-        "_type": "MessageChannel",
-        "uid": 20000000007,
-        "externalId": "1357924680@s.whatsapp.net",
-        "name": "",
-        "topic": "WhatsApp private chat",
-        "encrypted": false,
-        "allEdges": [
-            {
-                "targetType": "Account",
-                "uid": 20000000003,
-                "_type": "receiver"
-            }
-        ]
-    },
-    {
         "_type": "Message",
         "uid": 20000000008,
         "externalId": "93463F7980167E92C28FF0781E650E80",
@@ -3916,7 +3923,7 @@
         "dateSent": 1589691670000,
         "allEdges": [
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000008,
                 "_type": "message"
             },
@@ -3941,7 +3948,7 @@
                 "_type": "photo"
             },
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000009,
                 "_type": "message"
             },
@@ -3961,7 +3968,7 @@
         "dateSent": 1589691690000,
         "allEdges": [
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000010,
                 "_type": "message"
             },

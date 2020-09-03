@@ -49,7 +49,7 @@ public class UIElement: CVUToString {
                         var result = [Item]()
                         if let list = x as? Results<Edge> {
                             for edge in list {
-                                if let d = edge.item() {
+                                if let d = edge.target() {
                                     result.append(d)
                                 }
                             }
@@ -154,7 +154,7 @@ public enum UIElementFamily: String, CaseIterable {
     case VStack, HStack, ZStack, EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
         Text, Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
         Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, RichTextfield, Empty,
-        TimelineItem, MessageBubble, EmailContent, EmailHeader, SmartText
+        TimelineItem, MessageBubble, EmailContent, EmailHeader, SmartText, Toggle
 }
 
 public enum UIElementProperties: String, CaseIterable {

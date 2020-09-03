@@ -292,7 +292,7 @@ struct GeneralEditorSection: View {
                                 if edges.count > 0 {
                                     ForEach<[Edge], Edge, UIElementView>(edges,
                                                                          id: \.self) { edge in
-                                        let targetItem = edge.item()
+                                        let targetItem = edge.target()
                                         return renderConfig.render(
                                             item: targetItem,
                                             group: groupKey,
@@ -338,7 +338,7 @@ struct GeneralEditorSection: View {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: spacing) {
                                     ForEach<[Edge], Edge, ItemCell>(edges, id: \.self) { edge in
-                                        let targetItem = edge.item()
+                                        let targetItem = edge.target()
                                         return ItemCell(
                                             item: targetItem,
                                             rendererNames: ["generalEditor"],

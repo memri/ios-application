@@ -1,0 +1,23 @@
+[session = annotationUIExample] {
+    [view] {
+        title: "Email Annotations"
+        defaultRenderer: labelAnnotation
+        [datasource = pod] {
+            query: "EmailMessage"
+        }
+    }
+}
+
+
+EmailMessage[] {
+    title: "Email Annotation"
+    emptyResultText: "There are no emails here yet"
+    defaultRenderer: labelAnnotation
+    sortFields: subject dateModified dateAccessed dateCreated
+    
+    [datasource = pod] {
+        sortProperty: dateSent
+        sortAscending: true
+    }
+    
+}

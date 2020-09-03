@@ -237,6 +237,8 @@
 		B81B792F24D04A9E00C25CDF /* ConfigPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */; };
 		B81B793124D04AE700C25CDF /* RendererSelectionPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */; };
 		B81B793324D04CB600C25CDF /* ConfigPanelModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B81B793224D04CB600C25CDF /* ConfigPanelModel.swift */; };
+		B81F7F6E24FFBBB4000C33FE /* AnnotationListExample.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B81F7F6D24FFBBB4000C33FE /* AnnotationListExample.cvu */; };
+		B81F7F7024FFC766000C33FE /* AnnotationUIExample.cvu in Resources */ = {isa = PBXBuildFile; fileRef = B81F7F6F24FFC68A000C33FE /* AnnotationUIExample.cvu */; };
 		B821D67C24C70DCF006D6CFF /* PhotoViewerRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */; };
 		B821D67D24C70DCF006D6CFF /* PhotoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */; };
 		B821D67F24C71274006D6CFF /* DemoAssets in Resources */ = {isa = PBXBuildFile; fileRef = B821D67E24C71274006D6CFF /* DemoAssets */; };
@@ -533,6 +535,8 @@
 		B81B792E24D04A9E00C25CDF /* ConfigPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigPanel.swift; sourceTree = "<group>"; };
 		B81B793024D04AE700C25CDF /* RendererSelectionPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererSelectionPanel.swift; sourceTree = "<group>"; };
 		B81B793224D04CB600C25CDF /* ConfigPanelModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigPanelModel.swift; sourceTree = "<group>"; };
+		B81F7F6D24FFBBB4000C33FE /* AnnotationListExample.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = AnnotationListExample.cvu; sourceTree = "<group>"; };
+		B81F7F6F24FFC68A000C33FE /* AnnotationUIExample.cvu */ = {isa = PBXFileReference; lastKnownFileType = text; path = AnnotationUIExample.cvu; sourceTree = "<group>"; };
 		B821D67A24C70DCF006D6CFF /* PhotoViewerRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewerRenderer.swift; sourceTree = "<group>"; };
 		B821D67B24C70DCF006D6CFF /* PhotoViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoViewController.swift; sourceTree = "<group>"; };
 		B821D67E24C71274006D6CFF /* DemoAssets */ = {isa = PBXFileReference; lastKnownFileType = folder; path = DemoAssets; sourceTree = "<group>"; };
@@ -821,7 +825,8 @@
 		5D493FDC23FC15D10034692B /* cvu */ = {
 			isa = PBXGroup;
 			children = (
-				86CDB46E2469C1F0007EAE67 /* defaults */,
+				868EF61F2476699900C0375F /* parsers */,
+				86CDB46E2469C1F0007EAE67 /* defaultDefinitions */,
 				5DB8EC0024598EAC0028FD2E /* views */,
 			);
 			path = cvu;
@@ -851,7 +856,6 @@
 				5DD1E9B623FD812C007BDF7B /* model */,
 				5D493FDC23FC15D10034692B /* cvu */,
 				5DFB0CB824179DFC002FBDE7 /* gui */,
-				868EF61F2476699900C0375F /* parsers */,
 				5D1A3E62240704BF00A0583B /* extension */,
 				5D599BC223F2B77700F218A0 /* Preview Content */,
 				C8A6F7332419907D00FF8183 /* Resources */,
@@ -1176,9 +1180,10 @@
 			path = install;
 			sourceTree = "<group>";
 		};
-		86CDB46E2469C1F0007EAE67 /* defaults */ = {
+		86CDB46E2469C1F0007EAE67 /* defaultDefinitions */ = {
 			isa = PBXGroup;
 			children = (
+				B81F7F6C24FFBB93000C33FE /* annotation */,
 				5DAFB6342479530A00719160 /* session */,
 				5DAFB631247952DF00719160 /* user */,
 				5DAFB6242479528700719160 /* named */,
@@ -1192,7 +1197,7 @@
 				86CDB4732469C49F007EAE67 /* macro_views.json */,
 				86CDB4752469C542007EAE67 /* template_views.json */,
 			);
-			path = defaults;
+			path = defaultDefinitions;
 			sourceTree = "<group>";
 		};
 		86CDB4772469CB57007EAE67 /* type */ = {
@@ -1259,6 +1264,15 @@
 				86865D37244996AA0010271A /* FlowStack.swift */,
 			);
 			path = components;
+			sourceTree = "<group>";
+		};
+		B81F7F6C24FFBB93000C33FE /* annotation */ = {
+			isa = PBXGroup;
+			children = (
+				B81F7F6F24FFC68A000C33FE /* AnnotationUIExample.cvu */,
+				B81F7F6D24FFBBB4000C33FE /* AnnotationListExample.cvu */,
+			);
+			path = annotation;
 			sourceTree = "<group>";
 		};
 		B821D67924C70DCF006D6CFF /* PhotoViewerRenderer */ = {
@@ -1749,9 +1763,11 @@
 				86AECB1724D3FFD90024D7B9 /* inbox.cvu in Resources */,
 				8680189224D1D048004FC4E3 /* demo_database.json in Resources */,
 				5DAFB628247952A800719160 /* choose-item-by-query.cvu in Resources */,
+				B81F7F7024FFC766000C33FE /* AnnotationUIExample.cvu in Resources */,
 				5D0A28BA24067E5C00398B17 /* test_dataItems.json in Resources */,
 				5DAFB633247952F500719160 /* UserNote.cvu-disabled in Resources */,
 				5D487F252440772D00B50202 /* list_item_component.json in Resources */,
+				B81F7F6E24FFBBB4000C33FE /* AnnotationListExample.cvu in Resources */,
 				5D5327D9248FA59C001FF168 /* Importer.cvu in Resources */,
 				5DAFB6152479524500719160 /* thumbnail.cvu in Resources */,
 				5DAFB61B2479526100719160 /* Label.cvu in Resources */,

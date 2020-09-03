@@ -18,7 +18,7 @@ class LocalFileSyncQueue : Object {
     
     public class func add(_ sha256:String, task:String) {
         do {
-            try DatabaseController.tryCurrent(write:true) { realm in
+            try DatabaseController.trySync(write:true) { realm in
                 if let _ = realm.object(ofType: LocalFileSyncQueue.self, forPrimaryKey: sha256) {
                     return
                 }
@@ -32,7 +32,7 @@ class LocalFileSyncQueue : Object {
     
     public class func remove(_ sha256:String) {
         do {
-            try DatabaseController.tryCurrent(write:true) { realm in
+            try DatabaseController.trySync(write:true) { realm in
                 if let fileToUpload = realm.object(ofType: LocalFileSyncQueue.self, forPrimaryKey: sha256) {
                     fileToUpload["task"] = ""
                     realm.delete(fileToUpload)

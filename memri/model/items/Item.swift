@@ -646,7 +646,7 @@ public class Item: SchemaItem {
     /// update the dateAccessed property to the current date
     public func accessed() {
         let safeSelf = ItemReference(to: self)
-        DatabaseController.background(write:true) { _ in
+        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
             guard let item = safeSelf?.resolve() else { return }
 
             item.dateAccessed = Date()
@@ -671,7 +671,7 @@ public class Item: SchemaItem {
         }
         
         let safeSelf = ItemReference(to: self)
-        DatabaseController.background(write:true) { _ in
+        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
             guard let item = safeSelf?.resolve() else { return }
 
             let previousModified = item.dateModified
@@ -680,7 +680,7 @@ public class Item: SchemaItem {
             if previousModified?.distance(to: Date()) ?? 0 < 300 /* 5 minutes */ {
                 #warning("Test that .last gives the last added audit item")
                 if
-                    let auditItem = item.edges("changelog")?.last?.item(type: AuditItem.self),
+                    let auditItem = item.edges("changelog")?.last?.target(type: AuditItem.self),
                     let content = auditItem.content,
                     var dict = try unserialize(content, type: [String: AnyCodable?].self) {
                     for field in updatedFields {
@@ -769,7 +769,7 @@ extension RealmSwift.Results where Element == Edge {
         }
 
         do {
-            return try DatabaseController.tryCurrent {
+            return try DatabaseController.trySync {
                 let filter = "uid = "
                     + self.compactMap {
                         if let value = (dir == .target ? $0.targetItemID.value : $0.sourceItemID
@@ -850,15 +850,13 @@ extension memri.Edge {
         ItemFamily(rawValue: sourceItemType ?? "")?.getType() as? Item.Type
     }
 
-    func item<T: Item>(type: T.Type? = T.self) -> T? {
-        target(type: type)
-    }
-
-    func target<T: Object>(type _: T.Type? = T.self) -> T? {
+    func target<T: Item>(type _: T.Type? = T.self) -> T? {
         do {
-            return try DatabaseController.tryCurrent {
+            return try DatabaseController.trySync {
                 if let itemType = self.targetType {
-                    return $0.object(ofType: itemType, forPrimaryKey: self.targetItemID) as? T
+                    let object = $0.object(ofType: itemType, forPrimaryKey: self.targetItemID) as? T
+                    guard (object as Item?)?.deleted == false else { return nil } // Check the edge doesn't point to a deleted item
+                    return object
                 }
                 else {
                     throw "Could not resolve edge target: \(self)"
@@ -874,9 +872,11 @@ extension memri.Edge {
 
     func source<T: Item>(type _: T.Type? = T.self) -> T? {
         do {
-            return try DatabaseController.tryCurrent {
+            return try DatabaseController.trySync {
                 if let itemType = self.sourceType {
-                    return $0.object(ofType: itemType, forPrimaryKey: self.sourceItemID) as? T
+                    let object = $0.object(ofType: itemType, forPrimaryKey: self.sourceItemID) as? T
+                    guard (object as Item?)?.deleted == false else { return nil }  // Check the edge doesn't come from a deleted item
+                    return object
                 }
                 else {
                     throw "Could not resolve edge source: \(self)"

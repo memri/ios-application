@@ -302,6 +302,15 @@ public struct UIElementView: SwiftUI.View {
                             self.viewArguments
                     )
                 }
+                else if from.type == .Toggle {
+                    renderToggle()
+                        .setProperties(
+                        from.propertyResolver.properties,
+                        self.item,
+                        context,
+                        self.viewArguments
+                    )
+                }
                 else if from.type == .SubView {
                     if has("viewName") {
                         SubView(
@@ -642,6 +651,15 @@ public struct UIElementView: SwiftUI.View {
                                backgroundColor: nil,
                                isEditing: editModeBinding)
             .eraseToAnyView()
+    }
+    
+    func renderToggle() -> some View {
+        let (_, dataItem, propName) = from.getType("value", item, viewArguments)
+        
+        return Toggle(isOn: Binding<Bool>(
+            get: { dataItem[propName] as? Bool ?? false },
+            set: { dataItem.set(propName, $0) }
+        )) { EmptyView() }
     }
 
     func renderTextfield() -> some View {

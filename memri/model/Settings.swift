@@ -103,7 +103,7 @@ public class Settings {
     /// - Parameter path: path for the setting
     /// - Returns: setting value
     public func getSetting<T: Decodable>(_ path: String, type: T.Type = T.self) throws -> T? {
-        try DatabaseController.tryCurrent { realm in
+        try DatabaseController.trySync { realm in
             let item = realm.objects(Setting.self).first(where: { $0.key == path })
 
             if let item = item, let json = item.json {
@@ -128,7 +128,7 @@ public class Settings {
     ///   - path: path of the setting
     ///   - value: setting Value
     public func setSetting(_ path: String, _ value: AnyCodable) throws {
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             if let s = realm.objects(Setting.self).first(where: { $0.key == path }) {
                 s.json = try serialize(value)
 

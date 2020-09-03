@@ -43,9 +43,10 @@ struct RendererSelectionPanel: View {
         let renderDefinitions: [CVUParsedDefinition] = context.currentView?.cascadeList("rendererDefinitions", selectorType: .list) ?? []
         return renderDefinitions.compactMap {
             $0.name
-        }
+        }.filter { $0 != "generalEditor" }
     }
 }
+
 //
 //private extension RendererSelectionPanel {
 //	func getRendererCategories() -> [(String, FilterPanelRendererButton)] {
