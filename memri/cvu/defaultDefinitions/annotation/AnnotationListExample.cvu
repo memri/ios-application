@@ -13,7 +13,7 @@
             HStack {
                 VStack {
                     Text {
-                        text: "Subject: {._annotatedItem.target.subject or '-'}"
+                        text: "Subject: {._annotatedItem.target.subject}"
                         lineLimit: 1
                         font: 18
                         color: #333
