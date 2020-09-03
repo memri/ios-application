@@ -7,9 +7,6 @@
     }
 }
 
-/*EmailMessage {*/
-/*    */
-/*}*/
 
 EmailMessage[] {
     title: "All Emails"
@@ -105,46 +102,4 @@ EmailMessage[] {
         }
     }
     
-    [renderer = labelAnnotation] {
-        VStack {
-            alignment: left
-            
-            VStack {
-                padding: 10
-                spacing: 5
-                background: #DFDFDF
-                
-                HStack {
-                    align: left
-                    
-                    Text {
-                        text: "From: {.sender.owner.firstName}"
-                        lineLimit: 1
-                        font: 18 semibold
-                        color: #333
-                        padding: 0 0 0 0
-                    }
-                    Spacer
-                    Text {
-                        text: "{.dateModified.format('time')}" /* TODO: Short */
-                        lineLimit: 1
-                        font: 11 regular
-                        color: #888
-                        padding: 0 0 0 0
-                    }
-                }
-                Text {
-                    text: "Subject: {.subject}"
-                    lineLimit: 1
-                    font: 18 regular
-                    color: #666
-                    padding: 0 0 0 0
-                }
-            }
-            
-            EmailContent {
-                content: "{.content}"
-            }
-        }
-    }
 }

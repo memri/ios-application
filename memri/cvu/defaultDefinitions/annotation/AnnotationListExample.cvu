@@ -1,49 +1,44 @@
 [session = annotationListExample] {
     [view] {
         title: "Email Annotations"
+        emptyResultText: "There are no annotations here yet"
+        defaultRenderer: list
+        
         [datasource = pod] {
-            query: "LabelAnnotation AND ANY allEdges.targetItemType = 'EmailMessage'"
+            query: "LabelAnnotation AND labelType = 'emailLabels' AND ANY allEdges.targetItemType = 'EmailMessage'"
         }
-    }
-}
-
-
-LabelAnnotation[] {
-    title: "Email Annotations"
-    emptyResultText: "There are no annotations here yet"
-    defaultRenderer: list
-    
-    [renderer = list] {
-    press: noop
-        HStack {
-            VStack {
-            Text {
-                text: {{._annotatedItem.target.subject or "No Subject"}}
-                lineLimit: 1
-                font: 18 semibold
-                color: #333
-                padding: 0 0 0 0
-            }
-            Text {
-                text: {{._annotatedItem.target.sender.owner.firstName}}
-                lineLimit: 1
-                font: 18 semibold
-                color: #333
-                padding: 0 0 0 0
-            }
-            Text {
-                text: "{.labels}"
-                lineLimit: 1
-                font: 16
-                color: #555
-                padding: 0 0 0 0
-            }
-            }
-            Toggle {
-            value: {{.allowSharing}}
-            padding: 5
-}
+        
+        [renderer = list] {
+            press: noop
+            HStack {
+                VStack {
+                    Text {
+                        text: {{._annotatedItem.target.subject or "No Subject"}}
+                        lineLimit: 1
+                        font: 18 semibold
+                        color: #333
+                        padding: 0 0 0 0
+                    }
+                    Text {
+                        text: {{._annotatedItem.target.sender.owner.firstName}}
+                        lineLimit: 1
+                        font: 18 semibold
+                        color: #333
+                        padding: 0 0 0 0
+                    }
+                    Text {
+                        text: "{.labels}"
+                        lineLimit: 1
+                        font: 16
+                        color: #555
+                        padding: 0 0 0 0
+                    }
+                }
+                Toggle {
+                    value: {{.allowSharing}}
+                    padding: 5
+                }
+            }        
         }
-                
     }
 }

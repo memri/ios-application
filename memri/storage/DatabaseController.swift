@@ -255,7 +255,7 @@ class DatabaseController {
     /// Execute a realm based function that returns a value on the main thread
     static func sync<T>(
         write:Bool = false,
-        _ exec:@escaping (Realm) throws -> T?
+        _ exec: (Realm) throws -> T?
     ) -> T? {
         do {
             return try trySync(write: write, exec)
@@ -269,7 +269,7 @@ class DatabaseController {
     /// Execute a realm based function that throws and returns a value on the main thread
     static func trySync<T>(
         write:Bool = false,
-        _ exec:@escaping (Realm) throws -> T?
+        _ exec: (Realm) throws -> T?
     ) throws -> T? {
         let realm = try getRealmSync()
         

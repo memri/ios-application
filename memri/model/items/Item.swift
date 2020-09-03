@@ -228,24 +228,15 @@ public class Item: SchemaItem {
         }
 
         // TODO: collection support
-        #warning("Not implemented fully yet")
+        #warning("Reverse EdgeCollection support not implemented yet")
 
-        // Should this create a temporary edge for which item() is source() ?
+        
         return realm?.objects(Edge.self)
             .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)'")
     }
 
     public func reverseEdge(_ edgeType: String) -> Edge? {
-        guard realm != nil, let uid = self.uid.value else {
-            return nil
-        }
-
-        // TODO: collection support
-        #warning("Not implemented fully yet")
-
-        // Should this create a temporary edge for which item() is source() ?
-        return realm?.objects(Edge.self)
-            .filter("deleted = false AND targetItemID = \(uid) AND type = '\(edgeType)'").first
+        return reverseEdges(edgeType)?.first
     }
 
     public func edges(_ edgeType: String) -> Results<Edge>? {
@@ -282,36 +273,11 @@ public class Item: SchemaItem {
     }
 
     public func edge(_ edgeType: String) -> Edge? {
-        guard edgeType != "", realm != nil else {
-            return nil
-        }
-
-        if let collection = edgeCollection(edgeType) {
-            return edge(collection)
-        }
-
-        return allEdges.filter("deleted = false AND type = '\(edgeType)'").first
+        edges(edgeType)?.first
     }
 
     public func edge(_ edgeTypes: [String]) -> Edge? {
-        guard edgeTypes.count > 0, realm != nil else {
-            return nil
-        }
-
-        var flattened = [String]()
-        for type in edgeTypes {
-            if let collection = edgeCollection(type) {
-                flattened.append(contentsOf: collection)
-            }
-            else {
-                flattened.append(type)
-            }
-        }
-
-        let filter =
-            "deleted = false and (type = '\(flattened.joined(separator: "' or type = '"))')"
-
-        return allEdges.filter(filter).first
+        edges(edgeTypes)?.first
     }
 
     private func determineSequenceNumber(

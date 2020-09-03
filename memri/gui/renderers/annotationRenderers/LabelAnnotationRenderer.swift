@@ -52,14 +52,14 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     var selectedLabels = Set<String>()
     
     
-    var labelType: String = "emailLabels"
-    var options: [LabelOption] = [
-        LabelOption(labelID: "personal", text: "Personal", icon: Image(systemName: "person.circle")),
-        LabelOption(labelID: "important", text: "Important", icon: Image(systemName: "bell")),
-        LabelOption(labelID: "bill", text: "Bill", icon: Image(systemName: "creditcard")),
-        LabelOption(labelID: "receipt", text: "Receipt", icon: Image(systemName: "cart")),
-        LabelOption(labelID: "spam", text: "Spam", icon: Image(systemName: "hand.thumbsdown"))
-    ]
+    var labelType: String {
+        config.labelType
+    }
+    var labelOptions: [LabelOption] {
+        config.labelOptions.indexed().map { label in
+            LabelOption(labelID: label.element, text: label.element.titleCase(), icon: Image(systemName: config.labelOptionIcons[safe: label.index] ?? "tag"))
+        }
+    }
     
     func moveToPreviousItem() {
         guard currentIndex > 0 else { return }
@@ -99,7 +99,7 @@ class LabelAnnotationRendererController: RendererController, ObservableObject {
     
     func currentAnnotation() -> LabelAnnotation? {
         DatabaseController.sync { realm in
-            let edge = self.currentItem?.reverseEdge("annotatedItem")
+            let edge = self.currentItem?.reverseEdges("annotatedItem")?.first(where: { $0.source(type: LabelAnnotation.self)?.labelType == labelType })
             return edge?.source(type: LabelAnnotation.self)
         }
     }
@@ -139,6 +139,16 @@ class LabelAnnotationRendererConfig: CascadingRendererConfig, ConfigurableRender
     func configItems(context: MemriContext) -> [ConfigPanelModel.ConfigItem] {
         []
     }
+    
+    var labelType: String {
+        cascadeProperty("labelType") ?? "UNDEFINED"
+    }
+    var labelOptions: [String] {
+        cascadeList("labelOptions")
+    }
+    var labelOptionIcons: [String] {
+        cascadeList("labelOptionIcons")
+    }
 }
 
 
@@ -167,7 +177,7 @@ struct LabelAnnotationRendererView: View {
     }
     
     var body: some View {
-        LabelSelectionView(options: controller.options,
+        LabelSelectionView(options: controller.labelOptions,
                            selected: selectedLabelBinding,
                            enabled: controller.currentItem != nil,
                            onBackPressed: controller.moveToPreviousItem,
