@@ -1004,9 +1004,9 @@
 		5DD1E9B623FD812C007BDF7B /* model */ = {
 			isa = PBXGroup;
 			children = (
-				B82792B824E39EC90085DB8A /* helpers */,
-				863CDB6F2441E680000D7AC0 /* items */,
 				B8A5E30724F77B9400A1F488 /* schema */,
+				863CDB6F2441E680000D7AC0 /* schemaExtensions */,
+				B82792B824E39EC90085DB8A /* helpers */,
 				8665ADD8241A8387005B3FA5 /* Cache.swift */,
 				867527B924B76F5B002B5006 /* CachePubSub.swift */,
 				867527BB24B8290B002B5006 /* SettingsPubSub.swift */,
@@ -1057,14 +1057,14 @@
 			path = install;
 			sourceTree = "<group>";
 		};
-		863CDB6F2441E680000D7AC0 /* items */ = {
+		863CDB6F2441E680000D7AC0 /* schemaExtensions */ = {
 			isa = PBXGroup;
 			children = (
 				5D38DE162405776B00FF9B70 /* Item.swift */,
 				863CDB702441E69F000D7AC0 /* File.swift */,
 				86FFD0C424A4CE42001BF14B /* Other.swift */,
 			);
-			path = items;
+			path = schemaExtensions;
 			sourceTree = "<group>";
 		};
 		866F87D42456AD76000E5FAB /* persons */ = {

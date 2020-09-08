@@ -151,6 +151,11 @@
     },
     {
         "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "Annotation"
+    },
+    {
+        "_type": "NavigationItem",
         "type": "item",
         "title": "Email Annotation UI",
         "sessionName": "annotationUIExample"
@@ -208,7 +213,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image6.jpg"
+                    "filename": "demoData/unsplash-image6.jpg"
                 }
             }
         ]
@@ -222,7 +227,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager9.jpg"
+                    "filename": "demoData/iphone-imager9.jpg"
                 }
             }
         ]
@@ -236,7 +241,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager39.jpg"
+                    "filename": "demoData/iphone-imager39.jpg"
                 }
             }
         ]
@@ -251,7 +256,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image4.jpg"
+                    "filename": "demoData/iphone-image4.jpg"
                 }
             }
         ]
@@ -266,7 +271,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image5.jpg"
+                    "filename": "demoData/iphone-image5.jpg"
                 }
             }
         ]
@@ -280,7 +285,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image2.jpg"
+                    "filename": "demoData/unsplash-image2.jpg"
                 }
             }
         ]
@@ -294,7 +299,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image13.jpg"
+                    "filename": "demoData/unsplash-image13.jpg"
                 }
             }
         ]
@@ -308,7 +313,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "karen-penroz-06ZTGDcAQFs-unsplash.jpg"
+                    "filename": "demoData/karen-penroz-06ZTGDcAQFs-unsplash.jpg"
                 }
             }
         ]
@@ -323,7 +328,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image16.jpg"
+                    "filename": "demoData/unsplash-image16.jpg"
                 }
             }
         ]
@@ -337,7 +342,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager67.jpg"
+                    "filename": "demoData/iphone-imager67.jpg"
                 }
             }
         ]
@@ -351,7 +356,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager69.jpg"
+                    "filename": "demoData/iphone-imager69.jpg"
                 }
             }
         ]
@@ -365,7 +370,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager71.jpg"
+                    "filename": "demoData/iphone-imager71.jpg"
                 }
             }
         ]
@@ -379,7 +384,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person30.jpg"
+                    "filename": "demoData/fake-person30.jpg"
                 }
             }
         ]
@@ -394,7 +399,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "ave-calvar-ukuIJ6ReFms-unsplash.jpg"
+                    "filename": "demoData/ave-calvar-ukuIJ6ReFms-unsplash.jpg"
                 }
             }
         ]
@@ -408,7 +413,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "karen-penroz-06ZTGDcAQFs-unsplash.jpg"
+                    "filename": "demoData/karen-penroz-06ZTGDcAQFs-unsplash.jpg"
                 }
             }
         ]
@@ -423,7 +428,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash.jpg"
+                    "filename": "demoData/katarzyna-korobczuk-pwUjBdc5U9c-unsplash.jpg"
                 }
             }
         ]
@@ -438,7 +443,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "szabo-viktor-tarTTEaiIx4-unsplash.jpg"
+                    "filename": "demoData/szabo-viktor-tarTTEaiIx4-unsplash.jpg"
                 }
             }
         ]
@@ -453,7 +458,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image2.jpg"
+                    "filename": "demoData/iphone-image2.jpg"
                 }
             }
         ]
@@ -468,7 +473,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person1.jpg"
+                    "filename": "demoData/fake-person1.jpg"
                 }
             }
         ]
@@ -483,7 +488,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image1.jpg"
+                    "filename": "demoData/iphone-image1.jpg"
                 }
             }
         ]
@@ -498,7 +503,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image3.jpg"
+                    "filename": "demoData/iphone-image3.jpg"
                 }
             }
         ]
@@ -513,7 +518,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image6.jpg"
+                    "filename": "demoData/iphone-image6.jpg"
                 }
             }
         ]
@@ -528,7 +533,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager43.jpg"
+                    "filename": "demoData/iphone-imager43.jpg"
                 }
             }
         ]
@@ -543,7 +548,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image7.jpg"
+                    "filename": "demoData/iphone-image7.jpg"
                 }
             }
         ]
@@ -558,7 +563,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image8.jpg"
+                    "filename": "demoData/iphone-image8.jpg"
                 }
             }
         ]
@@ -573,7 +578,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person6.jpg"
+                    "filename": "demoData/fake-person6.jpg"
                 }
             }
         ]
@@ -588,7 +593,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image11.jpg"
+                    "filename": "demoData/iphone-image11.jpg"
                 }
             }
         ]
@@ -604,7 +609,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person9.jpg"
+                    "filename": "demoData/fake-person9.jpg"
                 }
             }
         ]
@@ -619,7 +624,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person10.jpg"
+                    "filename": "demoData/fake-person10.jpg"
                 }
             }
         ]
@@ -634,7 +639,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person11.jpg"
+                    "filename": "demoData/fake-person11.jpg"
                 }
             }
         ]
@@ -649,7 +654,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person12.jpg"
+                    "filename": "demoData/fake-person12.jpg"
                 }
             }
         ]
@@ -664,7 +669,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person13.jpg"
+                    "filename": "demoData/fake-person13.jpg"
                 }
             }
         ]
@@ -680,7 +685,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person2.jpg"
+                    "filename": "demoData/fake-person2.jpg"
                 }
             }
         ]
@@ -695,7 +700,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person3.jpg"
+                    "filename": "demoData/fake-person3.jpg"
                 }
             }
         ]
@@ -710,7 +715,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person4.jpg"
+                    "filename": "demoData/fake-person4.jpg"
                 }
             }
         ]
@@ -725,7 +730,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person14.jpg"
+                    "filename": "demoData/fake-person14.jpg"
                 }
             }
         ]
@@ -740,7 +745,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person15.jpg"
+                    "filename": "demoData/fake-person15.jpg"
                 }
             }
         ]
@@ -755,7 +760,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person16.jpg"
+                    "filename": "demoData/fake-person16.jpg"
                 }
             }
         ]
@@ -770,7 +775,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person17.jpg"
+                    "filename": "demoData/fake-person17.jpg"
                 }
             }
         ]
@@ -785,7 +790,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person18.jpg"
+                    "filename": "demoData/fake-person18.jpg"
                 }
             }
         ]
@@ -801,7 +806,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person19.jpg"
+                    "filename": "demoData/fake-person19.jpg"
                 }
             }
         ]
@@ -817,7 +822,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person20.jpg"
+                    "filename": "demoData/fake-person20.jpg"
                 }
             }
         ]
@@ -833,7 +838,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person21.jpg"
+                    "filename": "demoData/fake-person21.jpg"
                 }
             }
         ]
@@ -849,7 +854,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person22.jpg"
+                    "filename": "demoData/fake-person22.jpg"
                 }
             }
         ]
@@ -865,7 +870,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person23.jpg"
+                    "filename": "demoData/fake-person23.jpg"
                 }
             }
         ]
@@ -880,7 +885,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person24.jpg"
+                    "filename": "demoData/fake-person24.jpg"
                 }
             }
         ]
@@ -896,7 +901,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person25.jpg"
+                    "filename": "demoData/fake-person25.jpg"
                 }
             }
         ]
@@ -912,7 +917,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person26.jpg"
+                    "filename": "demoData/fake-person26.jpg"
                 }
             }
         ]
@@ -928,7 +933,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person27.jpg"
+                    "filename": "demoData/fake-person27.jpg"
                 }
             }
         ]
@@ -944,7 +949,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person28.jpg"
+                    "filename": "demoData/fake-person28.jpg"
                 }
             }
         ]
@@ -959,7 +964,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person29.jpg"
+                    "filename": "demoData/fake-person29.jpg"
                 }
             }
         ]
@@ -974,7 +979,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person30.jpg"
+                    "filename": "demoData/fake-person30.jpg"
                 }
             }
         ]
@@ -990,7 +995,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person7.jpg"
+                    "filename": "demoData/fake-person7.jpg"
                 }
             }
         ]
@@ -1009,7 +1014,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person10.jpg"
+                    "filename": "demoData/fake-person10.jpg"
                 }
             }
         ]
@@ -1028,7 +1033,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image17.jpg"
+                    "filename": "demoData/unsplash-image17.jpg"
                 }
             }
         ]
@@ -1047,7 +1052,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image18.jpg"
+                    "filename": "demoData/unsplash-image18.jpg"
                 }
             }
         ]
@@ -1067,7 +1072,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person58.jpg"
+                    "filename": "demoData/fake-person58.jpg"
                 }
             }
         ]
@@ -1086,7 +1091,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1105,7 +1110,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person56.jpg"
+                    "filename": "demoData/fake-person56.jpg"
                 }
             }
         ]
@@ -1124,7 +1129,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image29.jpg"
+                    "filename": "demoData/unsplash-image29.jpg"
                 }
             }
         ]
@@ -1143,7 +1148,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image55.jpg"
+                    "filename": "demoData/unsplash-image55.jpg"
                 }
             }
         ]
@@ -1162,7 +1167,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person52.jpg"
+                    "filename": "demoData/fake-person52.jpg"
                 }
             }
         ]
@@ -1181,7 +1186,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1201,7 +1206,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person34.jpg"
+                    "filename": "demoData/fake-person34.jpg"
                 }
             }
         ]
@@ -1220,7 +1225,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image20.jpg"
+                    "filename": "demoData/unsplash-image20.jpg"
                 }
             }
         ]
@@ -1239,7 +1244,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1258,7 +1263,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image24.jpg"
+                    "filename": "demoData/unsplash-image24.jpg"
                 }
             }
         ]
@@ -1277,7 +1282,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person0.jpg"
+                    "filename": "demoData/fake-person0.jpg"
                 }
             }
         ]
@@ -1296,7 +1301,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1316,7 +1321,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person43.jpg"
+                    "filename": "demoData/fake-person43.jpg"
                 }
             }
         ]
@@ -1335,7 +1340,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image57.jpg"
+                    "filename": "demoData/unsplash-image57.jpg"
                 }
             }
         ]
@@ -1354,7 +1359,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person36.jpg"
+                    "filename": "demoData/fake-person36.jpg"
                 }
             }
         ]
@@ -1373,7 +1378,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image-27.jpg"
+                    "filename": "demoData/unsplash-image-27.jpg"
                 }
             }
         ]
@@ -1393,7 +1398,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person54.jpg"
+                    "filename": "demoData/fake-person54.jpg"
                 }
             }
         ]
@@ -1412,7 +1417,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image21.jpg"
+                    "filename": "demoData/unsplash-image21.jpg"
                 }
             }
         ]
@@ -1431,7 +1436,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image24.jpg"
+                    "filename": "demoData/unsplash-image24.jpg"
                 }
             }
         ]
@@ -1450,7 +1455,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person41.jpg"
+                    "filename": "demoData/fake-person41.jpg"
                 }
             }
         ]
@@ -1469,7 +1474,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person57.jpg"
+                    "filename": "demoData/fake-person57.jpg"
                 }
             }
         ]
@@ -1488,7 +1493,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image58.jpg"
+                    "filename": "demoData/unsplash-image58.jpg"
                 }
             }
         ]
@@ -1507,7 +1512,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image23.jpg"
+                    "filename": "demoData/unsplash-image23.jpg"
                 }
             }
         ]
@@ -1526,7 +1531,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person15.jpg"
+                    "filename": "demoData/fake-person15.jpg"
                 }
             }
         ]
@@ -1546,7 +1551,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person6.jpg"
+                    "filename": "demoData/fake-person6.jpg"
                 }
             }
         ]
@@ -1565,7 +1570,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image18.jpg"
+                    "filename": "demoData/unsplash-image18.jpg"
                 }
             }
         ]
@@ -1584,7 +1589,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image59.jpg"
+                    "filename": "demoData/unsplash-image59.jpg"
                 }
             }
         ]
@@ -1603,7 +1608,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person49.jpg"
+                    "filename": "demoData/fake-person49.jpg"
                 }
             }
         ]
@@ -1622,7 +1627,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image25.jpg"
+                    "filename": "demoData/unsplash-image25.jpg"
                 }
             }
         ]
@@ -1641,7 +1646,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image60.jpg"
+                    "filename": "demoData/unsplash-image60.jpg"
                 }
             }
         ]
@@ -1660,7 +1665,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person50.jpg"
+                    "filename": "demoData/fake-person50.jpg"
                 }
             }
         ]
@@ -1680,7 +1685,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person33.jpg"
+                    "filename": "demoData/fake-person33.jpg"
                 }
             }
         ]
@@ -1699,7 +1704,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image22.jpg"
+                    "filename": "demoData/unsplash-image22.jpg"
                 }
             }
         ]
@@ -1718,7 +1723,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image28.jpg"
+                    "filename": "demoData/unsplash-image28.jpg"
                 }
             }
         ]
@@ -1737,7 +1742,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image30.jpg"
+                    "filename": "demoData/unsplash-image30.jpg"
                 }
             }
         ]
@@ -1756,7 +1761,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person18.jpg"
+                    "filename": "demoData/fake-person18.jpg"
                 }
             }
         ]
@@ -1775,7 +1780,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person33.jpg"
+                    "filename": "demoData/fake-person33.jpg"
                 }
             }
         ]

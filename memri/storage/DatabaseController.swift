@@ -153,8 +153,8 @@ class DatabaseController {
             if !realmTesting {
                 #if targetEnvironment(simulator)
                 if !reportedKey {
-                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                     reportedKey = true
+                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 }
                 #endif
                 
@@ -185,7 +185,7 @@ class DatabaseController {
                 print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 Authentication.getOwnerAndDBKey { err, owner, db in
                     if err != nil {
-                        reportedKey = false
+                        print("AUTH ERROR: \(err)")
                         return
                     }
                     

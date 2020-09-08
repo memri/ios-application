@@ -578,11 +578,11 @@ public class Views {
         #warning(
             "Turned off caching temporarily due to issue with UserState being cached wrongly (and then changed in cache)"
         )
-        let cached = -1 // InMemoryObjectCache.get(strDef)
-        if let cached = cached as? CVU {
-            return try cached.parse().first
-        }
-        else if let definition = viewDef.definition {
+//        let cached = InMemoryObjectCache.get(strDef)
+//        if let cached = cached as? CVU {
+//            return try cached.parse().first
+//        } else
+            if let definition = viewDef.definition {
             let viewDefParser = CVU(definition, context,
                                     lookup: lookupValueOfVariables,
                                     execFunc: executeFunction)

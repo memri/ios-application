@@ -223,8 +223,7 @@ class Sync {
             }
         }
 
-        #warning("Why is this not in the background?")
-        DatabaseController.asyncOnCurrentThread { realm in
+        DatabaseController.asyncOnBackgroundThread { realm in
             var found = 0
             var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
             var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
