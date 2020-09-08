@@ -244,7 +244,7 @@ public class PodAPI {
         try MemriJSONEncoder.encode(AnyCodable(result))
     }
 
-    func simplify(_ item: SchemaItem, create: Bool = false) throws -> [String: Any] {
+    func simplify(_ item: SchemaItem, create: Bool = false) -> [String: Any]? {
         let updatedFields = item._updated
         var result: [String: Any] = [
             "_type": item.genericType,
@@ -274,13 +274,14 @@ public class PodAPI {
         }
 
         guard result["uid"] is Int else {
-            throw "Exception: Item does not have uid set: \(item)"
+            debugHistory.warn("Exception: Item does not have uid set: \(item)")
+            return nil
         }
 
         return result
     }
 
-    func simplify(_ edge: Edge, create _: Bool = false) throws -> [String: Any] {
+    func simplify(_ edge: Edge, create _: Bool = false) -> [String: Any]? {
         var result = [String: Any]()
 
         let properties = edge.objectSchema.properties
@@ -312,8 +313,8 @@ public class PodAPI {
 
         guard result["_source"] != nil && result["_target"] != nil && result["_target"] != nil
         else {
-            print(result)
-            throw "Exception: Edge is not properly formed: \(edge)"
+            debugHistory.warn("Exception: Edge is not properly formed: \(edge)")
+            return nil
         }
 
         return result
@@ -361,23 +362,23 @@ public class PodAPI {
     ) throws {
         var result = [String: Any]()
         if createItems?.count ?? 0 > 0 {
-            result["createItems"] = try createItems?.map { try simplify($0, create: true) }
+            result["createItems"] = createItems?.compactMap { simplify($0, create: true) }
         }
         if updateItems?.count ?? 0 > 0 {
-            result["updateItems"] = try updateItems?.map { try simplify($0) }
+            result["updateItems"] = updateItems?.compactMap { simplify($0) }
         }
         if deleteItems?.count ?? 0 > 0 {
             result["deleteItems"] = deleteItems?.map { $0.uid.value }
         }
         if createEdges?.count ?? 0 > 0 {
-            result["createEdges"] = try createEdges?.map { try simplify($0, create: true) }
+            result["createEdges"] = createEdges?.compactMap { simplify($0, create: true) }
         }
         if updateEdges?.count ?? 0 > 0 {
-            result["updateEdges"] = try updateEdges?.map { try simplify($0) }
+            result["updateEdges"] = updateEdges?.compactMap { simplify($0) }
         }
         #warning("This is untested")
         if deleteEdges?.count ?? 0 > 0 {
-            result["deleteEdges"] = try deleteEdges?.map { try simplify($0) }
+            result["deleteEdges"] = deleteEdges?.compactMap { simplify($0) }
         }
 
         http(path: "bulk_action", payload: result) { error, _ in
