@@ -11,9 +11,17 @@ struct SessionSwitcher: View {
     @State private var _globalOffset: CGFloat = 0
     @State private var dragOffset: CGFloat = 0
     
+    var count: Int {
+        min(10, self.context.sessions.count)
+    }
+    
+    var countIndexOffset: Int {
+        self.context.sessions.count - count
+    }
+    
     private var globalOffset: CGFloat {
         min(
-            CGFloat(self.context.sessions.count) * self
+            CGFloat(count) * self
                 .height / 2,
             max(0, _globalOffset + dragOffset))
     }
@@ -100,8 +108,8 @@ struct SessionSwitcher: View {
     }
 
     private func getRelativePosition(_ i: CGFloat, _: GeometryProxy) -> CGFloat {
-        let normalizedPosition = i / CGFloat(context.sessions.count)
-        let maxGlobalOffset = CGFloat(context.sessions.count) * height
+        let normalizedPosition = i / CGFloat(count)
+        let maxGlobalOffset = CGFloat(count) * height
         let normalizedGlobalState = min(1, max(0, globalOffset / maxGlobalOffset))
         let translatedRelativePosition = normalizedGlobalState + (normalizedPosition / 2)
         return translatedRelativePosition / 2.0
@@ -136,18 +144,17 @@ struct SessionSwitcher: View {
                 Image("session-switcher-tile")
                     .resizable(resizingMode: .tile)
                     .edgesIgnoringSafeArea(.vertical)
-
-                ForEach(0 ..< self.context.sessions.count, id: \.self) { i in
-                    { () -> Image in
-                        if let session = self.context.sessions[i] {
-                            if let screenShot = session.screenshot,
-                                let uiImage = screenShot.asUIImage {
-                                return Image(uiImage: uiImage)
-                            }
+                
+                ForEach(0 ..< self.count, id: \.self) { i in
+                    { () -> AnyView in
+                        if let session = self.context.sessions[i + self.countIndexOffset],
+                            let screenShot = session.screenshot,
+                            let uiImage = screenShot.asUIImage {
+                            return Image(uiImage: uiImage).resizable().eraseToAnyView()
+                        } else {
+                            return Color(.secondarySystemBackground).eraseToAnyView()
                         }
-                        return Image("screenshot-example")
                     }()
-                        .resizable()
                         .scaledToFit()
                         .frame(width: self.getWidth(CGFloat(i)), height: nil, alignment: .center)
                         .clipShape(RoundedRectangle(cornerRadius: 24)
@@ -160,7 +167,7 @@ struct SessionSwitcher: View {
                             radius: 15,
                             x: 10,
                             y: 10
-                        )
+                    )
                         .rotation3DEffect(.degrees(self.getRotation(CGFloat(i), geometry)),
                                           axis: (x: 1, y: 0, z: 0),
                                           anchor: .center,
@@ -169,14 +176,14 @@ struct SessionSwitcher: View {
                         .zIndex(Double(0))
                         //                            .opacity(0.7)
                         .onTapGesture {
-                            if let session = self.context.sessions[i] {
+                            if let session = self.context.sessions[i + self.countIndexOffset] {
                                 // TODO:
                                 do { try ActionOpenSession.exec(self.context, ["session": session])
                                 }
                                 catch {}
                             }
                             self.hide()
-                        }
+                    }
                 }
             }
             .edgesIgnoringSafeArea(.vertical)

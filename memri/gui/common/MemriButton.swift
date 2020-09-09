@@ -19,7 +19,7 @@ public struct MemriButton: View {
     public var body: some View {
         var inputItem:Item? = item
         if edge != nil {
-            inputItem = edge?.item()
+            inputItem = edge?.target()
         }
         
         let family = ItemFamily(rawValue: inputItem?.genericType ?? "Note")

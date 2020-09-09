@@ -114,7 +114,7 @@
                     defaultRenderer: timeline
                     
                     datasource {
-                        query: "AuditItem appliesTo:{.id}"
+                        query: "AuditItem appliesTo:{.uid}"
                         sortProperty: dateCreated
                         sortAscending: true
                     }
@@ -144,7 +144,7 @@
                     defaultRenderer: timeline
                     
                     datasource {
-                        query: "AuditItem appliesTo:{.id}"
+                        query: "AuditItem appliesTo:{.uid}"
                         sortProperty: dateCreated
                         sortAscending: true
                     }
@@ -199,7 +199,7 @@ Person {
                 minHeight: 165
                 
                 view {
-                    defaultRenderer: thumbnail.grid
+                    defaultRenderer: grid
                     
                     datasource {
                         query: "photo AND ANY includes.memriID = '0x013'"

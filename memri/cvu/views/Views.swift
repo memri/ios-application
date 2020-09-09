@@ -100,7 +100,7 @@ public class Views {
         }
 
         // Start write transaction outside loop for performance reasons
-        DatabaseController.background(write:true, error:callback) { _ in
+        DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { _ in
             // Loop over lookup table with named views
             for def in parsedDefinitions {
                 var values: [String: Any?] = [
@@ -414,7 +414,7 @@ public class Views {
                     switch node.name {
                     case "source": value = v.source()
                     case "target": value = v.target()
-                    case "item": value = v.item()
+                    case "item": value = v.target()
                     case "label": value = v.edgeLabel
                     case "type": value = v.type
                     case "sequence": value = v.sequence
@@ -557,7 +557,7 @@ public class Views {
         if let domain = domain { filter.append("domain = '\(domain)'") }
 
         return Array(
-            DatabaseController.current {
+            DatabaseController.sync {
                 $0.objects(CVUStoredDefinition.self)
                     .filter(filter.joined(separator: " AND "))
                     .map { (def) -> CVUStoredDefinition in def }
@@ -578,11 +578,11 @@ public class Views {
         #warning(
             "Turned off caching temporarily due to issue with UserState being cached wrongly (and then changed in cache)"
         )
-        let cached = -1 // InMemoryObjectCache.get(strDef)
-        if let cached = cached as? CVU {
-            return try cached.parse().first
-        }
-        else if let definition = viewDef.definition {
+//        let cached = InMemoryObjectCache.get(strDef)
+//        if let cached = cached as? CVU {
+//            return try cached.parse().first
+//        } else
+            if let definition = viewDef.definition {
             let viewDefParser = CVU(definition, context,
                                     lookup: lookupValueOfVariables,
                                     execFunc: executeFunction)
@@ -735,14 +735,14 @@ public class Views {
 
             // Create a new view
             #warning("viewArguments are not passed to cascading config, is that bad?")
-            let cascadingRenderConfig = CascadingRenderConfig(
+            let cascadingRendererConfig = CascadingRendererConfig(
                 nil,
                 cascadeStack,
                 context.currentView
             )
 
             // Return the rendered UIElements in a UIElementView
-            return cascadingRenderConfig.render(item: item, arguments: viewArguments)
+            return cascadingRendererConfig.render(item: item, arguments: viewArguments)
         }
         catch {
             debugHistory.error("Unable to render ItemCell: \(error)")

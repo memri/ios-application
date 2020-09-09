@@ -379,7 +379,7 @@ class Authentication {
     }
     
     static func setOwnerAndDBKey(privateKey:String, publicKey:String, dbKey:String) throws {
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             realm.objects(CryptoKey.self).filter("name = 'memriDBKey'").forEach { key in
                 key.active = false
             }
@@ -423,7 +423,7 @@ class Authentication {
     }
     
     static func getOwnerAndDBKey(_ callback: @escaping (Error?, String?, String?) -> Void) {
-        DatabaseController.current { realm in
+        DatabaseController.asyncOnCurrentThread { realm in
             let dbQuery = "name = 'Memri Database Key' and active = true"
             guard let dbKey = realm.objects(CryptoKey.self).filter(dbQuery).first else {
                 callback("Database key is not set", nil, nil)

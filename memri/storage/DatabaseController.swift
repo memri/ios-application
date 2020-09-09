@@ -9,9 +9,10 @@ class ItemReference {
     let uid: Int
     let type: Item.Type
 
-    init(to: Item) {
+    init?(to: Item) {
         guard let uid = to.uid.value, let type = to.getType(), to.realm != nil else {
-            fatalError("Trying to get a reference to an item that is not in realm or has no uid")
+            print("Trying to get a reference to an item that is not in realm or has no uid")
+            return nil
         }
         
         self.uid = uid
@@ -20,7 +21,7 @@ class ItemReference {
 
     func resolve() -> Item? {
         do {
-            return try DatabaseController.tryCurrent {
+            return try DatabaseController.trySync {
                 $0.object(ofType: self.type, forPrimaryKey: self.uid)
             }
         }
@@ -52,7 +53,7 @@ class EdgeReference {
 
     func resolve() -> Edge? {
         do {
-            return try DatabaseController.tryCurrent {
+            return try DatabaseController.trySync {
                 $0.objects(Edge.self).filter("""
                     type = '\(self.type)'
                         AND sourceItemID = \(self.sourceItemID)
@@ -152,8 +153,8 @@ class DatabaseController {
             if !realmTesting {
                 #if targetEnvironment(simulator)
                 if !reportedKey {
-                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                     reportedKey = true
+                    print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 }
                 #endif
                 
@@ -184,7 +185,7 @@ class DatabaseController {
                 print("REALM KEY: \(data.hexEncodedString(options: .upperCase))")
                 Authentication.getOwnerAndDBKey { err, owner, db in
                     if err != nil {
-                        reportedKey = false
+                        print("AUTH ERROR: \(err)")
                         return
                     }
                     
@@ -214,7 +215,7 @@ class DatabaseController {
     //	}
     
     /// Execute a realm based function on the current thread
-    static func current(
+    static func asyncOnCurrentThread(
         write:Bool = false,
         error:(@escaping (Error) -> Void) = globalErrorHandler,
         _ exec:@escaping (Realm) throws -> Void
@@ -252,12 +253,12 @@ class DatabaseController {
     }
     
     /// Execute a realm based function that returns a value on the main thread
-    static func current<T>(
+    static func sync<T>(
         write:Bool = false,
-        _ exec:@escaping (Realm) throws -> T?
+        _ exec: (Realm) throws -> T?
     ) -> T? {
         do {
-            return try tryCurrent(write: write, exec)
+            return try trySync(write: write, exec)
         }
         catch {
             debugHistory.warn("\(error)")
@@ -266,9 +267,9 @@ class DatabaseController {
     }
     
     /// Execute a realm based function that throws and returns a value on the main thread
-    static func tryCurrent<T>(
+    static func trySync<T>(
         write:Bool = false,
-        _ exec:@escaping (Realm) throws -> T?
+        _ exec: (Realm) throws -> T?
     ) throws -> T? {
         let realm = try getRealmSync()
         
@@ -287,27 +288,27 @@ class DatabaseController {
     }
     
     /// Execute a realm based function on a background thread
-    static func background(
+    static func asyncOnBackgroundThread(
         write:Bool = false,
         error:(@escaping (Error) -> Void) = globalErrorHandler,
         _ exec:@escaping (Realm) throws -> Void
     ) {
         realmQueue.async {
             autoreleasepool {
-                current(write: write, error: error, exec)
+                asyncOnCurrentThread(write: write, error: error, exec)
             }
         }
     }
     
     /// Execute a realm based function on the main thread (warning this blocks the UI)
-    static func main(
+    static func asyncOnMainThread(
         write:Bool = false,
         error:(@escaping (Error) -> Void) = globalErrorHandler,
         _ exec:@escaping (Realm) throws -> Void
     ) {
         DispatchQueue.main.async {
             autoreleasepool {
-                current(write: write, error: error, exec)
+                asyncOnCurrentThread(write: write, error: error, exec)
             }
         }
     }
@@ -359,7 +360,7 @@ class DatabaseController {
 
     static func clean(_ callback:@escaping (Error?) -> Void) {
         #warning("@Toby, deleting here on realm doesnt remove them from the db and thus this is called every time. Any idea why?")
-        DatabaseController.background(write: true, error: callback) { realm in
+        DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { realm in
             for itemType in ItemFamily.allCases {
                 if itemType == .typeUserState { continue }
 

@@ -6,15 +6,15 @@ import Combine
 import SwiftUI
 
 extension View {
-    func fullHeight() -> some View {
+    func fullHeight(alignment: Alignment = .topLeading) -> some View {
         frame(minWidth: 0,
               maxWidth: .infinity,
               minHeight: 0, maxHeight: .infinity,
-              alignment: Alignment.topLeading)
+              alignment: alignment)
     }
 
-    func fullWidth() -> some View {
-        frame(minWidth: 0, maxWidth: .infinity, alignment: Alignment.topLeading)
+    func fullWidth(alignment: Alignment = .topLeading) -> some View {
+        frame(minWidth: 0, maxWidth: .infinity, alignment: alignment)
     }
 }
 

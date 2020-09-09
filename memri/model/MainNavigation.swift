@@ -30,7 +30,7 @@ public class MainNavigation: ObservableObject {
     
     public func getItems() -> [NavigationItem] {
         let needle = filterText.lowercased()
-        let items = DatabaseController.current {
+        let items = DatabaseController.sync {
             $0.objects(NavigationItem.self).sorted(byKeyPath: "sequence")
         }
 

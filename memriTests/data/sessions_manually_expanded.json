@@ -41,7 +41,7 @@
                                     }
                                 },
                                 "query": {
-                                    "text": "data:Log appliesTo:{.id}",
+                                    "text": "data:Log appliesTo:{.uid}",
                                     "sortProperty": "date-created",
                                     "sortAscending": 0
                                 }
@@ -97,7 +97,7 @@
                                     }
                                 },
                                 "query": {
-                                    "text": "data:Log appliesTo:{.id}",
+                                    "text": "data:Log appliesTo:{.uid}",
                                     "sortProperty": "date-created",
                                     "sortAscending": 0
                                 }

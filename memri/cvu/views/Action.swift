@@ -247,11 +247,8 @@ public class Action: CVUToString {
         "showTitle": false,
         "opensView": false,
         "color": Color(hex: "#999999"),
-        "backgroundColor": Color.white,
         "activeColor": Color(hex: "#ffdb00"),
         "inactiveColor": Color(hex: "#999999"),
-        "activeBackgroundColor": Color.white,
-        "inactiveBackgroundColor": Color.white,
         "withAnimation": true,
     ]
     var values: [String: Any?] = [:]
@@ -271,20 +268,20 @@ public class Action: CVUToString {
 
     var color: Color {
         if let active = isActive() {
-            if active { return get("activeColor") ?? getColor("color") }
-            else { return get("inactiveColor") ?? getColor("color") }
+            if active { return get("activeColor") ?? getColor("color") ?? .black }
+            else { return get("inactiveColor") ?? getColor("color") ?? .black }
         }
         else {
-            return getColor("color")
+            return getColor("color") ?? .black
         }
     }
 
     var backgroundColor: Color {
         if let active = isActive() {
-            if active { return get("activeBackgroundColor") ?? getColor("backgroundolor") }
-            else { return get("inactiveBackgroundColor") ?? getColor("backgroundolor") }
+            if active { return get("activeBackgroundColor") ?? getColor("backgroundColor") ?? .clear }
+            else { return get("inactiveBackgroundColor") ?? getColor("backgroundColor") ?? .clear }
         }
-        else { return getColor("backgroundColor") }
+        else { return getColor("backgroundColor") ?? .clear }
     }
 
     public var description: String {
@@ -340,8 +337,8 @@ public class Action: CVUToString {
         return x
     }
 
-    func getColor(_ key: String, _ viewArguments: ViewArguments? = nil) -> Color {
-        let x: Color = get(key, viewArguments) ?? Color.black
+    func getColor(_ key: String, _ viewArguments: ViewArguments? = nil) -> Color? {
+        let x: Color? = get(key, viewArguments)
         return x
     }
 

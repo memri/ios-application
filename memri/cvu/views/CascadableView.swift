@@ -14,7 +14,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     var uid: Int
 
     var state: CVUStateDefinition? {
-        DatabaseController.current {
+        DatabaseController.sync {
             $0.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
         }
     }
@@ -27,18 +27,26 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
     var activeRenderer: String {
         get {
-            if let s: String = cascadeProperty("defaultRenderer") { return s }
-            debugHistory
-                .error(
-                    "Exception: Unable to determine the active renderer. Missing defaultRenderer in view?"
+            guard let s: String = cascadeProperty("defaultRenderer") else {
+                debugHistory
+                    .error(
+                        "Exception: Unable to determine the active renderer. Missing defaultRenderer in view?"
                 )
-            return ""
+                return ""
+            }
+            return s
         }
         set(value) {
-            //			localCache.removeValue(forKey: value) // Remove renderConfig reference
-            #warning("TODO: Store value in userstate for other context based on .")
             setState("defaultRenderer", value)
+            if context?.currentRendererController?.rendererTypeName != value {
+                context?.currentRendererController = makeRendererController(forRendererType: value)
+            }
         }
+    }
+
+    func makeRendererController(forRendererType: String? = nil) -> RendererController? {
+        guard let context = context else { return nil }
+        return Renderers.rendererTypes[forRendererType ?? activeRenderer]?.makeController(context, renderConfig)
     }
 
     var fullscreen: Bool {
@@ -197,8 +205,8 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         }
     }
 
-    var renderConfig: CascadingRenderConfig? {
-        if let x = localCache[activeRenderer] as? CascadingRenderConfig { return x }
+    var renderConfig: CascadingRendererConfig? {
+        if let x = localCache[activeRenderer] as? CascadingRendererConfig { return x }
 
         func getConfig(_ a: CVUParsedDefinition) -> CVUParsedRendererDefinition? {
             let definitions = (a["rendererDefinitions"] as? [CVUParsedRendererDefinition] ?? [])
@@ -220,9 +228,9 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
 
         insertRenderDefs(&tail)
 
-        if let all = allRenderers, let RenderConfigType = all.allConfigTypes[activeRenderer] {
+        if let rendererType = Renderers.rendererTypes[activeRenderer] {
             // swiftformat:disable:next redundantInit
-            let renderConfig = RenderConfigType.init(head, tail, self)
+            let renderConfig = rendererType.makeConfig(head, tail, self)
             // Not actively preventing conflicts in namespace - assuming chance to be low
             localCache[activeRenderer] = renderConfig
             return renderConfig
@@ -232,7 +240,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
             debugHistory.error("Unable to cascade render config for \(activeRenderer)")
         }
 
-        return CascadingRenderConfig()
+        return CascadingRendererConfig()
     }
 
     private var _emptyResultTextTemp: String?
@@ -406,7 +414,7 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
     }
 
     public func persist() throws {
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             var state = realm.object(ofType: CVUStateDefinition.self, forPrimaryKey: self.uid)
             if state == nil {
                 debugHistory.warn("Could not find stored view CVU. Creating a new one.")

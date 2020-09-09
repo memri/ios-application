@@ -31,7 +31,7 @@ public class Cache {
 
     /// gets default item from database, and adds them to realm
     public func install(_ dbName: String, _ callback:@escaping (Error?) -> Void) throws {
-        DatabaseController.background(write:true, error:callback) { realm in
+        DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { realm in
             try self._install(realm, dbName)
             callback(nil)
         }
@@ -134,7 +134,7 @@ public class Cache {
                         )
                     }
 
-                    DatabaseController.current(write:true) { _ in
+                    DatabaseController.asyncOnCurrentThread(write:true) { _ in
                         item.allEdges.append(edge)
                     }
                 }
@@ -170,7 +170,7 @@ public class Cache {
         syncWithRemote: Bool = true,
         _ callback: @escaping (_ error: Error?, _ items: [Item]?) throws -> Void
     ) throws {
-        try DatabaseController.tryCurrent { realm in
+        try DatabaseController.trySync { realm in
             // Do nothing when the query is empty. Should not happen.
             let q = datasource.query ?? ""
 
@@ -297,7 +297,7 @@ public class Cache {
             }
 
             // Add item to realm
-            try DatabaseController.tryCurrent(write:true) { $0.add(item, update: .modified) }
+            try DatabaseController.trySync(write:true) { $0.add(item, update: .modified) }
         }
         catch {
             throw "Could not add item to cache: \(error)"
@@ -368,9 +368,13 @@ public class Cache {
     /// - Remark: All methods and properties must throw when deleted = true;
     public func delete(_ item: Item) throws {
         if !item.deleted {
-            try DatabaseController.tryCurrent(write:true) { _ in
+            try DatabaseController.trySync(write:true) { _ in
                 item.deleted = true
                 item._action = "delete"
+                item.allEdges.forEach {
+                    $0.deleted = true
+                    $0._action = "delete"
+                }
                 let auditItem = try Cache.createItem(AuditItem.self, values: ["action": "delete"])
                 _ = try item.link(auditItem, type: "changelog")
 
@@ -382,11 +386,15 @@ public class Cache {
     /// marks a set of items to be deleted
     /// - Parameter items: items to be deleted
     public func delete(_ items: [Item]) throws {
-        try DatabaseController.tryCurrent(write:true) { _ in
+        try DatabaseController.trySync(write:true) { _ in
             for item in items {
                 if !item.deleted {
                     item.deleted = true
                     item._action = "delete"
+                    item.allEdges.forEach {
+                        $0.deleted = true
+                        $0._action = "delete"
+                    }
                     let auditItem = try Cache.createItem(
                         AuditItem.self,
                         values: ["action": "delete"]
@@ -440,7 +448,7 @@ public class Cache {
     static var cacheUIDCounter: Int = -1
     
     public class func incrementUID() throws -> Int {
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             if cacheUIDCounter == -1 {
                 if
                     let setting = realm.objects(Setting.self)
@@ -511,7 +519,7 @@ public class Cache {
         unique: String? = nil
     ) throws -> T {
         var item: T?
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             var dict = values
 
             // TODO:
@@ -608,7 +616,7 @@ public class Cache {
         sequence: Int? = nil
     ) throws -> Edge {
         var edge: Edge?
-        try DatabaseController.tryCurrent(write:true) { realm in
+        try DatabaseController.trySync(write:true) { realm in
             // TODO:
             // Always overwrite (see also link())
 

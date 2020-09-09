@@ -41,6 +41,8 @@ public class MemriContext: ObservableObject, Subscriptable {
     public var currentView: CascadableView? {
         sessions.currentSession?.currentView
     }
+    
+    public var currentRendererController: RendererController?
 
     public var views: Views
 
@@ -55,8 +57,6 @@ public class MemriContext: ObservableObject, Subscriptable {
     public var cache: Cache
 
     public var navigation: MainNavigation
-
-    public var renderers: Renderers
 
     public var items: [Item] {
         get {
@@ -105,6 +105,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             DispatchQueue.main.async {
                 withAnimation {
                     self.objectWillChange.send()
+                    self.currentRendererController?.update()
                 }
             }
             return
@@ -224,7 +225,6 @@ public class MemriContext: ObservableObject, Subscriptable {
         sessions: Sessions,
         views: Views,
         navigation: MainNavigation,
-        renderers: Renderers,
         indexerAPI: IndexerAPI
     ) {
         self.name = name
@@ -235,7 +235,6 @@ public class MemriContext: ObservableObject, Subscriptable {
         self.sessions = sessions
         self.views = views
         self.navigation = navigation
-        self.renderers = renderers
         self.indexerAPI = indexerAPI
 
         // TODO: FIX
@@ -248,6 +247,7 @@ public class MemriContext: ObservableObject, Subscriptable {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] in
                 self?.objectWillChange.send()
+                self?.currentRendererController?.update()
             }
 
         // Setup update publishers
@@ -277,7 +277,6 @@ public class SubContext: MemriContext {
             sessions: try Sessions(state),
             views: views,
             navigation: context.navigation,
-            renderers: context.renderers,
             indexerAPI: context.indexerAPI
         )
 
@@ -318,7 +317,6 @@ public class RootContext: MemriContext {
             sessions: try Sessions(isDefault: true),
             views: views,
             navigation: MainNavigation(),
-            renderers: Renderers(),
             indexerAPI: IndexerAPI()
         )
 

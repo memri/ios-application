@@ -51,14 +51,13 @@
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "messages",
-        "sessionName": "all-messages"
+        "itemType": "heading",
+        "title": "Inbox"
     },
     {
         "_type": "NavigationItem",
         "itemType": "item",
-        "title": "message channels",
+        "title": "Messages",
         "sessionName": "all-message-channels"
     },
     {
@@ -66,6 +65,11 @@
         "itemType": "item",
         "title": "email",
         "sessionName": "all-email-messages"
+    },
+    {
+        "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "General"
     },
     {
         "_type": "NavigationItem",
@@ -146,6 +150,23 @@
         "sessionName": "all-locations"
     },
     {
+        "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "Annotation"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "Email Annotation UI",
+        "sessionName": "annotationUIExample"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "Email Annotation List",
+        "sessionName": "annotationListExample"
+    },
+    {
         "_type": "Importer",
         "name": "iCloud notes",
         "datatype": "Note",
@@ -192,7 +213,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image6.jpg"
+                    "filename": "demoData/unsplash-image6.jpg"
                 }
             }
         ]
@@ -206,7 +227,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager9.jpg"
+                    "filename": "demoData/iphone-imager9.jpg"
                 }
             }
         ]
@@ -220,7 +241,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager39.jpg"
+                    "filename": "demoData/iphone-imager39.jpg"
                 }
             }
         ]
@@ -235,7 +256,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image4.jpg"
+                    "filename": "demoData/iphone-image4.jpg"
                 }
             }
         ]
@@ -250,7 +271,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image5.jpg"
+                    "filename": "demoData/iphone-image5.jpg"
                 }
             }
         ]
@@ -264,7 +285,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image2.jpg"
+                    "filename": "demoData/unsplash-image2.jpg"
                 }
             }
         ]
@@ -278,7 +299,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image13.jpg"
+                    "filename": "demoData/unsplash-image13.jpg"
                 }
             }
         ]
@@ -292,7 +313,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "karen-penroz-06ZTGDcAQFs-unsplash.jpg"
+                    "filename": "demoData/karen-penroz-06ZTGDcAQFs-unsplash.jpg"
                 }
             }
         ]
@@ -307,7 +328,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image16.jpg"
+                    "filename": "demoData/unsplash-image16.jpg"
                 }
             }
         ]
@@ -321,7 +342,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager67.jpg"
+                    "filename": "demoData/iphone-imager67.jpg"
                 }
             }
         ]
@@ -335,7 +356,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager69.jpg"
+                    "filename": "demoData/iphone-imager69.jpg"
                 }
             }
         ]
@@ -349,7 +370,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager71.jpg"
+                    "filename": "demoData/iphone-imager71.jpg"
                 }
             }
         ]
@@ -363,7 +384,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person30.jpg"
+                    "filename": "demoData/fake-person30.jpg"
                 }
             }
         ]
@@ -378,7 +399,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "ave-calvar-ukuIJ6ReFms-unsplash.jpg"
+                    "filename": "demoData/ave-calvar-ukuIJ6ReFms-unsplash.jpg"
                 }
             }
         ]
@@ -392,7 +413,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "karen-penroz-06ZTGDcAQFs-unsplash.jpg"
+                    "filename": "demoData/karen-penroz-06ZTGDcAQFs-unsplash.jpg"
                 }
             }
         ]
@@ -407,7 +428,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "katarzyna-korobczuk-pwUjBdc5U9c-unsplash.jpg"
+                    "filename": "demoData/katarzyna-korobczuk-pwUjBdc5U9c-unsplash.jpg"
                 }
             }
         ]
@@ -422,7 +443,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "szabo-viktor-tarTTEaiIx4-unsplash.jpg"
+                    "filename": "demoData/szabo-viktor-tarTTEaiIx4-unsplash.jpg"
                 }
             }
         ]
@@ -437,7 +458,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image2.jpg"
+                    "filename": "demoData/iphone-image2.jpg"
                 }
             }
         ]
@@ -452,7 +473,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person1.jpg"
+                    "filename": "demoData/fake-person1.jpg"
                 }
             }
         ]
@@ -467,7 +488,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image1.jpg"
+                    "filename": "demoData/iphone-image1.jpg"
                 }
             }
         ]
@@ -482,7 +503,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image3.jpg"
+                    "filename": "demoData/iphone-image3.jpg"
                 }
             }
         ]
@@ -497,7 +518,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image6.jpg"
+                    "filename": "demoData/iphone-image6.jpg"
                 }
             }
         ]
@@ -512,7 +533,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-imager43.jpg"
+                    "filename": "demoData/iphone-imager43.jpg"
                 }
             }
         ]
@@ -527,7 +548,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image7.jpg"
+                    "filename": "demoData/iphone-image7.jpg"
                 }
             }
         ]
@@ -542,7 +563,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image8.jpg"
+                    "filename": "demoData/iphone-image8.jpg"
                 }
             }
         ]
@@ -557,7 +578,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person6.jpg"
+                    "filename": "demoData/fake-person6.jpg"
                 }
             }
         ]
@@ -572,7 +593,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "iphone-image11.jpg"
+                    "filename": "demoData/iphone-image11.jpg"
                 }
             }
         ]
@@ -588,7 +609,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person9.jpg"
+                    "filename": "demoData/fake-person9.jpg"
                 }
             }
         ]
@@ -603,7 +624,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person10.jpg"
+                    "filename": "demoData/fake-person10.jpg"
                 }
             }
         ]
@@ -618,7 +639,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person11.jpg"
+                    "filename": "demoData/fake-person11.jpg"
                 }
             }
         ]
@@ -633,7 +654,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person12.jpg"
+                    "filename": "demoData/fake-person12.jpg"
                 }
             }
         ]
@@ -648,7 +669,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person13.jpg"
+                    "filename": "demoData/fake-person13.jpg"
                 }
             }
         ]
@@ -664,7 +685,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person2.jpg"
+                    "filename": "demoData/fake-person2.jpg"
                 }
             }
         ]
@@ -679,7 +700,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person3.jpg"
+                    "filename": "demoData/fake-person3.jpg"
                 }
             }
         ]
@@ -694,7 +715,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person4.jpg"
+                    "filename": "demoData/fake-person4.jpg"
                 }
             }
         ]
@@ -709,7 +730,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person14.jpg"
+                    "filename": "demoData/fake-person14.jpg"
                 }
             }
         ]
@@ -724,7 +745,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person15.jpg"
+                    "filename": "demoData/fake-person15.jpg"
                 }
             }
         ]
@@ -739,7 +760,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person16.jpg"
+                    "filename": "demoData/fake-person16.jpg"
                 }
             }
         ]
@@ -754,7 +775,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person17.jpg"
+                    "filename": "demoData/fake-person17.jpg"
                 }
             }
         ]
@@ -769,7 +790,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person18.jpg"
+                    "filename": "demoData/fake-person18.jpg"
                 }
             }
         ]
@@ -785,7 +806,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person19.jpg"
+                    "filename": "demoData/fake-person19.jpg"
                 }
             }
         ]
@@ -801,7 +822,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person20.jpg"
+                    "filename": "demoData/fake-person20.jpg"
                 }
             }
         ]
@@ -817,7 +838,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person21.jpg"
+                    "filename": "demoData/fake-person21.jpg"
                 }
             }
         ]
@@ -833,7 +854,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person22.jpg"
+                    "filename": "demoData/fake-person22.jpg"
                 }
             }
         ]
@@ -849,7 +870,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person23.jpg"
+                    "filename": "demoData/fake-person23.jpg"
                 }
             }
         ]
@@ -864,7 +885,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person24.jpg"
+                    "filename": "demoData/fake-person24.jpg"
                 }
             }
         ]
@@ -880,7 +901,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person25.jpg"
+                    "filename": "demoData/fake-person25.jpg"
                 }
             }
         ]
@@ -896,7 +917,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person26.jpg"
+                    "filename": "demoData/fake-person26.jpg"
                 }
             }
         ]
@@ -912,7 +933,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person27.jpg"
+                    "filename": "demoData/fake-person27.jpg"
                 }
             }
         ]
@@ -928,7 +949,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person28.jpg"
+                    "filename": "demoData/fake-person28.jpg"
                 }
             }
         ]
@@ -943,7 +964,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person29.jpg"
+                    "filename": "demoData/fake-person29.jpg"
                 }
             }
         ]
@@ -958,7 +979,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person30.jpg"
+                    "filename": "demoData/fake-person30.jpg"
                 }
             }
         ]
@@ -974,7 +995,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person7.jpg"
+                    "filename": "demoData/fake-person7.jpg"
                 }
             }
         ]
@@ -993,7 +1014,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person10.jpg"
+                    "filename": "demoData/fake-person10.jpg"
                 }
             }
         ]
@@ -1012,7 +1033,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image17.jpg"
+                    "filename": "demoData/unsplash-image17.jpg"
                 }
             }
         ]
@@ -1031,7 +1052,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image18.jpg"
+                    "filename": "demoData/unsplash-image18.jpg"
                 }
             }
         ]
@@ -1051,7 +1072,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person58.jpg"
+                    "filename": "demoData/fake-person58.jpg"
                 }
             }
         ]
@@ -1070,7 +1091,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1089,7 +1110,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person56.jpg"
+                    "filename": "demoData/fake-person56.jpg"
                 }
             }
         ]
@@ -1108,7 +1129,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image29.jpg"
+                    "filename": "demoData/unsplash-image29.jpg"
                 }
             }
         ]
@@ -1127,7 +1148,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image55.jpg"
+                    "filename": "demoData/unsplash-image55.jpg"
                 }
             }
         ]
@@ -1146,7 +1167,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person52.jpg"
+                    "filename": "demoData/fake-person52.jpg"
                 }
             }
         ]
@@ -1165,7 +1186,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1185,7 +1206,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person34.jpg"
+                    "filename": "demoData/fake-person34.jpg"
                 }
             }
         ]
@@ -1204,7 +1225,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image20.jpg"
+                    "filename": "demoData/unsplash-image20.jpg"
                 }
             }
         ]
@@ -1223,7 +1244,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1242,7 +1263,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image24.jpg"
+                    "filename": "demoData/unsplash-image24.jpg"
                 }
             }
         ]
@@ -1261,7 +1282,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person0.jpg"
+                    "filename": "demoData/fake-person0.jpg"
                 }
             }
         ]
@@ -1280,7 +1301,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image19.jpg"
+                    "filename": "demoData/unsplash-image19.jpg"
                 }
             }
         ]
@@ -1300,7 +1321,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person43.jpg"
+                    "filename": "demoData/fake-person43.jpg"
                 }
             }
         ]
@@ -1319,7 +1340,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image57.jpg"
+                    "filename": "demoData/unsplash-image57.jpg"
                 }
             }
         ]
@@ -1338,7 +1359,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person36.jpg"
+                    "filename": "demoData/fake-person36.jpg"
                 }
             }
         ]
@@ -1357,7 +1378,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image-27.jpg"
+                    "filename": "demoData/unsplash-image-27.jpg"
                 }
             }
         ]
@@ -1377,7 +1398,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person54.jpg"
+                    "filename": "demoData/fake-person54.jpg"
                 }
             }
         ]
@@ -1396,7 +1417,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image21.jpg"
+                    "filename": "demoData/unsplash-image21.jpg"
                 }
             }
         ]
@@ -1415,7 +1436,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image24.jpg"
+                    "filename": "demoData/unsplash-image24.jpg"
                 }
             }
         ]
@@ -1434,7 +1455,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person41.jpg"
+                    "filename": "demoData/fake-person41.jpg"
                 }
             }
         ]
@@ -1453,7 +1474,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person57.jpg"
+                    "filename": "demoData/fake-person57.jpg"
                 }
             }
         ]
@@ -1472,7 +1493,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image58.jpg"
+                    "filename": "demoData/unsplash-image58.jpg"
                 }
             }
         ]
@@ -1491,7 +1512,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image23.jpg"
+                    "filename": "demoData/unsplash-image23.jpg"
                 }
             }
         ]
@@ -1510,7 +1531,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person15.jpg"
+                    "filename": "demoData/fake-person15.jpg"
                 }
             }
         ]
@@ -1530,7 +1551,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person6.jpg"
+                    "filename": "demoData/fake-person6.jpg"
                 }
             }
         ]
@@ -1549,7 +1570,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image18.jpg"
+                    "filename": "demoData/unsplash-image18.jpg"
                 }
             }
         ]
@@ -1568,7 +1589,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image59.jpg"
+                    "filename": "demoData/unsplash-image59.jpg"
                 }
             }
         ]
@@ -1587,7 +1608,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person49.jpg"
+                    "filename": "demoData/fake-person49.jpg"
                 }
             }
         ]
@@ -1606,7 +1627,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image25.jpg"
+                    "filename": "demoData/unsplash-image25.jpg"
                 }
             }
         ]
@@ -1625,7 +1646,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image60.jpg"
+                    "filename": "demoData/unsplash-image60.jpg"
                 }
             }
         ]
@@ -1644,7 +1665,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person50.jpg"
+                    "filename": "demoData/fake-person50.jpg"
                 }
             }
         ]
@@ -1664,7 +1685,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person33.jpg"
+                    "filename": "demoData/fake-person33.jpg"
                 }
             }
         ]
@@ -1683,7 +1704,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image22.jpg"
+                    "filename": "demoData/unsplash-image22.jpg"
                 }
             }
         ]
@@ -1702,7 +1723,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image28.jpg"
+                    "filename": "demoData/unsplash-image28.jpg"
                 }
             }
         ]
@@ -1721,7 +1742,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "unsplash-image30.jpg"
+                    "filename": "demoData/unsplash-image30.jpg"
                 }
             }
         ]
@@ -1740,7 +1761,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person18.jpg"
+                    "filename": "demoData/fake-person18.jpg"
                 }
             }
         ]
@@ -1759,7 +1780,7 @@
                 "_type": "file",
                 "_target": {
                     "_type": "File",
-                    "filename": "fake-person33.jpg"
+                    "filename": "demoData/fake-person33.jpg"
                 }
             }
         ]
@@ -3738,21 +3759,6 @@
         ]
     },
     {
-        "_type": "MessageChannel",
-        "uid": 20000000007,
-        "externalId": "1357924680@s.whatsapp.net",
-        "name": "",
-        "topic": "WhatsApp private chat",
-        "encrypted": false,
-        "allEdges": [
-            {
-                "targetType": "Account",
-                "uid": 20000000003,
-                "_type": "receiver"
-            }
-        ]
-    },
-    {
         "_type": "Message",
         "uid": 20000000008,
         "externalId": "93463F7980167E92C28FF0781E650E80",
@@ -3903,7 +3909,7 @@
         "uid": 22000000008,
         "subject": "Hello",
         "externalId": "93463F7980167E92C28FF0781E650E80",
-        "content": "test 123",
+        "content": " <!doctype html> <html>   <head>     <meta name=\"viewport\" content=\"width=device-width\" \/>     <meta http-equiv=\"Content-Type\" content=\"text\/html; charset=UTF-8\" \/>     <title>Simple Transactional Email<\/title>     <style>       \/* -------------------------------------           GLOBAL RESETS       ------------------------------------- *\/       img {         border: none;         -ms-interpolation-mode: bicubic;         max-width: 100%; }        body {         background-color: #f6f6f6;         font-family: sans-serif;         -webkit-font-smoothing: antialiased;         font-size: 14px;         line-height: 1.4;         margin: 0;         padding: 0;         -ms-text-size-adjust: 100%;         -webkit-text-size-adjust: 100%; }        table {         border-collapse: separate;         mso-table-lspace: 0pt;         mso-table-rspace: 0pt;         width: 100%; }         table td {           font-family: sans-serif;           font-size: 14px;           vertical-align: top; }        \/* -------------------------------------           BODY & CONTAINER       ------------------------------------- *\/        .body {         background-color: #f6f6f6;         width: 100%; }        \/* Set a max-width, and make it display as block so it will automatically stretch to that width, but will also shrink down on a phone or something *\/       .container {         display: block;         margin: 0 auto !important;         \/* makes it centered *\/         max-width: 580px;         padding: 10px;         width: 580px; }        \/* This should also be a block element, so that it will fill 100% of the .container *\/       .content {         box-sizing: border-box;         display: block;         margin: 0 auto;         max-width: 580px;         padding: 10px; }        \/* -------------------------------------           HEADER, FOOTER, MAIN       ------------------------------------- *\/       .main {         background: #ffffff;         border-radius: 3px;         width: 100%; }        .wrapper {         box-sizing: border-box;         padding: 20px; }        .content-block {         padding-bottom: 10px;         padding-top: 10px;       }        .footer {         clear: both;         margin-top: 10px;         text-align: center;         width: 100%; }         .footer td,         .footer p,         .footer span,         .footer a {           color: #999999;           font-size: 12px;           text-align: center; }        \/* -------------------------------------           TYPOGRAPHY       ------------------------------------- *\/       h1,       h2,       h3,       h4 {         color: #000000;         font-family: sans-serif;         font-weight: 400;         line-height: 1.4;         margin: 0;         margin-bottom: 30px; }        h1 {         font-size: 35px;         font-weight: 300;         text-align: center;         text-transform: capitalize; }        p,       ul,       ol {         font-family: sans-serif;         font-size: 14px;         font-weight: normal;         margin: 0;         margin-bottom: 15px; }         p li,         ul li,         ol li {           list-style-position: inside;           margin-left: 5px; }        a {         color: #3498db;         text-decoration: underline; }        \/* -------------------------------------           BUTTONS       ------------------------------------- *\/       .btn {         box-sizing: border-box;         width: 100%; }         .btn > tbody > tr > td {           padding-bottom: 15px; }         .btn table {           width: auto; }         .btn table td {           background-color: #ffffff;           border-radius: 5px;           text-align: center; }         .btn a {           background-color: #ffffff;           border: solid 1px #3498db;           border-radius: 5px;           box-sizing: border-box;           color: #3498db;           cursor: pointer;           display: inline-block;           font-size: 14px;           font-weight: bold;           margin: 0;           padding: 12px 25px;           text-decoration: none;           text-transform: capitalize; }        .btn-primary table td {         background-color: #3498db; }        .btn-primary a {         background-color: #3498db;         border-color: #3498db;         color: #ffffff; }        \/* -------------------------------------           OTHER STYLES THAT MIGHT BE USEFUL       ------------------------------------- *\/       .last {         margin-bottom: 0; }        .first {         margin-top: 0; }        .align-center {         text-align: center; }        .align-right {         text-align: right; }        .align-left {         text-align: left; }        .clear {         clear: both; }        .mt0 {         margin-top: 0; }        .mb0 {         margin-bottom: 0; }        .preheader {         color: transparent;         display: none;         height: 0;         max-height: 0;         max-width: 0;         opacity: 0;         overflow: hidden;         mso-hide: all;         visibility: hidden;         width: 0; }        .powered-by a {         text-decoration: none; }        hr {         border: 0;         border-bottom: 1px solid #f6f6f6;         Margin: 20px 0; }        \/* -------------------------------------           RESPONSIVE AND MOBILE FRIENDLY STYLES       ------------------------------------- *\/       @media only screen and (max-width: 620px) {         table[class=body] h1 {           font-size: 28px !important;           margin-bottom: 10px !important; }         table[class=body] p,         table[class=body] ul,         table[class=body] ol,         table[class=body] td,         table[class=body] span,         table[class=body] a {           font-size: 16px !important; }         table[class=body] .wrapper,         table[class=body] .article {           padding: 10px !important; }         table[class=body] .content {           padding: 0 !important; }         table[class=body] .container {           padding: 0 !important;           width: 100% !important; }         table[class=body] .main {           border-left-width: 0 !important;           border-radius: 0 !important;           border-right-width: 0 !important; }         table[class=body] .btn table {           width: 100% !important; }         table[class=body] .btn a {           width: 100% !important; }         table[class=body] .img-responsive {           height: auto !important;           max-width: 100% !important;           width: auto !important; }}        \/* -------------------------------------           PRESERVE THESE STYLES IN THE HEAD       ------------------------------------- *\/       @media all {         .ExternalClass {           width: 100%; }         .ExternalClass,         .ExternalClass p,         .ExternalClass span,         .ExternalClass font,         .ExternalClass td,         .ExternalClass div {           line-height: 100%; }         .apple-link a {           color: inherit !important;           font-family: inherit !important;           font-size: inherit !important;           font-weight: inherit !important;           line-height: inherit !important;           text-decoration: none !important; }         .btn-primary table td:hover {           background-color: #34495e !important; }         .btn-primary a:hover {           background-color: #34495e !important;           border-color: #34495e !important; } }      <\/style>   <\/head>   <body class=\"\">     <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"body\">       <tr>         <td>&nbsp;<\/td>         <td class=\"container\">           <div class=\"content\">              <!-- START CENTERED WHITE CONTAINER -->             <span class=\"preheader\">This is preheader text. Some clients will show this text as a preview.<\/span>             <table class=\"main\">                <!-- START MAIN CONTENT AREA -->               <tr>                 <td class=\"wrapper\">                   <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">                     <tr>                       <td>                         <p>Hi there,<\/p>                         <p>Sometimes you just want to send a simple HTML email with a simple design and clear call to action. This is it.<\/p>                         <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\">                           <tbody>                             <tr>                               <td align=\"left\">                                 <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">                                   <tbody>                                     <tr>                                       <td> <a href=\"http:\/\/htmlemail.io\" target=\"_blank\">Email Call To Action<\/a> <\/td>                                     <\/tr>                                   <\/tbody>                                 <\/table>                               <\/td>                             <\/tr>                           <\/tbody>                         <\/table>                         <p>This is a really simple email template. Its sole purpose is to get the recipient to click the button with no distractions.<\/p>                         <p>Good luck! Hope it works.<\/p>                       <\/td>                     <\/tr>                   <\/table>                 <\/td>               <\/tr>              <!-- END MAIN CONTENT AREA -->             <\/table>              <!-- START FOOTER -->             <div class=\"footer\">               <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\">                 <tr>                   <td class=\"content-block\">                     <span class=\"apple-link\">Company Inc, 3 Abbey Road, San Francisco CA 94102<\/span>                     <br> Don't like these emails? <a href=\"http:\/\/i.imgur.com\/CScmqnj.gif\">Unsubscribe<\/a>.                   <\/td>                 <\/tr>                 <tr>                   <td class=\"content-block powered-by\">                     Powered by <a href=\"http:\/\/htmlemail.io\">HTML Email<\/a>.                   <\/td>                 <\/tr>               <\/table>             <\/div>             <!-- END FOOTER -->            <!-- END CENTERED WHITE CONTAINER -->           <\/div>         <\/td>         <td>&nbsp;<\/td>       <\/tr>     <\/table>      <!-- GA -->     <script>       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)       })(window,document,'script','https:\/\/www.google-analytics.com\/analytics.js','ga');        ga('create', 'UA-1284993-68', 'auto');       ga('send', 'pageview');      <\/script>   <\/body> <\/html>",
         "dateSent": 1589691657000,
         "allEdges": [
             {
@@ -3922,7 +3928,7 @@
         "dateSent": 1589691670000,
         "allEdges": [
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000008,
                 "_type": "message"
             },
@@ -3947,7 +3953,7 @@
                 "_type": "photo"
             },
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000009,
                 "_type": "message"
             },
@@ -3967,7 +3973,7 @@
         "dateSent": 1589691690000,
         "allEdges": [
             {
-                "targetType": "Message",
+                "targetType": "EmailMessage",
                 "uid": 22000000010,
                 "_type": "message"
             },

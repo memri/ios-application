@@ -17,7 +17,7 @@ protocol ConfigurableRenderConfig {
 }
 
 // MARK: Common variables needed by renderers
-extension CascadingRenderConfig {
+extension CascadingRendererConfig {
 	var primaryColor: ColorDefinition {
 		get { cascadeProperty("color") ?? ColorDefinition.system(.systemBlue) }
 		set(value) { setState("color", value) }
@@ -27,8 +27,8 @@ extension CascadingRenderConfig {
 		get { cascadeProperty("background") }
 		set(value) { setState("background", value) }
 	}
-	
-	var spacing: CGSize {
+    
+    var spacing: CGSize {
 		get {
 			if let spacing = cascadePropertyAsCGFloat("spacing") {
 				return CGSize(width: spacing, height: spacing)
@@ -38,7 +38,7 @@ extension CascadingRenderConfig {
 				guard spacingArray.count == 2 else { return .zero }
 				return CGSize(width: spacingArray[0], height: spacingArray[1])
 			}
-			return .zero
+			return defaultSpacing
 		}
 		set(value) { setState("spacing", value) }
 	}
@@ -71,7 +71,7 @@ extension CascadingRenderConfig {
 				default: return .init()
 				}
 			}
-			return .init()
+			return defaultEdgeInset
 		}
 		set(value) { setState("edgeInset", value) }
 	}

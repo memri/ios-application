@@ -54,7 +54,7 @@ class Sync {
             ] as? [String: String])
 
             // Add to realm
-            DatabaseController.background(write:true) { realm in
+            DatabaseController.asyncOnBackgroundThread(write:true) { realm in
 
                 var safeRef: ItemReference?
                 if auditable {
@@ -78,7 +78,7 @@ class Sync {
                 self.prioritySync(datasource) {
                     if auditable {
                         // We no longer need to process this log item
-                        DatabaseController.background(write:true) { _ in
+                        DatabaseController.asyncOnBackgroundThread(write:true) { _ in
                             safeRef?.resolve()?._action = nil
                         }
                     }
@@ -191,7 +191,7 @@ class Sync {
 
     private func syncToPod() {
         func markAsDone(_ list: [String: Any], _ callback: @escaping (Error?) -> Void) {
-            DatabaseController.background(write:true, error:callback) { realm in
+            DatabaseController.asyncOnBackgroundThread(write:true, error:callback) { realm in
                 for (_, sublist) in list {
                     for item in sublist as? [Any] ?? [] {
                         if let item = item as? ItemReference, let resolvedItem = item.resolve() {
@@ -223,8 +223,7 @@ class Sync {
             }
         }
 
-        #warning("Why is this not in the background?")
-        DatabaseController.current { realm in
+        DatabaseController.asyncOnBackgroundThread { realm in
             var found = 0
             var itemQueue: [String: [Item]] = ["create": [], "update": [], "delete": []]
             var edgeQueue: [String: [Edge]] = ["create": [], "update": [], "delete": []]
@@ -310,7 +309,7 @@ class Sync {
     }
     
     public func syncFilesFromPod(_ callback: @escaping (Error?) -> Void ) {
-        DatabaseController.background { realm in
+        DatabaseController.asyncOnBackgroundThread { realm in
             var list = [String]()
             let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
             items.forEach {
@@ -325,7 +324,7 @@ class Sync {
             }
             
             func validate(_ sha256:String) -> Bool {
-                return DatabaseController.current { realm -> Bool? in
+                return DatabaseController.sync { realm -> Bool? in
                     guard
                         let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
                         file._action != "create",
@@ -375,7 +374,7 @@ class Sync {
     }
     
     public func syncFilesToPod(_ callback: @escaping (Error?) -> Void ) {
-        DatabaseController.background { realm in
+        DatabaseController.asyncOnBackgroundThread { realm in
             var list = [String]()
             let items = realm.objects(LocalFileSyncQueue.self).filter("task = 'upload'")
             items.forEach {
@@ -390,7 +389,7 @@ class Sync {
             }
             
             func validate(_ sha256:String) -> Bool {
-                return DatabaseController.current { realm -> Bool? in
+                return DatabaseController.sync { realm -> Bool? in
                     guard
                         let file = realm.objects(File.self).filter("sha256 = '\(sha256)'").first,
                         file._action != "create",

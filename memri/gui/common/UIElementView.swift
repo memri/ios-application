@@ -293,6 +293,24 @@ public struct UIElementView: SwiftUI.View {
                     //                .environmentObject(self.context)
                     //                .setProperties(from.properties, self.item, context, self.viewArguments)
                 }
+                else if from.type == .EmailContent {
+                    EmailView(emailHTML: self.get("content"))
+                        .setProperties(
+                            from.propertyResolver.properties,
+                            self.item,
+                            context,
+                            self.viewArguments
+                    )
+                }
+                else if from.type == .Toggle {
+                    renderToggle()
+                        .setProperties(
+                        from.propertyResolver.properties,
+                        self.item,
+                        context,
+                        self.viewArguments
+                    )
+                }
                 else if from.type == .SubView {
                     if has("viewName") {
                         SubView(
@@ -633,6 +651,16 @@ public struct UIElementView: SwiftUI.View {
                                backgroundColor: nil,
                                isEditing: editModeBinding)
             .eraseToAnyView()
+    }
+    
+    func renderToggle() -> some View {
+        let (_, dataItem, propName) = from.getType("value", item, viewArguments)
+        
+        return Toggle(isOn: Binding<Bool>(
+            get: { dataItem[propName] as? Bool ?? false },
+            set: { dataItem.set(propName, $0) }
+        )) { EmptyView() }
+        .labelsHidden()
     }
 
     func renderTextfield() -> some View {
