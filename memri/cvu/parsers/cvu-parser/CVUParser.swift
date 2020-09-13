@@ -213,29 +213,19 @@ class CVUParser {
         var isArrayMode = false
 
         func setPropertyValue() {
-            if stack.count > 0 {
-                if forUIElement, let convert = CVUParser.specialTypedProperties[lastKey!] {
-                    if !isArrayMode && stack.count == 1 {
-                        dict[lastKey!] = convert(stack[0], uiElementName!)
-                    }
-                    else if isArrayMode || stack.count > 0 {
-                        dict[lastKey!] = convert(stack, uiElementName!)
-                    }
-                }
-                else {
+            if !stack.isEmpty {
                     if !isArrayMode && stack.count == 1 { dict[lastKey!] = stack[0] }
                     else if isArrayMode || stack.count > 0 { dict[lastKey!] = stack }
-                }
 
                 stack = []
             }
         }
 
         func addUIElement(_ type: UIElementFamily, _ properties: inout [String: Any?]) {
-            var children = dict["children"] as? [UIElement] ?? [UIElement]()
-            let subChildren = properties.removeValue(forKey: "children")
-            children.append(UIElement(type,
-                                      children: subChildren as? [UIElement] ?? [],
+            var children = dict["children"] as? [UINode] ?? []
+            let subChildren = properties.removeValue(forKey: "children") as? [UINode] ?? []
+            children.append(UINode(type: type,
+                                      children: subChildren,
                                       properties: properties))
             dict["children"] = children
         }
@@ -312,14 +302,13 @@ class CVUParser {
                 stack.append(try parseDict(lastKey))
             case .CurlyBracketClose:
                 setPropertyValue()
-                if forUIElement { processCompoundProperties(&dict) }
                 return dict // DONE
             case .Colon:
                 throw CVUParseErrors.ExpectedKey(lastToken!)
             case let .Expression(v, _, _):
                 stack.append(createExpression(v))
             case let .Color(value, _, _):
-                stack.append(ColorDefinition.hex(value))
+                stack.append(CVUColor.hex(value))
             case let .Identifier(value, _, _):
                 if lastKey == nil {
                     var nextToken = peekCurrentToken()
@@ -466,106 +455,4 @@ class CVUParser {
         }
         return result
     }()
-
-    // Same as above to be converted once per dict
-    let frameProperties = ["minWidth": 1, "maxWidth": 1, "minHeight": 1, "maxHeight": 1, "align": 1]
-    // Based on key when its added to the dict (only needed within rendererDefinition / UIElement)
-    static let specialTypedProperties = [
-        "alignment": { (value: Any?, type: String) -> Any? in
-            switch value as? String {
-            case "left": return HorizontalAlignment.leading
-            case "top": return VerticalAlignment.top
-            case "right": return HorizontalAlignment.trailing
-            case "bottom": return VerticalAlignment.bottom
-            case "center":
-                if type == "ZStack" { return Alignment.center }
-                return type == "VStack"
-                    ? HorizontalAlignment.center
-                    : VerticalAlignment.center
-            default:
-                return value // TODO: Test if this crashes the view renderer
-            }
-        },
-        "align": { (value: Any?, _: String) -> Any? in
-            switch value as? String {
-            case "left": return Alignment.leading
-            case "top": return Alignment.top
-            case "right": return Alignment.trailing
-            case "bottom": return Alignment.bottom
-            case "center": return Alignment.center
-            case "lefttop", "topleft": return Alignment.topLeading
-            case "righttop", "topright": return Alignment.topTrailing
-            case "leftbottom", "bottomleft": return Alignment.bottomLeading
-            case "rightbottom", "bottomright": return Alignment.bottomTrailing
-            default:
-                return value // TODO: Test if this crashes the view renderer
-            }
-        },
-        "textAlign": { (value: Any?, _: String) -> Any? in
-            switch value as? String {
-            case "left": return TextAlignment.leading
-            case "center": return TextAlignment.center
-            case "right": return TextAlignment.trailing
-            default:
-                return value // TODO: Test if this crashes the view renderer
-            }
-        },
-        "font": { (input: Any?, _: String) -> Any? in
-            if var value = input as? [Any?] {
-                if let _ = value[0] as? CGFloat {
-                    if value.count == 1 {
-                        value.append(Font.Weight.regular)
-                    }
-                    else {
-                        switch value[1] as? String {
-                        case "regular": value[1] = Font.Weight.regular
-                        case "bold": value[1] = Font.Weight.bold
-                        case "semibold": value[1] = Font.Weight.semibold
-                        case "heavy": value[1] = Font.Weight.heavy
-                        case "light": value[1] = Font.Weight.light
-                        case "ultralight": value[1] = Font.Weight.ultraLight
-                        case "black": value[1] = Font.Weight.black
-                        default:
-                            // TODO: Warn user
-                            value[1] = Font.Weight.regular
-                        }
-                    }
-                }
-                return value
-            }
-            // TODO: Warn user
-            return input
-        },
-    ]
-
-    func processCompoundProperties(_ dict: inout [String: Any?]) {
-        for (name, _) in frameProperties {
-            if dict[name] != nil {
-                let values: [Any?] = [
-                    dict["minWidth"] as Any?,
-                    dict["maxWidth"] as Any?,
-                    dict["minHeight"] as Any?,
-                    dict["maxHeight"] as Any?,
-                    dict["align"] as Any?,
-                ]
-
-                dict["minWidth"] = nil
-                dict["maxWidth"] = nil
-                dict["minHeight"] = nil
-                dict["maxHeight"] = nil
-//                dict["align"] = nil
-
-                dict["frame"] = values
-                break
-            }
-        }
-
-        if dict["cornerRadius"] != nil, dict["border"] != nil {
-            var value = dict["border"] as? [Any?] ?? []
-            value.append(dict["cornerRadius"] ?? 0)
-
-            dict["cornerborder"] = value as Any?
-            dict["border"] = nil
-        }
-    }
 }

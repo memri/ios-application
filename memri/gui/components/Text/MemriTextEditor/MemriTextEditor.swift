@@ -12,7 +12,7 @@ public struct MemriTextEditor: UIViewRepresentable {
         titlePlaceholder: String? = nil,
         fontSize: CGFloat = 18,
         headingFontSize: CGFloat = 26,
-        backgroundColor: ColorDefinition? = nil,
+        backgroundColor: CVUColor? = nil,
         isEditing: Binding<Bool>? = nil,
         onContentChanged: ((String) -> Void)? = nil
     ) {
@@ -33,7 +33,7 @@ public struct MemriTextEditor: UIViewRepresentable {
     var headingFontSize: CGFloat
     var isEditing: Binding<Bool>?
     var onContentChanged: ((String) -> Void)?
-    var backgroundColor: ColorDefinition?
+    var backgroundColor: CVUColor?
 
     public func makeUIView(context _: Context) -> MemriTextEditorWrapper_UIKit {
         MemriTextEditorWrapper_UIKit(

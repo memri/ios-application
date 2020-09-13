@@ -644,8 +644,8 @@ public class Views {
         with item: Item?,
         search rendererNames: [String] = [],
         inView viewOverride: String? = nil,
-        use viewArguments: ViewArguments? = nil
-    ) -> UIElementView {
+        use viewArguments: ViewArguments = ViewArguments()
+    ) -> AnyView {
         do {
             guard let context = self.context else {
                 throw "Exception: MemriContext is not defined in views"
@@ -742,15 +742,13 @@ public class Views {
             )
 
             // Return the rendered UIElements in a UIElementView
-            return cascadingRendererConfig.render(item: item, arguments: viewArguments)
+            return cascadingRendererConfig.render(item: item, arguments: viewArguments).eraseToAnyView()
         }
         catch {
             debugHistory.error("Unable to render ItemCell: \(error)")
 
             // TODO: Refactor: Log error to the user
-            return UIElementView(UIElement(.Text,
-                                           properties: ["text": "Could not render this view"]),
-                                 item ?? Item())
+            return Text("Could not render this view").eraseToAnyView()
         }
     }
 }

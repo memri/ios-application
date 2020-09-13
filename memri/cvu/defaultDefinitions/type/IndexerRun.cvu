@@ -95,7 +95,7 @@ IndexerRun {
                     /** todo, this padding is hacky but necessary now*/
                     padding: 8 0 8 0
                     align: center
-                    resizable: fill
+                    sizingMode: fill
                     show: {{.indexer.icon}}
                     systemName: {{.indexer.icon}}
                     color: #d64f4f
@@ -108,7 +108,7 @@ IndexerRun {
                     show: {{!.indexer.icon}}
                     bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
-                    resizable: fill
+                    sizingMode: fill
                     minWidth: 100
                     minHeight: 100
                     maxWidth: 100
@@ -148,7 +148,7 @@ IndexerRun {
                         margin: 0 5 10 35
                         
                         press: runIndexer {
-                            indexer: {{.}}
+                            indexerRun: {{.}}
                         }
                         
                         Text {

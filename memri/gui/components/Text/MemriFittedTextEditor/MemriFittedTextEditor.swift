@@ -11,7 +11,7 @@ public struct MemriFittedTextEditor: View {
     var placeholder: String?
     
     var fontSize: CGFloat = 18
-    var backgroundColor: ColorDefinition?
+    var backgroundColor: CVUColor?
     var isEditing: Binding<Bool>?
     
     
@@ -80,7 +80,7 @@ public struct MemriFittedTextEditor_Inner: UIViewRepresentable {
         MemriFittedTextEditorWrapper_UIKit(
             MemriFittedTextEditor_UIKit(textContent: textContent,
                                   fontSize: fontSize,
-                                  backgroundColor: ColorDefinition.system(.clear))
+                                  backgroundColor: CVUColor.system(.clear))
         )
     }
     

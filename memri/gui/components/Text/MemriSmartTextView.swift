@@ -7,8 +7,8 @@ import SwiftUI
 struct MemriSmartTextView: View {
 	var string: String
 	var detectLinks: Bool = true
-	var font: FontDefinition
-	var color: ColorDefinition?
+	var font: CVUFont
+	var color: CVUColor?
 	var maxLines: Int?
 	
 	// This uses a rather hacky implementation to get around SwiftUI sizing limitations
@@ -26,8 +26,8 @@ struct MemriSmartTextView: View {
 struct MemriSmartTextView_Inner: UIViewRepresentable {
     var string: String
     var detectLinks: Bool = true
-    var font: FontDefinition
-    var color: ColorDefinition?
+    var font: CVUFont
+    var color: CVUColor?
     var maxLines: Int?
 
     func makeUIView(context: Context) -> MemriSmartTextView_UIKit {

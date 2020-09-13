@@ -92,7 +92,7 @@ ImporterRun {
                 
                 Image {
                     align: center
-                    resizable: fill
+                    sizingMode: fill
                     show: {{.importer.icon}}
                     systemName: {{.importer.icon}}
                     color: #2480d6
@@ -105,7 +105,7 @@ ImporterRun {
                     show: {{!.importer.icon and .importer.bundleImage}}
                     bundleImage: {{.importer.bundleImage}}
                     color: #2480d6
-                    resizable: fill
+                    sizingMode: fill
                     minWidth: 100
                     minHeight: 100
                     maxWidth: 100

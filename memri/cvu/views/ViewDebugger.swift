@@ -251,7 +251,6 @@ struct DebugConsole: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 .background(Color.white.edgesIgnoringSafeArea(.all))
-                .border(width: [1, 0, 0, 0], color: Color(hex: "ddd"))
                 .frame(height: 200)
             }
         }

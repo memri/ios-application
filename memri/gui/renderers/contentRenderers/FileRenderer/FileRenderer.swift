@@ -49,10 +49,9 @@ class FileRendererController: RendererController, ObservableObject {
     
     var files: [FileViewerItem] {
         context.items.compactMap { item -> FileViewerItem? in
-            guard let file = resolveExpression(config.file, toType: File.self, forItem: item) ?? (item as? File),
-                let url = file.url
+            guard let file = resolveExpression(config.file, toType: File.self, forItem: item) ?? (item as? File)
                 else { return nil }
-            return FileViewerItem(url: url,
+            return FileViewerItem(url: file.url,
                                   title: resolveExpression(config.itemTitle, toType: String.self, forItem: item))
         }
     }

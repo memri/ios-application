@@ -12,7 +12,7 @@ struct EmailHeaderView: View {
     var senderName: String
     var recipientList: String?
     var dateString: String?
-    var color: ColorDefinition?
+    var color: CVUColor?
     
     var senderInitials: String {
         senderName.split(separator: Character(" ")).prefix(2).compactMap{$0.first.map(String.init)?.capitalized}.joined()

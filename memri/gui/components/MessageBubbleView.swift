@@ -13,7 +13,7 @@ struct MessageBubbleView: View {
     var sender: String?
     var content: String
     var outgoing: Bool
-    var font: FontDefinition?
+    var font: CVUFont?
     
     var dateFormatter: DateFormatter {
         // TODO: If there is a user setting for a *short* date format, we should use that
@@ -41,8 +41,8 @@ struct MessageBubbleView: View {
                         .foregroundColor(Color(.secondaryLabel))
                 }
                 MemriSmartTextView(string: content, detectLinks: true,
-                                   font: font ?? FontDefinition(size: 18),
-                                   color: outgoing ? ColorDefinition.system(.white) : ColorDefinition.system(.label),
+                                   font: font ?? CVUFont(size: 18),
+                                   color: outgoing ? CVUColor.system(.white) : CVUColor.system(.label),
                                    maxLines: nil)
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.all, 10)

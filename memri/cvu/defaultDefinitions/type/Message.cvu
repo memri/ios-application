@@ -175,6 +175,8 @@ Message[] {
                     image: {{.photo}}
                     forceAspect: true
                     cornerRadius: 5
+                    maxHeight: 200
+                    maxWidth: 150
                 }
                 
                 SmartText {

@@ -290,7 +290,7 @@ struct GeneralEditorSection: View {
                                 }
                                 // Render the edges
                                 if edges.count > 0 {
-                                    ForEach<[Edge], Edge, UIElementView>(edges,
+                                    ForEach<[Edge], Edge, AnyView>(edges,
                                                                          id: \.self) { edge in
                                         let targetItem = edge.target()
                                         return renderConfig.render(
@@ -379,7 +379,7 @@ struct GeneralEditorSection: View {
         value _: Any? = nil,
         item: Item?,
         edge: Edge? = nil
-    ) -> ViewArguments? {
+    ) -> ViewArguments {
         ViewArguments(
             [
                 "subject": item,

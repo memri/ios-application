@@ -149,7 +149,7 @@ struct SessionSwitcher: View {
                     { () -> AnyView in
                         if let session = self.context.sessions[i + self.countIndexOffset],
                             let screenShot = session.screenshot,
-                            let uiImage = screenShot.asUIImage {
+                            let uiImage = FileStorageController.getImage(fromFileForUUID: screenShot.fileUID) {
                             return Image(uiImage: uiImage).resizable().eraseToAnyView()
                         } else {
                             return Color(.secondarySystemBackground).eraseToAnyView()

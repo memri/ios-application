@@ -1382,41 +1382,6 @@ public class ExercisePlan : Item {
     }
 }
 
-/// Any file that can be stored on disk.
-public class File : Item {
-    /// The sha256 hash of a resource.
-    @objc dynamic var sha256:String? = nil
-    /// A cryptographic nonce https://en.wikipedia.org/wiki/Cryptographic_nonce
-    @objc dynamic var nonce:String? = nil
-    /// A piece of information that determines the functional output of a cryptographic
-    /// algorithm.
-    @objc dynamic var key:String? = nil
-    /// The filename of a resource.
-    @objc dynamic var filename:String? = nil
-
-    /// A universal resource location
-    var resource: Results<Resource>? {
-        edges("resource")?.items(type:Resource.self)
-    }
-
-    /// An Item this Item is used by.
-    var usedBy: [Item]? {
-        edges("usedBy")?.itemsArray()
-    }
-
-    public required convenience init(from decoder: Decoder) throws {
-        self.init()
-
-        jsonErrorHandling(decoder) {
-            sha256 = try decoder.decodeIfPresent("sha256") ?? sha256
-            nonce = try decoder.decodeIfPresent("nonce") ?? nonce
-            key = try decoder.decodeIfPresent("key") ?? key
-            filename = try decoder.decodeIfPresent("filename") ?? filename
-
-            try self.superDecode(from: decoder)
-        }
-    }
-}
 
 /// The number of occurrences of a repeating event per measure of time.
 public class Frequency : Item {

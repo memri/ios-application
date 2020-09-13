@@ -16,7 +16,7 @@ struct DefaultGeneralEditorRow: View {
     var readOnly: Bool
     var isLast: Bool
     var renderConfig: CascadingRendererConfig
-    var arguments: ViewArguments?
+    var arguments: ViewArguments
     
     var body: some View {
         // Get the type from the schema, because when the value is nil the type cannot be determined
@@ -177,7 +177,7 @@ private struct GeneralEditorInput: ViewModifier {
             .fullHeight()
             .font(.system(size: 16, weight: .regular))
             .padding(10)
-            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
+//            .border(width: [0, 0, 1, 1], color: Color(hex: "#eee"))
             .generalEditorCaption()
     }
 }

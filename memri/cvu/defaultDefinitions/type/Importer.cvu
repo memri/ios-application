@@ -117,7 +117,7 @@ Importer[] {
                     show: {{!.icon and .bundleImage}}
                     bundleImage: {{.bundleImage}}
                     color: #2480d6
-                    resizable: fit
+                    sizingMode: fit
                     minWidth: 50
                     minHeight: 50
                     maxWidth: 50

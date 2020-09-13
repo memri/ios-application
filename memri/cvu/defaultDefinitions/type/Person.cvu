@@ -201,7 +201,7 @@ Person {
                 
                     Image {
                         image: {{.profilePicture}}
-                        resizable: fill
+                        sizingMode: fill
                     }
                     
                     HStack {
@@ -366,7 +366,7 @@ Person[] {
                 
                 Image {
                     image: {{.profilePicture}}
-                    resizable: fill
+                    sizingMode: fill
                     minHeight: 60
                     maxHeight: 60
                     minWidth: 60
@@ -406,7 +406,7 @@ Person[] {
             Image {
                 image: {{.profilePicture}}
                 cornerRadius: 10
-                resizable: fill
+                sizingMode: fill
 				forceAspect: true
             }
             Text {

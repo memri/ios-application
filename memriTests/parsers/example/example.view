@@ -228,7 +228,7 @@ Person {
                 Image {
                     image: {{.}}
                     border: #ccc 1
-                    resizable: fill
+                    sizingMode: fill
                     minHeight: 250
                     maxHeight: 250
                     opacity: 0.6
@@ -245,7 +245,7 @@ Person {
                 
                     Image {
                         image: {{.}}
-                        resizable: fill
+                        sizingMode: fill
                     }
                     
                     HSTack {
@@ -379,7 +379,7 @@ Person[] {
                 
                     Image {
                         image: {{.profilePicture}}
-                        resizable: fill
+                        sizingMode: fill
                         minHeight: 60
                         maxHeight: 60
                     }

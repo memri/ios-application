@@ -106,3 +106,42 @@ public class PhotoAnnotation : Item  {
         }
     }
 }
+
+
+import RealmSwift
+/// Any file that can be stored on disk.
+public class File : Item {
+    /// The sha256 hash of a resource.
+    @objc dynamic var sha256:String? = nil
+    /// A cryptographic nonce https://en.wikipedia.org/wiki/Cryptographic_nonce
+    @objc dynamic var nonce:String? = nil
+    /// A piece of information that determines the functional output of a cryptographic
+    /// algorithm.
+    @objc dynamic var key:String? = nil
+    
+    /// A unique identifier that can be used as a filename for the resource.
+    @objc dynamic var fileUID:String = UUID().uuidString
+    
+    /// A universal resource location
+    var resource: Results<Resource>? {
+        edges("resource")?.items(type:Resource.self)
+    }
+    
+    /// An Item this Item is used by.
+    var usedBy: [Item]? {
+        edges("usedBy")?.itemsArray()
+    }
+    
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+        
+        jsonErrorHandling(decoder) {
+            sha256 = try decoder.decodeIfPresent("sha256")
+            nonce = try decoder.decodeIfPresent("nonce")
+            key = try decoder.decodeIfPresent("key")
+            fileUID = try decoder.decodeIfPresent("fileUID") ?? UUID().uuidString
+            
+            try self.superDecode(from: decoder)
+        }
+    }
+}

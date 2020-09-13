@@ -119,7 +119,7 @@ Note[] {
             
             HStack {
                 align: left
-                
+                spacing: 5
                 Text {
                     text: {{.title or "Untitled Note"}}
 					lineLimit: 1

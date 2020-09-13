@@ -75,7 +75,7 @@ public class MemriTextEditor_UIKit: UITextView {
         titlePlaceholder: String?,
         fontSize: CGFloat = 18,
         headingFontSize: CGFloat = 26,
-        backgroundColor: ColorDefinition?
+        backgroundColor: CVUColor?
     ) {
         self.titleBinding = titleBinding
         self.titlePlaceholder = titlePlaceholder

@@ -176,8 +176,8 @@ class ChartRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
         set(value) { setState("hideGridlines", value) }
     }
     
-    var barLabelFont: FontDefinition {
-        get { cascadeProperty("barLabelFont") ?? FontDefinition(size: 13) }
+    var barLabelFont: CVUFont {
+        get { cascadeProperty("barLabelFont") ?? CVUFont(size: 13) }
         set(value) { setState("barLabelFont", value) }
     }
 	
@@ -186,8 +186,8 @@ class ChartRendererConfig: CascadingRendererConfig, ConfigurableRenderConfig {
 		set(value) { setState("showValueLabels", value) }
 	}
 	
-    var valueLabelFont: FontDefinition {
-        get { cascadeProperty("valueLabelFont") ?? FontDefinition(size: 14) }
+    var valueLabelFont: CVUFont {
+        get { cascadeProperty("valueLabelFont") ?? CVUFont(size: 14) }
         set(value) { setState("valueLabelFont", value) }
     }
     
