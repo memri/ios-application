@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Flight-School/AnyCodable",
         "state": {
           "branch": null,
-          "revision": "6e9610258e9f1044b5e0d88545052846448b43c3",
-          "version": "0.2.3"
+          "revision": "79b05a5da89557a4fa50647cc92488a3d9c3f478",
+          "version": "0.3.0"
         }
       },
       {
@@ -33,7 +33,7 @@
         "repositoryURL": "https://gitlab.memri.io/memri/ios-dependencies/charts",
         "state": {
           "branch": "master",
-          "revision": "c7609524054ed624c08f2695f2b4881ae71e4cd8",
+          "revision": "c75cbbaa7227c3ba565008f5c0b954d9a4c72f74",
           "version": null
         }
       },

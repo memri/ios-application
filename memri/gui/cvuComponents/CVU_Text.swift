@@ -15,7 +15,6 @@ struct CVU_Text: View {
         nodeResolver.string(for: "text")?.nilIfBlank
     }
     
-    @ViewBuilder
     var body: some View {
         content.map {
             Text($0)
@@ -30,7 +29,6 @@ struct CVU_SmartText: View {
         nodeResolver.string(for: "text")?.nilIfBlank
     }
     
-    @ViewBuilder
     var body: some View {
         content.map { MemriSmartTextView(string: $0, font: nodeResolver.font(), color: nodeResolver.color()) }
     }

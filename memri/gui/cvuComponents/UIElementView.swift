@@ -19,35 +19,27 @@ public struct UIElementView: SwiftUI.View {
 
     var nodeResolver: UINodeResolver
     
-    
-    var resolvedComponent: AnyView {
+    @ViewBuilder
+    var resolvedComponent: some View {
         switch nodeResolver.node.type {
         case .HStack:
-            return CVU_HStack(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_HStack(nodeResolver: nodeResolver)
         case .VStack:
-            return CVU_VStack(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_VStack(nodeResolver: nodeResolver)
         case .ZStack:
-            return CVU_ZStack(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_ZStack(nodeResolver: nodeResolver)
         case .Text:
-            return CVU_Text(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_Text(nodeResolver: nodeResolver)
         case .SmartText:
-            return CVU_SmartText(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_SmartText(nodeResolver: nodeResolver)
         case .Image:
-            return CVU_Image(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_Image(nodeResolver: nodeResolver)
         case .Map:
-            return CVU_Map(nodeResolver: nodeResolver)
-                .eraseToAnyView()
+             CVU_Map(nodeResolver: nodeResolver)
         case .Spacer:
-            return Spacer().eraseToAnyView()
+             Spacer()
         default:
-            return Text("Not implemented yet")
-                .eraseToAnyView()
+            Text("Not implemented yet")
         }
     }
     

@@ -23,20 +23,17 @@ struct CVU_Image: View {
         if let imageURI = nodeResolver.fileURI(for: "image"),
             let image = FileStorageController.getImage(fromFileForUUID: imageURI)
         {
-            return MemriImageView(image: image, fitContent: nodeResolver.sizingMode == .fit)
+            MemriImageView(image: image, fitContent: nodeResolver.sizingMode == .fit)
                 .if(nodeResolver.sizingMode == .fit) {
                     $0.aspectRatio(image.aspectRatio, contentMode: .fit)
             }
-            .eraseToAnyView()
         } else if let iconName = nodeResolver.string(for: "systemName") {
-            return Image(systemName: iconName)
+            Image(systemName: iconName)
                 .renderingMode(.template)
-                .eraseToAnyView()
         } else {
-            return Image(systemName: "questionmark")
+            Image(systemName: "questionmark")
                 .renderingMode(.template)
                 .foregroundColor(Color(.secondaryLabel))
-                .eraseToAnyView()
         }
     }
 }
