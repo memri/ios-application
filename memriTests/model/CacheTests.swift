@@ -123,7 +123,7 @@ class CacheTests: XCTestCase {
             
             XCTAssertEqual((notUpdatedNote as? Note)?.title, "changed")
             
-            DatabaseController.current(write:true) { realm in
+            DatabaseController.sync(write:true) { realm in
                 notUpdatedNote._action = nil
             }
             
