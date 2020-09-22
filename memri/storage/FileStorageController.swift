@@ -52,7 +52,7 @@ class FileStorageController {
 
     static func getURLForFile(withUUID uuid: String) -> URL {
         // Little hack to make our demo data work
-        if let url = Bundle.main.url(forResource: "DemoAssets/\(uuid.split(separator: Character(".")).first.map(String.init) ?? uuid))", withExtension: "jpg") {
+        if let url = Bundle.main.url(forResource: "DemoAssets/\(uuid)", withExtension: "jpg") {
             return url
         }
 
