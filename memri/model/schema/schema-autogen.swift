@@ -378,16 +378,12 @@ public class Account : Item {
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
-    /// The name quality used by Synapse.
-    let nameQuality = RealmOptional<Int>()
-    /// Whether the Item should be displayed in the interfaces.
-    @objc dynamic var enablePresence:Bool = false
-    /// Whether you retrieve Messages from this Person.
-    @objc dynamic var enableReceipts:Bool = false
     /// A service of any kind.
     @objc dynamic var service:String? = nil
     /// The type or (sub)category of some Item.
     @objc dynamic var itemType:String? = nil
+    /// URL to avatar image used by WhatsApp.
+    @objc dynamic var avatarUrl:String? = nil
 
     /// The Person this Item belongs to.
     var belongsTo: Results<Person>? {
@@ -417,11 +413,9 @@ public class Account : Item {
         jsonErrorHandling(decoder) {
             handle = try decoder.decodeIfPresent("handle") ?? handle
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
-            nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
-            enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
-            enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             service = try decoder.decodeIfPresent("service") ?? service
             itemType = try decoder.decodeIfPresent("itemType") ?? itemType
+            avatarUrl = try decoder.decodeIfPresent("avatarUrl") ?? avatarUrl
 
             try self.superDecode(from: decoder)
         }
@@ -1123,6 +1117,8 @@ public class EmailMessage : Item {
     @objc dynamic var dateSent:Date? = nil
     /// Datetime when Item was received.
     @objc dynamic var dateReceived:Date? = nil
+    /// A service of any kind.
+    @objc dynamic var service:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -1218,6 +1214,7 @@ public class EmailMessage : Item {
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+            service = try decoder.decodeIfPresent("service") ?? service
 
             try self.superDecode(from: decoder)
         }
@@ -2074,6 +2071,8 @@ public class Message : Item {
     @objc dynamic var dateSent:Date? = nil
     /// Datetime when Item was received.
     @objc dynamic var dateReceived:Date? = nil
+    /// A service of any kind.
+    @objc dynamic var service:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -2153,6 +2152,7 @@ public class Message : Item {
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+            service = try decoder.decodeIfPresent("service") ?? service
 
             try self.superDecode(from: decoder)
         }
@@ -2785,12 +2785,6 @@ public class SchemaPerson : Item {
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
-    /// The name quality used by Synapse.
-    let nameQuality = RealmOptional<Int>()
-    /// Whether the Item should be displayed in the interfaces.
-    @objc dynamic var enablePresence:Bool = false
-    /// Whether you retrieve Messages from this Person.
-    @objc dynamic var enableReceipts:Bool = false
     /// A role describes the function of the item in their context.
     @objc dynamic var role:String? = nil
 
@@ -2905,9 +2899,6 @@ public class SchemaPerson : Item {
             gender = try decoder.decodeIfPresent("gender") ?? gender
             sexualOrientation = try decoder.decodeIfPresent("sexualOrientation") ?? sexualOrientation
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
-            nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
-            enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
-            enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             role = try decoder.decodeIfPresent("role") ?? role
 
             try self.superDecode(from: decoder)
