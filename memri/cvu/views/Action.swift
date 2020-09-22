@@ -69,7 +69,9 @@ extension MemriContext {
 
         var args = [String: Any?]()
         for (argName, inputValue) in action.values {
-            if action.argumentTypes[argName] == nil { continue }
+            if action.argumentTypes[argName] == nil {
+                continue
+            }
 
             var argValue: Any?
 
@@ -1298,6 +1300,14 @@ class ActionRunIndexer: Action, ActionExec {
     required init(_ context: MemriContext, values: [String: Any?] = [:]) {
         super.init(context, "runIndexer", values: values)
     }
+    
+    override var defaultValues: [String: Any?] {
+        [
+            "argumentTypes": [
+                "indexerRun": IndexerRun.self
+            ]
+        ]
+    }
 
     func exec(_ arguments: [String: Any?]) throws {
         // TODO: parse options
@@ -1329,27 +1339,28 @@ class ActionRunIndexer: Action, ActionExec {
                 // Start indexer process
                 self.context.podAPI.runIndexer(uid) { error, _ in
                     if error == nil {
-                        var watcher: AnyCancellable?
-                        watcher = self.context.cache.subscribe(to: run).sink { item in
-                            if let progress: Int = item.get("progress") {
-                                self.context.scheduleUIUpdate()
-
-                                print("progress \(progress)")
-
-                                if progress >= 100 {
-                                    watcher?.cancel()
-                                    watcher = nil
-                                }
-                            }
-                            else {
-                                debugHistory
-                                    .error(
-                                        "ERROR, could not get progress: \(String(describing: error))"
-                                    )
-                                watcher?.cancel()
-                                watcher = nil
-                            }
-                        }
+                        #warning("This is broken. Realm threading crash. watcher will not be retained if stored in local var")
+//                        var watcher: AnyCancellable?
+//                        watcher = self.context.cache.subscribe(to: run).sink { item in
+//                            if let progress: Int = item.get("progress") {
+//                                self.context.scheduleUIUpdate()
+//
+//                                print("progress \(progress)")
+//
+//                                if progress >= 100 {
+//                                    watcher?.cancel()
+//                                    watcher = nil
+//                                }
+//                            }
+//                            else {
+//                                debugHistory
+//                                    .error(
+//                                        "ERROR, could not get progress: \(String(describing: error))"
+//                                    )
+//                                watcher?.cancel()
+//                                watcher = nil
+//                            }
+//                        }
                     }
                     else {
                         // TODO: User Error handling
