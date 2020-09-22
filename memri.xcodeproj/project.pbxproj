@@ -286,7 +286,6 @@
 		B88AAB3024A1AEBB0007C9EB /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */; };
 		B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */; };
 		B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */; };
-		B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */; };
 		B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3824A1B10F0007C9EB /* UIColor.swift */; };
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
 		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
@@ -582,7 +581,6 @@
 		B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartHelper.swift; sourceTree = "<group>"; };
 		B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
-		B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSize.swift; sourceTree = "<group>"; };
 		B88AAB3824A1B10F0007C9EB /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -1464,7 +1462,6 @@
 			isa = PBXGroup;
 			children = (
 				8690AF012472D8C300FC49F4 /* view.swift */,
-				B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1960,7 +1957,6 @@
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				8690AF082472D91F00FC49F4 /* collection.swift in Sources */,
 				B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */,
-				B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
