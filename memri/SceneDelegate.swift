@@ -10,6 +10,8 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
     var settingWatcher: AnyCancellable?
+    
+    let extraEnvironment = ExtraEnvironment()
 
     func scene(
         _ scene: UIScene,
@@ -23,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the SwiftUI view that provides the window contents.
         do {
             let context = try RootContext(name: "Memri GUI")
-            let application = Application().environmentObject(context as MemriContext)
+            let application = Application().environmentObject(context as MemriContext).environmentObject(extraEnvironment)
 
             try context.installer.await (context) {
                 context.boot { error in
@@ -49,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard let windowScene = scene as? UIWindowScene else { return }
 
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = MemriHostingController(rootView: application)
+            window.rootViewController = MemriHostingController(rootView: application, extraEnvironment: extraEnvironment)
 
             #if targetEnvironment(macCatalyst)
                 if let titlebar = windowScene.titlebar {
@@ -96,3 +98,38 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
     }
 }
+
+class MemriHostingController<Content: View>: UIHostingController<Content> {
+    let extraEnvironment: ExtraEnvironment
+    
+    init(rootView: Content, extraEnvironment: ExtraEnvironment) {
+        self.extraEnvironment = extraEnvironment
+        super.init(rootView: rootView)
+    }
+    
+    @objc required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateExtraEnvironment()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: nil) { (context) in
+            self.updateExtraEnvironment()
+        }
+    }
+    
+    func updateExtraEnvironment() {
+        extraEnvironment.screenSize = view.window?.frame.size ?? .zero
+    }
+}
+
+class ExtraEnvironment: ObservableObject {
+    @Published
+    var screenSize: CGSize = .zero
+}
+

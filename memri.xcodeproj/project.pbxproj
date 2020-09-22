@@ -258,7 +258,6 @@
 		B8348BE424FD236700BF12F8 /* BottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8348BE324FD236700BF12F8 /* BottomBar.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
-		B84089062518967800CFC5AC /* MemriHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84089052518967800CFC5AC /* MemriHostingController.swift */; };
 		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
 		B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */; };
 		B85DE32724F6363400D613B6 /* LabelAnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85DE32624F6363400D613B6 /* LabelAnnotationRenderer.swift */; };
@@ -562,7 +561,6 @@
 		B826587424D440C50051CCFE /* KeyboardModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardModifiers.swift; sourceTree = "<group>"; };
 		B8348BE024FCFB4E00BF12F8 /* GeneralEditorRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralEditorRows.swift; sourceTree = "<group>"; };
 		B8348BE324FD236700BF12F8 /* BottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBar.swift; sourceTree = "<group>"; };
-		B84089052518967800CFC5AC /* MemriHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriHostingController.swift; sourceTree = "<group>"; };
 		B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRenderConfig.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1486,7 +1484,6 @@
 			isa = PBXGroup;
 			children = (
 				8690AF012472D8C300FC49F4 /* View.swift */,
-				B84089052518967800CFC5AC /* MemriHostingController.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1980,7 +1977,6 @@
 				B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */,
 				B85DE32924F636B000D613B6 /* RoundedCornerRectangle.swift in Sources */,
 				B8A5E30B24F7878600A1F488 /* RendererController.swift in Sources */,
-				B84089062518967800CFC5AC /* MemriHostingController.swift in Sources */,
 				B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				B8E8E8BA24C99FC400F1291F /* UIImage+.swift in Sources */,
