@@ -43,15 +43,6 @@ class MessageRendererController: RendererController, ObservableObject {
         return try? expression?.execForReturnType(T.self, args: args)
     }
     
-    var selectedItems: Binding<Set<Int>> {
-        Binding<Set<Int>>(
-            get: { [] },
-            set: {
-                self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
-        }
-        )
-    }
-    
     var editMode: Bool {
         context.currentSession?.editMode ?? false
     }
@@ -98,7 +89,7 @@ struct MessageRendererView: View {
     
 
     var section: ASSection<Int> {
-        ASSection<Int>(id: 0, data: controller.context.items, selectedItems: controller.selectedItems) { item, cellContext in
+        ASSection<Int>(id: 0, data: controller.context.items, selectionMode: .selectMultiple(controller.context.selectedIndicesBinding) ) { item, cellContext in
             //let previousItem = context.items[safe: cellContext.index - 1])
             return self.controller.view(for: item)//, ViewArguments(["previousItem": previousItem]))
                 .padding(EdgeInsets(top: cellContext.isFirstInSection ? 0 : self.controller.config.spacing.height / 2,
@@ -106,7 +97,6 @@ struct MessageRendererView: View {
 									bottom: cellContext.isLastInSection ? 0 : self.controller.config.spacing.height / 2,
 									trailing: self.controller.config.edgeInset.right))
         }
-        .onSelectSingle(controller.onSelectSingle)
     }
 
     

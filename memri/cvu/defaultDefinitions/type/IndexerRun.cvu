@@ -148,7 +148,7 @@ IndexerRun {
                         margin: 0 5 10 35
                         
                         press: runIndexer {
-                            indexer: {{.}}
+                            indexerRun: {{.}}
                         }
                         
                         Text {

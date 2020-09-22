@@ -212,8 +212,24 @@ public class MemriContext: ObservableObject, Subscriptable {
         set(value) { self["showNavigation"] = value }
     }
 
+    public func getSelection() -> [Item] {
+        currentView?.userState.get("selection") ?? []
+    }
+    
     public func setSelection(_ selection: [Item]) {
         currentView?.userState.set("selection", selection)
+        self.scheduleUIUpdate()
+    }
+    
+    var selectedIndicesBinding: Binding<Set<Int>> {
+        Binding<Set<Int>>(
+            get: {
+                Set(self.getSelection().compactMap { self.items.firstIndex(of: $0) })
+            },
+            set: {
+                self.setSelection($0.compactMap { self.items[safe: $0] })
+            }
+        )
     }
 
     init(

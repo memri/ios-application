@@ -30,24 +30,22 @@ struct Application: View {
     @EnvironmentObject var context: MemriContext
 
     var body: some View {
-        ScreenSizer {
-            VStack(spacing: 0) {
-                if self.context.installer.isInstalled && !self.context.installer.debugMode {
-                    NavigationWrapper(isVisible: self.context.showNavigationBinding) {
-                        if self.context.showSessionSwitcher {
-                            SessionSwitcher()
-                                .ignoreSafeAreaOnMac()
-                        }
-                        else {
-                            Browser()
-                                .ignoreSafeAreaOnMac()
-                        }
+        VStack(spacing: 0) {
+            if self.context.installer.isInstalled && !self.context.installer.debugMode {
+                NavigationWrapper(isVisible: self.context.showNavigationBinding) {
+                    if self.context.showSessionSwitcher {
+                        SessionSwitcher()
+                            .ignoreSafeAreaOnMac()
                     }
-                    DebugConsole()
+                    else {
+                        Browser()
+                            .ignoreSafeAreaOnMac()
+                    }
                 }
-                else {
-                    SetupWizard()
-                }
+                DebugConsole()
+            }
+            else {
+                SetupWizard()
             }
         }
         .background(Color(.systemBackground))
