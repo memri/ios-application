@@ -273,6 +273,7 @@
 		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
 		B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */; };
 		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
+		B866A0522519E5980028EF49 /* UIHostingControllerNoSafeArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = B866A0512519E5980028EF49 /* UIHostingControllerNoSafeArea.swift */; };
 		B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */; };
 		B881BECA24BD3C8B0016DBF5 /* CalendarRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */; };
 		B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */; };
@@ -567,6 +568,7 @@
 		B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+NSExpression.swift"; sourceTree = "<group>"; };
 		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
+		B866A0512519E5980028EF49 /* UIHostingControllerNoSafeArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHostingControllerNoSafeArea.swift; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
 		B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarRenderer.swift; sourceTree = "<group>"; };
@@ -1331,6 +1333,7 @@
 			children = (
 				86B7A6772457F28A00292E81 /* KeyboardResponder.swift */,
 				B81237EC24A43E42003E8BCB /* MapHelper.swift */,
+				B866A0512519E5980028EF49 /* UIHostingControllerNoSafeArea.swift */,
 			);
 			path = helpers;
 			sourceTree = "<group>";
@@ -1993,6 +1996,7 @@
 				5D38DE172405776B00FF9B70 /* Item.swift in Sources */,
 				B80E01A924C8434F0005D756 /* Array+Segments.swift in Sources */,
 				86CDB46C24698DB7007EAE67 /* NSAttributedString.swift in Sources */,
+				B866A0522519E5980028EF49 /* UIHostingControllerNoSafeArea.swift in Sources */,
 				5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */,
 				868EF63424766A8800C0375F /* ExprParser.swift in Sources */,
 				8680189424D1D118004FC4E3 /* data.swift in Sources */,
