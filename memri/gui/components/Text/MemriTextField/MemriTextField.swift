@@ -350,7 +350,7 @@ public class MemriTextField_UIKit: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
 
-    var toolbarHost: UIHostingController<KeyboardToolbarView>?
+    var toolbarHost: UIHostingControllerNoSafeArea<KeyboardToolbarView>?
 
     func updateToolbar() {
         let view = KeyboardToolbarView(owner: self, showArrows: showPrevNextButtons)
@@ -358,7 +358,7 @@ public class MemriTextField_UIKit: UITextField {
             hc.rootView = view
         }
         else {
-            toolbarHost = UIHostingController(rootView: view)
+            toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
             toolbarHost?.view.sizeToFit()
             inputAccessoryView = toolbarHost?.view
         }

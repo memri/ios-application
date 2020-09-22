@@ -199,7 +199,7 @@ public class MemriTextEditor_UIKit: UITextView {
         #endif
     }
 
-    var toolbarHost: UIHostingController<MemriTextEditorToolbar>?
+    var toolbarHost: UIHostingControllerNoSafeArea<MemriTextEditorToolbar>?
 
     func updateToolbar() {
         let view = MemriTextEditorToolbar(
@@ -221,7 +221,7 @@ public class MemriTextEditor_UIKit: UITextView {
             hc.rootView = view
         }
         else {
-            let toolbarHost = UIHostingController(rootView: view)
+            let toolbarHost = UIHostingControllerNoSafeArea(rootView: view)
             #if targetEnvironment(macCatalyst)
                 if let superview = superview {
                     superview.addSubview(toolbarHost.view)
