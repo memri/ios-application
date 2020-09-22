@@ -257,7 +257,7 @@ class ItemTest: XCTestCase {
         """.utf8)
         let items: [Person] = try MemriJSONDecoder.decode([Person].self, from: data1)
 
-        DatabaseController.current(write:true) { realm in
+        DatabaseController.sync(write:true) { realm in
             for item in items {
                 realm.add(item, update: .modified)
             }
@@ -281,18 +281,18 @@ class ItemTest: XCTestCase {
 
     func testEdgesSingle() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("father")?.item(type: Person.self)?.firstName, "Coolio")
+        XCTAssertEqual(person.edge("father")?.target(type: Person.self)?.firstName, "Coolio")
     }
 
     func testEdgesSingleExpanded() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("family")?.item(type: Person.self)?.firstName, "Bernie")
+        XCTAssertEqual(person.edge("family")?.target(type: Person.self)?.firstName, "Bernie")
     }
 
     func testEdgesMulti() throws {
         let person = try createDataset()
         XCTAssertEqual(
-            person.edge(["sister", "father"])?.item(type: Person.self)?.firstName,
+            person.edge(["sister", "father"])?.target(type: Person.self)?.firstName,
             "Coolio"
         )
     }
@@ -300,7 +300,7 @@ class ItemTest: XCTestCase {
     func testEdgesMultiExpanded() throws {
         let person = try createDataset()
         XCTAssertEqual(
-            person.edge(["aunt", "family"])?.item(type: Person.self)?.firstName,
+            person.edge(["aunt", "family"])?.target(type: Person.self)?.firstName,
             "Bernie"
         )
     }
@@ -317,14 +317,14 @@ class ItemTest: XCTestCase {
 
     func testEdgeMulti() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("brother")?.item()?.edges(["sister", "aunt"])?.items()?.count, 1)
-        XCTAssertEqual(person.edge("father")?.item()?.edges(["sister", "aunt"])?.items()?.count, 0)
+        XCTAssertEqual(person.edge("brother")?.target()?.edges(["sister", "aunt"])?.items()?.count, 1)
+        XCTAssertEqual(person.edge("father")?.target()?.edges(["sister", "aunt"])?.items()?.count, 0)
     }
 
     func testEdgeMultiExpanded() throws {
         let person = try createDataset()
-        XCTAssertEqual(person.edge("brother")?.item()?.edges(["aunt", "family"])?.items()?.count, 2)
-        XCTAssertEqual(person.edge("father")?.item()?.edges(["aunt", "family"])?.items()?.count, 2)
+        XCTAssertEqual(person.edge("brother")?.target()?.edges(["aunt", "family"])?.items()?.count, 2)
+        XCTAssertEqual(person.edge("father")?.target()?.edges(["aunt", "family"])?.items()?.count, 2)
     }
 
     //    func testPerformanceExample() throws {

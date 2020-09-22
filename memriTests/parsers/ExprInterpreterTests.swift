@@ -248,9 +248,9 @@ class ExprInterpreterTests: XCTestCase {
     func testTypeConversionStringToBool() throws {
         let snippet = "''"
 
-        let result = try exec(snippet)
+        let result = try exec(snippet) as? Bool ?? false
 
-        XCTAssertEqual(result as! Bool, false)
+        XCTAssertEqual(result, false)
     }
 
     func testStringModeStartWithString() throws {
