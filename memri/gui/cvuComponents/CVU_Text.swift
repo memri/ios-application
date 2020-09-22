@@ -18,6 +18,7 @@ struct CVU_Text: View {
     var body: some View {
         content.map {
             Text($0)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 }

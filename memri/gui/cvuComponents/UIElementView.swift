@@ -8,9 +8,12 @@ import SwiftUI
 
 
 public enum UIElementFamily: String, CaseIterable {
-    case VStack, HStack, ZStack, EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
-    Text, Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
-    Circle, HorizontalLine, Rectangle, RoundedRectangle, Spacer, Divider, RichTextfield, Empty,
+    // Implemented
+    case VStack, HStack, ZStack, Text, RichTextfield, Empty, Spacer
+    // Unimplemented
+         case EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
+    Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
+    Circle, HorizontalLine, Rectangle, RoundedRectangle, Divider,
     TimelineItem, MessageBubble, EmailContent, EmailHeader, SmartText, Toggle
 }
 
@@ -45,8 +48,12 @@ public struct UIElementView: SwiftUI.View {
              CVU_Map(nodeResolver: nodeResolver)
         case .RichTextfield:
             CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
+        case .Toggle:
+            CVU_Toggle(nodeResolver: nodeResolver)
         case .Spacer:
              Spacer()
+        case .Empty:
+            EmptyView()
         default:
             Text("Not implemented yet")
         }
@@ -282,25 +289,7 @@ public struct UIElementView: SwiftUI.View {
 //                        self.viewArguments
 //                    )
 //                }
-//                else if from.type == .Text {
-//                    (from
-//                        .processText(get("text"))
-//                        ?? get("nilText")
-//                        ?? (get("allowNil", defaultValue: false, type: Bool.self) ? "" : nil))
-//                        .map { text in
-//                            Text(text)
-//                                .if(from.getBool("italic")) { $0.italic() }
-//                                .if(from.getBool("underline")) { $0.underline() }
-//                                .if(from.getBool("strikethrough")) { $0.strikethrough() }
-//                                .fixedSize(horizontal: false, vertical: true)
-//                                .setProperties(
-//                                    from.propertyResolver.properties,
-//                                    self.item,
-//                                    context,
-//                                    self.viewArguments
-//                                )
-//                        }
-//                }
+//
 //                else if from.type == .Textfield {
 //                    self.renderTextfield()
 //                        .setProperties(
@@ -310,15 +299,7 @@ public struct UIElementView: SwiftUI.View {
 //                            self.viewArguments
 //                        )
 //                }
-//                else if from.type == .RichTextfield {
-//                    self.renderRichTextfield()
-//                        .setProperties(
-//                            from.propertyResolver.properties,
-//                            self.item,
-//                            context,
-//                            self.viewArguments
-//                        )
-//                }
+//
 //                else if from.type == .ItemCell {
 //                    // TODO: Refactor fix this
 //                    //                ItemCell(

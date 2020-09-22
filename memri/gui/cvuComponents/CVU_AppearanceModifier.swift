@@ -21,19 +21,20 @@ struct CVU_AppearanceModifier: ViewModifier {
             .foregroundColor(nodeResolver.color()?.color)
             .font(nodeResolver.font().font)
             .multilineTextAlignment(nodeResolver.textAlignment())
+            .lineLimit(nodeResolver.lineLimit)
             .padding(nodeResolver.padding)
             .if(nodeResolver.cornerRadius > 0) { $0.clipShape(shape) }
             .background(
                 shape
                     .fill(nodeResolver.backgroundColor?.color ?? .clear)
                     .ifLet(nodeResolver.shadow) { $0.shadow(radius: $1) })
-        .overlay(
-            shape
-                .strokeBorder(nodeResolver.borderColor?.color ?? .clear)
-        )
+            .overlay(
+                shape
+                    .strokeBorder(nodeResolver.borderColor?.color ?? .clear)
+            )
             .offset(nodeResolver.offset)
             .opacity(nodeResolver.opacity)
-        .padding(nodeResolver.margin)
+            .padding(nodeResolver.margin)
             .ifLet(nodeResolver.zIndex) { $0.zIndex($1) }
     }
 }
