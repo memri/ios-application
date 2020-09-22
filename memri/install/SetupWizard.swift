@@ -22,8 +22,6 @@ struct SetupWizard: View {
         NavigationView {
             Form {
                 if !context.installer.isInstalled && !context.installer.debugMode {
-                    Text("Setup Wizard")
-                        .font(.system(size: 22, weight: .bold))
 
                     Section(
                         header: Text("Connect to a pod")
@@ -39,30 +37,30 @@ struct SetupWizard: View {
                                         .frame(width: 100, alignment: .leading)
                                     MemriTextField(value: $host)
                                 }
-                                HStack {
-                                    Button(action: {
-                                        if self.host != "" {
-                                            self.showingAlert = true
-                                        }
-                                    }) {
-                                        Text("Authenticate")
-                                    }
-                                    .alert(isPresented:$showingAlert) {
-                                        Alert (
-                                            title: Text("Clear Database"),
-                                            message: Text("This will delete access to all previous data on this device and load the default database to connect to a new pod. Are you sure? There is no undo!"),
-                                            primaryButton: .destructive(Text("Delete")
-                                        ) {
-                                            self.context.installer.installLocalAuthForNewPod(
-                                                self.context,
-                                                areYouSure: true,
-                                                host: self.host
-                                            ) { error in
+                            }
+                            Button(action: {
+                                if self.host != "" {
+                                    self.showingAlert = true
+                                }
+                            }) {
+                                Text("Authenticate")
+                            }
+                            .alert(isPresented:$showingAlert) {
+                                Alert (
+                                    title: Text("Clear Database"),
+                                    message: Text("This will delete access to all previous data on this device and load the default database to connect to a new pod. Are you sure? There is no undo!"),
+                                    primaryButton: .destructive(Text("Delete")
+                                    ) {
+                                        self.context.installer.installLocalAuthForNewPod(
+                                            self.context,
+                                            areYouSure: true,
+                                            host: self.host
+                                        ) { error in
+                                            if let error = error {
                                                 debugHistory.error("\(error)") // TODO: show this to the user
                                             }
-                                        }, secondaryButton: .cancel())
-                                    }
-                                }
+                                        }
+                                    }, secondaryButton: .cancel())
                             }
                         }) {
                             Text("Connect to a new pod")
@@ -93,33 +91,31 @@ struct SetupWizard: View {
                                         .frame(width: 100, alignment: .leading)
                                     SecureField("Database Key:", text: $databaseKey)
                                 }
-                                HStack {
-                                    Button(action: {
-                                        if self.host != "" {
-                                            self.showingAlert = true
-                                        }
-                                    }) {
-                                        Text("Authenticate")
-                                    }
-                                    .alert(isPresented:$showingAlert) {
-                                        Alert (
-                                            title: Text("Clear Database"),
-                                            message: Text("This will delete access to all previous data on this device and load a fresh copy of your data from your pod. Are you sure? There is no undo!"),
-                                            primaryButton: .destructive(Text("Delete")
-                                        ) {
-                                            self.context.installer.installLocalAuthForExistingPod(
-                                                self.context,
-                                                areYouSure: true,
-                                                host: self.host,
-                                                privateKey: self.privateKey,
-                                                publicKey: self.publicKey,
-                                                dbKey: self.databaseKey
-                                            ) { error in
-                                                error.map { debugHistory.error("\($0)") } // TODO: show this to the user
-                                            }
-                                        }, secondaryButton: .cancel())
-                                    }
+                            }
+                            Button(action: {
+                                if self.host != "" {
+                                    self.showingAlert = true
                                 }
+                            }) {
+                                Text("Authenticate")
+                            }
+                            .alert(isPresented:$showingAlert) {
+                                Alert (
+                                    title: Text("Clear Database"),
+                                    message: Text("This will delete access to all previous data on this device and load a fresh copy of your data from your pod. Are you sure? There is no undo!"),
+                                    primaryButton: .destructive(Text("Delete")
+                                    ) {
+                                        self.context.installer.installLocalAuthForExistingPod(
+                                            self.context,
+                                            areYouSure: true,
+                                            host: self.host,
+                                            privateKey: self.privateKey,
+                                            publicKey: self.publicKey,
+                                            dbKey: self.databaseKey
+                                        ) { error in
+                                            error.map { debugHistory.error("\($0)") } // TODO: show this to the user
+                                        }
+                                    }, secondaryButton: .cancel())
                             }
                         }) {
                             Text("Connect to an existing pod")
@@ -181,6 +177,7 @@ struct SetupWizard: View {
                     }
                 }
             }
+            .navigationBarTitle(Text("Setup Wizard"))
         }
     }
 }

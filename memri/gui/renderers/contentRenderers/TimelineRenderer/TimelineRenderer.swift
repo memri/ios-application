@@ -81,22 +81,24 @@ struct TimelineRendererView: View {
 
     func sections(withModel model: TimelineModel) -> [ASSection<Date>] {
         model.data.map { group in
-            ASSection<Date>(id: group.date, data: group.items) { element, _ in
+            ASSection<Date>(id: group.date,
+                            data: group.items,
+                            selectionMode: .selectSingle { index in
+                                guard let element = group.items[safe: index] else { return }
+                                if element.isGroup {
+                                    let uids = element.items.compactMap { $0.uid }
+                                    try? ActionOpenViewWithUIDs(self.controller.context)
+                                        .exec(["itemType": element.itemType, "uids": uids])
+                                }
+                                else {
+                                    if let press = self.controller.config.press, let item = element.items.first {
+                                        self.controller.context.executeAction(press, with: item)
+                                    }
+                                }
+                            }
+            ) { element, _ in
                 self.renderElement(element)
                     .if(group.items.count < 2) { $0.frame(minHeight: self.minSectionHeight) }
-            }
-            .onSelectSingle { index in
-                guard let element = group.items[safe: index] else { return }
-                if element.isGroup {
-                    let uids = element.items.compactMap { $0.uid }
-                    try? ActionOpenViewWithUIDs(self.controller.context)
-                        .exec(["itemType": element.itemType, "uids": uids])
-                }
-                else {
-                    if let press = self.controller.config.press, let item = element.items.first {
-                        self.controller.context.executeAction(press, with: item)
-                    }
-                }
             }
             .sectionHeader {
                 header(for: group, calendarHelper: model.calendarHelper)

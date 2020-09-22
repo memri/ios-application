@@ -15,12 +15,7 @@ public struct TopNavigation: View {
     private let inSubView: Bool
     private let showCloseButton: Bool
 
-    init() {
-        inSubView = false
-        showCloseButton = false
-    }
-
-    init(inSubView: Bool, showCloseButton: Bool) {
+    init(inSubView: Bool = false, showCloseButton: Bool = false) {
         self.inSubView = inSubView
         self.showCloseButton = showCloseButton
     }
