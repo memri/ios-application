@@ -62,13 +62,8 @@ class ListRendererController: RendererController, ObservableObject {
             .environmentObject(context)
     }
     
-    var selectedIndices: Binding<Set<Int>> {
-        Binding<Set<Int>>(
-            get: { [] },
-            set: {
-                self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
-        }
-        )
+    var isEditing: Bool {
+        context.currentSession?.editMode ?? false
     }
     
     var hasItems: Bool {
@@ -86,11 +81,11 @@ struct ListRendererView: View {
     var body: some View {
         return VStack {
             if controller.hasItems {
-                ASTableView(editMode: controller.context.currentSession?.editMode ?? false, section:
+                ASTableView(editMode: controller.isEditing, section:
                     ASSection(id: 0,
                               data: controller.context.items,
                               dataID: \.uid.value,
-                              selectedItems: controller.selectedIndices,
+                              selectionMode: selectionMode,
                               onSwipeToDelete: { _, item in
                                 self.controller.context.executeAction(ActionDelete(self.controller.context), with: item)
                                   return true
@@ -104,11 +99,7 @@ struct ListRendererView: View {
                                                 bottom: cellContext.isLastInSection ? 0 : self.controller.config.spacing.height / 2,
 												trailing: self.controller.config.edgeInset.right))
                     }
-                    .onSelectSingle { index in
-                        if let press = self.controller.config.press {
-                            self.controller.context.executeAction(press, with: self.controller.context.items[safe: index])
-                        }
-                    })
+                )
                     .alwaysBounce()
 					.contentInsets(.init(top: controller.config.edgeInset.top, left: 0, bottom: controller.config.edgeInset.bottom, right: 0))
                     .background(controller.config.backgroundColor?.color ?? Color(.systemBackground))
@@ -127,6 +118,19 @@ struct ListRendererView: View {
             
         }
             .id(controller.config.ui_UUID) // Fix swiftUI wrongly animating between different lists
+    }
+    
+    
+    var selectionMode: ASSectionSelectionMode {
+        if controller.isEditing {
+            return .selectMultiple(controller.context.selectedIndicesBinding)
+        } else {
+            return .selectSingle { index in
+                if let press = self.controller.config.press {
+                    self.controller.context.executeAction(press, with: self.controller.context.items[safe: index])
+                }
+            }
+        }
     }
     
     func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {

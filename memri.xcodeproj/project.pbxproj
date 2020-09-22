@@ -258,6 +258,7 @@
 		B8348BE424FD236700BF12F8 /* BottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8348BE324FD236700BF12F8 /* BottomBar.swift */; };
 		B83E330D2496F3A100D88742 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330C2496F3A100D88742 /* Realm */; };
 		B83E330F2496F3A100D88742 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = B83E330E2496F3A100D88742 /* RealmSwift */; };
+		B84089062518967800CFC5AC /* MemriHostingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84089052518967800CFC5AC /* MemriHostingController.swift */; };
 		B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */; };
 		B85A510024C9379E00AB1A41 /* MemriSmartTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85A50FF24C9379E00AB1A41 /* MemriSmartTextView.swift */; };
 		B85DE32724F6363400D613B6 /* LabelAnnotationRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B85DE32624F6363400D613B6 /* LabelAnnotationRenderer.swift */; };
@@ -271,6 +272,7 @@
 		B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */; };
 		B8627E4124A9EAAA005A1A8F /* KeyboardToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */; };
 		B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */; };
+		B866A0282519C0330028EF49 /* CVU_RichTextEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B866A0272519C0330028EF49 /* CVU_RichTextEditor.swift */; };
 		B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */; };
 		B881BECA24BD3C8B0016DBF5 /* CalendarRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */; };
 		B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B881BECC24BD4A9F0016DBF5 /* TimelineModel.swift */; };
@@ -284,7 +286,6 @@
 		B88AAB3024A1AEBB0007C9EB /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */; };
 		B88AAB3124A1AEBB0007C9EB /* ChartHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */; };
 		B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */; };
-		B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */; };
 		B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3824A1B10F0007C9EB /* UIColor.swift */; };
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
 		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
@@ -303,7 +304,7 @@
 		B8BF6F5124BEA9260058067C /* ContextualBottomBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */; };
 		B8CECC082503092C006EE229 /* CVUFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC072503092C006EE229 /* CVUFont.swift */; };
 		B8CECC0A25030956006EE229 /* CVUColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC0925030956006EE229 /* CVUColor.swift */; };
-		B8CECC0E250309CA006EE229 /* CVUImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC0D250309CA006EE229 /* CVUImage.swift */; };
+		B8CECC0E250309CA006EE229 /* CVU_Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CECC0D250309CA006EE229 /* CVU_Image.swift */; };
 		B8DCEE0C24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */; };
 		B8E0FBD924A43F5A009C3C30 /* MapView-AppleMaps.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */; };
 		B8E0FBDD24A43FDB009C3C30 /* MapStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */; };
@@ -559,6 +560,7 @@
 		B826587424D440C50051CCFE /* KeyboardModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardModifiers.swift; sourceTree = "<group>"; };
 		B8348BE024FCFB4E00BF12F8 /* GeneralEditorRows.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralEditorRows.swift; sourceTree = "<group>"; };
 		B8348BE324FD236700BF12F8 /* BottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomBar.swift; sourceTree = "<group>"; };
+		B84089052518967800CFC5AC /* MemriHostingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemriHostingController.swift; sourceTree = "<group>"; };
 		B84EB50F24CEC3AF00B498FE /* CommonRenderConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonRenderConfig.swift; sourceTree = "<group>"; };
 		B857B7B424A1CBE700615BA7 /* memriTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B857B7B524A1CBE700615BA7 /* memriUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = memriUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -574,6 +576,8 @@
 		B8627E3424A9EAAA005A1A8F /* String+NSExpression.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+NSExpression.swift"; sourceTree = "<group>"; };
 		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
+		B866A0272519C0330028EF49 /* CVU_RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_RichTextEditor.swift; sourceTree = "<group>"; };
+		B866A02F2519C6F30028EF49 /* ASCollectionView */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ASCollectionView; path = ../../../WorkoutTime/WorkoutTimeiOSApp/ASCollectionView; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
 		B881BEC724BD3C8B0016DBF5 /* CalendarHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
 		B881BEC824BD3C8B0016DBF5 /* CalendarRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalendarRenderer.swift; sourceTree = "<group>"; };
@@ -588,7 +592,6 @@
 		B88AAB2A24A1AEBB0007C9EB /* BarChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		B88AAB2B24A1AEBB0007C9EB /* ChartHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChartHelper.swift; sourceTree = "<group>"; };
 		B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
-		B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScreenSize.swift; sourceTree = "<group>"; };
 		B88AAB3824A1B10F0007C9EB /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
 		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
@@ -607,7 +610,7 @@
 		B8BF6F5024BEA9260058067C /* ContextualBottomBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextualBottomBar.swift; sourceTree = "<group>"; };
 		B8CECC072503092C006EE229 /* CVUFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVUFont.swift; path = ../../../cvu/newWIP/CVUFont.swift; sourceTree = "<group>"; };
 		B8CECC0925030956006EE229 /* CVUColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVUColor.swift; path = ../../../cvu/newWIP/CVUColor.swift; sourceTree = "<group>"; };
-		B8CECC0D250309CA006EE229 /* CVUImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVUImage.swift; path = ../../cvu/newWIP/CVUImage.swift; sourceTree = "<group>"; };
+		B8CECC0D250309CA006EE229 /* CVU_Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CVU_Image.swift; path = ../../cvu/newWIP/CVU_Image.swift; sourceTree = "<group>"; };
 		B8DCEE0B24A0CE5500FF3B70 /* ThumbHorizontalGridRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbHorizontalGridRendererView.swift; sourceTree = "<group>"; };
 		B8E0FBD824A43F5A009C3C30 /* MapView-AppleMaps.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MapView-AppleMaps.swift"; sourceTree = "<group>"; };
 		B8E0FBDB24A43FDB009C3C30 /* MapStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MapStyle.swift; sourceTree = "<group>"; };
@@ -847,6 +850,7 @@
 		5D599BAE23F2B77500F218A0 = {
 			isa = PBXGroup;
 			children = (
+				B866A02F2519C6F30028EF49 /* ASCollectionView */,
 				5D599BB923F2B77500F218A0 /* memri */,
 				5D406F2223F5667C00F98616 /* playground */,
 				5D599BD023F2B77700F218A0 /* memriTests */,
@@ -1045,13 +1049,13 @@
 		5DFB0CB824179DFC002FBDE7 /* gui */ = {
 			isa = PBXGroup;
 			children = (
-				B8AAB433250DABFB007CF0E3 /* cvuComponents */,
-				B82792B724E39D2B0085DB8A /* helpers */,
-				B80E01A524C839160005D756 /* components */,
-				B826587324D440B80051CCFE /* modifiers */,
-				86865D342449965B0010271A /* common */,
 				5DB8EC09245992D60028FD2E /* browser */,
 				5D41E2A52417A20E001D4482 /* renderers */,
+				B8AAB433250DABFB007CF0E3 /* cvuComponents */,
+				B80E01A524C839160005D756 /* components */,
+				B82792B724E39D2B0085DB8A /* helpers */,
+				B826587324D440B80051CCFE /* modifiers */,
+				86865D342449965B0010271A /* common */,
 				86A5D83B243B3FFF00F8FAD8 /* Loading.swift */,
 				869CA735243F9AA3009C56FF /* SessionSwitcher.swift */,
 				86865D3224487B390010271A /* SettingsPane.swift */,
@@ -1477,7 +1481,7 @@
 			isa = PBXGroup;
 			children = (
 				8690AF012472D8C300FC49F4 /* View.swift */,
-				B88AAB3624A1B0A10007C9EB /* ScreenSize.swift */,
+				B84089052518967800CFC5AC /* MemriHostingController.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1506,9 +1510,10 @@
 				5D487F21244073DF00B50202 /* UIElementView.swift */,
 				868EF6542476768C00C0375F /* UIElement.swift */,
 				B8AAB43C250E1160007CF0E3 /* types */,
-				B8CECC0D250309CA006EE229 /* CVUImage.swift */,
+				B8CECC0D250309CA006EE229 /* CVU_Image.swift */,
 				B8AAB434250DAC0A007CF0E3 /* CVU_Stack.swift */,
 				B8AAB43A250DD2AE007CF0E3 /* CVU_Text.swift */,
+				B866A0272519C0330028EF49 /* CVU_RichTextEditor.swift */,
 				B8AAB43F250E2EDF007CF0E3 /* CVU_Map.swift */,
 				B8AAB436250DB253007CF0E3 /* CVU_AppearanceModifier.swift */,
 			);
@@ -1969,6 +1974,7 @@
 				B84EB51024CEC3AF00B498FE /* CommonRenderConfig.swift in Sources */,
 				B85DE32924F636B000D613B6 /* RoundedCornerRectangle.swift in Sources */,
 				B8A5E30B24F7878600A1F488 /* RendererController.swift in Sources */,
+				B84089062518967800CFC5AC /* MemriHostingController.swift in Sources */,
 				B8627E3F24A9EAAA005A1A8F /* String+NSExpression.swift in Sources */,
 				868EF63824766A8800C0375F /* ExprNodes.swift in Sources */,
 				B8E8E8BA24C99FC400F1291F /* UIImage+.swift in Sources */,
@@ -1990,8 +1996,8 @@
 				5D4B903D247BC0ED00EE50B4 /* ActionErrors.swift in Sources */,
 				86865D3324487B390010271A /* SettingsPane.swift in Sources */,
 				8690AF082472D91F00FC49F4 /* collection.swift in Sources */,
+				B866A0282519C0330028EF49 /* CVU_RichTextEditor.swift in Sources */,
 				B8627E3A24A9EAAA005A1A8F /* MemriTextEditor.swift in Sources */,
-				B88AAB3724A1B0A10007C9EB /* ScreenSize.swift in Sources */,
 				5DD17B68241294CC0018A8F1 /* AnyCodable.swift in Sources */,
 				8690AF0A2472F60600FC49F4 /* InMemoryObjectCache.swift in Sources */,
 				86911E8424C543CD009AC8B1 /* CascadableContextPane.swift in Sources */,
@@ -2073,7 +2079,7 @@
 				5DD1E9BA23FD81C5007BDF7B /* CascadingRendererConfig.swift in Sources */,
 				B8348BE424FD236700BF12F8 /* BottomBar.swift in Sources */,
 				5DD1E9B523FD7EB1007BDF7B /* SearchView.swift in Sources */,
-				B8CECC0E250309CA006EE229 /* CVUImage.swift in Sources */,
+				B8CECC0E250309CA006EE229 /* CVU_Image.swift in Sources */,
 				8665ADD9241A8387005B3FA5 /* Cache.swift in Sources */,
 				86DDB362247ACF930051A92F /* CVUValidator.swift in Sources */,
 				8672C27C2497F35A006F0D42 /* CustomRenderer.swift in Sources */,

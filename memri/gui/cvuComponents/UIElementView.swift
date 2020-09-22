@@ -19,6 +19,13 @@ public struct UIElementView: SwiftUI.View {
 
     var nodeResolver: UINodeResolver
     
+    
+    var editModeBinding: Binding<Bool> {  Binding<Bool>(
+        get: { self.context.currentSession?.editMode ?? false },
+        set: { self.context.currentSession?.editMode = $0 }
+    )}
+    
+    
     @ViewBuilder
     var resolvedComponent: some View {
         switch nodeResolver.node.type {
@@ -36,6 +43,8 @@ public struct UIElementView: SwiftUI.View {
              CVU_Image(nodeResolver: nodeResolver)
         case .Map:
              CVU_Map(nodeResolver: nodeResolver)
+        case .RichTextfield:
+            CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
         case .Spacer:
              Spacer()
         default:

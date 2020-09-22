@@ -186,7 +186,19 @@ struct CalendarRendererView: View {
 
     func section(forMonth month: Date, withCalcs calcs: CalendarCalculations) -> ASSection<Date> {
         let days = controller.calendarHelper.getPaddedDays(forMonth: month)
-        return ASSection(id: month, data: days, dataID: \.self) { day, cellContext in
+        return ASSection(id: month, data: days, dataID: \.self, selectionMode: .selectSingle { index in
+            guard let day = days[safe: index].flatMap({ $0 }) else { return }
+            let formatter = DateFormatter()
+            formatter.dateStyle = .long
+            formatter.timeStyle = .none
+            // handle press on day
+            let items = calcs.itemsOnDay(day)
+            let uids = items.compactMap { $0.uid }
+            
+            guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
+            
+            try? ActionOpenViewWithUIDs(self.controller.context).exec(["itemType": itemType, "uids": uids])
+        }) { day, cellContext in
             Group {
                 day.map { day in
                     VStack(spacing: 0) {
@@ -220,19 +232,6 @@ struct CalendarRendererView: View {
             Text(controller.calendarHelper.monthYearString(for: month))
                 .font(.headline)
                 .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .onSelectSingle { index in
-            guard let day = days[safe: index].flatMap({ $0 }) else { return }
-            let formatter = DateFormatter()
-            formatter.dateStyle = .long
-            formatter.timeStyle = .none
-            // handle press on day
-            let items = calcs.itemsOnDay(day)
-            let uids = items.compactMap { $0.uid }
-
-            guard let itemType = items.first?.genericType, !uids.isEmpty else { return }
-
-            try? ActionOpenViewWithUIDs(self.controller.context).exec(["itemType": itemType, "uids": uids])
         }
     }
 }

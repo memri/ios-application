@@ -256,7 +256,43 @@ public struct UINodeResolver: Identifiable {
         resolve(propertyName, type: Bool.self) ?? defaultValue
     }
     
+    func binding<T>(for propertyName: String, type: T.Type = T.self) -> Binding<T?>? {
+        let (_, dataItemOptional, itemPropertyName) = getType(for: propertyName)
+        guard let dataItem = dataItemOptional, dataItem.hasProperty(itemPropertyName)
+        else { return nil }
+        return Binding<T?>(
+            get: { dataItem.get(itemPropertyName) },
+            set: { dataItem.set(itemPropertyName, $0) }
+        )
+    }
     
+    func binding<T>(for propertyName: String, defaultValue: T, type: T.Type = T.self) -> Binding<T> {
+        let (_, dataItemOptional, itemPropertyName) = getType(for: propertyName)
+        guard let dataItem = dataItemOptional, dataItem.hasProperty(itemPropertyName) else {
+            return .constant(defaultValue)
+        }
+        return  Binding<T>(
+            get: { dataItem.get(itemPropertyName) ?? defaultValue },
+            set: { dataItem.set(itemPropertyName, $0) }
+        )
+    }
+    
+    private func getType(for propName: String) -> (PropertyType, Item?, String) {
+        if let prop = node.properties[propName] {
+            // Execute expression to get the right value
+            if let expr = prop as? Expression {
+                do {
+                    return try expr.getTypeOfItem(viewArguments)
+                }
+                catch {
+                    // TODO: Refactor: Error Handling
+                    debugHistory.error("could not get type of \(String(describing: item))")
+                }
+            }
+        }
+        return (.any, item, "")
+    }
+
 }
 
 extension UINodeResolver {

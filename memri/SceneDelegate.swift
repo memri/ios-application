@@ -49,7 +49,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             guard let windowScene = scene as? UIWindowScene else { return }
 
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: application)
+            window.rootViewController = MemriHostingController(rootView: application)
 
             #if targetEnvironment(macCatalyst)
                 if let titlebar = windowScene.titlebar {

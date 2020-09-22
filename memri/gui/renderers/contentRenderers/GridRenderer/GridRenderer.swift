@@ -28,15 +28,6 @@ class GridRendererController: RendererController, ObservableObject {
         GridRendererConfig(head, tail, host)
     }
     
-    var selectedIndices: Binding<Set<Int>> {
-        Binding<Set<Int>>(
-            get: { [] },
-            set: {
-                self.context.setSelection($0.compactMap { self.context.items[safe: $0] })
-        }
-        )
-    }
-    
     var hasItems: Bool {
         !context.items.isEmpty
     }
@@ -101,7 +92,7 @@ struct GridRendererView: View {
     var layout: ASCollectionLayout<Int> {
         ASCollectionLayout(scrollDirection: .vertical, interSectionSpacing: 0) {
             ASCollectionLayoutSection { environment in
-                let contentInsets = self.controller.config.nsEdgeInset ?? .init()
+                let contentInsets = self.controller.config.nsEdgeInset
                 let numberOfColumns = self.controller.config.columns
                 let xSpacing = self.controller.config.spacing.width
                 let estimatedGridBlockSize = (environment.container.effectiveContentSize
@@ -136,7 +127,7 @@ struct GridRendererView: View {
     var section: ASCollectionViewSection<Int> {
         ASCollectionViewSection(id: 0,
                                 data: controller.items,
-                                selectedItems: controller.selectedIndices,
+                                selectionMode: selectionMode,
                                 contextMenuProvider: controller.contextMenuProvider)
         { dataItem, state in
             ZStack(alignment: .bottomTrailing) {
@@ -158,7 +149,14 @@ struct GridRendererView: View {
                 }
             }
         }
-        .onSelectSingle(controller.onSelectSingleItem)
+    }
+    
+    var selectionMode: ASSectionSelectionMode {
+        if controller.isEditing {
+            return .selectMultiple(controller.context.selectedIndicesBinding)
+        } else {
+            return .selectSingle(controller.onSelectSingleItem)
+        }
     }
 
     var body: some View {
