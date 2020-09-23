@@ -198,20 +198,26 @@
     {
         "_type": "Importer",
         "name": "iCloud notes",
-        "datatype": "Note",
+        "dataType": "Note",
         "icon": "cloud"
     },
     {
         "_type": "Importer",
         "name": "Evernote notes",
-        "datatype": "Note",
+        "dataType": "Note",
         "bundleImage": "evernote-icon"
     },
     {
         "_type": "Importer",
         "name": "Gmail",
-        "datatype": "Email",
+        "dataType": "Email",
         "bundleImage": "envelope"
+    },
+    {
+        "_type": "Importer",
+        "name": "WhatsApp",
+        "dataType": "whatsapp",
+        "icon": "message"
     },
     {
         "_type": "Indexer",
