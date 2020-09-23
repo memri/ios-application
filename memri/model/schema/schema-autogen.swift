@@ -94,6 +94,9 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeVoteAction = "VoteAction"
     case typeWebsite = "Website"
     case typeWrittenWork = "WrittenWork"
+    case typeLabelAnnotation = "LabelAnnotation"
+    case typeLabelAnnotationCollection = "LabelAnnotationCollection"
+    case typePhotoAnnotation = "PhotoAnnotation"
 
     static var discriminator: Discriminator = ._type
 
@@ -349,6 +352,9 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeVoteAction: return VoteAction.self
         case .typeWebsite: return Website.self
         case .typeWrittenWork: return WrittenWork.self
+        case .typeLabelAnnotation: return LabelAnnotation.self
+        case .typeLabelAnnotationCollection: return LabelAnnotationCollection.self
+        case .typePhotoAnnotation: return PhotoAnnotation.self
         }
     }
 }
