@@ -199,24 +199,28 @@
         "_type": "Importer",
         "name": "iCloud notes",
         "dataType": "Note",
+        "repository": "memri-nodeintegrators",
         "icon": "cloud"
     },
     {
         "_type": "Importer",
         "name": "Evernote notes",
         "dataType": "Note",
+        "repository": "memri-pyintegrators",
         "bundleImage": "evernote-icon"
     },
     {
         "_type": "Importer",
         "name": "Gmail",
         "dataType": "Email",
+        "repository": "memri-pyintegrators",
         "bundleImage": "envelope"
     },
     {
         "_type": "Importer",
         "name": "WhatsApp",
         "dataType": "whatsapp",
+        "repository": "memri-rustintegrators",
         "icon": "message"
     },
     {
