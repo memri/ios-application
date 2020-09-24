@@ -95,6 +95,7 @@ Importer[] {
                 _type: ImporterRun
                 name: {{.name}}
                 importer: {{.}}
+                repository: {{.repository}}
             }
         }
 

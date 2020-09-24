@@ -674,9 +674,8 @@ public class PodAPI {
                 "databaseKey": dbKey,
                 "ownerKey": ownerKey
             ]
-            // WARNING: WE ARE CALLING DOWNLOADER HERE, WHICH FIRST CALLS THE DOWNLOADER
-            // AND THEN, THE DOWNLOADER CALLS THE IMPORTER
-            self.http(path: "run_downloader", payload:payload) { error, _ in
+
+            self.http(path: "run_importer", payload:payload) { error, _ in
                 callback(error, error == nil)
             }
         }

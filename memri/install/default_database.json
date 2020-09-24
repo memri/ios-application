@@ -198,20 +198,30 @@
     {
         "_type": "Importer",
         "name": "iCloud notes",
-        "datatype": "Note",
+        "dataType": "Note",
+        "repository": "memri-nodeintegrators",
         "icon": "cloud"
     },
     {
         "_type": "Importer",
         "name": "Evernote notes",
-        "datatype": "Note",
+        "dataType": "Note",
+        "repository": "memri-pyintegrators",
         "bundleImage": "evernote-icon"
     },
     {
         "_type": "Importer",
         "name": "Gmail",
-        "datatype": "Email",
+        "dataType": "Email",
+        "repository": "memri-pyintegrators",
         "bundleImage": "envelope"
+    },
+    {
+        "_type": "Importer",
+        "name": "WhatsApp",
+        "dataType": "whatsapp",
+        "repository": "memri-rustintegrators",
+        "icon": "message"
     },
     {
         "_type": "Indexer",
