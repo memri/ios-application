@@ -427,7 +427,7 @@ class CVUParserTests: XCTestCase {
 
         XCTAssertEqual(try parseToCVUString(snippet), """
         Person {
-            color: #ff00ff
+            color: #f0f
         }
         """)
     }
@@ -640,8 +640,8 @@ class CVUParserTests: XCTestCase {
 
                 Text {
                     textAlign: center
-                    align: top
                     font: 12 light
+                    align: top
                 }
 
                 Text {

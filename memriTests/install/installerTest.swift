@@ -67,7 +67,7 @@ class installerTest: XCTestCase {
                     
                     self.installer.ready(context)
 
-                    DatabaseController.current {
+                    DatabaseController.sync {
                         XCTAssertTrue($0.objects(CVUStoredDefinition.self).count > 20)
                         
                         didFinish.fulfill()
@@ -90,12 +90,12 @@ class installerTest: XCTestCase {
                 XCTAssertNil(error)
 
                 // Install default db
-                self.installer.installDemoDatabase(context) { error in
+                self.installer.installDemoDatabase(context) { error, progress in
                     XCTAssertNil(error)
                     
                     self.installer.ready(context)
 
-                    DatabaseController.current {
+                    DatabaseController.sync {
                         XCTAssertTrue($0.objects(CVUStoredDefinition.self).count > 20)
                         
                         didFinish.fulfill()

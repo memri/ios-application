@@ -172,9 +172,9 @@ class CVUSerializer {
                 }
             }
             else if key == "frame" {
-                let names = ["minWidth", "maxWidth", "minHeight", "maxHeight", "align"]
+                let names = ["minWidth", "maxWidth", "minHeight", "maxHeight"] // "align" left out as it remains in the primary dict
                 if let list = dict[key] as? [Any?] {
-                    for i in 0 ..< list.count {
+                    for i in 0 ..< min(names.count, list.count) {
                         if let v = list[i] {
                             str.append("\(names[i]): \(valueToString(v, depth, tab))")
                         }

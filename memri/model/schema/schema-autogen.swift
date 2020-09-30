@@ -45,6 +45,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
     case typeIndexer = "Indexer"
     case typeIndexerRun = "IndexerRun"
     case typeIndustry = "Industry"
+    case typeIntegrator = "Integrator"
     case typeInvoice = "Invoice"
     case typeLabel = "Label"
     case typeLead = "Lead"
@@ -130,6 +131,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeIndexer: return Color(hex: "#93c47d")
         case .typeIndexerRun: return Color(hex: "#93c47d")
         case .typeIndustry: return Color(hex: "#93c47d")
+        case .typeIntegrator: return Color(hex: "#93c47d")
         case .typeInvoice: return Color(hex: "#93c47d")
         case .typeLabel: return Color(hex: "#93c47d")
         case .typeLead: return Color(hex: "#93c47d")
@@ -213,6 +215,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeIndexer: return Color(hex: "#ffffff")
         case .typeIndexerRun: return Color(hex: "#ffffff")
         case .typeIndustry: return Color(hex: "#ffffff")
+        case .typeIntegrator: return Color(hex: "#ffffff")
         case .typeInvoice: return Color(hex: "#ffffff")
         case .typeLabel: return Color(hex: "#ffffff")
         case .typeLead: return Color(hex: "#ffffff")
@@ -300,6 +303,7 @@ enum ItemFamily: String, ClassFamily, CaseIterable {
         case .typeIndexer: return Indexer.self
         case .typeIndexerRun: return IndexerRun.self
         case .typeIndustry: return Industry.self
+        case .typeIntegrator: return Integrator.self
         case .typeInvoice: return Invoice.self
         case .typeLabel: return Label.self
         case .typeLead: return Lead.self
@@ -378,16 +382,12 @@ public class Account : Item {
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
-    /// The name quality used by Synapse.
-    let nameQuality = RealmOptional<Int>()
-    /// Whether the Item should be displayed in the interfaces.
-    @objc dynamic var enablePresence:Bool = false
-    /// Whether you retrieve Messages from this Person.
-    @objc dynamic var enableReceipts:Bool = false
     /// A service of any kind.
     @objc dynamic var service:String? = nil
     /// The type or (sub)category of some Item.
     @objc dynamic var itemType:String? = nil
+    /// URL to avatar image used by WhatsApp.
+    @objc dynamic var avatarUrl:String? = nil
 
     /// The Person this Item belongs to.
     var belongsTo: Results<Person>? {
@@ -417,11 +417,9 @@ public class Account : Item {
         jsonErrorHandling(decoder) {
             handle = try decoder.decodeIfPresent("handle") ?? handle
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
-            nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
-            enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
-            enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             service = try decoder.decodeIfPresent("service") ?? service
             itemType = try decoder.decodeIfPresent("itemType") ?? itemType
+            avatarUrl = try decoder.decodeIfPresent("avatarUrl") ?? avatarUrl
 
             try self.superDecode(from: decoder)
         }
@@ -1123,6 +1121,8 @@ public class EmailMessage : Item {
     @objc dynamic var dateSent:Date? = nil
     /// Datetime when Item was received.
     @objc dynamic var dateReceived:Date? = nil
+    /// A service of any kind.
+    @objc dynamic var service:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -1218,6 +1218,7 @@ public class EmailMessage : Item {
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+            service = try decoder.decodeIfPresent("service") ?? service
 
             try self.superDecode(from: decoder)
         }
@@ -1606,6 +1607,9 @@ public class HowTo : Item {
 public class Importer : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
+    /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
+    /// container.
+    @objc dynamic var repository:String? = nil
     /// The type of the data this Item acts on.
     @objc dynamic var dataType:String? = nil
     /// A graphic symbol to represent some Item.
@@ -1623,6 +1627,7 @@ public class Importer : Item {
 
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
+            repository = try decoder.decodeIfPresent("repository") ?? repository
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
             icon = try decoder.decodeIfPresent("icon") ?? icon
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
@@ -1636,6 +1641,9 @@ public class Importer : Item {
 public class ImporterRun : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
+    /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
+    /// container.
+    @objc dynamic var repository:String? = nil
     /// The progress an Item made. The number could be a (rounded) percentage or a count of a
     /// (potentially unknown) total.
     let progress = RealmOptional<Int>()
@@ -1656,6 +1664,7 @@ public class ImporterRun : Item {
 
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
+            repository = try decoder.decodeIfPresent("repository") ?? repository
             progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
             username = try decoder.decodeIfPresent("username") ?? username
@@ -1671,6 +1680,9 @@ public class ImporterRun : Item {
 public class Indexer : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
+    /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
+    /// container.
+    @objc dynamic var repository:String? = nil
     /// A graphic symbol to represent some Item.
     @objc dynamic var icon:String? = nil
     /// A Memri query that retrieves a set of Items from the Pod database.
@@ -1692,6 +1704,7 @@ public class Indexer : Item {
 
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
+            repository = try decoder.decodeIfPresent("repository") ?? repository
             icon = try decoder.decodeIfPresent("icon") ?? icon
             query = try decoder.decodeIfPresent("query") ?? query
             bundleImage = try decoder.decodeIfPresent("bundleImage") ?? bundleImage
@@ -1707,6 +1720,9 @@ public class Indexer : Item {
 public class IndexerRun : Item {
     /// The name of the item.
     @objc dynamic var name:String? = nil
+    /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
+    /// container.
+    @objc dynamic var repository:String? = nil
     /// A Memri query that retrieves a set of Items from the Pod database.
     @objc dynamic var query:String? = nil
     /// The progress an Item made. The number could be a (rounded) percentage or a count of a
@@ -1725,6 +1741,7 @@ public class IndexerRun : Item {
 
         jsonErrorHandling(decoder) {
             name = try decoder.decodeIfPresent("name") ?? name
+            repository = try decoder.decodeIfPresent("repository") ?? repository
             query = try decoder.decodeIfPresent("query") ?? query
             progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
             targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
@@ -1744,6 +1761,27 @@ public class Industry : Item {
 
         jsonErrorHandling(decoder) {
             itemType = try decoder.decodeIfPresent("itemType") ?? itemType
+
+            try self.superDecode(from: decoder)
+        }
+    }
+}
+
+/// An integrator operates on your database enhances your personal data by inferring facts over
+/// existing data and adding those to the database.
+public class Integrator : Item {
+    /// The name of the item.
+    @objc dynamic var name:String? = nil
+    /// Repository associated with this item, e.g. used by Pod to start appropriate integrator
+    /// container.
+    @objc dynamic var repository:String? = nil
+
+    public required convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        jsonErrorHandling(decoder) {
+            name = try decoder.decodeIfPresent("name") ?? name
+            repository = try decoder.decodeIfPresent("repository") ?? repository
 
             try self.superDecode(from: decoder)
         }
@@ -2039,6 +2077,8 @@ public class Message : Item {
     @objc dynamic var dateSent:Date? = nil
     /// Datetime when Item was received.
     @objc dynamic var dateReceived:Date? = nil
+    /// A service of any kind.
+    @objc dynamic var service:String? = nil
 
     /// An audio object.
     var audio: Results<Audio>? {
@@ -2118,6 +2158,7 @@ public class Message : Item {
             subject = try decoder.decodeIfPresent("subject") ?? subject
             dateSent = try decoder.decodeIfPresent("dateSent") ?? dateSent
             dateReceived = try decoder.decodeIfPresent("dateReceived") ?? dateReceived
+            service = try decoder.decodeIfPresent("service") ?? service
 
             try self.superDecode(from: decoder)
         }
@@ -2750,12 +2791,6 @@ public class SchemaPerson : Item {
     /// The name to display, for Persons this could be a first or last name, both, or a
     /// phonenumber.
     @objc dynamic var displayName:String? = nil
-    /// The name quality used by Synapse.
-    let nameQuality = RealmOptional<Int>()
-    /// Whether the Item should be displayed in the interfaces.
-    @objc dynamic var enablePresence:Bool = false
-    /// Whether you retrieve Messages from this Person.
-    @objc dynamic var enableReceipts:Bool = false
     /// A role describes the function of the item in their context.
     @objc dynamic var role:String? = nil
 
@@ -2870,9 +2905,6 @@ public class SchemaPerson : Item {
             gender = try decoder.decodeIfPresent("gender") ?? gender
             sexualOrientation = try decoder.decodeIfPresent("sexualOrientation") ?? sexualOrientation
             displayName = try decoder.decodeIfPresent("displayName") ?? displayName
-            nameQuality.value = try decoder.decodeIfPresent("nameQuality") ?? nameQuality.value
-            enablePresence = try decoder.decodeIfPresent("enablePresence") ?? enablePresence
-            enableReceipts = try decoder.decodeIfPresent("enableReceipts") ?? enableReceipts
             role = try decoder.decodeIfPresent("role") ?? role
 
             try self.superDecode(from: decoder)
@@ -4037,6 +4069,7 @@ func dataItemListToArray(_ object: Any) -> [Item] {
     else if let list = object as? Results<Indexer> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<IndexerRun> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Industry> { list.forEach { collection.append($0) } }
+    else if let list = object as? Results<Integrator> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Invoice> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Item> { list.forEach { collection.append($0) } }
     else if let list = object as? Results<Label> { list.forEach { collection.append($0) } }
