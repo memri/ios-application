@@ -66,17 +66,18 @@ struct Browser: View {
                                 Text("No active renderer").padding().frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
                             
-                            
-                            ContextualBottomBar()
-                            
-                            if !currentView.fullscreen {
-                                BottomBarView(onSearchPressed: {
-                                    self.isSearchActive = true
-                                })
+                            if currentView.showBottomBar {
+                                ContextualBottomBar()
+                                
+                                if !currentView.fullscreen {
+                                    BottomBarView(onSearchPressed: {
+                                        self.isSearchActive = true
+                                    })
                                     .zIndex(8)
+                                }
                             }
                         }
-                        if showFilterPanel {
+                        if showFilterPanel && currentView.showBottomBar {
                             Color.black.opacity(0.15)
                                 .onTapGesture {
                                 self.showFilterPanel = false

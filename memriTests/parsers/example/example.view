@@ -232,7 +232,7 @@ Person {
                     minHeight: 250
                     maxHeight: 250
                     opacity: 0.6
-                    align: center
+                    alignment: center
                 }
                 
                 ZStack {
@@ -241,7 +241,7 @@ Person {
                     maxWidth: 140
                     maxHeight: 140
                     cornerRadius: 100
-                    align: center
+                    alignment: center
                 
                     Image {
                         image: {{.}}
@@ -250,7 +250,7 @@ Person {
                     
                     HSTack {
                         debug : true
-                        align: center
+                        alignment: center
                         maxWidth: 140
                         maxHeight: 140
                         condition: {{!readOnly}}
@@ -262,7 +262,7 @@ Person {
                             maxHeight: 50
                             background: #eee
                             color: #434343
-                            align: center
+                            alignment: center
                             font: 14 regular
                         
                             Text { text: "Edit" }
@@ -374,7 +374,7 @@ Person[] {
                     maxWidth: 25
                     maxHeight: 25
                     cornerRadius: 30
-                    align: center
+                    alignment: center
                     margin: 5 15 9 0
                 
                     Image {

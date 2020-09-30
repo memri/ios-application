@@ -34,3 +34,24 @@ struct CVU_SmartText: View {
         content.map { MemriSmartTextView(string: $0, font: nodeResolver.font(), color: nodeResolver.color()) }
     }
 }
+
+
+struct CVU_TextField: View {
+    var nodeResolver: UINodeResolver
+    var editModeBinding: Binding<Bool>
+    
+    var hint: String? {
+        nodeResolver.string(for: "hint")?.nilIfBlank
+    }
+    
+    var contentBinding: Binding<String?> {
+        nodeResolver.binding(for: "value", defaultValue: nil)
+    }
+    
+    var body: some View {
+        MemriTextField(value: contentBinding,
+                       placeholder: hint,
+                       textColor: nodeResolver.color()?.uiColor,
+                       isEditing: editModeBinding)
+    }
+}

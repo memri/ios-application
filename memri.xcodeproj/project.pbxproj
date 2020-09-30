@@ -289,6 +289,12 @@
 		B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */; };
 		B88AAB3924A1B10F0007C9EB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3824A1B10F0007C9EB /* UIColor.swift */; };
 		B88AAB3B24A1B13F0007C9EB /* Indexed.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88AAB3A24A1B13F0007C9EB /* Indexed.swift */; };
+		B88B8D4A25247053001295D7 /* CVU_EditorSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D4925247053001295D7 /* CVU_EditorSection.swift */; };
+		B88B8D5225247906001295D7 /* CVU_MemriButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D5125247906001295D7 /* CVU_MemriButton.swift */; };
+		B88B8D5725247AC6001295D7 /* CVU_Shape.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D5625247AC6001295D7 /* CVU_Shape.swift */; };
+		B88B8D5C25247F36001295D7 /* CVU_HTMLView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D5B25247F36001295D7 /* CVU_HTMLView.swift */; };
+		B88B8D6125248CDA001295D7 /* SizeReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D6025248CDA001295D7 /* SizeReader.swift */; };
+		B88B8D6D2524C04A001295D7 /* CVU_TimelineItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = B88B8D6C2524C04A001295D7 /* CVU_TimelineItem.swift */; };
 		B89A268324A70358009119E4 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B89A268224A70358009119E4 /* MapView.swift */; };
 		B8A5E30924F77BA800A1F488 /* schema-manual.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A5E30824F77BA800A1F488 /* schema-manual.swift */; };
 		B8A5E30B24F7878600A1F488 /* RendererController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8A5E30A24F7878600A1F488 /* RendererController.swift */; };
@@ -577,7 +583,6 @@
 		B8627E3724A9EAAA005A1A8F /* KeyboardToolbar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeyboardToolbar.swift; sourceTree = "<group>"; };
 		B8627E3824A9EAAA005A1A8F /* MemriTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemriTextField.swift; sourceTree = "<group>"; };
 		B866A0272519C0330028EF49 /* CVU_RichTextEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_RichTextEditor.swift; sourceTree = "<group>"; };
-		B866A02F2519C6F30028EF49 /* ASCollectionView */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ASCollectionView; path = ../../../WorkoutTime/WorkoutTimeiOSApp/ASCollectionView; sourceTree = "<group>"; };
 		B866A0362519D0890028EF49 /* CVU_Toggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_Toggle.swift; sourceTree = "<group>"; };
 		B866A0512519E5980028EF49 /* UIHostingControllerNoSafeArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIHostingControllerNoSafeArea.swift; sourceTree = "<group>"; };
 		B867929D24A01B9E00042B21 /* memri.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = memri.entitlements; sourceTree = "<group>"; };
@@ -596,6 +601,13 @@
 		B88AAB2C24A1AEBB0007C9EB /* LineChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineChartView.swift; sourceTree = "<group>"; };
 		B88AAB3824A1B10F0007C9EB /* UIColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		B88AAB3A24A1B13F0007C9EB /* Indexed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Indexed.swift; sourceTree = "<group>"; };
+		B88B8D4925247053001295D7 /* CVU_EditorSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_EditorSection.swift; sourceTree = "<group>"; };
+		B88B8D5125247906001295D7 /* CVU_MemriButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_MemriButton.swift; sourceTree = "<group>"; };
+		B88B8D5625247AC6001295D7 /* CVU_Shape.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_Shape.swift; sourceTree = "<group>"; };
+		B88B8D5B25247F36001295D7 /* CVU_HTMLView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_HTMLView.swift; sourceTree = "<group>"; };
+		B88B8D6025248CDA001295D7 /* SizeReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeReader.swift; sourceTree = "<group>"; };
+		B88B8D682524AEA8001295D7 /* ascollectionview */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ascollectionview; path = ../ascollectionview; sourceTree = "<group>"; };
+		B88B8D6C2524C04A001295D7 /* CVU_TimelineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CVU_TimelineItem.swift; sourceTree = "<group>"; };
 		B89A268224A70358009119E4 /* MapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapView.swift; sourceTree = "<group>"; };
 		B8A5E30824F77BA800A1F488 /* schema-manual.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "schema-manual.swift"; sourceTree = "<group>"; };
 		B8A5E30A24F7878600A1F488 /* RendererController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RendererController.swift; sourceTree = "<group>"; };
@@ -852,7 +864,6 @@
 		5D599BAE23F2B77500F218A0 = {
 			isa = PBXGroup;
 			children = (
-				B866A02F2519C6F30028EF49 /* ASCollectionView */,
 				5D599BB923F2B77500F218A0 /* memri */,
 				5D406F2223F5667C00F98616 /* playground */,
 				5D599BD023F2B77700F218A0 /* memriTests */,
@@ -860,6 +871,7 @@
 				5D38DE3F240581E500FF9B70 /* memri.app */,
 				B857B7B424A1CBE700615BA7 /* memriTests.xctest */,
 				B857B7B524A1CBE700615BA7 /* memriUITests.xctest */,
+				B88B8D682524AEA8001295D7 /* ascollectionview */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1269,9 +1281,7 @@
 		B80E01A524C839160005D756 /* components */ = {
 			isa = PBXGroup;
 			children = (
-				B82792B624E39D0A0085DB8A /* Styles */,
 				B82792B524E39BEC0085DB8A /* Shapes */,
-				B8FD53B424D5079300CA0709 /* FileViewer */,
 				B80E01A624C839250005D756 /* ProgressBarView.swift */,
 				B8FD53AE24D5066600CA0709 /* Text */,
 				B8FD53AF24D5066E00CA0709 /* Email */,
@@ -1338,13 +1348,6 @@
 				B8AAB438250DD0BF007CF0E3 /* EdgeBorder.swift */,
 			);
 			path = Shapes;
-			sourceTree = "<group>";
-		};
-		B82792B624E39D0A0085DB8A /* Styles */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Styles;
 			sourceTree = "<group>";
 		};
 		B82792B724E39D2B0085DB8A /* helpers */ = {
@@ -1484,6 +1487,7 @@
 			isa = PBXGroup;
 			children = (
 				8690AF012472D8C300FC49F4 /* View.swift */,
+				B88B8D6025248CDA001295D7 /* SizeReader.swift */,
 			);
 			path = SwiftUI;
 			sourceTree = "<group>";
@@ -1515,10 +1519,15 @@
 				B8CECC0D250309CA006EE229 /* CVU_Image.swift */,
 				B8AAB434250DAC0A007CF0E3 /* CVU_Stack.swift */,
 				B8AAB43A250DD2AE007CF0E3 /* CVU_Text.swift */,
-				B866A0362519D0890028EF49 /* CVU_Toggle.swift */,
+				B88B8D5625247AC6001295D7 /* CVU_Shape.swift */,
 				B866A0272519C0330028EF49 /* CVU_RichTextEditor.swift */,
+				B88B8D5125247906001295D7 /* CVU_MemriButton.swift */,
+				B866A0362519D0890028EF49 /* CVU_Toggle.swift */,
+				B88B8D6C2524C04A001295D7 /* CVU_TimelineItem.swift */,
 				B8AAB43F250E2EDF007CF0E3 /* CVU_Map.swift */,
+				B88B8D5B25247F36001295D7 /* CVU_HTMLView.swift */,
 				B8AAB436250DB253007CF0E3 /* CVU_AppearanceModifier.swift */,
+				B88B8D4925247053001295D7 /* CVU_EditorSection.swift */,
 			);
 			path = cvuComponents;
 			sourceTree = "<group>";
@@ -1603,13 +1612,6 @@
 				B8FD53B524D5079F00CA0709 /* FileViewerController.swift */,
 			);
 			path = FileRenderer;
-			sourceTree = "<group>";
-		};
-		B8FD53B424D5079300CA0709 /* FileViewer */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = FileViewer;
 			sourceTree = "<group>";
 		};
 		C892B3E924A5530D006707EC /* Sensors */ = {
@@ -1935,6 +1937,7 @@
 				868EF63724766A8800C0375F /* ExprLexer.swift in Sources */,
 				B8FB499A249F3187007A05C4 /* UIKit+FirstResponder.swift in Sources */,
 				B881BECF24BD4AA00016DBF5 /* TimelineModel.swift in Sources */,
+				B88B8D4A25247053001295D7 /* CVU_EditorSection.swift in Sources */,
 				5D4C71ED2445E44B00DF09E8 /* GeneralEditorRenderer.swift in Sources */,
 				B8348BE124FCFB4E00BF12F8 /* GeneralEditorRows.swift in Sources */,
 				8665ADD7241A8120005B3FA5 /* MemriContext.swift in Sources */,
@@ -1959,6 +1962,7 @@
 				86C3A73524518763006D4F55 /* ItemCell.swift in Sources */,
 				B81B793324D04CB600C25CDF /* ConfigPanelModel.swift in Sources */,
 				B81237ED24A43E42003E8BCB /* MapHelper.swift in Sources */,
+				B88B8D5725247AC6001295D7 /* CVU_Shape.swift in Sources */,
 				866F87C3245354B5000E5FAB /* PickerPane.swift in Sources */,
 				5D38DE132405775400FF9B70 /* PodAPI.swift in Sources */,
 				B881BEC924BD3C8B0016DBF5 /* CalendarHelper.swift in Sources */,
@@ -2026,6 +2030,7 @@
 				B8CECC0A25030956006EE229 /* CVUColor.swift in Sources */,
 				8699AA2D247BBBB200EC85C0 /* SubView.swift in Sources */,
 				86CDB48B246ABE46007EAE67 /* ViewDebugger.swift in Sources */,
+				B88B8D6D2524C04A001295D7 /* CVU_TimelineItem.swift in Sources */,
 				B8AAB43B250DD2AE007CF0E3 /* CVU_Text.swift in Sources */,
 				5D4231AB247C2D7100CD1933 /* Datasource.swift in Sources */,
 				B8EA5C7624FCC4900031854D /* MessageBubbleView.swift in Sources */,
@@ -2062,12 +2067,15 @@
 				B866A0372519D0890028EF49 /* CVU_Toggle.swift in Sources */,
 				B881BED024BD4AA00016DBF5 /* TimelineRenderer.swift in Sources */,
 				868EF697247784C600C0375F /* ResultSet.swift in Sources */,
+				B88B8D5C25247F36001295D7 /* CVU_HTMLView.swift in Sources */,
+				B88B8D5225247906001295D7 /* CVU_MemriButton.swift in Sources */,
 				B8627E4224A9EAAA005A1A8F /* MemriTextField.swift in Sources */,
 				B88AAB2F24A1AEBB0007C9EB /* LineChartModel.swift in Sources */,
 				5D90464F243616B000632492 /* color.swift in Sources */,
 				5D3D961F24164B240004040E /* CodeExtended.swift in Sources */,
 				B88AAB3224A1AEBB0007C9EB /* LineChartView.swift in Sources */,
 				8693206724CDD4910030863D /* SetupWizard.swift in Sources */,
+				B88B8D6125248CDA001295D7 /* SizeReader.swift in Sources */,
 				5DD28B772417BAF900CE9F6A /* GridRenderer.swift in Sources */,
 				B8BF6F4A24BEA16A0058067C /* MessageRenderer.swift in Sources */,
 				5DB8EC0424598FA30028FD2E /* CascadableView.swift in Sources */,

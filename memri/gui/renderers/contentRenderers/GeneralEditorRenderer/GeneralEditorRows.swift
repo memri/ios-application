@@ -54,18 +54,25 @@ struct DefaultGeneralEditorRow: View {
                         else { defaultRow() }
                     }
                     else {
-                        if propType == .string { stringRow() }
-                        else if propType == .bool { boolRow() }
-                        else if propType == .date { dateRow() }
-                        else if propType == .int { intRow() }
-                        else if propType == .double { doubleRow() }
-                        else if propType == .object { defaultRow() }
-                        else { defaultRow() }
+                        switch propType {
+                        case .string:
+                            stringRow()
+                        case .bool:
+                            boolRow()
+                        case .date:
+                            dateRow()
+                        case .int:
+                            intRow()
+                        case .double:
+                            doubleRow()
+                        default:
+                            defaultRow()
+                        }
                     }
                 }
                 .fullWidth()
                 .padding(.bottom, 10)
-                .padding(.horizontal, 36)
+                .padding(.horizontal)
                 .background(readOnly ? Color(hex: "#f9f9f9") : Color(hex: "#f7fcf5"))
                 
                 if !isLast {
@@ -143,6 +150,7 @@ struct DefaultGeneralEditorRow: View {
         .generalEditorCaption()
     }
     
+    @ViewBuilder
     func dateRow() -> some View {
         let binding = Binding<Date>(
             get: { self.item[self.prop] as? Date ?? Date() },
@@ -152,10 +160,16 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return DatePicker("", selection: binding, displayedComponents: .date)
-            .frame(width: 300, height: 80, alignment: .center)
-            .clipped()
-            .padding(8)
+        if #available(iOS 14.0, *) {
+            DatePicker("", selection: binding, displayedComponents: .date)
+                .labelsHidden()
+        } else {
+            DatePicker("", selection: binding, displayedComponents: .date)
+                .labelsHidden()
+                .frame(width: 300, height: 80, alignment: .center)
+                .clipped()
+                .padding(8)
+        }
     }
     
     func defaultRow(_ caption: String? = nil) -> some View {
@@ -206,7 +220,7 @@ private struct GeneralEditorHeader: ViewModifier {
             .foregroundColor(Color(hex: "#434343"))
             .padding(.bottom, 5)
             .padding(.top, 24)
-            .padding(.horizontal, 36)
+            .padding(.horizontal)
             .foregroundColor(Color(hex: "#333"))
     }
 }

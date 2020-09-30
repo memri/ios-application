@@ -15,6 +15,9 @@ struct CVU_HStack: View {
         HStack(alignment: nodeResolver.alignment().vertical, spacing: nodeResolver.spacing.x) {
             nodeResolver.childrenInForEach
         }
+        .if(nodeResolver.bool(for: "fillWidth", defaultValue: false)) {
+            $0.frame(maxWidth: .infinity, alignment: nodeResolver.alignment())
+        }
     }
 }
 
@@ -24,6 +27,9 @@ struct CVU_VStack: View {
     var body: some View {
         VStack(alignment: nodeResolver.alignment().horizontal, spacing: nodeResolver.spacing.y) {
             nodeResolver.childrenInForEach
+        }
+        .if(nodeResolver.bool(for: "fillHeight", defaultValue: false)) {
+            $0.frame(maxHeight: .infinity, alignment: nodeResolver.alignment())
         }
     }
 }

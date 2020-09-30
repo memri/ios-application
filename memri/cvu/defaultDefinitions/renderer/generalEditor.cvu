@@ -28,6 +28,7 @@
                 color: #777
             }
             FlowStack {
+                spacing: 5
                 list: {{ .label[] }}
             
                 Button {

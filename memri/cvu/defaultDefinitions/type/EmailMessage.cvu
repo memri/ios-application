@@ -46,7 +46,7 @@ EmailMessage[] {
             spacing: 3
             
             HStack {
-                align: left
+                alignment: left
                 
                 Text {
                     text: {{.sender.owner.firstName}}
@@ -94,11 +94,40 @@ EmailMessage[] {
         background: #D3E4D1
         content: {{.content}}
         
-        EmailHeader {
-            color: #000000
-            title: "{.subject}"
-            subtitle: "{.sender.owner.fullName()}"
-            rightSubtitle: "{.dateSent}"
+        HStack {
+            spacing: 10
+            ZStack {
+                width: 50
+                height: 50
+                Circle {
+                    color: #000000
+                }
+                Text {
+                    text: "AA"
+                    color: #FFFFFF
+                }
+            }
+            VStack {
+                alignment: leading
+                spacing: 4
+                HStack {
+                    Text {
+                        text: "{.subject}"
+                    }
+                    Spacer
+                    Text {
+                        text: "{.dateSent}"
+                        color: #666
+                    }
+                }
+                HStack {
+                    Text {
+                        text: "{.sender.owner.fullName()}"
+                        color: #666
+                    }
+                    Spacer
+                }
+            }
         }
     }
     

@@ -48,11 +48,12 @@ Label[]: {
                     }
                 }
                 Spacer
-                RoundedRectangle {
+                Rectangle {
                     color: {{.color}}
+                    cornerRadius: 20
                     maxHeight: 25
                     maxWidth: 25
-                    align: center
+                    alignment: center
                     padding: 0 10 0 0
                 }
             }

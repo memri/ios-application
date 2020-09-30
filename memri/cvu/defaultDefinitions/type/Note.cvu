@@ -118,7 +118,7 @@ Note[] {
             spacing: 3
             
             HStack {
-                align: left
+                alignment: left
                 spacing: 5
                 Text {
                     text: {{.title or "Untitled Note"}}
@@ -174,10 +174,10 @@ Note[] {
                 font: 9 regular
                 minHeight: 40
                 idealHeight: 80
-                align: left top
+                alignment: left top
             }
             HStack {
-                align: center
+                alignment: center
                 Text {
                     text: {{.title or "Untitled Note"}}
                     padding: 5 0 0 0
@@ -234,16 +234,4 @@ Note[] {
 			isOutgoing: {{.title = "To read list"}} /* This is just a demo until we have a Message type in the schema... */
 		}
 	}
-    
-    [renderer = emailThread] {
-        background: #D3E4D1
-        content: {{.content}}
-        
-        EmailHeader {
-            color: #000000
-            title: {{.title}}
-            subtitle: "Testing out email renderer"
-            rightSubtitle: {{.dateModified}}
-        }
-    }
 }

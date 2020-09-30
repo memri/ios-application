@@ -641,7 +641,7 @@ class CVUParserTests: XCTestCase {
                 Text {
                     textAlign: center
                     font: 12 light
-                    align: top
+                    alignment: top
                 }
 
                 Text {

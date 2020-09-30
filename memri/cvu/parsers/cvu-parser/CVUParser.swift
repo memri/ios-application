@@ -208,7 +208,6 @@ class CVUParser {
         var dict = [String: Any?]()
         var stack = [Any?]()
 
-        let forUIElement = knownUIElements[uiElementName?.lowercased() ?? ""] != nil
         var lastKey: String?
         var isArrayMode = false
 
@@ -386,7 +385,7 @@ class CVUParser {
                 let x: String? = nil
                 stack.append(x)
             case let .Number(value, _, _):
-                stack.append(forUIElement ? CGFloat(value) : value)
+                stack.append(value)
             case let .String(value, _, _):
                 if !isArrayMode,
                     case CVUToken.Colon = peekCurrentToken() {

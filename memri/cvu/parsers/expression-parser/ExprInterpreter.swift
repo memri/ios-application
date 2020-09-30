@@ -48,9 +48,16 @@ class ExprInterpreter {
         if let x = x as? Bool { return x ? 1 : 0 }
         else if let x = x as? Int { return Double(x) }
         else if let x = x as? Double { return x }
-        else if let x = x as? String { return Double(x) ?? .nan }
-        else if x == nil { return .nan }
-        else { return .nan }
+        else if let x = x as? String { return Double(x) ?? 0}
+        else { return 0 }
+    }
+    
+    
+    class func evaluateNumberArray(_ x: Any?) -> [Double] {
+        if let x = x as? String { return x.split(separator: " ").map { Double($0) ?? 0 }}
+        else if let x = x as? Double { return [x] }
+        else if let x = x as? Int { return [Double(x)] }
+        else { return [] }
     }
 
     class func evaluateDateTime(_ x: Any?) -> Date? {

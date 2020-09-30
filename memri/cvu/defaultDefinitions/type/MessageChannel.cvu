@@ -22,7 +22,7 @@ MessageChannel {
             showTitle: false
         
             VStack {
-                align: bottomright
+                alignment: bottomright
                 maxHeight: 300
                 
                 Image {
@@ -77,7 +77,7 @@ MessageChannel[] {
             alignment: center
             
             ZStack {
-                align: top
+                alignment: top
                 margin: 0 15 0 0
             
                 Image {

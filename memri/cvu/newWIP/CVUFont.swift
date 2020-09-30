@@ -38,6 +38,20 @@ extension UIFont {
 }
 
 extension Font.Weight {
+    init(_ string: String) {
+        switch string {
+        case "black": self = .black
+        case "bold": self = .bold
+        case "heavy": self = .heavy
+        case "light": self = .light
+        case "medium": self = .medium
+        case "regular": self = .regular
+        case "semibold": self = .semibold
+        case "thin": self = .thin
+        case "ultraLight": self = .ultraLight
+        default: self = .regular
+        }
+    }
     var uiKit: UIFont.Weight {
         switch self {
         case .black: return .black

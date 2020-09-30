@@ -112,6 +112,20 @@ public struct UINodeResolver: Identifiable {
     var childrenInArray: [UIElementView] {
         node.children.map { UINodeResolver(node: $0, viewArguments: viewArguments) }.map { UIElementView(nodeResolver: $0) }
     }
+    
+    
+    func childrenInForEach(usingItem item: Item) -> some View {
+        let newArguments = ViewArguments(viewArguments, item)
+        let childNodeResolvers = node.children.map { UINodeResolver(node: $0, viewArguments: newArguments) }
+        return ForEach(childNodeResolvers) { childNodeResolver in
+            UIElementView(nodeResolver: childNodeResolver)
+        }
+    }
+    
+    func childrenInArray(usingItem item: Item) -> [UIElementView] {
+        let newArguments = ViewArguments(viewArguments, item)
+        return node.children.map { UINodeResolver(node: $0, viewArguments: newArguments) }.map { UIElementView(nodeResolver: $0) }
+    }
 //
 //
 //    func processText(_ text: String?) -> String? {
@@ -153,21 +167,21 @@ public struct UINodeResolver: Identifiable {
     
     func font(for propertyName: String = "font", baseFont defaultValue: CVUFont = CVUFont()) -> CVUFont {
         if let value = resolve(propertyName, type: [Any].self) {
-            if let name = value[safe: 0] as? String, let size = value[safe: 1] as? CGFloat {
+            if let name = value[safe: 0] as? String, let size = value[safe: 1] as? Double {
                 return CVUFont(
                     name: name,
-                    size: size,
+                    size: CGFloat(size),
                     weight: value[safe: 2] as? Font.Weight ?? defaultValue.weight
                 )
             }
-            else if let size = value[safe: 0] as? CGFloat {
-                return CVUFont(name: defaultValue.name, size: size, weight: value[safe: 1] as? Font.Weight ?? defaultValue.weight)
+            else if let size = value[safe: 0] as? Double {
+                return CVUFont(name: defaultValue.name, size: CGFloat(size), weight: (value[safe: 1] as? String).flatMap(Font.Weight.init) ?? defaultValue.weight)
             }
         }
         else if let size = resolve(propertyName, type: CGFloat.self) {
             return CVUFont(name: defaultValue.name, size: size, weight: defaultValue.weight)
         }
-        else if let weight = resolve(propertyName, type: Font.Weight.self) {
+        else if let weight = resolve(propertyName, type: String.self).flatMap(Font.Weight.init) {
             return CVUFont(name: defaultValue.name, size: defaultValue.size, weight: weight)
         }
         return defaultValue
@@ -224,29 +238,29 @@ public struct UINodeResolver: Identifiable {
     }
     
     func insets(for propertyName: String) -> UIEdgeInsets? {
-        if let edgeInset = resolve(propertyName, type: CGFloat.self) {
-            return UIEdgeInsets(
-                top: edgeInset,
-                left: edgeInset,
-                bottom: edgeInset,
-                right: edgeInset
-            )
-        } else if let insetArray = resolve(propertyName, type: [Double].self)?.map({ CGFloat($0) }) {
+        if let insetArray = resolve(propertyName, type: [Double].self)?.map({ CGFloat($0) }) {
             switch insetArray.count {
             case 2: return UIEdgeInsets(
                 top: insetArray[1],
                 left: insetArray[0],
                 bottom: insetArray[1],
                 right: insetArray[0]
-                )
+            )
             case 4: return UIEdgeInsets(
                 top: insetArray[0],
                 left: insetArray[3],
                 bottom: insetArray[2],
                 right: insetArray[1]
-                )
+            )
             default: return .init()
             }
+        } else if let edgeInset = resolve(propertyName, type: CGFloat.self) {
+            return UIEdgeInsets(
+                top: edgeInset,
+                left: edgeInset,
+                bottom: edgeInset,
+                right: edgeInset
+            )
         } else {
             return nil
         }
@@ -277,7 +291,7 @@ public struct UINodeResolver: Identifiable {
         )
     }
     
-    private func getType(for propName: String) -> (PropertyType, Item?, String) {
+    func getType(for propName: String) -> (PropertyType, Item?, String) {
         if let prop = node.properties[propName] {
             // Execute expression to get the right value
             if let expr = prop as? Expression {

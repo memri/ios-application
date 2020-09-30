@@ -59,9 +59,9 @@ public class CascadableView: Cascadable, ObservableObject, Subscriptable {
         set(value) { setState("showToolbar", value) }
     }
 
-    var showSearchbar: Bool {
-        get { viewArguments?.get("showSearchbar") ?? cascadeProperty("showSearchbar") ?? true }
-        set(value) { setState("showSearchbar", value) }
+    var showBottomBar: Bool {
+        get { viewArguments?.get("showBottomBar") ?? cascadeProperty("showBottomBar") ?? true }
+        set(value) { setState("showBottomBar", value) }
     }
 
     #warning("Implement this in all renderers")

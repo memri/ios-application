@@ -75,7 +75,6 @@ public struct SubView: View {
     public var body: some View {
         Browser(inSubView: true, showCloseButton: showCloseButton)
             .fullHeight()
-            // NOTE: Allowed force unwrap
-            .environmentObject(self.proxyMain!)
+            .ifLet(self.proxyMain) { $0.environmentObject($1) }
     }
 }

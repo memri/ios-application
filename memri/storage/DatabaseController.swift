@@ -362,7 +362,6 @@ class DatabaseController {
         #warning("@Toby, deleting here on realm doesnt remove them from the db and thus this is called every time. Any idea why?")
         DatabaseController.asyncOnBackgroundThread(write: true, error: callback) { realm in
             for itemType in ItemFamily.allCases {
-                if itemType == .typeUserState { continue }
 
                 if let type = itemType.getType() as? Item.Type {
                     let items = realm.objects(type).filter("_action == nil and deleted = true")

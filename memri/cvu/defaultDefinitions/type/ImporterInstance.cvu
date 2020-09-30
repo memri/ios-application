@@ -87,11 +87,11 @@ ImporterRun {
             showTitle: false
             
             HStack{
-                align: center
+                alignment: center
                 padding: 30 0 0 0
                 
                 Image {
-                    align: center
+                    alignment: center
                     sizingMode: fill
                     show: {{.importer.icon}}
                     systemName: {{.importer.icon}}
@@ -101,7 +101,7 @@ ImporterRun {
                 }
                 
                 Image {
-                    align: center
+                    alignment: center
                     show: {{!.importer.icon and .importer.bundleImage}}
                     bundleImage: {{.importer.bundleImage}}
                     color: #2480d6
@@ -119,7 +119,7 @@ ImporterRun {
             
             VStack {
                 HStack {
-                    align: left
+                    alignment: left
                     background: #f9f9f9
                     
                     Button {

@@ -9,12 +9,20 @@ import SwiftUI
 
 public enum UIElementFamily: String, CaseIterable {
     // Implemented
-    case VStack, HStack, ZStack, Text, RichTextfield, Empty, Spacer
+    case VStack, HStack, ZStack, FlowStack
+    case Text, SmartText, Textfield, RichTextfield
+    case Image
+    case Toggle, MemriButton, Button, Picker
+    case Map
+    case Empty, Spacer, Divider, HorizontalLine
+    case Circle, Rectangle
+    case EditorSection, EditorRow
+    case SubView
+    case HTMLView
+    case TimelineItem
     // Unimplemented
-         case EditorSection, EditorRow, EditorLabel, Title, Button, FlowStack,
-    Textfield, ItemCell, SubView, Map, Picker, SecureField, Action, MemriButton, Image,
-    Circle, HorizontalLine, Rectangle, RoundedRectangle, Divider,
-    TimelineItem, MessageBubble, EmailContent, EmailHeader, SmartText, Toggle
+         case EditorLabel, Title, ItemCell, Action
+    
 }
 
 public struct UIElementView: SwiftUI.View {
@@ -46,16 +54,52 @@ public struct UIElementView: SwiftUI.View {
              CVU_Image(nodeResolver: nodeResolver)
         case .Map:
              CVU_Map(nodeResolver: nodeResolver)
+        case .Textfield:
+            CVU_TextField(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
         case .RichTextfield:
             CVU_RichTextEditor(nodeResolver: nodeResolver, editModeBinding: editModeBinding)
+        case .EditorSection:
+            CVU_EditorSection(nodeResolver: nodeResolver)
+        case .EditorRow:
+            CVU_EditorRow(nodeResolver: nodeResolver)
         case .Toggle:
             CVU_Toggle(nodeResolver: nodeResolver)
+        case .MemriButton:
+            CVU_MemriButton(nodeResolver: nodeResolver)
+        case .Button:
+            button
+        case .Divider:
+            Divider()
+        case .HorizontalLine:
+            HorizontalLine()
+        case .Circle:
+            CVU_Shape.Circle(nodeResolver: nodeResolver)
+        case .Rectangle:
+            CVU_Shape.Rectangle(nodeResolver: nodeResolver)
+        case .HTMLView:
+            CVU_HTMLView(nodeResolver: nodeResolver)
         case .Spacer:
              Spacer()
         case .Empty:
             EmptyView()
+        case .SubView:
+            subview
+        case .FlowStack:
+            flowstack
+        case .Picker:
+            picker
+        case .TimelineItem:
+            CVU_TimelineItem(nodeResolver: nodeResolver)
         default:
-            Text("Not implemented yet")
+            Text("\(nodeResolver.node.type.rawValue) not implemented")
+        }
+    }
+    
+    var needsModifier: Bool {
+        guard nodeResolver.showNode else { return false }
+        switch nodeResolver.node.type {
+        case .Empty, .Spacer, .Divider, .FlowStack: return false
+        default: return true
         }
     }
     
@@ -63,7 +107,93 @@ public struct UIElementView: SwiftUI.View {
     public var body: some View {
         if nodeResolver.showNode {
             resolvedComponent
-                .modifier(CVU_AppearanceModifier(nodeResolver: nodeResolver))
+                .if(needsModifier) { $0.modifier(CVU_AppearanceModifier(nodeResolver: nodeResolver)) }
+        }
+    }
+    
+    var flowstack: some View {
+        FlowStack(data: nodeResolver.resolve("list", type: [Item].self) ?? [], spacing: nodeResolver.spacing) { listItem in
+            nodeResolver.childrenInForEach(usingItem: listItem)
+        }
+    }
+    
+    var button: some View {
+        Button(action: {
+            if let press: Action = self.nodeResolver.resolve("press") {
+                self.context.executeAction(
+                    press,
+                    with: self.nodeResolver.item,
+                    using: self.nodeResolver.viewArguments
+                )
+            }
+        }) {
+            self.nodeResolver.childrenInForEach
+        }
+    }
+    
+    @ViewBuilder
+    var subview: some View {
+        let subviewArguments = ViewArguments(nodeResolver.resolve("arguments", type: [String: Any?].self))
+        if let viewName = nodeResolver.string(for: "viewName") {
+            SubView(
+                context: self.context,
+                viewName: viewName,
+                item: nodeResolver.item,
+                viewArguments: subviewArguments
+            )
+        } else {
+            #warning("This was carried over from the old UIElementView - this has potential to cause performance issues")
+            SubView(
+                context: self.context,
+                view: {
+                    #warning(
+                        "This is creating a new CVU at every redraw. Instead architect this to only create the CVU once and have that one reload"
+                        )
+                    if let parsed: [String: Any?] = nodeResolver.resolve("view") {
+                        let def = CVUParsedViewDefinition(
+                            "[view]",
+                            type: "view",
+                            parsed: parsed
+                        )
+                        do {
+                            return try CVUStateDefinition.fromCVUParsedDefinition(def)
+                        }
+                        catch {
+                            debugHistory.error("\(error)")
+                        }
+                    }
+                    else {
+                        debugHistory
+                            .error(
+                                "Failed to make subview (not defined), creating empty one instead"
+                            )
+                    }
+                    return CVUStateDefinition()
+                }(),
+                item: nodeResolver.item,
+                viewArguments: subviewArguments)
+        }
+    }
+    
+    @ViewBuilder
+    var picker: some View {
+        let (_, propItem, propName) = nodeResolver.getType(for: "value")
+        let selected = nodeResolver.resolve("value", type: Item.self) ?? nodeResolver.resolve("defaultValue", type: Item.self)
+        let emptyValue = nodeResolver.resolve("hint") ?? "Pick a value"
+        let query = nodeResolver.resolve("query", type: String.self)
+        let renderer = nodeResolver.resolve("renderer", type: String.self)
+        
+        if let item = nodeResolver.item, let propItem = propItem {
+            Picker(
+                item: item,
+                selected: selected,
+                title: nodeResolver.string(for: "title") ?? "Select:",
+                emptyValue: emptyValue,
+                propItem: propItem,
+                propName: propName,
+                renderer: renderer,
+                query: query ?? ""
+            )
         }
     }
 }

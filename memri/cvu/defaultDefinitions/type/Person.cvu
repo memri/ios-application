@@ -197,7 +197,7 @@ Person {
                     maxWidth: 140
                     maxHeight: 140
                     cornerRadius: 25
-                    align: center
+                    alignment: center
                 
                     Image {
                         image: {{.profilePicture}}
@@ -205,7 +205,7 @@ Person {
                     }
                     
                     HStack {
-                        align: center
+                        alignment: center
                         maxWidth: 140
                         maxHeight: 140
                         show: {{!readOnly}}
@@ -216,7 +216,7 @@ Person {
                             maxHeight: 50
                             background: #eee
                             color: #434343
-                            align: center
+                            alignment: center
                             font: 14 regular
                             
                             press: openViewByName {
@@ -251,6 +251,7 @@ Person {
 					}
 					
 					FlowStack {
+                        spacing: 5
 						list: {{ .label[] }}
 						
 						button {
@@ -292,7 +293,8 @@ Person {
                         query: "Photo AND ANY allEdges.targetItemID = {.uid}"
                     }
                     
-                    [renderer = thumbnail.horizontalgrid] {
+                    [renderer = grid] {
+                        scrollDirection: horizontal
                         columns: 2
                         edgeInset: 0
                         allowBounce: false
@@ -300,7 +302,7 @@ Person {
                 }
                 arguments: {
                     showToolbar: false
-                    showSearchbar: false
+                    showBottomBar: false
                     readOnly: true
                 }
             }

@@ -87,14 +87,14 @@ IndexerRun {
             dividers: false
             
             HStack {
-                align: center
+                alignment: center
                 padding: 20 0 20 0
                 show: {{ .indexer.icon or .indexer.bundleImage }}
                 
                 Image {
                     /** todo, this padding is hacky but necessary now*/
                     padding: 8 0 8 0
-                    align: center
+                    alignment: center
                     sizingMode: fill
                     show: {{.indexer.icon}}
                     systemName: {{.indexer.icon}}
@@ -104,7 +104,7 @@ IndexerRun {
                 }
                 
                 Image {
-                    align: center
+                    alignment: center
                     show: {{!.indexer.icon}}
                     bundleImage: {{.indexer.bundleImage}}
                     color: #2480d6
@@ -141,7 +141,7 @@ IndexerRun {
                     Divider
                 }
                 HStack {
-                    align: left
+                    alignment: left
                     background: #f9f9f9
                     
                     Button {
