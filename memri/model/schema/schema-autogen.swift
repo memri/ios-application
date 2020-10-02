@@ -1688,6 +1688,10 @@ public class ImporterRun : Item {
     @objc dynamic var username:String? = nil
     /// Password for a username.
     @objc dynamic var password:String? = nil
+    /// The status of a run, (running, error, etc).
+    @objc dynamic var runStatus:String? = nil
+    /// Description of the error
+    @objc dynamic var errorMessage:String? = nil
 
     /// An Importer is used to import data from an external source to the Pod database.
     var importer: Importer? {
@@ -1704,6 +1708,8 @@ public class ImporterRun : Item {
             dataType = try decoder.decodeIfPresent("dataType") ?? dataType
             username = try decoder.decodeIfPresent("username") ?? username
             password = try decoder.decodeIfPresent("password") ?? password
+            runStatus = try decoder.decodeIfPresent("runStatus") ?? runStatus
+            errorMessage = try decoder.decodeIfPresent("errorMessage") ?? errorMessage
 
             try self.superDecode(from: decoder)
         }
@@ -1765,6 +1771,10 @@ public class IndexerRun : Item {
     let progress = RealmOptional<Int>()
     /// The type of data this Item targets.
     @objc dynamic var targetDataType:String? = nil
+    /// The status of a run, (running, error, etc).
+    @objc dynamic var runStatus:String? = nil
+    /// Description of the error
+    @objc dynamic var errorMessage:String? = nil
 
     /// An Indexer is used to enrich data in the Pod database.
     var indexer: Indexer? {
@@ -1780,6 +1790,8 @@ public class IndexerRun : Item {
             query = try decoder.decodeIfPresent("query") ?? query
             progress.value = try decoder.decodeIfPresent("progress") ?? progress.value
             targetDataType = try decoder.decodeIfPresent("targetDataType") ?? targetDataType
+            runStatus = try decoder.decodeIfPresent("runStatus") ?? runStatus
+            errorMessage = try decoder.decodeIfPresent("errorMessage") ?? errorMessage
 
             try self.superDecode(from: decoder)
         }

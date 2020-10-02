@@ -217,7 +217,7 @@
         "dataType": "Email",
         "repository": "memri-pyintegrators:latest",
         "icon": "envelope",
-        "itemDescription": "To run this importer you need a to fill in an email address and an app password below, and enable IMAP in your email settings, for gmail that is under https://mail.google.com/mail/u/0/#settings/fwdandpop. The recommended usage is with an app password, for which you need to enable 2FA (Google), which you can do under Security at https://myaccount.google.com/security ."
+        "itemDescription": "To run this importer you need a to fill in an email address and an app password below, and enable IMAP in your email settings, for gmail that is under \nhttps://mail.google.com/mail/u/0/#settings/fwdandpop \nThe recommended usage is with an app password, for which you need to enable 2FA (Google), which you can do under Security at \nhttps://myaccount.google.com/security"
     },
     {
         "_type": "Importer",
