@@ -96,6 +96,7 @@ Importer[] {
                 name: {{.name}}
                 importer: {{.}}
                 repository: {{.repository}}
+                itemDescription: {{.itemDescription}}
             }
         }
 

@@ -139,7 +139,7 @@
     {
         "_type": "NavigationItem",
         "itemType": "item",
-        "title": "importer instances",
+        "title": "importer runs",
         "sessionName": "all-importer-instances"
     },
     {
@@ -151,7 +151,7 @@
     {
         "_type": "NavigationItem",
         "itemType": "item",
-        "title": "indexer instances",
+        "title": "indexer runs",
         "sessionName": "all-indexer-instances"
     },
     {
@@ -199,28 +199,31 @@
         "_type": "Importer",
         "name": "iCloud notes",
         "dataType": "Note",
-        "repository": "memri-nodeintegrators",
+        "repository": "memri-nodeintegrators:latest",
         "icon": "cloud"
     },
     {
         "_type": "Importer",
         "name": "Evernote notes",
         "dataType": "Note",
-        "repository": "memri-pyintegrators",
-        "bundleImage": "evernote-icon"
+        "repository": "memri-pyintegrators:latest",
+        "bundleImage": "evernote-icon",
+        "icon": "square.and.pencil"
+
     },
     {
         "_type": "Importer",
         "name": "Gmail",
         "dataType": "Email",
-        "repository": "memri-pyintegrators",
-        "bundleImage": "envelope"
+        "repository": "memri-pyintegrators:latest",
+        "icon": "envelope",
+        "itemDescription": "To run this importer you need a to fill in an email address and an app password below, and enable IMAP in your email settings, for gmail that is under https://mail.google.com/mail/u/0/#settings/fwdandpop. The recommended usage is with an app password, for which you need to enable 2FA (Google), which you can do under Security at https://myaccount.google.com/security ."
     },
     {
         "_type": "Importer",
         "name": "WhatsApp",
         "dataType": "whatsapp",
-        "repository": "memri-rustintegrators",
+        "repository": "memri-rustintegrators:latest",
         "icon": "message"
     },
     {

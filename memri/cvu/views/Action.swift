@@ -1281,7 +1281,8 @@ class ActionRunImporter: Action, ActionExec {
                     debugHistory.error("Item does not have a uid")
                     return
                 }
-
+                self.context.cache.sync.schedule()
+                
                 self.context.podAPI.runImporter(uid) { error, _ in
                     if let error = error {
                         print("Cannot execute actionImport: \(error)")
