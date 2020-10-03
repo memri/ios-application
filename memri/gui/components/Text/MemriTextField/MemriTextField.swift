@@ -24,6 +24,8 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
     var font: UIFont?
 
     var isEditing: Binding<Bool>?
+    /// Allows making this textfield
+    var isSharedEditingBinding: Bool
     private var onEditingBeganCallback: (() -> Void)?
     private var onEditingEndedCallback: (() -> Void)?
 
@@ -75,6 +77,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
         assignIfChanged(textField, \.textAlignment, newValue: textAlignment.nsTextAlignment)
         assignIfChanged(textField, \.showPrevNextButtons, newValue: showPrevNextButtons)
         textField.isEditingBinding = isEditing
+        textField.isSharedEditingBinding = isSharedEditingBinding
     }
 
     public func makeCoordinator() -> Delegate {
@@ -190,7 +193,8 @@ public extension MemriTextField where Value == String? {
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false,
-        isEditing: Binding<Bool>? = nil
+        isEditing: Binding<Bool>? = nil,
+        isSharedEditingBinding: Bool = false
     ) {
         _value = value
         valueToString = { $0 }
@@ -205,6 +209,7 @@ public extension MemriTextField where Value == String? {
         self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
+        self.isSharedEditingBinding = isSharedEditingBinding
     }
 }
 
@@ -220,7 +225,8 @@ public extension MemriTextField where Value == String {
         returnKeyType: UIReturnKeyType = .default,
         showPrevNextButtons: Bool = true,
         selectAllOnEdit: Bool = false,
-        isEditing: Binding<Bool>? = nil
+        isEditing: Binding<Bool>? = nil,
+        isSharedEditingBinding: Bool = false
     ) {
         _value = value
         valueToString = { $0 }
@@ -235,6 +241,7 @@ public extension MemriTextField where Value == String {
         self.showPrevNextButtons = showPrevNextButtons
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
+        self.isSharedEditingBinding = isSharedEditingBinding
     }
 }
 
@@ -243,19 +250,23 @@ public extension MemriTextField where Value == Int {
         value: Binding<Int>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
+        clearButtonMode: UITextField.ViewMode = .never,
         selectAllOnEdit: Bool = false,
-        isEditing: Binding<Bool>? = nil
+        isEditing: Binding<Bool>? = nil,
+        isSharedEditingBinding: Bool = false
     ) {
         _value = value
         valueToString = { "\($0)" }
         stringToValue = { $0.flatMap { Int($0) } ?? 0 }
         self.placeholder = placeholder
         self.textColor = textColor
+        self.clearButtonMode = clearButtonMode
         allowedCharacters = .decimalDigits
         keyboardType = .numberPad
         returnKeyType = .done
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
+        self.isSharedEditingBinding = isSharedEditingBinding
     }
 }
 
@@ -264,19 +275,23 @@ public extension MemriTextField where Value == Double {
         value: Binding<Double>,
         placeholder: String? = nil,
         textColor: UIColor? = nil,
+        clearButtonMode: UITextField.ViewMode = .never,
         selectAllOnEdit: Bool = false,
-        isEditing: Binding<Bool>? = nil
+        isEditing: Binding<Bool>? = nil,
+        isSharedEditingBinding: Bool = false
     ) {
         _value = value
         valueToString = { "\($0)" }
         stringToValue = { $0.flatMap { Double($0) } ?? 0 }
         self.placeholder = placeholder
         self.textColor = textColor
+        self.clearButtonMode = clearButtonMode
         allowedCharacters = CharacterSet.decimalDigits.union(CharacterSet(charactersIn: "."))
         keyboardType = .numberPad
         returnKeyType = .done
         self.selectAllOnEdit = selectAllOnEdit
         self.isEditing = isEditing
+        self.isSharedEditingBinding = isSharedEditingBinding
     }
 }
 
@@ -325,10 +340,15 @@ public class MemriTextField_UIKit: UITextField {
         }
     }
     
+    /// If this is set to true, the textfield won't respond to isEditing being set to true (but will resign responder if isEditing is set to false - useful for shared binding with other fields)
+    var isSharedEditingBinding: Bool = false
+    
     var isEditingBinding: Binding<Bool>? {
         didSet {
             if let bindingIsEditing = isEditingBinding?.wrappedValue,
-                bindingIsEditing != isEditing {
+                bindingIsEditing != isEditing,
+                !isSharedEditingBinding || (isSharedEditingBinding && !bindingIsEditing) // If shared, only use for resigning first responder
+                {
                 if bindingIsEditing {
                     becomeFirstResponder()
                 }

@@ -41,7 +41,7 @@ class GridRendererController: RendererController, ObservableObject {
     }
     
     var isEditing: Bool {
-        context.currentSession?.editMode ?? false
+        context.editMode
     }
     
     func contextMenuProvider(index: Int, item: Item) -> UIContextMenuConfiguration? {

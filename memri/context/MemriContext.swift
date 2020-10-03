@@ -221,6 +221,14 @@ public class MemriContext: ObservableObject, Subscriptable {
         self.scheduleUIUpdate()
     }
     
+    public var editMode: Bool {
+        get { currentSession?.editMode ?? false }
+        set {
+            currentSession?.editMode = newValue
+            self.scheduleUIUpdate()
+        }
+    }
+    
     var selectedIndicesBinding: Binding<Set<Int>> {
         Binding<Set<Int>>(
             get: {

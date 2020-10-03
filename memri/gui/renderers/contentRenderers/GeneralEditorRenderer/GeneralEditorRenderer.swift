@@ -53,7 +53,7 @@ class GeneralEditorRendererConfig: CascadingRendererConfig, ConfigurableRenderCo
             }
         )
         .map { dict -> GeneralEditorLayoutItem in
-            GeneralEditorLayoutItem(dict: dict, viewArguments: self.viewArguments)
+            GeneralEditorLayoutItem(id: dict["section"] as? String ?? "", dict: dict, viewArguments: self.viewArguments)
         }
     }
     
@@ -67,7 +67,7 @@ class GeneralEditorRendererConfig: CascadingRendererConfig, ConfigurableRenderCo
 }
 
 struct GeneralEditorLayoutItem {
-    var id = UUID()
+    var id: String
     var dict: [String: Any?]
     var viewArguments: ViewArguments? = nil
 
@@ -78,7 +78,7 @@ struct GeneralEditorLayoutItem {
     func get<T>(_ propName: String, _: T.Type = T.self, _ item: Item? = nil) -> T? {
         guard let propValue = dict[propName] else {
             if propName == "section" {
-                print("ERROR")
+                print("ERROR: tri")
             }
 
             return nil
@@ -128,26 +128,36 @@ struct GeneralEditorRendererView: View {
 
     var name: String = "generalEditor"
 
-    var body: some View {
+    @ViewBuilder
+    var stackContent: some View {
         let item = getItem()
         let layout = controller.config.layout
-        let renderConfig = controller.config
         let usedFields = getUsedFields(layout)
+        
+        if layout.count > 0 {
+            ForEach(layout, id: \.id) { layoutSection in
+                GeneralEditorSection(
+                    item: item,
+                    renderConfig: controller.config,
+                    layoutSection: layoutSection,
+                    usedFields: usedFields
+                )
+            }
+        }
+    }
+    
+    var body: some View {
 
         return ScrollView {
-            VStack(alignment: .leading, spacing: 0) {
-                if layout.count > 0 {
-                    ForEach(layout, id: \.id) { layoutSection in
-                        GeneralEditorSection(
-                            item: item,
-                            renderConfig: renderConfig,
-                            layoutSection: layoutSection,
-                            usedFields: usedFields
-                        )
-                    }
+            if #available(iOS 14.0, *) {
+                LazyVStack(alignment: .leading, spacing: 0) {
+                    stackContent
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 0) {
+                    stackContent
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 
@@ -201,7 +211,7 @@ struct GeneralEditorSection: View {
 
     var body: some View {
         let renderConfig = self.renderConfig
-        let editMode = context.currentSession?.editMode ?? false
+        let editMode = context.editMode
         let fields: [String] = (layoutSection.get("fields", String.self) == "*"
             ? getProperties(item, usedFields)
             : layoutSection.get("fields", [String].self)) ?? []
@@ -324,7 +334,7 @@ struct GeneralEditorSection: View {
                                     context: self._context,
                                     item: self.item,
                                     prop: field,
-                                    readOnly: !editMode || readOnly,
+                                    readOnly: readOnly,
                                     isLast: fields.last == field,
                                     renderConfig: renderConfig,
                                     arguments: self._args(name: field,
@@ -383,7 +393,7 @@ struct GeneralEditorSection: View {
         ViewArguments(
             [
                 "subject": item,
-                "readOnly": !(context.currentSession?.editMode ?? false),
+                "readOnly": !(context.editMode),
                 "title": groupKey.camelCaseToWords().uppercased(),
                 "displayName": name.camelCaseToWords().capitalizingFirst(),
                 "name": name,

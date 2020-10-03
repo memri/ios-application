@@ -9,7 +9,7 @@ struct ContextualBottomBar: View {
 
     var shouldShow: Bool {
         ((context.currentView?.renderConfig as? ConfigurableRenderConfig)?.showContextualBarInEditMode ?? true)
-        && (context.currentSession?.editMode ?? false)
+        && (context.editMode)
     }
 
     var nonEmptySelection: Bool {
@@ -22,7 +22,7 @@ struct ContextualBottomBar: View {
             VStack(spacing: 0) {
                 Divider()
                 HStack {
-                    if context.currentSession?.editMode ?? false {
+                    if context.editMode {
                         Button(action: {
                             withAnimation {
                                 self.context.executeAction(ActionSelectAll(self.context))
@@ -33,7 +33,7 @@ struct ContextualBottomBar: View {
                         }
                     }
                     Spacer()
-                    if context.currentSession?.editMode ?? false {
+                    if context.editMode {
                         Button(action: {
                             withAnimation {
                                 self.context.executeAction(ActionDelete(self.context))

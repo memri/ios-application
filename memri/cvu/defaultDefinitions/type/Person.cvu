@@ -165,7 +165,7 @@ Person {
     
     [renderer = generalEditor] {
         layout: [
-            { section: profilePicture }
+            { section: profilePicture, exclude: labels }
             { section: names, fields: firstName lastName }
             { section: picturesOfPerson }
             { section: phoneNumbers, edges: hasPhoneNumber, type: PhoneNumber }
@@ -210,7 +210,7 @@ Person {
                         maxHeight: 140
                         show: {{!readOnly}}
                     
-                        Action {
+                        ActionButton {
                             cornerRadius: 25
                             maxWidth: 50
                             maxHeight: 50
@@ -409,7 +409,7 @@ Person[] {
                 image: {{.profilePicture}}
                 cornerRadius: 10
                 sizingMode: fill
-				forceAspect: true
+				sizingMode: fit
             }
             Text {
                 text: "{.firstName} {.lastName}"

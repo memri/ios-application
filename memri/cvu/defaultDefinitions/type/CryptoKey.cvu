@@ -35,7 +35,7 @@ CryptoKey {
                         font: 20 semibold
                         padding: 0 5 0 0
                     }
-                    Action {
+                    ActionButton {
                         press: star
                     }
                 }
@@ -75,7 +75,7 @@ CryptoKey {
                         padding: 10 0 0 0
                     }
                     
-                    Action {
+                    ActionButton {
                         show: {{!readOnly}}
                         font: 12 regular
                         margin: 8 0 0 10

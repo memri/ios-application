@@ -12,7 +12,8 @@ public enum UIElementFamily: String, CaseIterable {
     case VStack, HStack, ZStack, FlowStack
     case Text, SmartText, Textfield, RichTextfield
     case Image
-    case Toggle, MemriButton, Button, Picker
+    case Toggle, Picker
+    case MemriButton, Button, ActionButton
     case Map
     case Empty, Spacer, Divider, HorizontalLine
     case Circle, Rectangle
@@ -20,9 +21,10 @@ public enum UIElementFamily: String, CaseIterable {
     case SubView
     case HTMLView
     case TimelineItem
-    // Unimplemented
-         case EditorLabel, Title, ItemCell, Action
+    case ItemCell
     
+    //Unimplemented
+    case EditorLabel
 }
 
 public struct UIElementView: SwiftUI.View {
@@ -32,8 +34,8 @@ public struct UIElementView: SwiftUI.View {
     
     
     var editModeBinding: Binding<Bool> {  Binding<Bool>(
-        get: { self.context.currentSession?.editMode ?? false },
-        set: { self.context.currentSession?.editMode = $0 }
+        get: { self.context.editMode },
+        set: { self.context.editMode = $0 }
     )}
     
     
@@ -62,12 +64,16 @@ public struct UIElementView: SwiftUI.View {
             CVU_EditorSection(nodeResolver: nodeResolver)
         case .EditorRow:
             CVU_EditorRow(nodeResolver: nodeResolver)
+        case .EditorLabel:
+            EmptyView(); #warning("EditorLabel Unimplemented")
         case .Toggle:
             CVU_Toggle(nodeResolver: nodeResolver)
         case .MemriButton:
             CVU_MemriButton(nodeResolver: nodeResolver)
+        case .ActionButton:
+            ActionButton(action: nodeResolver.resolve("press") ?? Action(context, "noop"), item: nodeResolver.item)
         case .Button:
-            button
+            CVU_Button(nodeResolver: nodeResolver, context: context)
         case .Divider:
             Divider()
         case .HorizontalLine:
@@ -88,6 +94,10 @@ public struct UIElementView: SwiftUI.View {
             flowstack
         case .Picker:
             picker
+        case .ItemCell:
+            ItemCell(item: nodeResolver.item,
+                     rendererNames: nodeResolver.resolve("rendererNames", type: [String].self) ?? [],
+                     arguments: nodeResolver.viewArguments)
         case .TimelineItem:
             CVU_TimelineItem(nodeResolver: nodeResolver)
         default:
@@ -117,19 +127,29 @@ public struct UIElementView: SwiftUI.View {
         }
     }
     
-    var button: some View {
-        Button(action: {
-            if let press: Action = self.nodeResolver.resolve("press") {
-                self.context.executeAction(
-                    press,
-                    with: self.nodeResolver.item,
-                    using: self.nodeResolver.viewArguments
-                )
-            }
-        }) {
-            self.nodeResolver.childrenInForEach
+    
+    @ViewBuilder
+    var picker: some View {
+        let (_, propItem, propName) = nodeResolver.getType(for: "value")
+        let selected = nodeResolver.resolve("value", type: Item.self) ?? nodeResolver.resolve("defaultValue", type: Item.self)
+        let emptyValue = nodeResolver.resolve("hint") ?? "Pick a value"
+        let query = nodeResolver.resolve("query", type: String.self)
+        let renderer = nodeResolver.resolve("renderer", type: String.self)
+        
+        if let item = nodeResolver.item, let propItem = propItem {
+            Picker(
+                item: item,
+                selected: selected,
+                title: nodeResolver.string(for: "title") ?? "Select:",
+                emptyValue: emptyValue,
+                propItem: propItem,
+                propName: propName,
+                renderer: renderer,
+                query: query ?? ""
+            )
         }
     }
+    
     
     @ViewBuilder
     var subview: some View {
@@ -172,28 +192,6 @@ public struct UIElementView: SwiftUI.View {
                 }(),
                 item: nodeResolver.item,
                 viewArguments: subviewArguments)
-        }
-    }
-    
-    @ViewBuilder
-    var picker: some View {
-        let (_, propItem, propName) = nodeResolver.getType(for: "value")
-        let selected = nodeResolver.resolve("value", type: Item.self) ?? nodeResolver.resolve("defaultValue", type: Item.self)
-        let emptyValue = nodeResolver.resolve("hint") ?? "Pick a value"
-        let query = nodeResolver.resolve("query", type: String.self)
-        let renderer = nodeResolver.resolve("renderer", type: String.self)
-        
-        if let item = nodeResolver.item, let propItem = propItem {
-            Picker(
-                item: item,
-                selected: selected,
-                title: nodeResolver.string(for: "title") ?? "Select:",
-                emptyValue: emptyValue,
-                propItem: propItem,
-                propName: propName,
-                renderer: renderer,
-                query: query ?? ""
-            )
         }
     }
 }
@@ -787,8 +785,8 @@ public struct UIElementView: SwiftUI.View {
 ////        )
 //
 //        let editModeBinding = Binding<Bool>(
-//            get: { self.context.currentSession?.editMode ?? false },
-//            set: { self.context.currentSession?.editMode = $0 })
+//            get: { self.context.editMode },
+//            set: { self.context.editMode = $0 })
 //
 //        return MemriTextEditor(contentHTMLBinding: contentBinding,
 //                               titleBinding: titleBinding,

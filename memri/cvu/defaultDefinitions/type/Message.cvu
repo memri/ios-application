@@ -146,20 +146,31 @@ Message[] {
                     Image {
                         show: {{.message.photo}}
                         image: {{.message.photo}}
-                        forceAspect: true
+                        sizingMode: fit
                         cornerRadius: 3
                         maxHeight: 60
                         maxWidth: 60
                     }
                 }
                 
-                Image {
+                Button {
                     show: {{.photo}}
-                    image: {{.photo}}
-                    forceAspect: true
-                    cornerRadius: 5
-                    maxHeight: 200
-                    maxWidth: 150
+                    press: openView {
+                        view: {
+                            inherit: {{currentView}}
+                            defaultRenderer: "photoViewer"
+                        }
+                        viewArguments: {
+                            currentItem: {{.}}
+                        }
+                    }
+                    
+                    Image {
+                        image: {{.photo}}
+                        sizingMode: fit
+                        cornerRadius: 5
+                        maxWidth: 250
+                    }
                 }
                 
                 SmartText {
@@ -179,5 +190,10 @@ Message[] {
                 }
             }
         }
+    }
+    
+    [renderer = photoViewer] {
+        file: {{.photo.file}}
+        initialItem: {{currentItem}}
     }
 }

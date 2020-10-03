@@ -52,6 +52,7 @@ struct CVU_TextField: View {
         MemriTextField(value: contentBinding,
                        placeholder: hint,
                        textColor: nodeResolver.color()?.uiColor,
-                       isEditing: editModeBinding)
+                       isEditing: editModeBinding,
+                       isSharedEditingBinding: true)
     }
 }

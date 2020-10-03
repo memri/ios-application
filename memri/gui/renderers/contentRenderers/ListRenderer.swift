@@ -63,7 +63,7 @@ class ListRendererController: RendererController, ObservableObject {
     }
     
     var isEditing: Bool {
-        context.currentSession?.editMode ?? false
+        context.editMode
     }
     
     var hasItems: Bool {

@@ -87,71 +87,43 @@ IndexerRun {
             dividers: false
             
             HStack {
-                alignment: center
-                padding: 20 0 20 0
-                show: {{ .indexer.icon or .indexer.bundleImage }}
+                alignment: leading
+                fillWidth: true
+                spacing: 10
+                padding: 20
                 
-                Spacer
-
                 Image {
-                    /** todo, this padding is hacky but necessary now*/
                     padding: 8 0 8 0
                     alignment: center
-                    sizingMode: fill
-                    show: {{.indexer.icon}}
+                    show: {{.indexer.icon or .indexer.bundleImage}}
                     systemName: {{.indexer.icon}}
-                    color: #d64f4f
-                    maxWidth: 100
-                    maxHeight: 100
-                }
-                
-                Image {
-                    alignment: center
-                    show: {{!.indexer.icon}}
                     bundleImage: {{.indexer.bundleImage}}
-                    color: #2480d6
-                    sizingMode: fill
-                    minWidth: 100
-                    minHeight: 100
-                    maxWidth: 100
-                    maxHeight: 100
+                    resizable: true
+                    color: #d64f4f
+                    width: 30
+                    height: 30
                 }
                 
-                Spacer
-
+                Text {
+                    text: {{.name}}
+                    font: 25 bold
+                }
             }
         }
-
+        
+        
         info {
             showTitle: false
             dividers: false
             
             VStack {
-                Divider
                 EditorRow {
-                    title: "Name"
-                    readOnly: true
-                    
-                    Text {
-                        text: {{.name}}
-                    }
-                }
-                EditorRow {
-                    Text {
-                        text: {{.indexer.itemDescription}}
-                        font: 14 regular
-                        color: #555
-                        padding: 8 36 8 0
-                    }
-                    Divider
-                }
-                HStack {
                     alignment: left
+                    readOnly: true
+                    padding: 0 10
                     background: #f9f9f9
                     
                     Button {
-                        margin: 0 5 10 35
-                        
                         press: runIndexer {
                             indexerRun: {{.}}
                         }
@@ -167,6 +139,15 @@ IndexerRun {
                     }
                 }
                 Divider
+                
+                EditorRow {
+                    Text {
+                        text: {{.indexer.itemDescription}}
+                        font: 14 regular
+                        color: #555
+                        padding: 8 36 8 0
+                    }
+                }
             }
         }
     }
@@ -176,7 +157,7 @@ IndexerRun[] {
     name: "all-indexer-instances"
     title: "All IndexerRuns"
     emptyResultText: "There are no IndexerRuns"
-    defaultRenderer: grid
+    defaultRenderer: list
     sortFields: datatype dateModified dateAccessed dateCreated
     
     [datasource = pod] {
@@ -196,10 +177,9 @@ IndexerRun[] {
     editActionButton: toggleEditMode
     filterButtons: showStarred toggleFilterPanel
     
-    [renderer = grid] {
-        VStack {
-            alignment: left
-            rowInset: 12 20 -12 20
+    [renderer = list] {
+        HStack {
+            alignment: center
             
             Text {
                 text: "{.name}"

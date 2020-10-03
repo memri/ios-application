@@ -63,8 +63,12 @@ class ExprInterpreter {
     class func evaluateDateTime(_ x: Any?) -> Date? {
         x as? Date
     }
+    
+    class func evaluateString(_ x: Any?, defaultValue: String) -> String {
+        evaluateString(x) ?? defaultValue
+    }
 
-    class func evaluateString(_ x: Any?, _ defaultValue: String = "") -> String {
+    class func evaluateString(_ x: Any?) -> String? {
         if let x = x as? Bool { return x ? "true" : "false" }
         else if let x = x as? Int { return String(x) }
         else if let x = x as? Double {
@@ -80,8 +84,7 @@ class ExprInterpreter {
                 .get("user/formatting/date") // "HH:mm    dd/MM/yyyy"
             return formatter.string(from: x)
         }
-        else if x == nil { return defaultValue }
-        else { return defaultValue }
+        return nil
     }
 
     func compare(_ a: Any?, _ b: Any?) -> Bool {
@@ -218,7 +221,7 @@ class ExprInterpreter {
         else if let expr = expr as? ExprStringModeNode {
             var result = [String]()
             for expr in expr.expressions {
-                result.append(IP.evaluateString(try execSingle(expr, args), ""))
+                result.append(IP.evaluateString(try execSingle(expr, args), defaultValue: ""))
             }
             return result.joined()
         }

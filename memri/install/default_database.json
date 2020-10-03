@@ -62,19 +62,7 @@
     {
         "_type": "NavigationItem",
         "itemType": "item",
-        "title": "inbox",
-        "sessionName": "inbox"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "messages",
-        "sessionName": "all-messages"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "message channels",
+        "title": "Messages",
         "sessionName": "all-message-channels"
     },
     {
@@ -90,98 +78,68 @@
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "notes",
         "sessionName": "all-notes"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "people",
         "sessionName": "all-people"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "photos",
         "sessionName": "all-photos"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "addresses",
         "sessionName": "all-addresses"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "log",
-        "sessionName": "all-audit-items"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "labels",
         "sessionName": "all-labels"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "sessions",
-        "sessionName": "all-sessions"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "importers",
         "sessionName": "all-importers"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "importer runs",
+        "type": "item",
+        "title": "importer instances",
         "sessionName": "all-importer-instances"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
+        "type": "item",
         "title": "indexers",
         "sessionName": "all-indexers"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "indexer runs",
+        "type": "item",
+        "title": "indexer instances",
         "sessionName": "all-indexer-instances"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "views",
-        "sessionName": "all-sessionviews"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "locations",
+        "type": "item",
+        "title": "location",
         "sessionName": "all-locations"
     },
     {
         "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "crypto keys",
-        "sessionName": "all-cryptokeys"
-    },
-    {
-        "_type": "NavigationItem",
         "itemType": "heading",
-        "title": "Macros"
-    },
-    {
-        "_type": "NavigationItem",
-        "itemType": "item",
-        "title": "starred",
-        "sessionName": "filter-starred"
+        "title": "Annotation"
     },
     {
         "_type": "NavigationItem",
@@ -196,6 +154,29 @@
         "sessionName": "annotationListExample"
     },
     {
+        "_type": "NavigationItem",
+        "itemType": "heading",
+        "title": "Other"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "views",
+        "sessionName": "all-sessionviews"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "sessions",
+        "sessionName": "all-sessions"
+    },
+    {
+        "_type": "NavigationItem",
+        "type": "item",
+        "title": "log",
+        "sessionName": "all-audit-items"
+    },
+    {
         "_type": "Importer",
         "name": "iCloud notes",
         "dataType": "Note",
@@ -207,9 +188,7 @@
         "name": "Evernote notes",
         "dataType": "Note",
         "repository": "memri-pyintegrators:latest",
-        "bundleImage": "evernote-icon",
-        "icon": "square.and.pencil"
-
+        "bundleImage": "evernote-icon"
     },
     {
         "_type": "Importer",

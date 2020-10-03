@@ -14,7 +14,7 @@
     ]
     
     starred {
-        Action {
+        ActionButton {
             press: star
         }
     }

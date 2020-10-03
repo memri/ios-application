@@ -44,7 +44,7 @@ class MessageRendererController: RendererController, ObservableObject {
     }
     
     var editMode: Bool {
-        context.currentSession?.editMode ?? false
+        context.editMode
     }
     
     func onSelectSingle(_ index: Int) {

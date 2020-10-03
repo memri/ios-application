@@ -40,7 +40,7 @@ struct DefaultGeneralEditorRow: View {
                     }
                     else if readOnly {
                         if [.string, .bool, .date, .int, .double].contains(propType) {
-                            defaultRow(ExprInterpreter.evaluateString(propValue, ""))
+                            defaultRow(ExprInterpreter.evaluateString(propValue, defaultValue: ""))
                         }
                         else if propType == .object {
                             if propValue is Item {
@@ -84,16 +84,16 @@ struct DefaultGeneralEditorRow: View {
     
     func stringRow() -> some View {
         let binding = Binding<String>(
-            get: { self.item.getString(self.prop) },
+            get: { self.item.getString(self.prop) ?? "" },
             set: {
                 self.item.set(self.prop, $0)
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     
@@ -127,10 +127,10 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     
@@ -143,10 +143,10 @@ struct DefaultGeneralEditorRow: View {
         }
         )
         
-        return MemriTextField(value: binding)
-            .onEditingBegan {
-                self.context.currentSession?.editMode = true
-        }
+        return MemriTextField(value: binding,
+                              clearButtonMode: .whileEditing,
+                              isEditing: $context.editMode,
+                              isSharedEditingBinding: true)
         .generalEditorCaption()
     }
     

@@ -85,12 +85,18 @@ class Person: SchemaPerson {
     
     override var computedVars: [ComputedPropertyLink] {[
         ComputedPropertyLink(propertyName: "fullName", type: .string),
+        ComputedPropertyLink(propertyName: "initials", type: .string),
         ComputedPropertyLink(propertyName: "age", type: .int)
     ]}
     
     // Full name in western style (first last)
     var fullName: String {
         "\(firstName ?? "") \(lastName ?? "")"
+    }
+    
+    // Initials (two letters) in western style (FL)
+    var initials: String {
+        [firstName?.first, lastName?.first].compactMap { $0 }.map { String($0) }.joined()
     }
 
     /// Age in years
@@ -106,6 +112,7 @@ class Person: SchemaPerson {
 
         functions["age"] = { _ in self.age }
         functions["fullName"] = { _ in self.fullName }
+        functions["initials"] = { _ in self.initials }
     }
 }
 

@@ -92,6 +92,7 @@ MessageChannel[] {
             }
             
             VStack {
+                alignment: leading
                 HStack {
                     Text {
                         text: "{.receiver.displayName}"
