@@ -11,7 +11,7 @@ import LocalAuthentication
 import CryptoKit
 
 class Authentication {
-    #if targetEnvironment(simulator)
+    #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
     private static let autologin = true
     #endif
     
@@ -130,7 +130,7 @@ class Authentication {
 //    }
     
     static func authenticateOwnerByPasscode(_ callback: @escaping (Error?) -> Void) {
-        #if targetEnvironment(simulator)
+        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
         if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)
@@ -160,7 +160,7 @@ class Authentication {
     }
     
     static func authenticateOwner(_ callback: @escaping (Error?) -> Void) {
-        #if targetEnvironment(simulator)
+        #if targetEnvironment(simulator) || (targetEnvironment(macCatalyst) && DEBUG)
         if DatabaseController.realmTesting || autologin {
             isOwnerAuthenticated = true
             callback(nil)

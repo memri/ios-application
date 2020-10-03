@@ -51,6 +51,13 @@ extension Text {
     }
 }
 
+extension Image {
+    func `if`(_ conditional: Bool, content: (Self) -> Image) -> Image {
+        if conditional { return content(self) }
+        else { return self }
+    }
+}
+
 //extension View {
 //    func setProperties(
 //        _ properties: [String: Any?],

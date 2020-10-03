@@ -18,7 +18,7 @@ enum CVU_SizingMode: String {
 struct CVU_Image: View {
     var nodeResolver: UINodeResolver
     
- 
+    @ViewBuilder
     var body: some View {
         if let imageURI = nodeResolver.fileURI(for: "image"),
             let image = FileStorageController.getImage(fromFileForUUID: imageURI)
@@ -30,6 +30,7 @@ struct CVU_Image: View {
         } else if let iconName = nodeResolver.string(for: "systemName") {
             Image(systemName: iconName)
                 .renderingMode(.template)
+                .if(nodeResolver.bool(for: "resizable", defaultValue: false)) { $0.resizable() }
         } else {
             Image(systemName: "questionmark")
                 .renderingMode(.template)
