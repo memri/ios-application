@@ -91,6 +91,8 @@ IndexerRun {
                 padding: 20 0 20 0
                 show: {{ .indexer.icon or .indexer.bundleImage }}
                 
+                Spacer
+
                 Image {
                     /** todo, this padding is hacky but necessary now*/
                     padding: 8 0 8 0
@@ -114,6 +116,9 @@ IndexerRun {
                     maxWidth: 100
                     maxHeight: 100
                 }
+                
+                Spacer
+
             }
         }
 

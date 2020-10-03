@@ -64,7 +64,7 @@
 		5D4C71ED2445E44B00DF09E8 /* GeneralEditorRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D4C71EC2445E44B00DF09E8 /* GeneralEditorRenderer.swift */; };
 		5D5327D9248FA59C001FF168 /* Importer.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D5327D8248FA59C001FF168 /* Importer.cvu */; };
 		5D5327DB248FD03E001FF168 /* Indexer.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D5327DA248FD03E001FF168 /* Indexer.cvu */; };
-		5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D5327DC248FF2AA001FF168 /* ImporterInstance.cvu */; };
+		5D5327DD248FF2AA001FF168 /* ImporterRun.cvu in Resources */ = {isa = PBXBuildFile; fileRef = 5D5327DC248FF2AA001FF168 /* ImporterRun.cvu */; };
 		5D599BBB23F2B77500F218A0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBA23F2B77500F218A0 /* AppDelegate.swift */; };
 		5D599BBD23F2B77500F218A0 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */; };
 		5D599BBF23F2B77500F218A0 /* Browser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D599BBE23F2B77500F218A0 /* Browser.swift */; };
@@ -392,7 +392,7 @@
 		5D4C71EC2445E44B00DF09E8 /* GeneralEditorRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralEditorRenderer.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D5327D8248FA59C001FF168 /* Importer.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Importer.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5D5327DA248FD03E001FF168 /* Indexer.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Indexer.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
-		5D5327DC248FF2AA001FF168 /* ImporterInstance.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImporterInstance.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
+		5D5327DC248FF2AA001FF168 /* ImporterRun.cvu */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ImporterRun.cvu; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.css; };
 		5D599BBA23F2B77500F218A0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		5D599BBC23F2B77500F218A0 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		5D599BBE23F2B77500F218A0 /* Browser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Browser.swift; sourceTree = "<group>"; };
@@ -1240,7 +1240,7 @@
 				86AECB1924D400040024D7B9 /* MessageChannel.cvu */,
 				86CDB47E246A4570007EAE67 /* Note.cvu */,
 				5D5327D8248FA59C001FF168 /* Importer.cvu */,
-				5D5327DC248FF2AA001FF168 /* ImporterInstance.cvu */,
+				5D5327DC248FF2AA001FF168 /* ImporterRun.cvu */,
 				5D47BCFC24911A0000126126 /* IndexerRun.cvu */,
 				5D5327DA248FD03E001FF168 /* Indexer.cvu */,
 				5DAFB6182479525900719160 /* AuditItem.cvu */,
@@ -1767,7 +1767,7 @@
 				5D395B5724A38FF90008610E /* label_indexer_data.json in Resources */,
 				B881BED324BD4F5E0016DBF5 /* calendar.cvu in Resources */,
 				B8E0FBE524A4AE36009C3C30 /* map.cvu in Resources */,
-				5D5327DD248FF2AA001FF168 /* ImporterInstance.cvu in Resources */,
+				5D5327DD248FF2AA001FF168 /* ImporterRun.cvu in Resources */,
 				5DE95A6D241BCD34003ABA63 /* back_action.json in Resources */,
 				8699AA31247BCF3000EC85C0 /* generalEditor.cvu in Resources */,
 				5DC1692A24093E7000367905 /* sessions_manually_expanded.json in Resources */,
