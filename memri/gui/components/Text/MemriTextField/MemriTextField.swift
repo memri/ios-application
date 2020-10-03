@@ -76,8 +76,8 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
         assignIfChanged(textField, \.returnKeyType, newValue: returnKeyType)
         assignIfChanged(textField, \.textAlignment, newValue: textAlignment.nsTextAlignment)
         assignIfChanged(textField, \.showPrevNextButtons, newValue: showPrevNextButtons)
-        textField.isEditingBinding = isEditing
         textField.isSharedEditingBinding = isSharedEditingBinding
+        textField.isEditingBinding = isEditing
     }
 
     public func makeCoordinator() -> Delegate {

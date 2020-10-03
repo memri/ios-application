@@ -208,10 +208,12 @@ ImporterRun[] {
     
     [renderer = list] {
         HStack {
+            alignment: left
             spacing: 10
             Image {
-                show: {{.importer.icon}}
+                show: {{.importer.icon or .importer.bundleImage}}
                 systemName: {{.importer.icon}}
+                bundleImage: {{.importer.bundleImage}}
                 resizable: true
                 color: #2480d6
                 width: 30

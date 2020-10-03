@@ -335,26 +335,19 @@ class DatabaseController {
     }
     
     static func deleteDatabase(_ callback:@escaping (Error?) -> Void) {
-        Authentication.authenticateOwnerByPasscode { error in
-            if let error = error {
-                callback("Unable to authenticate: \(error)")
-                return
+        do {
+            let fileManager = FileManager.default
+            let realmUrl = try getRealmURL()
+            
+            // Check if realm database exists
+            if fileManager.fileExists(atPath: realmUrl.path) {
+                try fileManager.removeItem(at: realmUrl)
             }
             
-            do {
-                let fileManager = FileManager.default
-                let realmUrl = try getRealmURL()
-                
-                // Check if realm database exists
-                if fileManager.fileExists(atPath: realmUrl.path) {
-                    try fileManager.removeItem(at: realmUrl)
-                }
-                
-                callback(nil)
-            }
-            catch {
-                callback("Could not remove realm database: \(error)")
-            }
+            callback(nil)
+        }
+        catch {
+            callback("Could not remove realm database: \(error)")
         }
     }
 

@@ -179,7 +179,7 @@ IndexerRun[] {
     
     [renderer = list] {
         HStack {
-            alignment: center
+            alignment: left
             
             Text {
                 text: "{.name}"
