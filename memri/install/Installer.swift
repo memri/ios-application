@@ -85,7 +85,7 @@ public class Installer: ObservableObject {
                 
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
                     
-                self.installDefaultDatabase(context) { error in
+                self.installDemoDatabase(context) { error in
                     if let error = error {
                         // TODO Error Handling - show to the user
                         debugHistory.warn("\(error)")
@@ -181,7 +181,7 @@ public class Installer: ObservableObject {
                 
                 _ = try Authentication.createRootKey(areYouSure: areYouSure)
                 
-                self.installDefaultDatabase(context) { error in
+                self.installDemoDatabase(context) { error in
                     if let error = error {
                         // TODO Error Handling - show to the user
                         debugHistory.warn("\(error)")
@@ -249,7 +249,7 @@ public class Installer: ObservableObject {
                         return
                     }
                     
-                    self.installDefaultDatabase(self.testRoot!) { error in
+                    self.installDemoDatabase(self.testRoot!) { error in
                         if let error = error {
                             debugHistory.error("\(error)")
                             do { try callback(error, nil) }
@@ -274,62 +274,62 @@ public class Installer: ObservableObject {
         debugHistory.warn("\(error!)")
     }
 
-    public func installDefaultDatabase(_ context: MemriContext,
-                                       _ callback:@escaping (Error?) -> Void) {
-        debugHistory.info("Installing defaults in the database")
-        install(context, dbName: "default_database", callback)
-    }
-
     public func installDemoDatabase(_ context: MemriContext,
-                                    _ callback:@escaping (Error?, Double?) -> Void) {
-        
+                                       _ callback:@escaping (Error?) -> Void) {
         debugHistory.info("Installing demo database")
-        
-        // Download database file
-        let destinationURL = FileStorageController.getURLForFile(withUUID: "ios-demo-resources.zip")
-        
-        let destination: DownloadRequest.Destination = { _, _ in
-            return (destinationURL, [])
-        }
-
-        let url = "https://gitlab.memri.io/memri/demo-data/-/raw/master/data/ios-demo-resources.zip?inline=false"
-        AF.download(url, method: .get, requestModifier: {
-            $0.timeoutInterval = 5
-            $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
-            $0.allowsExpensiveNetworkAccess = false
-            $0.allowsConstrainedNetworkAccess = false
-            $0.cachePolicy = .reloadIgnoringCacheData
-            $0.timeoutInterval = .greatestFiniteMagnitude
-        }, to: destination)
-        .downloadProgress { progress in
-            self.state = .downloadingDemoData(progress.fractionCompleted)
-            callback(nil, progress.fractionCompleted)
-        }
-        .response { response in
-            guard let httpResponse = response.response else {
-                callback(response.error ?? "Unknown error", nil)
-                return
-            }
-            
-            guard httpResponse.statusCode < 400 else {
-                let httpError = PodAPI.HTTPError.ClientError(
-                    httpResponse.statusCode,
-                    "URL: \(url)"
-                )
-                callback(httpError, nil)
-                return
-            }
-            
-            self.state = .extractingDemoData
-            try? FileStorageController.unzipFile(from: destinationURL)
-            try? FileStorageController.deleteFile(at: destinationURL)
-            print("PROGRESS: Unzip completed, attempt install of database")
-            
-            self.install(context, dbName: "demo_database", { error in callback(error, nil) })
-            
-            callback(nil, nil)
-        }
+        install(context, dbName: "demo_database", callback)
     }
+
+//    public func installDemoDatabase(_ context: MemriContext,
+//                                    _ callback:@escaping (Error?, Double?) -> Void) {
+//
+//        debugHistory.info("Installing demo database")
+//
+//        // Download database file
+//        let destinationURL = FileStorageController.getURLForFile(withUUID: "ios-demo-resources.zip")
+//
+//        let destination: DownloadRequest.Destination = { _, _ in
+//            return (destinationURL, [])
+//        }
+//
+//        let url = "https://gitlab.memri.io/memri/demo-data/-/raw/master/data/ios-demo-resources.zip?inline=false"
+//        AF.download(url, method: .get, requestModifier: {
+//            $0.timeoutInterval = 5
+//            $0.addValue("application/octet-stream", forHTTPHeaderField: "Content-Type")
+//            $0.allowsExpensiveNetworkAccess = false
+//            $0.allowsConstrainedNetworkAccess = false
+//            $0.cachePolicy = .reloadIgnoringCacheData
+//            $0.timeoutInterval = .greatestFiniteMagnitude
+//        }, to: destination)
+//        .downloadProgress { progress in
+//            self.state = .downloadingDemoData(progress.fractionCompleted)
+//            callback(nil, progress.fractionCompleted)
+//        }
+//        .response { response in
+//            guard let httpResponse = response.response else {
+//                callback(response.error ?? "Unknown error", nil)
+//                return
+//            }
+//
+//            guard httpResponse.statusCode < 400 else {
+//                let httpError = PodAPI.HTTPError.ClientError(
+//                    httpResponse.statusCode,
+//                    "URL: \(url)"
+//                )
+//                callback(httpError, nil)
+//                return
+//            }
+//
+//            self.state = .extractingDemoData
+//            try? FileStorageController.unzipFile(from: destinationURL)
+//            try? FileStorageController.deleteFile(at: destinationURL)
+//            print("PROGRESS: Unzip completed, attempt install of database")
+//
+//            self.install(context, dbName: "demo_database", { error in callback(error, nil) })
+//
+//            callback(nil, nil)
+//        }
+//    }
 
     private func install(_ context: MemriContext, dbName: String,
                          _ callback:@escaping (Error?) -> Void) {
