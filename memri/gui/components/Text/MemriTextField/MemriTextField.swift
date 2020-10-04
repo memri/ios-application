@@ -136,7 +136,7 @@ public struct MemriTextField<Value: Equatable>: UIViewRepresentable {
             assignIfChanged(textField, \.text, newValue: parent.valueString)
             textField.resignFirstResponder()
             parent.onEditingEndedCallback?()
-            if parent.isEditing?.wrappedValue == true {
+            if parent.isEditing?.wrappedValue == true, !parent.isSharedEditingBinding {
                 parent.isEditing?.wrappedValue = false
             }
         }

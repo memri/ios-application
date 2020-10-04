@@ -148,7 +148,7 @@ struct GeneralEditorRendererView: View {
     
     var body: some View {
 
-        return ScrollView {
+        ScrollView(.vertical) {
             if #available(iOS 14.0, *) {
                 LazyVStack(alignment: .leading, spacing: 0) {
                     stackContent
@@ -408,7 +408,7 @@ struct GeneralEditorSection: View {
         ActionOpenViewByName(
             context,
             values: [
-                "name": "choose-item-by-query",
+                "viewName": "choose-item-by-query",
                 "viewArguments": ViewArguments([
                     "query": itemType,
                     "type": edgeType,
