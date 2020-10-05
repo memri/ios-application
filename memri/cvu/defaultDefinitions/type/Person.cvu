@@ -298,6 +298,16 @@ Person {
                         columns: 2
                         edgeInset: 0
                         allowBounce: false
+                        
+                        press: openView {
+                            view: {
+                                inherit: {{currentView}}
+                                defaultRenderer: "photoViewer"
+                            }
+                            viewArguments: {
+                                currentItem: {{.}}
+                            }
+                        }
                     }
                 }
                 arguments: {
