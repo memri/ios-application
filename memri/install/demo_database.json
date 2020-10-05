@@ -3587,7 +3587,7 @@
     {
         "_type": "Note",
         "title": "Notes to self",
-        "content": "Be in time with hour administration",
+        "content": "<ul>\r\n    <li>\r\n        <p>Buy groceries<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Call john<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Do the taxes<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Take out the trash<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Reply to carls mail<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p><br \/><\/p>\r\n<ul>\r\n    <li>\r\n        <p>Buy groceries<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Call john<\/p>\r\n        <ul>\r\n            <li>\r\n                <p>He really needs to pick up<\/p>\r\n            <\/li>\r\n            <li>\r\n                <p>Because I need to speak to him<\/p>\r\n            <\/li>\r\n        <\/ul>\r\n    <\/li>\r\n    <li>\r\n        <p>Do the taxes<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Take out the trash<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Reply to carls mail<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p>Buy: Toothpaste<\/p>\r\n<p><strong>Read<\/strong>: The age of surveillance capitalism<\/p>\r\n<p>Watch: Parasite<\/p>\r\n<p>Read:<\/p>\r\n<ul>\r\n    <li>\r\n        <p>Joe speedboat<\/p>\r\n    <\/li>\r\n    <li>\r\n        <p>Een schitterend gebrek<\/p>\r\n    <\/li>\r\n<\/ul>\r\n<p><br><strong>Read<\/strong><br>Joe speedboat<br>Een schitterend gebrek<\/p>\r\n<p><br><\/p>\r\n<p><strong>Buy<\/strong><\/p>\r\n<p>Groceries<br>Shoes<br><br><strong>Read<\/strong><br>Joe speedboat<br>Een schitterend gebrek<\/p>",
         "dateModified": 1593717745298,
         "version": 1
     },
