@@ -26,11 +26,7 @@ class ExprInterpreter {
         try execSingle(ast, args)
     }
 
-    class func evaluateBoolean(_ x: Any?, defaultValue: Bool) -> Bool {
-        evaluateBoolean(x) ?? defaultValue
-    }
-    
-    class func evaluateBoolean(_ x: Any?) -> Bool? {
+    class func evaluateBoolean(_ x: Any?, nilValue: Bool = false) -> Bool? {
         if let x = x as? Bool { return x }
         else if let x = x as? Int { return x != 0 }
         else if let x = x as? Double { return x != 0 }
@@ -44,6 +40,7 @@ class ExprInterpreter {
         else if let x = x as? [Item] { return x.count > 0 }
         else if let x = x as? Results<Edge> { return x.count > 0 }
         else if let x = x as? Results<Item> { return x.count > 0 }
+        else if x == nil { return nilValue }
         return nil
     }
 
@@ -184,7 +181,7 @@ class ExprInterpreter {
                 let otherResult = try execSingle(expr.rhs, args)
                 return IP.evaluateNumber(result) <= IP.evaluateNumber(otherResult)
             case .ConditionAND:
-                let boolLHS = IP.evaluateBoolean(result, defaultValue: false)
+                let boolLHS = IP.evaluateBoolean(result) ?? false
                 if !boolLHS { return false }
                 else {
                     let otherResult = try execSingle(expr.rhs, args)
@@ -192,7 +189,7 @@ class ExprInterpreter {
                 }
             case .ConditionOR:
                 let boolLHS = result // IP.evaluateBoolean(result)
-                if IP.evaluateBoolean(boolLHS, defaultValue: false) { return boolLHS }
+                if IP.evaluateBoolean(boolLHS) ?? false { return boolLHS }
                 else {
                     let otherResult = try execSingle(expr.rhs, args)
                     return otherResult // IP.evaluateBoolean(otherResult)
@@ -214,7 +211,7 @@ class ExprInterpreter {
             }
         }
         else if let expr = expr as? ExprConditionNode {
-            if IP.evaluateBoolean(try execSingle(expr.condition, args), defaultValue: false) {
+            if IP.evaluateBoolean(try execSingle(expr.condition, args)) ?? false {
                 return try execSingle(expr.trueExp, args)
             }
             else {
@@ -230,7 +227,7 @@ class ExprInterpreter {
         }
         else if let expr = expr as? ExprNegationNode {
             let result = try execSingle(expr.exp, args)
-            return !IP.evaluateBoolean(result, defaultValue: false)
+            return !(IP.evaluateBoolean(result) ?? true)
         }
         else if let expr = expr as? ExprNumberNode { return expr.value }
         else if let expr = expr as? ExprStringNode { return expr.value }

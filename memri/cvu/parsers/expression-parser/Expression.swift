@@ -158,11 +158,10 @@ public class Expression: CVUToString {
         if !parsed { try parse() }
 
         let value = try interpreter?.execute(args)
-
-        // Note: bool must precede nil check, as nil can equal false
-        if T.self == Bool.self { return ExprInterpreter.evaluateBoolean(value) as? T }
         
-        if value == nil { return nil }
+        if T.self == Bool.self {
+            return ExprInterpreter.evaluateBoolean(value, nilValue: false) as? T
+        }
         if T.self == [Double].self { return ExprInterpreter.evaluateNumberArray(value) as? T }
         if T.self == Double.self { return ExprInterpreter.evaluateNumber(value) as? T }
         if T.self == Int.self { return Int(ExprInterpreter.evaluateNumber(value)) as? T }
